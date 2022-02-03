@@ -1,0 +1,2 @@
+<div class="info_center">[owner]У Вас нет ни одного альбома.[/owner][not-owner]Пока нет ни одного фотоальбома.[/not-owner]</div>
+[owner]<center><button onClick="Albums.CreatAlbum(); return false;" class="button">Создать альбом</button></center>[/owner]

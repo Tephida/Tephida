@@ -1,0 +1,1 @@
+<div class="err_yellow">{error}</div>

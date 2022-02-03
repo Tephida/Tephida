@@ -1,0 +1,1 @@
+<div class="im_oneusr cursor_pointer" onClick="im.open('{uid}')"><img src="{ava}" /><div style="float:left;margin-top:2px"><b>{name}</b></div> <div class="newmsgss">{msg_num}</div><div class="clr"></div></div>
