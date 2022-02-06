@@ -100,21 +100,18 @@ if($logged){
 				
 					//Директория юзеров
 					$uploaddir = ROOT_DIR.'/uploads/users/';
-					
+
+                    $album_dir = ROOT_DIR.'/uploads/users/'.$user_id.'/albums/'.$aid.'/';
+
 					//Если нет папок юзера, то создаём их
-					if(!is_dir($uploaddir.$user_id)){ 
-						@mkdir($uploaddir.$user_id, 0777 );
-						@chmod($uploaddir.$user_id, 0777 );
-						@mkdir($uploaddir.$user_id.'/albums', 0777 );
-						@chmod($uploaddir.$user_id.'/albums', 0777 );
-					}
-					
-					//Если нет папки альбома, то создаём её
-					$album_dir = ROOT_DIR.'/uploads/users/'.$user_id.'/albums/'.$aid.'/';
-					if(!is_dir($album_dir)){ 
-						@mkdir($album_dir, 0777);
-						@chmod($album_dir, 0777);
-					}
+                    try {
+                        createDir($uploaddir . $user_id);
+                        createDir($uploaddir.$user_id.'/albums');
+                        //Если нет папки альбома, то создаём её
+                        createDir(ROOT_DIR.'/uploads/users/'.$user_id.'/albums/'.$aid.'/');
+                    } catch (Exception $e) {
+                        //
+                    }
 
 					//Разришенные форматы
 					$allowed_files = explode(', ', $config['photo_format']);
@@ -126,7 +123,7 @@ if($logged){
 					$image_size = $_FILES['uploadfile']['size']; // размер файла
 					$type = end(explode(".", $image_name)); // формат файла
 					
-					//Проверям если, формат верный то пропускаем
+					//Проверяем если, формат верный то пропускаем
 					if(in_array(strtolower($type), $allowed_files)){
 						$config['max_photo_size'] = $config['max_photo_size'] * 1000;
 						if($image_size < $config['max_photo_size']){
@@ -151,7 +148,7 @@ if($logged){
 	
 								$date = date('Y-m-d H:i:s', $server_time);
 								
-								//Генерируем position фотки для "обзо фотографий"
+								//Генерируем position фотки для "обзор фотографий"
 								$position_all = $_SESSION['position_all'];
 								if($position_all){
 									$position_all = $position_all+1;
@@ -177,7 +174,7 @@ if($logged){
 								echo $ins_id.'|||'.$img_url.'|||'.$user_id;
 								
 								//Удаляем кеш позиций фотографий
-								if(!$photos_num)
+//								if(!$photos_num) //WTF?
 									mozg_clear_cache_file('user_'.$user_id.'/profile_'.$user_id);
 
 								//Чистим кеш
