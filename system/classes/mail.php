@@ -263,7 +263,7 @@ class vii_mail {
 		
 		$this->smtp_code = substr( $this->smtp_msg, 0, 3 );
 		
-		return $this->smtp_code == "" ? FALSE : TRUE;
+		return !($this->smtp_code == "");
 	}
 	
 	function smtp_error($err = "") {
