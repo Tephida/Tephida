@@ -12,34 +12,32 @@ if (!defined('MOZG')) {
 
 class thumbnail
 {
-    public $img;
+    private array $img;
 
-    function __construct($imgfile)
+    function __construct(string $img_file)
     {
         //detect image format
 
-        $info = getimagesize($imgfile);
-
-        var_dump($info);
+        $info = getimagesize($img_file);
 
         if ($info[2] == 2) {
             $this->img['format'] = "JPEG";
-            $this->img['src'] = imagecreatefromjpeg($imgfile);
+            $this->img['src'] = imagecreatefromjpeg($img_file);
         } elseif ($info[2] == 3) {
             $this->img['format'] = "PNG";
-            $this->img['src'] = imagecreatefrompng($imgfile);
+            $this->img['src'] = imagecreatefrompng($img_file);
         } elseif ($info[2] == 1) {
             $this->img['format'] = "GIF";
-            $this->img['src'] = imagecreatefromgif($imgfile);
+            $this->img['src'] = imagecreatefromgif($img_file);
         } else {
             echo "Not Supported File! Thumbnails can only be made from .jpg, gif and .png images! ";
-//            unlink($imgfile);
+            unlink($img_file);
             exit();
         }
 
         if (!$this->img['src']) {
             echo "Not Supported File! Thumbnails can only be made from .jpg, gif and .png images!";
-//            @unlink($imgfile);
+            unlink($img_file);
             exit();
 
         }
@@ -53,9 +51,8 @@ class thumbnail
 
     }
 
-    function size_auto($size = 100, $site = 0, $jqCrop = 0)
+    public function size_auto($size = 100, $site = 0, string|int $jqCrop = 0): int
     {
-
         $size = explode("x", $size);
 
         if ($jqCrop) {
@@ -75,7 +72,7 @@ class thumbnail
 
     }
 
-    function crop($nw, $nh)
+    private function crop(int $nw, int $nh): int
     {
 
         $w = $this->img['lebar'];
@@ -96,7 +93,7 @@ class thumbnail
         $src_h = ceil($nh / $size_ratio);
 
         $sx = floor(($w - $src_w) / 2);
-        $sy = floor(($h - $src_h) / 2);
+//        $sy = floor(($h - $src_h) / 2);
 
         $this->img['des'] = imagecreatetruecolor($nw, $nh);
 
@@ -111,7 +108,7 @@ class thumbnail
         return 1;
     }
 
-    function jqCrop($nw, $nh, $cropData)
+    private function jqCrop(int $nw, int $nh, string|int $cropData): int
     {
         $cropDataExp = explode('|', $cropData);
         $left = $cropDataExp[0];
@@ -154,7 +151,7 @@ class thumbnail
         return 1;
     }
 
-    function scale($size = 100, $site = 0): int
+    private function scale($size = 100, $site = 0): int
     {
 
         $site = intval($site);
@@ -224,13 +221,13 @@ class thumbnail
 
     }
 
-    function jpeg_quality($quality = 90)
+    public function jpeg_quality($quality = 90): void
     {
         //jpeg quality
         $this->img['quality'] = $quality;
     }
 
-    function save($save = "")
+    public function save($save = ""): void
     {
 
         if ($this->img['format'] == "JPG" || $this->img['format'] == "JPEG") {
@@ -249,7 +246,11 @@ class thumbnail
         imagedestroy($this->img['src']);
     }
 
-    function show()
+    /**
+     * NOT USED
+     * @return void
+     */
+    protected function show(): void
     {
         if ($this->img['format'] == "JPG" || $this->img['format'] == "JPEG") {
             //JPEG
