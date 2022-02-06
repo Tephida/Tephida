@@ -399,7 +399,7 @@ if($logged){
 			$discussion = intval($_POST['discussion']);
 			$title = textFilter($_POST['title'], 25000, true);
 			$adres_page = strtolower(textFilter($_POST['adres_page'], 25000, true));
-			$descr = textFilter($_POST['descr'], 5000));
+			$descr = textFilter($_POST['descr'], 5000);
 			
 			$_POST['web'] = str_replace(array('"', "'"), '', $_POST['web']);
 			$web = textFilter($_POST['web'], 25000, true);
