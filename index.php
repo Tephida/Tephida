@@ -20,7 +20,7 @@ define("ROOT_DIR", dirname(__FILE__));
 const ENGINE_DIR = ROOT_DIR . '/system';
 header('Content-type: text/html; charset=utf-8');
 //AJAX
-$ajax = (!empty($_POST['ajax']) ? $_POST['ajax'] : null;
+$ajax = !empty($_POST['ajax']) ? $_POST['ajax'] : null;
 $logged = false;
 $user_info = false;
 include ENGINE_DIR . '/init.php';
