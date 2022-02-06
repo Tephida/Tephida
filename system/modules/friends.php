@@ -1,27 +1,25 @@
 <?php
-/* 
-	Appointment: Друзья пользователя
-	File: friends.php 
-	Author: f0rt1 
-	Engine: Vii Engine
-	Copyright: NiceWeb Group (с) 2011
-	e-mail: niceweb@i.ua
-	URL: http://www.niceweb.in.ua/
-	ICQ: 427-825-959
-	Данный код защищен авторскими правами
-*/
+/*
+ *   (c) Semen Alekseev
+ *
+ *  For the full copyright and license information, please view the LICENSE
+ *   file that was distributed with this source code.
+ *
+ */
 if(!defined('MOZG'))
 	die('Hacking attempt!');
 
 //Если страница вызвана через AJAX то включаем защиту, чтоб не могли обращаться напрямую к странице
-if($ajax == 'yes')
 	NoAjaxQuery();
 
 if($logged){
-	$act = $_GET['act'];
+    $act = $_GET['act'] ?? '';
 	$metatags['title'] = $lang['friends'];
 
-	if($_GET['page'] > 0) $page = intval($_GET['page']); else $page = 1;
+	if(isset($_GET['page']) AND $_GET['page'] > 0)
+        $page = intval($_GET['page']);
+    else
+        $page = 1;
 	$gcount = 20;
 	$limit_page = ($page-1)*$gcount;
 				
@@ -72,7 +70,7 @@ if($logged){
 							$rowUserEmail = $db->super_query("SELECT user_name, user_email FROM `".PREFIX."_users` WHERE user_id = '".$for_user_id."'");
 							if($rowUserEmail['user_email']){
 								include_once ENGINE_DIR.'/classes/mail.php';
-								$mail = new dle_mail($config);
+								$mail = new vii_mail($config);
 								$rowMyInfo = $db->super_query("SELECT user_search_pref FROM `".PREFIX."_users` WHERE user_id = '".$user_id."'");
 								$rowEmailTpl = $db->super_query("SELECT text FROM `".PREFIX."_mail_tpl` WHERE id = '1'");
 								$rowEmailTpl['text'] = str_replace('{%user%}', $rowUserEmail['user_name'], $rowEmailTpl['text']);
@@ -324,7 +322,7 @@ if($logged){
 					//Кол-во друзей в онлайне
 					$online_friends = $db->super_query("SELECT COUNT(*) AS cnt FROM `".PREFIX."_users` tb1, `".PREFIX."_friends` tb2 WHERE tb1.user_id = tb2.friend_id AND tb2.user_id = '{$get_user_id}' AND tb1.user_last_visit >= '{$online_time}' AND tb2.subscriptions = 0");
 
-				if($online_friends['cnt'])
+				if(!empty($online_friends['cnt']) AND $online_friends['cnt'])
 					$user_speedbar = 'У '.$gram_name.' '.$online_friends['cnt'].' '.gram_record($online_friends['cnt'], 'friends_online');
 				else
 					$user_speedbar = $lang['no_requests_online'];
@@ -552,7 +550,7 @@ if($logged){
 				//################### Просмотр всех друзей ###################//
 				$mobile_speedbar = 'Друзья';
 
-				$get_user_id = intval($_GET['user_id']);
+				$get_user_id = isset($_GET['user_id']) ? intval($_GET['user_id']) : null;
 				if(!$get_user_id)
 					$get_user_id = $user_info['user_id'];
 					

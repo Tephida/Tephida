@@ -1,15 +1,11 @@
 <?php
-/* 
-	Appointment: Отправка записи в сообщество или другу
-	File: repost.php 
-	Author: f0rt1 
-	Engine: Vii Engine
-	Copyright: NiceWeb Group (с) 2011
-	e-mail: niceweb@i.ua
-	URL: http://www.niceweb.in.ua/
-	ICQ: 427-825-959
-	Данный код защищен авторскими правами
-*/
+/*
+ *   (c) Semen Alekseev
+ *
+ *  For the full copyright and license information, please view the LICENSE
+ *   file that was distributed with this source code.
+ *
+ */
 if(!defined('MOZG'))
 	die('Hacking attempt!');
 
@@ -17,7 +13,7 @@ NoAjaxQuery();
 
 if($logged){
 
-	$act = $_GET['act'];
+    $act = $_GET['act'] ?? '';
 	$user_id = $user_info['user_id'];
 	
 	switch($act){
@@ -27,7 +23,7 @@ if($logged){
 			NoAjaxQuery();
 			
 			$rid = intval($_POST['rec_id']);
-			$comm = ajax_utf8(textFilter($_POST['comm']));
+			$comm = textFilter($_POST['comm']);
 			
 			//Проверка на существование записи
 			if($_POST['g_tell'] == 1){
@@ -77,7 +73,7 @@ if($logged){
 			
 			$rid = intval($_POST['rec_id']);
 			$sel_group = intval($_POST['sel_group']);
-			$comm = ajax_utf8(textFilter($_POST['comm']));
+			$comm = textFilter($_POST['comm']);
 			
 			//Проверка на существование записи
 			$row = $db->super_query("SELECT add_date, text, author_user_id, tell_uid, tell_date, public, attach FROM `".PREFIX."_wall` WHERE fast_comm_id = '0' AND id = '{$rid}'");
@@ -122,7 +118,7 @@ if($logged){
 			
 			$rid = intval($_POST['rec_id']);
 			$sel_group = intval($_POST['sel_group']);
-			$comm = ajax_utf8(textFilter($_POST['comm']));
+			$comm = textFilter($_POST['comm']);
 			
 			//Проверка на существование записи
 			$row = $db->super_query("SELECT add_date, text, public_id, attach, tell_uid, tell_date, public FROM `".PREFIX."_communities_wall` WHERE fast_comm_id = 0 AND id = '{$rid}'");
@@ -168,7 +164,7 @@ if($logged){
 			NoAjaxQuery();
 			
 			$for_user_id = intval($_POST['for_user_id']);
-			$tell_comm = ajax_utf8(textFilter($_POST['comm']));
+			$tell_comm = textFilter($_POST['comm']);
 			$rid = intval($_POST['rec_id']);
 
 			if($user_id != $for_user_id){
@@ -260,7 +256,7 @@ if($logged){
 								$rowUserEmail = $db->super_query("SELECT user_name, user_email FROM `".PREFIX."_users` WHERE user_id = '".$for_user_id."'");
 								if($rowUserEmail['user_email']){
 									include_once ENGINE_DIR.'/classes/mail.php';
-									$mail = new dle_mail($config);
+									$mail = new vii_mail($config);
 									$rowMyInfo = $db->super_query("SELECT user_search_pref FROM `".PREFIX."_users` WHERE user_id = '".$user_id."'");
 									$rowEmailTpl = $db->super_query("SELECT text FROM `".PREFIX."_mail_tpl` WHERE id = '8'");
 									$rowEmailTpl['text'] = str_replace('{%user%}', $rowUserEmail['user_name'], $rowEmailTpl['text']);

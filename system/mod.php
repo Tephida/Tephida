@@ -1,47 +1,47 @@
 <?php
 /*
-	Appointment: Подключение модулей
-	File: mod.php 
-	Author: f0rt1 
-	Engine: Vii Engine
-	Copyright: NiceWeb Group (с) 2011
-	e-mail: niceweb@i.ua
-	URL: http://www.niceweb.in.ua/
-	ICQ: 427-825-959
-	Данный код защищен авторскими правами
-*/
+ *   (c) Semen Alekseev
+ *
+ *  For the full copyright and license information, please view the LICENSE
+ *   file that was distributed with this source code.
+ *
+ */
 if (!defined('MOZG')) die('Hacking attempt!');
-if (isset($_GET['go'])) $go = htmlspecialchars(strip_tags(stripslashes(trim(urldecode($_GET['go'])))));
-else $go = "main";
+
+if (isset($_GET['go']))
+    $go = htmlspecialchars(strip_tags(stripslashes(trim(urldecode($_GET['go'])))));
+else
+    $go = "main";
+
 $mozg_module = $go;
 check_xss();
 //FOR MOBILE VERSION 1.0
-if ($config['temp'] == 'mobile') $lang['online'] = '<img src="{theme}/images/monline.gif" />';
+$lang['online'] = $config['temp'] == 'mobile' ? '<img src="{theme}/images/monline.gif" />' : '';
+
 switch ($go) {
-        //Регистрация
-        
+    /** Регистрация */
     case "register":
         include ENGINE_DIR . '/modules/register.php';
-    break;
-        //Профиль пользователя
-        
+        break;
+
+    /** Профиль пользователя */
     case "profile":
         $spBar = true;
         include ENGINE_DIR . '/modules/profile.php';
-    break;
-        //Редактирование моей страницы
-        
+        break;
+
+    /** Редактирование моей страницы */
     case "editprofile":
         $spBar = true;
         include ENGINE_DIR . '/modules/editprofile.php';
-    break;
-        //Загрузка городов
-        
+        break;
+
+    /**Загрузка городов  */
     case "loadcity":
         include ENGINE_DIR . '/modules/loadcity.php';
-    break;
-        //Альбомы
-        
+        break;
+
+    /** Альбомы */
     case "albums":
         $spBar = true;
         if ($config['album_mod'] == 'yes') include ENGINE_DIR . '/modules/albums.php';
@@ -50,47 +50,47 @@ switch ($go) {
             msgbox('', 'Сервис отключен.', 'info');
         }
         break;
-        //Просмотр фотографии
-        
+
+    /** Просмотр фотографии */
     case "photo":
         include ENGINE_DIR . '/modules/photo.php';
         break;
-        //Друзья
-        
+
+    /** Друзья */
     case "friends":
         $spBar = true;
         include ENGINE_DIR . '/modules/friends.php';
         break;
-        //Закладки
-        
+
+    /** Закладки */
     case "fave":
         $spBar = true;
         include ENGINE_DIR . '/modules/fave.php';
         break;
-        //Сообщения
-        
+
+    /** Сообщения */
     case "messages":
         $spBar = true;
         include ENGINE_DIR . '/modules/messages.php';
         break;
-        //Диалоги
-        
+
+    /** Диалоги */
     case "im":
         include ENGINE_DIR . '/modules/im.php';
         break;
-        //Заметки
-        
+
+    /** Заметки */
     case "notes":
         $spBar = true;
         include ENGINE_DIR . '/modules/notes.php';
         break;
-        //Подписки
-        
+
+    /** Подписки */
     case "subscriptions":
         include ENGINE_DIR . '/modules/subscriptions.php';
         break;
-        //Видео
-        
+
+    /** Видео */
     case "videos":
         $spBar = true;
         if ($config['video_mod'] == 'yes') include ENGINE_DIR . '/modules/videos.php';
@@ -99,158 +99,159 @@ switch ($go) {
             msgbox('', 'Сервис отключен.', 'info');
         }
         break;
-        //Поиск
-        
+
+    /** Поиск */
     case "search":
         include ENGINE_DIR . '/modules/search.php';
         break;
-        //Стена
-        
+
+    /** Стена */
     case "wall":
         $spBar = true;
         include ENGINE_DIR . '/modules/wall.php';
         break;
-        //Статус
-        
+
+    /** Статус */
     case "status":
         include ENGINE_DIR . '/modules/status.php';
         break;
-        //Новости
-        
+
+    /** Новости */
     case "news":
         $spBar = true;
         include ENGINE_DIR . '/modules/news.php';
         break;
-        //Настройки
-        
+
+    /** Настройки */
     case "settings":
         include ENGINE_DIR . '/modules/settings.php';
         break;
-        //Помощь
-        
+
+    /** Помощь */
     case "support":
         include ENGINE_DIR . '/modules/support.php';
         break;
-        //Воостановление доступа
-        
+
+    /** Восстановление доступа */
     case "restore":
         include ENGINE_DIR . '/modules/restore.php';
         break;
-        //Загрузка картинок при прикриплении файлов со стены, заметок, или сообщений
-        
+
+    /** Загрузка картинок при прикреплении файлов со стены, заметок, или сообщений */
     case "attach":
         include ENGINE_DIR . '/modules/attach.php';
         break;
-        //Блог сайта
-        
+
+    /** Блог сайта */
     case "blog":
         $spBar = true;
         include ENGINE_DIR . '/modules/blog.php';
         break;
-        //Баланс
-        
+
+    /** Баланс */
     case "balance":
         include ENGINE_DIR . '/modules/balance.php';
         break;
-        //Подарки
-        
+
+    /** Подарки */
     case "gifts":
         include ENGINE_DIR . '/modules/gifts.php';
         break;
-        //Сообщества
-        
+
+    /** Сообщества */
     case "groups":
         include ENGINE_DIR . '/modules/groups.php';
         break;
-        //Сообщества -> Публичные страницы
-        
+
+    /** Сообщества -> Публичные страницы */
     case "public":
         $spBar = true;
         include ENGINE_DIR . '/modules/public.php';
         break;
-        //Сообщества -> Загрузка фото
-        
+
+    /** Сообщества -> Загрузка фото */
     case "attach_groups":
         include ENGINE_DIR . '/modules/attach_groups.php';
         break;
-        //Музыка
-        
+
+    /** Музыка */
     case "audio":
-        if ($config['audio_mod'] == 'yes') include ENGINE_DIR . '/modules/audio.php';
+        if ($config['audio_mod'] == 'yes')
+            include ENGINE_DIR . '/modules/audio.php';
         else {
             $spBar = true;
             $user_speedbar = 'Информация';
             msgbox('', 'Сервис отключен.', 'info');
         }
         break;
-        //Статические страницы
-        
+
+    /** Статические страницы */
     case "static":
         include ENGINE_DIR . '/modules/static.php';
         break;
-        //Выделить человека на фото
-        
+
+    /** Выделить человека на фото */
     case "distinguish":
         include ENGINE_DIR . '/modules/distinguish.php';
         break;
-        //Скрываем блок Дни рожденья друзей
-        
+
+    /** Скрываем блок Дни рожденья друзей */
     case "happy_friends_block_hide":
         $_SESSION['happy_friends_block_hide'] = 1;
         die();
         break;
-        //Скрываем блок Дни рожденья друзей
-        
+
+    /** Скрываем блок Дни рожденья друзей */
     case "fast_search":
         include ENGINE_DIR . '/modules/fast_search.php';
         break;
-        //Жалобы
-        
+
+    /** Жалобы */
     case "report":
         include ENGINE_DIR . '/modules/report.php';
         break;
-        //Отправка записи в сообщество или другу
-        
+
+    /** Отправка записи в сообщество или другу */
     case "repost":
         include ENGINE_DIR . '/modules/repost.php';
         break;
-        //Моментальные оповещания
-        
+
+    /** Моментальные оповещения */
     case "updates":
         include ENGINE_DIR . '/modules/updates.php';
         break;
-        //Документы
-        
+
+    /** Документы */
     case "doc":
         include ENGINE_DIR . '/modules/doc.php';
         break;
-        //Опросы
-        
+
+    /** Опросы */
     case "votes":
         include ENGINE_DIR . '/modules/votes.php';
         break;
-        //Сообщества -> Публичные страницы -> Аудиозаписи
-        
+
+    /** Сообщества -> Публичные страницы -> Аудиозаписи */
     case "public_audio":
         include ENGINE_DIR . '/modules/public_audio.php';
         break;
-        //Сообщества -> Публичные страницы -> Обсуждения
-        
+
+    /** Сообщества -> Публичные страницы -> Обсуждения */
     case "groups_forum":
         include ENGINE_DIR . '/modules/groups_forum.php';
         break;
-        //Комментарии к прикприпленным фото
-        
+
+    /** Комментарии к прикрепленным фото */
     case "attach_comm":
         include ENGINE_DIR . '/modules/attach_comm.php';
         break;
-        //Сообщества -> Публичные страницы -> Видеозаписи
-        
+
+    /** Сообщества -> Публичные страницы -> Видеозаписи */
     case "public_videos":
         include ENGINE_DIR . '/modules/public_videos.php';
         break;
-        //Удаление страницы
-        
+
+    /** Удаление страницы */
     case "del_my_page":
         NoAjaxQuery();
         if ($logged) {
@@ -275,60 +276,59 @@ switch ($go) {
         }
         die();
         break;
-        //Гости
-        
+
+    /** Гости */
     case "guests":
         $spBar = true;
         include ENGINE_DIR . '/modules/guests.php';
         break;
-        //Фоторедактор
-        
+
+    /** Фоторедактор */
     case "photo_editor":
         include ENGINE_DIR . '/modules/photo_editor.php';
         break;
-        //Игры
-        
+
+    /** Игры */
     case "apps":
         include ENGINE_DIR . '/modules/apps.php';
         break;
-        //Отзывы
-        
+
+    /** Отзывы */
     case "reviews":
         include ENGINE_DIR . '/modules/reviews.php';
         break;
-        //Плеер
-        
+
+    /** Плеер */
     case "audio_player":
         include ENGINE_DIR . '/modules/audio_player.php';
         break;
-        //Рейтинг
-        
+
+    /** Рейтинг */
     case "rating":
         include ENGINE_DIR . '/modules/rating.php';
         break;
-        //Статистика сообществ
-        
+
+    /** Статистика сообществ */
     case "stats_groups":
         include ENGINE_DIR . '/modules/stats_groups.php';
         break;
-        //Выбор языка
-        
+
+    /** Выбор языка */
     case "lang":
         include ENGINE_DIR . '/modules/lang.php';
         break;
-        //Статистика страницы пользователя
-        
+
+    /** Статистика страницы пользователя */
     case "my_stats":
         include ENGINE_DIR . '/modules/my_stats.php';
         break;
     default:
         $spBar = true;
         if ($go != 'main') msgbox('', $lang['no_str_bar'], 'info');
-    }
-    if (!$metatags['title']) $metatags['title'] = $config['home'];
-    if ($user_speedbar) $speedbar = $user_speedbar;
-    else $speedbar = $lang['welcome'];
-    $headers = '<title>' . $metatags['title'] . '</title>
-<meta name="generator" content="CMS TOOLS" />
+}
+if (empty($metatags['title']))
+    $metatags['title'] = $config['home'];
+$speedbar = $user_speedbar ?? $lang['welcome'];
+$headers = '<title>' . $metatags['title'] . '</title>
+<meta name="generator" content="VII ENGINE" />
 <meta http-equiv="content-type" content="text/html; charset=utf-8" />';
-?>

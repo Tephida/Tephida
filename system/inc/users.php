@@ -1,48 +1,74 @@
 <?php
-/* 
+/*
+ *   (c) Semen Alekseev
+ *
+ *  For the full copyright and license information, please view the LICENSE
+ *   file that was distributed with this source code.
+ *
+ */
+
+/*
 	Appointment: Пользователи
 	File: users.php
  
 */
-if(!defined('MOZG'))
-	die('Hacking attempt!');
+if (!defined('MOZG'))
+    die('Hacking attempt!');
 
-echoheader();	
+echoheader();
 
-$se_uid = intval($_GET['se_uid']);
-if(!$se_uid) $se_uid = '';
 
-$sort = intval($_GET['sort']);
-$se_name = textFilter($_GET['se_name'], false, true);
-$se_email = textFilter($_GET['se_email'], false, true);
-$ban = $_GET['ban'];
-$delet = $_GET['delet'];
+$se_uid = isset($_GET['se_uid']) ? intval($_GET['se_uid']) : '';
+if (!$se_uid)
+    $se_uid = '';
 
-if($se_uid OR $sort OR $se_name OR $se_email OR $ban OR $delet OR $_GET['regdate']){
-	$where_sql .= "WHERE user_email != ''";
-	if($se_uid) $where_sql .= "AND user_id = '".$se_uid."' ";
-	if($se_name) $where_sql .= "AND user_search_pref LIKE '%".$se_name."%' ";
-	if($se_email) $where_sql .= "AND user_email LIKE '%".$se_email."%' ";
-	if($ban){$where_sql .= "AND user_ban = 1 ";$checked_ban = "checked";}
-	if($delet){$where_sql .= "AND user_delet = 1 ";$checked_delet = "checked";}
-	if($sort == 1) $order_sql = "`user_search_pref` ASC";
-	else if($sort == 2) $order_sql = "`user_reg_date` ASC";
-	else if($sort == 3) $order_sql = "`user_last_visit` DESC";
-	else $order_sql = "`user_reg_date` DESC";
+$sort = isset($_GET['sort']) ? intval($_GET['sort']) : null;
+$se_name = $_GET['se_name'] ?? '';
+$se_email = $_GET['se_email'] ?? '';
+
+$se_name = textFilter($se_name, 25000, true);
+$se_email = textFilter($se_email, 25000, true);
+$ban = $_GET['ban'] ?? null;
+$delet = $_GET['delet'] ?? null;
+
+$regdate = $_GET['regdate'] ?? null;
+$where_sql = '';
+
+if ($se_uid or $sort or $se_name or $se_email or $ban or $delet or $regdate) {
+    $where_sql .= "WHERE user_email != ''";
+    if ($se_uid) $where_sql .= "AND user_id = '" . $se_uid . "' ";
+    if ($se_name) $where_sql .= "AND user_search_pref LIKE '%" . $se_name . "%' ";
+    if ($se_email) $where_sql .= "AND user_email LIKE '%" . $se_email . "%' ";
+    if ($ban) {
+        $where_sql .= "AND user_ban = 1 ";
+        $checked_ban = "checked";
+    }
+    if ($delet) {
+        $where_sql .= "AND user_delet = 1 ";
+        $checked_delet = "checked";
+    }
+    if ($sort == 1) $order_sql = "`user_search_pref` ASC";
+    else if ($sort == 2) $order_sql = "`user_reg_date` ASC";
+    else if ($sort == 3) $order_sql = "`user_last_visit` DESC";
+    else $order_sql = "`user_reg_date` DESC";
 } else
-	$order_sql = "`user_reg_date` DESC";
-	
+    $order_sql = "`user_reg_date` DESC";
+
 $selsorlist = installationSelected($sort, '<option value="1">по алфавиту</option><option value="2">по дате регистрации</option><option value="3">по дате посещения</option>');
 
 //Выводим список людей
-if($_GET['page'] > 0) $page = intval($_GET['page']); else $page = 1;
+if (isset($_GET['page']) and $_GET['page'] > 0)
+    $page = intval($_GET['page']);
+else
+    $page = 1;
 $gcount = 20;
-$limit_page = ($page-1)*$gcount;
+$limit_page = ($page - 1) * $gcount;
 
-$sql_ = $db->super_query("SELECT user_group, user_search_pref, user_id, user_real, user_reg_date, user_last_visit, user_email, user_delet, user_ban, user_balance FROM `".PREFIX."_users`  {$where_sql} ORDER by {$order_sql} LIMIT {$limit_page}, {$gcount}", 1);
+$sql_ = $db->super_query("SELECT user_group, user_search_pref, user_id, user_real, user_reg_date, user_last_visit, user_email, user_delet, user_ban, user_balance FROM `" . PREFIX . "_users`  {$where_sql} ORDER by {$order_sql} LIMIT {$limit_page}, {$gcount}", 1);
 
 //Кол-во людей считаем
-$numRows = $db->super_query("SELECT COUNT(*) AS cnt FROM `".PREFIX."_users` {$where_sql}");
+$numRows = $db->super_query("SELECT COUNT(*) AS cnt FROM `" . PREFIX . "_users` {$where_sql}");
+$admin_index = $admin_index ?? null;
 
 echo <<<HTML
 <style type="text/css" media="all">
@@ -87,38 +113,51 @@ textarea{width:300px;height:100px;}
 </form>
 HTML;
 
-echohtmlstart('Список пользователей ('.$numRows['cnt'].')');
+echohtmlstart('Список пользователей (' . $numRows['cnt'] . ')');
 
-foreach($sql_ as $row){
-	$format_reg_date = date('Y-m-d', $row['user_reg_date']);
-	$lastvisit = date('Y-m-d', $row['user_last_visit']);
-	
-	$row['user_reg_date'] = langdate('j M Y в H:i', $row['user_reg_date']);
-	$row['user_last_visit'] = langdate('j M Y в H:i', $row['user_last_visit']);
+$users = '';
+foreach ($sql_ as $row) {
+//    $format_reg_date = date('Y-m-d', $row['user_reg_date']);
+//    $lastvisit = date('Y-m-d', $row['user_last_visit']);
 
-	if($row['user_delet']) 
-		$color = 'color:red';
-	else if($row['user_ban'])
-		$color = 'color:blue';
-	else if($row['user_group'] == 4)
-		$color = 'color:green';
-	else if($row['user_real'] == 1)
-		$color = 'color:purple';
-	else
-		$color = '';
-	
-	$users .= <<<HTML
-<div style="background:#fff;float:left;padding:5px;width:170px;text-align:center;font-weight:bold;" title="Баланс: {$row['user_balance']} голосов"><a href="/u{$row['user_id']}" target="_blank" style="{$color}">{$row['user_search_pref']}</a></div>
+    $row['user_balance'] = $row['user_balance'] ?? null;
+    $row['user_search_pref'] = $row['user_search_pref'] ?? null;
+    $row['user_id'] = $row['user_id'] ?? null;
+    $row['user_reg_date'] = $row['user_reg_date'] ?? null;
+    $row['user_last_visit'] = $row['user_last_visit'] ?? null;
+    $row['user_email'] = $row['user_email'] ?? null;
+
+    $row['user_reg_date'] = langdate('j M Y в H:i', $row['user_reg_date']);
+    $row['user_last_visit'] = langdate('j M Y в H:i', $row['user_last_visit']);
+
+    if ($row['user_delet'])
+        $color = 'color:red';
+    else if ($row['user_ban'])
+        $color = 'color:blue';
+    else if ($row['user_group'] == 4)
+        $color = 'color:green';
+    else if ($row['user_real'] == 1)
+        $color = 'color:purple';
+    else
+        $color = '';
+
+   $users .= <<<HTML
+<div style="background:#fff;float:left;padding:5px;width:170px;text-align:center;font-weight:bold;" 
+title="Баланс: {$row['user_balance']} голосов">
+<a href="/u{$row['user_id']}" target="_blank" style="{$color}">{$row['user_search_pref']}</a></div>
 <div style="background:#fff;float:left;padding:5px;width:110px;text-align:center;margin-left:1px">{$row['user_reg_date']}</div>
 <div style="background:#fff;float:left;padding:5px;width:100px;text-align:center;margin-left:1px">{$row['user_last_visit']}</div>
 <div style="background:#fff;float:left;padding:5px;width:148px;text-align:center;margin-left:1px">{$row['user_email']}</div>
 <div style="background:#fff;float:left;padding:4px;width:20px;text-align:center;font-weight:bold;margin-left:1px"><input type="checkbox" name="massaction_users[]" style="float:right;" value="{$row['user_id']}" /></div>
 <div class="mgcler"></div>
 HTML;
+
+
 }
 
+
 echo <<<HTML
-<script language="text/javascript" type="text/javascript">
+<script type="text/javascript">
 function ckeck_uncheck_all() {
     var frm = document.editusers;
     for (var i=0;i<frm.elements.length;i++) {
@@ -169,9 +208,8 @@ function ckeck_uncheck_all() {
 HTML;
 
 $query_string = preg_replace("/&page=[0-9]+/i", '', $_SERVER['QUERY_STRING']);
-echo navigation($gcount, $numRows['cnt'], '?'.$query_string.'&page=');
+echo navigation($gcount, $numRows['cnt'], '?' . $query_string . '&page=');
 
 htmlclear();
 
 echohtmlend();
-?>

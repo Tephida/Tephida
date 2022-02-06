@@ -1,27 +1,28 @@
 <?php
-/* 
-	Appointment: Помощь
-	File: support.php 
-	Author: f0rt1 
-	Engine: Vii Engine
-	Copyright: NiceWeb Group (с) 2011
-	e-mail: niceweb@i.ua
-	URL: http://www.niceweb.in.ua/
-	ICQ: 427-825-959
-	Данный код защищен авторскими правами
-*/
+/*
+ *   (c) Semen Alekseev
+ *
+ *  For the full copyright and license information, please view the LICENSE
+ *   file that was distributed with this source code.
+ *
+ */
 if(!defined('MOZG'))
 	die('Hacking attempt!');
 
-if($ajax == 'yes')
 	NoAjaxQuery();
 
 if($logged){
-	$act = $_GET['act'];
+    $act = $_GET['act'] ?? '';
+
+//	$act = $_GET['act'];
 	$user_id = $user_info['user_id'];
 	$metatags['title'] = $lang['support_title'];
 
-	if($_GET['page'] > 0) $page = intval($_GET['page']); else $page = 1;
+	if(isset($_GET['page']) AND $_GET['page'] > 0)
+        $page = intval($_GET['page']);
+    else
+        $page = 1;
+
 	$gcount = 20;
 	$limit_page = ($page-1)*$gcount;
 
@@ -29,18 +30,17 @@ if($logged){
 		
 		//################### Страница создание нового вопроса  ###################//
 		case "new":
-			$mobile_speedbar = 'Новый вопрос';
-
-			$tpl->load_template('support/new.tpl');
-			$tpl->set('{uid}', $user_id);
-			$tpl->compile('content');
-		break;
+            $mobile_speedbar = 'Новый вопрос';
+            $tpl->load_template('support/new.tpl');
+            $tpl->set('{uid}', $user_id);
+            $tpl->compile('content');
+            break;
 		
 		//################### Отправка нового вопроса  ###################//
 		case "send":
 			NoAjaxQuery();
-			$title = ajax_utf8(textFilter($_POST['title']), false, true);
-			$question = ajax_utf8(textFilter($_POST['question']));
+			$title = textFilter($_POST['title'], 25000, true);
+			$question = textFilter($_POST['question']);
 			$limitTime = $server_time-3600;
 			$rowLast = $db->super_query("SELECT COUNT(*) AS cnt FROM `".PREFIX."_support` WHERE сdate > '{$limitTime}'");
 			if(!$rowLast['cnt'] AND isset($title) AND !empty($title) AND isset($question) AND !empty($question) AND $user_info['user_group'] != 4){
@@ -109,7 +109,7 @@ if($logged){
 		case "answer":
 			NoAjaxQuery();
 			$qid = intval($_POST['qid']);
-			$answer = ajax_utf8(textFilter($_POST['answer']));
+			$answer = textFilter($_POST['answer']);
 			$check = $db->super_query("SELECT suser_id FROM `".PREFIX."_support` WHERE id = '{$qid}'");
 			if($check['suser_id'] == $user_id OR $user_info['user_group'] == 4 AND isset($answer) AND !empty($answer)){
 				if($user_info['user_group'] == 4){
@@ -302,4 +302,3 @@ if($logged){
 	$user_speedbar = $lang['no_infooo'];
 	msgbox('', $lang['not_logged'], 'info');
 }
-?>

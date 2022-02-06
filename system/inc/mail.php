@@ -1,15 +1,11 @@
 <?php
-/* 
-	Appointment: Отправка массовых сообщений
-	File: mail.php
-	Author: f0rt1 
-	Engine: Vii CMS (Social version)
-	Copyright: NiceWeb Group (с) 2011
-	e-mail: niceweb@i.ua
-	URL: http://www.niceweb.in.ua/
-	ICQ: 427-825-959
-	Данный код защищен авторскими правами
-*/
+/*
+ *   (c) Semen Alekseev
+ *
+ *  For the full copyright and license information, please view the LICENSE
+ *   file that was distributed with this source code.
+ *
+ */
 if(!defined('MOZG'))
 	die('Hacking attempt!');
 	
@@ -21,14 +17,14 @@ switch($act){
 	case "send":
 		$limit = intval($_POST['limit']);
 		$lastid = intval($_POST['lastid']);
-		$title = textFilter($_POST['title'], false, true);
+		$title = textFilter($_POST['title'], 25000, true);
 		$_POST['text'] = $_POST['text'];
 		
 		$sql_ = $db->super_query("SELECT user_search_pref, user_email FROM `".PREFIX."_users` ORDER by `user_id` ASC LIMIT ".$lastid.", ".$limit, 1);
 		
 		if($sql_){
 			include_once ENGINE_DIR.'/classes/mail.php';
-			$mail = new dle_mail($config, true);
+			$mail = new vii_mail($config, true);
 			
 			foreach($sql_ as $row){
 				$find = array ('/data:/i', '/about:/i', '/vbscript:/i', '/onclick/i', '/onload/i', '/onunload/i', '/onabort/i', '/onerror/i', '/onblur/i', '/onchange/i', '/onfocus/i', '/onreset/i', '/onsubmit/i', '/ondblclick/i', '/onkeydown/i', '/onkeypress/i', '/onkeyup/i', '/onmousedown/i', '/onmouseup/i', '/onmouseover/i', '/onmouseout/i', '/onselect/i', '/javascript/i', '/javascript/i' );

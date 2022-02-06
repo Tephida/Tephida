@@ -1,49 +1,41 @@
 <?php
 /*
-=====================================================
- DataLife Engine - by SoftNews Media Group 
------------------------------------------------------
- http://dle-news.ru/
------------------------------------------------------
- Copyright (c) 2004,2011 SoftNews Media Group
-=====================================================
- Данный код защищен авторскими правами
-=====================================================
- Файл: mail.class.php
------------------------------------------------------
- Назначение: Класс для отправки писем с сайта
-=====================================================
-*/
-class dle_mail {
+ *   (c) Semen Alekseev
+ *
+ *  For the full copyright and license information, please view the LICENSE
+ *   file that was distributed with this source code.
+ *
+ */
+class vii_mail {
 	
-	var $site_name = "";
-	var $from = "";
-	var $to = "";
-	var $subject = "";
-	var $message = "";
-	var $header = "";
-	var $additional_parameters = null;
-	var $error = "";
-	var $bcc = array ();
-	var $mail_headers = "";
-	var $html_mail = 0;
-	var $charset = 'windows-1251';
+	public mixed $site_name = "";
+    public mixed $from = "";
+    public string $to = "";
+    public $subject = "";
+    public $message = "";
+    public $header = "";
+    public $additional_parameters = null;
+    public $error = "";
+    public $bcc = array ();
+    public $mail_headers = "";
+    public $html_mail = 0;
+    public $charset = 'windows-1251';
+
+    public $smtp_fp = FALSE;
+    public $smtp_msg = "";
+    public $smtp_port = "";
+    public $smtp_host = "localhost";
+    public $smtp_user = "";
+    public $smtp_pass = "";
+    public $smtp_code = "";
+    public $smtp_mail = "";
+    public $send_error = FALSE;
+
+    public $eol = "\n";
+
+    public $mail_method = 'php';
 	
-	var $smtp_fp = FALSE;
-	var $smtp_msg = "";
-	var $smtp_port = "";
-	var $smtp_host = "localhost";
-	var $smtp_user = "";
-	var $smtp_pass = "";
-	var $smtp_code = "";
-	var $smtp_mail = "";
-	var $send_error = FALSE;
-	
-	var $eol = "\n";
-	
-	var $mail_method = 'php';
-	
-	function dle_mail($config, $is_html = false) {
+	function __construct($config, $is_html = false) {
 		$this->mail_method = $config['mail_metod'];
 		
 		$this->from = $config['admin_mail'];
@@ -95,7 +87,7 @@ class dle_mail {
 		$this->mail_headers .= "Return-Path: <" . $this->from . ">" . $this->eol;
 		$this->mail_headers .= "X-Priority: 3" . $this->eol;
 		$this->mail_headers .= "X-MSMail-Priority: Normal" . $this->eol;
-		$this->mail_headers .= "X-Mailer: DLE PHP" . $this->eol;
+		$this->mail_headers .= "X-Mailer: VII PHP" . $this->eol;
 	
 	}
 	
@@ -288,4 +280,3 @@ class dle_mail {
 		return $data;
 	}
 }
-?>

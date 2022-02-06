@@ -1,15 +1,11 @@
 <?php
-/* 
-	Appointment: Заметки
-	File: notes.php
-	Author: f0rt1 
-	Engine: Vee Engine
-	Copyright: NiceWeb Group (с) 2011
-	e-mail: niceweb@i.ua
-	URL: http://www.niceweb.in.ua/
-	ICQ: 427-825-959
-	Данный код защищен авторскими правами
-*/
+/*
+ *   (c) Semen Alekseev
+ *
+ *  For the full copyright and license information, please view the LICENSE
+ *   file that was distributed with this source code.
+ *
+ */
 if(!defined('MOZG'))
 	die('Hacking attempt!');
 
@@ -26,7 +22,7 @@ if($_GET['act'] == 'edit'){
 		$parse = new parse();
 		
 		if(isset($_POST['save'])){
-			$title = textFilter($_POST['title'], false, true);
+			$title = textFilter($_POST['title'], 25000, true);
 			$text = $parse->BBparse(textFilter($_POST['full_text']));
 
 			if(isset($title) AND !empty($title) AND isset($text) AND !empty($text)){
@@ -83,7 +79,7 @@ $se_user_id = intval($_GET['se_user_id']);
 if(!$se_user_id) $se_user_id = '';
 
 $sort = intval($_GET['sort']);
-$se_name = textFilter($_GET['se_name'], false, true);
+$se_name = textFilter($_GET['se_name'], 25000, true);
 
 if($se_uid OR $sort OR $se_name OR $se_user_id){
 	if($se_uid) $where_sql .= "AND id = '".$se_uid."' ";

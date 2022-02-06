@@ -1,3 +1,11 @@
+/*
+ *   (c) Semen Alekseev
+ *
+ *  For the full copyright and license information, please view the LICENSE
+ *   file that was distributed with this source code.
+ *
+ */
+
 //LANG
 template_dir					= '/templates/Default';
 uploads_dir						= '/uploads';
@@ -10,7 +18,7 @@ lang_please_code				= 'Введите код с картинки';
 lang_bad_email					= 'Неправильный адрес';
 lang_none_sex					= 'Укажите Ваш пол';
 lang_no_vk						= 'Указанная Вами ссылка не является сайтом в контакте';
-lang_no_od						= 'Указанная Вами ссылка не является сайтом однаклассники';
+lang_no_od						= 'Указанная Вами ссылка не является сайтом одноклассники';
 lang_no_fb						= 'Указанная Вами ссылка не является сайтом facebook';
 lang_no_icq						= 'Номер ICQ должен состоять только из цифр';
 lang_infosave					= 'Изменения сохранены';
@@ -20,7 +28,7 @@ lang_bad_aaa					= 'Неизвестная ошибка';
 lang_del_photo					= 'Вы уверены, что хотите удалить фотографию?';
 lang_del_album					= 'Вы уверены, что хотите удалить альбом?';
 lang_title_del_photo			= 'Предупреждениe';
-lang_box_canсel					= 'Отмена';
+lang_box_cancel					= 'Отмена';
 lang_box_yes					= 'Да';
 lang_box_send					= 'Отправить';
 lang_box_save					= 'Сохранить';
@@ -34,8 +42,8 @@ lang_edit_albums				= 'Редактирование альбома';
 lang_edit_cover_album			= 'Выберите фотографию на обложку';
 lang_demand_ok					= 'Заявка отправлена';
 lang_demand_no					= 'Повторно заявка отправлена не будет.';
-lang_demand_sending				= 'Заявка отправляеться';
-lang_demand_sending_t			= 'В данный момент заявка на дружбу отправляеться.';
+lang_demand_sending				= 'Заявка отправляется';
+lang_demand_sending_t			= 'В данный момент заявка на дружбу отправляется.';
 lang_demand_s_ok				= ' получил уведомление и подтвердит, что Вы его друг.';
 lang_take_ok					= 'Заявка принята.';
 lang_take_no					= 'Заявка отклонена.';
@@ -73,7 +81,7 @@ lang_wysiwyg_title				= 'Настройки ссылки';
 lang_unsubscribe				= 'Отписаться от обновлений';
 lang_subscription				= 'Подписаться на обновления';
 lang_subscription_box_title		= 'Подписки';
-lang_max_albums					= 'Привышен лимит альбомов.';
+lang_max_albums					= 'Превышен лимит альбомов.';
 lang_video_new					= 'Добавление нового видео';
 lang_videos_no_url				= 'Введите ссылку на видеоролик.';
 lang_videos_no_url				= 'Напишите название для видеоролика.';
@@ -87,8 +95,8 @@ lang_video_info_text			= 'Видеозапись удалена либо еще 
 lang_scroll_loading				= '<span id="scroll_loading"><center><img src="/templates/Default/images/loading_mini.gif" alt="" /></center><br /></span>';
 lang_se_go						= 'Найти';
 lang_bad_format					= 'Загружать разрешено только фотографии в формате JPG, PNG, GIF.';
-lang_max_imgs					= 'Привышен лимит фотографий в одном альбоме.';
-lang_max_size					= 'Привышен максимальный размер изображения.';
+lang_max_imgs					= 'Превышен лимит фотографий в одном альбоме.';
+lang_max_size					= 'Превышен максимальный размер изображения.';
 lang_news_prev					= 'Показать предыдущие новости &#8595;';
 lang_editprof_text_1			= 'Укажите Вашу подругу';
 lang_editprof_text_2			= 'Укажите Вашу невесту';

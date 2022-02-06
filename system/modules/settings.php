@@ -1,29 +1,27 @@
 <?php
 /*
-	Appointment: Настройки
-	File: settings.php 
-	Author: f0rt1 
-	Engine: Vii Engine
-	Copyright: NiceWeb Group (с) 2011
-	e-mail: niceweb@i.ua
-	URL: http://www.niceweb.in.ua/
-	ICQ: 427-825-959
-	Данный код защищен авторскими правами
-*/
-if (!defined('MOZG')) die('Hacking attempt!');
-if ($ajax == 'yes') NoAjaxQuery();
+ *   (c) Semen Alekseev
+ *
+ *  For the full copyright and license information, please view the LICENSE
+ *   file that was distributed with this source code.
+ *
+ */
+if (!defined('MOZG'))
+    die('Hacking attempt!');
+
+NoAjaxQuery();
+
 if ($logged) {
     $user_id = $user_info['user_id'];
-    $act = $_GET['act'];
-    $metatags['title'] = $lang['settings'];
+    $act = $_GET['act'] ?? '';
+//    $metatags['title'] = $lang['settings'];
     switch ($act) {
-            //################### Изменение пароля ###################//
-            
+        /** Изменение пароля */
         case "newpass":
             NoAjaxQuery();
-            $_POST['old_pass'] = ajax_utf8($_POST['old_pass']);
-            $_POST['new_pass'] = ajax_utf8($_POST['new_pass']);
-            $_POST['new_pass2'] = ajax_utf8($_POST['new_pass2']);
+            $_POST['old_pass'] = $_POST['old_pass'];
+            $_POST['new_pass'] = $_POST['new_pass'];
+            $_POST['new_pass2'] = $_POST['new_pass2'];
             $old_pass = md5(md5(GetVar($_POST['old_pass'])));
             $new_pass = md5(md5(GetVar($_POST['new_pass'])));
             $new_pass2 = md5(md5(GetVar($_POST['new_pass2'])));
@@ -35,12 +33,12 @@ if ($logged) {
             } else echo '1';
             die();
             break;
-            //################### Изменение имени ###################//
-            
+
+        /** Изменение имени */
         case "newname":
             NoAjaxQuery();
-            $user_name = ajax_utf8(textFilter($_POST['name']));
-            $user_lastname = ajax_utf8(textFilter(ucfirst($_POST['lastname'])));
+            $user_name = textFilter($_POST['name']);
+            $user_lastname = textFilter(ucfirst($_POST['lastname']));
             //Проверка имени
             if (isset($user_name)) {
                 if (strlen($user_name) >= 2) {
@@ -64,8 +62,8 @@ if ($logged) {
             } else echo $errors;
             die();
             break;
-            //################### Сохранение настроек приватности ###################//
-            
+
+        /** Сохранение настроек приватности */
         case "saveprivacy":
             NoAjaxQuery();
             $val_msg = intval($_POST['val_msg']);
@@ -73,18 +71,18 @@ if ($logged) {
             $val_wall2 = intval($_POST['val_wall2']);
             $val_wall3 = intval($_POST['val_wall3']);
             $val_info = intval($_POST['val_info']);
-            if ($val_msg <= 0 OR $val_msg > 3) $val_msg = 1;
-            if ($val_wall1 <= 0 OR $val_wall1 > 3) $val_wall1 = 1;
-            if ($val_wall2 <= 0 OR $val_wall2 > 3) $val_wall2 = 1;
-            if ($val_wall3 <= 0 OR $val_wall3 > 3) $val_wall3 = 1;
-            if ($val_info <= 0 OR $val_info > 3) $val_info = 1;
+            if ($val_msg <= 0 or $val_msg > 3) $val_msg = 1;
+            if ($val_wall1 <= 0 or $val_wall1 > 3) $val_wall1 = 1;
+            if ($val_wall2 <= 0 or $val_wall2 > 3) $val_wall2 = 1;
+            if ($val_wall3 <= 0 or $val_wall3 > 3) $val_wall3 = 1;
+            if ($val_info <= 0 or $val_info > 3) $val_info = 1;
             $user_privacy = "val_msg|{$val_msg}||val_wall1|{$val_wall1}||val_wall2|{$val_wall2}||val_wall3|{$val_wall3}||val_info|{$val_info}||";
             $db->query("UPDATE `" . PREFIX . "_users` SET user_privacy = '{$user_privacy}' WHERE user_id = '{$user_id}'");
             mozg_clear_cache_file('user_' . $user_id . '/profile_' . $user_id);
             die();
             break;
-            //################### Приватность настройки ###################//
-            
+
+        /** Приватность настройки */
         case "privacy":
             $sql_ = $db->super_query("SELECT user_privacy FROM `" . PREFIX . "_users` WHERE user_id = '{$user_id}'");
             $row = xfieldsdataload($sql_['user_privacy']);
@@ -101,8 +99,8 @@ if ($logged) {
             $tpl->set('{val_info_text}', strtr($row['val_info'], array('1' => 'Все пользователи', '2' => 'Только друзья', '3' => 'Только я')));
             $tpl->compile('info');
             break;
-            //################### Добавление в черный список ###################//
-            
+
+        /** Добавление в черный список */
         case "addblacklist":
             NoAjaxQuery();
             $bad_user_id = intval($_POST['bad_user_id']);
@@ -111,7 +109,7 @@ if ($logged) {
             //Выводим свой блеклист для проверка
             $myRow = $db->super_query("SELECT user_blacklist FROM `" . PREFIX . "_users` WHERE user_id = '{$user_id}'");
             $array_blacklist = explode('|', $myRow['user_blacklist']);
-            if ($row['cnt'] AND !in_array($bad_user_id, $array_blacklist) AND $user_id != $bad_user_id) {
+            if ($row['cnt'] and !in_array($bad_user_id, $array_blacklist) and $user_id != $bad_user_id) {
                 $db->query("UPDATE `" . PREFIX . "_users` SET user_blacklist_num = user_blacklist_num+1, user_blacklist = '{$myRow['user_blacklist']}|{$bad_user_id}|' WHERE user_id = '{$user_id}'");
                 //Если юзер есть в др.
                 if (CheckFriends($bad_user_id)) {
@@ -137,8 +135,8 @@ if ($logged) {
             }
             die();
             break;
-            //################### Удаление из черного списка ###################//
-            
+
+        /** Удаление из черного списка */
         case "delblacklist":
             NoAjaxQuery();
             $bad_user_id = intval($_POST['bad_user_id']);
@@ -147,7 +145,7 @@ if ($logged) {
             //Выводим свой блеклист для проверка
             $myRow = $db->super_query("SELECT user_blacklist FROM `" . PREFIX . "_users` WHERE user_id = '{$user_id}'");
             $array_blacklist = explode('|', $myRow['user_blacklist']);
-            if ($row['cnt'] AND in_array($bad_user_id, $array_blacklist) AND $user_id != $bad_user_id) {
+            if ($row['cnt'] and in_array($bad_user_id, $array_blacklist) and $user_id != $bad_user_id) {
                 $myRow['user_blacklist'] = str_replace("|{$bad_user_id}|", "", $myRow['user_blacklist']);
                 $db->query("UPDATE `" . PREFIX . "_users` SET user_blacklist_num = user_blacklist_num-1, user_blacklist = '{$myRow['user_blacklist']}' WHERE user_id = '{$user_id}'");
                 $openMyList = mozg_cache("user_{$user_id}/blacklist");
@@ -155,8 +153,8 @@ if ($logged) {
             }
             die();
             break;
-            //################### Черный список ###################//
-            
+
+        /** Черный список */
         case "blacklist":
             $row = $db->super_query("SELECT user_blacklist, user_blacklist_num FROM `" . PREFIX . "_users` WHERE user_id = '{$user_id}'");
             $tpl->load_template('settings/blacklist.tpl');
@@ -166,7 +164,7 @@ if ($logged) {
                 $tpl->set('[/yes-users]', '');
             } else $tpl->set_block("'\\[yes-users\\](.*?)\\[/yes-users\\]'si", "");
             $tpl->compile('info');
-            if ($row['user_blacklist_num'] AND $row['user_blacklist_num'] <= 100) {
+            if ($row['user_blacklist_num'] and $row['user_blacklist_num'] <= 100) {
                 $tpl->load_template('settings/baduser.tpl');
                 $array_blacklist = explode('|', $row['user_blacklist']);
                 foreach ($array_blacklist as $user) {
@@ -181,24 +179,26 @@ if ($logged) {
                 }
             } else msgbox('', $lang['settings_nobaduser'], 'info_2');
             break;
-            //################### Смена e-mail ###################//
-            
+
+        /** Смена e-mail */
         case "change_mail":
             //Отправляем письмо на обе почты
             include_once ENGINE_DIR . '/classes/mail.php';
-            $mail = new dle_mail($config);
-            $email = textFilter($_POST['email'], false, true);
+            $mail = new vii_mail($config);
+            $email = textFilter($_POST['email'], 25000, true);
             //Проверка E-mail
-            if (filter_var($email, FILTER_VALIDATE_EMAIL)) $ok_email = true;
-            else $ok_email = false;
+            if (filter_var($email, FILTER_VALIDATE_EMAIL))
+                $ok_email = true;
+            else
+                $ok_email = false;
             $row = $db->super_query("SELECT user_email FROM `" . PREFIX . "_users` WHERE user_id = '{$user_id}'");
             $check_email = $db->super_query("SELECT COUNT(*) AS cnt FROM `" . PREFIX . "_users`  WHERE user_email = '{$email}'");
-            if ($row['user_email'] AND $ok_email AND !$check_email['cnt']) {
+            if ($row['user_email'] and $ok_email and !$check_email['cnt']) {
                 //Удаляем все пред. заявки
                 $db->query("DELETE FROM `" . PREFIX . "_restore` WHERE email = '{$email}'");
                 $salt = "abchefghjkmnpqrstuvwxyz0123456789";
-                for ($i = 0;$i < 15;$i++) {
-                    $rand_lost.= $salt{rand(0, 33) };
+                for ($i = 0; $i < 15; $i++) {
+                    $rand_lost .= $salt[rand(0, 33)];
                 }
                 $hash = md5($server_time . $row['user_email'] . rand(0, 100000) . $rand_lost);
                 $message = <<<HTML
@@ -220,8 +220,8 @@ HTML;
                 //Вставляем в БД код 1
                 $db->query("INSERT INTO `" . PREFIX . "_restore` SET email = '{$email}', hash = '{$hash}', ip = '{$_IP}'");
                 $salt = "abchefghjkmnpqrstuvwxyz0123456789";
-                for ($i = 0;$i < 15;$i++) {
-                    $rand_lost.= $salt{rand(0, 33) };
+                for ($i = 0; $i < 15; $i++) {
+                    $rand_lost .= $salt[rand(0, 33)];
                 }
                 $hash = md5($server_time . $row['user_email'] . rand(0, 300000) . $rand_lost);
                 $message = <<<HTML
@@ -242,11 +242,13 @@ HTML;
                 $mail->send($email, 'Изменение почтового адреса', $message);
                 //Вставляем в БД код 2
                 $db->query("INSERT INTO `" . PREFIX . "_restore` SET email = '{$email}', hash = '{$hash}', ip = '{$_IP}'");
-            } else echo '1';
-            exit;
+            } else
+                echo '1';
+            die();
             break;
-            //################### Общие настройки ###################//
-            
+
+        /** Общие настройки */
+
         default:
             $mobile_speedbar = 'Общие настройки';
             $row = $db->super_query("SELECT user_name, user_lastname, user_email FROM `" . PREFIX . "_users` WHERE user_id = '{$user_id}'");
@@ -259,8 +261,8 @@ HTML;
             $tpl->set('{code-1}', 'no_display');
             $tpl->set('{code-2}', 'no_display');
             $tpl->set('{code-3}', 'no_display');
-            $code1 = strip_data($_GET['code1']);
-            $code2 = strip_data($_GET['code2']);
+            $code1 = (isset($_GET['code1'])) ? strip_data($_GET['code1']) : null;
+            $code2 = (isset($_GET['code2'])) ? strip_data($_GET['code2']) : null;
             if (strlen($code1) == 32) {
                 $code2 = '';
                 $check_code1 = $db->super_query("SELECT email FROM `" . PREFIX . "_restore` WHERE hash = '{$code1}' AND ip = '{$_IP}'");
@@ -297,11 +299,10 @@ HTML;
             $epx1 = explode('@', $row['user_email']);
             $tpl->set('{email}', $substre . '*******@' . $epx1[1]);
             $tpl->compile('info');
-        }
-        $tpl->clear();
-        $db->free();
-    } else {
-        $user_speedbar = $lang['no_infooo'];
-        msgbox('', $lang['not_logged'], 'info');
     }
-?>
+    $tpl->clear();
+    $db->free();
+} else {
+    $user_speedbar = $lang['no_infooo'];
+    msgbox('', $lang['not_logged'], 'info');
+}

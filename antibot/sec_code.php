@@ -1,15 +1,11 @@
 <?php
-/* 
-	Appointment: Выводим текущюю каптчу для AJAX
-	File: sec_code.php 
-	Author: f0rt1 
-	Engine: Vii Engine
-	Copyright: NiceWeb Group (с) 2011
-	e-mail: niceweb@i.ua
-	URL: http://www.niceweb.in.ua/
-	ICQ: 427-825-959
-	Данный код защищен авторскими правами
-*/
+/*
+ *   (c) Semen Alekseev
+ *
+ *  For the full copyright and license information, please view the LICENSE
+ *   file that was distributed with this source code.
+ *
+ */
 @session_start();
 
 @error_reporting(E_ALL ^ E_WARNING ^ E_NOTICE);
@@ -40,4 +36,3 @@ if($user_code == $_SESSION['sec_code']){
 } else {
 	echo 'no';
 }
-?>

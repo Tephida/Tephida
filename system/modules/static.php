@@ -1,23 +1,18 @@
 <?php
-/* 
-	Appointment: Статические страницы
-	File: static.php 
-	Author: f0rt1 
-	Engine: Vii Engine
-	Copyright: NiceWeb Group (с) 2011
-	e-mail: niceweb@i.ua
-	URL: http://www.niceweb.in.ua/
-	ICQ: 427-825-959
-	Данный код защищен авторскими правами
-*/
+/*
+ *   (c) Semen Alekseev
+ *
+ *  For the full copyright and license information, please view the LICENSE
+ *   file that was distributed with this source code.
+ *
+ */
 if(!defined('MOZG'))
 	die('Hacking attempt!');
 
-if($ajax == 'yes')
 	NoAjaxQuery();
 
 if($logged){
-	$alt_name = $db->safesql(totranslit($_GET['page']));
+	$alt_name = $db->safesql(to_translit($_GET['page']));
 	$row = $db->super_query("SELECT title, text FROM `".PREFIX."_static` WHERE alt_name = '".$alt_name."'");
 	if($row){
 		$tpl->load_template('static.tpl');

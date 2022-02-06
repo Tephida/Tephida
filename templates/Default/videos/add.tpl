@@ -4,7 +4,7 @@
  <input type="text" class="videos_input" id="video_lnk" onKeyUp="videos.load()" style="margin-bottom:5px" />
  <span id="vi_info">
   <span id="no_serviece">Видеосервис не поддерживается либо ссылка является неправильной<br /></span>
-  Поддерживаемые видеосервисы: <b>YouTube</b>, <b>RuTube.Ru</b>, <b>Vimeo.Com</b>, <b>Smotri.Com</b>
+  Поддерживаемые видеосервисы: <b>YouTube</b> и <b>Vimeo.Com</b>
  </span>
  <div id="result_load" class="no_display">
   <br />

@@ -2,9 +2,6 @@
 <html lang="ru">
 	<head>
 		{header}
-		<noscript>
-			<meta http-equiv="refresh" content="0; URL=/badbrowser.php">
-		</noscript>
 		<link media="screen" href="{theme}/style/style.css" type="text/css" rel="stylesheet" />
 		{js}[not-logged]<script type="text/javascript" src="{theme}/js/reg.js"></script>[/not-logged]
 	</head>
@@ -175,9 +172,8 @@
 					<div class="clear"></div>
 				</div>
 			</div>
-			<div style="display:none;">Сделано для пользователей форума cmstools.ru</div>
 			<div class="footer">
-				Vii Engine &copy; 2018 <a class="cursor_pointer" onClick="trsn.box()" onMouseOver="myhtml.title('1', 'Выбор используемого языка на сайте', 'langTitle', 1)" id="langTitle1">{lang}</a>
+				Vii Engine &copy; 2022 <a class="cursor_pointer" onClick="trsn.box()" onMouseOver="myhtml.title('1', 'Выбор используемого языка на сайте', 'langTitle', 1)" id="langTitle1">{lang}</a>
 				<div class="fl_r">
 					<a href="/?act=change_mobile">мобильная версия</a>
 					<a href="/?go=search&online=1" onClick="Page.Go(this.href); return false">люди</a>

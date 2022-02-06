@@ -1,15 +1,11 @@
 <?php
-/* 
-	Appointment: Игры
-	File: apps.php
-	Author: f0rt1 
-	Engine: Vee Engine
-	Copyright: NiceWeb Group (с) 2011
-	e-mail: niceweb@i.ua
-	URL: http://www.niceweb.in.ua/
-	ICQ: 427-825-959
-	Данный код защищен авторскими правами
-*/
+/*
+ *   (c) Semen Alekseev
+ *
+ *  For the full copyright and license information, please view the LICENSE
+ *   file that was distributed with this source code.
+ *
+ */
 if(!defined('MOZG'))
 	die('Hacking attempt!');
 
@@ -18,7 +14,7 @@ if($_GET['act'] == 'upload'){
 
 	//Получаем данные о файле
 	$image_tmp = $_FILES['uploadfile']['tmp_name'];
-	$image_name = totranslit($_FILES['uploadfile']['name']); // оригинальное название для оприделения формата
+	$image_name = to_translit($_FILES['uploadfile']['name']); // оригинальное название для оприделения формата
 	$image_rename = substr(md5($server_time+rand(1,100000)), 0, 20); // имя файла
 	$image_size = $_FILES['uploadfile']['size']; // размер файла
 	$type = end(explode(".", $image_name)); // формат файла
@@ -119,7 +115,7 @@ if($_GET['act'] == 'upload_swf'){
 
 	//Получаем данные о файле
 	$image_tmp = $_FILES['uploadfile']['tmp_name'];
-	$image_name = totranslit($_FILES['uploadfile']['name']); // оригинальное название для оприделения формата
+	$image_name = to_translit($_FILES['uploadfile']['name']); // оригинальное название для оприделения формата
 	$image_rename = substr(md5($server_time+rand(1,100000)), 0, 20); // имя файла
 	$image_size = $_FILES['uploadfile']['size']; // размер файла
 	$type = end(explode(".", $image_name)); // формат файла
@@ -204,7 +200,7 @@ if($_GET['act'] == 'upload_scrin'){
 
 	//Получаем данные о файле
 	$image_tmp = $_FILES['uploadfile']['tmp_name'];
-	$image_name = totranslit($_FILES['uploadfile']['name']); // оригинальное название для оприделения формата
+	$image_name = to_translit($_FILES['uploadfile']['name']); // оригинальное название для оприделения формата
 	$image_rename = substr(md5($server_time+rand(1,100000)), 0, 20); // имя файла
 	$image_size = $_FILES['uploadfile']['size']; // размер файла
 	$type = end(explode(".", $image_name)); // формат файла
@@ -346,7 +342,7 @@ if($_GET['act'] == 'del'){
 //Отправка в базу
 if(isset($_POST['send'])){
 	
-	$title = textFilter($_POST['title'], false, true);
+	$title = textFilter($_POST['title'], 25000, true);
 	$descr = textFilter($_POST['descr']);
 	$width = intval($_POST['width']);
 	$height = intval($_POST['height']);
@@ -464,7 +460,7 @@ if($_GET['act'] == 'del_game'){
 //Сохраняем отред. данные
 if(isset($_POST['edtisave'])){
 	
-	$title = textFilter($_POST['title'], false, true);
+	$title = textFilter($_POST['title'], 25000, true);
 	$descr = textFilter($_POST['descr']);
 	$width = intval($_POST['width']);
 	$height = intval($_POST['height']);

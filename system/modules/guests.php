@@ -1,18 +1,14 @@
 <?php
-/* 
-	Appointment: Гости
-	File: guests.php 
-	Author: f0rt1 
-	Engine: Mozg CMS (Social version)
-	Copyright: www.niceweb.in.ua 
-	e-mail: niceweb@i.ua
-	URL: http://www.niceweb.in.ua/
-	ICQ: 427-825-959
-*/
+/*
+ *   (c) Semen Alekseev
+ *
+ *  For the full copyright and license information, please view the LICENSE
+ *   file that was distributed with this source code.
+ *
+ */
 if(!defined('MOZG'))
 	die('Hacking attempt!');
 
-if($ajax == 'yes')
 	NoAjaxQuery();
 
 if($logged){
@@ -21,7 +17,10 @@ if($logged){
 	$metatags['title'] = 'Гости';
 	$user_speedbar = 'Гости';
 	
-	if($_GET['page'] > 0) $page = intval($_GET['page']); else $page = 1;
+	if(isset($_GET['page']) AND $_GET['page'] > 0)
+        $page = intval($_GET['page']);
+    else
+        $page = 1;
 	$gcount = 1;
 	$limit_page = ($page-1)*$gcount;
 	
@@ -56,10 +55,10 @@ if($logged){
 		
 		navigation($gcount, $num['cnt'], $config['home_url'].'?go=guests&page=');
 		
-		//Убераем новых гостей
-		$db->query("UPDATE `".PREFIX."_guests` SET new = '0' WHERE ouid = '{$user_id}' AND new = '1'");
+		//Убираем новых гостей
+//		$db->query("UPDATE `".PREFIX."_guests` SET new = '0' WHERE ouid = '{$user_id}' AND new = '1'");
 		
-		$db->super_query("UPDATE `".PREFIX."_users` SET guests = '0' WHERE user_id = '{$user_id}'");
+//		$db->super_query("UPDATE `".PREFIX."_users` SET guests = '0' WHERE user_id = '{$user_id}'");
 		
 	} else
 		msgbox('', '<br /><br />К Вам пока что никто не заходил.<br /><br /><br />', 'info_2');
@@ -73,4 +72,3 @@ if($logged){
 	msgbox('', $lang['not_logged'], 'info');
 	
 }
-?>

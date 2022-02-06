@@ -1,19 +1,17 @@
 <?php
 /*
-	Appointment: Авторизация пользователей
-	File: login.php 
-	Author: f0rt1 
-	Engine: Vii Engine
-	Copyright: NiceWeb Group (с) 2011
-	e-mail: niceweb@i.ua
-	URL: http://www.niceweb.in.ua/
-	ICQ: 427-825-959
-	Данный код защищен авторскими правами
-*/
+ *   (c) Semen Alekseev
+ *
+ *  For the full copyright and license information, please view the LICENSE
+ *   file that was distributed with this source code.
+ *
+ */
 if (!defined('MOZG')) die('Hacking attempt!');
 $_IP = $db->safesql($_SERVER['REMOTE_ADDR']);
 $_BROWSER = $db->safesql($_SERVER['HTTP_USER_AGENT']);
 //Если делаем выход
+$act = $_GET['act'] ?? '';
+
 if (isset($_GET['act']) AND $_GET['act'] == 'logout') {
     set_cookie("user_id", "", 0);
     set_cookie("password", "", 0);
@@ -35,7 +33,8 @@ if (isset($_SESSION['user_id']) > 0) {
     if (!$user_info['user_id']) header('Location: /index.php?act=logout');
     //Если юзер нажимает "Главная" и он зашел не с моб версии. то скидываем на его стр.
     $host_site = $_SERVER['QUERY_STRING'];
-    if ($logged AND !$host_site AND $config['temp'] != 'mobile') header('Location: /u' . $user_info['user_id']);
+    if ($logged AND !$host_site AND $config['temp'] != 'mobile')
+        header('Location: /u' . $user_info['user_id']);
     //Если есть данные о COOKIE то проверяем
     
 } elseif (isset($_COOKIE['user_id']) > 0 AND $_COOKIE['password'] AND $_COOKIE['hid']) {
@@ -53,9 +52,10 @@ if (isset($_SESSION['user_id']) > 0) {
         $user_info = array();
         $logged = false;
     }
-    //Если юзер нажимает "Главная" и он зашел не с моб версии. то скидываем на его стр.
+    //Если юзер нажимает "Главная" и он зашел не с моб версии, то скидываем на его стр.
     $host_site = $_SERVER['QUERY_STRING'];
-    if ($logged AND !$host_site AND $config['temp'] != 'mobile') header('Location: /u' . $user_info['user_id']);
+    if ($logged AND !$host_site AND $config['temp'] != 'mobile')
+        header('Location: /u' . $user_info['user_id']);
 } else {
     $user_info = array();
     $logged = false;
@@ -88,10 +88,13 @@ if (isset($_POST['log_in']) AND !$logged) {
                 set_cookie("hid", $hid, 365);
                 //Вставляем лог в бд
                 $db->query("UPDATE `" . PREFIX . "_log` SET browser = '" . $_BROWSER . "', ip = '" . $_IP . "' WHERE uid = '" . $check_user['user_id'] . "'");
-                if ($config['temp'] != 'mobile') header('Location: /u' . $check_user['user_id']);
-                else header('Location: /');
-            } else msgbox('', $lang['not_loggin'] . '<br /><br /><a href="/restore" onClick="Page.Go(this.href); return false">Забыли пароль?</a>', 'info_red');
-        } else msgbox('', $lang['not_loggin'] . '<br /><br /><a href="/restore" onClick="Page.Go(this.href); return false">Забыли пароль?</a>', 'info_red');
+                if ($config['temp'] != 'mobile')
+                    header('Location: /u' . $check_user['user_id']);
+                else
+                    header('Location: /');
+            } else
+                msgbox('', $lang['not_loggin'] . '<br /><br /><a href="/restore" onClick="Page.Go(this.href); return false">Забыли пароль?</a>', 'info_red');
+        } else
+            msgbox('', $lang['not_loggin'] . '<br /><br /><a href="/restore" onClick="Page.Go(this.href); return false">Забыли пароль?</a>', 'info_red');
     }
 }
-?>

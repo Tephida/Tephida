@@ -1,24 +1,21 @@
 <?php
 /*
-	Appointment: Парсинг шаблонов
-	File: templates.php 
-	Author: f0rt1 
-	Engine: Vii Engine
-	Copyright: NiceWeb Group (с) 2011
-	e-mail: niceweb@i.ua
-	URL: http://www.niceweb.in.ua/
-	ICQ: 427-825-959
-	Данный код защищен авторскими правами
-*/
+ *   (c) Semen Alekseev
+ *
+ *  For the full copyright and license information, please view the LICENSE
+ *   file that was distributed with this source code.
+ *
+ */
 class mozg_template {
-    var $dir = '.';
-    var $template = null;
-    var $copy_template = null;
-    var $data = array();
-    var $block_data = array();
-    var $result = array('info' => '', 'vote' => '', 'speedbar' => '', 'content' => '');
-    var $allow_php_include = true;
-    var $template_parse_time = 0;
+    public $dir = '.';
+    public $template = null;
+    public $copy_template = null;
+    public $data = array();
+    public $block_data = array();
+    public $result = array('info' => '', 'vote' => '', 'speedbar' => '', 'content' => '');
+    public $allow_php_include = true;
+    public $template_parse_time = 0;
+
     function set($name, $var) {
         if (is_array($var) && count($var)) {
             foreach ($var as $key => $key_var) {
@@ -34,10 +31,10 @@ class mozg_template {
         } else $this->block_data[$name] = $var;
     }
     function load_template($tpl_name) {
-        $time_before = $this->get_real_time();
+//        $time_before = $this->get_real_time();
         if ($tpl_name == '' || !file_exists($this->dir . DIRECTORY_SEPARATOR . $tpl_name)) {
             die("Невозможно загрузить шаблон: " . $tpl_name);
-            return false;
+//            return false;
         }
         $this->template = file_get_contents($this->dir . DIRECTORY_SEPARATOR . $tpl_name);
         if (strpos($this->template, "[aviable=") !== false) {
@@ -61,11 +58,11 @@ class mozg_template {
             }, $this->template);
         }
         $this->copy_template = $this->template;
-        $this->template_parse_time+= $this->get_real_time() - $time_before;
+//        $this->template_parse_time+= $this->get_real_time() - $time_before;
         return true;
     }
     function load_file($name, $include_file = "tpl") {
-        global $db, $is_logged, $member_id, $cat_info, $config, $user_group, $category_id, $_TIME, $lang, $smartphone_detected, $mozg_module;
+        global $db, $is_logged, $member_id, $cat_info, $config, $category_id, $_TIME, $lang, $smartphone_detected, $mozg_module;
         $name = str_replace('..', '', $name);
         $url = @parse_url($name);
         $type = explode(".", $url['path']);
@@ -74,12 +71,15 @@ class mozg_template {
             return $this->sub_load_template($name);
         }
         if ($include_file == "php") {
-            if (!$this->allow_php_include) return;
+            if (!$this->allow_php_include){
+                echo 'error';
+                return false;
+            }
             if ($type != "php") return "To connect permitted only files with the extension: .tpl or .php";
-            if ($url['path'] {
-                0
-            } == "/") $file_path = dirname(ROOT_DIR . $url['path']);
-            else $file_path = dirname(ROOT_DIR . "/" . $url['path']);
+
+            $file_path = ROOT_DIR."/".cleanpath(dirname($url['path']));
+            $url['path'] = clearfilepath( trim($url['path']) , array ("php") );
+
             $file_name = pathinfo($url['path']);
             $file_name = $file_name['basename'];
             if (stristr(php_uname("s"), "windows") === false) $chmod_value = @decoct(@fileperms($file_path)) % 1000;
@@ -87,11 +87,11 @@ class mozg_template {
             if (stristr(dirname($url['path']), "templates") !== false) return "Include files from directory /templates/ is denied";
             if ($chmod_value == 777) return "File {$url['path']} is in the folder, which is available to write (CHMOD 777). For security purposes the connection files from these folders is impossible. Change the permissions on the folder that it had no rights to the write.";
             if (!file_exists($file_path . "/" . $file_name)) return "File {$url['path']} not found.";
-            if ($url['query']) {
+            if (isset($url['query']) AND $url['query']) {
                 parse_str($url['query']);
             }
             ob_start();
-            $tpl = new hp_template();
+            $tpl = new mozg_template();
             $tpl->dir = TEMPLATE_DIR;
             include $file_path . "/" . $file_name;
             return ob_get_clean();
@@ -99,10 +99,9 @@ class mozg_template {
         return '{include file="' . $name . '"}';
     }
     function sub_load_template($tpl_name) {
-        $tpl_name = totranslit($tpl_name);
+        $tpl_name = to_translit($tpl_name);
         if ($tpl_name == '' || !file_exists($this->dir . DIRECTORY_SEPARATOR . $tpl_name)) {
             return "Отсутствует файл шаблона: " . $tpl_name;
-            return false;
         }
         $template = file_get_contents($this->dir . DIRECTORY_SEPARATOR . $tpl_name);
         if (strpos($template, "[aviable=") !== false) {
@@ -173,7 +172,10 @@ class mozg_template {
         return $lang[$var];
     }
     function compile($tpl) {
-        $time_before = $this->get_real_time();
+//        $time_before = $this->get_real_time();
+
+        $find = $find_preg = $replace = $replace_preg = array();
+
         if (count($this->block_data)) {
             foreach ($this->block_data as $key_find => $key_replace) {
                 $find_preg[] = $key_find;
@@ -187,17 +189,26 @@ class mozg_template {
         }
         $this->copy_template = str_replace($find, $replace, $this->copy_template);
         $this->copy_template = word_filter($this->copy_template);
+
         $this->copy_template = preg_replace_callback("#\\{translate=(.+?)\\}#is", function ($matches) {
             return $this->load_lang($match);
         }, $this->copy_template);
-        if (isset($this->result[$tpl])) $this->result[$tpl].= $this->copy_template;
-        else $this->result[$tpl] = $this->copy_template;
+
+
+        $this->copy_template = str_replace(array("_&#123;_", "_&#91;_"), array("{", "["), $this->copy_template);
+
+        if( isset( $this->result[$tpl] ) )
+            $this->result[$tpl] .= $this->copy_template;
+        else
+            $this->result[$tpl] = $this->copy_template;
+
+
         $this->_clear();
-        $this->template_parse_time+= $this->get_real_time() - $time_before;
+//        $this->template_parse_time+= $this->get_real_time() - $time_before;
     }
-    function get_real_time() {
+    function get_real_time(): float
+    {
         list($seconds, $microSeconds) = explode(' ', microtime());
         return (( float )$seconds + ( float )$microSeconds);
     }
 }
-?>

@@ -1,22 +1,18 @@
 <?php
-/* 
-	Appointment: Комментарии к прикприпленным фото
-	File: attach_comm.php 
-	Author: f0rt1 
-	Engine: Vii Engine
-	Copyright: NiceWeb Group (с) 2011
-	e-mail: niceweb@i.ua
-	URL: http://www.niceweb.in.ua/
-	ICQ: 427-825-959
-	Данный код защищен авторскими правами
-*/
+/*
+ *   (c) Semen Alekseev
+ *
+ *  For the full copyright and license information, please view the LICENSE
+ *   file that was distributed with this source code.
+ *
+ */
 if(!defined('MOZG'))
 	die('Hacking attempt!');
 
 NoAjaxQuery();
 
 if($logged){
-	$act = $_GET['act'];
+    $act = $_GET['act'] ?? '';
 	$user_id = $user_info['user_id'];
 
 	switch($act){
@@ -25,7 +21,7 @@ if($logged){
 		case "delcomm":
 			
 			$id = intval($_POST['id']);
-			$purl = $db->safesql(totranslit($_POST['purl']));
+			$purl = $db->safesql(to_translit($_POST['purl']));
 			
 			//Выводим данные о комментариии
 			$row = $db->super_query("SELECT tb1.forphoto, auser_id, tb2.ouser_id FROM `".PREFIX."_attach_comm` tb1, `".PREFIX."_attach` tb2 WHERE tb1.id = '{$id}' AND tb1.forphoto = '{$purl}'");
@@ -73,8 +69,8 @@ if($logged){
 		//################### Добавления комментария ###################//
 		case "addcomm":
 			
-			$text = ajax_utf8(textFilter($_POST['text']));
-			$purl = $db->safesql(totranslit($_POST['purl']));
+			$text = textFilter($_POST['text']);
+			$purl = $db->safesql(to_translit($_POST['purl']));
 			
 			//Проверка на существования фотки в таблице PREFIX_attach
 			$row = $db->super_query("SELECT COUNT(*) AS cnt FROM `".PREFIX."_attach` WHERE photo = '{$purl}'");
@@ -139,7 +135,7 @@ if($logged){
 		//################### Показ пред.комментариев ###################//
 		case "prevcomm":
 			
-			$foSQLurl = $db->safesql(totranslit($_POST['purl']));
+			$foSQLurl = $db->safesql(to_translit($_POST['purl']));
 			
 			//Выводим данные о владельце фото
 			$row = $db->super_query("SELECT ouser_id, acomm_num FROM `".PREFIX."_attach` WHERE photo = '{$foSQLurl}'");
@@ -213,7 +209,7 @@ if($logged){
 			$photo_url = $_POST['photo'];
 			$resIMGurl = explode('/', $photo_url);
 			$foSQLurl = end($resIMGurl);
-			$foSQLurl = $db->safesql(totranslit($foSQLurl));
+			$foSQLurl = $db->safesql(to_translit($foSQLurl));
 			
 			//Выводим данные о владельце фото
 			$row = $db->super_query("SELECT tb1.ouser_id, acomm_num, add_date, tb2.user_search_pref, user_country_city_name FROM `".PREFIX."_attach` tb1, `".PREFIX."_users` tb2 WHERE tb1.ouser_id = tb2.user_id AND tb1.photo = '{$foSQLurl}'");

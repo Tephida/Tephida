@@ -1,3 +1,11 @@
+/*
+ *   (c) Semen Alekseev
+ *
+ *  For the full copyright and license information, please view the LICENSE
+ *   file that was distributed with this source code.
+ *
+ */
+
 var sp = {
 	openfriends: function(ifalse, page_num){
 		var sex = $('#sex').val();

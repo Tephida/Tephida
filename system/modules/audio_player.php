@@ -1,15 +1,11 @@
 <?php
-/* 
-	Appointment: Плеер на всех страницах
-	File: audio_player.php 
-	Author: f0rt1 
-	Engine: Vii Engine
-	Copyright: NiceWeb Group (с) 2011
-	e-mail: niceweb@i.ua
-	URL: http://www.niceweb.in.ua/
-	ICQ: 427-825-959
-	Данный код защищен авторскими правами
-*/
+/*
+ *   (c) Semen Alekseev
+ *
+ *  For the full copyright and license information, please view the LICENSE
+ *   file that was distributed with this source code.
+ *
+ */
 if(!defined('MOZG'))
 	die('Hacking attempt!');
 
@@ -17,7 +13,7 @@ NoAjaxQuery();
 	
 if($logged){
 
-	$act = $_GET['act'];
+    $act = $_GET['act'] ?? '';
 	$user_id = $user_info['user_id'];
 	
 	switch($act){
@@ -26,14 +22,15 @@ if($logged){
 		default:
 			
 			//Если поиск
-			$query = textFilter(ajax_utf8(strip_data(urldecode($_POST['query']))));
+			$query = (isset($_POST['query'])) ? textFilter(strip_data(urldecode($_POST['query']))) : '';
 			$query = strtr($query, array(' ' => '%')); //Замеянем пробелы на проценты чтоб тоиск был точнее
-			$doload = intval($_POST['doload']);
+			$do_load = (isset($_POST['doload'])) ? intval($_POST['doload']) : null;
 			
-			$get_user_id = intval($_POST['get_user_id']);
-			if($get_user_id == $user_id OR !$get_user_id) $get_user_id = $user_id;
+			$get_user_id = (isset($_POST['get_user_id'])) ? intval($_POST['get_user_id']) : null;
+			if($get_user_id == $user_id OR !$get_user_id)
+                $get_user_id = $user_id;
 
-			if(isset($query) AND !empty($query)){
+			if(!empty($query)){
 				
 				$sql_query = "WHERE MATCH (name, artist) AGAINST ('%{$query}%') OR artist LIKE '%{$query}%' OR name LIKE '%{$query}%'";
 				$search = true;
@@ -47,8 +44,10 @@ if($logged){
 
 			//Выводим из БД
 			$limit_select = 20;
-			if($_POST['page_cnt'] > 0) $page_cnt = intval($_POST['page_cnt']) * $limit_select;
-			else $page_cnt = 0;
+			if(isset($_POST['page_cnt']) AND $_POST['page_cnt'] > 0)
+                $page_cnt = intval($_POST['page_cnt']) * $limit_select;
+			else
+                $page_cnt = 0;
 			
 			$sql_ = $db->super_query("SELECT aid, url, artist, name FROM `".PREFIX."_audio` {$sql_query} ORDER by `adate` DESC LIMIT {$page_cnt}, {$limit_select}", 1);
 			
@@ -86,7 +85,7 @@ if($logged){
 					
 				}
 				
-				if(!$page_cnt AND !$doload){
+				if(!$page_cnt AND !$do_load){
 				
 					$tpl->load_template('audio_player/player.tpl');
 					
@@ -102,7 +101,7 @@ if($logged){
 					$tpl->result['content'] = $tpl->result['audios'];
 			
 			} else
-				if($doload AND !$page_cnt){
+				if($do_load AND !$page_cnt){
 					
 					$query = str_replace('%', ' ', $query);
 					
@@ -123,4 +122,3 @@ if($logged){
 }
 
 exit();
-?>

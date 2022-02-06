@@ -1,22 +1,17 @@
 <?php
-/* 
-	Appointment: Просмотр страницы пользователей
-	File: profile.php 
-	Author: f0rt1 
-	Engine: Vii Engine
-	Copyright: NiceWeb Group (с) 2011
-	e-mail: niceweb@i.ua
-	URL: http://www.niceweb.in.ua/
-	ICQ: 427-825-959
-	Данный код защищен авторскими правами
-*/
+/*
+ *   (c) Semen Alekseev
+ *
+ *  For the full copyright and license information, please view the LICENSE
+ *   file that was distributed with this source code.
+ *
+ */
 if(!defined('MOZG'))
 	die('Hacking attempt!');
 
-if($ajax == 'yes')
 	NoAjaxQuery();
 
-$user_id = $user_info['user_id'];
+$user_id = $user_info['user_id'] ?? null;
 
 if($logged){
 	$id = intval($_GET['id']);
@@ -25,7 +20,7 @@ if($logged){
 	//Читаем кеш
 	$row = unserialize(mozg_cache($cache_folder.'/profile_'.$id));
 
-	//Проверяем на наличие кеша, если нету то выводи из БД и создаём его 
+	//Проверяем на наличие кеша, если нет, то выводим из БД и создаём его
 	if(!$row){
 		$row = $db->super_query("SELECT user_id, user_real, user_search_pref, user_country_city_name, user_birthday, user_xfields, user_xfields_all, user_city, user_country, user_photo, user_friends_num, user_notes_num, user_subscriptions_num, user_wall_num, user_albums_num, user_last_visit, user_videos_num, user_status, user_privacy, user_sp, user_sex, user_gifts, user_public_num, user_audio, user_delet, user_ban_date, xfields, user_logged_mobile , user_cover, user_cover_pos, user_rating FROM `".PREFIX."_users` WHERE user_id = '{$id}'");
 		if($row){
@@ -38,14 +33,14 @@ if($logged){
 		$row_online = $db->super_query("SELECT user_last_visit, user_logged_mobile FROM `".PREFIX."_users` WHERE user_id = '{$id}'");
 
 	
-	//Если есть такой, юзер то продолжаем выполнение скрипта
+	//Если есть такой юзер, то продолжаем выполнение скрипта
 	if($row){
 		$mobile_speedbar = $row['user_search_pref'];
 		$user_speedbar = $row['user_search_pref'];
 		$metatags['title'] = $row['user_search_pref'];
 		
 		//Если удалена
-		if($row['user_delet']){
+		if($row['user_delet'] > 0){
 			$tpl->load_template("profile_delete_all.tpl");
 			$user_name_lastname_exp = explode(' ', $row['user_search_pref']);
 			$tpl->set('{name}', $user_name_lastname_exp[0]);
@@ -61,10 +56,16 @@ if($logged){
 		//Если все хорошо, то выводим дальше
 		} else {
 			$CheckBlackList = CheckBlackList($id);
-			
-			$user_privacy = xfieldsdataload($row['user_privacy']);
+
+//            var_dump($row['user_privacy']);
+//            exit();
+
+            $user_privacy = xfieldsdataload($row['user_privacy']);
 
 			$user_name_lastname_exp = explode(' ', $row['user_search_pref']);
+
+            if ($row['user_country_city_name'] == '')
+                $row['user_country_city_name'] = ' | ';
 			$user_country_city_name_exp = explode('|', $row['user_country_city_name']);
 
 			//################### Друзья ###################//
@@ -203,9 +204,9 @@ if($logged){
 					$tpl->compile('audios');
 				}
 			}
-			
+
 			//################### Праздники друзей ###################//
-			if($user_id == $id AND !$_SESSION['happy_friends_block_hide']){
+			if($user_id == $id AND !isset($_SESSION['happy_friends_block_hide'])){
 				$sql_happy_friends = $db->super_query("SELECT tb1.friend_id, tb2.user_search_pref, user_photo, user_birthday FROM `".PREFIX."_friends` tb1, `".PREFIX."_users` tb2 WHERE tb1.user_id = '".$id."' AND tb1.friend_id = tb2.user_id  AND subscriptions = 0 AND user_day = '".date('j', $server_time)."' AND user_month = '".date('n', $server_time)."' ORDER by `user_last_visit` DESC LIMIT 0, 50", 1);
 				$tpl->load_template('profile_happy_friends.tpl');
 				$cnt_happfr = 0;
@@ -260,7 +261,7 @@ if($logged){
 			//################### Загрузка самого профиля ###################//
 			$tpl->load_template('profile.tpl');
 
-			if($count_common['cnt']){
+			if(isset($count_common['cnt']) AND $count_common['cnt']){
 			
 				$tpl->set('{mutual_friends}', $tpl->result['mutual_friends']);
 				$tpl->set('{mutual-num}', $count_common['cnt']);
@@ -271,7 +272,7 @@ if($logged){
 				$tpl->set_block("'\\[common-friends\\](.*?)\\[/common-friends\\]'si","");
 
 			$tpl->set('{user-id}', $row['user_id']);
-			
+
 			//Страна и город
 			$tpl->set('{country}', $user_country_city_name_exp[0]);
 			$tpl->set('{country-id}', $row['user_country']);
@@ -281,22 +282,23 @@ if($logged){
 			//Если человек сидит с мобильнйо версии
 			if($row_online['user_logged_mobile']) $mobile_icon = '<img src="{theme}/images/spacer.gif" class="mobile_online" />';
 			else $mobile_icon = '';
-	
-			if($row_online['user_last_visit'] >= $online_time)
-				$tpl->set('{online}', $lang['online'].$mobile_icon);
-			else {
-				if(date('Y-m-d', $row_online['user_last_visit']) == date('Y-m-d', $server_time))
+
+			if($row_online['user_last_visit'] >= $online_time){
+                $tpl->set('{online}', $lang['online'].$mobile_icon);
+            }else {
+                if(date('Y-m-d', intval($row_online['user_last_visit'])) == date('Y-m-d', $server_time))
 					$dateTell = langdate('сегодня в H:i', $row_online['user_last_visit']);
-				elseif(date('Y-m-d', $row_online['user_last_visit']) == date('Y-m-d', ($server_time-84600)))
+				elseif(date('Y-m-d', intval($row_online['user_last_visit'])) == date('Y-m-d', ($server_time-84600)))
 					$dateTell = langdate('вчера в H:i', $row_online['user_last_visit']);
 				else
 					$dateTell = langdate('j F Y в H:i', $row_online['user_last_visit']);
+
 				if($row['user_sex'] == 2)
 					$tpl->set('{online}', 'последний раз была '.$dateTell.$mobile_icon);
 				else
 					$tpl->set('{online}', 'последний раз был '.$dateTell.$mobile_icon);
 			}
-			
+
 			if($row['user_city'] AND $row['user_country']){
 				$tpl->set('[not-all-city]','');
 				$tpl->set('[/not-all-city]','');
@@ -313,12 +315,22 @@ if($logged){
 			$xfields = xfieldsdataload($row['user_xfields']);
 			$preg_safq_name_exp = explode(', ', 'phone, vk, od, skype, fb, icq, site');
 			foreach($preg_safq_name_exp as $preg_safq_name){
-				if($xfields[$preg_safq_name]){
+				if(isset($xfields[$preg_safq_name]) AND $xfields[$preg_safq_name]){
 					$tpl->set("[not-contact-{$preg_safq_name}]", '');
 					$tpl->set("[/not-contact-{$preg_safq_name}]", '');
 				} else
 					$tpl->set_block("'\\[not-contact-{$preg_safq_name}\\](.*?)\\[/not-contact-{$preg_safq_name}\\]'si","");
 			}
+
+            if(!isset($xfields['vk'])) $xfields['vk'] = '';
+            if(!isset($xfields['od'])) $xfields['od'] = '';
+            if(!isset($xfields['fb'])) $xfields['fb'] = '';
+            if(!isset($xfields['skype'])) $xfields['skype'] = '';
+            if(!isset($xfields['icq'])) $xfields['icq'] = '';
+            if(!isset($xfields['phone'])) $xfields['phone'] = '';
+            if(!isset($xfields['site'])) $xfields['site'] = '';
+
+
 			$tpl->set('{vk}', '<a href="'.stripslashes($xfields['vk']).'" target="_blank">'.stripslashes($xfields['vk']).'</a>');
 			$tpl->set('{od}', '<a href="'.stripslashes($xfields['od']).'" target="_blank">'.stripslashes($xfields['od']).'</a>');
 			$tpl->set('{fb}', '<a href="'.stripslashes($xfields['fb']).'" target="_blank">'.stripslashes($xfields['fb']).'</a>');
@@ -327,11 +339,12 @@ if($logged){
 			$tpl->set('{phone}', stripslashes($xfields['phone']));
 			
 			if(preg_match('/http:\/\//i', $xfields['site']))
-				if(preg_match('/\.ru|\.com|\.net|\.su|\.in\.ua|\.ua/i', $xfields['site']))
-					$tpl->set('{site}', '<a href="'.stripslashes($xfields['site']).'" target="_blank">'.stripslashes($xfields['site']).'</a>');
-				else
-					$tpl->set('{site}', stripslashes($xfields['site']));
-			else
+            {
+                if(preg_match('/\.ru|\.com|\.net|\.su|\.in\.ua|\.ua/i', $xfields['site']))
+                    $tpl->set('{site}', '<a href="'.stripslashes($xfields['site']).'" target="_blank">'.stripslashes($xfields['site']).'</a>');
+                else
+                    $tpl->set('{site}', stripslashes($xfields['site']));
+            }else
 				$tpl->set('{site}', 'http://'.stripslashes($xfields['site']));
 			
 			if(!$xfields['vk'] && !$xfields['od'] && !$xfields['fb'] && !$xfields['skype'] && !$xfields['icq'] && !$xfields['phone'] && !$xfields['site'])
@@ -343,6 +356,16 @@ if($logged){
 				
 			//Интересы
 			$xfields_all = xfieldsdataload($row['user_xfields_all']);
+
+            if(!isset($xfields_all['activity'])) $xfields_all['activity'] = '';
+            if(!isset($xfields_all['interests'])) $xfields_all['interests'] = '';
+            if(!isset($xfields_all['myinfo'])) $xfields_all['myinfo'] = '';
+            if(!isset($xfields_all['music'])) $xfields_all['music'] = '';
+            if(!isset($xfields_all['kino'])) $xfields_all['kino'] = '';
+            if(!isset($xfields_all['books'])) $xfields_all['books'] = '';
+            if(!isset($xfields_all['games'])) $xfields_all['games'] = '';
+            if(!isset($xfields_all['quote'])) $xfields_all['quote'] = '';
+
 			$preg_safq_name_exp = explode(', ', 'activity, interests, myinfo, music, kino, books, games, quote');
 			
 			if(!$xfields_all['activity'] AND !$xfields_all['interests'] AND !$xfields_all['myinfo'] AND !$xfields_all['music'] AND !$xfields_all['kino'] AND !$xfields_all['books'] AND !$xfields_all['games'] AND !$xfields_all['quote'])
@@ -370,10 +393,17 @@ if($logged){
 			$tpl->set('{lastname}', $user_name_lastname_exp[1]);
 			
 			//День рождение
-			$user_birthday = explode('-', $row['user_birthday']);
-			$row['user_day'] = $user_birthday[2];
-			$row['user_month'] = $user_birthday[1];
-			$row['user_year'] = $user_birthday[0];
+            if (!$row['user_birthday'] == ''){
+                $user_birthday = explode('-', $row['user_birthday']);
+                $row['user_day'] = $user_birthday[2];
+                $row['user_month'] = $user_birthday[1];
+                $row['user_year'] = $user_birthday[0];
+            }else{
+                $row['user_day'] = '';
+                $row['user_month'] = '';
+                $row['user_year'] = '';
+            }
+
 			
 			if($row['user_day'] > 0 && $row['user_day'] <= 31 && $row['user_month'] > 0 && $row['user_month'] < 13){
 				$tpl->set('[not-all-birthday]', '');
@@ -431,7 +461,8 @@ if($logged){
 			if($user_id == $id){
 				$albums_privacy = false;
 				$albums_count['cnt'] = $row['user_albums_num'];
-			} else if($check_friend){
+                $cache_pref = '';
+			} elseif(isset($check_friend) AND $check_friend){
 				$albums_privacy = "AND SUBSTRING(privacy, 1, 1) regexp '[[:<:]](1|2)[[:>:]]'";
 				$albums_count = $db->super_query("SELECT COUNT(*) AS cnt FROM `".PREFIX."_albums` WHERE user_id = '{$id}' {$albums_privacy}", false, "user_{$id}/albums_cnt_friends");
 				$cache_pref = "_friends";
@@ -440,8 +471,10 @@ if($logged){
 				$albums_count = $db->super_query("SELECT COUNT(*) AS cnt FROM `".PREFIX."_albums` WHERE user_id = '{$id}' {$albums_privacy}", false, "user_{$id}/albums_cnt_all");
 				$cache_pref = "_all";
 			}
+
 			$sql_albums = $db->super_query("SELECT aid, name, adate, photo_num, cover FROM `".PREFIX."_albums` WHERE user_id = '{$id}' {$albums_privacy} ORDER by `position` ASC LIMIT 0, 4", 1, "user_{$id}/albums{$cache_pref}");
-			if($sql_albums){
+            $albums = '';
+            if($sql_albums){
 				foreach($sql_albums as $row_albums){
 					$row_albums['name'] = stripslashes($row_albums['name']);
 					$album_date = megaDateNoTpl(strtotime($row_albums['adate']));
@@ -517,6 +550,7 @@ if($logged){
 			$tpl->set('{gram-name}', gramatikName($author_info[0]));
 			
 			$tpl->set('{friends-num}', $row['user_friends_num']);
+            if (!isset($online_friends['cnt'])) $online_friends['cnt'] = '';
 			$tpl->set('{online-friends-num}', $online_friends['cnt']);
 			$tpl->set('{notes-num}', $row['user_notes_num']);
 			$tpl->set('{subscriptions-num}', $row['user_subscriptions_num']);
@@ -563,13 +597,15 @@ if($logged){
 				$tpl->set_block("'\\[online-friends\\](.*?)\\[/online-friends\\]'si","");
 			
 			//Если человек пришел после реги, то открываем ему окно загрузи фотографии
-			if(intval($_GET['after'])){
+			if(isset($_GET['after']) AND intval($_GET['after'])){
 				$tpl->set('[after-reg]', '');
 				$tpl->set('[/after-reg]', '');
 			} else
 				$tpl->set_block("'\\[after-reg\\](.*?)\\[/after-reg\\]'si","");
 
 			//Стена
+            if (!isset($tpl->result['wall']))
+                $tpl->result['wall'] = '';
 			$tpl->set('{records}', $tpl->result['wall']);
 
 			if($user_id != $id){
@@ -637,7 +673,7 @@ if($logged){
 			
 			//Семейное положение
 			$user_sp = explode('|', $row['user_sp']);
-			if($user_sp[1]){
+			if(isset($user_sp[1]) AND $user_sp[1]){
 				$rowSpUserName = $db->super_query("SELECT user_search_pref, user_sp, user_sex FROM `".PREFIX."_users` WHERE user_id = '{$user_sp[1]}'");
 				if($row['user_sex'] == 1) $check_sex = 2;
 				if($row['user_sex'] == 2) $check_sex = 1;
@@ -645,7 +681,9 @@ if($logged){
 					$spExpName = explode(' ', $rowSpUserName['user_search_pref']);
 					$spUserName = $spExpName[0].' '.$spExpName[1];
 				}
-			}
+			}else{
+                $spUserName = '';
+            }
 			if($row['user_sex'] == 1){
 				$sp1 = '<a href="/?go=search&sp=1" onClick="Page.Go(this.href); return false">не женат</a>';
 				$sp2 = "подруга <a href=\"/u{$user_sp[1]}\" onClick=\"Page.Go(this.href); return false\">{$spUserName}</a>";
@@ -668,6 +706,7 @@ if($logged){
 				$sp5 = "любимый <a href=\"/u{$user_sp[1]}\" onClick=\"Page.Go(this.href); return false\">{$spUserName}</a>";
 				$sp5_5 = '<a href="/?go=search&sp=5" onClick="Page.Go(this.href); return false">влюблена</a>';
 			}
+            $user_sp[1] = $user_sp[1] ?? '';
 			$sp6 = "партнёр <a href=\"/u{$user_sp[1]}\" onClick=\"Page.Go(this.href); return false\">{$spUserName}</a>";
 			$sp6_6 = '<a href="/?go=search&sp=6" onClick="Page.Go(this.href); return false">всё сложно</a>';
 			$tpl->set('[sp]', '');
@@ -855,23 +894,21 @@ if($logged){
 			
 			//Гости
 			if($id != $user_info['user_id']){
-			
+
 				$checkGuest = $db->super_query("SELECT COUNT(*) AS cnt FROM `".PREFIX."_guests` WHERE ouid = '{$id}' AND guid = '{$user_id}'");
-				
-				if($checkGuest['cnt'])
-				
-					$db->query("UPDATE `".PREFIX."_guests` SET gdate = '{$server_time}', new = '1' WHERE ouid = '{$id}' AND guid = '{$user_id}'");
-					
-				else
-				
-					$db->query("INSERT INTO `".PREFIX."_guests` SET gdate = '{$server_time}', ouid = '{$id}', guid = '{$user_id}', new = '1'");
-				
-				$db->super_query("UPDATE `".PREFIX."_users` SET guests = guests + 1 WHERE user_id = '{$id}'");
-				
+
+				if($checkGuest['cnt']){
+                    $db->query("UPDATE `".PREFIX."_guests` SET gdate = '{$server_time}', new = '1' WHERE ouid = '{$id}' AND guid = '{$user_id}'");
+                }else{
+                    $db->query("INSERT INTO `".PREFIX."_guests` SET gdate = '{$server_time}', ouid = '{$id}', guid = '{$user_id}', new = '1'");
+                }
+
+                $db->query("UPDATE `vii_users` SET guests = guests + 1 WHERE user_id = '{$id}'");
+
 			}
-			
-			//Обновляем кол-во посищений на страницу, если юзер есть у меня в друзьях
-			if($check_friend)
+//
+			//Обновляем кол-во посещений на страницу, если юзер есть у меня в друзьях
+			if(isset($check_friend) AND $check_friend)
 				$db->query("UPDATE LOW_PRIORITY `".PREFIX."_friends` SET views = views+1 WHERE user_id = '{$user_info['user_id']}' AND friend_id = '{$id}' AND subscriptions = 0");
 			
 			//Вставляем в статистику
@@ -901,20 +938,20 @@ if($logged){
 					$db->query("UPDATE `".PREFIX."_users_stats` SET views = views + 1 WHERE user_id = '{$id}' AND date = '{$stat_date}'");
 					
 				}
-			
+
 			}
 
 
 		}
-	} else {
+	}
+    else {
 		$user_speedbar = $lang['no_infooo'];
 		msgbox('', $lang['no_upage'], 'info');
 	}
 	
 	$tpl->clear();
-	$db->free();
+//	$db->free();
 } else {
 	$user_speedbar = 'Информация';
 	msgbox('', $lang['not_logged'], 'info');
 }
-?>

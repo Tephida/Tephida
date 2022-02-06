@@ -1,23 +1,18 @@
 <?php
-/* 
-	Appointment: Альбомы
-	File: albums.php 
-	Author: f0rt1 
-	Engine: Vii Engine
-	Copyright: NiceWeb Group (с) 2011
-	e-mail: niceweb@i.ua
-	URL: http://www.niceweb.in.ua/
-	ICQ: 427-825-959
-	Данный код защищен авторскими правами
-*/
+/*
+ *   (c) Semen Alekseev
+ *
+ *  For the full copyright and license information, please view the LICENSE
+ *   file that was distributed with this source code.
+ *
+ */
 if(!defined('MOZG'))
 	die('Hacking attempt!');
 
-if($ajax == 'yes')
 	NoAjaxQuery();
 
 if($logged){
-	$act = $_GET['act'];
+    $act = $_GET['act'] ?? '';
 
 	switch($act){
 
@@ -25,8 +20,8 @@ if($logged){
 		case "create":
 			NoAjaxQuery();
 			
-			$name = ajax_utf8(textFilter($_POST['name'], false, true));
-			$descr = ajax_utf8(textFilter($_POST['descr']));
+			$name = textFilter($_POST['name'], 25000, true);
+			$descr = textFilter($_POST['descr']);
 			$privacy = intval($_POST['privacy']);
 			$privacy_comm = intval($_POST['privacy_comm']);
 			if($privacy <= 0 OR $privacy > 3) $privacy = 1;
@@ -126,7 +121,7 @@ if($logged){
 				
 					//Получаем данные о фотографии
 					$image_tmp = $_FILES['uploadfile']['tmp_name'];
-					$image_name = totranslit($_FILES['uploadfile']['name']); // оригинальное название для оприделения формата
+					$image_name = to_translit($_FILES['uploadfile']['name']); // оригинальное название для оприделения формата
 					$image_rename = substr(md5($server_time+rand(1,100000)), 0, 20); // имя фотографии
 					$image_size = $_FILES['uploadfile']['size']; // размер файла
 					$type = end(explode(".", $image_name)); // формат файла
@@ -292,7 +287,7 @@ if($logged){
 			NoAjaxQuery();
 			$id = intval($_POST['id']);
 			$user_id = $user_info['user_id'];
-			$descr = ajax_utf8(textFilter($_POST['descr']));
+			$descr = textFilter($_POST['descr']);
 			
 			//Выводим фотку из БД, если она есть
 			$row = $db->super_query("SELECT id FROM `".PREFIX."_photos` WHERE id = '{$id}' AND user_id = '{$user_id}'");
@@ -300,7 +295,7 @@ if($logged){
 				$db->query("UPDATE `".PREFIX."_photos` SET descr = '{$descr}' WHERE id = '{$id}' AND user_id = '{$user_id}'");
 				
 				//Ответ скрипта
-				echo stripslashes(myBr(htmlspecialchars(ajax_utf8(trim($_POST['descr'])))));
+				echo stripslashes(myBr(htmlspecialchars(trim($_POST['descr']))));
 			}
 			die();
 		break;
@@ -387,8 +382,8 @@ if($logged){
 			NoAjaxQuery();
 			$id = intval($_POST['id']);
 			$user_id = $user_info['user_id'];
-			$name = ajax_utf8(textFilter($_POST['name'], false, true));
-			$descr = ajax_utf8(textFilter($_POST['descr']));
+			$name = textFilter($_POST['name'], 25000, true);
+			$descr = textFilter($_POST['descr']);
 			
 			$privacy = intval($_POST['privacy']);
 			$privacy_comm = intval($_POST['privacy_comm']);
@@ -1105,7 +1100,7 @@ HTML;
 				Hacking();
 	}
 	$tpl->clear();
-	$db->free($sql_);
+//	$db->free($sql_);
 } else {
 	$user_speedbar = $lang['no_infooo'];
 	msgbox('', $lang['not_logged'], 'info');

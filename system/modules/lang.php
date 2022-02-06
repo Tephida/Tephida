@@ -1,15 +1,11 @@
 <?php
-/* 
-	Appointment: Выбор языка
-	File: lang.php 
-	Author: f0rt1 
-	Engine: Vii Engine
-	Copyright: NiceWeb Group (с) 2011
-	e-mail: niceweb@i.ua
-	URL: http://www.niceweb.in.ua/
-	ICQ: 427-825-959
-	Данный код защищен авторскими правами
-*/
+/*
+ *   (c) Semen Alekseev
+ *
+ *  For the full copyright and license information, please view the LICENSE
+ *   file that was distributed with this source code.
+ *
+ */
 if(!defined('MOZG'))
 	die('Hacking attempt!');
 
@@ -17,12 +13,13 @@ NoAjaxQuery();
 
 $tpl->load_template('lang/main.tpl');
 
-$useLang = intval($_COOKIE['lang']);
+$useLang = isset($_COOKIE['lang']) ? intval($_COOKIE['lang']) : null;
 if($useLang <= 0) $useLang = 1;
 $config['lang_list'] = nl2br($config['lang_list']);
 $expLangList = explode('<br />', $config['lang_list']);
 $numLangs = count($expLangList);
 $cil = 0;
+$langs = '';
 foreach($expLangList as $expLangData){
 	
 	$expLangName = explode(' | ', $expLangData);
@@ -52,4 +49,3 @@ $tpl->compile('content');
 AjaxTpl();
 
 exit();
-?>
