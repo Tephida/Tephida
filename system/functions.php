@@ -1193,3 +1193,13 @@ function AntiSpamLogInsert(string $act, bool|string $text = false): void
         $db->query("INSERT INTO `" . PREFIX . "_antispam` SET act = '6', user_id = '{$user_info['user_id']}', date = '{$antiDate}'");
     }
 }
+
+/**
+ * @throws Exception
+ */
+function createDir(string $dir, int $mode = 0777): void
+{
+    if (!is_dir($dir) && !mkdir($dir, $mode, true) && !is_dir($dir)) { // @ - dir may already exist
+        throw new Exception("Unable to create directory '$dir' with mode " );
+    }
+}
