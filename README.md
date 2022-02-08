@@ -25,4 +25,4 @@ However, if you are not using Homestead, you will need to make sure your server 
 
 ## License
 
-This software is distributed as open source with the [MIT](https://github.com/semyon492/vii/blob/main/LICENSE) license.
+This software is distributed as open source with the [MIT](https://github.com/semyon492/vii/blob/master/LICENSE) license.
