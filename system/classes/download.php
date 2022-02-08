@@ -12,7 +12,7 @@ class download {
 	
 	var $range = 0;
 	
-	function download($path, $name = "", $resume = 0, $max_speed = 0) {
+	function __construct($path, $name = "", $resume = 0, $max_speed = 0) {
 		
 		$name = ($name == "") ? substr( strrchr( "/" . $path, "/" ), 1 ) : $name;
 		$name = explode( "/", $name );

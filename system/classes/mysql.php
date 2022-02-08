@@ -21,7 +21,7 @@ class db
     public bool|mysqli_result $query_id = false;
 
 
-    function connect($db_user, $db_pass, $db_name, $db_location = 'localhost', $show_error=1) : bool
+    public function connect($db_user, $db_pass, $db_name, $db_location = 'localhost', $show_error=1) : bool
     {
         $db_location = explode(":", $db_location);
 
@@ -64,7 +64,7 @@ class db
         return true;
     }
 
-    function query($query, $show_error=true,) {
+    public function query($query, $show_error=true,) {
         if(!$this->db_id) $this->connect(DBUSER, DBPASS, DBNAME, DBHOST);
 
         if(!($this->query_id = mysqli_query($this->db_id, $query) )) {
@@ -85,7 +85,7 @@ class db
         return $this->query_id;
     }
 
-    function multi_query($query, $show_error=true) {
+    public function multi_query($query, $show_error=true) {
 
         if(!$this->db_id) $this->connect(DBUSER, DBPASS, DBNAME, DBHOST);
 
@@ -113,23 +113,29 @@ class db
         $this->query_num ++;
     }
 
-    function get_row($query_id = '') {
+    /** 1 used */
+    public function get_row($query_id = '') {
         if ($query_id == '') $query_id = $this->query_id;
 
         return mysqli_fetch_assoc($query_id);
     }
 
-    function get_affected_rows() {
+    /**
+     * @return int|string
+     * @deprecated
+     */
+    public function get_affected_rows() {
         return mysqli_affected_rows($this->db_id);
     }
 
+    /** 2 used */
     function get_array($query_id = '') {
         if ($query_id == '') $query_id = $this->query_id;
 
         return mysqli_fetch_array($query_id);
     }
 
-    function super_query($query, $multi = false, $show_error=true): array|bool|null
+    public function super_query($query, $multi = false, $show_error=true): array|bool|null
     {
 
         if(!$multi) {
@@ -156,6 +162,7 @@ class db
         }
     }
 
+    /** 1 used */
     function num_rows($query_id = ''): int|string
     {
         if ($query_id == '') $query_id = $this->query_id;
@@ -163,11 +170,16 @@ class db
         return mysqli_num_rows($query_id);
     }
 
-    function insert_id(): int|string
+    public function insert_id(): int|string
     {
         return mysqli_insert_id($this->db_id);
     }
 
+    /**
+     * @param $query_id
+     * @return array
+     * @deprecated
+     */
     function get_result_fields($query_id = ''): array
     {
 
@@ -190,7 +202,7 @@ class db
             return addslashes($source);
     }
 
-    function free( $query_id = '' ) {
+    public function free( $query_id = '' ) {
 
         if ($query_id == '')
             $query_id = $this->query_id;
@@ -201,12 +213,12 @@ class db
         }
     }
 
-    function close() {
+    public function close() {
         if( $this->db_id )  mysqli_close($this->db_id);
         $this->db_id = false;
     }
 
-    function sql_mode() {
+    private function sql_mode() {
         $remove_modes = array( 'STRICT_TRANS_TABLES', 'STRICT_ALL_TABLES', 'ONLY_FULL_GROUP_BY', 'NO_ZERO_DATE', 'NO_ZERO_IN_DATE', 'TRADITIONAL' );
 
         $res = $this->query( "SELECT @@SESSION.sql_mode", false, false );
@@ -241,7 +253,7 @@ class db
         $this->db_id = false;
     }
 
-    function display_error($error, $error_num, $query = '') {
+    private function display_error($error, $error_num, $query = '') {
 
         $query = htmlspecialchars($query, ENT_QUOTES, 'utf-8');
         $error = htmlspecialchars($error, ENT_QUOTES, 'utf-8');

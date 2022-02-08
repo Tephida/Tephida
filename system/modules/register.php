@@ -14,14 +14,14 @@ if ($logged == null) {
 //    NoAjaxQuery();
     //Код безопасности
     $session_sec_code = $_SESSION['sec_code'] ?? null;
-    $sec_code = $_POST['sec_code'] ?? null;
+    $sec_code = textFilter($_POST['sec_code']) ?? null;
     //Если код введные юзером совпадает, то пропускаем, иначе выводим ошибку
     if ($sec_code == $session_sec_code) {
         //Входные POST Данные
 
-        $user_name = $_POST['name'] ?? null;
-        $user_lastname = $_POST['lastname'] ?? null;
-        $user_email = $_POST['email'] ?? null;
+        $user_name = textFilter($_POST['name']) ?? null;
+        $user_lastname = textFilter($_POST['lastname']) ?? null;
+        $user_email = textFilter($_POST['email']) ?? null;
         $user_name = textFilter($user_name, 60, true);
         $user_lastname = textFilter($user_lastname, 60, true);
         $user_email = textFilter($user_email, 100, true);
@@ -45,10 +45,10 @@ if ($logged == null) {
         $user_city = $_POST['city'] ? intval($_POST['city']) : 0;
         if ($user_city < 0 OR $user_city > 1587)
             $user_city = 0;
-        $password_first = $_POST['password_first'] ?? null;
-        $password_second = $_POST['password_second'] ?? null;
-        $password_first = GetVar($password_first);
-        $password_second = GetVar($password_second);
+        $password_first = textFilter($_POST['password_first']) ?? null;
+        $password_second = textFilter($_POST['password_second']) ?? null;
+//        $password_first = GetVar($password_first);
+//        $password_second = GetVar($password_second);
         $user_birthday = $user_year . '-' . $user_month . '-' . $user_day;
 
         $errors = array();

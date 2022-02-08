@@ -6,6 +6,7 @@
  *   file that was distributed with this source code.
  *
  */
+
 if (!defined('MOZG')) {
     die("Hacking attempt!");
 }
@@ -17,7 +18,6 @@ class thumbnail
     function __construct(string $img_file)
     {
         //detect image format
-
         $info = getimagesize($img_file);
 
         if ($info[2] == 2) {
@@ -39,7 +39,6 @@ class thumbnail
             echo "Not Supported File! Thumbnails can only be made from .jpg, gif and .png images!";
             unlink($img_file);
             exit();
-
         }
 
         $this->img['lebar'] = @imagesx($this->img['src']);
@@ -48,7 +47,6 @@ class thumbnail
         $this->img['tinggi_thumb'] = $this->img['tinggi'];
         //default quality jpeg
         $this->img['quality'] = 90;
-
     }
 
     public function size_auto($size = 100, $site = 0, string|int $jqCrop = 0): int
@@ -56,20 +54,15 @@ class thumbnail
         $size = explode("x", $size);
 
         if ($jqCrop) {
-
             return $this->jqCrop(intval($size[0]), intval($size[1]), $jqCrop);
-
         } else if (count($size) == 2) {
             $size[0] = intval($size[0]);
             $size[1] = intval($size[1]);
             return $this->crop(intval($size[0]), intval($size[1]));
-
         } else {
             $size[0] = intval($size[0]);
             return $this->scale(intval($size[0]), $site);
-
         }
-
     }
 
     private function crop(int $nw, int $nh): int
@@ -93,7 +86,6 @@ class thumbnail
         $src_h = ceil($nh / $size_ratio);
 
         $sx = floor(($w - $src_w) / 2);
-//        $sy = floor(($h - $src_h) / 2);
 
         $this->img['des'] = imagecreatetruecolor($nw, $nh);
 
@@ -153,7 +145,6 @@ class thumbnail
 
     private function scale($size = 100, $site = 0): int
     {
-
         $site = intval($site);
 
         if ($this->img['lebar'] <= $size and $this->img['tinggi'] <= $size) {
@@ -161,9 +152,7 @@ class thumbnail
             $this->img['tinggi_thumb'] = $this->img['tinggi'];
             return 0;
         }
-
         switch ($site) {
-
             case "1" :
                 if ($this->img['lebar'] <= $size) {
                     $this->img['lebar_thumb'] = $this->img['lebar'];
@@ -173,7 +162,6 @@ class thumbnail
                     $this->img['lebar_thumb'] = $size;
                     $this->img['tinggi_thumb'] = ($this->img['lebar_thumb'] / $this->img['lebar']) * $this->img['tinggi'];
                 }
-
                 break;
 
             case "2" :
@@ -185,7 +173,6 @@ class thumbnail
                     $this->img['tinggi_thumb'] = $size;
                     $this->img['lebar_thumb'] = ($this->img['tinggi_thumb'] / $this->img['tinggi']) * $this->img['lebar'];
                 }
-
                 break;
 
             default :
@@ -193,12 +180,9 @@ class thumbnail
                 if ($this->img['lebar'] >= $this->img['tinggi']) {
                     $this->img['lebar_thumb'] = $size;
                     $this->img['tinggi_thumb'] = ($this->img['lebar_thumb'] / $this->img['lebar']) * $this->img['tinggi'];
-
                 } else {
-
                     $this->img['tinggi_thumb'] = $size;
                     $this->img['lebar_thumb'] = ($this->img['tinggi_thumb'] / $this->img['tinggi']) * $this->img['lebar'];
-
                 }
 
                 break;
@@ -223,28 +207,23 @@ class thumbnail
 
     public function jpeg_quality($quality = 90): void
     {
-        //jpeg quality
         $this->img['quality'] = $quality;
     }
 
     public function save($save = ""): void
     {
-
         if ($this->img['format'] == "JPG" || $this->img['format'] == "JPEG") {
-            //JPEG
             imagejpeg($this->img['src'], $save, $this->img['quality']);
         } elseif ($this->img['format'] == "PNG") {
-            //PNG
             imagealphablending($this->img['src'], false);
             imagesavealpha($this->img['src'], true);
             imagepng($this->img['src'], $save);
         } elseif ($this->img['format'] == "GIF") {
-            //GIF
             imagegif($this->img['src'], $save);
         }
-
         imagedestroy($this->img['src']);
     }
+
 
     /**
      * NOT USED
@@ -253,16 +232,12 @@ class thumbnail
     protected function show(): void
     {
         if ($this->img['format'] == "JPG" || $this->img['format'] == "JPEG") {
-            //JPEG
             imageJPEG($this->img['src'], "", $this->img['quality']);
         } elseif ($this->img['format'] == "PNG") {
-            //PNG
             imagePNG($this->img['src']);
         } elseif ($this->img['format'] == "GIF") {
-            //GIF
             imageGIF($this->img['src']);
         }
-
         imagedestroy($this->img['src']);
     }
 

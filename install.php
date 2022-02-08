@@ -4758,7 +4758,7 @@ HTML;
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;";
             //Вставляем админа в базу
             $_POST['pass'] = md5(md5($_POST['pass']));
-            $hid = $_POST['pass'] . md5(md5($db->safesql($_SERVER['REMOTE_ADDR'])));
+            $hid = $_POST['pass'] . md5(md5($_SERVER['REMOTE_ADDR']));
 
             $server_time = $server_time ?? time();
 

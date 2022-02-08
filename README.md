@@ -5,6 +5,8 @@
 
 Please run install.php
 
+It requires PHP version 8.0 and supports PHP up to 8.1.
+
 <a name="server-requirements"></a>
 ### Server Requirements
 

@@ -7,6 +7,18 @@
  *
  */
 if (!defined('MOZG')) die('Hacking attempt!');
+
+/**
+ * @param string $source
+ * @param int $substr_num
+ * @param bool $strip_tags
+ * @return array|string|null
+ */
+function textFilter(string $source, int $substr_num = 25000, bool $strip_tags = false): array|string|null
+{
+    return htmlspecialchars(stripslashes(trim($source)), 0, $substr_num);
+}
+
 function informationText($array): string
 {
     global $db;
@@ -815,29 +827,6 @@ HTML;
         return header('Location: /index.php?go=none');
 }
 
-/**
- * @param string $source
- * @param int $substr_num
- * @param bool $strip_tags
- * @return array|string|null
- */
-function textFilter(string $source, int $substr_num = 25000, bool $strip_tags = false): array|string|null
-{
-    if (function_exists("get_magic_quotes_gpc") AND get_magic_quotes_gpc())
-        $source = stripslashes($source);
-    $find = array('/data:/i', '/about:/i', '/vbscript:/i', '/onclick/i', '/onload/i', '/onunload/i', '/onabort/i', '/onerror/i', '/onblur/i', '/onchange/i', '/onfocus/i', '/onreset/i', '/onsubmit/i', '/ondblclick/i', '/onkeydown/i', '/onkeypress/i', '/onkeyup/i', '/onmousedown/i', '/onmouseup/i', '/onmouseover/i', '/onmouseout/i', '/onselect/i', '/javascript/i');
-    $replace = array("d&#097;ta:", "&#097;bout:", "vbscript<b></b>:", "&#111;nclick", "&#111;nload", "&#111;nunload", "&#111;nabort", "&#111;nerror", "&#111;nblur", "&#111;nchange", "&#111;nfocus", "&#111;nreset", "&#111;nsubmit", "&#111;ndblclick", "&#111;nkeydown", "&#111;nkeypress", "&#111;nkeyup", "&#111;nmousedown", "&#111;nmouseup", "&#111;nmouseover", "&#111;nmouseout", "&#111;nselect", "j&#097;vascript");
-    $source = preg_replace("#<iframe#i", "&lt;iframe", $source);
-    $source = preg_replace("#<script#i", "&lt;script", $source);
-    $source = myBr(htmlspecialchars(substr(trim($source), 0, $substr_num)));
-    $source = str_ireplace("{", "&#123;", $source);
-    $source = str_ireplace("`", "&#96;", $source);
-    $source = str_ireplace("{theme}", "&#123;theme}", $source);
-    $source = preg_replace($find, $replace, $source);
-    if ($strip_tags)
-        $source = strip_tags($source);
-    return $source;
-}
 
 /**
  * @param $user_year
