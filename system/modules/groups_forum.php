@@ -1,20 +1,16 @@
 <?php
-/* 
-	Appointment: Сообщества -> Обсуждения
-	File: groups_forum.php 
-	Author: f0rt1 
-	Engine: Vii Engine
-	Copyright: NiceWeb Group (с) 2011
-	e-mail: niceweb@i.ua
-	URL: http://www.niceweb.in.ua/
-	ICQ: 427-825-959
-	Данный код защищен авторскими правами
-*/
+/*
+ *   (c) Semen Alekseev
+ *
+ *  For the full copyright and license information, please view the LICENSE
+ *   file that was distributed with this source code.
+ *
+ */
 if(!defined('MOZG'))
 	die('Hacking attempt!');
 
 if($logged){
-	$act = $_GET['act'];
+    $act = $_GET['act'] ?? '';
 	$user_id = $user_info['user_id'];
 	
 	switch($act){
@@ -24,9 +20,9 @@ if($logged){
 			NoAjaxQuery();
 			
 			$public_id = intval($_POST['public_id']);
-			$title = ajax_utf8(textFilter($_POST['title'], false, true));
-			$attach_files = ajax_utf8(textFilter($_POST['attach_files'], false, true));
-			$text = ajax_utf8(textFilter($_POST['text']));
+			$title = textFilter($_POST['title'], 25000, true);
+			$attach_files = textFilter($_POST['attach_files'], 25000, true);
+			$text = textFilter($_POST['text']);
 			
 			$row = $db->super_query("SELECT ulist, discussion FROM `".PREFIX."_communities` WHERE id = '{$public_id}'");
 			
@@ -72,7 +68,7 @@ if($logged){
 			
 			$fid = intval($_POST['fid']);
 			$answer_id = intval($_POST['answer_id']);
-			$msg = ajax_utf8(textFilter($_POST['msg']));
+			$msg = textFilter($_POST['msg']);
 			
 			$row = $db->super_query("SELECT status, public_id FROM `".PREFIX."_communities_forum` WHERE fid = '{$fid}'");
 			$row2 = $db->super_query("SELECT discussion FROM `".PREFIX."_communities` WHERE id = '{$row['public_id']}'");
@@ -247,7 +243,7 @@ if($logged){
 			NoAjaxQuery();
 			
 			$fid = intval($_POST['fid']);
-			$text = ajax_utf8(textFilter($_POST['text']));
+			$text = textFilter($_POST['text']);
 			
 			$row = $db->super_query("SELECT fuser_id, public_id FROM `".PREFIX."_communities_forum` WHERE fid = '{$fid}'");
 			$row2 = $db->super_query("SELECT admin, discussion FROM `".PREFIX."_communities` WHERE id = '{$row['public_id']}'");
@@ -273,7 +269,7 @@ if($logged){
 			NoAjaxQuery();
 			
 			$fid = intval($_POST['fid']);
-			$title = ajax_utf8(textFilter($_POST['title'], false, true));
+			$title = textFilter($_POST['title'], 25000, true);
 			
 			$row = $db->super_query("SELECT fuser_id, public_id FROM `".PREFIX."_communities_forum` WHERE fid = '{$fid}'");
 			$row2 = $db->super_query("SELECT admin, discussion FROM `".PREFIX."_communities` WHERE id = '{$row['public_id']}'");
@@ -452,8 +448,8 @@ if($logged){
 			if($user_info['user_group'] == 1 OR $public_admin OR $row['fuser_id'] == $user_id AND $row2['discussion']){
 				
 				//Голосование
-				$vote_title = ajax_utf8(textFilter($_POST['vote_title'], false, true));
-				$vote_answer_1 = ajax_utf8(textFilter($_POST['vote_answer_1'], false, true));
+				$vote_title = textFilter($_POST['vote_title'], 25000, true);
+				$vote_answer_1 = textFilter($_POST['vote_answer_1'], 25000, true);
 
 				$ansers_list = array();
 							
@@ -461,7 +457,7 @@ if($logged){
 								
 					for($vote_i = 1; $vote_i <= 10; $vote_i++){
 									
-						$vote_answer = ajax_utf8(textFilter($_POST['vote_answer_'.$vote_i], false, true));
+						$vote_answer = textFilter($_POST['vote_answer_'.$vote_i], 25000, true);
 						$vote_answer = str_replace('|', '&#124;', $vote_answer);
 									
 						if($vote_answer)

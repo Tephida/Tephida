@@ -1,21 +1,17 @@
 <?php
-/* 
-	Appointment: Страны
-	File: country.php
-	Author: f0rt1 
-	Engine: Vii Engine
-	Copyright: NiceWeb Group (с) 2011
-	e-mail: niceweb@i.ua
-	URL: http://www.niceweb.in.ua/
-	ICQ: 427-825-959
-	Данный код защищен авторскими правами
-*/
+/*
+ *   (c) Semen Alekseev
+ *
+ *  For the full copyright and license information, please view the LICENSE
+ *   file that was distributed with this source code.
+ *
+ */
 if(!defined('MOZG'))
 	die('Hacking attempt!');
 
 //Добавление
 if(isset($_POST['add'])){
-	$country = textFilter($_POST['country'], false, true);
+	$country = textFilter($_POST['country'], 25000, true);
 	if(isset($country) AND !empty($country)){
 		$row = $db->super_query("SELECT COUNT(*) AS cnt FROM `".PREFIX."_country` WHERE name = '".$country."'");
 		if(!$row['cnt']){

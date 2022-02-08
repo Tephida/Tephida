@@ -1,24 +1,20 @@
 <?php
 /*
-	Appointment: Личные настройки
-	File: mysettings.php
-	Author: f0rt1 
-	Engine: Vee Engine
-	Copyright: NiceWeb Group (с) 2011
-	e-mail: niceweb@i.ua
-	URL: http://www.niceweb.in.ua/
-	ICQ: 427-825-959
-	Данный код защищен авторскими правами
-*/
+ *   (c) Semen Alekseev
+ *
+ *  For the full copyright and license information, please view the LICENSE
+ *   file that was distributed with this source code.
+ *
+ */
 if (!defined('MOZG')) die('Hacking attempt!');
 $row = $db->super_query("SELECT user_email, user_name, user_lastname, user_password FROM `" . PREFIX . "_users` WHERE user_id = '" . $user_info['user_id'] . "'");
 //Если сохраянем
 if (isset($_POST['save'])) {
     $old_pass = md5(md5(GetVar($_POST['old_pass'])));
     $new_pass = md5(md5(GetVar($_POST['new_pass'])));
-    $user_name = textFilter($_POST['name'], false, true);
-    $user_lastname = textFilter($_POST['lastname'], false, true);
-    $user_email = textFilter($_POST['email'], false, true);
+    $user_name = textFilter($_POST['name'], 25000, true);
+    $user_lastname = textFilter($_POST['lastname'], 25000, true);
+    $user_email = textFilter($_POST['email'], 25000, true);
     $errors = array();
     //Проверка имени
     if (isset($user_name)) {

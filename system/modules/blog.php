@@ -1,23 +1,18 @@
 <?php
-/* 
-	Appointment: Блог сайта
-	File: blog.php 
-	Author: f0rt1 
-	Engine: Vii Engine
-	Copyright: NiceWeb Group (с) 2011
-	e-mail: niceweb@i.ua
-	URL: http://www.niceweb.in.ua/
-	ICQ: 427-825-959
-	Данный код защищен авторскими правами
-*/
+/*
+ *   (c) Semen Alekseev
+ *
+ *  For the full copyright and license information, please view the LICENSE
+ *   file that was distributed with this source code.
+ *
+ */
 if(!defined('MOZG'))
 	die('Hacking attempt!');
 
-if($ajax == 'yes')
 	NoAjaxQuery();
 
 if($logged){
-	$act = $_GET['act'];
+    $act = $_GET['act'] ?? '';
 	$user_id = $user_info['user_id'];
 
 $user_speedbar = $lang['blog_descr'];	
@@ -26,7 +21,7 @@ $user_speedbar = $lang['blog_descr'];
 		
 		//################### Страница добавления ###################//
 		case "add":
-			if($user_group[$user_info['user_group']]['addnews']){
+			if($user_info['user_group'] == 1){
 				$tpl->load_template('blog/add.tpl');
 				$tpl->compile('content');
 			} else
@@ -36,13 +31,13 @@ $user_speedbar = $lang['blog_descr'];
 		//################### Добавление новости в БД ###################//
 		case "send":
 			NoAjaxQuery();
-			if($user_group[$user_info['user_group']]['addnews']){
+			if($user_info['user_group'] == 1){
 				//Подключаем парсер
 				include ENGINE_DIR.'/classes/parse.php';
 				$parse = new parse();
 
-				$title = ajax_utf8(textFilter($_POST['title'], false, true));
-				$text = $parse->BBparse(ajax_utf8(textFilter($_POST['text'])));
+				$title = textFilter($_POST['title'], 25000, true);
+				$text = $parse->BBparse(textFilter($_POST['text']));
 
 				function BBimg($source){ 
 					return "<img src=\"{$source}\" alt=\"\" />";
@@ -58,7 +53,7 @@ $user_speedbar = $lang['blog_descr'];
 		//################### Удаление новости в БД ###################//
 		case "del":
 			NoAjaxQuery();
-			if($user_group[$user_info['user_group']]['addnews']){
+			if($user_info['user_group'] == 1){
 				$id = intval($_POST['id']);
 				$db->query("DELETE FROM `".PREFIX."_blog` WHERE id = '{$id}'");
 			}
@@ -67,7 +62,7 @@ $user_speedbar = $lang['blog_descr'];
 		
 		//################### Страница редактирования ###################//
 		case "edit":
-			if($user_group[$user_info['user_group']]['addnews']){
+			if($user_info['user_group'] == 1){
 				$id = intval($_GET['id']);
 				$row = $db->super_query("SELECT title, story FROM `".PREFIX."_blog` WHERE id = '{$id}'");
 				if($row){
@@ -94,13 +89,13 @@ $user_speedbar = $lang['blog_descr'];
 		//################### Сохранение отредактированых ###################//
 		case "save":
 			NoAjaxQuery();
-			if($user_group[$user_info['user_group']]['addnews']){
+			if($user_info['user_group'] == 1){
 				//Подключаем парсер
 				include ENGINE_DIR.'/classes/parse.php';
 				$parse = new parse();
 
-				$title = ajax_utf8(textFilter($_POST['title'], false, true));
-				$text = $parse->BBparse(ajax_utf8(textFilter($_POST['text'])));
+				$title = textFilter($_POST['title'], 25000, true);
+				$text = $parse->BBparse(textFilter($_POST['text']));
 				$id = intval($_POST['id']);
 
 				function BBimg($source){ 
@@ -117,7 +112,7 @@ $user_speedbar = $lang['blog_descr'];
 		//################### Загрузка фотографии ###################//
 		case "upload":
 			NoAjaxQuery();
-			if($user_group[$user_info['user_group']]['addnews']){
+			if($user_info['user_group'] == 1){
 				//Если нет папки альбома, то создаём её
 				$album_dir = ROOT_DIR."/uploads/blog/";
 
@@ -126,7 +121,7 @@ $user_speedbar = $lang['blog_descr'];
 
 				//Получаем данные о фотографии
 				$image_tmp = $_FILES['uploadfile']['tmp_name'];
-				$image_name = totranslit($_FILES['uploadfile']['name']); // оригинальное название для оприделения формата
+				$image_name = to_translit($_FILES['uploadfile']['name']); // оригинальное название для оприделения формата
 				$image_rename = substr(md5($server_time+rand(1,100000)), 0, 20); // имя фотографии
 				$image_size = $_FILES['uploadfile']['size']; // размер файла
 				$type = end(explode(".", $image_name)); // формат файла
@@ -196,7 +191,14 @@ $user_speedbar = $lang['blog_descr'];
 	$tpl->clear();
 	$db->free();
 } else {
-	$user_speedbar = $lang['no_infooo'];
-	msgbox('', $lang['not_logged'], 'info');
+//	$user_speedbar = $lang['no_infooo'];
+
+    $tpl->load_template('info.tpl');
+    $tpl->set('{error}', $lang['not_logged']);
+    $tpl->set('{title}', '');
+    $tpl->compile('content');
+    $tpl->clear();
+    $db->free();
+
+//	msgbox('', $lang['not_logged'], 'info');
 }
-?>

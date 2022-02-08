@@ -1,68 +1,58 @@
 <?php
-/* 
-	Appointment: АнтиБОТ
-	File: antibot.php 
-	Author: f0rt1 
-	Engine: Vii Engine
-	Copyright: NiceWeb Group (с) 2011
-	e-mail: niceweb@i.ua
-	URL: http://www.niceweb.in.ua/
-	ICQ: 427-825-959
-	Данный код защищен авторскими правами
-*/
+/*
+ *   (c) Semen Alekseev
+ *
+ *  For the full copyright and license information, please view the LICENSE
+ *   file that was distributed with this source code.
+ *
+ */
 @session_start();
 
 @error_reporting(E_ALL ^ E_WARNING ^ E_NOTICE);
 
 function clean_url($url){
-
-  if ($url == '') return;
-
   $url = str_replace("http://", "", strtolower($url));
   $url = str_replace("https://", "", $url );
   if (substr($url, 0, 4) == 'www.')  $url = substr($url, 4);
   $url = explode('/', $url);
   $url = reset($url);
   $url = explode(':', $url);
-  $url = reset($url);
-
-  return $url;
-  
-}
+    return reset($url);
+  }
 
 if(clean_url($_SERVER['HTTP_REFERER']) != clean_url($_SERVER['HTTP_HOST'])) 
 	die("Hacking attempt!");
 	
-$width = 120;				//Ширина изображения
-$height = 50;				//Высота изображения
-$font_size = 16;   			//Размер шрифта
-$let_amount = 5;			//Количество символов, которые нужно набрать
-$fon_let_amount = 30;		//Количество символов на фоне
-$font = "../system/fonts/cour.ttf";	//Путь к шрифту
+$width = 120;				//РЁРёСЂРёРЅР° РёР·РѕР±СЂР°Р¶РµРЅРёСЏ
+$height = 50;				//Р’С‹СЃРѕС‚Р° РёР·РѕР±СЂР°Р¶РµРЅРёСЏ
+$font_size = 16;   			//Р Р°Р·РјРµСЂ С€СЂРёС„С‚Р°
+$let_amount = 5;			//РљРѕР»РёС‡РµСЃС‚РІРѕ СЃРёРјРІРѕР»РѕРІ, РєРѕС‚РѕСЂС‹Рµ РЅСѓР¶РЅРѕ РЅР°Р±СЂР°С‚СЊ
+$fon_let_amount = 30;		//РљРѕР»РёС‡РµСЃС‚РІРѕ СЃРёРјРІРѕР»РѕРІ РЅР° С„РѕРЅРµ
+$font = "../system/fonts/cour.ttf";	//РџСѓС‚СЊ Рє С€СЂРёС„С‚Сѓ
  
-//набор символов
+//РЅР°Р±РѕСЂ СЃРёРјРІРѕР»РѕРІ
 $letters = array('1', '2', '3', '4', '5', '6', '7', '8', '9', '0');		
 
-//Цвета для фона
+//Р¦РІРµС‚Р° РґР»СЏ С„РѕРЅР°
 $background_color = array(mt_rand(200, 255), mt_rand(200, 255), mt_rand(200, 255));
 
-//Цвета для обводки
+//Р¦РІРµС‚Р° РґР»СЏ РѕР±РІРѕРґРєРё
 $foreground_color = array(mt_rand(0, 100), mt_rand(0, 100), mt_rand(0, 100));
 
-$src = imagecreatetruecolor($width,$height); //создаем изображение			
+$src = imagecreatetruecolor($width,$height); //СЃРѕР·РґР°РµРј РёР·РѕР±СЂР°Р¶РµРЅРёРµ			
 	
-$fon = imagecolorallocate($src, $background_color[0], $background_color[1], $background_color[2]); //создаем фон
+$fon = imagecolorallocate($src, $background_color[0], $background_color[1], $background_color[2]); //СЃРѕР·РґР°РµРј С„РѕРЅ
 
-imagefill($src,0,0,$fon); //заливаем изображение фоном
+imagefill($src,0,0,$fon); //Р·Р°Р»РёРІР°РµРј РёР·РѕР±СЂР°Р¶РµРЅРёРµ С„РѕРЅРѕРј
 
-//то же самое для основных букв
+//С‚Рѕ Р¶Рµ СЃР°РјРѕРµ РґР»СЏ РѕСЃРЅРѕРІРЅС‹С… Р±СѓРєРІ
 for($i=0; $i < $let_amount; $i++){
-	$color = imagecolorallocatealpha($src, $foreground_color[0], $foreground_color[1], $foreground_color[2], rand(20,40)); //Цвет шрифта
+	$color = imagecolorallocatealpha($src, $foreground_color[0], $foreground_color[1], $foreground_color[2], rand(20,40)); //Р¦РІРµС‚ С€СЂРёС„С‚Р°
 	$letter = $letters[rand(0,sizeof($letters)-1)];
 	$size = rand($font_size*2-2,$font_size*2+2);
-	$x = ($i+1)*$font_size + rand(2,5); //даем каждому символу случайное смещение
+	$x = ($i+1)*$font_size + rand(2,5); //РґР°РµРј РєР°Р¶РґРѕРјСѓ СЃРёРјРІРѕР»Сѓ СЃР»СѓС‡Р°Р№РЅРѕРµ СЃРјРµС‰РµРЅРёРµ
 	$y = (($height*2)/3) + rand(0,5);							
-	$cod[] = $letter; //запоминаем код
+	$cod[] = $letter; //Р·Р°РїРѕРјРёРЅР°РµРј РєРѕРґ
 	imagettftext($src,$size,rand(0,15),$x,$y,$color,$font,$letter);
 }
 
@@ -73,11 +63,12 @@ imageline($src, 0, 0,  0, $height, $foreground);
 imageline($src, 0, $height-1,  $width, $height-1, $foreground);
 imageline($src, $width-1, 0,  $width-1, $height, $foreground);
 
-$cod = implode("",$cod); //переводим код в строку
+$cod = $cod ?? null;
+
+$cod = implode("",$cod); //РїРµСЂРµРІРѕРґРёРј РєРѕРґ РІ СЃС‚СЂРѕРєСѓ
  
-header("Content-type: image/gif"); //выводим готовую картинку
+header("Content-type: image/gif"); //РІС‹РІРѕРґРёРј РіРѕС‚РѕРІСѓСЋ РєР°СЂС‚РёРЅРєСѓ
 
 imagegif($src); 
 
-$_SESSION['sec_code'] = $cod; //Добавляем код в сессию
-?>
+$_SESSION['sec_code'] = $cod; //Р”РѕР±Р°РІР»СЏРµРј РєРѕРґ РІ СЃРµСЃСЃРёСЋ

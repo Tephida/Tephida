@@ -1,19 +1,14 @@
 <?php
-/* 
-	Appointment: Новости
-	File: news.php 
-	Author: f0rt1 
-	Engine: Vii Engine
-	Copyright: NiceWeb Group (с) 2011
-	e-mail: niceweb@i.ua
-	URL: http://www.niceweb.in.ua/
-	ICQ: 427-825-959
-	Данный код защищен авторскими правами
-*/
+/*
+ *   (c) Semen Alekseev
+ *
+ *  For the full copyright and license information, please view the LICENSE
+ *   file that was distributed with this source code.
+ *
+ */
 if(!defined('MOZG'))
 	die('Hacking attempt!');
 
-if($ajax == 'yes')
 	NoAjaxQuery();
 
 if($logged){
@@ -21,11 +16,14 @@ if($logged){
 	$limit_news = 20;
 		
 			//################### Вывод новостей ###################//
-			$type = $_GET['type']; #тип сортировки
+//			$type = $_GET['type']; #тип сортировки
+            $type = $_GET['type'] ?? 'no';
 			
 			//Если вызвана страница обновлений
 			if($type == 'updates' OR $type == 'photos' OR $type == 'videos')
 				$for_new_sql = "AND subscriptions IN (0,1)";
+            else
+                $for_new_sql = '';
 			
 			$sql_where = "tb1.ac_user_id IN (SELECT tb2.friend_id FROM `".PREFIX."_friends` tb2 WHERE user_id = '{$user_id}' {$for_new_sql}) AND";
 			
@@ -34,6 +32,7 @@ if($logged){
 				$metatags['title'] = $lang['news_updates'];
 				$user_speedbar = $lang['news_speedbar'];
 				$sql_sort = '4,5';
+                $dop_sort = '';
 				$no_news = '<br /><br />'.$lang['news_none_updates'].'<br /><br /><br />';
 			} 
 			//Если вызвана страница фотографий
@@ -41,6 +40,7 @@ if($logged){
 				$metatags['title'] = $lang['news_photos'];
 				$user_speedbar = $lang['news_speedbar_photos'];
 				$sql_sort = '3';
+                $dop_sort = '';
 				$no_news = '<br /><br />'.$lang['news_none_photos'].'<br /><br /><br />';
 			} 
 			//Если вызвана страница видео
@@ -48,6 +48,7 @@ if($logged){
 				$metatags['title'] = $lang['news_videos'];
 				$user_speedbar = $lang['news_speedbar_videos'];
 				$sql_sort = '2';
+                $dop_sort = '';
 				$no_news = '<br /><br />'.$lang['news_none_videos'].'<br /><br /><br />';
 			} 
 			//Если вызвана страница ответов
@@ -71,7 +72,7 @@ if($logged){
 				$sql_sort = '1,2,3,11';
 				$no_news = '<br /><br />'.$lang['news_none'].'<br /><br /><br />';
 				$type = '';
-				
+                $dop_sort = '';
 				$sql_where = "
 					tb1.ac_user_id IN (SELECT tb2.friend_id FROM `".PREFIX."_friends` tb2 WHERE user_id = '{$user_id}' AND tb1.action_type IN (1,2,3) AND subscriptions != 2) 
 				OR 
@@ -79,17 +80,19 @@ if($logged){
 				AND";
 			}
 			
-			if($_POST['page_cnt'] > 0)
+			if(isset($_POST['page_cnt']) AND $_POST['page_cnt'] > 0)
 				$page_cnt = intval($_POST['page_cnt'])*$limit_news;
 			else
 				$page_cnt = 0;
 				
 			//Если вызваны предыдущие новости
-			if($_POST['page_cnt'])
+			if(isset($_POST['page_cnt']) AND $_POST['page_cnt'])
 				$where = "AND ac_id < '{$last_id}'";
+            else
+                $where = '';
 			
 			//Head
-			if(!$_POST['page_cnt']){
+			if(empty($_POST['page_cnt'])){
 				$tpl->load_template('news/head.tpl');
 				$tpl->set('[news]', '');
 				$tpl->set('[/news]', '');
@@ -121,7 +124,7 @@ if($logged){
 					$tpl->load_template('news/notifications.tpl');
 				else
 					$tpl->load_template('news/news.tpl');
-				
+
 				foreach($sql_ as $row){
 				
 					if($row['action_type'] != 11){
@@ -1823,13 +1826,13 @@ HTML;
 					$tpl->compile('content');
 				}
 			} else
-				if(!$_POST['page_cnt'])
+				if(!isset($_POST['page_cnt']))
 					msgbox('', $no_news, 'info_2');
 				else
 					echo 'no_news';
-				
+//    echo 'ttt';
 			//Если вызваны предыдущие новости
-			if($_POST['page_cnt']){
+			if(isset($_POST['page_cnt']) AND $_POST['page_cnt']){
 				AjaxTpl();
 				die();
 			}

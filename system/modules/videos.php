@@ -1,24 +1,19 @@
 <?php
-/* 
-	Appointment: Видео
-	File: videos.php 
-	Author: f0rt1 
-	Engine: Vii Engine
-	Copyright: NiceWeb Group (с) 2011
-	e-mail: niceweb@i.ua
-	URL: http://www.niceweb.in.ua/
-	ICQ: 427-825-959
-	Данный код защищен авторскими правами
-*/
+/*
+ *   (c) Semen Alekseev
+ *
+ *  For the full copyright and license information, please view the LICENSE
+ *   file that was distributed with this source code.
+ *
+ */
 if(!defined('MOZG')){
 	die('Hacking attempt!');
 }
 
-if($ajax == 'yes')
 	NoAjaxQuery();
 
 if($logged){
-	$act = $_GET['act'];
+    $act = $_GET['act'] ?? '';
 	$user_id = $user_info['user_id'];
 	$limit_vieos = 20;
 	
@@ -38,64 +33,67 @@ if($logged){
 			NoAjaxQuery();
 			
 			if($config['video_mod_add'] == 'yes'){
-				$good_video_lnk = ajax_utf8(textFilter($_POST['good_video_lnk']));
-				$title = ajax_utf8(textFilter($_POST['title'], false, true));
-				$descr = ajax_utf8(textFilter($_POST['descr'], 3000));
+				$good_video_lnk = textFilter($_POST['good_video_lnk']);
+				$title = textFilter($_POST['title'], 25000, true);
+				$descr = textFilter($_POST['descr'], 3000);
 				$privacy = intval($_POST['privacy']);
 				if($privacy <= 0 OR $privacy > 3) $privacy = 1;
 
 				//Если youtube то добавляем префикс src=" и составляем ответ для скрипта, для вставки в БД
-				if(preg_match("/src=\"http:\/\/www.youtube.com|src=\"http:\/\/youtube.com/i", 'src="'.$good_video_lnk)){
+				if(preg_match("/src=\"https:\/\/www.youtube.com|src=\"https:\/\/youtube.com/i", 'src="'.$good_video_lnk)){
 					$good_video_lnk = str_replace(array('#', '!'), '', $good_video_lnk);
 					$exp_y = explode('v=', $good_video_lnk);
 					$exp_x = explode('&', $exp_y[1]);
-					$result_video_lnk = '<iframe width="770" height="420" src="http://www.youtube.com/embed/'.$exp_x[0].'" frameborder="0" allowfullscreen></iframe>';
+					$result_video_lnk = '<iframe width="770" height="420" src="https://www.youtube.com/embed/'.$exp_x[0].'"  allowfullscreen></iframe>';
 				}
-				
-				//Если rutube, То добавляем префикс value="
-				if(preg_match("/value=\"http:\/\/www.rutube.ru|value=\"http:\/\/rutube.ru/i", 'value="'.$good_video_lnk)){
-					$exp_frutube = explode('?v=', $good_video_lnk);
-					$result_video_lnk = '<OBJECT width="770" height="420"><PARAM name="movie" value="http://video.rutube.ru/'.$exp_frutube[1].'"></PARAM><PARAM name="wmode" value="window"></PARAM><PARAM name="allowFullScreen" value="true"></PARAM><EMBED src="http://video.rutube.ru/'.$exp_frutube[1].'" type="application/x-shockwave-flash" wmode="window" width="770" height="420" allowFullScreen="true" ></EMBED></OBJECT>';
-				}
-				
+
 				//Если vimeo, То добавляем префикс src="
 				if(preg_match("/src=\"http:\/\/www.vimeo.com|src=\"http:\/\/vimeo.com/i", 'src="'.$good_video_lnk)){
 					$exp_frutube = explode('com/', $good_video_lnk);
-					$result_video_lnk = '<iframe src="http://player.vimeo.com/video/'.$exp_frutube[1].'" width="770" height="420" frameborder="0"></iframe>';
+					$result_video_lnk = '<iframe src="https://player.vimeo.com/video/'.$exp_frutube[1].'" width="770" height="420" frameborder="0"></iframe>';
 				}
-				
-				//Если smotri, То добавляем префикс src="
-				if(preg_match("/src=\"http:\/\/www.smotri.com|src=\"http:\/\/smotri.com/i", 'src="'.$good_video_lnk)){
-					$exp = explode('id=', str_replace('#', '', $good_video_lnk));
-					$result_video_lnk = '<object id="smotriComVideoPlayer'.$exp[1].'_1314557535.5897_7726" classid="clsid:d27cdb6e-ae6d-11cf-96b8-444553540000" width="770" height="420"><param name="movie" value="http://pics.smotri.com/player.swf?file='.$exp[1].'&bufferTime=3&autoStart=false&str_lang=rus&xmlsource=http%3A%2F%2Fpics.smotri.com%2Fcskins%2Fblue%2Fskin_color.xml&xmldatasource=http%3A%2F%2Fpics.smotri.com%2Fskin_ng.xml" /><param name="allowScriptAccess" value="always" /><param name="allowFullScreen" value="true" /><param name="bgcolor" value="#ffffff" /><embed src="http://pics.smotri.com/player.swf?file='.$exp[1].'&bufferTime=3&autoStart=false&str_lang=rus&xmlsource=http%3A%2F%2Fpics.smotri.com%2Fcskins%2Fblue%2Fskin_color.xml&xmldatasource=http%3A%2F%2Fpics.smotri.com%2Fskin_ng.xml" quality="high" allowscriptaccess="always" allowfullscreen="true" wmode="opaque"  width="770" height="420" type="application/x-shockwave-flash"></embed></object>';
-				}
-				
+
+                $result_video_lnk = $result_video_lnk ?? null;
+
 				//Формируем данные о фото
-				$photo = $db->safesql(ajax_utf8(htmlspecialchars(trim($_POST['photo']))));
+				$photo = htmlspecialchars(trim($_POST['photo']));
 				$photo = str_replace("\\", "/", $photo);
 				$img_name_arr = explode(".", $photo);
-				$img_format = totranslit(end($img_name_arr));
+				$img_format = to_translit(end($img_name_arr));
 				$image_name = substr(md5(time().md5($good_video_lnk)), 0, 15);
 				
-				//Разришенные форматы
+				//Разрешенные форматы
 				$allowed_files = array('jpg', 'jpeg', 'jpe', 'png', 'gif');
 
 				//Загружаем картинку на сайт
-				if(in_array(strtolower($img_format), $allowed_files) && preg_match("/http:\/\//i", $photo) && $result_video_lnk){
+				if(in_array(strtolower($img_format), $allowed_files) AND preg_match("/https:\/\//i", $photo) AND $result_video_lnk){
 							
 					//Директория загрузки фото
 					$upload_dir = ROOT_DIR.'/uploads/videos/'.$user_id;
 							
 					//Если нет папки юзера, то создаём её
 					if(!is_dir($upload_dir)){ 
-						@mkdir($upload_dir, 0777);
-						@chmod($upload_dir, 0777);
+						mkdir($upload_dir, 0777);
+						chmod($upload_dir, 0777);
 					}
 							
 					//Подключаем класс для фотографий
 					include ENGINE_DIR.'/classes/images.php';
 
-					@copy($photo, $upload_dir.'/'.$image_name.'.'.$img_format);
+//					copy($photo, $upload_dir.'/'.$image_name.'.'.$img_format);
+
+//                    if (!copy($photo, $upload_dir.'/'.$image_name.'.'.$img_format)) {
+//                        echo "не удалось скопировать ".$upload_dir.'/'.$image_name.'.'.$img_format." ...\n";
+//                        echo $photo;
+//                        exit();
+//                    }
+
+                    file_put_contents($upload_dir.'/'.$image_name.'.'.$img_format, file_get_contents($photo));
+                    if (!file_exists($upload_dir.'/'.$image_name.'.'.$img_format)){
+                        echo "не удалось скопировать ".$upload_dir.'/'.$image_name.'.'.$img_format." ...\n";
+                        echo $photo;
+                        exit();
+                    }
 
 					$tmb = new thumbnail($upload_dir.'/'.$image_name.'.'.$img_format);
 					$tmb->size_auto('175x131');
@@ -138,17 +136,17 @@ if($logged){
 			
 			$video_lnk = $_POST['video_lnk'];
 			
-			if(preg_match("/http:\/\/www.youtube.com|http:\/\/youtube.com|http:\/\/rutube.ru|http:\/\/www.rutube.ru|http:\/\/www.vimeo.com|http:\/\/vimeo.com|http:\/\/smotri.com|http:\/\/www.smotri.com/i", $video_lnk)){
+			if(preg_match("/https:\/\/www.youtube.com|https:\/\/youtube.com|https:\/\/www.vimeo.com|https:\/\/vimeo.com/i", $video_lnk)){
 			
 				//Открываем ссылку
 				
 				//Если ссылка youtube, то формируем xml ссылку для получения данных
-				if(preg_match("/http:\/\/www.youtube.com|http:\/\/youtube.com/i", $video_lnk)){
+				if(preg_match("/https:\/\/www.youtube.com|https:\/\/youtube.com/i", $video_lnk)){
 					$exp_y = explode('v=', $video_lnk);
 					$exp_x = explode('&', $exp_y[1]);
-					$sock = fopen('http://www.youtube.com/oembed?url=http://www.youtube.com/watch?v='.$exp_x[0].'&format=xml', 'r');
-				} elseif(preg_match("/http:\/\/www.vimeo.com|http:\/\/vimeo.com/i", $video_lnk)){
-					$sock = fopen('http://vimeo.com/api/oembed.xml?url='.$video_lnk, 'r');
+					$sock = fopen('https://www.youtube.com/oembed?url=https://www.youtube.com/watch?v='.$exp_x[0].'&format=xml', 'r');
+				} elseif(preg_match("/https:\/\/www.vimeo.com|https:\/\/vimeo.com/i", $video_lnk)){
+					$sock = fopen('https://vimeo.com/api/oembed.xml?url='.$video_lnk, 'r');
 				} else {
 					$sock = fopen($video_lnk, 'r');
 				}
@@ -159,16 +157,16 @@ if($logged){
 					$html = '';
 					
 					//Если сервис youtube, rutube, smotri то просто выводи
-					if(preg_match("/http:\/\/www.youtube.com|http:\/\/youtube.com|http:\/\/rutube.ru|http:\/\/www.rutube.ru|http:\/\/smotri.com|http:\/\/www.smotri.com/i", $video_lnk)){
+					if(preg_match("/https:\/\/www.youtube.com|https:\/\/youtube.com/i", $video_lnk)){
 						while(!feof($sock)){
 							$html .= fgets($sock);
 						}
 					}
 					
 					//Если сервис Vimeo, то сразу применяем кодировку utf-8, win-1251
-					if(preg_match("/http:\/\/www.vimeo.com|http:\/\/vimeo.com/i", $video_lnk)){
+					if(preg_match("/https:\/\/www.vimeo.com|https:\/\/vimeo.com/i", $video_lnk)){
 						while(!feof($sock)){
-							$html .= ajax_utf8(fgets($sock));
+							$html .= fgets($sock);
 						}
 					}
 					
@@ -178,35 +176,19 @@ if($logged){
 					$data = str_replace(array('[', ']'), array('&iqu;', '&iqu2;'), $html);
 					
 					//Если сервис youtube применяем кодировку utf-8, win-1251
-					$data_all = ajax_utf8(str_replace(array('[', ']'), array('&iqu;', '&iqu2;'), $html));
+					$data_all = str_replace(array('[', ']'), array('&iqu;', '&iqu2;'), $html);
 
 					//Если видеосервис youtube
-					if(preg_match("/http:\/\/www.youtube.com|http:\/\/youtube.com/i", $video_lnk)){
+					if(preg_match("/https:\/\/www.youtube.com|https:\/\/youtube.com/i", $video_lnk)){
 						preg_match_all('`(<title>[^\[]+\</title>)`si', $data_all, $parse);
 						$res_title = rn_replace(str_replace(array('<title>', '</title>'), '', $parse[1][0]));
 
 						//Делаем фотку для youtube
 						$parse_start = explode('v=', $video_lnk);
 						$parse_end = explode('&', $parse_start[1]);
-						$res_img = "http://img.youtube.com/vi/{$parse_end[0]}/0.jpg";
+						$res_img = "https://img.youtube.com/vi/{$parse_end[0]}/0.jpg";
 					}
-					
-					//Если видеосервис rutube
-					if(preg_match("/http:\/\/rutube.ru|http:\/\/www.rutube.ru/i", $video_lnk)){
-						$data_rutube = iconv('koi8-u', 'windows-1251', str_replace(array('[', ']'), array('&iqu;', '&iqu2;'), $html));
-						
-						preg_match_all('`(<meta property="og:title" content="[^\[]+\<meta property="og:description")`si', $data_rutube, $parse_rutube);
-						$res_title = rn_replace(str_replace(array('<meta property="og:title" content="', '<meta property="og:description"', '" />'), '', $parse_rutube[1][0]));
-						
-						preg_match_all('`(<meta property="og:description" content="[^\[]+\<meta property="og:image")`si', $data_rutube, $parse_rutube_descr);
-						$res_descr = rn_replace(str_replace(array('<meta property="og:description" content="', '<meta property="og:image"', '" />'), '', $parse_rutube_descr[1][0]));
-						
-						$exp_rutube_img = explode('v=', $video_lnk);
-						$exp_img_dir = substr($exp_rutube_img[1], 0, 2);
-						$exp_img_dir_2 = substr($exp_rutube_img[1], 2, 2);
-						$res_img = "http://tub.rutube.ru/thumbs/{$exp_img_dir}/{$exp_img_dir_2}/{$exp_rutube_img[1]}-1.jpg";
-					}
-					
+
 					//Если видеосервис vimeo
 					if(preg_match("/http:\/\/www.vimeo.com|http:\/\/vimeo.com/i", $video_lnk)){
 						preg_match_all('`(<title>[^\[]+\</title>)`si', $data, $parse);
@@ -219,18 +201,10 @@ if($logged){
 						$res_descr = myBrRn(rn_replace($parse_descr[1][0]));
 					}
 					
-					//Если видеосервис smotri
-					if(preg_match("/http:\/\/smotri.com|http:\/\/www.smotri.com/i", $video_lnk)){
-						$html = iconv('utf-8', 'windows-1251', $html);
-					
-						preg_match_all('`(<meta property="og:title" content="[^\[]+\<meta property="og:image")`si', $html, $parse_title);
-						$res_title = rn_replace(str_replace(array('<meta property="og:title" content="', '<meta property="og:image"', '" />'), '', $parse_title[1][0]));
-						
-						preg_match_all('`(<link rel="image_src" href="[^\[]+\<!-- Open Graf Protocol. Facebook/Yandex -->)`si', $html, $parse_img);
-						$res_img = rn_replace(str_replace(array('<link rel="image_src" href="', '<!-- Open Graf Protocol. Facebook/Yandex -->', '" />'), '', $parse_img[1][0]));
-					}
+					$result_img = $res_img ?? null;
+                    $res_title = $res_title ?? null;
+                    $res_descr = $res_descr ?? null;
 
-					$result_img = $res_img;
 					$result_title = trim(strip_tags(strtr($res_title, array('&#39;' => "'", '&quot;' => '"', '&iqu;' => '[', '&iqu2;' => ']'))));
 					$result_descr = trim(strip_tags($res_descr));
 					
@@ -294,8 +268,8 @@ if($logged){
 			$vid = intval($_POST['vid']);
 			
 			if($vid){
-				$title = ajax_utf8(textFilter($_POST['title'], false, true));
-				$descr = ajax_utf8(textFilter($_POST['descr'], 3000));
+				$title = textFilter($_POST['title'], 25000, true);
+				$descr = textFilter($_POST['descr'], 3000);
 				$privacy = intval($_POST['privacy']);
 				if($privacy <= 0 OR $privacy > 3) $privacy = 1;
 
@@ -324,7 +298,7 @@ if($logged){
 			NoAjaxQuery();
 			if($config['video_mod_comm'] == 'yes'){
 				$vid = intval($_POST['vid']);
-				$comment = ajax_utf8(textFilter($_POST['comment']));
+				$comment = textFilter($_POST['comment']);
 				
 				//Провекра на существования видео
 				$check_video = $db->super_query("SELECT owner_user_id, photo, public_id FROM `".PREFIX."_videos` WHERE id = '{$vid}'");
@@ -383,7 +357,7 @@ if($logged){
 									$rowUserEmail = $db->super_query("SELECT user_name, user_email FROM `".PREFIX."_users` WHERE user_id = '".$check_video['owner_user_id']."'");
 									if($rowUserEmail['user_email']){
 										include_once ENGINE_DIR.'/classes/mail.php';
-										$mail = new dle_mail($config);
+										$mail = new vii_mail($config);
 										$rowMyInfo = $db->super_query("SELECT user_search_pref FROM `".PREFIX."_users` WHERE user_id = '".$user_id."'");
 										$rowEmailTpl = $db->super_query("SELECT text FROM `".PREFIX."_mail_tpl` WHERE id = '3'");
 										$rowEmailTpl['text'] = str_replace('{%user%}', $rowUserEmail['user_name'], $rowEmailTpl['text']);
@@ -721,9 +695,9 @@ if($logged){
 		break;
 		
 			default:
-		
+
 			//################### Вывод всех видео ###################//
-			$get_user_id = intval($_GET['get_user_id']);
+			$get_user_id = (isset($_GET['get_user_id']) AND $_GET['get_user_id'] !== null) ? intval($_GET['get_user_id']) : false;
 			if(!$get_user_id)
 				$get_user_id = $user_id;
 

@@ -1,22 +1,18 @@
 <?php
-/* 
-	Appointment: Скачивание файлов
-	File: download.php 
-	Author: f0rt1 
-	Engine: Vii Engine
-	Copyright: NiceWeb Group (с) 2011
-	e-mail: niceweb@i.ua
-	URL: http://www.niceweb.in.ua/
-	ICQ: 427-825-959
-	Данный код защищен авторскими правами
-*/
+/*
+ *   (c) Semen Alekseev
+ *
+ *  For the full copyright and license information, please view the LICENSE
+ *   file that was distributed with this source code.
+ *
+ */
 class download {
 	
 	var $properties = array ('old_name' => "", 'new_name' => "", 'type' => "", 'size' => "", 'resume' => "", 'max_speed' => "" );
 	
 	var $range = 0;
 	
-	function download($path, $name = "", $resume = 0, $max_speed = 0) {
+	function __construct($path, $name = "", $resume = 0, $max_speed = 0) {
 		
 		$name = ($name == "") ? substr( strrchr( "/" . $path, "/" ), 1 ) : $name;
 		$name = explode( "/", $name );

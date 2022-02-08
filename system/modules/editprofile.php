@@ -1,23 +1,18 @@
 <?php
-/* 
-	Appointment: Редактирование страницы
-	File: editprofile.php 
-	Author: f0rt1 
-	Engine: Vii Engine
-	Copyright: NiceWeb Group (с) 2011
-	e-mail: niceweb@i.ua
-	URL: http://www.niceweb.in.ua/
-	ICQ: 427-825-959
-	Данный код защищен авторскими правами
-*/
+/*
+ *   (c) Semen Alekseev
+ *
+ *  For the full copyright and license information, please view the LICENSE
+ *   file that was distributed with this source code.
+ *
+ */
 if(!defined('MOZG'))
 	die('Hacking attempt!');
 
-if($ajax == 'yes')
 	NoAjaxQuery();
 
 if($logged){
-	$act = $_GET['act'];
+    $act = $_GET['act'] ?? '';
 	
 	$metatags['title'] = $lang['editmyprofile'];
 	
@@ -46,7 +41,7 @@ if($logged){
 			
 			//Получаем данные о фотографии
 			$image_tmp = $_FILES['uploadfile']['tmp_name'];
-			$image_name = totranslit($_FILES['uploadfile']['name']); // оригинальное название для оприделения формата
+			$image_name = to_translit($_FILES['uploadfile']['name']); // оригинальное название для оприделения формата
 			$image_rename = substr(md5($server_time+rand(1,100000)), 0, 15); // имя фотографии
 			$image_size = $_FILES['uploadfile']['size']; // размер файла
 			$type = end(explode(".", $image_name)); // формат файла
@@ -212,13 +207,13 @@ if($logged){
 			NoAjaxQuery();
 
 			$xfields = array();
-			$xfields['vk'] = $db->safesql(ajax_utf8(htmlspecialchars(substr($_POST['vk'], 0, 200))));
-			$xfields['od'] = $db->safesql(ajax_utf8(htmlspecialchars(substr($_POST['od'], 0, 200))));
-			$xfields['phone'] = $db->safesql(ajax_utf8(htmlspecialchars(substr($_POST['phone'], 0, 200))));
-			$xfields['skype'] = $db->safesql(ajax_utf8(htmlspecialchars(substr($_POST['skype'], 0, 200))));
-			$xfields['fb'] = $db->safesql(ajax_utf8(htmlspecialchars(substr($_POST['fb'], 0, 200))));
-			$xfields['icq'] = $db->safesql(ajax_utf8(htmlspecialchars(substr($_POST['icq'], 0, 200))));
-			$xfields['site'] = $db->safesql(ajax_utf8(htmlspecialchars(substr($_POST['site'], 0, 200))));
+			$xfields['vk'] = $db->safesql(htmlspecialchars(substr($_POST['vk'], 0, 200)));
+			$xfields['od'] = $db->safesql(htmlspecialchars(substr($_POST['od'], 0, 200)));
+			$xfields['phone'] = $db->safesql(htmlspecialchars(substr($_POST['phone'], 0, 200)));
+			$xfields['skype'] = $db->safesql(htmlspecialchars(substr($_POST['skype'], 0, 200)));
+			$xfields['fb'] = $db->safesql(htmlspecialchars(substr($_POST['fb'], 0, 200)));
+			$xfields['icq'] = $db->safesql(htmlspecialchars(substr($_POST['icq'], 0, 200)));
+			$xfields['site'] = $db->safesql(htmlspecialchars(substr($_POST['site'], 0, 200)));
 			
 			foreach($xfields as $name => $value){
 				$value = str_replace("|", "&#124;", $value);
@@ -240,14 +235,14 @@ if($logged){
 			NoAjaxQuery();
 
 			$xfields = array();
-			$xfields['activity'] = $db->safesql(ajax_utf8(htmlspecialchars(substr($_POST['activity'], 0, 5000))));
-			$xfields['interests'] = $db->safesql(ajax_utf8(htmlspecialchars(substr($_POST['interests'], 0, 5000))));
-			$xfields['myinfo'] = $db->safesql(ajax_utf8(htmlspecialchars(substr($_POST['myinfo'], 0, 5000))));
-			$xfields['music'] = $db->safesql(ajax_utf8(htmlspecialchars(substr($_POST['music'], 0, 5000))));
-			$xfields['kino'] = $db->safesql(ajax_utf8(htmlspecialchars(substr($_POST['kino'], 0, 5000))));
-			$xfields['books'] = $db->safesql(ajax_utf8(htmlspecialchars(substr($_POST['books'], 0, 5000))));
-			$xfields['games'] = $db->safesql(ajax_utf8(htmlspecialchars(substr($_POST['games'], 0, 5000))));
-			$xfields['quote'] = $db->safesql(ajax_utf8(htmlspecialchars(substr($_POST['quote'], 0, 5000))));
+			$xfields['activity'] = $db->safesql(htmlspecialchars(substr($_POST['activity'], 0, 5000)));
+			$xfields['interests'] = $db->safesql(htmlspecialchars(substr($_POST['interests'], 0, 5000)));
+			$xfields['myinfo'] = $db->safesql(htmlspecialchars(substr($_POST['myinfo'], 0, 5000)));
+			$xfields['music'] = $db->safesql(htmlspecialchars(substr($_POST['music'], 0, 5000)));
+			$xfields['kino'] = $db->safesql(htmlspecialchars(substr($_POST['kino'], 0, 5000)));
+			$xfields['books'] = $db->safesql(htmlspecialchars(substr($_POST['books'], 0, 5000)));
+			$xfields['games'] = $db->safesql(htmlspecialchars(substr($_POST['games'], 0, 5000)));
+			$xfields['quote'] = $db->safesql(htmlspecialchars(substr($_POST['quote'], 0, 5000)));
 			
 			foreach($xfields as $name => $value){
 				$value = str_replace("|", "&#124;", $value);
@@ -300,7 +295,7 @@ if($logged){
 				if($expxfielddatavalue[1])
 					$xfielddatavalue = str_replace('|1', '', textFilter($xfielddatavalue));
 				else
-					$xfielddatavalue = ajax_utf8(textFilter($xfielddatavalue));
+					$xfielddatavalue = textFilter($xfielddatavalue);
 
 				$xfielddataname = $db->safesql($xfielddataname);
 
@@ -496,7 +491,7 @@ if($logged){
 			
 			//Получаем данные о файле
 			$image_tmp = $_FILES['uploadfile']['tmp_name'];
-			$image_name = totranslit($_FILES['uploadfile']['name']); // оригинальное название для оприделения формата
+			$image_name = to_translit($_FILES['uploadfile']['name']); // оригинальное название для оприделения формата
 			$image_rename = substr(md5($server_time+rand(1,100000)), 0, 20); // имя файла
 			$image_size = $_FILES['uploadfile']['size']; // размер файла
 			$type = end(explode(".", $image_name)); // формат файла

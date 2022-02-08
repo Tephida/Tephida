@@ -1,15 +1,11 @@
 <?php
-/* 
-	Appointment: Музыка
-	File: audio.php 
-	Author: f0rt1 
-	Engine: Vii Engine
-	Copyright: NiceWeb Group (с) 2011
-	e-mail: niceweb@i.ua
-	URL: http://www.niceweb.in.ua/
-	ICQ: 427-825-959
-	Данный код защищен авторскими правами
-*/
+/*
+ *   (c) Semen Alekseev
+ *
+ *  For the full copyright and license information, please view the LICENSE
+ *   file that was distributed with this source code.
+ *
+ */
 if(!defined('MOZG'))
 	die('Hacking attempt!');
 
@@ -17,7 +13,7 @@ if($ajax == 'yes')
 	NoAjaxQuery();
 
 if($logged){
-	$act = $_GET['act'];
+    $act = $_GET['act'] ?? '';
 	$user_id = $user_info['user_id'];
 
 	$metatags['title'] = $lang['audio'];
@@ -27,7 +23,7 @@ if($logged){
 		//################### Отправление песни в БД ###################//
 		case "send":
 			NoAjaxQuery();
-			$lnk = ajax_utf8(textFilter($_POST['lnk']));
+			$lnk = textFilter($_POST['lnk']);
 			$format = strtolower(end(explode('.', $lnk)));
 			
 			if($format == 'mp3' AND isset($lnk) AND !empty($lnk) AND $config['audio_mod_add'] == 'yes'){
@@ -49,8 +45,8 @@ if($logged){
 					$id3v2 = new Id3v2;
 					$res = $id3v2->read(ROOT_DIR.'/uploads/audio_tmp/'.$ranTmp.'.mp3');
 					
-					$artist = ajax_utf8(textFilter($res['Artist'], false, true));
-					$name = ajax_utf8(textFilter($res['Title'], false, true));
+					$artist = textFilter($res['Artist'], 25000, true);
+					$name = textFilter($res['Title'], 25000, true);
 					if(isset($artist) AND empty($artist)) $artist = 'Неизвестный исполнитель';
 					if(isset($name) AND empty($name)) $name = 'Без названия';
 				
@@ -71,8 +67,8 @@ if($logged){
 		case "editsave":
 			NoAjaxQuery();
 			$aid = intval($_POST['aid']);
-			$artist = ajax_utf8(textFilter($_POST['artist'], false, true));
-			$name = ajax_utf8(textFilter($_POST['name'], false, true));
+			$artist = textFilter($_POST['artist'], 25000, true);
+			$name = textFilter($_POST['name'], 25000, true);
 			
 			$check = $db->super_query("SELECT auser_id FROM `".PREFIX."_audio` WHERE aid = '".$aid."'");
 			
@@ -193,7 +189,7 @@ if($logged){
 
 			//Получаем данные о файле
 			$file_tmp = $_FILES['uploadfile']['tmp_name'];
-			$file_name = totranslit($_FILES['uploadfile']['name']); // оригинальное название для оприделения формата
+			$file_name = to_translit($_FILES['uploadfile']['name']); // оригинальное название для оприделения формата
 			$file_rename = substr(md5($server_time+rand(1,100000)), 0, 15); // имя
 			$file_size = $_FILES['uploadfile']['size']; // размер файла
 			$type = strtolower(end(explode(".", $file_name))); // формат файла
@@ -211,8 +207,8 @@ if($logged){
 					$id3v2 = new Id3v2;
 					$res = $id3v2->read(ROOT_DIR.'/uploads/audio/'.$user_id.'/'.$file_rename.$res_type);
 					
-					$artist = ajax_utf8(textFilter($res['Artist'], false, true));
-					$name = ajax_utf8(textFilter($res['Title'], false, true));
+					$artist = textFilter($res['Artist'], 25000, true);
+					$name = textFilter($res['Title'], 25000, true);
 					if(isset($artist) AND empty($artist)) $artist = 'Неизвестный исполнитель';
 					if(isset($name) AND empty($name)) $name = 'Без названия';
 					

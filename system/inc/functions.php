@@ -1,93 +1,26 @@
 <?php
-/* 
-	Appointment: Основные функции админ панели
-	File: functions.php
-	Author: f0rt1 
-	Engine: Vii CMS (Social version)
-	Copyright: NiceWeb Group (с) 2014
-	e-mail: niceweb@i.ua
-	URL: http://www.niceweb.in.ua/
-	ICQ: 427-825-959
-	Данный код защищен авторскими правами
-*/
+/*
+ *   (c) Semen Alekseev
+ *
+ *  For the full copyright and license information, please view the LICENSE
+ *   file that was distributed with this source code.
+ *
+ */
 if(!defined('MOZG'))
 	die('Hacking attempt!');
 
-function totranslit($var, $lower = true, $punkt = true) {
-	global $langtranslit;
-	
-	if ( is_array($var) ) return "";
+include __DIR__.'/../classes/templates.php';
+$tpl = new mozg_template;
+$tpl->dir = ROOT_DIR . '/templates/' . $config['temp'];
+define('TEMPLATE_DIR', $tpl->dir);
+$_DOCUMENT_DATE = false;
 
-	if (!is_array ( $langtranslit ) OR !count( $langtranslit ) ) {
-
-		$langtranslit = array(
-		'а' => 'a', 'б' => 'b', 'в' => 'v',
-		'г' => 'g', 'д' => 'd', 'е' => 'e',
-		'ё' => 'e', 'ж' => 'zh', 'з' => 'z',
-		'и' => 'i', 'й' => 'y', 'к' => 'k',
-		'л' => 'l', 'м' => 'm', 'н' => 'n',
-		'о' => 'o', 'п' => 'p', 'р' => 'r',
-		'с' => 's', 'т' => 't', 'у' => 'u',
-		'ф' => 'f', 'х' => 'h', 'ц' => 'c',
-		'ч' => 'ch', 'ш' => 'sh', 'щ' => 'sch',
-		'ь' => '', 'ы' => 'y', 'ъ' => '',
-		'э' => 'e', 'ю' => 'yu', 'я' => 'ya',
-		"ї" => "yi", "є" => "ye",
-		
-		'А' => 'A', 'Б' => 'B', 'В' => 'V',
-		'Г' => 'G', 'Д' => 'D', 'Е' => 'E',
-		'Ё' => 'E', 'Ж' => 'Zh', 'З' => 'Z',
-		'И' => 'I', 'Й' => 'Y', 'К' => 'K',
-		'Л' => 'L', 'М' => 'M', 'Н' => 'N',
-		'О' => 'O', 'П' => 'P', 'Р' => 'R',
-		'С' => 'S', 'Т' => 'T', 'У' => 'U',
-		'Ф' => 'F', 'Х' => 'H', 'Ц' => 'C',
-		'Ч' => 'Ch', 'Ш' => 'Sh', 'Щ' => 'Sch',
-		'Ь' => '', 'Ы' => 'Y', 'Ъ' => '',
-		'Э' => 'E', 'Ю' => 'Yu', 'Я' => 'Ya',
-		"Ї" => "yi", "Є" => "ye",
-		);
-
-	}
-	
-	$var = str_replace( ".php", "", $var );
-	$var = trim( strip_tags( $var ) );
-	$var = preg_replace( "/\s+/ms", "-", $var );
-
-	$var = strtr($var, $langtranslit);
-	
-	if ( $punkt ) $var = preg_replace( "/[^a-z0-9\_\-.]+/mi", "", $var );
-	else $var = preg_replace( "/[^a-z0-9\_\-]+/mi", "", $var );
-
-	$var = preg_replace( '#[\-]+#i', '-', $var );
-
-	if ( $lower ) $var = strtolower( $var );
-	
-	if( strlen( $var ) > 200 ) {
-		
-		$var = substr( $var, 0, 200 );
-		
-		if( ($temp_max = strrpos( $var, '-' )) ) $var = substr( $var, 0, $temp_max );
-	
-	}
-	
-	return $var;
-}
-function GetVar($v) {
+include __DIR__ .'/../functions.php';
+/*function GetVar($v) {
 	if(ini_get('magic_quotes_gpc'))
 		return stripslashes($v) ;
 	return $v;
-} 
-function strip_data($text) {
-	$quotes = array ("\x27", "\x22", "\x60", "\t", "\n", "\r", "'", ",", "/", ";", ":", "@", "[", "]", "{", "}", "=", ")", "(", "*", "&", "^", "%", "$", "<", ">", "?", "!", '"' );
-	$goodquotes = array ("-", "+", "#" );
-	$repquotes = array ("\-", "\+", "\#" );
-	$text = stripslashes( $text );
-	$text = trim( strip_tags( $text ) );
-	$text = str_replace( $quotes, '', $text );
-	$text = str_replace( $goodquotes, $repquotes, $text );
-	return $text;
-}
+}*/
 function clean_url($url) {
 	if( $url == '' ) return;
 	
@@ -143,34 +76,12 @@ function set_cookie($name, $value, $expires) {
 	
 	}
 }
-function check_xss() {
-	
-	$url = html_entity_decode( urldecode( $_SERVER['QUERY_STRING'] ) );
-	
-	if( $url ) {
-		
-		if( (strpos( $url, '<' ) !== false) || (strpos( $url, '>' ) !== false) || (strpos( $url, '"' ) !== false) || (strpos( $url, './' ) !== false) || (strpos( $url, '../' ) !== false) || (strpos( $url, '\'' ) !== false) || (strpos( $url, '.php' ) !== false) ) {
-			die('Hacking attempt!');
-		}
-	
-	}
-	
-	$url = html_entity_decode( urldecode( $_SERVER['REQUEST_URI'] ) );
-	
-	if( $url ) {
-		
-		if( (strpos( $url, '<' ) !== false) || (strpos( $url, '>' ) !== false) || (strpos( $url, '"' ) !== false) || (strpos( $url, '\'' ) !== false) ) {
-			die('Hacking attempt!');
-		}
-	
-	}
 
-}
-function langdate($format, $stamp){
+/*function langdate($format, $stamp){
 	global $langdate;
 	return strtr(@date($format, $stamp), $langdate);
-}
-function navigation($gc, $num, $type){
+}*/
+/*function navigation($gc, $num, $type){
 	$page = ( isset( $_GET['page'] )&& !empty( $_GET['page'] ) ) ? intval( $_GET['page'] ) : 1;
 	$gcount = $gc;
 	$cnt = $num;
@@ -216,7 +127,7 @@ function navigation($gc, $num, $type){
 		
 		if($pages)
 			return '<div class="nav">'.$pages.'</div>';
-}
+}*/
 function echoheader($box_width = false){
 	global $config, $logged, $admin_link, $user_info;
 	
@@ -303,12 +214,12 @@ function echohtmlend(){
 </html>
 HTML;
 }
-function msgbox($title, $text, $link = false){
+/*function msgbox($title, $text, $link = false){
 	echoheader();
 	echohtmlstart($title);
 	echo '<center>'.$text.'<br /><a href="'.$link.'">Вернуться назад</a></center>';
 	echohtmlend();
-}
+}*/
 function echoblock($title, $description, $link, $icon){
 	global $admin_link;
 	
@@ -324,7 +235,7 @@ HTML;
 function htmlclear(){
 	echo '<div class="clr"></div>';
 }
-function myBr($source){
+/*function myBr($source){
 	$find[] = "'\r'";
 	$replace[] = "<br />";
 	
@@ -334,8 +245,8 @@ function myBr($source){
 	$source = preg_replace($find, $replace, $source);
 	
 	return $source;
-}
-function myBrRn($source){
+}*/
+/*function myBrRn($source){
 
 	$find[] = "<br />";
 	$replace[] = "\r";
@@ -345,58 +256,26 @@ function myBrRn($source){
 	$source = str_replace($find, $replace, $source);
 	
 	return $source;
-}
-function textFilter($source, $substr_num = false, $strip_tags = false){
-	global $db;
-	
-	if(function_exists("get_magic_quotes_gpc") AND get_magic_quotes_gpc())
-		$source = stripslashes($source);  
-	
-	$find = array('/data:/i', '/about:/i', '/vbscript:/i', '/onclick/i', '/onload/i', '/onunload/i', '/onabort/i', '/onerror/i', '/onblur/i', '/onchange/i', '/onfocus/i', '/onreset/i', '/onsubmit/i', '/ondblclick/i', '/onkeydown/i', '/onkeypress/i', '/onkeyup/i', '/onmousedown/i', '/onmouseup/i', '/onmouseover/i', '/onmouseout/i', '/onselect/i', '/javascript/i');
-		
-	$replace = array("d&#097;ta:", "&#097;bout:", "vbscript<b></b>:", "&#111;nclick", "&#111;nload", "&#111;nunload", "&#111;nabort", "&#111;nerror", "&#111;nblur", "&#111;nchange", "&#111;nfocus", "&#111;nreset", "&#111;nsubmit", "&#111;ndblclick", "&#111;nkeydown", "&#111;nkeypress", "&#111;nkeyup", "&#111;nmousedown", "&#111;nmouseup", "&#111;nmouseover", "&#111;nmouseout", "&#111;nselect", "j&#097;vascript");
+}*/
 
-	$source = preg_replace("#<iframe#i", "&lt;iframe", $source);
-	$source = preg_replace("#<script#i", "&lt;script", $source);
-		
-	if(!$substr_num)
-		$substr_num = 25000;
-
-	$source = $db->safesql(myBr(htmlspecialchars(substr(trim($source), 0, $substr_num))));
-	
-	$source = str_ireplace("{", "&#123;", $source);
-	$source = str_ireplace("`", "&#96;", $source);
-	$source = str_ireplace("{theme}", "&#123;theme}", $source);
-	
-	$source = preg_replace($find, $replace, $source);
-	
-	if($strip_tags)
-		$source = strip_tags($source);
-
-	return $source;
-}
 function ajax_utf8($source){
 	return iconv('utf-8', 'windows-1251', $source);
 }
-function installationSelected($id, $options){
-	$source = str_replace('value="'.$id.'"', 'value="'.$id.'" selected', $options);
-	return $source;
-}
-function mozg_clear_cache_file($prefix) {
+/*function mozg_clear_cache_file($prefix) {
 	@unlink(ENGINE_DIR.'/cache/'.$prefix.'.tmp');
-}
-function mozg_clear_cache(){
+}*/
+/*function mozg_clear_cache(){
 	$fdir = opendir(ENGINE_DIR.'/cache/');
 	
 	while($file = readdir($fdir))
 		if($file != '.' and $file != '..' and $file != '.htaccess' and $file != 'system')
 			@unlink(ENGINE_DIR.'/cache/'.$file);
-}
-function mozg_mass_clear_cache_file($prefix){
+}*/
+/*function mozg_mass_clear_cache_file($prefix){
 	$arr_prefix = explode('|', $prefix);
 	foreach($arr_prefix as $file)
 		@unlink(ENGINE_DIR.'/cache/'.$file.'.tmp');
-}
+}*/
 function convert_unicode($t, $to = 'windows-1251') {
 	$to = strtolower($to);
 	if($to == 'utf-8'){

@@ -1,21 +1,17 @@
 <?php
-/* 
-	Appointment: Сообщества -> Публичные страницы -> Видеозаписи
-	File: public_videos.php 
-	Author: f0rt1 
-	Engine: Vii Engine
-	Copyright: NiceWeb Group (с) 2011
-	e-mail: niceweb@i.ua
-	URL: http://www.niceweb.in.ua/
-	ICQ: 427-825-959
-	Данный код защищен авторскими правами
-*/
+/*
+ *   (c) Semen Alekseev
+ *
+ *  For the full copyright and license information, please view the LICENSE
+ *   file that was distributed with this source code.
+ *
+ */
 if(!defined('MOZG'))
 	die('Hacking attempt!');
 
 if($logged){
 
-	$act = $_GET['act'];
+    $act = $_GET['act'] ?? '';
 	$user_id = $user_info['user_id'];
 	
 	switch($act){
@@ -143,8 +139,8 @@ if($logged){
 			$pid = intval($_POST['pid']);
 			$id = intval($_POST['id']);
 			
-			$title = ajax_utf8(textFilter($_POST['title'], false, true));
-			$descr = ajax_utf8(textFilter($_POST['descr'], 3000));
+			$title = textFilter($_POST['title'], 25000, true);
+			$descr = textFilter($_POST['descr'], 3000);
 			
 			$infoGroup = $db->super_query("SELECT admin FROM `".PREFIX."_communities` WHERE id = '{$pid}'");
 			
@@ -179,7 +175,7 @@ if($logged){
 			
 			$pid = intval($_POST['pid']);
 	
-			$query = $db->safesql(ajax_utf8(strip_data($_POST['query'])));
+			$query = $db->safesql(strip_data($_POST['query']));
 			$query = strtr($query, array(' ' => '%')); //Замеянем пробелы на проценты чтоб тоиск был точнее
 			
 			$adres = strip_tags($_POST['adres']);

@@ -1,18 +1,14 @@
 <?php
 /*
-	Appointment: Просмотр фотографии
-	File: photo.php 
-	Author: f0rt1 
-	Engine: Vii Engine
-	Copyright: NiceWeb Group (с) 2011
-	e-mail: niceweb@i.ua
-	URL: http://www.niceweb.in.ua/
-	ICQ: 427-825-959
-	Данный код защищен авторскими правами
-*/
+ *   (c) Semen Alekseev
+ *
+ *  For the full copyright and license information, please view the LICENSE
+ *   file that was distributed with this source code.
+ *
+ */
 if (!defined('MOZG')) die('Hacking attempt!');
 if ($logged) {
-    $act = $_GET['act'];
+    $act = $_GET['act'] ?? '';
     $user_id = $user_info['user_id'];
     switch ($act) {
             //################### Добавления комментария ###################//
@@ -20,7 +16,7 @@ if ($logged) {
         case "addcomm":
             NoAjaxQuery();
             $pid = intval($_POST['pid']);
-            $comment = ajax_utf8(textFilter($_POST['comment']));
+            $comment = textFilter($_POST['comment']);
             $date = date('Y-m-d H:i:s', $server_time);
             $hash = md5($user_id . $server_time . $_IP . $user_info['user_email'] . rand(0, 1000000000)) . $comment . $pid;
             $check_photo = $db->super_query("SELECT album_id, user_id, photo_name FROM `" . PREFIX . "_photos` WHERE id = '{$pid}'");
@@ -74,7 +70,7 @@ if ($logged) {
                         $rowUserEmail = $db->super_query("SELECT user_name, user_email FROM `" . PREFIX . "_users` WHERE user_id = '" . $check_photo['user_id'] . "'");
                         if ($rowUserEmail['user_email']) {
                             include_once ENGINE_DIR . '/classes/mail.php';
-                            $mail = new dle_mail($config);
+                            $mail = new vii_mail($config);
                             $rowMyInfo = $db->super_query("SELECT user_search_pref FROM `" . PREFIX . "_users` WHERE user_id = '" . $user_id . "'");
                             $rowEmailTpl = $db->super_query("SELECT text FROM `" . PREFIX . "_mail_tpl` WHERE id = '4'");
                             $rowEmailTpl['text'] = str_replace('{%user%}', $rowUserEmail['user_name'], $rowEmailTpl['text']);

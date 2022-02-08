@@ -1,23 +1,18 @@
 <?php
-/* 
-	Appointment: Подарки
-	File: gifts.php 
-	Author: f0rt1 
-	Engine: Vii Engine
-	Copyright: NiceWeb Group (с) 2011
-	e-mail: niceweb@i.ua
-	URL: http://www.niceweb.in.ua/
-	ICQ: 427-825-959
-	Данный код защищен авторскими правами
-*/
+/*
+ *   (c) Semen Alekseev
+ *
+ *  For the full copyright and license information, please view the LICENSE
+ *   file that was distributed with this source code.
+ *
+ */
 if(!defined('MOZG'))
 	die('Hacking attempt!');
 
-if($ajax == 'yes')
 	NoAjaxQuery();
 
 if($logged){
-	$act = $_GET['act'];
+    $act = $_GET['act'] ?? '';
 	$user_id = $user_info['user_id'];
 
 	switch($act){
@@ -55,7 +50,7 @@ if($logged){
 			$gift = intval($_POST['gift']);
 			$privacy = intval($_POST['privacy']);
 			if($privacy < 0 OR $privacy > 3) $privacy = 1;
-			$msg = ajax_utf8(textFilter($_POST['msg']));
+			$msg = textFilter($_POST['msg']);
 			$gifts = $db->super_query("SELECT price FROM `".PREFIX."_gifts_list` WHERE img = '".$gift."'");
 			
 			//Выводим текущий баланс свой
@@ -114,7 +109,7 @@ if($logged){
 						$rowUserEmail = $db->super_query("SELECT user_name, user_email FROM `".PREFIX."_users` WHERE user_id = '".$for_user_id."'");
 						if($rowUserEmail['user_email']){
 							include_once ENGINE_DIR.'/classes/mail.php';
-							$mail = new dle_mail($config);
+							$mail = new vii_mail($config);
 							$rowMyInfo = $db->super_query("SELECT user_search_pref FROM `".PREFIX."_users` WHERE user_id = '".$user_id."'");
 							$rowEmailTpl = $db->super_query("SELECT text FROM `".PREFIX."_mail_tpl` WHERE id = '6'");
 							$rowEmailTpl['text'] = str_replace('{%user%}', $rowUserEmail['user_name'], $rowEmailTpl['text']);

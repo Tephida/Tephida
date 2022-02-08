@@ -1,21 +1,17 @@
 <?php
-/* 
-	Appointment: Сообщества -> Публичные страницы -> Аудиозаписи
-	File: public_audio.php 
-	Author: f0rt1 
-	Engine: Vii Engine
-	Copyright: NiceWeb Group (с) 2011
-	e-mail: niceweb@i.ua
-	URL: http://www.niceweb.in.ua/
-	ICQ: 427-825-959
-	Данный код защищен авторскими правами
-*/
+/*
+ *   (c) Semen Alekseev
+ *
+ *  For the full copyright and license information, please view the LICENSE
+ *   file that was distributed with this source code.
+ *
+ */
 if(!defined('MOZG'))
 	die('Hacking attempt!');
 
 if($logged){
 
-	$act = $_GET['act'];
+    $act = $_GET['act'] ?? '';
 	$user_id = $user_info['user_id'];
 	
 	switch($act){
@@ -56,8 +52,8 @@ if($logged){
 			
 			$aid = intval($_POST['aid']);
 			$pid = intval($_POST['pid']);
-			$artist = ajax_utf8(textFilter($_POST['artist'], false, true));
-			$name = ajax_utf8(textFilter($_POST['name'], false, true));
+			$artist = textFilter($_POST['artist'], 25000, true);
+			$name = textFilter($_POST['name'], 25000, true);
 
 			if(isset($artist) AND empty($artist)) $artist = 'Неизвестный исполнитель';
 			if(isset($name) AND empty($name)) $name = 'Без названия';
@@ -118,7 +114,7 @@ if($logged){
 			
 			$pid = intval($_POST['pid']);
 	
-			$query = $db->safesql(ajax_utf8(strip_data($_POST['query'])));
+			$query = $db->safesql(strip_data($_POST['query']));
 			$query = strtr($query, array(' ' => '%')); //Замеянем пробелы на проценты чтоб тоиск был точнее
 			
 			$adres = strip_tags($_POST['adres']);

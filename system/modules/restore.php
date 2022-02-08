@@ -1,15 +1,11 @@
 <?php
-/* 
-	Appointment: Восстановление доступа к странице
-	File: restore.php 
-	Author: f0rt1 
-	Engine: Vii Engine
-	Copyright: NiceWeb Group (с) 2011
-	e-mail: niceweb@i.ua
-	URL: http://www.niceweb.in.ua/
-	ICQ: 427-825-959
-	Данный код защищен авторскими правами
-*/
+/*
+ *   (c) Semen Alekseev
+ *
+ *  For the full copyright and license information, please view the LICENSE
+ *   file that was distributed with this source code.
+ *
+ */
 if(!defined('MOZG'))
 	die('Hacking attempt!');
 
@@ -17,7 +13,7 @@ if($ajax == 'yes')
 	NoAjaxQuery();
 
 if(!$logged){
-	$act = $_GET['act'];
+    $act = $_GET['act'] ?? '';
 	$metatags['title'] = $lang['restore_title'];
 	
 	switch($act){
@@ -25,7 +21,7 @@ if(!$logged){
 		//################### Проверка данных на воостановления ###################//
 		case "next":
 			NoAjaxQuery();
-			$email = ajax_utf8(textFilter($_POST['email']));
+			$email = textFilter($_POST['email']);
 			$check = $db->super_query("SELECT user_id, user_search_pref, user_photo FROM `".PREFIX."_users` WHERE user_email = '{$email}'");
 			if($check){
 				if($check['user_photo'])
@@ -43,7 +39,7 @@ if(!$logged){
 		//################### Отправка данных на почту на воостановления ###################//
 		case "send":
 			NoAjaxQuery();
-			$email = ajax_utf8(textFilter($_POST['email']));
+			$email = textFilter($_POST['email']);
 			$check = $db->super_query("SELECT user_name FROM `".PREFIX."_users` WHERE user_email = '{$email}'");
 			if($check){
 				//Удаляем все предыдущие запросы на воостановление
@@ -60,7 +56,7 @@ if(!$logged){
 				
 				//Отправляем письмо на почту для воостановления
 				include_once ENGINE_DIR.'/classes/mail.php';
-				$mail = new dle_mail($config);
+				$mail = new vii_mail($config);
 				$message = <<<HTML
 Здравствуйте, {$check['user_name']}.
 
@@ -107,8 +103,8 @@ HTML;
 			$row = $db->super_query("SELECT email FROM `".PREFIX."_restore` WHERE hash = '{$hash}' AND ip = '{$_IP}'");
 			if($row){
 
-				$_POST['new_pass'] = ajax_utf8($_POST['new_pass']);
-				$_POST['new_pass2'] = ajax_utf8($_POST['new_pass2']);
+//				$_POST['new_pass'] = ajax_utf8($_POST['new_pass']);
+//				$_POST['new_pass2'] = ajax_utf8($_POST['new_pass2']);
 				
 				$new_pass = md5(md5($_POST['new_pass']));
 				$new_pass2 = md5(md5($_POST['new_pass2']));

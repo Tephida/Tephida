@@ -1,24 +1,20 @@
 <?php
-/* 
-	Appointment: Класс для стены
-	File: wall.php 
-	Author: f0rt1 
-	Engine: Vii Engine
-	Copyright: NiceWeb Group (с) 2011
-	e-mail: niceweb@i.ua
-	URL: http://www.niceweb.in.ua/
-	ICQ: 427-825-959
-	Данный код защищен авторскими правами
-*/
+/*
+ *   (c) Semen Alekseev
+ *
+ *  For the full copyright and license information, please view the LICENSE
+ *   file that was distributed with this source code.
+ *
+ */
 
 class wall {
 
-	var $query = false;
-	var $template = false;
-	var $compile = false;
-	var $comm_query = false;
-	var $comm_template = false;
-	var $comm_compile = false;
+	public $query = false;
+    public $template = false;
+    public $compile = false;
+    public $comm_query = false;
+    public $comm_template = false;
+    public $comm_compile = false;
 	
 	function query($query){
 		global $db;

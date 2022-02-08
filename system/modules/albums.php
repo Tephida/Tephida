@@ -1,23 +1,18 @@
 <?php
-/* 
-	Appointment: Альбомы
-	File: albums.php 
-	Author: f0rt1 
-	Engine: Vii Engine
-	Copyright: NiceWeb Group (с) 2011
-	e-mail: niceweb@i.ua
-	URL: http://www.niceweb.in.ua/
-	ICQ: 427-825-959
-	Данный код защищен авторскими правами
-*/
+/*
+ *   (c) Semen Alekseev
+ *
+ *  For the full copyright and license information, please view the LICENSE
+ *   file that was distributed with this source code.
+ *
+ */
 if(!defined('MOZG'))
 	die('Hacking attempt!');
 
-if($ajax == 'yes')
 	NoAjaxQuery();
 
 if($logged){
-	$act = $_GET['act'];
+    $act = $_GET['act'] ?? '';
 
 	switch($act){
 
@@ -25,8 +20,8 @@ if($logged){
 		case "create":
 			NoAjaxQuery();
 			
-			$name = ajax_utf8(textFilter($_POST['name'], false, true));
-			$descr = ajax_utf8(textFilter($_POST['descr']));
+			$name = textFilter($_POST['name'], 25000, true);
+			$descr = textFilter($_POST['descr']);
 			$privacy = intval($_POST['privacy']);
 			$privacy_comm = intval($_POST['privacy_comm']);
 			if($privacy <= 0 OR $privacy > 3) $privacy = 1;
@@ -105,33 +100,30 @@ if($logged){
 				
 					//Директория юзеров
 					$uploaddir = ROOT_DIR.'/uploads/users/';
-					
+
+                    $album_dir = ROOT_DIR.'/uploads/users/'.$user_id.'/albums/'.$aid.'/';
+
 					//Если нет папок юзера, то создаём их
-					if(!is_dir($uploaddir.$user_id)){ 
-						@mkdir($uploaddir.$user_id, 0777 );
-						@chmod($uploaddir.$user_id, 0777 );
-						@mkdir($uploaddir.$user_id.'/albums', 0777 );
-						@chmod($uploaddir.$user_id.'/albums', 0777 );
-					}
-					
-					//Если нет папки альбома, то создаём её
-					$album_dir = ROOT_DIR.'/uploads/users/'.$user_id.'/albums/'.$aid.'/';
-					if(!is_dir($album_dir)){ 
-						@mkdir($album_dir, 0777);
-						@chmod($album_dir, 0777);
-					}
+                    try {
+                        createDir($uploaddir . $user_id);
+                        createDir($uploaddir.$user_id.'/albums');
+                        //Если нет папки альбома, то создаём её
+                        createDir(ROOT_DIR.'/uploads/users/'.$user_id.'/albums/'.$aid.'/');
+                    } catch (Exception $e) {
+                        //
+                    }
 
 					//Разришенные форматы
 					$allowed_files = explode(', ', $config['photo_format']);
 				
 					//Получаем данные о фотографии
 					$image_tmp = $_FILES['uploadfile']['tmp_name'];
-					$image_name = totranslit($_FILES['uploadfile']['name']); // оригинальное название для оприделения формата
+					$image_name = to_translit($_FILES['uploadfile']['name']); // оригинальное название для оприделения формата
 					$image_rename = substr(md5($server_time+rand(1,100000)), 0, 20); // имя фотографии
 					$image_size = $_FILES['uploadfile']['size']; // размер файла
 					$type = end(explode(".", $image_name)); // формат файла
 					
-					//Проверям если, формат верный то пропускаем
+					//Проверяем если, формат верный то пропускаем
 					if(in_array(strtolower($type), $allowed_files)){
 						$config['max_photo_size'] = $config['max_photo_size'] * 1000;
 						if($image_size < $config['max_photo_size']){
@@ -156,7 +148,7 @@ if($logged){
 	
 								$date = date('Y-m-d H:i:s', $server_time);
 								
-								//Генерируем position фотки для "обзо фотографий"
+								//Генерируем position фотки для "обзор фотографий"
 								$position_all = $_SESSION['position_all'];
 								if($position_all){
 									$position_all = $position_all+1;
@@ -182,7 +174,7 @@ if($logged){
 								echo $ins_id.'|||'.$img_url.'|||'.$user_id;
 								
 								//Удаляем кеш позиций фотографий
-								if(!$photos_num)
+//								if(!$photos_num) //WTF?
 									mozg_clear_cache_file('user_'.$user_id.'/profile_'.$user_id);
 
 								//Чистим кеш
@@ -292,7 +284,7 @@ if($logged){
 			NoAjaxQuery();
 			$id = intval($_POST['id']);
 			$user_id = $user_info['user_id'];
-			$descr = ajax_utf8(textFilter($_POST['descr']));
+			$descr = textFilter($_POST['descr']);
 			
 			//Выводим фотку из БД, если она есть
 			$row = $db->super_query("SELECT id FROM `".PREFIX."_photos` WHERE id = '{$id}' AND user_id = '{$user_id}'");
@@ -300,7 +292,7 @@ if($logged){
 				$db->query("UPDATE `".PREFIX."_photos` SET descr = '{$descr}' WHERE id = '{$id}' AND user_id = '{$user_id}'");
 				
 				//Ответ скрипта
-				echo stripslashes(myBr(htmlspecialchars(ajax_utf8(trim($_POST['descr'])))));
+				echo stripslashes(myBr(htmlspecialchars(trim($_POST['descr']))));
 			}
 			die();
 		break;
@@ -387,8 +379,8 @@ if($logged){
 			NoAjaxQuery();
 			$id = intval($_POST['id']);
 			$user_id = $user_info['user_id'];
-			$name = ajax_utf8(textFilter($_POST['name'], false, true));
-			$descr = ajax_utf8(textFilter($_POST['descr']));
+			$name = textFilter($_POST['name'], 25000, true);
+			$descr = textFilter($_POST['descr']);
 			
 			$privacy = intval($_POST['privacy']);
 			$privacy_comm = intval($_POST['privacy_comm']);
@@ -1105,7 +1097,7 @@ HTML;
 				Hacking();
 	}
 	$tpl->clear();
-	$db->free($sql_);
+//	$db->free($sql_);
 } else {
 	$user_speedbar = $lang['no_infooo'];
 	msgbox('', $lang['not_logged'], 'info');

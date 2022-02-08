@@ -1,15 +1,11 @@
 <?php
-/* 
-	Appointment: Доп. поля профилей
-	File: xfields.php
-	Author: f0rt1 
-	Engine: Vii Engine
-	Copyright: NiceWeb Group (с) 2011
-	e-mail: niceweb@i.ua
-	URL: http://www.niceweb.in.ua/
-	ICQ: 427-825-959
-	Данный код защищен авторскими правами
-*/
+/*
+ *   (c) Semen Alekseev
+ *
+ *  For the full copyright and license information, please view the LICENSE
+ *   file that was distributed with this source code.
+ *
+ */
 if(!defined('MOZG'))
 	die('Hacking attempt!');
 
@@ -110,7 +106,7 @@ if(isset($_POST['save'])){
 		
 	if(strlen(trim($editedxfield[0])) > 0 AND strlen(trim($editedxfield[1])) > 0){
 
-		$editedxfield[0] = totranslit(trim($editedxfield[0]));
+		$editedxfield[0] = to_translit(trim($editedxfield[0]));
 		$editedxfield[0] = str_replace('-', '_', $editedxfield[0]);
 		$editedxfield[1] = htmlspecialchars(trim($editedxfield[1]));
 	
@@ -207,7 +203,7 @@ if($_GET['act'] == 'edit'){
 		
 		if(strlen(trim($editedxfield[0])) > 0 AND strlen(trim($editedxfield[1])) > 0){
 			
-			$editedxfield[0] = totranslit(trim($editedxfield[0]));
+			$editedxfield[0] = to_translit(trim($editedxfield[0]));
 			$editedxfield[0] = str_replace('-', '_', $editedxfield[0]);
 			$editedxfield[1] = htmlspecialchars(trim($editedxfield[1]));
 			

@@ -1,15 +1,11 @@
 <?php
-/* 
-	Appointment: Подарки
-	File: gifts.php
-	Author: f0rt1 
-	Engine: Vee Engine
-	Copyright: NiceWeb Group (с) 2011
-	e-mail: niceweb@i.ua
-	URL: http://www.niceweb.in.ua/
-	ICQ: 427-825-959
-	Данный код защищен авторскими правами
-*/
+/*
+ *   (c) Semen Alekseev
+ *
+ *  For the full copyright and license information, please view the LICENSE
+ *   file that was distributed with this source code.
+ *
+ */
 if(!defined('MOZG'))
 	die('Hacking attempt!');
 
@@ -22,13 +18,13 @@ if(isset($_POST['save'])){
 	
 	//Получаем данные о фотографии ОРИГИНАЛ
 	$image_tmp = $_FILES['original']['tmp_name'];
-	$image_name = totranslit($_FILES['original']['name']); // оригинальное название для оприделения формата
+	$image_name = to_translit($_FILES['original']['name']); // оригинальное название для оприделения формата
 	$image_size = $_FILES['original']['size']; // размер файла
 	$type = end(explode(".", $image_name)); // формат файла
 
 	//Получаем данные о фотографии КОПИЯ
 	$image_tmp_2 = $_FILES['thumbnail']['tmp_name'];
-	$image_name_2 = totranslit($_FILES['thumbnail']['name']); // оригинальное название для оприделения формата
+	$image_name_2 = to_translit($_FILES['thumbnail']['name']); // оригинальное название для оприделения формата
 	$image_size_2 = $_FILES['thumbnail']['size']; // размер файла
 	$type_2 = end(explode(".", $image_name_2)); // формат файла
 

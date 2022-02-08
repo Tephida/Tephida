@@ -1,3 +1,11 @@
+/*
+ *   (c) Semen Alekseev
+ *
+ *  For the full copyright and license information, please view the LICENSE
+ *   file that was distributed with this source code.
+ *
+ */
+
 function upClose(xnid) {
 	$('#event' + xnid).remove();
 	$('#updates').css('height', $('.update_box').length * 123 + 'px');
@@ -38,7 +46,7 @@ $(document).ready(function() {
 				else uTitle = 'Событие';
 				if (row[0] == 8) {
 					sli = row[6].split('/');
-					tURL = (location.href).replace('http://' + location.host, '').replace('/', '').split('#');
+					tURL = (location.href).replace('https://' + location.host, '').replace('/', '').split('#');
 					if (!sli[2] && tURL[0] == 'messages') return false;
 					if ($('#new_msg').text()) msg_num = parseInt($('#new_msg').text().replace(')', '').replace('(', '')) + 1;
 					else msg_num = 1;

@@ -1,15 +1,11 @@
 <?php
-/* 
-	Appointment: Загрузка картинок при прикриплении файлов со стены, заметок, или сообщений -> Сообщества
-	File: groups.php 
-	Author: f0rt1 
-	Engine: Vii Engine
-	Copyright: NiceWeb Group (с) 2011
-	e-mail: niceweb@i.ua
-	URL: http://www.niceweb.in.ua/
-	ICQ: 427-825-959
-	Данный код защищен авторскими правами
-*/
+/*
+ *   (c) Semen Alekseev
+ *
+ *  For the full copyright and license information, please view the LICENSE
+ *   file that was distributed with this source code.
+ *
+ */
 if(!defined('MOZG'))
 	die('Hacking attempt!');
 
@@ -29,7 +25,7 @@ if($logged){
 
 		//Получаем данные о фотографии
 		$image_tmp = $_FILES['uploadfile']['tmp_name'];
-		$image_name = totranslit($_FILES['uploadfile']['name']); // оригинальное название для оприделения формата
+		$image_name = to_translit($_FILES['uploadfile']['name']); // оригинальное название для оприделения формата
 		$image_rename = substr(md5($server_time+rand(1,100000)), 0, 20); // имя фотографии
 		$image_size = $_FILES['uploadfile']['size']; // размер файла
 		$type = end(explode(".", $image_name)); // формат файла

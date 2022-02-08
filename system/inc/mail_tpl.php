@@ -1,15 +1,11 @@
 <?php
-/* 
-	Appointment: Шаблоны сообщений
-	File: mail_tpl.php
-	Author: f0rt1 
-	Engine: Vee Engine
-	Copyright: NiceWeb Group (с) 2011
-	e-mail: niceweb@i.ua
-	URL: http://www.niceweb.in.ua/
-	ICQ: 427-825-959
-	Данный код защищен авторскими правами
-*/
+/*
+ *   (c) Semen Alekseev
+ *
+ *  For the full copyright and license information, please view the LICENSE
+ *   file that was distributed with this source code.
+ *
+ */
 if(!defined('MOZG'))
 	die('Hacking attempt!');
 
@@ -71,7 +67,6 @@ echo <<<HTML
 <b>{%rec-link%}</b> &nbsp;-&nbsp; ссылка на фотографию
 <textarea class="inpu" name="4">{$row4['text']}</textarea>
 HTML;
-HTML;
 		
 echohtmlstart('5. sНастройка E-Mail сообщения, которое отсылается при новом комментарии к заметке');
 echo <<<HTML
@@ -103,7 +98,6 @@ echo <<<HTML
 <b>{%user-friend%}</b> &nbsp;-&nbsp; пользователь который отправил сообщение<br />
 <b>{%rec-link%}</b> &nbsp;-&nbsp; ссылка на сообщение
 <textarea class="inpu" name="8">{$row8['text']}</textarea>
-HTML;
 HTML;
 
 echo <<<HTML

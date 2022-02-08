@@ -1,3 +1,11 @@
+/*
+ *   (c) Semen Alekseev
+ *
+ *  For the full copyright and license information, please view the LICENSE
+ *   file that was distributed with this source code.
+ *
+ */
+
 //ALBUMS
 var Albums = {
 	CreatAlbum: function() {
@@ -716,9 +724,7 @@ var videos = {
 			if (video_lnk != 0) {
 				if (video_lnk != good_video_lnk) {
 					$('#box_loading').show();
-					$.post('/index.php?go=videos&act=load', {
-						video_lnk: video_lnk
-					}, function(data) {
+					$.post('/index.php?go=videos&act=load', {video_lnk: video_lnk}, function(data) {
 						if (data == 'no_serviece') {
 							$('#no_serviece').show();
 						} else {
@@ -738,7 +744,7 @@ var videos = {
 		} else $('#no_serviece').show();
 	},
 	serviece: function(request) {
-		var pattern = new RegExp(/http:\/\/www.youtube.com|http:\/\/youtube.com|http:\/\/rutube.ru|http:\/\/www.rutube.ru|http:\/\/www.vimeo.com|http:\/\/vimeo.com|http:\/\/smotri.com|http:\/\/www.smotri.com/i);
+		var pattern = new RegExp(/http(?:s)?:\/\/www.youtube.com|http(?:s)?:\/\/youtube.com|http(?:s)?:\/\/www.vimeo.com|http(?:s)?:\/\/vimeo.com/i);
 		return pattern.test(request);
 	},
 	send: function(notes) {
@@ -761,7 +767,7 @@ var videos = {
 					$('#box_loading').hide();
 					Box.Close('add_video');
 					d = d.split('|');
-					if (notes == 1) wysiwyg.boxVideo('http://' + location.host + d[0], d[1], d[2]);
+					if (notes == 1) wysiwyg.boxVideo('https://' + location.host + d[0], d[1], d[2]);
 					else Page.Go('/videos');
 				});
 			} else Box.Info('msg_videos', lang_dd2f_no, lang_videos_no_url, 300);
@@ -1120,7 +1126,7 @@ var wall = {
 	send: function() {
 		wall_text = $('#wall_text').val();
 		attach_files = $('#vaLattach_files').val();
-		for_user_id = location.href.split('http://' + location.host + '/u');
+		for_user_id = location.href.split('https://' + location.host + '/u');
 		rec_num = parseInt($('#wall_rec_num').text()) + 1;
 		if (!rec_num) rec_num = 1;
 		if (wall_text != 0 || attach_files != 0) {
@@ -1321,7 +1327,7 @@ var wall = {
 			Box.Close('all_videos', 1);
 			res_attach_id = 'video_' + attach_id;
 			aPslit = action_url.split('|');
-			action_url = action_url.replace('http://' + location.host + '/uploads/videos/' + aPslit[2] + '/', '');
+			action_url = action_url.replace('https://' + location.host + '/uploads/videos/' + aPslit[2] + '/', '');
 			$('#attach_files').append('<span id="attach_file_' + res_attach_id + '" class="attach_file"><div class="wall_attach_photo fl_l"><div class="wall_attach_del" onMouseOver="myhtml.title(\'' + res_attach_id + '\', \'' + lang_wall_no_atttach + '\', \'wall_video_\')" onMouseOut="myhtml.title_close(\'' + res_attach_id + '\')" onClick="wall.attach_delete(\'' + res_attach_id + '\', \'video|' + action_url + '||\')" id="wall_video_' + res_attach_id + '"></div><img src="' + data + '" alt="" /></div></span>');
 			$('#vaLattach_files').val($('#vaLattach_files').val() + 'video|' + action_url + '||');
 		}
@@ -1405,17 +1411,19 @@ var wall = {
 	},
 	CheckLinkText: function(val, f) {
 		if (!$('#attach_lnk_stared').val()) {
-			matches = val.split('http://');
+			matches = val.split('https://');
 			url = matches[1].split('\r');
-			if (!url[1]) url = matches[1].split(' ');
-			if (val == 'http://' + url[0] && f) fast_check = 1;
+			if (!url[1])
+				url = matches[1].split(' ');
+			if (val == 'https://' + url[0] && f)
+				fast_check = 1;
 			if (url[1] || fast_check) {
 				rUrl = url[0].split(' ');
 				$('#attach_block_lnk').show();
 				$('#teck_link_attach').val(rUrl[0]);
-				txurl = rUrl[0].replace('http://', '');
+				txurl = rUrl[0].replace('https://', '');
 				spurl = txurl.split('/');
-				$('#attatch_link_url').text(spurl[0]).attr('href', '/away.php?url=http://' + rUrl[0]);
+				$('#attatch_link_url').text(spurl[0]).attr('href', '/away.php?url=https://' + rUrl[0]);
 				$('#attach_lnk_stared').val('started');
 				$.post('/index.php?go=wall&act=parse_link', {
 					lnk: rUrl[0]
@@ -1430,7 +1438,7 @@ var wall = {
 					if (row[2] && d != 1) $('#attatch_link_img').attr('src', row[2]).show();
 					if (!row[1]) row[1] = '0';
 					if (d != 1) {
-						$('#vaLattach_files').val($('#vaLattach_files').val() + 'link|http://' + rUrl[0] + '|' + row[0] + '|' + row[1] + '|' + row[2] + '||');
+						$('#vaLattach_files').val($('#vaLattach_files').val() + 'link|https://' + rUrl[0] + '|' + row[0] + '|' + row[1] + '|' + row[2] + '||');
 						$('#urlParseImgs').text(row[3]);
 					}
 				});
@@ -1445,7 +1453,7 @@ var wall = {
 		url_next_id++;
 	},
 	RemoveAttachLnk: function() {
-		delstr = 'link|http://' + $('#teck_link_attach').val() + '|' + $('#attatch_link_title').html() + '|' + $('#attatch_link_descr').html() + '|' + $('#attatch_link_img').attr('src') + '||';
+		delstr = 'link|https://' + $('#teck_link_attach').val() + '|' + $('#attatch_link_title').html() + '|' + $('#attatch_link_descr').html() + '|' + $('#attatch_link_img').attr('src') + '||';
 		$('#vaLattach_files').val($('#vaLattach_files').val().replace(delstr, ''));
 		$('#attach_lnk_stared').val('');
 		$('#attach_block_lnk').hide();
@@ -1614,7 +1622,7 @@ var gStatus = {
 		}, 2500);
 	},
 	startTell: function() {
-		for_user_id = location.href.split('http://' + location.host + '/u');
+		for_user_id = location.href.split('https://' + location.host + '/u');
 		text = $('#status_text').val();
 		tell_friends = $('#tell_friends').val();
 		if (tell_friends) {
@@ -2254,7 +2262,7 @@ var groups = {
 		});
 	},
 	addadmin: function(id) {
-		var new_admin_id = $('#new_admin_id').val().replace('http://udinbala.com/u', '');
+		var new_admin_id = $('#new_admin_id').val().replace('https://udinbala.com/u', '');
 		var check_adm = $('#admin' + new_admin_id).text();
 		if (new_admin_id && !check_adm) {
 			Box.Page('/index.php?go=groups&act=new_admin', 'new_admin_id=' + new_admin_id, 'new_admin_id', 400, 'Назначение руководителя', 'Закрыть', 'Назначить руководителем', 'groups.send_new_admin(' + id + ', ' + new_admin_id + ')', 130, 0, 0, 0, 0, 0);
@@ -2466,7 +2474,7 @@ var groups = {
 		$('#video_attach_lnk').focus();
 	},
 	wall_video_add_select: function() {
-		var video_attach_lnk = $('#video_attach_lnk').val().replace('http://' + location.host + '/video', '');
+		var video_attach_lnk = $('#video_attach_lnk').val().replace('https://' + location.host + '/video', '');
 		var data = video_attach_lnk.split('_');
 		if (video_attach_lnk != 0) {
 			$('#box_loading').show();
@@ -2686,7 +2694,7 @@ var audio = {
 		first = f;
 		$('.js_titleRemove').remove();
 		Box.Close();
-		Box.Show('addaudio', 510, lang_audio_add, '<div class="videos_pad"><div class="buttonsprofile albumsbuttonsprofile buttonsprofileSecond" style="height:22px;margin-bottom:20px;margin-top:-5px"><div class="buttonsprofileSec cursor_pointer"><a><div><b>По ссылке</b></div></a></div><a class="cursor_pointer" onClick="audio.addBoxComp()"><div><b>С компьютера</b></div></a></div><div class="videos_text">Вставьте ссылку на mp3 файл</div><input type="text" class="videos_input" id="audio_lnk" style="margin-top:5px" /><span id="vi_info">Например: <b>http://music.com/uploads/files/audio/2012/faxo_-_kalp.mp3</b></span></div>', lang_box_canсel, lang_album_create, 'audio.send()', 0, 0, 1, 1);
+		Box.Show('addaudio', 510, lang_audio_add, '<div class="videos_pad"><div class="buttonsprofile albumsbuttonsprofile buttonsprofileSecond" style="height:22px;margin-bottom:20px;margin-top:-5px"><div class="buttonsprofileSec cursor_pointer"><a><div><b>По ссылке</b></div></a></div><a class="cursor_pointer" onClick="audio.addBoxComp()"><div><b>С компьютера</b></div></a></div><div class="videos_text">Вставьте ссылку на mp3 файл</div><input type="text" class="videos_input" id="audio_lnk" style="margin-top:5px" /><span id="vi_info">Например: <b>https://music.com/uploads/files/audio/2012/faxo_-_kalp.mp3</b></span></div>', lang_box_canсel, lang_album_create, 'audio.send()', 0, 0, 1, 1);
 		$('#audio_lnk').focus();
 	},
 	addBoxComp: function() {
@@ -3721,7 +3729,7 @@ var photoeditor = {
 	start: function(img, id, h) {
 		var height = parseInt(h) + 180;
 		$('#ladybug_ant' + id).hide();
-		$('#frameedito' + id).html('<iframe src="http://pixlr.com/express/?s=c&image=' + escape(img) + '&title=photo&target=' + escape('http://' + location.host + '/index.php?go=photo_editor&pid=' + id) + '&exit=' + escape('http://' + location.host + '/index.php?go=photo_editor&act=close&image=' + img) + '" width="770" height="' + height + '" frameborder="0"></iframe>');
+		$('#frameedito' + id).html('<iframe src="https://pixlr.com/express/?s=c&image=' + escape(img) + '&title=photo&target=' + escape('https://' + location.host + '/index.php?go=photo_editor&pid=' + id) + '&exit=' + escape('https://' + location.host + '/index.php?go=photo_editor&act=close&image=' + img) + '" width="770" height="' + height + '" frameborder="0"></iframe>');
 	}
 }
 //APPS
@@ -4046,7 +4054,9 @@ var imRoom = {
 					if (d.response) {
 						viiBox.clos('createRoom', 1);
 						Page.Go('/messages#c' + d.response);
-					} else if (d.error) alert(d.error);
+					} else
+						if (d.error)
+							addAllErr(d.error);
 				});
 			});
 		} else title.focus();

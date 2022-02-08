@@ -1,22 +1,18 @@
 <?php
-/* 
-	Appointment: Выделить человека на фото
-	File: distinguish.php 
-	Author: f0rt1 
-	Engine: Vii Engine
-	Copyright: NiceWeb Group (с) 2011
-	e-mail: niceweb@i.ua
-	URL: http://www.niceweb.in.ua/
-	ICQ: 427-825-959
-	Данный код защищен авторскими правами
-*/
+/*
+ *   (c) Semen Alekseev
+ *
+ *  For the full copyright and license information, please view the LICENSE
+ *   file that was distributed with this source code.
+ *
+ */
 if(!defined('MOZG'))
 	die('Hacking attempt!');
 
 NoAjaxQuery();
 
 if($logged){
-	$act = $_GET['act'];
+    $act = $_GET['act'] ?? '';
 	$user_id = $user_info['user_id'];
 	switch($act){
 	
@@ -28,7 +24,7 @@ if($logged){
 			$i_height = intval($_POST['i_height']); if($i_height < 0) $i_height = 0;
 			$photo_id = intval($_POST['photo_id']);
 			$muser_id = intval($_POST['user_id']);
-			$mphoto_name = ajax_utf8(strip_data(textFilter($_POST['user_name'], false, true)));
+			$mphoto_name = strip_data(textFilter($_POST['user_name'], 25000, true));
 			$msettings_pos = $i_left.", ".$i_top.", ".$i_width.", ".$i_height;
 			if($user_id == $muser_id) $approve = 1;
 			else $approve = 0;
@@ -58,7 +54,7 @@ if($logged){
 		case "mark_del":
 			$photo_id = intval($_POST['photo_id']);
 			$muser_id = intval($_POST['user_id']);
-			$mphoto_name = ajax_utf8(strip_data(textFilter($_POST['user_name'], false, true)));
+			$mphoto_name = strip_data(textFilter($_POST['user_name'], 25000, true));
 			$row = $db->super_query("SELECT user_id FROM `".PREFIX."_photos` WHERE id = '".$photo_id."'");
 			
 			if($mphoto_name AND $muser_id == 0)

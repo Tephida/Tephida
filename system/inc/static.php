@@ -1,15 +1,11 @@
 <?php
-/* 
-	Appointment: Статические страницы
-	File: static.php
-	Author: f0rt1 
-	Engine: Vee Engine
-	Copyright: NiceWeb Group (с) 2011
-	e-mail: niceweb@i.ua
-	URL: http://www.niceweb.in.ua/
-	ICQ: 427-825-959
-	Данный код защищен авторскими правами
-*/
+/*
+ *   (c) Semen Alekseev
+ *
+ *  For the full copyright and license information, please view the LICENSE
+ *   file that was distributed with this source code.
+ *
+ */
 if(!defined('MOZG'))
 	die('Hacking attempt!');
 
@@ -19,8 +15,8 @@ if(isset($_POST['save'])){
 	include_once ENGINE_DIR.'/classes/parse.php';
 	$parse = new parse();
 			
-	$title = textFilter($_POST['title'], false, true);
-	$alt_name = totranslit($_POST['alt_name']);
+	$title = textFilter($_POST['title'], 25000, true);
+	$alt_name = to_translit($_POST['alt_name']);
 	$text = $parse->BBparse(textFilter($_POST['text']));
 	
 	if(isset($title) AND !empty($title) AND isset($text) AND !empty($text) AND isset($alt_name) AND !empty($alt_name)){
@@ -48,8 +44,8 @@ if(isset($_POST['save'])){
 				include_once ENGINE_DIR.'/classes/parse.php';
 				$parse = new parse();
 						
-				$title = textFilter($_POST['title'], false, true);
-				$alt_name = totranslit($_POST['alt_name']);
+				$title = textFilter($_POST['title'], 25000, true);
+				$alt_name = to_translit($_POST['alt_name']);
 				$text = $parse->BBparse(textFilter($_POST['text']));
 				
 				if(isset($title) AND !empty($title) AND isset($text) AND !empty($text) AND isset($alt_name) AND !empty($alt_name)){

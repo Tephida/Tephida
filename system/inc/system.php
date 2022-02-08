@@ -1,15 +1,11 @@
 <?php
-/* 
-	Appointment: Настройки системы
-	File: system.php
-	Author: f0rt1 
-	Engine: Vee Engine
-	Copyright: NiceWeb Group (с) 2011
-	e-mail: niceweb@i.ua
-	URL: http://www.niceweb.in.ua/
-	ICQ: 427-825-959
-	Данный код защищен авторскими правами
-*/
+/*
+ *   (c) Semen Alekseev
+ *
+ *  For the full copyright and license information, please view the LICENSE
+ *   file that was distributed with this source code.
+ *
+ */
 if(!defined('MOZG'))
 	die('Hacking attempt!');
 
@@ -52,7 +48,10 @@ if(isset($_POST['saveconf'])){
 	fwrite($handler, ");\n\n?>" );
 	fclose($handler);
 	
-	msgbox('Настройки сохранены', 'Настройки системы были успешно сохранены!', '?mod=system');
+//	msgbox('Настройки сохранены', 'Настройки системы были успешно сохранены!', '?mod=system');
+
+    msgbox('', 'Настройки системы были успешно сохранены!', 'info');
+    echo $tpl->result['info'];
 } else {
 	echoheader();
 	echohtmlstart('Общие настройки');

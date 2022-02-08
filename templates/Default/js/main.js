@@ -1,3 +1,11 @@
+/*
+ *   (c) Semen Alekseev
+ *
+ *  For the full copyright and license information, please view the LICENSE
+ *   file that was distributed with this source code.
+ *
+ */
+
 var uagent = navigator.userAgent.toLowerCase();
 var is_safari = ((uagent.indexOf('safari') != -1) || (navigator.vendor == "Apple Computer, Inc."));
 var is_ie = ((uagent.indexOf('msie') != -1) && (!is_opera) && (!is_safari) && (!is_webtv));
@@ -98,7 +106,7 @@ var Page = {
 		}
 	},
 	Go: function(h) {
-		hh = (location.href).replace('http://' + location.host + '/', '');
+		hh = (location.href).replace('https://' + location.host + '/', '');
 		if (hh == 'my_stats' || ((hh).substring(0, 5)) == 'stats') {
 			window.location.href = h;
 			return false;

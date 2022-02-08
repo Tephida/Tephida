@@ -2,29 +2,26 @@ DirectoryIndex index.php
 
 RewriteEngine On
 
-# Отключаем вывод ошибок пользователям
-	php_flag display_errors on
-
-# Регистрация
+# Р РµРіРёСЃС‚СЂР°С†РёСЏ
 	RewriteRule ^reg/(/?)+$ index.php?go=register [L]
 	
-# Отзывы
+# РћС‚Р·С‹РІС‹
 	RewriteRule ^reviews(/?)+$ index.php?go=reviews [L]
 	
-# Статистика страницы пользователя
+# РЎС‚Р°С‚РёСЃС‚РёРєР° СЃС‚СЂР°РЅРёС†С‹ РїРѕР»СЊР·РѕРІР°С‚РµР»СЏ
 	RewriteRule ^my_stats(/?)+$ index.php?go=my_stats [L]
 	
-# Страница юзера
+# РЎС‚СЂР°РЅРёС†Р° СЋР·РµСЂР°
 	RewriteRule ^u([0-9]+)(/?)+$ index.php?go=profile&id=$1 [L]
 	RewriteRule ^u([0-9]+)after(/?)+$ index.php?go=profile&id=$1&after=1 [L]
 	
-# Редактирование страницы
+# Р РµРґР°РєС‚РёСЂРѕРІР°РЅРёРµ СЃС‚СЂР°РЅРёС†С‹
 	RewriteRule ^editmypage(/?)+$ index.php?go=editprofile [L]
 	RewriteRule ^editmypage/contact(/?)+$ index.php?go=editprofile&act=contact [L]
 	RewriteRule ^editmypage/interests(/?)+$ index.php?go=editprofile&act=interests [L]
 	RewriteRule ^editmypage/all(/?)+$ index.php?go=editprofile&act=all [L]
 	
-# Альбомы
+# РђР»СЊР±РѕРјС‹
 	RewriteRule ^albums/([0-9]+)(/?)+$ index.php?go=albums&uid=$1 [L]
 	RewriteRule ^albums/add/([0-9]+)(/?)+$ index.php?go=albums&act=add&aid=$1 [L]
 	RewriteRule ^albums/view/([0-9]+)(/?)+$ index.php?go=albums&act=view&aid=$1 [L]
@@ -37,7 +34,7 @@ RewriteEngine On
 	RewriteRule ^albums/newphotos(/?)+$ index.php?go=albums&act=new_photos [L]
 	RewriteRule ^albums/newphotos/([0-9]+)(/?)+$ index.php?go=albums&act=new_photos&page=$1 [L]
 	
-# Просмотр фотографий
+# РџСЂРѕСЃРјРѕС‚СЂ С„РѕС‚РѕРіСЂР°С„РёР№
 	RewriteRule ^photo([0-9]+)_([0-9]+)_sec=user_page(/?)+$ index.php?go=profile&id=$1 [L]
 	RewriteRule ^photo([0-9]+)_([0-9]+)_sec=all_comments(/?)+$ index.php?go=albums&act=all_comments&uid=$1 [L]
 	RewriteRule ^photo([0-9]+)_([0-9]+)_sec=wall/fuser=([0-9]+)(/?)+$ index.php?go=profile&id=$3 [L]
@@ -48,7 +45,7 @@ RewriteEngine On
 	RewriteRule ^photo([0-9]+)_([0-9]+)_([0-9]+)_sec=album_comments(/?)+$ index.php?go=albums&act=all_comments&aid=$3 [L]
 	RewriteRule ^photo([0-9]+)_([0-9]+)_([0-9]+)_sec=newphotos(/?)+$ index.php?go=albums&act=new_photos [L]
 
-# Друзья
+# Р”СЂСѓР·СЊСЏ
 	RewriteRule ^friedns/send_demand/([0-9]+)(/?)+$ index.php?go=friends&act=send_demand&for_user_id=$1 [L]
 	RewriteRule ^friedns/take/([0-9]+)(/?)+$ index.php?go=friends&act=take&take_user_id=$1 [L]
 	RewriteRule ^friedns/reject/([0-9]+)(/?)+$ index.php?go=friends&act=reject&reject_user_id=$1 [L]
@@ -62,11 +59,11 @@ RewriteEngine On
 	RewriteRule ^friends/common/([0-9]+)(/?)+$ index.php?go=friends&act=common&uid=$1 [L]
 	RewriteRule ^friends/common/([0-9]+)/page/([0-9]+)(/?)+$ index.php?go=friends&act=common&uid=$1&page=$2 [L]
 	
-# Закладки
+# Р—Р°РєР»Р°РґРєРё
 	RewriteRule ^fave(/?)+$ index.php?go=fave [L]
 	RewriteRule ^fave/page/([0-9]+)(/?)+$ index.php?go=fave&page=$1 [L]	
 
-# Заметки
+# Р—Р°РјРµС‚РєРё
 	RewriteRule ^notes(/?)+$ index.php?go=notes [L]
 	RewriteRule ^notes/add(/?)+$ index.php?go=notes&act=add [L]
 	RewriteRule ^notes/edit/([0-9]+)(/?)+$ index.php?go=notes&act=edit&note_id=$1 [L]
@@ -74,7 +71,7 @@ RewriteEngine On
 	RewriteRule ^notes/([0-9]+)(/?)+$ index.php?go=notes&get_user_id=$1 [L]
 	RewriteRule ^notes/([0-9]+)/page/([0-9]+)(/?)+$ index.php?go=notes&get_user_id=$1&page=$2 [L]
 	
-# Видео
+# Р’РёРґРµРѕ
 	RewriteRule ^videos(/?)+$ index.php?go=videos [L]
 	RewriteRule ^videos/([0-9]+)(/?)+$ index.php?go=videos&get_user_id=$1 [L]
 	RewriteRule ^videos/([0-9]+)/page/([0-9]+)(/?)+$ index.php?go=videos&get_user_id=$1&page=$2 [L]
@@ -85,32 +82,32 @@ RewriteEngine On
 	RewriteRule ^video([0-9]+)_([0-9]+)_sec=news(/?)+$ index.php?go=news [L]
 	RewriteRule ^video([0-9]+)_([0-9]+)_sec=msg/id=([0-9]+)(/?)+$ index.php?go=messages&act=review&mid=$3 [L]
 	
-# Поиск
+# РџРѕРёСЃРє
 	RewriteRule ^search/query=(.*)&type=([0-3]+)(/?)+$ index.php?go=search&query=$1&type=$2 [L]
 	
-# Новости
+# РќРѕРІРѕСЃС‚Рё
 	RewriteRule ^news(/?)+$ index.php?go=news [L]
 	RewriteRule ^news/updates(/?)+$ index.php?go=news&type=updates [L]
 	RewriteRule ^news/photos(/?)+$ index.php?go=news&type=photos [L]
 	RewriteRule ^news/videos(/?)+$ index.php?go=news&type=videos [L]
 	RewriteRule ^news/notifications(/?)+$ index.php?go=news&type=notifications [L]
 	
-# Сообщения
+# РЎРѕРѕР±С‰РµРЅРёСЏ
 	RewriteRule ^messages(/?)+$ index.php?go=im [L]
 	
-# Стена
+# РЎС‚РµРЅР°
 	RewriteRule ^wall([0-9]+)(/?)+$ index.php?go=wall&uid=$1&type=page [L]
 	RewriteRule ^wall([0-9]+)/page/([0-9]+)(/?)+$ index.php?go=wall&uid=$1&type=page&page=$2 [L]
 	RewriteRule ^wall([0-9]+)_sec=own(/?)+$ index.php?go=wall&uid=$1&type=own [L]
 	RewriteRule ^wall([0-9]+)_sec=own&page=([0-9]+)(/?)+$ index.php?go=wall&uid=$1&type=own&page=$2 [L]
 	RewriteRule ^wall([0-9]+)_([0-9]+)(/?)+$ index.php?go=wall&uid=$1&rid=$2&type=record [L]
 	
-# Настройки
+# РќР°СЃС‚СЂРѕР№РєРё
 	RewriteRule ^settings(/?)+$ index.php?go=settings [L]
 	RewriteRule ^settings/privacy(/?)+$ index.php?go=settings&act=privacy [L]
 	RewriteRule ^settings/blacklist(/?)+$ index.php?go=settings&act=blacklist [L]
 	
-# Помощь
+# РџРѕРјРѕС‰СЊ
 	RewriteCond %{QUERY_STRING} ^act=([a-z]+)
 	RewriteRule ^(.*)support $1index.php?go=support [QSA,L]
 
@@ -118,12 +115,12 @@ RewriteEngine On
 	RewriteRule ^(.*)support $1index.php?go=support [QSA,L]
 	RewriteRule ^support(/?)+$ index.php?go=support [L]
 	
-# Воостановление пароля
+# Р’РѕРѕСЃС‚Р°РЅРѕРІР»РµРЅРёРµ РїР°СЂРѕР»СЏ
 	RewriteCond %{QUERY_STRING} ^act=([a-z]+)
 	RewriteRule ^(.*)restore $1index.php?go=restore [QSA,L]
 	RewriteRule ^restore(/?)+$ index.php?go=restore [L]
 	
-# Блог сайта
+# Р‘Р»РѕРі СЃР°Р№С‚Р°
 	RewriteCond %{QUERY_STRING} ^act=([a-z]+)
 	RewriteRule ^(.*)blog $1index.php?go=blog [QSA,L]
 	
@@ -136,10 +133,10 @@ RewriteEngine On
 	RewriteRule ^(.*)balance $1index.php?go=balance [QSA,L]
 	RewriteRule ^balance(/?)+$ index.php?go=balance [L]
 	
-# Реф. ссылка на регистрацию
+# Р РµС„. СЃСЃС‹Р»РєР° РЅР° СЂРµРіРёСЃС‚СЂР°С†РёСЋ
 	RewriteRule ^reg([0-9]+)(/?)+$ index.php?reg=$1 [L]
 	
-# Подарки
+# РџРѕРґР°СЂРєРё
 	RewriteCond %{QUERY_STRING} ^new=([0-9]+)
 	RewriteRule ^(.*)gifts([0-9]+) $1index.php?go=gifts&uid=$2 [QSA,L]
 	
@@ -148,11 +145,11 @@ RewriteEngine On
 	
 	RewriteRule ^gifts([0-9]+)(/?)+$ index.php?go=gifts&uid=$1 [L]
 
-# Статистика сообщетсв
+# РЎС‚Р°С‚РёСЃС‚РёРєР° СЃРѕРѕР±С‰РµС‚СЃРІ
 	RewriteCond %{QUERY_STRING} ^gid=([0-9]+)
 	RewriteRule ^(.*)stats $1index.php?go=stats_groups [QSA,L]
 	
-# Сообщества
+# РЎРѕРѕР±С‰РµСЃС‚РІР°
 	RewriteCond %{QUERY_STRING} ^act=([a-z]+)
 	RewriteRule ^(.*)groups $1index.php?go=groups [QSA,L]
 
@@ -162,24 +159,24 @@ RewriteEngine On
 	
 	RewriteRule ^wallgroups([0-9]+)_([0-9]+)(/?)+$ index.php?go=groups&act=wallgroups&pid=$1&id=$2 [L]
 	
-# Музыка
+# РњСѓР·С‹РєР°
 	RewriteRule ^audio(/?)+$ index.php?go=audio [L]
 	RewriteRule ^audio([0-9]+)(/?)+$ index.php?go=audio&uid=$1 [L]
 
-# Документы
+# Р”РѕРєСѓРјРµРЅС‚С‹
 	RewriteRule ^docs(/?)+$ index.php?go=doc&act=list [L]
 
-# Игры
+# РРіСЂС‹
 	RewriteRule ^apps(/?)+$ index.php?go=apps [L]
 	RewriteRule ^app([0-9]+)(/?)+$ index.php?go=apps&act=start&id=$1 [L]
 	
-# Сообщества -> Публичные страницы -> Аудио
+# РЎРѕРѕР±С‰РµСЃС‚РІР° -> РџСѓР±Р»РёС‡РЅС‹Рµ СЃС‚СЂР°РЅРёС†С‹ -> РђСѓРґРёРѕ
 	RewriteRule ^public/audio([0-9]+)(/?)+$ index.php?go=public_audio&pid=$1 [L]
 
-# Сообщества -> Публичные страницы -> Видео
+# РЎРѕРѕР±С‰РµСЃС‚РІР° -> РџСѓР±Р»РёС‡РЅС‹Рµ СЃС‚СЂР°РЅРёС†С‹ -> Р’РёРґРµРѕ
 	RewriteRule ^public/videos([0-9]+)(/?)+$ index.php?go=public_videos&pid=$1 [L]
 	
-# Сообщества -> Публичные страницы -> Обсуждения
+# РЎРѕРѕР±С‰РµСЃС‚РІР° -> РџСѓР±Р»РёС‡РЅС‹Рµ СЃС‚СЂР°РЅРёС†С‹ -> РћР±СЃСѓР¶РґРµРЅРёСЏ
 	RewriteCond %{QUERY_STRING} ^act=([a-z]+)
 	RewriteRule ^(.*)forum([0-9]+) $1index.php?go=groups_forum&public_id=$2 [QSA,L]
 
@@ -187,13 +184,13 @@ RewriteEngine On
 	RewriteRule ^(.*)forum([0-9]+) $1index.php?go=groups_forum&public_id=$2 [QSA,L]
 	RewriteRule ^forum([0-9]+)(/?)+$ index.php?go=groups_forum&public_id=$1 [L]
 	
-# Сообщества -> Публичные страницы
+# РЎРѕРѕР±С‰РµСЃС‚РІР° -> РџСѓР±Р»РёС‡РЅС‹Рµ СЃС‚СЂР°РЅРёС†С‹
 	RewriteCond %{QUERY_STRING} ^act=([a-z]+)
 	RewriteRule ^public([0-9]+)(/?)+$ index.php?go=public&pid=$1 [L]
 	
 	RewriteRule ^public([0-9]+)(/?)+$ index.php?go=public&pid=$1 [L]
 	RewriteRule ^([^.]+)/?$ index.php?go=public&get_adres=$1 [L]
 
-# Стат страницы
+# РЎС‚Р°С‚ СЃС‚СЂР°РЅРёС†С‹
 	RewriteCond %{REQUEST_FILENAME} !-f
 	RewriteRule ^([^/]+).html$ index.php?go=static&page=$1 [L]

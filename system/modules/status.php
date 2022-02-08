@@ -1,15 +1,11 @@
 <?php
-/* 
-	Appointment: Статус
-	File: status.php 
-	Author: f0rt1 
-	Engine: Vii Engine
-	Copyright: NiceWeb Group (с) 2011
-	e-mail: niceweb@i.ua
-	URL: http://www.niceweb.in.ua/
-	ICQ: 427-825-959
-	Данный код защищен авторскими правами
-*/
+/*
+ *   (c) Semen Alekseev
+ *
+ *  For the full copyright and license information, please view the LICENSE
+ *   file that was distributed with this source code.
+ *
+ */
 if(!defined('MOZG'))
 	die('Hacking attempt!');
 
@@ -18,7 +14,7 @@ NoAjaxQuery();
 if($logged){
 
 	$user_id = $user_info['user_id'];
-	$text = ajax_utf8(textFilter($_POST['text'], false, true));
+	$text = textFilter($_POST['text'], 25000, true);
 	$public_id = intval($_POST['public_id']);
 	
 	//Если обновляем статус группы
@@ -44,8 +40,7 @@ if($logged){
 		
 	}
 	
-	echo stripslashes(stripslashes(textFilter(ajax_utf8($_POST['text']))));
+	echo stripslashes(stripslashes(textFilter($_POST['text'])));
 }
 
 die();
-?>

@@ -1,3 +1,11 @@
+/*
+ *   (c) Semen Alekseev
+ *
+ *  For the full copyright and license information, please view the LICENSE
+ *   file that was distributed with this source code.
+ *
+ */
+
 jQuery.uiTableFilter = function (jq, phrase, column, ifHidden) {
     var new_hidden = false;
     if (this.last_phrase === phrase) return false;

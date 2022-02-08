@@ -1,20 +1,16 @@
 <?php
-/* 
-	Appointment: Документы
-	File: doc.php 
-	Author: f0rt1 
-	Engine: Vii Engine
-	Copyright: NiceWeb Group (с) 2011
-	e-mail: niceweb@i.ua
-	URL: http://www.niceweb.in.ua/
-	ICQ: 427-825-959
-	Данный код защищен авторскими правами
-*/
+/*
+ *   (c) Semen Alekseev
+ *
+ *  For the full copyright and license information, please view the LICENSE
+ *   file that was distributed with this source code.
+ *
+ */
 if(!defined('MOZG'))
 	die('Hacking attempt!');
 
 if($logged){
-	$act = $_GET['act'];
+    $act = $_GET['act'] ?? '';
 	$user_id = $user_info['user_id'];
 	
 	switch($act){
@@ -67,7 +63,7 @@ if($logged){
 						}
 						
 						$dsize = formatsize($file_size);
-						$file_name = textFilter($file_name, false, true);
+						$file_name = textFilter($file_name, 25000, true);
 						
 						//Обновляем кол-во док. у юзера
 						$db->query("UPDATE `".PREFIX."_users` SET user_doc_num = user_doc_num+1 WHERE user_id = '{$user_id}'");
@@ -128,7 +124,7 @@ if($logged){
 			NoAjaxQuery();
 			
 			$did = intval($_POST['did']);
-			$name = ajax_utf8(textFilter($_POST['name'], false, true));
+			$name = textFilter($_POST['name'], 25000, true);
 			$strLn = strlen($name);
 			if($strLn > 50)
 				$name = substr($name, 0, 50);

@@ -1,26 +1,21 @@
 <?php
-/* 
-	Appointment: Группы
-	File: groups.php 
-	Author: f0rt1 
-	Engine: Vii Engine
-	Copyright: NiceWeb Group (с) 2011
-	e-mail: niceweb@i.ua
-	URL: http://www.niceweb.in.ua/
-	ICQ: 427-825-959
-	Данный код защищен авторскими правами
-*/
+/*
+ *   (c) Semen Alekseev
+ *
+ *  For the full copyright and license information, please view the LICENSE
+ *   file that was distributed with this source code.
+ *
+ */
 if(!defined('MOZG'))
 	die('Hacking attempt!');
 
-if($ajax == 'yes')
 	NoAjaxQuery();
 
 if($logged){
-	$act = $_GET['act'];
+    $act = $_GET['act'] ?? '';
 	$user_id = $user_info['user_id'];
 	
-	if($_GET['page'] > 0) $page = intval($_GET['page']); else $page = 1;
+	if(isset($_GET['page']) AND $_GET['page'] > 0) $page = intval($_GET['page']); else $page = 1;
 	$gcount = 20;
 	$limit_page = ($page-1)*$gcount;
 	
@@ -31,10 +26,11 @@ if($logged){
 		//################### Отправка сообщества БД ###################//
 		case "send":
 			NoAjaxQuery();
-			$title = ajax_utf8(textFilter($_POST['title'], false, true));
+            $title = $_POST['title'] ?? null;
+			$title = textFilter($title, 60, true);
 			AntiSpam('groups');
 			
-			if(isset($title) AND !empty($title)){
+			if(!empty($title)){
 				
 				AntiSpamLogInsert('groups');
 				$db->query("INSERT INTO `".PREFIX."_communities` SET title = '{$title}', type = 1, traf = 1, ulist = '|{$user_id}|', date = NOW(), admin = 'u{$user_id}|', real_admin = '{$user_id}', comments = 1");
@@ -43,10 +39,10 @@ if($logged){
 				$db->query("UPDATE `".PREFIX."_users` SET user_public_num = user_public_num+1 WHERE user_id = '{$user_id}'");
 				
 				@mkdir(ROOT_DIR.'/uploads/groups/'.$cid.'/', 0777);
-				@chmod(ROOT_DIR.'/uploads/groups/'.$cid.'/', 0777);
+//				@chmod(ROOT_DIR.'/uploads/groups/'.$cid.'/', 0777);
 				
 				@mkdir(ROOT_DIR.'/uploads/groups/'.$cid.'/photos/', 0777);
-				@chmod(ROOT_DIR.'/uploads/groups/'.$cid.'/photos/', 0777);
+//				@chmod(ROOT_DIR.'/uploads/groups/'.$cid.'/photos/', 0777);
 				
 				mozg_mass_clear_cache_file("user_{$user_id}/profile_{$user_id}|groups/{$user_id}");
 				
@@ -122,7 +118,7 @@ if($logged){
 				
 				//Получаем данные о фотографии
 				$image_tmp = $_FILES['uploadfile']['tmp_name'];
-				$image_name = totranslit($_FILES['uploadfile']['name']); // оригинальное название для оприделения формата
+				$image_name = to_translit($_FILES['uploadfile']['name']); // оригинальное название для оприделения формата
 				$image_rename = substr(md5($server_time+rand(1,100000)), 0, 20); // имя фотографии
 				$image_size = $_FILES['uploadfile']['size']; // размер файла
 				$type = end(explode(".", $image_name)); // формат файла
@@ -280,9 +276,9 @@ if($logged){
 			NoAjaxQuery();
 			$id = intval($_POST['id']);
 			$upage = intval($_POST['upage']);
-			$office = ajax_utf8(textFilter($_POST['office'], false, true));
-			$phone = ajax_utf8(textFilter($_POST['phone'], false, true));
-			$email = ajax_utf8(textFilter($_POST['email'], false, true));
+			$office = textFilter($_POST['office'], 25000, true);
+			$phone = textFilter($_POST['phone'], 25000, true);
+			$email = textFilter($_POST['email'], 25000, true);
 			
 			//Проверка на то, что действиие делает админ
 			$checkAdmin = $db->super_query("SELECT admin FROM `".PREFIX."_communities` WHERE id = '{$id}'");
@@ -336,9 +332,9 @@ if($logged){
 			NoAjaxQuery();
 			$id = intval($_POST['id']);
 			$upage = intval($_POST['uid']);
-			$office = ajax_utf8(textFilter($_POST['office'], false, true));
-			$phone = ajax_utf8(textFilter($_POST['phone'], false, true));
-			$email = ajax_utf8(textFilter($_POST['email'], false, true));
+			$office = textFilter($_POST['office'], 25000, true);
+			$phone = textFilter($_POST['phone'], 25000, true);
+			$email = textFilter($_POST['email'], 25000, true);
 			
 			//Проверка на то, что действиие делает админ
 			$checkAdmin = $db->super_query("SELECT admin FROM `".PREFIX."_communities` WHERE id = '{$id}'");
@@ -401,12 +397,12 @@ if($logged){
 			$id = intval($_POST['id']);
 			$comments = intval($_POST['comments']);
 			$discussion = intval($_POST['discussion']);
-			$title = ajax_utf8(textFilter($_POST['title'], false, true));
-			$adres_page = ajax_utf8(strtolower(textFilter($_POST['adres_page'], false, true)));
-			$descr = ajax_utf8(textFilter($_POST['descr'], 5000));
+			$title = textFilter($_POST['title'], 25000, true);
+			$adres_page = strtolower(textFilter($_POST['adres_page'], 25000, true));
+			$descr = textFilter($_POST['descr'], 5000);
 			
 			$_POST['web'] = str_replace(array('"', "'"), '', $_POST['web']);
-			$web = ajax_utf8(textFilter($_POST['web'], false, true));
+			$web = textFilter($_POST['web'], 25000, true);
 			
 			if(!preg_match("/^[a-zA-Z0-9_-]+$/", $adres_page)) $adress_ok = false;
 			else $adress_ok = true;
@@ -485,8 +481,8 @@ if($logged){
 		case "wall_send":
 			NoAjaxQuery();
 			$id = intval($_POST['id']);
-			$wall_text = ajax_utf8(textFilter($_POST['wall_text']));
-			$attach_files = ajax_utf8(textFilter($_POST['attach_files'], false, true));
+			$wall_text = textFilter($_POST['wall_text']);
+			$attach_files = textFilter($_POST['attach_files'], 25000, true);
 			
 			//Проверка на админа
 			$row = $db->super_query("SELECT admin, del, ban FROM `".PREFIX."_communities` WHERE id = '{$id}'");
@@ -507,7 +503,7 @@ if($logged){
 								$rImgUrl = $attach_type[4];
 								$rImgUrl = str_replace("\\", "/", $rImgUrl);
 								$img_name_arr = explode(".", $rImgUrl);
-								$img_format = totranslit(end($img_name_arr));
+								$img_format = to_translit(end($img_name_arr));
 								$image_name = substr(md5($server_time.md5($rImgUrl)), 0, 15);
 										
 								//Разришенные форматы
@@ -546,8 +542,8 @@ if($logged){
 				$attach_files = str_replace(array('&amp;#124;', '&amp;raquo;', '&amp;quot;'), array('&#124;', '&raquo;', '&quot;'), $attach_files);
 							
 				//Голосование
-				$vote_title = ajax_utf8(textFilter($_POST['vote_title'], false, true));
-				$vote_answer_1 = ajax_utf8(textFilter($_POST['vote_answer_1'], false, true));
+				$vote_title = textFilter($_POST['vote_title'], 25000, true);
+				$vote_answer_1 = textFilter($_POST['vote_answer_1'], 25000, true);
 
 				$ansers_list = array();
 							
@@ -555,7 +551,7 @@ if($logged){
 								
 					for($vote_i = 1; $vote_i <= 10; $vote_i++){
 									
-						$vote_answer = ajax_utf8(textFilter($_POST['vote_answer_'.$vote_i], false, true));
+						$vote_answer = textFilter($_POST['vote_answer_'.$vote_i], 25000, true);
 						$vote_answer = str_replace('|', '&#124;', $vote_answer);
 									
 						if($vote_answer)
@@ -607,7 +603,7 @@ if($logged){
 			
 			$rec_id = intval($_POST['rec_id']);
 			$public_id = intval($_POST['public_id']);
-			$wall_text = ajax_utf8(textFilter($_POST['wall_text']));
+			$wall_text = textFilter($_POST['wall_text']);
 			$answer_comm_id = intval($_POST['answer_comm_id']);
 	
 			//Проверка на админа и проверяем включены ли комменты
@@ -1239,7 +1235,7 @@ if($logged){
 			
 				//Получаем данные о файле
 				$image_tmp = $_FILES['uploadfile']['tmp_name'];
-				$image_name = totranslit($_FILES['uploadfile']['name']); // оригинальное название для оприделения формата
+				$image_name = to_translit($_FILES['uploadfile']['name']); // оригинальное название для оприделения формата
 				$image_rename = substr(md5($server_time+rand(1,100000)), 0, 20); // имя файла
 				$image_size = $_FILES['uploadfile']['size']; // размер файла
 				$type = end(explode(".", $image_name)); // формат файла

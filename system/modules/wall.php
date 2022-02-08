@@ -1,20 +1,16 @@
 <?php
-/* 
-	Appointment: Стена
-	File: wall.php 
-	Author: f0rt1 
-	Engine: Vii Engine
-	Copyright: NiceWeb Group (с) 2011
-	e-mail: niceweb@i.ua
-	URL: http://www.niceweb.in.ua/
-	ICQ: 427-825-959
-	Данный код защищен авторскими правами
-*/
+/*
+ *   (c) Semen Alekseev
+ *
+ *  For the full copyright and license information, please view the LICENSE
+ *   file that was distributed with this source code.
+ *
+ */
 if(!defined('MOZG'))
 	die('Hacking attempt!');
 	
 if($logged){
-	$act = $_GET['act'];
+    $act = $_GET['act'] ?? '';
 	$user_id = $user_info['user_id'];
 	$limit_select = 10;
 	$limit_page = 0;
@@ -23,16 +19,18 @@ if($logged){
 	
 		//################### Добвление новой записи на стену ###################//
 		case "send":
-			NoAjaxQuery();
-			$wall_text = ajax_utf8(textFilter($_POST['wall_text']));
-			$attach_files = ajax_utf8(textFilter($_POST['attach_files'], false, true));
+//			NoAjaxQuery();
+			$wall_text = textFilter($_POST['wall_text']);
+			$attach_files = textFilter($_POST['attach_files'], 25000, true);
 			$for_user_id = intval($_POST['for_user_id']);
 			$fast_comm_id = intval($_POST['rid']);
 			$answer_comm_id = intval($_POST['answer_comm_id']);
 			$str_date = time();
 			
-			if(!$fast_comm_id) AntiSpam('wall');
-			else AntiSpam('comments');
+			if(!$fast_comm_id)
+                AntiSpam('wall');
+			else
+                AntiSpam('comments');
 			
 			//Проверка на наличии юзера которум отправляется запись
 			$check = $db->super_query("SELECT user_privacy, user_last_visit FROM `".PREFIX."_users` WHERE user_id = '{$for_user_id}'");
@@ -47,6 +45,9 @@ if($logged){
 					//Проверка естьли запрашиваемый юзер в друзьях у юзера который смотрит стр
 					if($user_privacy['val_wall2'] == 2 OR $user_privacy['val_wall1'] == 2 OR $user_privacy['val_wall3'] == 2 AND $user_id != $for_user_id)
 						$check_friend = CheckFriends($for_user_id);
+                    else{
+                        $check_friend = null;
+                    }
 
 					if(!$fast_comm_id){
 						if($user_privacy['val_wall2'] == 1 OR $user_privacy['val_wall2'] == 2 AND $check_friend OR $user_id == $for_user_id)
@@ -82,7 +83,7 @@ if($logged){
 										$rImgUrl = $attach_type[4];
 										$rImgUrl = str_replace("\\", "/", $rImgUrl);
 										$img_name_arr = explode(".", $rImgUrl);
-										$img_format = totranslit(end($img_name_arr));
+										$img_format = to_translit(end($img_name_arr));
 										$image_name = substr(md5($server_time.md5($rImgUrl)), 0, 15);
 										
 										//Разришенные форматы
@@ -121,8 +122,8 @@ if($logged){
 							$attach_files = str_replace(array('&amp;#124;', '&amp;raquo;', '&amp;quot;'), array('&#124;', '&raquo;', '&quot;'), $attach_files);
 							
 							//Голосование
-							$vote_title = ajax_utf8(textFilter($_POST['vote_title'], false, true));
-							$vote_answer_1 = ajax_utf8(textFilter($_POST['vote_answer_1'], false, true));
+							$vote_title = textFilter($_POST['vote_title'], 25000, true);
+							$vote_answer_1 = textFilter($_POST['vote_answer_1'], 25000, true);
 
 							$ansers_list = array();
 							
@@ -130,7 +131,7 @@ if($logged){
 								
 								for($vote_i = 1; $vote_i <= 10; $vote_i++){
 									
-									$vote_answer = ajax_utf8(textFilter($_POST['vote_answer_'.$vote_i], false, true));
+									$vote_answer = textFilter($_POST['vote_answer_'.$vote_i], 25000, true);
 									$vote_answer = str_replace('|', '&#124;', $vote_answer);
 									
 									if($vote_answer)
@@ -223,7 +224,7 @@ if($logged){
 										$rowUserEmail = $db->super_query("SELECT user_name, user_email FROM `".PREFIX."_users` WHERE user_id = '".$row_owner['author_user_id']."'");
 										if($rowUserEmail['user_email']){
 											include_once ENGINE_DIR.'/classes/mail.php';
-											$mail = new dle_mail($config);
+											$mail = new vii_mail($config);
 											$rowMyInfo = $db->super_query("SELECT user_search_pref FROM `".PREFIX."_users` WHERE user_id = '".$user_id."'");
 											$rowEmailTpl = $db->super_query("SELECT text FROM `".PREFIX."_mail_tpl` WHERE id = '2'");
 											$rowEmailTpl['text'] = str_replace('{%user%}', $rowUserEmail['user_name'], $rowEmailTpl['text']);
@@ -262,7 +263,7 @@ if($logged){
 									$rowUserEmail = $db->super_query("SELECT user_name, user_email FROM `".PREFIX."_users` WHERE user_id = '".$for_user_id."'");
 									if($rowUserEmail['user_email']){
 										include_once ENGINE_DIR.'/classes/mail.php';
-										$mail = new dle_mail($config);
+										$mail = new vii_mail($config);
 										$rowMyInfo = $db->super_query("SELECT user_search_pref FROM `".PREFIX."_users` WHERE user_id = '".$user_id."'");
 										$rowEmailTpl = $db->super_query("SELECT text FROM `".PREFIX."_mail_tpl` WHERE id = '7'");
 										$rowEmailTpl['text'] = str_replace('{%user%}', $rowUserEmail['user_name'], $rowEmailTpl['text']);
@@ -633,7 +634,7 @@ if($logged){
 				$open_lnk = @file_get_contents($lnk);
 				
 				if(stripos(strtolower($open_lnk), 'charset=utf-8') OR stripos(strtolower($check_url[2]), 'charset=utf-8'))
-					$open_lnk = ajax_utf8($open_lnk);
+					$open_lnk = $open_lnk;
 				else
 					$open_lnk = iconv('windows-1251', 'utf-8', $open_lnk);
 					

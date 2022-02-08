@@ -1,23 +1,21 @@
 <?php
 /*
-	Appointment: Установка скрипта
-	File: install.php
-	Author: f0rt1 
-	Engine: Vii Engine
-	Copyright: NiceWeb Group (с) 2014
-	e-mail: niceweb@i.ua
-	URL: http://www.niceweb.in.ua/
-	ICQ: 427-825-959
-	Данный код защищен авторскими правами
-*/
-@error_reporting(E_ALL ^ E_WARNING ^ E_NOTICE);
+ *   (c) Semen Alekseev
+ *
+ *  For the full copyright and license information, please view the LICENSE
+ *   file that was distributed with this source code.
+ *
+ */
 header('Content-type: text/html; charset=utf-8');
-define('MOZG', true);
+const MOZG = true;
 define('ROOT_DIR', dirname(__FILE__));
-define('ENGINE_DIR', ROOT_DIR . '/system');
+const ENGINE_DIR = ROOT_DIR . '/system';
+
+include './system/functions.php';
+
 echo <<<HTML
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="ru" lang="ru">
+<!DOCTYPE>
+<html lang="ru">
 <head>
 <title>Vii Engine - Установка</title>
 <meta http-equiv="content-type" content="text/html; charset=utf-8" />
@@ -44,33 +42,91 @@ textarea{width:300px;height:100px;}
 <div class="box clr">
  <a href="/install.php"><div class="head"><div class="logo"></div></div></a>
 HTML;
-if (!@file_exists(ENGINE_DIR . '/data/config.php')) {
+if (!file_exists(ENGINE_DIR . '/data/config.php') AND !file_exists(ENGINE_DIR . '/data/db.php')) {
     //Проверка на запись у важных файлов системы
     if ($_GET['act'] == 'files') {
         echo '<div class="h1">Проверка на запись у важных файлов системы</div>';
-        $important_files = array('./system/data/xfields.txt', './system/data/', './system/cache/', './system/cache/system/', './system/cache/photos_mark/', './system/cache/votes/', './system/cache/groups/', './system/cache/wall/', './system/cache/groups_forum/', './backup/', './uploads/', './uploads/room/', './uploads/records/', './uploads/attach/', './uploads/audio_tmp/', './uploads/blog/', './uploads/gifts/', './uploads/groups/', './uploads/users/', './uploads/videos/', './uploads/audio/', './uploads/doc/', './uploads/apps/', './templates/', './templates/Default/',);
+
+        $important_files = array(
+            './system/data/xfields.txt',
+            './system/data/',
+            './system/cache/',
+            './system/cache/system/',
+            './system/cache/photos_mark/',
+            './system/cache/votes/',
+            './system/cache/groups/',
+            './system/cache/wall/',
+            './system/cache/groups_forum/',
+            './backup/',
+            './uploads/',
+            './uploads/room/',
+            './uploads/records/',
+            './uploads/attach/',
+            './uploads/audio_tmp/',
+            './uploads/blog/',
+            './uploads/gifts/',
+            './uploads/groups/',
+            './uploads/users/',
+            './uploads/videos/',
+            './uploads/audio/',
+            './uploads/doc/',
+            './uploads/apps/',
+            './templates/',
+            './templates/Default/',
+            );
+
+        try {
+            createDir('./uploads/room/');
+            createDir('./uploads/records/');
+            createDir('./uploads/attach/');
+            createDir('./uploads/audio_tmp/');
+            createDir('./uploads/blog/');
+            createDir('./uploads/groups/');
+            createDir('./uploads/users/');
+            createDir('./uploads/videos/');
+            createDir('./uploads/audio/');
+            createDir('./uploads/doc/');
+            createDir('./uploads/apps/');
+
+            createDir('./system/cache/');
+            createDir('./system/cache/groups/');
+            createDir('./system/cache/groups_forum/');
+            createDir('./system/cache/groups_mark/');
+            createDir('./system/cache/photos_mark/');
+            createDir('./system/cache/votes/');
+            createDir('./system/cache/wall/');
+
+            createDir('./system/data/');
+
+            createDir('./backup/');
+
+        } catch (Exception $e) {
+            echo '<div class="h2">Не удалось создать директории</div>';
+        }
+
         $chmod_errors = 0;
         $not_found_errors = 0;
         echo "<b><div style=\"float:left;width:450px;padding:10px;border-bottom:1px dashed #ddd\">Папка/Файл</div>
 		<div style=\"float:left;width:90px;text-align:center;padding:10px;border-bottom:1px dashed #ddd\">CHMOD</div>
 		<div style=\"float:left;width:195px;text-align:center;padding:10px;border-bottom:1px dashed #ddd\">Статус</div>
 		<div class=clear></div></b>";
+
         foreach ($important_files as $file) {
             if (!file_exists($file)) {
-                $file_status = "<font color=red>не найден!</font>";
+                $file_status = "<div style=\"color: red;\">не найден!</div>";
                 $not_found_errors++;
             } elseif (is_writable($file)) {
-                $file_status = "<font color=green>разрешено</font>";
+                $file_status = "<div style=\"color: green;\">разрешено</div>";
             } else {
                 @chmod($file, 0777);
                 if (is_writable($file)) {
-                    $file_status = "<font color=green>разрешено</font>";
+                    $file_status = "<div style=\"color: green;\">разрешено</div>";
                 } else {
                     @chmod("$file", 0755);
                     if (is_writable($file)) {
-                        $file_status = "<font color=green>разрешено</font>";
+                        $file_status = "<div style=\"color: green;\">разрешено</div>";
                     } else {
-                        $file_status = "<font color=red>запрещено</font>";
+                        $file_status = "<div style=\"color: red;\">запрещено</div>";
                         $chmod_errors++;
                     }
                 }
@@ -84,13 +140,17 @@ if (!@file_exists(ENGINE_DIR . '/data/config.php')) {
         if ($chmod_errors == 0 and $not_found_errors == 0) {
             $status_report = 'Проверка успешно завершена! Можете продолжить установку!';
         } else {
+            $status_report = '';
             if ($chmod_errors > 0) {
-                $status_report = "<font color=red>Внимание!!!</font><br /><br />Во время проверки обнаружены ошибки: <b>$chmod_errors</b>. Запрещена запись в файл.<br />Вы должны выставить для папок CHMOD 777, для файлов CHMOD 666, используя ФТП-клиент.<br /><br /><font color=red><b>Настоятельно не рекомендуется</b></font> продолжать установку, пока не будут произведены изменения.<br />";
+                $status_report = "<div style=\"color: red;\">Внимание!!!</div><br /><br />Во время проверки обнаружены ошибки: <b>$chmod_errors</b>. Запрещена запись в файл.<br />Вы должны выставить для папок CHMOD 777, для файлов CHMOD 666, используя ФТП-клиент.<br /><br /><div style=\"color: red;\"><b>Настоятельно не рекомендуется</b></div> продолжать установку, пока не будут произведены изменения.<br />";
             }
             if ($not_found_errors > 0) {
-                $status_report.= "<font color=red>Внимание!!!</font><br />Во время проверки обнаружены ошибки: <b>$not_found_errors</b>. Файлы не найдены!<br /><br /><font color=red><b>Не рекомендуется</b></font> продолжать установку, пока не будут произведены изменения.<br />";
+                $status_report .= "<div style=\"color: red;\">Внимание!!!</div><br />Во время проверки обнаружены ошибки: <b>$not_found_errors</b>. Файлы не найдены!<br /><br /><div style=\"color: red;\"><b>Не рекомендуется</b></div> продолжать установку, пока не будут произведены изменения.<br />";
             }
+            if (!isset($status_report))
+                $status_report = '';
         }
+
         echo '
 		<div class="clr"></div>
 		<div style="background:lightyellow;padding:10px;margin-bottom:10px;margin-top:10px;border:1px dashed #ccc;margin-top:10px"><div style="margin-bottom:7px;"><b>Состояние проверки</b></div>' . $status_report . '</div>
@@ -104,34 +164,34 @@ if (!@file_exists(ENGINE_DIR . '/data/config.php')) {
 		<div style=\"float:left;width:90px;text-align:center;padding:10px;border: 1px solid #ddd;background: #f7f7f7;\">Ваша версия</div>
 		<div style=\"float:left;width:195px;text-align:center;padding:10px;border: 1px solid #ddd;background: #f7f7f7;\">Статус</div>
 		<div class=clear></div></b>";
-        $status = phpversion() != '7.3.0' ? '<font color=red><b>Не совместимо</b></font>' : '<font color=green><b>Совместимо</b></font>';
-        echo "<div style=\"float:left;width:450px;padding:10px;border-bottom:1px dashed #ddd\"><b>PHP 7.3</b></div>
+        $status = version_compare(PHP_VERSION, '8.0.0') >= 0 ? '<div style="color: green;"><b>Совместимо</b></div>' : '<div style="color: red;"><b>Не совместимо</b></div>';
+        echo "<div style=\"float:left;width:450px;padding:10px;border-bottom:1px dashed #ddd\"><b>PHP 8.0</b></div>
 		<div style=\"float:left;width:90px;text-align:center;padding:10px;border-bottom:1px dashed #ddd\">" . phpversion() . "</div>
 		<div style=\"float:left;width:195px;text-align:center;padding:10px;border-bottom:1px dashed #ddd\">{$status}</div>
 		<div class=clear></div>";
-        $status = function_exists('mysqli_connect') ? '<font color=green><b>Совместимо</b></font>' : '<font color=red><b>Не совместимо</b></font>';
+        $status = function_exists('mysqli_connect') ? '<div style="color: green;"><b>Совместимо</b></div>' : '<div style="color: red;"><b>Не совместимо</b></div>';
         echo "<div style=\"float:left;width:450px;padding:10px;border-bottom:1px dashed #ddd\"><b>Поддержка MySQLi</b></div>
-		<div style=\"float:left;width:90px;text-align:center;padding:10px;border-bottom:1px dashed #ddd\">не опредиляется</div>
+		<div style=\"float:left;width:90px;text-align:center;padding:10px;border-bottom:1px dashed #ddd\">не определяется</div>
 		<div style=\"float:left;width:195px;text-align:center;padding:10px;border-bottom:1px dashed #ddd\">{$status}</div>
 		<div class=clear></div>";
-        $status = extension_loaded('zlib') ? '<font color=green><b>Совместимо</b></font>' : '<font color=red><b>Не совместимо</b></font>';
+        $status = extension_loaded('zlib') ? '<div style="color: green;"><b>Совместимо</b></div>' : '<div style="color: red;"><b>Не совместимо</b></div>';
         echo "<div style=\"float:left;width:450px;padding:10px;border-bottom:1px dashed #ddd\"><b>Поддержка сжатия ZLib</b></div>
-		<div style=\"float:left;width:90px;text-align:center;padding:10px;border-bottom:1px dashed #ddd\">не опредиляется</div>
+		<div style=\"float:left;width:90px;text-align:center;padding:10px;border-bottom:1px dashed #ddd\">не определяется</div>
 		<div style=\"float:left;width:195px;text-align:center;padding:10px;border-bottom:1px dashed #ddd\">{$status}</div>
 		<div class=clear></div>";
-        $status = extension_loaded('xml') ? '<font color=green><b>Совместимо</b></font>' : '<font color=red><b>Не совместимо</b></font>';
+        $status = extension_loaded('xml') ? '<div style="color: green;"><b>Совместимо</b></div>' : '<div style="color: red;"><b>Не совместимо</b></div>';
         echo "<div style=\"float:left;width:450px;padding:10px;border-bottom:1px dashed #ddd\"><b>Поддержка XML</b></div>
-		<div style=\"float:left;width:90px;text-align:center;padding:10px;border-bottom:1px dashed #ddd\">не опредиляется</div>
+		<div style=\"float:left;width:90px;text-align:center;padding:10px;border-bottom:1px dashed #ddd\">не определяется</div>
 		<div style=\"float:left;width:195px;text-align:center;padding:10px;border-bottom:1px dashed #ddd\">{$status}</div>
 		<div class=clear></div>";
-        $status = function_exists('iconv') ? '<font color=green><b>Совместимо</b></font>' : '<font color=red><b>Не совместимо</b></font>';
+        $status = function_exists('iconv') ? '<div style="color: green;"><b>Совместимо</b></div>' : '<div style="color: red;"><b>Не совместимо</b></div>';
         echo "<div style=\"float:left;width:450px;padding:10px;border-bottom:1px dashed #ddd\"><b>Поддержка iconv</b></div>
-		<div style=\"float:left;width:90px;text-align:center;padding:10px;border-bottom:1px dashed #ddd\">не опредиляется</div>
+		<div style=\"float:left;width:90px;text-align:center;padding:10px;border-bottom:1px dashed #ddd\">не определяется</div>
 		<div style=\"float:left;width:195px;text-align:center;padding:10px;border-bottom:1px dashed #ddd\">{$status}</div>
 		<div class=clear></div>";
         echo '
 		<div class="clr"></div>
-		<div style="background:lightyellow;padding:10px;margin-bottom:10px;margin-top:10px;border:1px dashed #ccc;margin-top:10px"><div style="margin-bottom:7px;text-align: center;font-size: 12px;"><b>Если любой из этих пунктов выделен красным, то пожалуйста выполните действия для исправления положения. <br />В случае несоблюдения минимальных требований скрипта возможна его некорректная работа в системе.</b></div></div>
+		<div style="background:lightyellow;padding:10px;margin-bottom:10px;margin-top:10px;border:1px dashed #ccc;"><div style="margin-bottom:7px;text-align: center;font-size: 12px;"><b>Если любой из этих пунктов выделен красным, то выполните действия для исправления положения. <br />В случае несоблюдения минимальных требований скрипта возможна его некорректная работа в системе.</b></div></div>
 		<input type="submit" class="inp fl_r" value="Продолжить &raquo;" onClick="location.href=\'/install.php?act=server\'" />
 		';
         die();
@@ -142,32 +202,32 @@ if (!@file_exists(ENGINE_DIR . '/data/config.php')) {
 		<div style=\"float:left;width:150px;text-align:center;padding:10px;border: 1px solid #ddd;background: #f7f7f7;\">Рекомендуемое значение</div>
 		<div style=\"float:left;width:195px;text-align:center;padding:10px;border: 1px solid #ddd;background: #f7f7f7;\">Текущее значение</div>
 		<div class=clear></div></b>";
-        $status = ini_get('safe_mode') ? '<font color=red><b>Включено</b></font>' : '<font color=green><b>Выключено</b></font>';
+        $status = ini_get('safe_mode') ? '<div style="color: red;"><b>Включено</b></div>' : '<div style="color: green;"><b>Выключено</b></div>';
         echo "<div style=\"float:left;width:390px;padding:10px;border-bottom:1px dashed #ddd\"><b>Safe Mode</b></div>
 		<div style=\"float:left;width:150px;text-align:center;padding:10px;border-bottom:1px dashed #ddd\">Выключено</div>
 		<div style=\"float:left;width:195px;text-align:center;padding:10px;border-bottom:1px dashed #ddd\">{$status}</div>
 		<div class=clear></div>";
-        $status = ini_get('file_uploads') ? '<font color=green><b>Включено</b></font>' : '<font color=red><b>Выключено</b></font>';
+        $status = ini_get('file_uploads') ? '<div style="color: green;"><b>Включено</b></div>' : '<div style="color: red;"><b>Выключено</b></div>';
         echo "<div style=\"float:left;width:390px;padding:10px;border-bottom:1px dashed #ddd\"><b>Загрузка файлов</b></div>
 		<div style=\"float:left;width:150px;text-align:center;padding:10px;border-bottom:1px dashed #ddd\">Включено</div>
 		<div style=\"float:left;width:195px;text-align:center;padding:10px;border-bottom:1px dashed #ddd\">{$status}</div>
 		<div class=clear></div>";
-        $status = ini_get('output_buffering') ? '<font color=red><b>Включено</b></font>' : '<font color=green><b>Выключено</b></font>';
+        $status = ini_get('output_buffering') ? '<div style="div-weight: bold"><b>Включено</b></div>' : '<div style="color: green;"><b>Выключено</b></div>';
         echo "<div style=\"float:left;width:390px;padding:10px;border-bottom:1px dashed #ddd\"><b>Буферизация вывода</b></div>
 		<div style=\"float:left;width:150px;text-align:center;padding:10px;border-bottom:1px dashed #ddd\">Выключено</div>
 		<div style=\"float:left;width:195px;text-align:center;padding:10px;border-bottom:1px dashed #ddd\">{$status}</div>
 		<div class=clear></div>";
-        $status = ini_get('magic_quotes_runtime') ? '<font color=red><b>Включено</b></font>' : '<font color=green><b>Выключено</b></font>';
+        $status = ini_get('magic_quotes_runtime') ? '<div style="color: red;"><b>Включено</b></div>' : '<div style="color: green;"><b>Выключено</b></div>';
         echo "<div style=\"float:left;width:390px;padding:10px;border-bottom:1px dashed #ddd\"><b>Magic Quotes Runtime</b></div>
 		<div style=\"float:left;width:150px;text-align:center;padding:10px;border-bottom:1px dashed #ddd\">Выключено</div>
 		<div style=\"float:left;width:195px;text-align:center;padding:10px;border-bottom:1px dashed #ddd\">{$status}</div>
 		<div class=clear></div>";
-        $status = ini_get('register_globals') ? '<font color=red><b>Включено</b></font>' : '<font color=green><b>Выключено</b></font>';
+        $status = ini_get('register_globals') ? '<div style="color: red;"><b>Включено</b></div>' : '<div style="color: green;"><b>Выключено</b></div>';
         echo "<div style=\"float:left;width:390px;padding:10px;border-bottom:1px dashed #ddd\"><b>Register Globals</b></div>
 		<div style=\"float:left;width:150px;text-align:center;padding:10px;border-bottom:1px dashed #ddd\">Выключено</div>
 		<div style=\"float:left;width:195px;text-align:center;padding:10px;border-bottom:1px dashed #ddd\">{$status}</div>
 		<div class=clear></div>";
-        $status = ini_get('session.auto_start') ? '<font color=red><b>Включено</b></font>' : '<font color=green><b>Выключено</b></font>';
+        $status = ini_get('session.auto_start') ? '<div style="color: red;"><b>Включено</b></div>' : '<div style="color: green;"><b>Выключено</b></div>';
         echo "<div style=\"float:left;width:390px;padding:10px;border-bottom:1px dashed #ddd\"><b>Session auto start</b></div>
 		<div style=\"float:left;width:150px;text-align:center;padding:10px;border-bottom:1px dashed #ddd\">Выключено</div>
 		<div style=\"float:left;width:195px;text-align:center;padding:10px;border-bottom:1px dashed #ddd\">{$status}</div>
@@ -187,7 +247,7 @@ HTML;
         $url = $_SERVER['HTTP_HOST'];
         echo <<<HTML
 <div class="h1">Настройка конфигурации системы</div>
-<div class="fllogall">Адрес сайта:</div><input type="text" name="url" class="inpu" value="http://{$url}/" />&nbsp;&nbsp;<span style="color:#777">Укажите путь без имени файла, знак слеша <font color="red">/</font> на конце обязателен</span><div class="mgcler"></div>
+<div class="fllogall">Адрес сайта:</div><input type="text" name="url" class="inpu" value="https://{$url}/" />&nbsp;&nbsp;<span style="color:#777">Укажите путь без имени файла, знак слеша <div color="red">/</div> на конце обязателен</span><div class="mgcler"></div>
 HTML;
         echo <<<HTML
 <div class="h1" style="margin-top:15px">Данные для доступа к MySQL серверу</div>
@@ -246,17 +306,13 @@ HTML;
             //Создаём файл админ панели
             $admin = <<<HTML
 <?php
-/* 
-	Appointment:  Панель управления
-	File: {$_POST['adminfile']}
-	Author: f0rt1 
-	Engine: Vii Engine (Replace by Andrey)
-	Copyright: NiceWeb Group (с) 2011
-	e-mail: niceweb@i.ua
-	URL: http://www.niceweb.in.ua/
-	ICQ: 427-825-959
-	Данный код защищен авторскими правами
-*/
+/*
+ *   (c) Semen Alekseev
+ *
+ *  For the full copyright and license information, please view the LICENSE
+ *   file that was distributed with this source code.
+ *
+ */
 @session_start();
 @ob_start();
 @ob_implicit_flush(0);
@@ -285,7 +341,6 @@ HTML;
             $con_file = fopen($_POST['adminfile'], "w+") or die("Извините, но невозможно создать файл <b>{$_POST['adminfile']}</b>.<br />Проверьте правильность проставленного CHMOD!");
             fwrite($con_file, $admin);
             fclose($con_file);
-            @chmod($_POST['adminfile'], 0666);
             $this_year = date('Y');
             //Создаём файл конфигурации системы
             $config = <<<HTML
@@ -398,18 +453,19 @@ HTML;
             @chmod("system/data/config.php", 0666);
             include ENGINE_DIR . '/classes/mysql.php';
             include ENGINE_DIR . '/data/db.php';
-            $_POST['name'] = $db->safesql(strip_tags($_POST['name']));
-            $_POST['lastname'] = $db->safesql(strip_tags($_POST['lastname']));
-            $tableChema = array();
-            $tableChema[] = "CREATE TABLE IF NOT EXISTS `vii_room` (
+
+            $_POST['name'] = strip_tags($_POST['name']);
+            $_POST['lastname'] = strip_tags($_POST['lastname']);
+            $table_Chema = array();
+            $table_Chema[] = "CREATE TABLE IF NOT EXISTS `vii_room` (
   `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT,
   `title` varchar(100) NOT NULL DEFAULT '',
   `owner` bigint(20) NOT NULL DEFAULT '0',
   `photo` varchar(255) NOT NULL DEFAULT '',
   `date` varchar(10) NOT NULL DEFAULT '0',
   PRIMARY KEY (`id`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;";
-            $tableChema[] = "CREATE TABLE IF NOT EXISTS `vii_room_users` (
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;";
+            $table_Chema[] = "CREATE TABLE IF NOT EXISTS `vii_room_users` (
   `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT,
   `room_id` bigint(20) UNSIGNED NOT NULL DEFAULT '0',
   `oid` bigint(20) UNSIGNED NOT NULL DEFAULT '0',
@@ -417,8 +473,8 @@ HTML;
   `date` varchar(10) NOT NULL DEFAULT '0',
   `type` tinyint(1) UNSIGNED NOT NULL DEFAULT '0',
   PRIMARY KEY (`id`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;";
-            $tableChema[] = "CREATE TABLE IF NOT EXISTS `{$_POST['mysql_prefix']}_albums` (
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;";
+            $table_Chema[] = "CREATE TABLE IF NOT EXISTS `{$_POST['mysql_prefix']}_albums` (
   `aid` int(11) unsigned NOT NULL AUTO_INCREMENT,
   `user_id` int(11) unsigned NOT NULL,
   `name` varchar(100) NOT NULL,
@@ -436,8 +492,8 @@ HTML;
   KEY `position` (`position`),
   KEY `privacy` (`privacy`),
   KEY `ahash` (`ahash`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;";
-            $tableChema[] = "CREATE TABLE IF NOT EXISTS `{$_POST['mysql_prefix']}_attach` (
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;";
+            $table_Chema[] = "CREATE TABLE IF NOT EXISTS `{$_POST['mysql_prefix']}_attach` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `photo` varchar(255) NOT NULL,
   `ouser_id` int(11) NOT NULL,
@@ -447,16 +503,16 @@ HTML;
   PRIMARY KEY (`id`),
   KEY `photo` (`photo`),
   KEY `public_id` (`public_id`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;";
-            $tableChema[] = "CREATE TABLE IF NOT EXISTS `{$_POST['mysql_prefix']}_antispam` (
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;";
+            $table_Chema[] = "CREATE TABLE IF NOT EXISTS `{$_POST['mysql_prefix']}_antispam` (
   `act` tinyint(3) NOT NULL,
   `user_id` int(11) NOT NULL,
   `date` int(10) NOT NULL,
   `txt` varchar(32) NOT NULL,
   KEY `act` (`act`,`user_id`,`date`),
   KEY `act_2` (`act`,`user_id`,`date`,`txt`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8;";
-            $tableChema[] = "CREATE TABLE IF NOT EXISTS `{$_POST['mysql_prefix']}_apps` (
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;";
+            $table_Chema[] = "CREATE TABLE IF NOT EXISTS `{$_POST['mysql_prefix']}_apps` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `url` varchar(255) NOT NULL,
   `flash` varchar(255) NOT NULL DEFAULT '',
@@ -479,24 +535,24 @@ HTML;
   `iframe` text NOT NULL,
   `tb1.game_id` int(11) NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;";
-            $tableChema[] = "CREATE TABLE IF NOT EXISTS `{$_POST['mysql_prefix']}_apps_transactions` (
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;";
+            $table_Chema[] = "CREATE TABLE IF NOT EXISTS `{$_POST['mysql_prefix']}_apps_transactions` (
   `id` int(11) NOT NULL,
   `application_id` int(11) NOT NULL,
   `votes` int(11) NOT NULL,
   `from` int(11) NOT NULL,
   `whom` int(11) NOT NULL,
   `date` int(11) NOT NULL
-) ENGINE=MyISAM DEFAULT CHARSET=utf8;";
-            $tableChema[] = "CREATE TABLE IF NOT EXISTS `{$_POST['mysql_prefix']}_apps_users` (
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;";
+            $table_Chema[] = "CREATE TABLE IF NOT EXISTS `{$_POST['mysql_prefix']}_apps_users` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `user_id` int(11) NOT NULL,
   `application_id` int(11) NOT NULL,
   `balance` int(10) NOT NULL DEFAULT '0',
   `date` int(11) NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;";
-            $tableChema[] = "CREATE TABLE IF NOT EXISTS `{$_POST['mysql_prefix']}_attach` (
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;";
+            $table_Chema[] = "CREATE TABLE IF NOT EXISTS `{$_POST['mysql_prefix']}_attach` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `photo` varchar(255) NOT NULL,
   `ouser_id` int(11) NOT NULL,
@@ -506,8 +562,8 @@ HTML;
   PRIMARY KEY (`id`),
   KEY `photo` (`photo`),
   KEY `public_id` (`public_id`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;";
-            $tableChema[] = "CREATE TABLE IF NOT EXISTS `{$_POST['mysql_prefix']}_attach_comm` (
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;";
+            $table_Chema[] = "CREATE TABLE IF NOT EXISTS `{$_POST['mysql_prefix']}_attach_comm` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `forphoto` varchar(30) NOT NULL,
   `auser_id` int(11) NOT NULL,
@@ -515,8 +571,8 @@ HTML;
   `adate` varchar(10) NOT NULL,
   PRIMARY KEY (`id`),
   KEY `forphoto` (`forphoto`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;";
-            $tableChema[] = "CREATE TABLE IF NOT EXISTS `{$_POST['mysql_prefix']}_audio` (
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;";
+            $table_Chema[] = "CREATE TABLE IF NOT EXISTS `{$_POST['mysql_prefix']}_audio` (
   `aid` int(11) unsigned NOT NULL AUTO_INCREMENT,
   `auser_id` int(11) unsigned NOT NULL,
   `url` text NOT NULL,
@@ -527,31 +583,31 @@ HTML;
   KEY `auser_id` (`auser_id`),
   KEY `adate` (`adate`),
   FULLTEXT KEY `artist` (`artist`,`name`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;";
-            $tableChema[] = "CREATE TABLE IF NOT EXISTS `{$_POST['mysql_prefix']}_banned` (
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;";
+            $table_Chema[] = "CREATE TABLE IF NOT EXISTS `{$_POST['mysql_prefix']}_banned` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `descr` text NOT NULL,
   `date` varchar(15) NOT NULL,
   `always` smallint(4) NOT NULL,
   `ip` varchar(50) NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;";
-            $tableChema[] = "CREATE TABLE IF NOT EXISTS `{$_POST['mysql_prefix']}_blog` (
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;";
+            $table_Chema[] = "CREATE TABLE IF NOT EXISTS `{$_POST['mysql_prefix']}_blog` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
   `title` varchar(65) NOT NULL,
   `story` text NOT NULL,
   `date` varchar(15) NOT NULL,
   PRIMARY KEY (`id`),
   KEY `date` (`date`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;";
-            $tableChema[] = "CREATE TABLE IF NOT EXISTS `{$_POST['mysql_prefix']}_city` (
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;";
+            $table_Chema[] = "CREATE TABLE IF NOT EXISTS `{$_POST['mysql_prefix']}_city` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
   `id_country` int(11) unsigned NOT NULL,
   `name` varchar(255) NOT NULL,
   PRIMARY KEY (`id`),
   KEY `id_country` (`id_country`)
-) ENGINE=MyISAM  DEFAULT CHARSET=utf8 AUTO_INCREMENT=3349 ;";
-            $tableChema[] = "INSERT INTO `{$_POST['mysql_prefix']}_city` (`id`, `id_country`, `name`) VALUES
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=3349 ;";
+            $table_Chema[] = "INSERT INTO `{$_POST['mysql_prefix']}_city` (`id`, `id_country`, `name`) VALUES
 (1, 1, 'Москва'),
 (2, 1, 'Абрамцево'),
 (3, 1, 'Алабино'),
@@ -2175,7 +2231,7 @@ HTML;
 (1621, 1, 'Спасск-Дальний'),
 (1622, 1, 'Терней'),
 (1623, 1, 'Уссурийск');";
-            $tableChema[] = "INSERT INTO `{$_POST['mysql_prefix']}_city` (`id`, `id_country`, `name`) VALUES
+            $table_Chema[] = "INSERT INTO `{$_POST['mysql_prefix']}_city` (`id`, `id_country`, `name`) VALUES
 (1624, 1, 'Фокино'),
 (1625, 1, 'Хасан'),
 (1626, 1, 'Хороль'),
@@ -3779,7 +3835,7 @@ HTML;
 (3224, 2, 'Новая Ушица'),
 (3225, 2, 'Полонное'),
 (3226, 2, 'Славута');";
-            $tableChema[] = "INSERT INTO `{$_POST['mysql_prefix']}_city` (`id`, `id_country`, `name`) VALUES
+            $table_Chema[] = "INSERT INTO `{$_POST['mysql_prefix']}_city` (`id`, `id_country`, `name`) VALUES
 (3227, 2, 'Старая Синява'),
 (3228, 2, 'Староконстантинов'),
 (3229, 2, 'Теофиполь'),
@@ -3902,7 +3958,7 @@ HTML;
 (3346, 7, 'Таллин'),
 (3347, 7, 'Тарту'),
 (3348, 7, 'Хаапсалу');";
-            $tableChema[] = "CREATE TABLE IF NOT EXISTS `{$_POST['mysql_prefix']}_communities` (
+            $table_Chema[] = "CREATE TABLE IF NOT EXISTS `{$_POST['mysql_prefix']}_communities` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
   `admin` text NOT NULL,
   `title` varchar(60) NOT NULL,
@@ -3935,8 +3991,8 @@ HTML;
   KEY `traf` (`traf`),
   KEY `photo` (`photo`),
   FULLTEXT KEY `title` (`title`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;";
-            $tableChema[] = "CREATE TABLE IF NOT EXISTS `{$_POST['mysql_prefix']}_communities_audio` (
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;";
+            $table_Chema[] = "CREATE TABLE IF NOT EXISTS `{$_POST['mysql_prefix']}_communities_audio` (
   `aid` int(11) unsigned NOT NULL AUTO_INCREMENT,
   `public_id` int(11) unsigned NOT NULL,
   `url` text NOT NULL,
@@ -3946,8 +4002,8 @@ HTML;
   PRIMARY KEY (`aid`),
   KEY `auser_id` (`public_id`),
   KEY `adate` (`adate`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;";
-            $tableChema[] = "CREATE TABLE IF NOT EXISTS `{$_POST['mysql_prefix']}_communities_feedback` (
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;";
+            $table_Chema[] = "CREATE TABLE IF NOT EXISTS `{$_POST['mysql_prefix']}_communities_feedback` (
   `cid` int(11) NOT NULL,
   `fuser_id` int(11) NOT NULL,
   `office` varchar(30) NOT NULL,
@@ -3957,8 +4013,8 @@ HTML;
   KEY `cid` (`cid`),
   KEY `fuser_id` (`fuser_id`),
   KEY `fdate` (`fdate`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8;";
-            $tableChema[] = "CREATE TABLE IF NOT EXISTS `{$_POST['mysql_prefix']}_communities_forum` (
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;";
+            $table_Chema[] = "CREATE TABLE IF NOT EXISTS `{$_POST['mysql_prefix']}_communities_forum` (
   `fid` int(11) unsigned NOT NULL AUTO_INCREMENT,
   `public_id` int(11) unsigned NOT NULL,
   `fuser_id` int(11) unsigned NOT NULL,
@@ -3977,8 +4033,8 @@ HTML;
   KEY `fdate` (`fdate`),
   KEY `lastdate` (`lastdate`),
   KEY `fixed` (`fixed`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;";
-            $tableChema[] = "CREATE TABLE IF NOT EXISTS `{$_POST['mysql_prefix']}_communities_forum_msg` (
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;";
+            $table_Chema[] = "CREATE TABLE IF NOT EXISTS `{$_POST['mysql_prefix']}_communities_forum_msg` (
   `mid` int(11) unsigned NOT NULL AUTO_INCREMENT,
   `fid` int(11) unsigned NOT NULL,
   `muser_id` int(11) unsigned NOT NULL,
@@ -3989,8 +4045,8 @@ HTML;
   KEY `fid` (`fid`),
   KEY `muser_id` (`muser_id`),
   KEY `mdate` (`mdate`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;";
-            $tableChema[] = "CREATE TABLE IF NOT EXISTS `{$_POST['mysql_prefix']}_communities_join` (
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;";
+            $table_Chema[] = "CREATE TABLE IF NOT EXISTS `{$_POST['mysql_prefix']}_communities_join` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `user_id` int(11) NOT NULL,
   `for_user_id` int(11) NOT NULL,
@@ -4000,8 +4056,8 @@ HTML;
   KEY `for_sel` (`for_user_id`,`public_id`),
   KEY `for_sel_1` (`user_id`,`public_id`,`date`),
   KEY `for_sel_2` (`for_user_id`,`public_id`,`user_id`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;";
-            $tableChema[] = "CREATE TABLE IF NOT EXISTS `{$_POST['mysql_prefix']}_communities_stats` (
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;";
+            $table_Chema[] = "CREATE TABLE IF NOT EXISTS `{$_POST['mysql_prefix']}_communities_stats` (
   `gid` int(11) NOT NULL,
   `date` int(10) NOT NULL,
   `cnt` int(11) NOT NULL,
@@ -4016,15 +4072,15 @@ HTML;
   KEY `new_users` (`new_users`),
   KEY `exit_users` (`exit_users`),
   KEY `sel_1` (`gid`,`date_x`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8;";
-            $tableChema[] = "CREATE TABLE IF NOT EXISTS `{$_POST['mysql_prefix']}_communities_stats_log` (
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;";
+            $table_Chema[] = "CREATE TABLE IF NOT EXISTS `{$_POST['mysql_prefix']}_communities_stats_log` (
   `gid` int(11) NOT NULL,
   `user_id` int(11) NOT NULL,
   `act` tinyint(3) NOT NULL,
   `date` int(10) NOT NULL,
   KEY `gid` (`gid`,`user_id`,`date`,`act`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8;";
-            $tableChema[] = "CREATE TABLE IF NOT EXISTS `{$_POST['mysql_prefix']}_communities_wall` (
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;";
+            $table_Chema[] = "CREATE TABLE IF NOT EXISTS `{$_POST['mysql_prefix']}_communities_wall` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
   `public_id` int(11) unsigned NOT NULL,
   `text` text NOT NULL,
@@ -4044,21 +4100,21 @@ HTML;
   KEY `public_id` (`public_id`),
   KEY `add_date` (`add_date`),
   KEY `tell_date` (`tell_date`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;";
-            $tableChema[] = "CREATE TABLE IF NOT EXISTS `{$_POST['mysql_prefix']}_communities_wall_like` (
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;";
+            $table_Chema[] = "CREATE TABLE IF NOT EXISTS `{$_POST['mysql_prefix']}_communities_wall_like` (
   `rec_id` int(11) unsigned NOT NULL,
   `user_id` int(11) unsigned NOT NULL,
   `date` varchar(10) NOT NULL,
   KEY `rec_id` (`rec_id`),
   KEY `user_id` (`user_id`),
   KEY `date` (`date`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8;";
-            $tableChema[] = "CREATE TABLE IF NOT EXISTS `{$_POST['mysql_prefix']}_country` (
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;";
+            $table_Chema[] = "CREATE TABLE IF NOT EXISTS `{$_POST['mysql_prefix']}_country` (
   `id` int(5) unsigned NOT NULL AUTO_INCREMENT,
   `name` varchar(255) NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=MyISAM  DEFAULT CHARSET=utf8 AUTO_INCREMENT=16 ;";
-            $tableChema[] = "INSERT INTO `{$_POST['mysql_prefix']}_country` (`id`, `name`) VALUES
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=16 ;";
+            $table_Chema[] = "INSERT INTO `{$_POST['mysql_prefix']}_country` (`id`, `name`) VALUES
 (4, 'Беларусь'),
 (3, 'Казахстан'),
 (2, 'Украина'),
@@ -4069,7 +4125,7 @@ HTML;
 (8, 'Азербайджан'),
 (9, 'Литва'),
 (10, 'США');";
-            $tableChema[] = "CREATE TABLE IF NOT EXISTS `{$_POST['mysql_prefix']}_doc` (
+            $table_Chema[] = "CREATE TABLE IF NOT EXISTS `{$_POST['mysql_prefix']}_doc` (
   `did` int(11) unsigned NOT NULL AUTO_INCREMENT,
   `duser_id` int(11) unsigned NOT NULL,
   `dname` varchar(255) NOT NULL,
@@ -4079,14 +4135,14 @@ HTML;
   PRIMARY KEY (`did`),
   KEY `duser_id` (`duser_id`),
   KEY `ddate` (`ddate`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;";
-            $tableChema[] = "CREATE TABLE IF NOT EXISTS `{$_POST['mysql_prefix']}_fave` (
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;";
+            $table_Chema[] = "CREATE TABLE IF NOT EXISTS `{$_POST['mysql_prefix']}_fave` (
   `user_id` int(11) unsigned NOT NULL,
   `fave_id` int(11) unsigned NOT NULL,
   `date` datetime NOT NULL,
   KEY `for_fast_select1` (`user_id`,`fave_id`,`date`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8;";
-            $tableChema[] = "CREATE TABLE IF NOT EXISTS `{$_POST['mysql_prefix']}_friends` (
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;";
+            $table_Chema[] = "CREATE TABLE IF NOT EXISTS `{$_POST['mysql_prefix']}_friends` (
   `user_id` int(11) NOT NULL,
   `friend_id` int(11) unsigned NOT NULL,
   `friends_date` datetime NOT NULL,
@@ -4096,14 +4152,14 @@ HTML;
   KEY `subscriptions` (`subscriptions`),
   KEY `views` (`views`),
   KEY `friends_date` (`friends_date`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8;";
-            $tableChema[] = "CREATE TABLE IF NOT EXISTS `{$_POST['mysql_prefix']}_friends_demands` (
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;";
+            $table_Chema[] = "CREATE TABLE IF NOT EXISTS `{$_POST['mysql_prefix']}_friends_demands` (
   `for_user_id` int(11) unsigned NOT NULL,
   `from_user_id` int(11) unsigned NOT NULL,
   `demand_date` datetime NOT NULL,
   KEY `for_fast_select1` (`for_user_id`,`from_user_id`,`demand_date`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8;";
-            $tableChema[] = "CREATE TABLE IF NOT EXISTS `{$_POST['mysql_prefix']}_games` (
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;";
+            $table_Chema[] = "CREATE TABLE IF NOT EXISTS `{$_POST['mysql_prefix']}_games` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `poster` varchar(25) NOT NULL,
   `title` varchar(200) NOT NULL,
@@ -4115,18 +4171,16 @@ HTML;
   `height` smallint(6) NOT NULL,
   PRIMARY KEY (`id`),
   FULLTEXT KEY `title` (`title`)
-) ENGINE=MyISAM  DEFAULT CHARSET=utf8 AUTO_INCREMENT=2 ;";
-            $tableChema[] = "INSERT INTO `{$_POST['mysql_prefix']}_games` (`id`, `poster`, `title`, `descr`, `flash`, `traf`, `date`, `width`, `height`) VALUES
-(1, '0eb8395d2ef2dc545c68.jpg', 'Губка Боб участвует в гонках', 'Спанч Боб - фактически превосходный скоростной гонщик. Ты можешь часто видеть, как он мчится по подземной автостраде. У тебя есть возможность погонять вместе с другом и многому научиться у него.', '65dafa59883c2b6e66ab.swf', 0, '1393261670', 795, 495);";
-            $tableChema[] = "CREATE TABLE IF NOT EXISTS `{$_POST['mysql_prefix']}_games_activity` (
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=2 ;";
+            $table_Chema[] = "CREATE TABLE IF NOT EXISTS `{$_POST['mysql_prefix']}_games_activity` (
   `user_id` int(11) NOT NULL,
   `action` tinyint(2) NOT NULL,
   `date` varchar(10) NOT NULL,
   `game_id` int(11) NOT NULL,
   KEY `for_select` (`user_id`,`game_id`),
   KEY `game_id` (`game_id`)
-) ENGINE=MyISAM  DEFAULT CHARSET=utf8 AUTO_INCREMENT=2 ;";
-            $tableChema[] = "CREATE TABLE IF NOT EXISTS `{$_POST['mysql_prefix']}_games_files` (
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=2 ;";
+            $table_Chema[] = "CREATE TABLE IF NOT EXISTS `{$_POST['mysql_prefix']}_games_files` (
   `game_id` int(11) NOT NULL,
   `user_id` int(11) NOT NULL,
   `file` varchar(25) NOT NULL,
@@ -4139,22 +4193,22 @@ HTML;
   KEY `user_id` (`user_id`,`type`,`game_id`),
   KEY `for_select` (`hash`,`user_id`,`type`,`game_id`),
   KEY `file` (`file`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8;";
-            $tableChema[] = "INSERT INTO `{$_POST['mysql_prefix']}_games_files` (`game_id`, `user_id`, `file`, `hash`, `type`) VALUES
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;";
+            $table_Chema[] = "INSERT INTO `{$_POST['mysql_prefix']}_games_files` (`game_id`, `user_id`, `file`, `hash`, `type`) VALUES
 (1, 1, '0eb8395d2ef2dc545c68.jpg', '03aeafe25b1037f0e1cd6622c47e4413', 'poster'),
 (1, 1, '65dafa59883c2b6e66ab.swf', '03aeafe25b1037f0e1cd6622c47e4413', 'swf'),
 (1, 1, '02be94644e6491869490.png', '03aeafe25b1037f0e1cd6622c47e4413', 'scrin'),
 (1, 1, 'd8ca5b2f12d3119e253f.png', '03aeafe25b1037f0e1cd6622c47e4413', 'scrin'),
 (1, 1, '3b631e1fb3651a566136.png', '03aeafe25b1037f0e1cd6622c47e4413', 'scrin');";
-            $tableChema[] = "CREATE TABLE IF NOT EXISTS `{$_POST['mysql_prefix']}_games_users` (
+            $table_Chema[] = "CREATE TABLE IF NOT EXISTS `{$_POST['mysql_prefix']}_games_users` (
   `user_id` int(11) NOT NULL,
   `game_id` int(11) NOT NULL,
   `setdate` varchar(10) NOT NULL,
   `lastdate` varchar(10) NOT NULL,
   KEY `for_select` (`user_id`,`game_id`),
   KEY `game_id` (`game_id`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8;";
-            $tableChema[] = "CREATE TABLE IF NOT EXISTS `{$_POST['mysql_prefix']}_gifts` (
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;";
+            $table_Chema[] = "CREATE TABLE IF NOT EXISTS `{$_POST['mysql_prefix']}_gifts` (
   `gid` int(11) unsigned NOT NULL AUTO_INCREMENT,
   `uid` int(11) unsigned NOT NULL,
   `from_uid` int(11) unsigned NOT NULL,
@@ -4168,15 +4222,15 @@ HTML;
   KEY `from_uid` (`from_uid`),
   KEY `status` (`status`),
   KEY `gdate` (`gdate`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;";
-            $tableChema[] = "CREATE TABLE IF NOT EXISTS `{$_POST['mysql_prefix']}_gifts_list` (
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;";
+            $table_Chema[] = "CREATE TABLE IF NOT EXISTS `{$_POST['mysql_prefix']}_gifts_list` (
   `gid` int(11) NOT NULL AUTO_INCREMENT,
   `img` varchar(50) NOT NULL,
   `price` mediumint(8) NOT NULL,
   PRIMARY KEY (`gid`),
   KEY `img` (`img`)
-) ENGINE=MyISAM  DEFAULT CHARSET=utf8 AUTO_INCREMENT=83 ;";
-            $tableChema[] = "INSERT INTO `{$_POST['mysql_prefix']}_gifts_list` (`gid`, `img`, `price`) VALUES
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=83 ;";
+            $table_Chema[] = "INSERT INTO `{$_POST['mysql_prefix']}_gifts_list` (`gid`, `img`, `price`) VALUES
 (8, '11', 30),
 (9, '14', 3),
 (10, '22', 2),
@@ -4251,16 +4305,18 @@ HTML;
 (79, '500', 25),
 (80, '501', 30),
 (82, '502', 20);";
-            $tableChema[] = "CREATE TABLE IF NOT EXISTS `{$_POST['mysql_prefix']}_guests` (
+            $table_Chema[] = "CREATE TABLE IF NOT EXISTS `{$_POST['mysql_prefix']}_guests` (
+  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
   `ouid` int(11) NOT NULL,
   `guid` int(11) NOT NULL,
   `gdate` varchar(10) NOT NULL,
   `new` tinyint(1) NOT NULL,
+  PRIMARY KEY (`id`),
   KEY `ouid` (`ouid`),
   KEY `guid` (`guid`),
   KEY `new` (`new`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8;";
-            $tableChema[] = "CREATE TABLE IF NOT EXISTS `{$_POST['mysql_prefix']}_im` (
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1;";
+            $table_Chema[] = "CREATE TABLE IF NOT EXISTS `{$_POST['mysql_prefix']}_im` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
   `iuser_id` int(11) unsigned NOT NULL,
   `im_user_id` int(11) unsigned NOT NULL,
@@ -4272,24 +4328,24 @@ HTML;
   KEY `iuser_id` (`iuser_id`),
   KEY `im_user_id` (`im_user_id`),
   KEY `idate` (`idate`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8 AUTO_INCREMENT=1;";
-            $tableChema[] = "CREATE TABLE IF NOT EXISTS `{$_POST['mysql_prefix']}_invites` (
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1;";
+            $table_Chema[] = "CREATE TABLE IF NOT EXISTS `{$_POST['mysql_prefix']}_invites` (
   `uid` int(11) NOT NULL,
   `ruid` int(11) NOT NULL,
   KEY `uid` (`uid`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8;";
-            $tableChema[] = "CREATE TABLE IF NOT EXISTS `{$_POST['mysql_prefix']}_log` (
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;";
+            $table_Chema[] = "CREATE TABLE IF NOT EXISTS `{$_POST['mysql_prefix']}_log` (
   `uid` int(11) NOT NULL,
   `browser` text NOT NULL,
   `ip` varchar(15) NOT NULL,
   KEY `uid` (`uid`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8;";
-            $tableChema[] = "CREATE TABLE IF NOT EXISTS `{$_POST['mysql_prefix']}_mail_tpl` (
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;";
+            $table_Chema[] = "CREATE TABLE IF NOT EXISTS `{$_POST['mysql_prefix']}_mail_tpl` (
   `id` mediumint(8) NOT NULL AUTO_INCREMENT,
   `text` text NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;";
-            $tableChema[] = "INSERT INTO `{$_POST['mysql_prefix']}_mail_tpl` (`id`, `text`) VALUES
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;";
+            $table_Chema[] = "INSERT INTO `{$_POST['mysql_prefix']}_mail_tpl` (`id`, `text`) VALUES
 			(1, 'Доброго времени суток, {%user%}!\r\nПользователь {%user-friend%}, отправил Вам заявку на дружбу.\r\n\r\nПросмотреть заявку Вы можете по ссылке: http://mysocial.ua/friends/requests\r\n\r\nС уважением, Социальная сеть.\r\nАдминистрация http://mysocial.ua/'),
 			(2, 'Доброго времени суток, {%user%}!\r\nПользователь {%user-friend%}, ответил на Вашу запись {%rec-link%}\r\n\r\nС уважением, Социальная сеть.\r\nАдминистрация http://mysocial.ua/'),
 			(3, 'Доброго времени суток, {%user%}!\r\nПользователь {%user-friend%}, оставил комментарий к Вашей видеозаписи {%rec-link%}\r\n\r\nС уважением, Социальная сеть.\r\nАдминистрация http://mysocial.ua/'),
@@ -4298,7 +4354,7 @@ HTML;
 			(6, 'Доброго времени суток, {%user%}!\r\nПользователь {%user-friend%}, отправил Вам подарок.\r\n\r\nПросмотреть подарок Вы можете по ссылке: {%rec-link%}\r\n\r\nС уважением, Социальная сеть.\r\nАдминистрация http://mysocial.ua/'),
 			(7, 'Доброго времени суток, {%user%}!\r\nПользователь {%user-friend%}, оставил на Вашей стене новую запись.\r\n\r\nПросмотреть запись можете по ссылке: {%rec-link%}\r\n\r\nС уважением, Социальная сеть.\r\nАдминистрация http://mysocial.ua/'),
 			(8, 'Доброго времени суток, {%user%}!\r\nПользователь {%user-friend%}, отправил Вам новое личное сообщение.\r\n\r\nПросмотреть сообщение можете по ссылке: {%rec-link%}\r\n\r\nС уважением, Социальная сеть.\r\nАдминистрация http://mysocial.ua/');";
-            $tableChema[] = "CREATE TABLE IF NOT EXISTS `{$_POST['mysql_prefix']}_messages` (
+            $table_Chema[] = "CREATE TABLE IF NOT EXISTS `{$_POST['mysql_prefix']}_messages` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
   `id2` varchar(255) NOT NULL DEFAULT '0',
   `room_id` bigint(20) UNSIGNED NOT NULL DEFAULT '0',
@@ -4327,8 +4383,8 @@ HTML;
   KEY `from_user_id` (`from_user_id`),
   KEY `history_user_id` (`history_user_id`),
   KEY `folder` (`folder`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;";
-            $tableChema[] = "CREATE TABLE IF NOT EXISTS `{$_POST['mysql_prefix']}_news` (
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;";
+            $table_Chema[] = "CREATE TABLE IF NOT EXISTS `{$_POST['mysql_prefix']}_news` (
   `ac_id` int(11) unsigned NOT NULL AUTO_INCREMENT,
   `ac_user_id` int(11) unsigned NOT NULL,
   `action_type` tinyint(4) unsigned NOT NULL,
@@ -4344,8 +4400,8 @@ HTML;
   KEY `for_user_id` (`for_user_id`),
   KEY `obj_id` (`obj_id`),
   KEY `action_time` (`action_time`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;";
-            $tableChema[] = "CREATE TABLE IF NOT EXISTS `{$_POST['mysql_prefix']}_notes` (
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;";
+            $table_Chema[] = "CREATE TABLE IF NOT EXISTS `{$_POST['mysql_prefix']}_notes` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
   `owner_user_id` int(11) unsigned NOT NULL,
   `title` varchar(65) NOT NULL,
@@ -4356,8 +4412,8 @@ HTML;
   KEY `owner_user_id` (`owner_user_id`),
   KEY `date` (`date`),
   FULLTEXT KEY `title` (`title`,`full_text`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;";
-            $tableChema[] = "CREATE TABLE IF NOT EXISTS `{$_POST['mysql_prefix']}_notes_comments` (
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;";
+            $table_Chema[] = "CREATE TABLE IF NOT EXISTS `{$_POST['mysql_prefix']}_notes_comments` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
   `note_id` int(11) unsigned NOT NULL,
   `from_user_id` int(11) unsigned NOT NULL,
@@ -4367,8 +4423,8 @@ HTML;
   KEY `note_id` (`note_id`),
   KEY `from_user_id` (`from_user_id`),
   KEY `add_date` (`add_date`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;";
-            $tableChema[] = "CREATE TABLE IF NOT EXISTS `{$_POST['mysql_prefix']}_photos` (
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;";
+            $table_Chema[] = "CREATE TABLE IF NOT EXISTS `{$_POST['mysql_prefix']}_photos` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
   `album_id` int(11) unsigned NOT NULL,
   `photo_name` varchar(25) NOT NULL,
@@ -4386,8 +4442,8 @@ HTML;
   KEY `position` (`position`),
   KEY `date` (`date`),
   KEY `photo_name` (`photo_name`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;";
-            $tableChema[] = "CREATE TABLE IF NOT EXISTS `{$_POST['mysql_prefix']}_photos_comments` (
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;";
+            $table_Chema[] = "CREATE TABLE IF NOT EXISTS `{$_POST['mysql_prefix']}_photos_comments` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
   `owner_id` int(11) unsigned NOT NULL,
   `album_id` int(11) unsigned NOT NULL,
@@ -4404,8 +4460,8 @@ HTML;
   KEY `hash` (`hash`),
   KEY `photo_name` (`photo_name`),
   KEY `date` (`date`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;";
-            $tableChema[] = "CREATE TABLE IF NOT EXISTS `{$_POST['mysql_prefix']}_photos_mark` (
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;";
+            $table_Chema[] = "CREATE TABLE IF NOT EXISTS `{$_POST['mysql_prefix']}_photos_mark` (
   `muser_id` int(11) unsigned NOT NULL,
   `mphoto_id` int(11) unsigned NOT NULL,
   `mphoto_name` varchar(50) NOT NULL,
@@ -4417,8 +4473,8 @@ HTML;
   KEY `mphoto_id` (`mphoto_id`),
   KEY `mdate` (`mdate`),
   FULLTEXT KEY `mphoto_name` (`mphoto_name`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8;";
-            $tableChema[] = "CREATE TABLE IF NOT EXISTS `{$_POST['mysql_prefix']}_photos_rating` (
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;";
+            $table_Chema[] = "CREATE TABLE IF NOT EXISTS `{$_POST['mysql_prefix']}_photos_rating` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `photo_id` int(11) NOT NULL,
   `user_id` int(11) NOT NULL,
@@ -4428,8 +4484,8 @@ HTML;
   PRIMARY KEY (`id`),
   KEY `for_select_1` (`id`,`user_id`),
   KEY `for_select_2` (`photo_id`,`user_id`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;";
-            $tableChema[] = "CREATE TABLE IF NOT EXISTS `{$_POST['mysql_prefix']}_report` (
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;";
+            $table_Chema[] = "CREATE TABLE IF NOT EXISTS `{$_POST['mysql_prefix']}_report` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
   `act` varchar(10) NOT NULL,
   `type` smallint(5) unsigned NOT NULL,
@@ -4442,8 +4498,8 @@ HTML;
   KEY `mid` (`mid`),
   KEY `act` (`act`),
   KEY `date` (`date`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;";
-            $tableChema[] = "CREATE TABLE IF NOT EXISTS `{$_POST['mysql_prefix']}_restore` (
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;";
+            $table_Chema[] = "CREATE TABLE IF NOT EXISTS `{$_POST['mysql_prefix']}_restore` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `email` varchar(50) NOT NULL,
   `hash` varchar(32) NOT NULL,
@@ -4452,8 +4508,8 @@ HTML;
   KEY `email` (`email`),
   KEY `hash` (`hash`),
   KEY `ip` (`ip`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;";
-            $tableChema[] = "CREATE TABLE IF NOT EXISTS `{$_POST['mysql_prefix']}_reviews` (
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;";
+            $table_Chema[] = "CREATE TABLE IF NOT EXISTS `{$_POST['mysql_prefix']}_reviews` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `user_id` int(11) NOT NULL,
   `text` text NOT NULL,
@@ -4463,8 +4519,8 @@ HTML;
   KEY `date` (`date`),
   KEY `for_sel` (`user_id`,`approve`),
   KEY `approve` (`approve`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;";
-            $tableChema[] = "CREATE TABLE IF NOT EXISTS `{$_POST['mysql_prefix']}_sms_log` (
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;";
+            $table_Chema[] = "CREATE TABLE IF NOT EXISTS `{$_POST['mysql_prefix']}_sms_log` (
   `user_id` int(11) NOT NULL,
   `from_u` varchar(20) NOT NULL,
   `msg` varchar(100) NOT NULL,
@@ -4474,16 +4530,16 @@ HTML;
   `abonent_cost` float NOT NULL,
   `date` varchar(10) NOT NULL,
   KEY `user_id` (`user_id`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8;";
-            $tableChema[] = "CREATE TABLE IF NOT EXISTS `{$_POST['mysql_prefix']}_static` (
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;";
+            $table_Chema[] = "CREATE TABLE IF NOT EXISTS `{$_POST['mysql_prefix']}_static` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `alt_name` varchar(50) NOT NULL,
   `title` varchar(150) NOT NULL,
   `text` text NOT NULL,
   PRIMARY KEY (`id`),
   KEY `alt_name` (`alt_name`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;";
-            $tableChema[] = "CREATE TABLE IF NOT EXISTS `{$_POST['mysql_prefix']}_support` (
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;";
+            $table_Chema[] = "CREATE TABLE IF NOT EXISTS `{$_POST['mysql_prefix']}_support` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
   `title` varchar(65) NOT NULL,
   `question` text NOT NULL,
@@ -4494,8 +4550,8 @@ HTML;
   PRIMARY KEY (`id`),
   KEY `suser_id` (`suser_id`),
   KEY `сdate` (`сdate`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;";
-            $tableChema[] = "CREATE TABLE IF NOT EXISTS `{$_POST['mysql_prefix']}_support_answers` (
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;";
+            $table_Chema[] = "CREATE TABLE IF NOT EXISTS `{$_POST['mysql_prefix']}_support_answers` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
   `qid` int(11) unsigned NOT NULL,
   `auser_id` int(11) unsigned NOT NULL,
@@ -4505,8 +4561,8 @@ HTML;
   KEY `qid` (`qid`),
   KEY `auser_id` (`auser_id`),
   KEY `adate` (`adate`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;";
-            $tableChema[] = "CREATE TABLE IF NOT EXISTS `{$_POST['mysql_prefix']}_updates` (
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;";
+            $table_Chema[] = "CREATE TABLE IF NOT EXISTS `{$_POST['mysql_prefix']}_updates` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
   `for_user_id` mediumint(8) unsigned NOT NULL,
   `from_user_id` mediumint(8) unsigned NOT NULL,
@@ -4519,8 +4575,8 @@ HTML;
   PRIMARY KEY (`id`),
   KEY `for_user_id` (`for_user_id`),
   KEY `date` (`date`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;";
-            $tableChema[] = "CREATE TABLE IF NOT EXISTS `{$_POST['mysql_prefix']}_users` (
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;";
+            $table_Chema[] = "CREATE TABLE IF NOT EXISTS `{$_POST['mysql_prefix']}_users` (
   `user_id` mediumint(11) NOT NULL AUTO_INCREMENT,
   `user_email` varchar(50) NOT NULL,
   `user_password` varchar(32) NOT NULL,
@@ -4597,8 +4653,8 @@ HTML;
   KEY `user_sp` (`user_sp`),
   KEY `user_rating` (`user_rating`),
   KEY `user_search_pref` (`user_search_pref`)
-) ENGINE=MyISAM  DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;";
-            $tableChema[] = "CREATE TABLE IF NOT EXISTS `{$_POST['mysql_prefix']}_users_rating` (
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;";
+            $table_Chema[] = "CREATE TABLE IF NOT EXISTS `{$_POST['mysql_prefix']}_users_rating` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `user_id` int(11) NOT NULL,
   `for_user_id` int(11) NOT NULL,
@@ -4606,8 +4662,8 @@ HTML;
   `date` varchar(10) NOT NULL,
   PRIMARY KEY (`id`),
   KEY `for_select` (`user_id`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;";
-            $tableChema[] = "CREATE TABLE IF NOT EXISTS `{$_POST['mysql_prefix']}_users_stats` (
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;";
+            $table_Chema[] = "CREATE TABLE IF NOT EXISTS `{$_POST['mysql_prefix']}_users_stats` (
   `user_id` int(11) unsigned NOT NULL,
   `users` int(11) unsigned NOT NULL,
   `views` int(11) unsigned NOT NULL,
@@ -4618,14 +4674,14 @@ HTML;
   KEY `date_x` (`date_x`),
   KEY `views` (`views`),
   KEY `users` (`users`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8;";
-            $tableChema[] = "CREATE TABLE IF NOT EXISTS `{$_POST['mysql_prefix']}_users_stats_log` (
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;";
+            $table_Chema[] = "CREATE TABLE IF NOT EXISTS `{$_POST['mysql_prefix']}_users_stats_log` (
   `user_id` int(11) unsigned NOT NULL,
   `for_user_id` int(11) unsigned NOT NULL,
   `date` int(8) unsigned NOT NULL,
   KEY `user_id` (`user_id`,`for_user_id`,`date`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8;";
-            $tableChema[] = "CREATE TABLE IF NOT EXISTS `{$_POST['mysql_prefix']}_videos` (
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;";
+            $table_Chema[] = "CREATE TABLE IF NOT EXISTS `{$_POST['mysql_prefix']}_videos` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
   `owner_user_id` int(11) unsigned NOT NULL,
   `public_id` int(11) unsigned NOT NULL,
@@ -4643,8 +4699,8 @@ HTML;
   KEY `public_id` (`public_id`),
   KEY `add_date` (`add_date`),
   FULLTEXT KEY `title` (`title`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;";
-            $tableChema[] = "CREATE TABLE IF NOT EXISTS `{$_POST['mysql_prefix']}_videos_comments` (
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;";
+            $table_Chema[] = "CREATE TABLE IF NOT EXISTS `{$_POST['mysql_prefix']}_videos_comments` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
   `author_user_id` int(11) unsigned NOT NULL,
   `video_id` int(11) unsigned NOT NULL,
@@ -4653,15 +4709,15 @@ HTML;
   PRIMARY KEY (`id`),
   KEY `for_fast_select1` (`author_user_id`,`video_id`),
   KEY `add_date` (`add_date`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;";
-            $tableChema[] = "CREATE TABLE IF NOT EXISTS `{$_POST['mysql_prefix']}_votes` (
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;";
+            $table_Chema[] = "CREATE TABLE IF NOT EXISTS `{$_POST['mysql_prefix']}_votes` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `title` varchar(80) NOT NULL,
   `answers` text NOT NULL,
   `answer_num` mediumint(8) NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;";
-            $tableChema[] = "CREATE TABLE IF NOT EXISTS `{$_POST['mysql_prefix']}_votes_result` (
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;";
+            $table_Chema[] = "CREATE TABLE IF NOT EXISTS `{$_POST['mysql_prefix']}_votes_result` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `user_id` int(11) NOT NULL,
   `vote_id` int(11) NOT NULL,
@@ -4670,8 +4726,8 @@ HTML;
   KEY `user_id` (`user_id`),
   KEY `vote_id` (`vote_id`),
   KEY `answer` (`answer`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;";
-            $tableChema[] = "CREATE TABLE IF NOT EXISTS `{$_POST['mysql_prefix']}_wall` (
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;";
+            $table_Chema[] = "CREATE TABLE IF NOT EXISTS `{$_POST['mysql_prefix']}_wall` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
   `author_user_id` int(11) unsigned NOT NULL,
   `for_user_id` int(11) unsigned NOT NULL,
@@ -4692,30 +4748,49 @@ HTML;
   KEY `fast_comm_id` (`fast_comm_id`),
   KEY `tell_uid` (`tell_uid`,`tell_date`),
   KEY `add_date` (`add_date`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;";
-            $tableChema[] = "CREATE TABLE IF NOT EXISTS `{$_POST['mysql_prefix']}_wall_like` (
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;";
+            $table_Chema[] = "CREATE TABLE IF NOT EXISTS `{$_POST['mysql_prefix']}_wall_like` (
   `rec_id` int(11) unsigned NOT NULL,
   `user_id` int(11) unsigned NOT NULL,
   `date` varchar(15) NOT NULL,
   KEY `for_fast_select1` (`rec_id`,`user_id`),
   KEY `date` (`date`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8;";
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;";
             //Вставляем админа в базу
             $_POST['pass'] = md5(md5($_POST['pass']));
-            $hid = $_POST['pass'] . md5(md5($db->safesql($_SERVER['REMOTE_ADDR'])));
-            $tableChema[] = "INSERT INTO `{$_POST['mysql_prefix']}_users` SET user_name = '{$_POST['name']}', user_lastname = '{$_POST['lastname']}', user_email = '{$_POST['email']}', user_password = '{$_POST['pass']}', user_group = 1, user_search_pref = '{$_POST['name']} {$_POST['lastname']}', user_privacy = 'val_msg|1||val_wall1|1||val_wall2|1||val_wall3|1||val_info|1||', user_hid = '{$hid}', user_reg_date = '" . time() . "'";
-            $tableChema[] = "INSERT INTO `{$_POST['mysql_prefix']}_log` SET uid = '1', browser = '', ip = ''";
-            foreach ($tableChema as $query) $db->query($query);
+            $hid = $_POST['pass'] . md5(md5($_SERVER['REMOTE_ADDR']));
+
+            $server_time = $server_time ?? time();
+
+            $table_Chema[] = "INSERT INTO `{$_POST['mysql_prefix']}_users` 
+SET user_name = '{$_POST['name']}', 
+    user_lastname = '{$_POST['lastname']}', 
+    user_email = '{$_POST['email']}', 
+    user_password = '{$_POST['pass']}', 
+    user_group = 1, 
+    user_search_pref = '{$_POST['name']} {$_POST['lastname']}', 
+    user_privacy = 'val_msg|1||val_wall1|1||val_wall2|1||val_wall3|1||val_info|1||', 
+    user_hid = '{$hid}',     
+    user_birthday = '0-0-0', 
+    user_day = '0', 
+    user_month = '0', 
+    user_year = '0', 
+    user_country = '0', 
+    user_city = '0', 
+    user_lastdate = '{$server_time}', 
+    user_lastupdate = '{$server_time}',   
+    user_reg_date = '{$server_time}'";
+            $table_Chema[] = "INSERT INTO `{$_POST['mysql_prefix']}_log` SET uid = '1', browser = '', ip = ''";
+            foreach ($table_Chema as $query) $db->query($query);
             echo <<<HTML
 <div class="h1">Установка успешно завершена</div>
-Поздравляем Вас, Vii Engine 2.0(fixed) был успешно установлен на Ваш сервер. Вы можете просмотреть теперь главную <a href="/">страницу вашего сайта</a> и посмотреть возможности скрипта. Либо Вы можете <a href="/{$admin_index}">зайти</a> в панель управления Vii Engine и изменить другие настройки системы. 
+Поздравляем Вас, Vii Engine был успешно установлен на Ваш сервер. Вы можете просмотреть теперь главную <a href="/">страницу вашего сайта</a> и посмотреть возможности скрипта. Либо Вы можете <a href="/{$admin_index}">зайти</a> в панель управления Vii Engine и изменить другие настройки системы. 
 <br /><br />
-<font color="red">Внимание: при установки скрипта создается структура базы данных, создается аккаунт администратора, а также прописываются основные настройки системы, поэтому после успешной установки удалите файл <b>install.php</b> во избежание повторной установки скрипта!</font>
+<div style="color: red">Внимание: при установке скрипта создается структура базы данных, создается аккаунт администратора, а также прописываются основные настройки системы, поэтому после успешной установки удалите файл <b>install.php</b> во избежание повторной установки скрипта!</div>
 <br /><br />
-Приятной Вам работы,<br />
-Null от CMSTOOLS.RU
+Приятной Вам работы!
 HTML;
-            
+
         } else echo <<<HTML
 <div class="h1">Ошибка</div>
 Заполните необходимые поля!
@@ -4728,73 +4803,27 @@ HTML;
 if (@file_exists(ENGINE_DIR . '/data/config.php')) {
     echo <<<HTML
 <div class="h1">Установка скрипта автоматически заблокирована</div>
-Внимание, на сервере обнаружена уже установленная копия Vii Engine. Если вы хотите еще раз произвести установку скрипта, то вам необходимо вручную удалить файл <b>/system/data/config.php</b>, используя FTP протокол.
+Внимание, на сервере обнаружена уже установленная копия Vii Engine. Если вы хотите еще раз произвести установку скрипта, то вам необходимо вручную удалить файл <b>/system/data/config.php</b> и <b>/system/data/db.php</b>.
 <input type="submit" class="inp fl_r" value="Обновить" onClick="location.href='/install.php'" />
 HTML;
-    
+
 } else {
     echo <<<HTML
 <div class="h1">Мастер установки скрипта</div>
 Добро пожаловать в мастер установки Vii Engine. Данный мастер поможет вам установить скрипт всего за пару минут. Однако, не смотря на это, мы настоятельно рекомендуем Вам ознакомиться с документацией по работе с движком, а также по его установке, которая поставляется вместе со скриптом.<br /><br />
 Прежде чем начать установку убедитесь, что все файлы дистрибутива загружены на сервер, а также выставлены необходимые права доступа для папок и файлов.<br /><br />
-<font color="red">Внимание: при установке скрипта создается структура базы данных, создается аккаунт администратора, а также прописываются основные настройки системы, поэтому после успешной установки удалите файл <b>install.php</b> во избежание повторной установки скрипта!</font><br /><br />
-Приятной Вам работы,<br />
-NiceWeb Group
+<div style="color: red">Внимание: при установке скрипта создается структура базы данных, создается аккаунт администратора, а также прописываются основные настройки системы, поэтому после успешной установки удалите файл <b>install.php</b> во избежание повторной установки скрипта!</div><br /><br />
+Приятной Вам работы!
 HTML;
     echo <<<HTML
 <div class="h1">Лицензионное соглашение</div>
 <div style="background:lightyellow;padding:10px;border:1px solid #ccc;height:300px;overflow:auto">
 
-<b>Скачал скрипт? Посети cmstools.ru!Администрация будет рада твоему визиту.</b><br /><br />
-
-<b>Предмет лицензионного соглашения</b><br /><br />
-
-Предметом настоящего лицензионного соглашения является право использования одной лицензионной копии программного продукта Vii Engine, в порядке и на условиях, установленных настоящим соглашением.<br /><br />
-
-<b>Содержание договора</b><br /><br />
-
-Срок обслуживания клиента с момента приобретения одной лицензионной копии программного продукта Vii Engine по базовой лицензии равен одному году. Если по истечении срока обслуживания, Вы решите не продлевать его действие, то Ваш программный продукт будет функционировать в полном объеме, но без нашей технической поддержки и без предоставления новых версий скрипта, за исключением критических обновлений скрипта.
-<br /><br />
-В случае приобретения и использования только базовой лицензии на скрипт, обслуживание клиентов, на время действия лицензионного соглашения, осуществляется только предоставлением стандартных услуг по обслуживанию: предоставление дистрибутивов, новых версий скрипта, критических обновлений скрипта. Технической поддержки по базовым лицензиям не предоставляется. Для получения технической поддержки по скрипту, пользователям необходимо иметь лицензию, включающую в себя службу технической поддержки, либо быть подписчиком на службу технической поддержки.
-
-Мы оставляем за собой право публиковать списки избранных пользователей своих программных продуктов. Мы оставляем за собой право в любое время изменять условия данного договора, но данные действия не имеют обратной силы. Изменения данного договора будут разосланы пользователям по электронной почте на адреса, указанные при приобретении системы.<br /><br />
-
-<b>Ограниченное использование</b><br /><br />
-
-Приобретая лицензию на программный продукт Vii Engine, вы должны знать, что не приобретаете авторские права на программный продукт. Вы приобретаете только право на использование программного продукта на единственном веб сайте (одном домене второго уровня и его поддоменах), принадлежащем Вам или Вашему клиенту. Для использования скрипта на другом сайте, вам необходимо приобретать повторую лицензию. Запрещается перепродажа скрипта третьим лицам, и если вы приобретаете скрипт для Ваших клиентов, то вы обязаны ознакомить Ваших клиентов с данным лицензионным соглашением. Также в случае приобретения скрипта не для собственного использования, а для установки на сайты Ваших клиентов, мы не несем обязательств по поддержке Ваших клиентов.<br /><br />
-
-<b>Права и обязанности сторон</b><br /><br />
-
-<b>Покупатель имеет право:</b><br /><br />
-<li>Изменять дизайн и структуру программного кода в соответствии с нуждами своего сайта.</li>
-<li>Производить и распространять инструкции по созданным Вами модификациям шаблонов и языковых файлов, если в них будет иметься указание на оригинального разработчика программного продукта до Ваших модификаций. Модификации, произведенные Вами самостоятельно, не являются собственностью NiceWeb Group, если не содержат программные коды непосредственно скрипта.</li>
-<li>Создавать модули, которые будут взаимодействовать с нашими программными кодами, с указанием на то, что это Ваш оригинальный продукт.</li>
-<li>Переносить программный продукт на другой сайт после обязательного уведомления нас об этом, а также полного удаления скрипта с предыдущего сайта.</li><br />
-
-<b>Покупатель не имеет право:</b><br /><br />
-<li>Передавать права на использование программного продукта третьим лицам.</li>
-<li>Изменять структуру программных кодов, функции программы, с целью создания родственных продуктов</li>
-<li>Создавать отдельные самостоятельные продукты, базирующиеся на нашем программном коде</li>
-<li>Использовать копии программного продукта Vii Engine по одной лицензии на более чем одном сайте (одном домене второго уровня и его поддоменах)</li>
-<li>Рекламировать, продавать или публиковать на своем сайте пиратские копии нашего программного продукта</li>
-<li>Распространять или содействовать распространению нелицензионных копий программного продукта Vii Engine</li>
-<li>Удалять механизмы проверки наличия оригинальной лицензии на использование скрипта</li>
-<li>Ограничение гарантийных обязательств</li>
-<br />
-Мы хотим отметить, что механизмы безопасности, установленные на Vii Engine, имеют известные ограничения, и несмотря на то, что мы прилагаем максимальные усилия по обеспечению безопасности скрипта, вы должны быть ознакомлены с отсутствием абсолютных гарантий от взлома вашего сайта. Так же Наши гарантии и техническая поддержка не распространяются на модификации, произведенные третьей стороной, включая изменения программного кода, стиля, языковых пакетов, а также на изменения перечисленных частей, внесенные владельцем лицензии самостоятельно. Если программный продукт изменен Вами или третьей стороной, то мы вправе отказать Вам в технической поддержке. Вы должны быть ознакомлены, что программный продукт Vii Engine не подлежит возврату или обмену из-за отсутствия гарантий защищающих программный продукт от копирования.<br /><br />
-
-<b>Права на интеллектуальную собственность</b><br /><br />
-
-Название Vii Engine, а также входящие в данный продукт скрипты являются собственностью NiceWeb Group, за исключением случаев, когда для компонента системы применяется другой тип лицензии. Программный продукт защищен законом об авторских правах. Любые публикуемые оригинальные материалы, создаваемые в результате использования нашего скрипта, и связанные с этим права на них, являются собственностью пользователя и защищены законом. NiceWeb Group не несет никакой ответственности за содержание сайтов, создаваемых пользователем скрипта Vii Engine.<br /><br />
-
-<b>Досрочное расторжение договорных обязательств</b><br /><br />
-
-Данное соглашение расторгается автоматически, если Вы отказываетесь выполнять условия нашего договора. Данное лицензионное соглашение может быть расторгнуто нами в одностороннем порядке, в случае установления фактов нарушения данного лицензионного соглашения. В случае досрочного расторжения договора Вы обязуетесь удалить все Ваши копии нашего программного продукта в течении 3 рабочих дней, с момента получения соответствующего уведомления.
 </div>
 <div class="fl_l" style="margin-top:11px"><input type="checkbox" id="lic" value="0" onClick="if(document.getElementById('lic').value == 0){document.getElementById('lic').value = '1'} else {document.getElementById('lic').value = '0'}" /> <b>Я принимаю данное соглашение</b></div>
 <input type="submit" class="inp fl_r" value="Начать установку" onClick="if(document.getElementById('lic').value == 0){alert('Вы должны принять лицензионное соглашение, прежде чем продолжите установку.');} else {location.href='/install.php?act=files'}" />
 HTML;
-    
+
 }
 echo <<<HTML
 </div>
@@ -4802,4 +4831,3 @@ echo <<<HTML
 </html>
 HTML;
 
-?>
