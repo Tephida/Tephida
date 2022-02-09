@@ -39,8 +39,8 @@ if($logged){
 		//################### Отправка нового вопроса  ###################//
 		case "send":
 			NoAjaxQuery();
-			$title = textFilter($_POST['title'], 25000, true);
-			$question = textFilter($_POST['question']);
+			$title = requestFilter('title', 25000, true);
+			$question = requestFilter('question');
 			$limitTime = $server_time-3600;
 			$rowLast = $db->super_query("SELECT COUNT(*) AS cnt FROM `".PREFIX."_support` WHERE сdate > '{$limitTime}'");
 			if(!$rowLast['cnt'] AND isset($title) AND !empty($title) AND isset($question) AND !empty($question) AND $user_info['user_group'] != 4){
@@ -109,7 +109,7 @@ if($logged){
 		case "answer":
 			NoAjaxQuery();
 			$qid = intval($_POST['qid']);
-			$answer = textFilter($_POST['answer']);
+			$answer = requestFilter('answer');
 			$check = $db->super_query("SELECT suser_id FROM `".PREFIX."_support` WHERE id = '{$qid}'");
 			if($check['suser_id'] == $user_id OR $user_info['user_group'] == 4 AND isset($answer) AND !empty($answer)){
 				if($user_info['user_group'] == 4){

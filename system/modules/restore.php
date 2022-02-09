@@ -21,7 +21,7 @@ if(!$logged){
 		//################### Проверка данных на воостановления ###################//
 		case "next":
 			NoAjaxQuery();
-			$email = textFilter($_POST['email']);
+			$email = requestFilter('email');
 			$check = $db->super_query("SELECT user_id, user_search_pref, user_photo FROM `".PREFIX."_users` WHERE user_email = '{$email}'");
 			if($check){
 				if($check['user_photo'])
@@ -39,7 +39,7 @@ if(!$logged){
 		//################### Отправка данных на почту на воостановления ###################//
 		case "send":
 			NoAjaxQuery();
-			$email = textFilter($_POST['email']);
+			$email = requestFilter('email');
 			$check = $db->super_query("SELECT user_name FROM `".PREFIX."_users` WHERE user_email = '{$email}'");
 			if($check){
 				//Удаляем все предыдущие запросы на воостановление

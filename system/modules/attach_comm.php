@@ -69,7 +69,7 @@ if($logged){
 		//################### Добавления комментария ###################//
 		case "addcomm":
 			
-			$text = textFilter($_POST['text']);
+			$text = requestFilter('text');
 			$purl = $db->safesql(to_translit($_POST['purl']));
 			
 			//Проверка на существования фотки в таблице PREFIX_attach

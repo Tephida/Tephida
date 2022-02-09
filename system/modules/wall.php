@@ -20,8 +20,8 @@ if($logged){
 		//################### Добвление новой записи на стену ###################//
 		case "send":
 //			NoAjaxQuery();
-			$wall_text = textFilter($_POST['wall_text']);
-			$attach_files = textFilter($_POST['attach_files'], 25000, true);
+			$wall_text = requestFilter('wall_text');
+			$attach_files = requestFilter('attach_files', 25000, true);
 			$for_user_id = intval($_POST['for_user_id']);
 			$fast_comm_id = intval($_POST['rid']);
 			$answer_comm_id = intval($_POST['answer_comm_id']);
@@ -122,16 +122,16 @@ if($logged){
 							$attach_files = str_replace(array('&amp;#124;', '&amp;raquo;', '&amp;quot;'), array('&#124;', '&raquo;', '&quot;'), $attach_files);
 							
 							//Голосование
-							$vote_title = textFilter($_POST['vote_title'], 25000, true);
-							$vote_answer_1 = textFilter($_POST['vote_answer_1'], 25000, true);
+							$vote_title = requestFilter('vote_title', 25000, true);
+							$vote_answer_1 = requestFilter('vote_answer_1', 25000, true);
 
 							$ansers_list = array();
 							
-							if(isset($vote_title) AND !empty($vote_title) AND isset($vote_answer_1) AND !empty($vote_answer_1)){
+							if(!empty($vote_title) AND !empty($vote_answer_1)){
 								
 								for($vote_i = 1; $vote_i <= 10; $vote_i++){
 									
-									$vote_answer = textFilter($_POST['vote_answer_'.$vote_i], 25000, true);
+									$vote_answer = requestFilter('vote_answer_'.$vote_i, 25000, true);
 									$vote_answer = str_replace('|', '&#124;', $vote_answer);
 									
 									if($vote_answer)

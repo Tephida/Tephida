@@ -21,9 +21,9 @@ switch($act){
 		
 		NoAjaxQuery();
 		
-		$text = textFilter($_POST['text']);
+		$text = requestFilter('text');
 		
-		if(isset($text) AND !empty($text) AND $logged){
+		if(!empty($text) AND $logged){
 			
 			//Вставляем в базу
 			$db->query("INSERT INTO `".PREFIX."_reviews` SET user_id = '{$user_info['user_id']}', text = '{$text}', date = '{$server_time}', approve = 1");

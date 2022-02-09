@@ -24,7 +24,7 @@ if($logged){
 			$i_height = intval($_POST['i_height']); if($i_height < 0) $i_height = 0;
 			$photo_id = intval($_POST['photo_id']);
 			$muser_id = intval($_POST['user_id']);
-			$mphoto_name = strip_data(textFilter($_POST['user_name'], 25000, true));
+			$mphoto_name = strip_data(requestFilter('user_name', 25000, true));
 			$msettings_pos = $i_left.", ".$i_top.", ".$i_width.", ".$i_height;
 			if($user_id == $muser_id) $approve = 1;
 			else $approve = 0;
@@ -54,7 +54,7 @@ if($logged){
 		case "mark_del":
 			$photo_id = intval($_POST['photo_id']);
 			$muser_id = intval($_POST['user_id']);
-			$mphoto_name = strip_data(textFilter($_POST['user_name'], 25000, true));
+			$mphoto_name = strip_data(requestFilter('user_name', 25000, true));
 			$row = $db->super_query("SELECT user_id FROM `".PREFIX."_photos` WHERE id = '".$photo_id."'");
 			
 			if($mphoto_name AND $muser_id == 0)

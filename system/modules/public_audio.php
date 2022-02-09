@@ -52,23 +52,24 @@ if($logged){
 			
 			$aid = intval($_POST['aid']);
 			$pid = intval($_POST['pid']);
-			$artist = textFilter($_POST['artist'], 25000, true);
-			$name = textFilter($_POST['name'], 25000, true);
+			$artist = requestFilter('artist', 25000, true);
+			$name = requestFilter('name', 25000, true);
 
-			if(isset($artist) AND empty($artist)) $artist = 'Неизвестный исполнитель';
-			if(isset($name) AND empty($name)) $name = 'Без названия';
+			if(empty($artist))
+                $artist = 'Неизвестный исполнитель';
+			if(empty($name))
+                $name = 'Без названия';
 			
 			$infoGroup = $db->super_query("SELECT admin FROM `".PREFIX."_communities` WHERE id = '{$pid}'");
 			
-			if(stripos($infoGroup['admin'], "u{$user_id}|") !== false) $public_admin = true;
-			else $public_admin = false;
+			if(stripos($infoGroup['admin'], "u{$user_id}|") !== false)
+                $public_admin = true;
+			else
+                $public_admin = false;
 			
 			if($public_admin){
-			
 				$db->query("UPDATE `".PREFIX."_communities_audio` SET artist = '{$artist}', name = '{$name}' WHERE aid = '{$aid}'");
-				
 				mozg_clear_cache_file("groups/audio{$pid}");
-				
 			}
 			
 			exit;

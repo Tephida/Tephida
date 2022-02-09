@@ -17,7 +17,7 @@ if(!$se_uid) $se_uid = '';
 $se_user_id = intval($_GET['se_user_id']);
 if(!$se_user_id) $se_user_id = '';
 
-$se_name = textFilter($_GET['se_name'], 25000, true);
+$se_name = requestFilter('se_name', 25000, true);
 
 if($se_uid OR $sort OR $se_name OR $se_user_id){
 	if($se_uid) $where_sql .= "AND aid = '".$se_uid."' ";

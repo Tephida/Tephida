@@ -12,10 +12,10 @@ if(!defined('MOZG'))
 NoAjaxQuery();
 
 if($logged){
-	$act = textFilter($_POST['act']);
+	$act = requestFilter('act');
 	$mid = intval($_POST['id']);
 	$type_report = intval($_POST['type_report']);
-	$text_report = textFilter($_POST['text_report']);
+	$text_report = requestFilter('text_report');
 	$arr_act = array('photo', 'video', 'note', 'wall');
 	if($act == 'wall') $type_report = 6;
 	if(in_array($act, $arr_act) AND $mid AND $type_report <= 6 AND $type_report > 0){

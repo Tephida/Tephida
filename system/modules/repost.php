@@ -23,7 +23,7 @@ if($logged){
 			NoAjaxQuery();
 			
 			$rid = intval($_POST['rec_id']);
-			$comm = textFilter($_POST['comm']);
+			$comm = requestFilter('comm');
 			
 			//Проверка на существование записи
 			if($_POST['g_tell'] == 1){
@@ -73,7 +73,7 @@ if($logged){
 			
 			$rid = intval($_POST['rec_id']);
 			$sel_group = intval($_POST['sel_group']);
-			$comm = textFilter($_POST['comm']);
+			$comm = requestFilter('comm');
 			
 			//Проверка на существование записи
 			$row = $db->super_query("SELECT add_date, text, author_user_id, tell_uid, tell_date, public, attach FROM `".PREFIX."_wall` WHERE fast_comm_id = '0' AND id = '{$rid}'");
@@ -118,7 +118,7 @@ if($logged){
 			
 			$rid = intval($_POST['rec_id']);
 			$sel_group = intval($_POST['sel_group']);
-			$comm = textFilter($_POST['comm']);
+			$comm = requestFilter('comm');
 			
 			//Проверка на существование записи
 			$row = $db->super_query("SELECT add_date, text, public_id, attach, tell_uid, tell_date, public FROM `".PREFIX."_communities_wall` WHERE fast_comm_id = 0 AND id = '{$rid}'");
@@ -164,7 +164,7 @@ if($logged){
 			NoAjaxQuery();
 			
 			$for_user_id = intval($_POST['for_user_id']);
-			$tell_comm = textFilter($_POST['comm']);
+			$tell_comm = requestFilter('comm');
 			$rid = intval($_POST['rec_id']);
 
 			if($user_id != $for_user_id){

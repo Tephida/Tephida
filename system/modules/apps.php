@@ -20,12 +20,16 @@ if ($logged) {
             $row = $db->super_query("SELECT id, title, poster, descr, traf FROM `" . PREFIX . "_games` WHERE id = '{$id}'");
             $tpl->load_template('apps/view.tpl');
             if ($row) {
-                if ($row['poster']) $tpl->set('{poster}', "/uploads/apps/{$row['id']}/{$row['poster']}");
-                else $tpl->set('{poster}', "/uploads/no_app.gif");
+                if ($row['poster'])
+                    $tpl->set('{poster}', "/uploads/apps/{$row['id']}/{$row['poster']}");
+                else
+                    $tpl->set('{poster}', "/uploads/no_app.gif");
                 $tpl->set('{title}', stripslashes($row['title']));
                 $tpl->set('{descr}', stripslashes($row['descr']));
-                if ($row['traf']) $tpl->set('{traf}', 'Игру ' . newGram($row['traf'], 'установил', 'установили', 'установили', true) . ' ' . newGram($row['traf'], 'человек', 'человека', 'человек'));
-                else $tpl->set('{traf}', 'Пока никто не установил эту игру');
+                if ($row['traf'])
+                    $tpl->set('{traf}', 'Игру ' . newGram($row['traf'], 'установил', 'установили', 'установили', true) . ' ' . newGram($row['traf'], 'человек', 'человека', 'человек'));
+                else
+                    $tpl->set('{traf}', 'Пока никто не установил эту игру');
                 $tpl->set('{app-id}', $row['id']);
                 //Выводим скрины
                 $sql_imgs = $db->super_query("SELECT file FROM `" . PREFIX . "_games_files` WHERE game_id = '{$row['id']}' AND type = 'scrin'", 1);

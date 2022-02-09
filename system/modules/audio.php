@@ -23,10 +23,10 @@ if($logged){
 		//################### Отправление песни в БД ###################//
 		case "send":
 			NoAjaxQuery();
-			$lnk = textFilter($_POST['lnk']);
+			$lnk = requestFilter('lnk');
 			$format = strtolower(end(explode('.', $lnk)));
 			
-			if($format == 'mp3' AND isset($lnk) AND !empty($lnk) AND $config['audio_mod_add'] == 'yes'){
+			if($format == 'mp3' AND !empty($lnk) AND $config['audio_mod_add'] == 'yes'){
 				$check_url = @get_headers(stripslashes($lnk));
 				if(strpos($check_url[0], '200')){
 					//Узнаем исполнителя и название песни по id3
@@ -67,13 +67,15 @@ if($logged){
 		case "editsave":
 			NoAjaxQuery();
 			$aid = intval($_POST['aid']);
-			$artist = textFilter($_POST['artist'], 25000, true);
-			$name = textFilter($_POST['name'], 25000, true);
+			$artist = requestFilter('artist', 25000, true);
+			$name = requestFilter('name', 25000, true);
 			
 			$check = $db->super_query("SELECT auser_id FROM `".PREFIX."_audio` WHERE aid = '".$aid."'");
 			
-			if(isset($artist) AND empty($artist)) $artist = 'Неизвестный исполнитель';
-			if(isset($name) AND empty($name)) $name = 'Без названия';
+			if(empty($artist))
+                $artist = 'Неизвестный исполнитель';
+			if(empty($name))
+                $name = 'Без названия';
 
 			if($check['auser_id'] == $user_id){
 				$db->query("UPDATE `".PREFIX."_audio` SET artist = '{$artist}', name = '{$name}' WHERE aid = '".$aid."'");
@@ -128,7 +130,10 @@ if($logged){
 			NoAjaxQuery();
 			
 			//Для навигатор
-			if($_POST['page'] > 0) $page = intval($_POST['page']); else $page = 1;
+			if($_POST['page'] > 0)
+                $page = intval($_POST['page']);
+            else
+                $page = 1;
 			$gcount = 20;
 			$limit_page = ($page-1)*$gcount;
 			

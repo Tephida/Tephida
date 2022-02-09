@@ -63,7 +63,7 @@ if (isset($_SESSION['user_id']) > 0) {
 //Если данные поступили через пост и пользователь не авторизован
 if (isset($_POST['log_in']) AND !$logged) {
     //Приготавливаем данные
-    $email = textFilter(strip_tags($_POST['email']));
+    $email = requestFilter('email');
     $password = md5(md5(GetVar($_POST['password'])));
     //Проверяем правильность e-mail
     if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {

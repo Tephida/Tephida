@@ -124,7 +124,7 @@ if($logged){
 			NoAjaxQuery();
 			
 			$did = intval($_POST['did']);
-			$name = textFilter($_POST['name'], 25000, true);
+			$name = requestFilter('name', 25000, true);
 			$strLn = strlen($name);
 			if($strLn > 50)
 				$name = substr($name, 0, 50);

@@ -26,8 +26,7 @@ if($logged){
 		//################### Отправка сообщества БД ###################//
 		case "send":
 			NoAjaxQuery();
-            $title = $_POST['title'] ?? null;
-			$title = textFilter($title, 60, true);
+			$title = requestFilter('title', 60, true);
 			AntiSpam('groups');
 			
 			if(!empty($title)){
@@ -276,9 +275,9 @@ if($logged){
 			NoAjaxQuery();
 			$id = intval($_POST['id']);
 			$upage = intval($_POST['upage']);
-			$office = textFilter($_POST['office'], 25000, true);
-			$phone = textFilter($_POST['phone'], 25000, true);
-			$email = textFilter($_POST['email'], 25000, true);
+			$office = requestFilter('office', 25000, true);
+			$phone = requestFilter('phone', 25000, true);
+			$email = requestFilter('email', 25000, true);
 			
 			//Проверка на то, что действиие делает админ
 			$checkAdmin = $db->super_query("SELECT admin FROM `".PREFIX."_communities` WHERE id = '{$id}'");
@@ -332,9 +331,9 @@ if($logged){
 			NoAjaxQuery();
 			$id = intval($_POST['id']);
 			$upage = intval($_POST['uid']);
-			$office = textFilter($_POST['office'], 25000, true);
-			$phone = textFilter($_POST['phone'], 25000, true);
-			$email = textFilter($_POST['email'], 25000, true);
+			$office = requestFilter('office', 25000, true);
+			$phone = requestFilter('phone', 25000, true);
+			$email = requestFilter('email', 25000, true);
 			
 			//Проверка на то, что действиие делает админ
 			$checkAdmin = $db->super_query("SELECT admin FROM `".PREFIX."_communities` WHERE id = '{$id}'");
@@ -397,12 +396,12 @@ if($logged){
 			$id = intval($_POST['id']);
 			$comments = intval($_POST['comments']);
 			$discussion = intval($_POST['discussion']);
-			$title = textFilter($_POST['title'], 25000, true);
-			$adres_page = strtolower(textFilter($_POST['adres_page'], 25000, true));
-			$descr = textFilter($_POST['descr'], 5000);
+			$title = requestFilter('title', 25000, true);
+			$adres_page = strtolower(requestFilter('adres_page', 25000, true));
+			$descr = requestFilter('descr', 5000);
 			
 			$_POST['web'] = str_replace(array('"', "'"), '', $_POST['web']);
-			$web = textFilter($_POST['web'], 25000, true);
+			$web = requestFilter('web', 25000, true);
 			
 			if(!preg_match("/^[a-zA-Z0-9_-]+$/", $adres_page)) $adress_ok = false;
 			else $adress_ok = true;
@@ -481,8 +480,8 @@ if($logged){
 		case "wall_send":
 			NoAjaxQuery();
 			$id = intval($_POST['id']);
-			$wall_text = textFilter($_POST['wall_text']);
-			$attach_files = textFilter($_POST['attach_files'], 25000, true);
+			$wall_text = requestFilter('wall_text');
+			$attach_files = requestFilter('attach_files', 25000, true);
 			
 			//Проверка на админа
 			$row = $db->super_query("SELECT admin, del, ban FROM `".PREFIX."_communities` WHERE id = '{$id}'");
@@ -542,16 +541,16 @@ if($logged){
 				$attach_files = str_replace(array('&amp;#124;', '&amp;raquo;', '&amp;quot;'), array('&#124;', '&raquo;', '&quot;'), $attach_files);
 							
 				//Голосование
-				$vote_title = textFilter($_POST['vote_title'], 25000, true);
-				$vote_answer_1 = textFilter($_POST['vote_answer_1'], 25000, true);
+				$vote_title = requestFilter('vote_title', 25000, true);
+				$vote_answer_1 = requestFilter('vote_answer_1', 25000, true);
 
 				$ansers_list = array();
 							
-				if(isset($vote_title) AND !empty($vote_title) AND isset($vote_answer_1) AND !empty($vote_answer_1)){
+				if(!empty($vote_title) AND !empty($vote_answer_1)){
 								
 					for($vote_i = 1; $vote_i <= 10; $vote_i++){
 									
-						$vote_answer = textFilter($_POST['vote_answer_'.$vote_i], 25000, true);
+						$vote_answer = requestFilter('vote_answer_'.$vote_i, 25000, true);
 						$vote_answer = str_replace('|', '&#124;', $vote_answer);
 									
 						if($vote_answer)
@@ -603,7 +602,7 @@ if($logged){
 			
 			$rec_id = intval($_POST['rec_id']);
 			$public_id = intval($_POST['public_id']);
-			$wall_text = textFilter($_POST['wall_text']);
+			$wall_text = requestFilter('wall_text');
 			$answer_comm_id = intval($_POST['answer_comm_id']);
 	
 			//Проверка на админа и проверяем включены ли комменты

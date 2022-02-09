@@ -11,7 +11,7 @@ if(!defined('MOZG'))
 
 //Добавление
 if(isset($_POST['add'])){
-	$country = textFilter($_POST['country'], 25000, true);
+	$country = requestFilter('country', 25000, true);
 	if(isset($country) AND !empty($country)){
 		$row = $db->super_query("SELECT COUNT(*) AS cnt FROM `".PREFIX."_country` WHERE name = '".$country."'");
 		if(!$row['cnt']){

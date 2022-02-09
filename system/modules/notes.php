@@ -49,8 +49,8 @@ if ($logged) {
             include ENGINE_DIR . '/classes/parse.php';
             $parse = new parse();
 
-            $title = textFilter($_POST['title'], 25000, true);
-            $text = $parse->BBparse(textFilter($_POST['text']));
+            $title = requestFilter('title');
+            $text = $parse->BBparse(requestFilter('text'));
 
             if (strlen($title) > 0 && strlen($text) > 0) {
                 $db->query("INSERT INTO `" . PREFIX . "_notes` SET owner_user_id = '{$user_id}', title = '{$title}', full_text = '{$text}', date = NOW()");
@@ -83,8 +83,8 @@ if ($logged) {
             include ENGINE_DIR . '/classes/parse.php';
             $parse = new parse();
 
-            $title = textFilter($_POST['title']);
-            $text = $parse->BBparse(textFilter($_POST['text']), 1);
+            $title = requestFilter('title');
+            $text = $parse->BBparse(requestFilter('text'), true);
 
             if ($text && $title) {
                 //Загружаем шаблон вывода полного просомтра заметки
@@ -148,8 +148,8 @@ if ($logged) {
 
             $note_id = intval($_POST['note_id']);
 
-            $title = textFilter($_POST['title'], 25000, true);
-            $text = $parse->BBparse(textFilter($_POST['text']));
+            $title = requestFilter('title');
+            $text = $parse->BBparse(requestFilter('text'));
 
             if (strlen($title) > 0 && strlen($text) > 0) {
                 //Проверка на существование заметки
@@ -183,7 +183,7 @@ if ($logged) {
         case "addcomment":
             NoAjaxQuery();
             $note_id = intval($_POST['note_id']);
-            $textcom = textFilter($_POST['textcom']);
+            $textcom = requestFilter('textcom');
 
             //Проверка на существование заметки
             $check = $db->super_query("SELECT owner_user_id FROM `" . PREFIX . "_notes` WHERE id = '{$note_id}'");

@@ -16,9 +16,7 @@ if ($logged) {
     $pid = intval($_GET['pid']);
     $mobile_speedbar = 'Сообщество';
 
-
-    $get_adres = $_GET['get_adres'] ?? '';
-    $get_adres = textFilter($get_adres, 100);
+    $get_adres = requestFilter('get_adres', 100);
 //	if(preg_match("/^[a-zA-Z0-9_-]+$/", $get_adres))
 //        $get_adres = $db->safesql($_GET['get_adres']);
 

@@ -15,7 +15,7 @@ if(isset($_POST['save'])){
 	$this_time = $ban_date ? $server_time + ($ban_date * 60 * 60 * 24) : 0;
 	if($this_time) $always = 1; else $always = 0;
 	if(isset($_POST['ip'])) $ip = $db->safesql(htmlspecialchars(strip_tags(trim($_POST['ip'])))); else $ip = "";
-	$descr = textFilter($_POST['descr']);
+	$descr = requestFilter('descr');
 	
 	if($ip){
 		$row = $db->super_query("SELECT id FROM `".PREFIX."_banned` WHERE ip ='".$ip."'");

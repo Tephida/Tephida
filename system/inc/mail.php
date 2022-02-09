@@ -17,8 +17,8 @@ switch($act){
 	case "send":
 		$limit = intval($_POST['limit']);
 		$lastid = intval($_POST['lastid']);
-		$title = textFilter($_POST['title'], 25000, true);
-		$_POST['text'] = $_POST['text'];
+		$title = requestFilter('title', 25000, true);
+//		$_POST['text'] = $_POST['text'];
 		
 		$sql_ = $db->super_query("SELECT user_search_pref, user_email FROM `".PREFIX."_users` ORDER by `user_id` ASC LIMIT ".$lastid.", ".$limit, 1);
 		

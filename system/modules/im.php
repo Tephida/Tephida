@@ -155,7 +155,7 @@ if ($logged) {
             break;
         case 'saveRoomName':
             $room_id = intval($_POST['room_id']);
-            $title = substr(textFilter($_POST['title']), 0, 100);
+            $title = substr(requestFilter('title'), 0, 100);
             if ($room_id) {
                 if ($title) {
                     $row = $db->super_query("SELECT id FROM " . PREFIX . "_room WHERE id = '{$room_id}' and owner = '{$user_id}'");
@@ -240,7 +240,7 @@ if ($logged) {
             die();
             break;
         case 'createRoom':
-            $title = isset($_POST['title']) ? substr(textFilter($_POST['title']), 0, 100) : null;
+            $title = requestFilter('title');
             $user_ids = $_POST['user_ids'] ?? null;
             if ($title) {
                 $user_ids = array_diff($user_ids, array(''));
@@ -405,10 +405,10 @@ if ($logged) {
             $room_id = intval($_POST['room_id']);
             $for_user_id = intval($_POST['for_user_id']);
             if ($room_id) $for_user_id = 0;
-            $msg = isset($_POST['msg']) ? textFilter($_POST['msg']) : '';
-            $my_ava = isset($_POST['my_ava']) ? textFilter($_POST['my_ava'], 25000, true) : '';
-            $my_name = isset($_POST['my_name']) ? textFilter($_POST['my_name'], 25000, true) : '';
-            $attach_files = isset($_POST['attach_files']) ? textFilter($_POST['attach_files'], 25000, true) : null;
+            $msg = requestFilter('msg');
+            $my_ava = requestFilter('my_ava');
+            $my_name = requestFilter('my_name');
+            $attach_files = requestFilter('attach_files');
             $attach_files = str_replace('vote|', 'hack|', $attach_files);
             AntiSpam('identical', $msg . $attach_files);
             if (!empty($msg) or !empty($attach_files)) {

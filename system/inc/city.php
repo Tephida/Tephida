@@ -12,7 +12,7 @@ if(!defined('MOZG'))
 //Добавление
 if(isset($_POST['add'])){
 	$country = intval($_POST['country']);
-	$city = textFilter($_POST['city'], 25000, true);
+	$city = requestFilter('city', 25000, true);
 	if(isset($city) AND !empty($city) AND $country){
 		$row = $db->super_query("SELECT COUNT(*) AS cnt FROM `".PREFIX."_city` WHERE name = '".$city."' AND id_country = '".$country."'");
 		if(!$row['cnt']){

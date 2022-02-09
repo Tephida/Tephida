@@ -342,8 +342,8 @@ if($_GET['act'] == 'del'){
 //Отправка в базу
 if(isset($_POST['send'])){
 	
-	$title = textFilter($_POST['title'], 25000, true);
-	$descr = textFilter($_POST['descr']);
+	$title = requestFilter('title', 25000, true);
+	$descr = requestFilter('descr');
 	$width = intval($_POST['width']);
 	$height = intval($_POST['height']);
 	
@@ -359,9 +359,11 @@ if(isset($_POST['send'])){
 		
 			foreach($sql_ as $row){
 				
-				if($row['type'] == 'poster') $poster .= $row['file'];
+				if($row['type'] == 'poster')
+                    $poster .= $row['file'];
 				
-				if($row['type'] == 'swf') $swf .= $row['file'];
+				if($row['type'] == 'swf')
+                    $swf .= $row['file'];
 				
 			}
 			

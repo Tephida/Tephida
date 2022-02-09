@@ -20,9 +20,9 @@ if($logged){
 			NoAjaxQuery();
 			
 			$public_id = intval($_POST['public_id']);
-			$title = textFilter($_POST['title'], 25000, true);
-			$attach_files = textFilter($_POST['attach_files'], 25000, true);
-			$text = textFilter($_POST['text']);
+			$title = requestFilter('title', 25000, true);
+			$attach_files = requestFilter('attach_files', 25000, true);
+			$text = requestFilter('text');
 			
 			$row = $db->super_query("SELECT ulist, discussion FROM `".PREFIX."_communities` WHERE id = '{$public_id}'");
 			
@@ -68,7 +68,7 @@ if($logged){
 			
 			$fid = intval($_POST['fid']);
 			$answer_id = intval($_POST['answer_id']);
-			$msg = textFilter($_POST['msg']);
+			$msg = requestFilter('msg');
 			
 			$row = $db->super_query("SELECT status, public_id FROM `".PREFIX."_communities_forum` WHERE fid = '{$fid}'");
 			$row2 = $db->super_query("SELECT discussion FROM `".PREFIX."_communities` WHERE id = '{$row['public_id']}'");
@@ -243,7 +243,7 @@ if($logged){
 			NoAjaxQuery();
 			
 			$fid = intval($_POST['fid']);
-			$text = textFilter($_POST['text']);
+			$text = requestFilter('text');
 			
 			$row = $db->super_query("SELECT fuser_id, public_id FROM `".PREFIX."_communities_forum` WHERE fid = '{$fid}'");
 			$row2 = $db->super_query("SELECT admin, discussion FROM `".PREFIX."_communities` WHERE id = '{$row['public_id']}'");
@@ -269,7 +269,7 @@ if($logged){
 			NoAjaxQuery();
 			
 			$fid = intval($_POST['fid']);
-			$title = textFilter($_POST['title'], 25000, true);
+			$title = requestFilter('title', 25000, true);
 			
 			$row = $db->super_query("SELECT fuser_id, public_id FROM `".PREFIX."_communities_forum` WHERE fid = '{$fid}'");
 			$row2 = $db->super_query("SELECT admin, discussion FROM `".PREFIX."_communities` WHERE id = '{$row['public_id']}'");
@@ -448,16 +448,16 @@ if($logged){
 			if($user_info['user_group'] == 1 OR $public_admin OR $row['fuser_id'] == $user_id AND $row2['discussion']){
 				
 				//Голосование
-				$vote_title = textFilter($_POST['vote_title'], 25000, true);
-				$vote_answer_1 = textFilter($_POST['vote_answer_1'], 25000, true);
+				$vote_title = requestFilter('vote_title', 25000, true);
+				$vote_answer_1 = requestFilter('vote_answer_1', 25000, true);
 
 				$ansers_list = array();
 							
-				if(isset($vote_title) AND !empty($vote_title) AND isset($vote_answer_1) AND !empty($vote_answer_1)){
+				if(!empty($vote_title) AND !empty($vote_answer_1)){
 								
 					for($vote_i = 1; $vote_i <= 10; $vote_i++){
 									
-						$vote_answer = textFilter($_POST['vote_answer_'.$vote_i], 25000, true);
+						$vote_answer = requestFilter('vote_answer_'.$vote_i, 25000, true);
 						$vote_answer = str_replace('|', '&#124;', $vote_answer);
 									
 						if($vote_answer)

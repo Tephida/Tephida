@@ -16,7 +16,7 @@ if ($logged) {
         case "addcomm":
             NoAjaxQuery();
             $pid = intval($_POST['pid']);
-            $comment = textFilter($_POST['comment']);
+            $comment = requestFilter('comment');
             $date = date('Y-m-d H:i:s', $server_time);
             $hash = md5($user_id . $server_time . $_IP . $user_info['user_email'] . rand(0, 1000000000)) . $comment . $pid;
             $check_photo = $db->super_query("SELECT album_id, user_id, photo_name FROM `" . PREFIX . "_photos` WHERE id = '{$pid}'");

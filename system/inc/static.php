@@ -15,11 +15,11 @@ if(isset($_POST['save'])){
 	include_once ENGINE_DIR.'/classes/parse.php';
 	$parse = new parse();
 			
-	$title = textFilter($_POST['title'], 25000, true);
+	$title = requestFilter('title', 25000, true);
 	$alt_name = to_translit($_POST['alt_name']);
-	$text = $parse->BBparse(textFilter($_POST['text']));
+	$text = $parse->BBparse(requestFilter('text'));
 	
-	if(isset($title) AND !empty($title) AND isset($text) AND !empty($text) AND isset($alt_name) AND !empty($alt_name)){
+	if(!empty($title) AND !empty($text) AND AND !empty($alt_name)){
 		$db->query("INSERT INTO `".PREFIX."_static` SET alt_name = '".$alt_name."', title = '".$title."', text = '".$text."'");
 		header("Location: ?mod=static");
 	} else
@@ -44,11 +44,11 @@ if(isset($_POST['save'])){
 				include_once ENGINE_DIR.'/classes/parse.php';
 				$parse = new parse();
 						
-				$title = textFilter($_POST['title'], 25000, true);
+				$title = requestFilter('title', 25000, true);
 				$alt_name = to_translit($_POST['alt_name']);
-				$text = $parse->BBparse(textFilter($_POST['text']));
+				$text = $parse->BBparse(requestFilter('text'));
 				
-				if(isset($title) AND !empty($title) AND isset($text) AND !empty($text) AND isset($alt_name) AND !empty($alt_name)){
+				if(!empty($title) AND !empty($text) AND !empty($alt_name)){
 					$db->query("UPDATE`".PREFIX."_static` SET alt_name = '".$alt_name."', title = '".$title."', text = '".$text."' WHERE id = '".$id."'");
 					header("Location: ?mod=static");
 				} else

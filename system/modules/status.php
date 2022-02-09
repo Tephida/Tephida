@@ -14,7 +14,7 @@ NoAjaxQuery();
 if($logged){
 
 	$user_id = $user_info['user_id'];
-	$text = textFilter($_POST['text'], 25000, true);
+	$text = requestFilter('text', 25000, true);
 	$public_id = intval($_POST['public_id']);
 	
 	//Если обновляем статус группы
@@ -40,7 +40,7 @@ if($logged){
 		
 	}
 	
-	echo stripslashes(stripslashes(textFilter($_POST['text'])));
+	echo requestFilter('text');
 }
 
 die();

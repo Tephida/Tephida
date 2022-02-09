@@ -22,10 +22,10 @@ if($_GET['act'] == 'edit'){
 		$parse = new parse();
 		
 		if(isset($_POST['save'])){
-			$title = textFilter($_POST['title'], 25000, true);
-			$text = $parse->BBparse(textFilter($_POST['full_text']));
+			$title = requestFilter('title', 25000, true);
+			$text = $parse->BBparse(requestFilter('full_text'));
 
-			if(isset($title) AND !empty($title) AND isset($text) AND !empty($text)){
+			if(!empty($title) AND !empty($text)){
 				$db->query("UPDATE `".PREFIX."_notes` SET title = '".$title."', full_text = '".$text."' WHERE id = '".$note_id."'");
 				msgbox('Информация', 'Заметка успешно сохранена', '?mod=notes');
 			} else
@@ -79,7 +79,7 @@ $se_user_id = intval($_GET['se_user_id']);
 if(!$se_user_id) $se_user_id = '';
 
 $sort = intval($_GET['sort']);
-$se_name = textFilter($_GET['se_name'], 25000, true);
+$se_name = requestFilter('se_name', 25000, true);
 
 if($se_uid OR $sort OR $se_name OR $se_user_id){
 	if($se_uid) $where_sql .= "AND id = '".$se_uid."' ";

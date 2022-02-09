@@ -19,6 +19,18 @@ function textFilter(string $source, int $substr_num = 25000, bool $strip_tags = 
     return htmlspecialchars(stripslashes(trim($source)), 0, $substr_num);
 }
 
+function requestFilter(string $source, int $substr_num = 25000, bool $strip_tags = false): array|string|null
+{
+    if(isset($_POST[$source])){
+        $source = $_POST[$source];
+    }elseif(isset($_GET[$source])){
+        $source = $_GET[$source];
+    }else{
+        return null;
+    }
+    return textFilter($source, $substr_num, $strip_tags)
+}
+
 function informationText($array): string
 {
     global $db;

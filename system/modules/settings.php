@@ -37,8 +37,8 @@ if ($logged) {
         /** Изменение имени */
         case "newname":
             NoAjaxQuery();
-            $user_name = textFilter($_POST['name']);
-            $user_lastname = textFilter(ucfirst($_POST['lastname']));
+            $user_name = requestFilter('name');
+            $user_lastname = ucfirst(requestFilter('lastname'));
             //Проверка имени
             if (isset($user_name)) {
                 if (strlen($user_name) >= 2) {
@@ -185,7 +185,7 @@ if ($logged) {
             //Отправляем письмо на обе почты
             include_once ENGINE_DIR . '/classes/mail.php';
             $mail = new vii_mail($config);
-            $email = textFilter($_POST['email'], 25000, true);
+            $email = requestFilter('email', 25000, true);
             //Проверка E-mail
             if (filter_var($email, FILTER_VALIDATE_EMAIL))
                 $ok_email = true;

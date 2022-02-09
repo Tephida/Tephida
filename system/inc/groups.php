@@ -17,12 +17,14 @@ if($_GET['act'] == 'edit'){
 	$row = $db->super_query("SELECT title, descr, comments, photo FROM `".PREFIX."_communities` WHERE id = '".$id."'");
 	if($row){
 		if(isset($_POST['save'])){
-			$title = textFilter($_POST['title'], 25000, true);
-			$descr = textFilter($_POST['descr']);
+			$title = requestFilter('title', 25000, true);
+			$descr = requestFilter('descr');
 			
 			if(isset($title) AND !empty($title) AND isset($descr) AND !empty($descr)){
-				if($_POST['comments']) $comments = 1;
-				else $comments = 0;
+				if($_POST['comments'])
+                    $comments = 1;
+				else
+                    $comments = 0;
 				
 				if($_POST['del_photo']){
 					@unlink(ROOT_DIR.'/uploads/groups/'.$id.'/'.$row['photo']);
@@ -91,7 +93,7 @@ $se_user_id = intval($_GET['se_user_id']);
 if(!$se_user_id) $se_user_id = '';
 
 $sort = intval($_GET['sort']);
-$se_name = textFilter($_GET['se_name'], 25000, true);
+$se_name = requestFilter('se_name', 25000, true);
 
 if($se_uid OR $sort OR $se_name OR $se_user_id OR $_GET['ban'] OR $_GET['delet']){
 	if($se_uid) $where_sql .= "AND id = '".$se_uid."' ";

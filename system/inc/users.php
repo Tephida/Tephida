@@ -23,11 +23,11 @@ if (!$se_uid)
     $se_uid = '';
 
 $sort = isset($_GET['sort']) ? intval($_GET['sort']) : null;
-$se_name = $_GET['se_name'] ?? '';
-$se_email = $_GET['se_email'] ?? '';
+//$se_name = $_GET['se_name'] ?? '';
+//$se_email = $_GET['se_email'] ?? '';
 
-$se_name = textFilter($se_name, 25000, true);
-$se_email = textFilter($se_email, 25000, true);
+$se_name = requestFilter('se_name', 25000, true);
+$se_email = requestFilter('se_email', 25000, true);
 $ban = $_GET['ban'] ?? null;
 $delet = $_GET['delet'] ?? null;
 

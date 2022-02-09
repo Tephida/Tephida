@@ -139,8 +139,8 @@ if($logged){
 			$pid = intval($_POST['pid']);
 			$id = intval($_POST['id']);
 			
-			$title = textFilter($_POST['title'], 25000, true);
-			$descr = textFilter($_POST['descr'], 3000);
+			$title = requestFilter('title', 25000, true);
+			$descr = requestFilter('descr', 3000);
 			
 			$infoGroup = $db->super_query("SELECT admin FROM `".PREFIX."_communities` WHERE id = '{$pid}'");
 			

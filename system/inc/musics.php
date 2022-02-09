@@ -17,8 +17,8 @@ if($_GET['act'] == 'edit'){
 	$row = $db->super_query("SELECT auser_id, artist, name FROM `".PREFIX."_audio` WHERE aid = '".$id."'");
 	if($row){
 		if(isset($_POST['save'])){
-			$artist = textFilter($_POST['artist'], 25000, true);
-			$name = textFilter($_POST['name'], 25000, true);
+			$artist = requestFilter('artist', 25000, true);
+			$name = requestFilter('name', 25000, true);
 
 			if(isset($artist) AND !empty($artist) AND isset($name) AND !empty($name)){
 				$db->query("UPDATE `".PREFIX."_audio` SET artist = '".$artist."', name = '".$name."' WHERE aid = '".$id."'");
@@ -77,7 +77,7 @@ $se_user_id = intval($_GET['se_user_id']);
 if(!$se_user_id) $se_user_id = '';
 
 $sort = intval($_GET['sort']);
-$se_name = textFilter($_GET['se_name'], 25000, true);
+$se_name = requestFilter('se_name', 25000, true);
 
 if($se_uid OR $sort OR $se_name OR $se_user_id){
 	if($se_uid) $where_sql .= "AND aid = '".$se_uid."' ";

@@ -36,15 +36,15 @@ $user_speedbar = $lang['blog_descr'];
 				include ENGINE_DIR.'/classes/parse.php';
 				$parse = new parse();
 
-				$title = textFilter($_POST['title'], 25000, true);
-				$text = $parse->BBparse(textFilter($_POST['text']));
+				$title = requestFilter('title', 25000, true);
+				$text = $parse->BBparse(requestFilter('text'));
 
 				function BBimg($source){ 
 					return "<img src=\"{$source}\" alt=\"\" />";
 				}
 				$text = preg_replace("#\\[img\\](.*?)\\[/img\\]#ies", "\BBimg('\\1')", $text);
 
-				if(isset($title) AND !empty($title) AND isset($text) AND !empty($text))
+				if(!empty($title) AND !empty($text))
 					$db->query("INSERT INTO `".PREFIX."_blog` SET title = '{$title}', story = '{$text}', date = '{$server_time}'");
 			}
 			die();
@@ -94,8 +94,8 @@ $user_speedbar = $lang['blog_descr'];
 				include ENGINE_DIR.'/classes/parse.php';
 				$parse = new parse();
 
-				$title = textFilter($_POST['title'], 25000, true);
-				$text = $parse->BBparse(textFilter($_POST['text']));
+				$title = requestFilter('title', 25000, true);
+				$text = $parse->BBparse(requestFilter('text'));
 				$id = intval($_POST['id']);
 
 				function BBimg($source){ 
@@ -103,7 +103,7 @@ $user_speedbar = $lang['blog_descr'];
 				}
 				$text = preg_replace("#\\[img\\](.*?)\\[/img\\]#ies", "\BBimg('\\1')", $text);
 
-				if(isset($title) AND !empty($title) AND isset($text) AND !empty($text))
+				if(!empty($title) AND !empty($text))
 					$db->query("UPDATE `".PREFIX."_blog` SET title = '{$title}', story = '{$text}' WHERE id = '{$id}'");
 			}
 			die();

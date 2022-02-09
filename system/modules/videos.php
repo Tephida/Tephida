@@ -33,9 +33,9 @@ if($logged){
 			NoAjaxQuery();
 			
 			if($config['video_mod_add'] == 'yes'){
-				$good_video_lnk = textFilter($_POST['good_video_lnk']);
-				$title = textFilter($_POST['title'], 25000, true);
-				$descr = textFilter($_POST['descr'], 3000);
+				$good_video_lnk = requestFilter('good_video_lnk');
+				$title = requestFilter('title', 25000, true);
+				$descr = requestFilter('descr', 3000);
 				$privacy = intval($_POST['privacy']);
 				if($privacy <= 0 OR $privacy > 3) $privacy = 1;
 
@@ -268,8 +268,8 @@ if($logged){
 			$vid = intval($_POST['vid']);
 			
 			if($vid){
-				$title = textFilter($_POST['title'], 25000, true);
-				$descr = textFilter($_POST['descr'], 3000);
+				$title = requestFilter('title', 25000, true);
+				$descr = requestFilter('descr', 3000);
 				$privacy = intval($_POST['privacy']);
 				if($privacy <= 0 OR $privacy > 3) $privacy = 1;
 
@@ -298,7 +298,7 @@ if($logged){
 			NoAjaxQuery();
 			if($config['video_mod_comm'] == 'yes'){
 				$vid = intval($_POST['vid']);
-				$comment = textFilter($_POST['comment']);
+				$comment = requestFilter('comment');
 				
 				//Провекра на существования видео
 				$check_video = $db->super_query("SELECT owner_user_id, photo, public_id FROM `".PREFIX."_videos` WHERE id = '{$vid}'");

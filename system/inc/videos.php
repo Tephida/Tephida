@@ -17,10 +17,10 @@ if($_GET['act'] == 'edit'){
 	$row = $db->super_query("SELECT owner_user_id, title, descr, video FROM `".PREFIX."_videos` WHERE id = '".$id."'");
 	if($row){
 		if(isset($_POST['save'])){
-			$title = textFilter($_POST['title'], 25000, true);
-			$descr = textFilter($_POST['descr']);
+			$title = requestFilter('title', 25000, true);
+			$descr = requestFilter('descr');
 
-			if(isset($title) AND !empty($title) AND isset($descr) AND !empty($descr)){
+			if(!empty($title) AND !empty($descr)){
 				$db->query("UPDATE `".PREFIX."_videos` SET title = '".$title."', descr = '".$descr."' WHERE id = '".$id."'");
 				
 				//Чистим кеш
@@ -78,23 +78,34 @@ $se_user_id = intval($_GET['se_user_id']);
 if(!$se_user_id) $se_user_id = '';
 
 $sort = intval($_GET['sort']);
-$se_name = textFilter($_GET['se_name'], 25000, true);
+$se_name = requestFilter('se_name', 25000, true);
 
 if($se_uid OR $sort OR $se_name OR $se_user_id){
-	if($se_uid) $where_sql .= "AND id = '".$se_uid."' ";
-	if($se_user_id) $where_sql .= "AND owner_user_id = '".$se_user_id."' ";
+	if($se_uid)
+        $where_sql .= "AND id = '".$se_uid."' ";
+	if($se_user_id)
+        $where_sql .= "AND owner_user_id = '".$se_user_id."' ";
 	$query = strtr($se_name, array(' ' => '%')); //Замеянем пробелы на проценты чтоб тоиск был точнее
-	if($se_name) $where_sql .= "AND title LIKE '%".$query."%' ";
-	if($sort == 1) $order_sql = "`title` ASC";
-	else if($sort == 2) $order_sql = "`add_date` ASC";
-	else if($sort == 3) $order_sql = "`views` DESC";
-	else if($sort == 4) $order_sql = "`comm_num` DESC";
-	else $order_sql = "`add_date` DESC";
+	if($se_name)
+        $where_sql .= "AND title LIKE '%".$query."%' ";
+	if($sort == 1)
+        $order_sql = "`title` ASC";
+	else if($sort == 2)
+        $order_sql = "`add_date` ASC";
+	else if($sort == 3)
+        $order_sql = "`views` DESC";
+	else if($sort == 4)
+        $order_sql = "`comm_num` DESC";
+	else
+        $order_sql = "`add_date` DESC";
 } else
 	$order_sql = "`add_date` DESC";
 	
 //Выводим список людей
-if($_GET['page'] > 0) $page = intval($_GET['page']); else $page = 1;
+if($_GET['page'] > 0)
+    $page = intval($_GET['page']);
+else
+    $page = 1;
 $gcount = 20;
 $limit_page = ($page-1)*$gcount;
 
@@ -157,7 +168,7 @@ HTML;
 }
 
 echo <<<HTML
-<script language="text/javascript" type="text/javascript">
+<script type="text/javascript">
 function ckeck_uncheck_all() {
     var frm = document.edit;
     for (var i=0;i<frm.elements.length;i++) {

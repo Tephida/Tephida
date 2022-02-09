@@ -50,7 +50,7 @@ if($logged){
 			$gift = intval($_POST['gift']);
 			$privacy = intval($_POST['privacy']);
 			if($privacy < 0 OR $privacy > 3) $privacy = 1;
-			$msg = textFilter($_POST['msg']);
+			$msg = requestFilter('msg');
 			$gifts = $db->super_query("SELECT price FROM `".PREFIX."_gifts_list` WHERE img = '".$gift."'");
 			
 			//Выводим текущий баланс свой
