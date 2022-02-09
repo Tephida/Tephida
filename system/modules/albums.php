@@ -20,8 +20,8 @@ if($logged){
 		case "create":
 			NoAjaxQuery();
 			
-			$name = textFilter($_POST['name'], 25000, true);
-			$descr = textFilter($_POST['descr']);
+			$name = requestFilter('name', 25000, true);
+			$descr = requestFilter('descr');
 			$privacy = intval($_POST['privacy']);
 			$privacy_comm = intval($_POST['privacy_comm']);
 			if($privacy <= 0 OR $privacy > 3) $privacy = 1;
@@ -284,7 +284,7 @@ if($logged){
 			NoAjaxQuery();
 			$id = intval($_POST['id']);
 			$user_id = $user_info['user_id'];
-			$descr = textFilter($_POST['descr']);
+			$descr = requestFilter('descr');
 			
 			//Выводим фотку из БД, если она есть
 			$row = $db->super_query("SELECT id FROM `".PREFIX."_photos` WHERE id = '{$id}' AND user_id = '{$user_id}'");
@@ -379,8 +379,8 @@ if($logged){
 			NoAjaxQuery();
 			$id = intval($_POST['id']);
 			$user_id = $user_info['user_id'];
-			$name = textFilter($_POST['name'], 25000, true);
-			$descr = textFilter($_POST['descr']);
+			$name = requestFilter('name', 25000, true);
+			$descr = requestFilter('descr');
 			
 			$privacy = intval($_POST['privacy']);
 			$privacy_comm = intval($_POST['privacy_comm']);
@@ -391,7 +391,7 @@ if($logged){
 			//Проверка на существование юзера
 			$chekc_user = $db->super_query("SELECT privacy FROM `".PREFIX."_albums` WHERE aid = '{$id}' AND user_id = '{$user_id}'");
 			if($chekc_user){
-				if(isset($name) AND !empty($name)){
+				if(!empty($name)){
 					$db->query("UPDATE `".PREFIX."_albums` SET name = '{$name}', descr = '{$descr}', privacy = '{$sql_privacy}' WHERE aid = '{$id}'");
 					echo stripslashes($name).'|#|||#row#|||#|'.stripslashes($descr);
 
@@ -412,7 +412,10 @@ if($logged){
 			if($user_id AND $id){
 				
 				//Для навигатор
-				if($_POST['page'] > 0) $page = intval($_POST['page']); else $page = 1;
+				if($_POST['page'] > 0)
+                    $page = intval($_POST['page']);
+                else
+                    $page = 1;
 				$gcount = 36;
 				$limit_page = ($page-1)*$gcount;
 				
@@ -464,7 +467,10 @@ if($logged){
 			$notes = intval($_POST['notes']);
 
 			//Для навигатор
-			if($_POST['page'] > 0) $page = intval($_POST['page']); else $page = 1;
+			if($_POST['page'] > 0)
+                $page = intval($_POST['page']);
+            else
+                $page = 1;
 			$gcount = 36;
 			$limit_page = ($page-1)*$gcount;
 
@@ -550,7 +556,7 @@ HTML;
 		//################### Удаление альбома ###################//
 		case "del_album":
 			NoAjaxQuery();
-			$hash = $db->safesql(substr($_POST['hash'], 0, 32));
+			$hash = substr($_POST['hash'], 0, 32);
 			$row = $db->super_query("SELECT aid, user_id, photo_num FROM `".PREFIX."_albums` WHERE ahash = '{$hash}'");
 			
 			if($row){
@@ -601,7 +607,10 @@ HTML;
 			if($aid) $uid = false;
 			if($uid) $aid = false;
 
-			if($_GET['page'] > 0) $page = intval($_GET['page']); else $page = 1;
+			if($_GET['page'] > 0)
+                $page = intval($_GET['page']);
+            else
+                $page = 1;
 			$gcount = 25;
 			$limit_page = ($page-1) * $gcount;
 			
