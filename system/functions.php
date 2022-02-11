@@ -28,7 +28,7 @@ function requestFilter(string $source, int $substr_num = 25000, bool $strip_tags
     }else{
         return null;
     }
-    return textFilter($source, $substr_num, $strip_tags)
+    return textFilter($source, $substr_num, $strip_tags);
 }
 
 function informationText($array): string
