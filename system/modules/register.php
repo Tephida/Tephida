@@ -110,10 +110,10 @@ if ($logged == null) {
                 mozg_create_folder_cache("user_{$id}");
                 //Директория юзеров
                 $upload_dir = ROOT_DIR . '/uploads/users/';
-                @mkdir($upload_dir . $id, 0777);
-//                @chmod($upload_dir . $id, 0777);
-                @mkdir($upload_dir . $id . '/albums', 0777);
-//                @chmod($upload_dir . $id . '/albums', 0777);
+
+                createDir($upload_dir . $id);
+                createDir($upload_dir . $id . '/albums');
+
                 //Если юзер регистрировался по ссылке, то начисляем юзеру 10 убм
                 $ref_id = $_SESSION['ref_id'] ?? null;
 

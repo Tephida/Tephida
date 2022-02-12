@@ -60,16 +60,18 @@ if ($logged) {
             echo json_encode($jsonResponse);
             die();
             break;
+
         case 'uploadRoomAvatar':
             $room_id = intval($_GET['room_id']);
             if ($room_id) {
                 $row = $db->super_query("SELECT id, photo FROM " . PREFIX . "_room WHERE id = '{$room_id}' and owner = '{$user_id}'");
                 if ($row) {
                     $uploaddir = ROOT_DIR . '/uploads/room/' . $room_id . '/';
-                    if (!is_dir($uploaddir)) {
-                        @mkdir($uploaddir, 0777);
-                        @chmod($uploaddir, 0777);
+                    try {
+                        createDir($uploaddir);
+                    } catch (Exception $e) {
                     }
+
                     $image_tmp = $_FILES['uploadfile']['tmp_name'];
                     $image_name = to_translit($_FILES['uploadfile']['name']);
                     $image_rename = substr(md5($server_time + rand(1, 100000)), 0, 20);

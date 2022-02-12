@@ -299,12 +299,17 @@ function mozg_mass_clear_cache_file($prefix): void
     $arr_prefix = explode('|', $prefix);
     foreach ($arr_prefix as $file) @unlink(ENGINE_DIR . '/cache/' . $file . '.tmp');
 }
+
+/**
+ * @throws Exception
+ */
 function mozg_create_folder_cache($prefix): void
 {
-    if (!is_dir(ROOT_DIR . '/system/cache/' . $prefix)) {
-        @mkdir(ROOT_DIR . '/system/cache/' . $prefix, 0777);
-        @chmod(ROOT_DIR . '/system/cache/' . $prefix, 0777);
-    }
+//    if (!is_dir(ROOT_DIR . '/system/cache/' . $prefix)) {
+//        @mkdir(ROOT_DIR . '/system/cache/' . $prefix, 0777);
+//        @chmod(ROOT_DIR . '/system/cache/' . $prefix, 0777);
+//    }
+    createDir(ROOT_DIR . '/system/cache/' . $prefix);
 }
 function mozg_create_cache($prefix, $cache_text): false|int
 {

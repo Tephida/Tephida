@@ -39,10 +39,7 @@ if($logged){
 					$upload_dir = ROOT_DIR."/uploads/doc/{$user_id}/";
 						
 					//Если нет папки юзера, то создаём её
-					if(!is_dir($upload_dir)){ 
-						@mkdir($upload_dir, 0777);
-						@chmod($upload_dir, 0777);
-					}
+                    createDir($upload_dir);
 					
 					$downl_file_name = substr(md5($file_name.rand(0, 1000).$server_time), 0, 25);
 					

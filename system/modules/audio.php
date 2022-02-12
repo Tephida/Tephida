@@ -201,10 +201,8 @@ if($logged){
 			
 			if($type == 'mp3' AND $config['audio_mod_add'] == 'yes' AND $file_size < 10000000){
 				$audio_dir = ROOT_DIR.'/uploads/audio/'.$user_id.'/';
-				if(!is_dir($audio_dir)){
-					@mkdir($audio_dir, 0777);
-					@chmod($audio_dir, 0777);
-				}
+                createDir($audio_dir);
+
 				$res_type = '.'.$type;
 				if(move_uploaded_file($file_tmp, $audio_dir.$file_rename.$res_type)){
 					//Узнаем исполнителя и название песни по id3

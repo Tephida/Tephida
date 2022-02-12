@@ -16,10 +16,7 @@ if($logged){
 
 	//Если нет папки альбома, то создаём её
 	$album_dir = ROOT_DIR."/uploads/attach/{$user_id}/";
-	if(!is_dir($album_dir)){ 
-		@mkdir($album_dir, 0777);
-		@chmod($album_dir, 0777);
-	}
+    createDir($album_dir);
 
 	//Разришенные форматы
 	$allowed_files = array('jpg', 'jpeg', 'jpe', 'png', 'gif');

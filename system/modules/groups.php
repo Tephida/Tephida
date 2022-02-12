@@ -36,13 +36,9 @@ if($logged){
 				$cid = $db->insert_id();
 				$db->query("INSERT INTO `".PREFIX."_friends` SET friend_id = '{$cid}', user_id = '{$user_id}', friends_date = NOW(), subscriptions = 2");
 				$db->query("UPDATE `".PREFIX."_users` SET user_public_num = user_public_num+1 WHERE user_id = '{$user_id}'");
-				
-				@mkdir(ROOT_DIR.'/uploads/groups/'.$cid.'/', 0777);
-//				@chmod(ROOT_DIR.'/uploads/groups/'.$cid.'/', 0777);
-				
-				@mkdir(ROOT_DIR.'/uploads/groups/'.$cid.'/photos/', 0777);
-//				@chmod(ROOT_DIR.'/uploads/groups/'.$cid.'/photos/', 0777);
-				
+
+                createDir(ROOT_DIR.'/uploads/groups/'.$cid.'/');
+                createDir(ROOT_DIR.'/uploads/groups/'.$cid.'/photos/');
 				mozg_mass_clear_cache_file("user_{$user_id}/profile_{$user_id}|groups/{$user_id}");
 				
 				echo $cid;
@@ -513,12 +509,7 @@ if($logged){
 													
 									//Директория загрузки фото
 									$upload_dir = ROOT_DIR.'/uploads/attach/'.$user_id;
-														
-									//Если нет папки юзера, то создаём её
-									if(!is_dir($upload_dir)){ 
-										@mkdir($upload_dir, 0777);
-										@chmod($upload_dir, 0777);
-									}
+                                    createDir($upload_dir);
 														
 									//Подключаем класс для фотографий
 									include ENGINE_DIR.'/classes/images.php';

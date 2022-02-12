@@ -29,12 +29,8 @@ if($logged){
 			$uploaddir = ROOT_DIR.'/uploads/users/';
 			
 			//Если нет папок юзера, то создаём её
-			if(!is_dir($uploaddir.$user_id)){ 
-				@mkdir($uploaddir.$user_id, 0777 );
-				@chmod($uploaddir.$user_id, 0777 );
-				@mkdir($uploaddir.$user_id.'/albums', 0777 );
-				@chmod($uploaddir.$user_id.'/albums', 0777 );
-			}
+            createDir($uploaddir.$user_id);
+            createDir($uploaddir.$user_id.'/albums');
 			
 			//Разришенные форматы
 			$allowed_files = array('jpg', 'jpeg', 'jpe', 'png', 'gif');
@@ -126,7 +122,8 @@ if($logged){
 					$update_wall = ", user_wall_num = user_wall_num-1";
 					$db->query("DELETE FROM `".PREFIX."_wall` WHERE id = '{$row['user_wall_id']}'");
 					$db->query("DELETE FROM `".PREFIX."_news` WHERE obj_id = '{$row['user_wall_id']}'");
-				}
+				}else
+                    $update_wall = null;
 				
 				$db->query("UPDATE `".PREFIX."_users` SET user_photo = '', user_wall_id = '' {$update_wall} WHERE user_id = '{$user_id}'");
 
