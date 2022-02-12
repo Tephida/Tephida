@@ -81,7 +81,7 @@ if ($config['offline'] == "yes") include ENGINE_DIR . '/modules/offline.php';
 
 if (isset($user_info['user_delet']) and $user_info['user_delet'] > 0)
     include ENGINE_DIR . '/modules/profile_delet.php';
-$sql_banned = $db->super_query("SELECT * FROM " . PREFIX . "_banned", true);
+$sql_banned = $db->super_query("SELECT * FROM banned", true);
 if (isset($sql_banned))
     $blockip = check_ip($sql_banned);
 else
@@ -107,7 +107,7 @@ if (isset($logged)) {
         $user_info['user_last_visit'] = $server_time;
 
     if (($user_info['user_last_visit'] + 60) <= $server_time) {
-        $db->query("UPDATE LOW_PRIORITY `" . PREFIX . "_users` SET user_logged_mobile = '{$device_user}', user_last_visit = '{$server_time}' {$sql_balance} WHERE user_id = '{$user_info['user_id']}'");
+        $db->query("UPDATE LOW_PRIORITY `users` SET user_logged_mobile = '{$device_user}', user_last_visit = '{$server_time}' {$sql_balance} WHERE user_id = '{$user_info['user_id']}'");
     }
 }
 

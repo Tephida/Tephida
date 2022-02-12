@@ -26,9 +26,9 @@ if ($logged) {
             $new_pass = md5(md5(GetVar($_POST['new_pass'])));
             $new_pass2 = md5(md5(GetVar($_POST['new_pass2'])));
             //Выводим текущий пароль
-            $row = $db->super_query("SELECT user_password FROM `" . PREFIX . "_users` WHERE user_id = '{$user_id}'");
+            $row = $db->super_query("SELECT user_password FROM `users` WHERE user_id = '{$user_id}'");
             if ($row['user_password'] == $old_pass) {
-                if ($new_pass == $new_pass2) $db->query("UPDATE `" . PREFIX . "_users` SET user_password = '{$new_pass2}' WHERE user_id = '{$user_id}'");
+                if ($new_pass == $new_pass2) $db->query("UPDATE `users` SET user_password = '{$new_pass2}' WHERE user_id = '{$user_id}'");
                 else echo '2';
             } else echo '1';
             die();
@@ -55,7 +55,7 @@ if ($logged) {
                 if (!$errors_lastname) {
                     $user_name = ucfirst($user_name);
                     $user_lastname = ucfirst($user_lastname);
-                    $db->query("UPDATE `" . PREFIX . "_users` SET user_name = '{$user_name}', user_lastname = '{$user_lastname}', user_search_pref = '{$user_name} {$user_lastname}' WHERE user_id = '{$user_id}'");
+                    $db->query("UPDATE `users` SET user_name = '{$user_name}', user_lastname = '{$user_lastname}', user_search_pref = '{$user_name} {$user_lastname}' WHERE user_id = '{$user_id}'");
                     mozg_clear_cache_file('user_' . $user_id . '/profile_' . $user_id);
                     mozg_clear_cache();
                 } else echo $errors;
@@ -77,14 +77,14 @@ if ($logged) {
             if ($val_wall3 <= 0 or $val_wall3 > 3) $val_wall3 = 1;
             if ($val_info <= 0 or $val_info > 3) $val_info = 1;
             $user_privacy = "val_msg|{$val_msg}||val_wall1|{$val_wall1}||val_wall2|{$val_wall2}||val_wall3|{$val_wall3}||val_info|{$val_info}||";
-            $db->query("UPDATE `" . PREFIX . "_users` SET user_privacy = '{$user_privacy}' WHERE user_id = '{$user_id}'");
+            $db->query("UPDATE `users` SET user_privacy = '{$user_privacy}' WHERE user_id = '{$user_id}'");
             mozg_clear_cache_file('user_' . $user_id . '/profile_' . $user_id);
             die();
             break;
 
         /** Приватность настройки */
         case "privacy":
-            $sql_ = $db->super_query("SELECT user_privacy FROM `" . PREFIX . "_users` WHERE user_id = '{$user_id}'");
+            $sql_ = $db->super_query("SELECT user_privacy FROM `users` WHERE user_id = '{$user_id}'");
             $row = xfieldsdataload($sql_['user_privacy']);
             $tpl->load_template('settings/privacy.tpl');
             $tpl->set('{val_msg}', $row['val_msg']);
@@ -105,22 +105,22 @@ if ($logged) {
             NoAjaxQuery();
             $bad_user_id = intval($_POST['bad_user_id']);
             //Проверяем на существование юзера
-            $row = $db->super_query("SELECT COUNT(*) AS cnt FROM `" . PREFIX . "_users` WHERE user_id = '{$bad_user_id}'");
+            $row = $db->super_query("SELECT COUNT(*) AS cnt FROM `users` WHERE user_id = '{$bad_user_id}'");
             //Выводим свой блеклист для проверка
-            $myRow = $db->super_query("SELECT user_blacklist FROM `" . PREFIX . "_users` WHERE user_id = '{$user_id}'");
+            $myRow = $db->super_query("SELECT user_blacklist FROM `users` WHERE user_id = '{$user_id}'");
             $array_blacklist = explode('|', $myRow['user_blacklist']);
             if ($row['cnt'] and !in_array($bad_user_id, $array_blacklist) and $user_id != $bad_user_id) {
-                $db->query("UPDATE `" . PREFIX . "_users` SET user_blacklist_num = user_blacklist_num+1, user_blacklist = '{$myRow['user_blacklist']}|{$bad_user_id}|' WHERE user_id = '{$user_id}'");
+                $db->query("UPDATE `users` SET user_blacklist_num = user_blacklist_num+1, user_blacklist = '{$myRow['user_blacklist']}|{$bad_user_id}|' WHERE user_id = '{$user_id}'");
                 //Если юзер есть в др.
                 if (CheckFriends($bad_user_id)) {
                     //Удаляем друга из таблицы друзей
-                    $db->query("DELETE FROM `" . PREFIX . "_friends` WHERE user_id = '{$user_id}' AND friend_id = '{$bad_user_id}' AND subscriptions = 0");
+                    $db->query("DELETE FROM `friends` WHERE user_id = '{$user_id}' AND friend_id = '{$bad_user_id}' AND subscriptions = 0");
                     //Удаляем у друга из таблицы
-                    $db->query("DELETE FROM `" . PREFIX . "_friends` WHERE user_id = '{$bad_user_id}' AND friend_id = '{$user_id}' AND subscriptions = 0");
+                    $db->query("DELETE FROM `friends` WHERE user_id = '{$bad_user_id}' AND friend_id = '{$user_id}' AND subscriptions = 0");
                     //Обновляем кол-друзей у юзера
-                    $db->query("UPDATE `" . PREFIX . "_users` SET user_friends_num = user_friends_num-1 WHERE user_id = '{$user_id}'");
+                    $db->query("UPDATE `users` SET user_friends_num = user_friends_num-1 WHERE user_id = '{$user_id}'");
                     //Обновляем у друга которого удаляем кол-во друзей
-                    $db->query("UPDATE `" . PREFIX . "_users` SET user_friends_num = user_friends_num-1 WHERE user_id = '{$bad_user_id}'");
+                    $db->query("UPDATE `users` SET user_friends_num = user_friends_num-1 WHERE user_id = '{$bad_user_id}'");
                     //Чистим кеш владельцу стр и тому кого удаляем из др.
                     mozg_clear_cache_file('user_' . $user_id . '/profile_' . $user_id);
                     mozg_clear_cache_file('user_' . $bad_user_id . '/profile_' . $bad_user_id);
@@ -141,13 +141,13 @@ if ($logged) {
             NoAjaxQuery();
             $bad_user_id = intval($_POST['bad_user_id']);
             //Проверяем на существование юзера
-            $row = $db->super_query("SELECT COUNT(*) AS cnt FROM `" . PREFIX . "_users` WHERE user_id = '{$bad_user_id}'");
+            $row = $db->super_query("SELECT COUNT(*) AS cnt FROM `users` WHERE user_id = '{$bad_user_id}'");
             //Выводим свой блеклист для проверка
-            $myRow = $db->super_query("SELECT user_blacklist FROM `" . PREFIX . "_users` WHERE user_id = '{$user_id}'");
+            $myRow = $db->super_query("SELECT user_blacklist FROM `users` WHERE user_id = '{$user_id}'");
             $array_blacklist = explode('|', $myRow['user_blacklist']);
             if ($row['cnt'] and in_array($bad_user_id, $array_blacklist) and $user_id != $bad_user_id) {
                 $myRow['user_blacklist'] = str_replace("|{$bad_user_id}|", "", $myRow['user_blacklist']);
-                $db->query("UPDATE `" . PREFIX . "_users` SET user_blacklist_num = user_blacklist_num-1, user_blacklist = '{$myRow['user_blacklist']}' WHERE user_id = '{$user_id}'");
+                $db->query("UPDATE `users` SET user_blacklist_num = user_blacklist_num-1, user_blacklist = '{$myRow['user_blacklist']}' WHERE user_id = '{$user_id}'");
                 $openMyList = mozg_cache("user_{$user_id}/blacklist");
                 mozg_create_cache("user_{$user_id}/blacklist", str_replace("|{$bad_user_id}|", "", $openMyList));
             }
@@ -156,7 +156,7 @@ if ($logged) {
 
         /** Черный список */
         case "blacklist":
-            $row = $db->super_query("SELECT user_blacklist, user_blacklist_num FROM `" . PREFIX . "_users` WHERE user_id = '{$user_id}'");
+            $row = $db->super_query("SELECT user_blacklist, user_blacklist_num FROM `users` WHERE user_id = '{$user_id}'");
             $tpl->load_template('settings/blacklist.tpl');
             $tpl->set('{cnt}', '<span id="badlistnum">' . $row['user_blacklist_num'] . '</span> ' . gram_record($row['user_blacklist_num'], 'fave'));
             if ($row['user_blacklist_num']) {
@@ -169,7 +169,7 @@ if ($logged) {
                 $array_blacklist = explode('|', $row['user_blacklist']);
                 foreach ($array_blacklist as $user) {
                     if ($user) {
-                        $infoUser = $db->super_query("SELECT user_photo, user_search_pref FROM `" . PREFIX . "_users` WHERE user_id = '{$user}'");
+                        $infoUser = $db->super_query("SELECT user_photo, user_search_pref FROM `users` WHERE user_id = '{$user}'");
                         if ($infoUser['user_photo']) $tpl->set('{ava}', '/uploads/users/' . $user . '/50_' . $infoUser['user_photo']);
                         else $tpl->set('{ava}', '{theme}/images/no_ava_50.png');
                         $tpl->set('{name}', $infoUser['user_search_pref']);
@@ -191,11 +191,11 @@ if ($logged) {
                 $ok_email = true;
             else
                 $ok_email = false;
-            $row = $db->super_query("SELECT user_email FROM `" . PREFIX . "_users` WHERE user_id = '{$user_id}'");
-            $check_email = $db->super_query("SELECT COUNT(*) AS cnt FROM `" . PREFIX . "_users`  WHERE user_email = '{$email}'");
+            $row = $db->super_query("SELECT user_email FROM `users` WHERE user_id = '{$user_id}'");
+            $check_email = $db->super_query("SELECT COUNT(*) AS cnt FROM `users`  WHERE user_email = '{$email}'");
             if ($row['user_email'] and $ok_email and !$check_email['cnt']) {
                 //Удаляем все пред. заявки
-                $db->query("DELETE FROM `" . PREFIX . "_restore` WHERE email = '{$email}'");
+                $db->query("DELETE FROM `restore` WHERE email = '{$email}'");
                 $salt = "abchefghjkmnpqrstuvwxyz0123456789";
                 for ($i = 0; $i < 15; $i++) {
                     $rand_lost .= $salt[rand(0, 33)];
@@ -218,7 +218,7 @@ if ($logged) {
 HTML;
                 $mail->send($row['user_email'], 'Изменение почтового адреса', $message);
                 //Вставляем в БД код 1
-                $db->query("INSERT INTO `" . PREFIX . "_restore` SET email = '{$email}', hash = '{$hash}', ip = '{$_IP}'");
+                $db->query("INSERT INTO `restore` SET email = '{$email}', hash = '{$hash}', ip = '{$_IP}'");
                 $salt = "abchefghjkmnpqrstuvwxyz0123456789";
                 for ($i = 0; $i < 15; $i++) {
                     $rand_lost .= $salt[rand(0, 33)];
@@ -241,7 +241,7 @@ HTML;
 HTML;
                 $mail->send($email, 'Изменение почтового адреса', $message);
                 //Вставляем в БД код 2
-                $db->query("INSERT INTO `" . PREFIX . "_restore` SET email = '{$email}', hash = '{$hash}', ip = '{$_IP}'");
+                $db->query("INSERT INTO `restore` SET email = '{$email}', hash = '{$hash}', ip = '{$_IP}'");
             } else
                 echo '1';
             die();
@@ -251,7 +251,7 @@ HTML;
 
         default:
             $mobile_speedbar = 'Общие настройки';
-            $row = $db->super_query("SELECT user_name, user_lastname, user_email FROM `" . PREFIX . "_users` WHERE user_id = '{$user_id}'");
+            $row = $db->super_query("SELECT user_name, user_lastname, user_email FROM `users` WHERE user_id = '{$user_id}'");
             //Загружаем вверх
             $tpl->load_template('settings/general.tpl');
             $tpl->set('{name}', $row['user_name']);
@@ -265,33 +265,33 @@ HTML;
             $code2 = (isset($_GET['code2'])) ? strip_data($_GET['code2']) : null;
             if (strlen($code1) == 32) {
                 $code2 = '';
-                $check_code1 = $db->super_query("SELECT email FROM `" . PREFIX . "_restore` WHERE hash = '{$code1}' AND ip = '{$_IP}'");
+                $check_code1 = $db->super_query("SELECT email FROM `restore` WHERE hash = '{$code1}' AND ip = '{$_IP}'");
                 if ($check_code1['email']) {
-                    $check_code2 = $db->super_query("SELECT COUNT(*) AS cnt FROM `" . PREFIX . "_restore` WHERE hash != '{$code1}' AND email = '{$check_code1['email']}' AND ip = '{$_IP}'");
+                    $check_code2 = $db->super_query("SELECT COUNT(*) AS cnt FROM `restore` WHERE hash != '{$code1}' AND email = '{$check_code1['email']}' AND ip = '{$_IP}'");
                     if ($check_code2['cnt']) $tpl->set('{code-1}', '');
                     else {
                         $tpl->set('{code-1}', 'no_display');
                         $tpl->set('{code-3}', '');
                         //Меняем
-                        $db->query("UPDATE `" . PREFIX . "_users` SET user_email = '{$check_code1['email']}' WHERE user_id = '{$user_id}'");
+                        $db->query("UPDATE `users` SET user_email = '{$check_code1['email']}' WHERE user_id = '{$user_id}'");
                         $row['user_email'] = $check_code1['email'];
                     }
-                    $db->query("DELETE FROM `" . PREFIX . "_restore` WHERE hash = '{$code1}' AND ip = '{$_IP}'");
+                    $db->query("DELETE FROM `restore` WHERE hash = '{$code1}' AND ip = '{$_IP}'");
                 }
             }
             if (strlen($code2) == 32) {
-                $check_code2 = $db->super_query("SELECT email FROM `" . PREFIX . "_restore` WHERE hash = '{$code2}' AND ip = '{$_IP}'");
+                $check_code2 = $db->super_query("SELECT email FROM `restore` WHERE hash = '{$code2}' AND ip = '{$_IP}'");
                 if ($check_code2['email']) {
-                    $check_code1 = $db->super_query("SELECT COUNT(*) AS cnt FROM `" . PREFIX . "_restore` WHERE hash != '{$code2}' AND email = '{$check_code2['email']}' AND ip = '{$_IP}'");
+                    $check_code1 = $db->super_query("SELECT COUNT(*) AS cnt FROM `restore` WHERE hash != '{$code2}' AND email = '{$check_code2['email']}' AND ip = '{$_IP}'");
                     if ($check_code1['cnt']) $tpl->set('{code-2}', '');
                     else {
                         $tpl->set('{code-2}', 'no_display');
                         $tpl->set('{code-3}', '');
                         //Меняем
-                        $db->query("UPDATE `" . PREFIX . "_users` SET user_email = '{$check_code2['email']}'  WHERE user_id = '{$user_id}'");
+                        $db->query("UPDATE `users` SET user_email = '{$check_code2['email']}'  WHERE user_id = '{$user_id}'");
                         $row['user_email'] = $check_code2['email'];
                     }
-                    $db->query("DELETE FROM `" . PREFIX . "_restore` WHERE hash = '{$code2}' AND ip = '{$_IP}'");
+                    $db->query("DELETE FROM `restore` WHERE hash = '{$code2}' AND ip = '{$_IP}'");
                 }
             }
             //Email

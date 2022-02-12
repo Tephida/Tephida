@@ -6,60 +6,60 @@
  *   file that was distributed with this source code.
  *
  */
-if(!defined('MOZG'))
-	die('Hacking attempt!');
-	
+if (!defined('MOZG'))
+    die('Hacking attempt!');
+
 $act = $_GET['act'];
 
-switch($act){
+switch ($act) {
 
-	//################### Начало рассылки ###################//
-	case "send":
-		$limit = intval($_POST['limit']);
-		$lastid = intval($_POST['lastid']);
-		$title = requestFilter('title', 25000, true);
+    //################### Начало рассылки ###################//
+    case "send":
+        $limit = intval($_POST['limit']);
+        $lastid = intval($_POST['lastid']);
+        $title = requestFilter('title', 25000, true);
 //		$_POST['text'] = $_POST['text'];
-		
-		$sql_ = $db->super_query("SELECT user_search_pref, user_email FROM `".PREFIX."_users` ORDER by `user_id` ASC LIMIT ".$lastid.", ".$limit, true);
-		
-		if($sql_){
-			include_once ENGINE_DIR.'/classes/mail.php';
-			$mail = new vii_mail($config, true);
-			
-			foreach($sql_ as $row){
-				$find = array ('/data:/i', '/about:/i', '/vbscript:/i', '/onclick/i', '/onload/i', '/onunload/i', '/onabort/i', '/onerror/i', '/onblur/i', '/onchange/i', '/onfocus/i', '/onreset/i', '/onsubmit/i', '/ondblclick/i', '/onkeydown/i', '/onkeypress/i', '/onkeyup/i', '/onmousedown/i', '/onmouseup/i', '/onmouseover/i', '/onmouseout/i', '/onselect/i', '/javascript/i', '/javascript/i' );
-				$replace = array ("d&#097;ta:", "&#097;bout:", "vbscript<b></b>:", "&#111;nclick", "&#111;nload", "&#111;nunload", "&#111;nabort", "&#111;nerror", "&#111;nblur", "&#111;nchange", "&#111;nfocus", "&#111;nreset", "&#111;nsubmit", "&#111;ndblclick", "&#111;nkeydown", "&#111;nkeypress", "&#111;nkeyup", "&#111;nmousedown", "&#111;nmouseup", "&#111;nmouseover", "&#111;nmouseout", "&#111;nselect", "j&#097;vascript" );
 
-				$message_send = preg_replace($find, $replace, $_POST['text']);
-				$message_send = preg_replace("#<iframe#i", "&lt;iframe", $message_send);
-				$message_send = preg_replace("#<script#i", "&lt;script", $message_send);
-				$message_send = str_replace("<?", "&lt;?", $message_send);
-				$message_send = str_replace("?>", "?&gt;", $message_send);
-				$message_send = $db->safesql($message_send);
-				$message_send = str_replace("{%user-name%}", $row['user_search_pref'], $_POST['text']);
-				
-				$mail->send($row['user_email'], $title, $message_send);
-				
-				echo 'ok';
-			}
-		}
+        $sql_ = $db->super_query("SELECT user_search_pref, user_email FROM `users` ORDER by `user_id` ASC LIMIT " . $lastid . ", " . $limit, true);
 
-		die();
-	break;
-	
-	default:
-		$users = $db->super_query("SELECT COUNT(*) AS cnt FROM `".PREFIX."_users`"); 
-		if($users['cnt'] < 20)
-			$max_users = $users['cnt'];
-		else
-			$max_users = 20;
+        if ($sql_) {
+            include_once ENGINE_DIR . '/classes/mail.php';
+            $mail = new vii_mail($config, true);
 
-		echoheader();
-		
-		echo '<div id="form">';
-		echohtmlstart('Подготовка к отправке сообщений');
-	
-		echo <<<HTML
+            foreach ($sql_ as $row) {
+                $find = array('/data:/i', '/about:/i', '/vbscript:/i', '/onclick/i', '/onload/i', '/onunload/i', '/onabort/i', '/onerror/i', '/onblur/i', '/onchange/i', '/onfocus/i', '/onreset/i', '/onsubmit/i', '/ondblclick/i', '/onkeydown/i', '/onkeypress/i', '/onkeyup/i', '/onmousedown/i', '/onmouseup/i', '/onmouseover/i', '/onmouseout/i', '/onselect/i', '/javascript/i', '/javascript/i');
+                $replace = array("d&#097;ta:", "&#097;bout:", "vbscript<b></b>:", "&#111;nclick", "&#111;nload", "&#111;nunload", "&#111;nabort", "&#111;nerror", "&#111;nblur", "&#111;nchange", "&#111;nfocus", "&#111;nreset", "&#111;nsubmit", "&#111;ndblclick", "&#111;nkeydown", "&#111;nkeypress", "&#111;nkeyup", "&#111;nmousedown", "&#111;nmouseup", "&#111;nmouseover", "&#111;nmouseout", "&#111;nselect", "j&#097;vascript");
+
+                $message_send = preg_replace($find, $replace, $_POST['text']);
+                $message_send = preg_replace("#<iframe#i", "&lt;iframe", $message_send);
+                $message_send = preg_replace("#<script#i", "&lt;script", $message_send);
+                $message_send = str_replace("<?", "&lt;?", $message_send);
+                $message_send = str_replace("?>", "?&gt;", $message_send);
+                $message_send = $db->safesql($message_send);
+                $message_send = str_replace("{%user-name%}", $row['user_search_pref'], $_POST['text']);
+
+                $mail->send($row['user_email'], $title, $message_send);
+
+                echo 'ok';
+            }
+        }
+
+        die();
+        break;
+
+    default:
+        $users = $db->super_query("SELECT COUNT(*) AS cnt FROM `users`");
+        if ($users['cnt'] < 20)
+            $max_users = $users['cnt'];
+        else
+            $max_users = 20;
+
+        echoheader();
+
+        echo '<div id="form">';
+        echohtmlstart('Подготовка к отправке сообщений');
+
+        echo <<<HTML
 <style type="text/css" media="all">
 .inpu{width:305px;}
 textarea{width:600px;height:300px;}
@@ -120,14 +120,14 @@ function mailSend(){
 </form>
 HTML;
 
-		echo '</div><div id="sendingbox" style="display:none">';
-		echohtmlstart('Отправка сообщений');
-		echo <<<HTML
+        echo '</div><div id="sendingbox" style="display:none">';
+        echohtmlstart('Отправка сообщений');
+        echo <<<HTML
 <div id="result"></div>
 Отправлено сообщений: <span style="color:red;" id="ok_users">0</span> из <span style="color:blue;" id="user_cnt">{$users['cnt']}</span> Статус: <span id="status">отправка...</span><br /><br />
 <span style="color:#777">Внимание идет отсылка сообщений пользователям, не закрывайте данное окно до тех пор, пока не будут отосланы все письма</span>
 </div>
 HTML;
-		echohtmlend();
+        echohtmlend();
 }
 ?>

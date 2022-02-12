@@ -6,38 +6,38 @@
  *   file that was distributed with this source code.
  *
  */
-if(!defined('MOZG'))
-	die('Hacking attempt!');
+if (!defined('MOZG'))
+    die('Hacking attempt!');
 
 //Редактирование
-if($_GET['act'] == 'edit'){
-	$id = intval($_GET['id']);
-	
-	//SQL Запрос на вывод информации 
-	$row = $db->super_query("SELECT owner_user_id, title, descr, video FROM `".PREFIX."_videos` WHERE id = '".$id."'");
-	if($row){
-		if(isset($_POST['save'])){
-			$title = requestFilter('title', 25000, true);
-			$descr = requestFilter('descr');
+if ($_GET['act'] == 'edit') {
+    $id = intval($_GET['id']);
 
-			if(!empty($title) AND !empty($descr)){
-				$db->query("UPDATE `".PREFIX."_videos` SET title = '".$title."', descr = '".$descr."' WHERE id = '".$id."'");
-				
-				//Чистим кеш
-				mozg_mass_clear_cache_file("user_{$row['owner_user_id']}/page_videos_user|user_{$row['owner_user_id']}/page_videos_user_friends|user_{$row['owner_user_id']}/page_videos_user_all|user_{$row['owner_user_id']}/videos_num_all|user_{$row['owner_user_id']}/videos_num_friends");
-					
-				msgbox('Информация', 'Видеозапись успешно отредактирована', '?mod=videos');
-			} else
-				msgbox('Ошибка', 'Заполните все поля', '?mod=videos&act=edit&id='.$id);
-		} else {
-			$row['title'] = stripslashes($row['title']);
-			$row['descr'] = stripslashes(myBrRn($row['descr']));
-			$row['video'] = stripslashes(myBrRn($row['video']));
+    //SQL Запрос на вывод информации
+    $row = $db->super_query("SELECT owner_user_id, title, descr, video FROM `videos` WHERE id = '" . $id . "'");
+    if ($row) {
+        if (isset($_POST['save'])) {
+            $title = requestFilter('title', 25000, true);
+            $descr = requestFilter('descr');
 
-			echoheader();
-			echohtmlstart('Редактирование видео');
-			
-			echo <<<HTML
+            if (!empty($title) and !empty($descr)) {
+                $db->query("UPDATE `videos` SET title = '" . $title . "', descr = '" . $descr . "' WHERE id = '" . $id . "'");
+
+                //Чистим кеш
+                mozg_mass_clear_cache_file("user_{$row['owner_user_id']}/page_videos_user|user_{$row['owner_user_id']}/page_videos_user_friends|user_{$row['owner_user_id']}/page_videos_user_all|user_{$row['owner_user_id']}/videos_num_all|user_{$row['owner_user_id']}/videos_num_friends");
+
+                msgbox('Информация', 'Видеозапись успешно отредактирована', '?mod=videos');
+            } else
+                msgbox('Ошибка', 'Заполните все поля', '?mod=videos&act=edit&id=' . $id);
+        } else {
+            $row['title'] = stripslashes($row['title']);
+            $row['descr'] = stripslashes(myBrRn($row['descr']));
+            $row['video'] = stripslashes(myBrRn($row['video']));
+
+            echoheader();
+            echohtmlstart('Редактирование видео');
+
+            echo <<<HTML
 <style type="text/css" media="all">
 .inpu{width:447px;}
 textarea{width:450px;height:100px;}
@@ -61,58 +61,58 @@ textarea{width:450px;height:100px;}
 
 </form>
 HTML;
-			echohtmlend();
-		}
-	} else
-		msgbox('Ошибка', 'Видео не найдено', '?mod=videos');
-		
-	die();
+            echohtmlend();
+        }
+    } else
+        msgbox('Ошибка', 'Видео не найдено', '?mod=videos');
+
+    die();
 }
 
-echoheader();	
+echoheader();
 
 $se_uid = intval($_GET['se_uid']);
-if(!$se_uid) $se_uid = '';
+if (!$se_uid) $se_uid = '';
 
 $se_user_id = intval($_GET['se_user_id']);
-if(!$se_user_id) $se_user_id = '';
+if (!$se_user_id) $se_user_id = '';
 
 $sort = intval($_GET['sort']);
 $se_name = requestFilter('se_name', 25000, true);
 
-if($se_uid OR $sort OR $se_name OR $se_user_id){
-	if($se_uid)
-        $where_sql .= "AND id = '".$se_uid."' ";
-	if($se_user_id)
-        $where_sql .= "AND owner_user_id = '".$se_user_id."' ";
-	$query = strtr($se_name, array(' ' => '%')); //Замеянем пробелы на проценты чтоб тоиск был точнее
-	if($se_name)
-        $where_sql .= "AND title LIKE '%".$query."%' ";
-	if($sort == 1)
+if ($se_uid or $sort or $se_name or $se_user_id) {
+    if ($se_uid)
+        $where_sql .= "AND id = '" . $se_uid . "' ";
+    if ($se_user_id)
+        $where_sql .= "AND owner_user_id = '" . $se_user_id . "' ";
+    $query = strtr($se_name, array(' ' => '%')); //Замеянем пробелы на проценты чтоб тоиск был точнее
+    if ($se_name)
+        $where_sql .= "AND title LIKE '%" . $query . "%' ";
+    if ($sort == 1)
         $order_sql = "`title` ASC";
-	else if($sort == 2)
+    else if ($sort == 2)
         $order_sql = "`add_date` ASC";
-	else if($sort == 3)
+    else if ($sort == 3)
         $order_sql = "`views` DESC";
-	else if($sort == 4)
+    else if ($sort == 4)
         $order_sql = "`comm_num` DESC";
-	else
+    else
         $order_sql = "`add_date` DESC";
 } else
-	$order_sql = "`add_date` DESC";
-	
+    $order_sql = "`add_date` DESC";
+
 //Выводим список людей
-if($_GET['page'] > 0)
+if ($_GET['page'] > 0)
     $page = intval($_GET['page']);
 else
     $page = 1;
 $gcount = 20;
-$limit_page = ($page-1)*$gcount;
+$limit_page = ($page - 1) * $gcount;
 
-$sql_ = $db->super_query("SELECT tb1.id, title, comm_num, add_date, owner_user_id, views, tb2.user_name FROM `".PREFIX."_videos` tb1, `".PREFIX."_users` tb2 WHERE tb1.owner_user_id = tb2.user_id {$where_sql} ORDER by {$order_sql} LIMIT {$limit_page}, {$gcount}", true);
+$sql_ = $db->super_query("SELECT tb1.id, title, comm_num, add_date, owner_user_id, views, tb2.user_name FROM `videos` tb1, `users` tb2 WHERE tb1.owner_user_id = tb2.user_id {$where_sql} ORDER by {$order_sql} LIMIT {$limit_page}, {$gcount}", true);
 
 //Кол-во людей считаем
-$numRows = $db->super_query("SELECT COUNT(*) AS cnt FROM `".PREFIX."_videos` WHERE id != '' {$where_sql}");
+$numRows = $db->super_query("SELECT COUNT(*) AS cnt FROM `videos` WHERE id != '' {$where_sql}");
 
 $selsorlist = installationSelected($sort, '<option value="1">по алфавиту</option><option value="2">по дате добавления</option><option value="3">по количеству просмотров</option><option value="4">по количеству комментариев</option>');
 
@@ -151,13 +151,13 @@ textarea{width:300px;height:100px;}
 </form>
 HTML;
 
-echohtmlstart('Список видео ('.$numRows['cnt'].')');
+echohtmlstart('Список видео (' . $numRows['cnt'] . ')');
 
-foreach($sql_ as $row){
-	$row['title'] = stripslashes($row['title']);
-	$row['add_date'] = langdate('j M Y в H:i', strtotime($row['add_date']));
+foreach ($sql_ as $row) {
+    $row['title'] = stripslashes($row['title']);
+    $row['add_date'] = langdate('j M Y в H:i', strtotime($row['add_date']));
 
-	$users .= <<<HTML
+    $users .= <<<HTML
 <div style="background:#fff;float:left;padding:5px;width:100px;text-align:center;"><a href="/u{$row['owner_user_id']}" target="_blank">{$row['user_name']}</a></div>
 <div style="background:#fff;float:left;padding:5px;width:243px;text-align:center;margin-left:1px"><a href="?mod=videos&act=edit&id={$row['id']}" title="Комментариев: {$row['comm_num']}">{$row['title']}</a></div>
 <div style="background:#fff;float:left;padding:5px;width:75px;text-align:center;margin-left:1px">{$row['views']}</div>
@@ -204,7 +204,7 @@ function ckeck_uncheck_all() {
 HTML;
 
 $query_string = preg_replace("/&page=[0-9]+/i", '', $_SERVER['QUERY_STRING']);
-echo navigation($gcount, $numRows['cnt'], '?'.$query_string.'&page=');
+echo navigation($gcount, $numRows['cnt'], '?' . $query_string . '&page=');
 
 htmlclear();
 echohtmlend();

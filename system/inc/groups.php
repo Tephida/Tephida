@@ -6,45 +6,45 @@
  *   file that was distributed with this source code.
  *
  */
-if(!defined('MOZG'))
-	die('Hacking attempt!');
+if (!defined('MOZG'))
+    die('Hacking attempt!');
 
 //Редактирование
-if($_GET['act'] == 'edit'){
-	$id = intval($_GET['id']);
-	
-	//SQL Запрос на вывод информации 
-	$row = $db->super_query("SELECT title, descr, comments, photo FROM `".PREFIX."_communities` WHERE id = '".$id."'");
-	if($row){
-		if(isset($_POST['save'])){
-			$title = requestFilter('title', 25000, true);
-			$descr = requestFilter('descr');
-			
-			if(isset($title) AND !empty($title) AND isset($descr) AND !empty($descr)){
-				if($_POST['comments'])
+if ($_GET['act'] == 'edit') {
+    $id = intval($_GET['id']);
+
+    //SQL Запрос на вывод информации
+    $row = $db->super_query("SELECT title, descr, comments, photo FROM `communities` WHERE id = '" . $id . "'");
+    if ($row) {
+        if (isset($_POST['save'])) {
+            $title = requestFilter('title', 25000, true);
+            $descr = requestFilter('descr');
+
+            if (isset($title) and !empty($title) and isset($descr) and !empty($descr)) {
+                if ($_POST['comments'])
                     $comments = 1;
-				else
+                else
                     $comments = 0;
-				
-				if($_POST['del_photo']){
-					@unlink(ROOT_DIR.'/uploads/groups/'.$id.'/'.$row['photo']);
-					$sql_line_del = ", photo = ''";
-				}
-				
-				$db->query("UPDATE `".PREFIX."_communities` SET title = '".$title."', descr = '".$descr."', comments = '".$comments."' ".$sql_line_del." WHERE id = '".$id."'");
-				msgbox('Информация', 'Сообщество успешно отредактировано', '?mod=groups');
-			} else
-				msgbox('Ошибка', 'Заполните все поля', '?mod=groups&act=edit&id='.$id);
-		} else {
-			$row['title'] = stripslashes($row['title']);
-			$row['descr'] = stripslashes(myBrRn($row['descr']));
-			
-			if($row['comments']) $checked = 'checked';
-			
-			echoheader();
-			echohtmlstart('Редактирование сообщества');
-			
-			echo <<<HTML
+
+                if ($_POST['del_photo']) {
+                    @unlink(ROOT_DIR . '/uploads/groups/' . $id . '/' . $row['photo']);
+                    $sql_line_del = ", photo = ''";
+                }
+
+                $db->query("UPDATE `communities` SET title = '" . $title . "', descr = '" . $descr . "', comments = '" . $comments . "' " . $sql_line_del . " WHERE id = '" . $id . "'");
+                msgbox('Информация', 'Сообщество успешно отредактировано', '?mod=groups');
+            } else
+                msgbox('Ошибка', 'Заполните все поля', '?mod=groups&act=edit&id=' . $id);
+        } else {
+            $row['title'] = stripslashes($row['title']);
+            $row['descr'] = stripslashes(myBrRn($row['descr']));
+
+            if ($row['comments']) $checked = 'checked';
+
+            echoheader();
+            echohtmlstart('Редактирование сообщества');
+
+            echo <<<HTML
 <style type="text/css" media="all">
 .inpu{width:447px;}
 textarea{width:450px;height:100px;}
@@ -76,50 +76,56 @@ textarea{width:450px;height:100px;}
 
 </form>
 HTML;
-			echohtmlend();
-		}
-	} else
-		msgbox('Ошибка', 'Сообщество не найдено', '?mod=groups');
-		
-	die();
+            echohtmlend();
+        }
+    } else
+        msgbox('Ошибка', 'Сообщество не найдено', '?mod=groups');
+
+    die();
 }
 
-echoheader();	
+echoheader();
 
 $se_uid = intval($_GET['se_uid']);
-if(!$se_uid) $se_uid = '';
+if (!$se_uid) $se_uid = '';
 
 $se_user_id = intval($_GET['se_user_id']);
-if(!$se_user_id) $se_user_id = '';
+if (!$se_user_id) $se_user_id = '';
 
 $sort = intval($_GET['sort']);
 $se_name = requestFilter('se_name', 25000, true);
 
-if($se_uid OR $sort OR $se_name OR $se_user_id OR $_GET['ban'] OR $_GET['delet']){
-	if($se_uid) $where_sql .= "AND id = '".$se_uid."' ";
-	if($se_user_id) $where_sql .= "AND real_admin = '".$se_user_id."' ";
-	$query = strtr($se_name, array(' ' => '%')); //Замеянем пробелы на проценты чтоб тоиск был точнее
-	if($se_name) $where_sql .= "AND title LIKE '%".$query."%' ";
-	if($_GET['ban']){$where_sql .= "AND ban = 1 ";$checked_ban = "checked";}
-	if($_GET['delet']){$where_sql .= "AND del = 1 ";$checked_delet = "checked";}
-	if($sort == 5) $where_sql = "AND photo != '' ";
-	if($sort == 1) $order_sql = "`title` ASC";
-	else if($sort == 2) $order_sql = "`date` ASC";
-	else if($sort == 3) $order_sql = "`traf` DESC";
-	else if($sort == 4) $order_sql = "`rec_num` DESC";
-	else $order_sql = "`date` DESC";
+if ($se_uid or $sort or $se_name or $se_user_id or $_GET['ban'] or $_GET['delet']) {
+    if ($se_uid) $where_sql .= "AND id = '" . $se_uid . "' ";
+    if ($se_user_id) $where_sql .= "AND real_admin = '" . $se_user_id . "' ";
+    $query = strtr($se_name, array(' ' => '%')); //Замеянем пробелы на проценты чтоб тоиск был точнее
+    if ($se_name) $where_sql .= "AND title LIKE '%" . $query . "%' ";
+    if ($_GET['ban']) {
+        $where_sql .= "AND ban = 1 ";
+        $checked_ban = "checked";
+    }
+    if ($_GET['delet']) {
+        $where_sql .= "AND del = 1 ";
+        $checked_delet = "checked";
+    }
+    if ($sort == 5) $where_sql = "AND photo != '' ";
+    if ($sort == 1) $order_sql = "`title` ASC";
+    else if ($sort == 2) $order_sql = "`date` ASC";
+    else if ($sort == 3) $order_sql = "`traf` DESC";
+    else if ($sort == 4) $order_sql = "`rec_num` DESC";
+    else $order_sql = "`date` DESC";
 } else
-	$order_sql = "`date` DESC";
-	
-//Выводим список людей
-if($_GET['page'] > 0) $page = intval($_GET['page']); else $page = 1;
-$gcount = 20;
-$limit_page = ($page-1)*$gcount;
+    $order_sql = "`date` DESC";
 
-$sql_ = $db->super_query("SELECT tb1.id, title, date, traf, real_admin, del, ban, rec_num, tb2.user_name FROM `".PREFIX."_communities` tb1, `".PREFIX."_users` tb2 WHERE tb1.real_admin = tb2.user_id {$where_sql} ORDER by {$order_sql} LIMIT {$limit_page}, {$gcount}", 1);
+//Выводим список людей
+if ($_GET['page'] > 0) $page = intval($_GET['page']); else $page = 1;
+$gcount = 20;
+$limit_page = ($page - 1) * $gcount;
+
+$sql_ = $db->super_query("SELECT tb1.id, title, date, traf, real_admin, del, ban, rec_num, tb2.user_name FROM `communities` tb1, `users` tb2 WHERE tb1.real_admin = tb2.user_id {$where_sql} ORDER by {$order_sql} LIMIT {$limit_page}, {$gcount}", 1);
 
 //Кол-во людей считаем
-$numRows = $db->super_query("SELECT COUNT(*) AS cnt FROM `".PREFIX."_communities` WHERE id != '' {$where_sql}");
+$numRows = $db->super_query("SELECT COUNT(*) AS cnt FROM `communities` WHERE id != '' {$where_sql}");
 
 $selsorlist = installationSelected($sort, '<option value="1">по алфавиту</option><option value="2">по дате создания</option><option value="3">по количеству участников</option><option value="4">по количеству записей на стене</option><option value="5">только с фото</option>');
 
@@ -166,20 +172,20 @@ textarea{width:300px;height:100px;}
 </form>
 HTML;
 
-echohtmlstart('Список сообществ ('.$numRows['cnt'].')');
+echohtmlstart('Список сообществ (' . $numRows['cnt'] . ')');
 
-foreach($sql_ as $row){
-	$row['title'] = stripslashes($row['title']);
-	$row['date'] = langdate('j M Y в H:i', strtotime($row['date']));
+foreach ($sql_ as $row) {
+    $row['title'] = stripslashes($row['title']);
+    $row['date'] = langdate('j M Y в H:i', strtotime($row['date']));
 
-	if($row['del']) 
-		$color = 'color:red';
-	else if($row['ban'])
-		$color = 'color:blue';
-	else
-		$color = '';
-		
-	$users .= <<<HTML
+    if ($row['del'])
+        $color = 'color:red';
+    else if ($row['ban'])
+        $color = 'color:blue';
+    else
+        $color = '';
+
+    $users .= <<<HTML
 <div style="background:#fff;float:left;padding:5px;width:100px;text-align:center;"><a href="/u{$row['real_admin']}" target="_blank">{$row['user_name']}</a></div>
 <div style="background:#fff;float:left;padding:5px;width:243px;text-align:center;margin-left:1px"><a href="?mod=groups&act=edit&id={$row['id']}" title="Записей на стене: {$row['rec_num']}" style="{$color}">{$row['title']}</a></div>
 <div style="background:#fff;float:left;padding:5px;width:75px;text-align:center;margin-left:1px">{$row['traf']}</div>
@@ -233,7 +239,7 @@ HTML;
 
 $query_string = preg_replace("/&page=[0-9]+/i", '', $_SERVER['QUERY_STRING']);
 
-echo navigation($gcount, $numRows['cnt'], '?'.$query_string.'&page=');
+echo navigation($gcount, $numRows['cnt'], '?' . $query_string . '&page=');
 
 htmlclear();
 echohtmlend();

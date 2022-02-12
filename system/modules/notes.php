@@ -53,19 +53,19 @@ if ($logged) {
             $text = $parse->BBparse(requestFilter('text'));
 
             if (strlen($title) > 0 && strlen($text) > 0) {
-                $db->query("INSERT INTO `" . PREFIX . "_notes` SET owner_user_id = '{$user_id}', title = '{$title}', full_text = '{$text}', date = NOW()");
+                $db->query("INSERT INTO `notes` SET owner_user_id = '{$user_id}', title = '{$title}', full_text = '{$text}', date = NOW()");
                 $db_id = $db->insert_id();
-                $db->query("UPDATE `" . PREFIX . "_users` SET user_notes_num = user_notes_num+1 WHERE user_id = '{$user_id}'");
+                $db->query("UPDATE `users` SET user_notes_num = user_notes_num+1 WHERE user_id = '{$user_id}'");
 
                 echo $db_id;
 
                 //Добавляем действия в ленту новостей
                 $generateLastTime = $server_time - 10800;
-                $row = $db->super_query("SELECT ac_id, action_text FROM `" . PREFIX . "_news` WHERE action_time > '{$generateLastTime}' AND action_type = 5 AND ac_user_id = '{$user_id}'");
+                $row = $db->super_query("SELECT ac_id, action_text FROM `news` WHERE action_time > '{$generateLastTime}' AND action_type = 5 AND ac_user_id = '{$user_id}'");
                 if ($row)
-                    $db->query("UPDATE `" . PREFIX . "_news` SET action_text = '{$db_id}||{$row['action_text']}', action_time = '{$server_time}' WHERE ac_id = '{$row['ac_id']}'");
+                    $db->query("UPDATE `news` SET action_text = '{$db_id}||{$row['action_text']}', action_time = '{$server_time}' WHERE ac_id = '{$row['ac_id']}'");
                 else
-                    $db->query("INSERT INTO `" . PREFIX . "_news` SET ac_user_id = '{$user_id}', action_type = 5, action_text = '{$db_id}', action_time = '{$server_time}'");
+                    $db->query("INSERT INTO `news` SET ac_user_id = '{$user_id}', action_type = 5, action_text = '{$db_id}', action_time = '{$server_time}'");
 
                 //Чистим кеш владельцу заметки и заметок на его стр
                 mozg_clear_cache_file('user_' . $user_id . '/profile_' . $user_id);
@@ -109,7 +109,7 @@ if ($logged) {
             $user_speedbar = $lang['note_edit'];
 
             //SQL Запрос на вывод информации о заметке
-            $row = $db->super_query("SELECT title, full_text FROM `" . PREFIX . "_notes` WHERE owner_user_id = '{$user_id}' AND id = '{$note_id}'");
+            $row = $db->super_query("SELECT title, full_text FROM `notes` WHERE owner_user_id = '{$user_id}' AND id = '{$note_id}'");
 
             if ($row) {
                 //Подключаем парсер
@@ -153,9 +153,9 @@ if ($logged) {
 
             if (strlen($title) > 0 && strlen($text) > 0) {
                 //Проверка на существование заметки
-                $row = $db->super_query("SELECT owner_user_id FROM `" . PREFIX . "_notes` WHERE id = '{$note_id}'");
+                $row = $db->super_query("SELECT owner_user_id FROM `notes` WHERE id = '{$note_id}'");
                 if ($row['owner_user_id'] == $user_id)
-                    $db->query("UPDATE `" . PREFIX . "_notes` SET title = '{$title}', full_text = '{$text}' WHERE id = '{$note_id}'");
+                    $db->query("UPDATE `notes` SET title = '{$title}', full_text = '{$text}' WHERE id = '{$note_id}'");
             }
 
             die();
@@ -166,11 +166,11 @@ if ($logged) {
             NoAjaxQuery();
             $note_id = intval($_POST['note_id']);
             //Проверка на существование заметки
-            $row = $db->super_query("SELECT owner_user_id FROM `" . PREFIX . "_notes` WHERE id = '{$note_id}'");
+            $row = $db->super_query("SELECT owner_user_id FROM `notes` WHERE id = '{$note_id}'");
             if ($row['owner_user_id'] == $user_id) {
-                $db->query("DELETE FROM `" . PREFIX . "_notes` WHERE id = '{$note_id}'");
-                $db->query("DELETE FROM `" . PREFIX . "_notes_comments` WHERE note_id = '{$note_id}'");
-                $db->query("UPDATE `" . PREFIX . "_users` SET user_notes_num = user_notes_num-1 WHERE user_id = '{$user_id}'");
+                $db->query("DELETE FROM `notes` WHERE id = '{$note_id}'");
+                $db->query("DELETE FROM `notes_comments` WHERE note_id = '{$note_id}'");
+                $db->query("UPDATE `users` SET user_notes_num = user_notes_num-1 WHERE user_id = '{$user_id}'");
 
                 //Чистим кеш владельцу заметки и заметок на его стр
                 mozg_clear_cache_file('user_' . $user_id . '/profile_' . $user_id);
@@ -186,15 +186,15 @@ if ($logged) {
             $textcom = requestFilter('textcom');
 
             //Проверка на существование заметки
-            $check = $db->super_query("SELECT owner_user_id FROM `" . PREFIX . "_notes` WHERE id = '{$note_id}'");
+            $check = $db->super_query("SELECT owner_user_id FROM `notes` WHERE id = '{$note_id}'");
 
             $CheckBlackList = CheckBlackList($check['owner_user_id']);
 
             if (!$CheckBlackList and $check and isset($textcom) and !empty($textcom)) {
                 if ($check) {
-                    $db->query("INSERT INTO `" . PREFIX . "_notes_comments` SET note_id = '{$note_id}', from_user_id = '{$user_id}', text = '{$textcom}', add_date = NOW()");
+                    $db->query("INSERT INTO `notes_comments` SET note_id = '{$note_id}', from_user_id = '{$user_id}', text = '{$textcom}', add_date = NOW()");
                     $db_id = $db->insert_id();
-                    $db->query("UPDATE `" . PREFIX . "_notes` SET comm_num = comm_num+1 WHERE id = '{$note_id}'");
+                    $db->query("UPDATE `notes` SET comm_num = comm_num+1 WHERE id = '{$note_id}'");
 
                     $tpl->load_template('notes/comment.tpl');
                     $tpl->set('{author}', $user_info['user_search_pref']);
@@ -213,15 +213,15 @@ if ($logged) {
                     //Добавляем действие в ленту новостей "ответы" владельцу заметки
                     if ($user_id != $check['owner_user_id']) {
                         $comment = str_replace("|", "&#124;", $textcom);
-                        $db->query("INSERT INTO `" . PREFIX . "_news` SET ac_user_id = '{$user_id}', action_type = 10, action_text = '{$comment}|{$note_id}', obj_id = '{$db_id}', for_user_id = '{$check['owner_user_id']}', action_time = '{$server_time}'");
+                        $db->query("INSERT INTO `news` SET ac_user_id = '{$user_id}', action_type = 10, action_text = '{$comment}|{$note_id}', obj_id = '{$db_id}', for_user_id = '{$check['owner_user_id']}', action_time = '{$server_time}'");
 
                         //Вставляем событие в моментальные оповещания
-                        $row_userOW = $db->super_query("SELECT user_last_visit FROM `" . PREFIX . "_users` WHERE user_id = '{$check['owner_user_id']}'");
+                        $row_userOW = $db->super_query("SELECT user_last_visit FROM `users` WHERE user_id = '{$check['owner_user_id']}'");
                         $update_time = $server_time - 70;
 
                         if ($row_userOW['user_last_visit'] >= $update_time) {
 
-                            $db->query("INSERT INTO `" . PREFIX . "_updates` SET for_user_id = '{$check['owner_user_id']}', from_user_id = '{$user_id}', type = '4', date = '{$server_time}', text = '{$comment}', user_photo = '{$user_info['user_photo']}', user_search_pref = '{$user_info['user_search_pref']}', lnk = '/notes/view/{$note_id}'");
+                            $db->query("INSERT INTO `updates` SET for_user_id = '{$check['owner_user_id']}', from_user_id = '{$user_id}', type = '4', date = '{$server_time}', text = '{$comment}', user_photo = '{$user_info['user_photo']}', user_search_pref = '{$user_info['user_search_pref']}', lnk = '/notes/view/{$note_id}'");
 
                             mozg_create_cache("user_{$check['owner_user_id']}/updates", 1);
 
@@ -235,12 +235,12 @@ if ($logged) {
 
                         //Отправка уведомления на E-mail
                         if ($config['news_mail_5'] == 'yes') {
-                            $rowUserEmail = $db->super_query("SELECT user_name, user_email FROM `" . PREFIX . "_users` WHERE user_id = '" . $check['owner_user_id'] . "'");
+                            $rowUserEmail = $db->super_query("SELECT user_name, user_email FROM `users` WHERE user_id = '" . $check['owner_user_id'] . "'");
                             if ($rowUserEmail['user_email']) {
                                 include_once ENGINE_DIR . '/classes/mail.php';
                                 $mail = new vii_mail($config);
-                                $rowMyInfo = $db->super_query("SELECT user_search_pref FROM `" . PREFIX . "_users` WHERE user_id = '" . $user_id . "'");
-                                $rowEmailTpl = $db->super_query("SELECT text FROM `" . PREFIX . "_mail_tpl` WHERE id = '5'");
+                                $rowMyInfo = $db->super_query("SELECT user_search_pref FROM `users` WHERE user_id = '" . $user_id . "'");
+                                $rowEmailTpl = $db->super_query("SELECT text FROM `mail_tpl` WHERE id = '5'");
                                 $rowEmailTpl['text'] = str_replace('{%user%}', $rowUserEmail['user_name'], $rowEmailTpl['text']);
                                 $rowEmailTpl['text'] = str_replace('{%user-friend%}', $rowMyInfo['user_search_pref'], $rowEmailTpl['text']);
                                 $rowEmailTpl['text'] = str_replace('{%rec-link%}', $config['home_url'] . 'notes/view/' . $note_id, $rowEmailTpl['text']);
@@ -263,11 +263,11 @@ if ($logged) {
             NoAjaxQuery();
             $comm_id = intval($_POST['comm_id']);
             //Проверка на существование коммента и выводим ИД создателя заметки
-            $row = $db->super_query("SELECT tb1.note_id, from_user_id, tb2.owner_user_id FROM `" . PREFIX . "_notes_comments` tb1, `" . PREFIX . "_notes` tb2  WHERE tb1.id = '{$comm_id}' AND tb1.note_id = tb2.id");
+            $row = $db->super_query("SELECT tb1.note_id, from_user_id, tb2.owner_user_id FROM `notes_comments` tb1, `notes` tb2  WHERE tb1.id = '{$comm_id}' AND tb1.note_id = tb2.id");
             if ($row['from_user_id'] == $user_id || $row['owner_user_id'] == $user_id) {
-                $db->query("DELETE FROM `" . PREFIX . "_notes_comments` WHERE id = '{$comm_id}'");
-                $db->query("DELETE FROM `" . PREFIX . "_news` WHERE obj_id = '{$comm_id}' AND action_type = 10");
-                $db->query("UPDATE `" . PREFIX . "_notes` SET comm_num = comm_num-1 WHERE id = '{$row['note_id']}'");
+                $db->query("DELETE FROM `notes_comments` WHERE id = '{$comm_id}'");
+                $db->query("DELETE FROM `news` WHERE obj_id = '{$comm_id}' AND action_type = 10");
+                $db->query("UPDATE `notes` SET comm_num = comm_num-1 WHERE id = '{$row['note_id']}'");
 
                 //Чистим кеш владельцу заметки и заметок на его стр
                 mozg_clear_cache_file('user_' . $row['owner_user_id'] . '/notes_user_' . $row['owner_user_id']);
@@ -283,7 +283,7 @@ if ($logged) {
             if ($comm_num > 10 && $note_id) {
                 $limit = $comm_num - 10;
 
-                $sql_ = $db->super_query("SELECT tb1.id, from_user_id, text, date, tb2.user_search_pref, user_photo, user_last_visit, user_logged_mobile tb3.owner_user_id FROM `" . PREFIX . "_notes_comments` tb1, `" . PREFIX . "_users` tb2, `" . PREFIX . "_notes` tb3 WHERE tb1.note_id = '{$note_id}' AND tb1.from_user_id = tb2.user_id AND tb1.note_id = tb3.id ORDER by `add_date` ASC LIMIT 0, {$limit}", true);
+                $sql_ = $db->super_query("SELECT tb1.id, from_user_id, text, date, tb2.user_search_pref, user_photo, user_last_visit, user_logged_mobile tb3.owner_user_id FROM `notes_comments` tb1, `users` tb2, `notes` tb3 WHERE tb1.note_id = '{$note_id}' AND tb1.from_user_id = tb2.user_id AND tb1.note_id = tb3.id ORDER by `add_date` ASC LIMIT 0, {$limit}", true);
 
                 $tpl->load_template('notes/comment.tpl');
                 foreach ($sql_ as $row_comm) {
@@ -318,7 +318,7 @@ if ($logged) {
             $note_id = intval($_GET['note_id']);
 
             //SQL Запрос
-            $row = $db->super_query("SELECT tb1.title, owner_user_id, full_text, comm_num, date, tb2.user_search_pref FROM `" . PREFIX . "_notes` tb1, `" . PREFIX . "_users` tb2 WHERE id = '{$note_id}' AND tb1.owner_user_id = tb2.user_id");
+            $row = $db->super_query("SELECT tb1.title, owner_user_id, full_text, comm_num, date, tb2.user_search_pref FROM `notes` tb1, `users` tb2 WHERE id = '{$note_id}' AND tb1.owner_user_id = tb2.user_id");
 
             //ЧС
             $CheckBlackList = CheckBlackList($row['owner_user_id']);
@@ -398,7 +398,7 @@ if ($logged) {
                         else
                             $start_limit = 0;
 
-                        $sql_ = $db->super_query("SELECT tb1.id, from_user_id, text, add_date, tb2.user_search_pref, user_photo, user_last_visit, user_logged_mobile FROM `" . PREFIX . "_notes_comments` tb1, `" . PREFIX . "_users` tb2 WHERE tb1.note_id = '{$note_id}' AND tb1.from_user_id = tb2.user_id ORDER by `add_date` ASC LIMIT {$start_limit}, {$row['comm_num']}", true);
+                        $sql_ = $db->super_query("SELECT tb1.id, from_user_id, text, add_date, tb2.user_search_pref, user_photo, user_last_visit, user_logged_mobile FROM `notes_comments` tb1, `users` tb2 WHERE tb1.note_id = '{$note_id}' AND tb1.from_user_id = tb2.user_id ORDER by `add_date` ASC LIMIT {$start_limit}, {$row['comm_num']}", true);
 
                         $tpl->load_template('notes/comment.tpl');
                         foreach ($sql_ as $row_comm) {
@@ -451,11 +451,11 @@ if ($logged) {
             $CheckBlackList = CheckBlackList($get_user_id);
             if (!$CheckBlackList) {
                 //Выводи информация о юзере у которого заметки
-                $owner = $db->super_query("SELECT user_search_pref, user_photo, user_notes_num FROM `" . PREFIX . "_users` WHERE user_id = '{$get_user_id}'");
+                $owner = $db->super_query("SELECT user_search_pref, user_photo, user_notes_num FROM `users` WHERE user_id = '{$get_user_id}'");
                 if ($owner) {
 
                     //SQL Запрос на вывод заметок из БД
-                    $sql_ = $db->super_query("SELECT id, title, full_text, date, comm_num FROM `" . PREFIX . "_notes` WHERE owner_user_id = '{$get_user_id}' ORDER by `date` DESC LIMIT {$limit_page}, {$gcount}", true);
+                    $sql_ = $db->super_query("SELECT id, title, full_text, date, comm_num FROM `notes` WHERE owner_user_id = '{$get_user_id}' ORDER by `date` DESC LIMIT {$limit_page}, {$gcount}", true);
 
                     if (!$owner['user_notes_num'])
                         $owner['user_notes_num'] = '';

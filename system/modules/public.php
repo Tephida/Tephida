@@ -42,10 +42,10 @@ if ($logged) {
         $page_cnt = 0;
 
     if ($page_cnt) {
-        $row = $db->super_query("SELECT admin FROM `" . PREFIX . "_communities` WHERE id = '{$pid}'");
+        $row = $db->super_query("SELECT admin FROM `communities` WHERE id = '{$pid}'");
         $row['id'] = $pid;
     } else
-        $row = $db->super_query("SELECT id, title, descr, traf, ulist, photo, date, admin, feedback, comments, real_admin, rec_num, del, ban, adres, audio_num, forum_num, discussion, status_text, web, videos_num, cover, cover_pos FROM `" . PREFIX . "_communities` WHERE " . $sql_where);
+        $row = $db->super_query("SELECT id, title, descr, traf, ulist, photo, date, admin, feedback, comments, real_admin, rec_num, del, ban, adres, audio_num, forum_num, discussion, status_text, web, videos_num, cover, cover_pos FROM `communities` WHERE " . $sql_where);
 
     if ($row['del'] == 1) {
         $user_speedbar = 'Страница удалена';
@@ -69,7 +69,7 @@ if ($logged) {
 
         include ENGINE_DIR . '/classes/wall.public.php';
         $wall = new wall();
-        $wall->query("SELECT tb1.id, text, public_id, add_date, fasts_num, attach, likes_num, likes_users, tell_uid, public, tell_date, tell_comm, fixed, tb2.title, photo, comments, adres FROM `" . PREFIX . "_communities_wall` tb1, `" . PREFIX . "_communities` tb2 WHERE tb1.public_id = '{$row['id']}' AND tb1.public_id = tb2.id AND fast_comm_id = 0 ORDER by `fixed` DESC, `add_date` DESC LIMIT {$page_cnt}, {$limit_select}");
+        $wall->query("SELECT tb1.id, text, public_id, add_date, fasts_num, attach, likes_num, likes_users, tell_uid, public, tell_date, tell_comm, fixed, tb2.title, photo, comments, adres FROM `communities_wall` tb1, `communities` tb2 WHERE tb1.public_id = '{$row['id']}' AND tb1.public_id = tb2.id AND fast_comm_id = 0 ORDER by `fixed` DESC, `add_date` DESC LIMIT {$page_cnt}, {$limit_select}");
         $wall->template('groups/record.tpl');
         //Если страница вывзана через "к предыдущим записям"
         if ($page_cnt)
@@ -159,7 +159,7 @@ if ($logged) {
             $tpl->set('[/yes]', '');
             $tpl->set_block("'\\[no\\](.*?)\\[/no\\]'si", "");
             $tpl->set('{num-feedback}', '<span id="fnumu">' . $row['feedback'] . '</span> ' . gram_record($row['feedback'], 'feedback'));
-            $sql_feedbackusers = $db->super_query("SELECT tb1.fuser_id, office, tb2.user_search_pref, user_photo FROM `" . PREFIX . "_communities_feedback` tb1, `" . PREFIX . "_users` tb2 WHERE tb1.cid = '{$row['id']}' AND tb1.fuser_id = tb2.user_id ORDER by `fdate` ASC LIMIT 0, 5", true);
+            $sql_feedbackusers = $db->super_query("SELECT tb1.fuser_id, office, tb2.user_search_pref, user_photo FROM `communities_feedback` tb1, `users` tb2 WHERE tb1.cid = '{$row['id']}' AND tb1.fuser_id = tb2.user_id ORDER by `fdate` ASC LIMIT 0, 5", true);
             foreach ($sql_feedbackusers as $row_feedbackusers) {
                 if ($row_feedbackusers['user_photo']) $ava = "/uploads/users/{$row_feedbackusers['fuser_id']}/50_{$row_feedbackusers['user_photo']}";
                 else $ava = "{theme}/images/no_ava_50.png";
@@ -182,7 +182,7 @@ if ($logged) {
         }
 
         //Выводим подписчиков
-        $sql_users = $db->super_query("SELECT tb1.user_id, tb2.user_name, user_lastname, user_photo FROM `" . PREFIX . "_friends` tb1, `" . PREFIX . "_users` tb2 WHERE tb1.friend_id = '{$row['id']}' AND tb1.user_id = tb2.user_id AND tb1.subscriptions = 2 ORDER by rand() LIMIT 0, 6", true);
+        $sql_users = $db->super_query("SELECT tb1.user_id, tb2.user_name, user_lastname, user_photo FROM `friends` tb1, `users` tb2 WHERE tb1.friend_id = '{$row['id']}' AND tb1.user_id = tb2.user_id AND tb1.subscriptions = 2 ORDER by rand() LIMIT 0, 6", true);
         $users = '';
         foreach ($sql_users as $row_users) {
             if ($row_users['user_photo']) $ava = "/uploads/users/{$row_users['user_id']}/50_{$row_users['user_photo']}";
@@ -206,7 +206,7 @@ if ($logged) {
             $adminO = '';
             foreach ($admins_arr as $admin_id) {
                 if ($admin_id) {
-                    $row_admin = $db->super_query("SELECT user_search_pref, user_photo FROM `" . PREFIX . "_users` WHERE user_id = '{$admin_id}'");
+                    $row_admin = $db->super_query("SELECT user_search_pref, user_photo FROM `users` WHERE user_id = '{$admin_id}'");
                     if ($row_admin['user_photo']) $ava_admin = "/uploads/users/{$admin_id}/50_{$row_admin['user_photo']}";
                     else $ava_admin = "{theme}/images/no_ava_50.png";
                     if ($admin_id != $row['real_admin'])
@@ -247,7 +247,7 @@ if ($logged) {
 
         //Аудиозаписи
         if ($row['audio_num']) {
-            $sql_audios = $db->super_query("SELECT url, artist, name FROM `" . PREFIX . "_communities_audio` WHERE public_id = '{$row['id']}' ORDER by `adate` DESC LIMIT 0, 3", true);
+            $sql_audios = $db->super_query("SELECT url, artist, name FROM `communities_audio` WHERE public_id = '{$row['id']}' ORDER by `adate` DESC LIMIT 0, 3", true);
             $jid = 0;
             foreach ($sql_audios as $row_audios) {
                 $jid++;
@@ -301,11 +301,11 @@ if ($logged) {
 
         if ($row['forum_num'] and $row['discussion']) {
 
-            $sql_forum = $db->super_query("SELECT fid, title, lastuser_id, lastdate, msg_num FROM `" . PREFIX . "_communities_forum` WHERE public_id = '{$row['id']}' ORDER by `fixed` DESC, `lastdate` DESC, `fdate` DESC LIMIT 0, 5", true);
+            $sql_forum = $db->super_query("SELECT fid, title, lastuser_id, lastdate, msg_num FROM `communities_forum` WHERE public_id = '{$row['id']}' ORDER by `fixed` DESC, `lastdate` DESC, `fdate` DESC LIMIT 0, 5", true);
 
             foreach ($sql_forum as $row_forum) {
 
-                $row_last_user = $db->super_query("SELECT user_search_pref FROM `" . PREFIX . "_users` WHERE user_id = '{$row_forum['lastuser_id']}'");
+                $row_last_user = $db->super_query("SELECT user_search_pref FROM `users` WHERE user_id = '{$row_forum['lastuser_id']}'");
                 $last_userX = explode(' ', $row_last_user['user_search_pref']);
                 $row_last_user['user_search_pref'] = gramatikName($last_userX[0]) . ' ' . gramatikName($last_userX[1]);
 
@@ -355,7 +355,7 @@ if ($logged) {
         //Видеозаписи
         if ($row['videos_num']) {
 
-            $sql_videos = $db->super_query("SELECT id, title, photo, add_date, comm_num, owner_user_id FROM `" . PREFIX . "_videos` WHERE public_id = '{$row['id']}' ORDER by `add_date` DESC LIMIT 0, 2", true);
+            $sql_videos = $db->super_query("SELECT id, title, photo, add_date, comm_num, owner_user_id FROM `videos` WHERE public_id = '{$row['id']}' ORDER by `add_date` DESC LIMIT 0, 2", true);
 
             foreach ($sql_videos as $row_video) {
 
@@ -447,27 +447,27 @@ if ($logged) {
         $stat_date = strtotime($stat_date);
         $stat_x_date = strtotime($stat_x_date);
 
-        $check_stat = $db->super_query("SELECT COUNT(*) AS cnt FROM `" . PREFIX . "_communities_stats` WHERE gid = '{$row['id']}' AND date = '{$stat_date}'");
-        $check_user_stat = $db->super_query("SELECT COUNT(*) AS cnt FROM `" . PREFIX . "_communities_stats_log` WHERE gid = '{$row['id']}' AND user_id = '{$user_info['user_id']}' AND date = '{$stat_date}' AND act = '1'");
+        $check_stat = $db->super_query("SELECT COUNT(*) AS cnt FROM `communities_stats` WHERE gid = '{$row['id']}' AND date = '{$stat_date}'");
+        $check_user_stat = $db->super_query("SELECT COUNT(*) AS cnt FROM `communities_stats_log` WHERE gid = '{$row['id']}' AND user_id = '{$user_info['user_id']}' AND date = '{$stat_date}' AND act = '1'");
 
         if (!$check_user_stat['cnt']) {
 
             if ($check_stat['cnt']) {
 
-                $db->query("UPDATE `" . PREFIX . "_communities_stats` SET cnt = cnt + 1 WHERE gid = '{$row['id']}' AND date = '{$stat_date}'");
+                $db->query("UPDATE `communities_stats` SET cnt = cnt + 1 WHERE gid = '{$row['id']}' AND date = '{$stat_date}'");
 
             } else {
 
-                $db->query("INSERT INTO `" . PREFIX . "_communities_stats` SET gid = '{$row['id']}', date = '{$stat_date}', cnt = '1', date_x = '{$stat_x_date}'");
+                $db->query("INSERT INTO `communities_stats` SET gid = '{$row['id']}', date = '{$stat_date}', cnt = '1', date_x = '{$stat_x_date}'");
 
             }
 
-            $db->query("INSERT INTO `" . PREFIX . "_communities_stats_log` SET user_id = '{$user_info['user_id']}', date = '{$stat_date}', gid = '{$row['id']}', act = '1'");
+            $db->query("INSERT INTO `communities_stats_log` SET user_id = '{$user_info['user_id']}', date = '{$stat_date}', gid = '{$row['id']}', act = '1'");
 
         }
 
         //Записываем в статистику "Просмотры"
-        $db->query("UPDATE `" . PREFIX . "_communities_stats` SET hits = hits + 1 WHERE gid = '{$row['id']}' AND date = '{$stat_date}'");
+        $db->query("UPDATE `communities_stats` SET hits = hits + 1 WHERE gid = '{$row['id']}' AND date = '{$stat_date}'");
 
         $tpl->compile('content');
 

@@ -6,39 +6,39 @@
  *   file that was distributed with this source code.
  *
  */
-if(!defined('MOZG'))
-	die('Hacking attempt!');
+if (!defined('MOZG'))
+    die('Hacking attempt!');
 
 //Редактирование
-if($_GET['act'] == 'edit'){
-	$note_id = intval($_GET['id']);
-	
-	//SQL Запрос на вывод информации о заметке
-	$row = $db->super_query("SELECT title, full_text FROM `".PREFIX."_notes` WHERE id = '".$note_id."'");
-	
-	if($row){
-		//Подключаем парсер
-		include ENGINE_DIR.'/classes/parse.php';
-		$parse = new parse();
-		
-		if(isset($_POST['save'])){
-			$title = requestFilter('title', 25000, true);
-			$text = $parse->BBparse(requestFilter('full_text'));
+if ($_GET['act'] == 'edit') {
+    $note_id = intval($_GET['id']);
 
-			if(!empty($title) AND !empty($text)){
-				$db->query("UPDATE `".PREFIX."_notes` SET title = '".$title."', full_text = '".$text."' WHERE id = '".$note_id."'");
-				msgbox('Информация', 'Заметка успешно сохранена', '?mod=notes');
-			} else
-				msgbox('Ошибка', 'Заполните все поля', '?mod=notes&act=edit&id='.$note_id);
-		} else {
-			$row['title'] = stripslashes($row['title']);
-			$row['full_text'] = $parse->BBdecode(stripslashes(myBrRn($row['full_text'])));
-			
-			echoheader();
-			
-			echohtmlstart('Редактирование заметки');
-			
-			echo <<<HTML
+    //SQL Запрос на вывод информации о заметке
+    $row = $db->super_query("SELECT title, full_text FROM `notes` WHERE id = '" . $note_id . "'");
+
+    if ($row) {
+        //Подключаем парсер
+        include ENGINE_DIR . '/classes/parse.php';
+        $parse = new parse();
+
+        if (isset($_POST['save'])) {
+            $title = requestFilter('title', 25000, true);
+            $text = $parse->BBparse(requestFilter('full_text'));
+
+            if (!empty($title) and !empty($text)) {
+                $db->query("UPDATE `notes` SET title = '" . $title . "', full_text = '" . $text . "' WHERE id = '" . $note_id . "'");
+                msgbox('Информация', 'Заметка успешно сохранена', '?mod=notes');
+            } else
+                msgbox('Ошибка', 'Заполните все поля', '?mod=notes&act=edit&id=' . $note_id);
+        } else {
+            $row['title'] = stripslashes($row['title']);
+            $row['full_text'] = $parse->BBdecode(stripslashes(myBrRn($row['full_text'])));
+
+            echoheader();
+
+            echohtmlstart('Редактирование заметки');
+
+            echo <<<HTML
 <style type="text/css" media="all">
 .inpu{width:487px;}
 textarea{width:450px;height:400px;}
@@ -62,48 +62,48 @@ textarea{width:450px;height:400px;}
 
 </form>
 HTML;
-			echohtmlend();
-		}
-	} else
-		msgbox('Информация', 'Запрашиваемая заметка не найдена', '?mod=notes');
+            echohtmlend();
+        }
+    } else
+        msgbox('Информация', 'Запрашиваемая заметка не найдена', '?mod=notes');
 
-	die();
+    die();
 }
-	
-echoheader();	
+
+echoheader();
 
 $se_uid = intval($_GET['se_uid']);
-if(!$se_uid) $se_uid = '';
+if (!$se_uid) $se_uid = '';
 
 $se_user_id = intval($_GET['se_user_id']);
-if(!$se_user_id) $se_user_id = '';
+if (!$se_user_id) $se_user_id = '';
 
 $sort = intval($_GET['sort']);
 $se_name = requestFilter('se_name', 25000, true);
 
-if($se_uid OR $sort OR $se_name OR $se_user_id){
-	if($se_uid) $where_sql .= "AND id = '".$se_uid."' ";
-	if($se_user_id) $where_sql .= "AND owner_user_id = '".$se_user_id."' ";
-	$query = strtr($se_name, array(' ' => '%')); //Замеянем пробелы на проценты чтоб тоиск был точнее
-	if($se_name) $where_sql .= "AND title LIKE '%".$query."%' ";
-	if($sort == 1) $order_sql = "`title` ASC";
-	else if($sort == 2) $order_sql = "`date` ASC";
-	else if($sort == 3) $order_sql = "`comm_num` DESC";
-	else $order_sql = "`date` DESC";
+if ($se_uid or $sort or $se_name or $se_user_id) {
+    if ($se_uid) $where_sql .= "AND id = '" . $se_uid . "' ";
+    if ($se_user_id) $where_sql .= "AND owner_user_id = '" . $se_user_id . "' ";
+    $query = strtr($se_name, array(' ' => '%')); //Замеянем пробелы на проценты чтоб тоиск был точнее
+    if ($se_name) $where_sql .= "AND title LIKE '%" . $query . "%' ";
+    if ($sort == 1) $order_sql = "`title` ASC";
+    else if ($sort == 2) $order_sql = "`date` ASC";
+    else if ($sort == 3) $order_sql = "`comm_num` DESC";
+    else $order_sql = "`date` DESC";
 } else
-	$order_sql = "`date` DESC";
-	
+    $order_sql = "`date` DESC";
+
 $selsorlist = installationSelected($sort, '<option value="1">по алфавиту</option><option value="2">по дате добавления</option><option value="3">по количеству комментариев</option>');
 
 //Выводим список людей
-if($_GET['page'] > 0) $page = intval($_GET['page']); else $page = 1;
+if ($_GET['page'] > 0) $page = intval($_GET['page']); else $page = 1;
 $gcount = 20;
-$limit_page = ($page-1)*$gcount;
+$limit_page = ($page - 1) * $gcount;
 
-$sql_ = $db->super_query("SELECT tb1.id, title, date, comm_num, owner_user_id, tb2.user_name FROM `".PREFIX."_notes` tb1, `".PREFIX."_users` tb2 WHERE tb1.owner_user_id = tb2.user_id {$where_sql} ORDER by {$order_sql} LIMIT {$limit_page}, {$gcount}", 1);
+$sql_ = $db->super_query("SELECT tb1.id, title, date, comm_num, owner_user_id, tb2.user_name FROM `notes` tb1, `users` tb2 WHERE tb1.owner_user_id = tb2.user_id {$where_sql} ORDER by {$order_sql} LIMIT {$limit_page}, {$gcount}", 1);
 
 //Кол-во людей считаем
-$numRows = $db->super_query("SELECT COUNT(*) AS cnt FROM `".PREFIX."_notes` WHERE id != '' {$where_sql}");
+$numRows = $db->super_query("SELECT COUNT(*) AS cnt FROM `notes` WHERE id != '' {$where_sql}");
 
 echo <<<HTML
 <style type="text/css" media="all">
@@ -140,13 +140,13 @@ textarea{width:300px;height:100px;}
 </form>
 HTML;
 
-echohtmlstart('Список заметок ('.$numRows['cnt'].')');
+echohtmlstart('Список заметок (' . $numRows['cnt'] . ')');
 
-foreach($sql_ as $row){
-	$row['title'] = stripslashes($row['title']);
-	$row['date'] = langdate('j M Y в H:i', strtotime($row['date']));
+foreach ($sql_ as $row) {
+    $row['title'] = stripslashes($row['title']);
+    $row['date'] = langdate('j M Y в H:i', strtotime($row['date']));
 
-	$users .= <<<HTML
+    $users .= <<<HTML
 <div style="background:#fff;float:left;padding:5px;width:100px;text-align:center;"><a href="/u{$row['owner_user_id']}" target="_blank">{$row['user_name']}</a></div>
 <div style="background:#fff;float:left;padding:5px;width:329px;text-align:center;margin-left:1px"><a href="?mod=notes&act=edit&id={$row['id']}" title="Комментариев: {$row['comm_num']}">{$row['title']}</a></div>
 <div style="background:#fff;float:left;padding:5px;width:110px;text-align:center;margin-left:1px">{$row['date']}</div>
@@ -192,7 +192,7 @@ HTML;
 
 $query_string = preg_replace("/&page=[0-9]+/i", '', $_SERVER['QUERY_STRING']);
 
-echo navigation($gcount, $numRows['cnt'], '?'.$query_string.'&page=');
+echo navigation($gcount, $numRows['cnt'], '?' . $query_string . '&page=');
 
 htmlclear();
 

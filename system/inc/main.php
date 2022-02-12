@@ -6,16 +6,16 @@
  *   file that was distributed with this source code.
  *
  */
-if(!defined('MOZG'))
-	die('Hacking attempt!');
+if (!defined('MOZG'))
+    die('Hacking attempt!');
 
 
-$row = $db->super_query("SELECT COUNT(*) AS cnt FROM `".PREFIX."_report`");
-if($row['cnt']) $new_report = '<font color="red">('.$row['cnt'].')</font>';
+$row = $db->super_query("SELECT COUNT(*) AS cnt FROM `report`");
+if ($row['cnt']) $new_report = '<font color="red">(' . $row['cnt'] . ')</font>';
 
-$row_reviews = $db->super_query("SELECT COUNT(*) AS cnt FROM `".PREFIX."_reviews` WHERE approve = '1'");
-if($row_reviews['cnt']) $new_reviews = '<font color="red">('.$row_reviews['cnt'].')</font>';
-	
+$row_reviews = $db->super_query("SELECT COUNT(*) AS cnt FROM `reviews` WHERE approve = '1'");
+if ($row_reviews['cnt']) $new_reviews = '<font color="red">(' . $row_reviews['cnt'] . ')</font>';
+
 echoheader();
 echoblock('Настройка системы', 'Настройка общих параметров скрипта, а также настройка системы безопасности скрипта', 'system', 'settings');
 echoblock('Управление БД', 'Резервное копирование и восстановление базы данных', 'db', 'db');
@@ -28,7 +28,7 @@ echoblock('Альбомы', 'Управление альбомами, редак
 echoblock('Заметки', 'Управления заметками, которые опубликовали пользователи сайта', 'notes', 'notes');
 echoblock('Подарки', 'Управление подарками на сайте, добавление, редактирование и удаление', 'gifts', 'gifts');
 echoblock('Сообщества', 'Управление сообществами, редактирование и удаление', 'groups', 'groups');
-echoblock('Жалобы '.$new_report, 'Список жалоб, поступивших от посетителей сайта на фотографии, записи, видеозаписи или заметки', 'report', 'report');
+echoblock('Жалобы ' . $new_report, 'Список жалоб, поступивших от посетителей сайта на фотографии, записи, видеозаписи или заметки', 'report', 'report');
 echoblock('Шаблоны сайта', 'Редактирование шаблонов, которые используются на вашем сайте', 'tpl', 'tpl');
 echoblock('Шаблоны сообщений', 'Настройка шаблонов E-Mail сообщений, которые отсылает скрипт с сайта при уведомлении.', 'mail_tpl', 'mail_tpl');
 echoblock('Рассылка сообщений', 'Создание и массовая отправка E-Mail сообщений, для зарегистрированных пользователей', 'mail', 'mail');
@@ -40,7 +40,7 @@ echoblock('Логи посещений', 'Вывод IP и браузера по
 echoblock('Страны', 'Добавление, удаление и редактирование стран', 'country', 'country');
 echoblock('Города', 'Добавление, удаление и редактирование городов', 'city', 'city');
 echoblock('Игры', 'Добавление, удаление и редактирование игр на сайте', 'apps', 'apps');
-echoblock('Отзывы '.$new_reviews, 'Модерация и удаление отзывов.', 'reviews', 'reviews');
+echoblock('Отзывы ' . $new_reviews, 'Модерация и удаление отзывов.', 'reviews', 'reviews');
 echoblock('Отчеты по SMS', 'Просмотр отчетов отправки SMS от пользователей', 'sms', 'sms');
 echo <<<HTML
 <script type="text/javascript" src="/system/inc/js/jquery.js"></script>

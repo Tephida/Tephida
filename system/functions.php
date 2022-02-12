@@ -35,9 +35,9 @@ function informationText($array): string
 {
     global $db;
     $array = json_decode($array, 1);
-    $row = $db->super_query("SELECT user_search_pref FROM  " . PREFIX . "_users WHERE user_id = '" . ($array['type'] == 1 ? $array['oid2'] : $array['oid']) . "'");
+    $row = $db->super_query("SELECT user_search_pref FROM  users WHERE user_id = '" . ($array['type'] == 1 ? $array['oid2'] : $array['oid']) . "'");
     if ($array['type'] == 5)
-        $row2 = $db->super_query("SELECT user_search_pref FROM  " . PREFIX . "_users WHERE user_id = '" . $array['oid2'] . "'");
+        $row2 = $db->super_query("SELECT user_search_pref FROM  users WHERE user_id = '" . $array['oid2'] . "'");
     else
         $row2['user_search_pref'] = null;
 
@@ -928,11 +928,11 @@ function GenerateAlbumPhotosPosition($uid, $aid = false) {
     global $db;
     //Выводим все фотографии из альбома и обновляем их позицию только для просмотра альбома
     if ($uid AND $aid) {
-        $sql_ = $db->super_query("SELECT id FROM `" . PREFIX . "_photos` WHERE album_id = '{$aid}' ORDER by `position` ASC", true);
+        $sql_ = $db->super_query("SELECT id FROM `photos` WHERE album_id = '{$aid}' ORDER by `position` ASC", true);
         $count = 1;
         $photo_info = '';
         foreach ($sql_ as $row) {
-            $db->query("UPDATE LOW_PRIORITY `" . PREFIX . "_photos` SET position = '{$count}' WHERE id = '{$row['id']}'");
+            $db->query("UPDATE LOW_PRIORITY `photos` SET position = '{$count}' WHERE id = '{$row['id']}'");
             $photo_info.= $count . '|' . $row['id'] . '||';
             $count++;
         }
@@ -1118,7 +1118,7 @@ function AntiSpam($act, $text = false) {
     //Если антиспам на друзей
     if ($act == 'friends') {
         //Проверяем в таблице
-        $check = $db->super_query("SELECT COUNT(*) AS cnt FROM `" . PREFIX . "_antispam` WHERE act = '1' AND user_id = '{$user_info['user_id']}' AND date = '{$antiDate}'");
+        $check = $db->super_query("SELECT COUNT(*) AS cnt FROM `antispam` WHERE act = '1' AND user_id = '{$user_info['user_id']}' AND date = '{$antiDate}'");
         //Если кол-во, логов больше, то ставим блок
         if ($check['cnt'] >= $max_frieds) {
             die('antispam_err');
@@ -1127,7 +1127,7 @@ function AntiSpam($act, $text = false) {
     //Если антиспам на сообщения
     elseif ($act == 'messages') {
         //Проверяем в таблице
-        $check = $db->super_query("SELECT COUNT(*) AS cnt FROM `" . PREFIX . "_antispam` WHERE act = '2' AND user_id = '{$user_info['user_id']}' AND date = '{$antiDate}'");
+        $check = $db->super_query("SELECT COUNT(*) AS cnt FROM `antispam` WHERE act = '2' AND user_id = '{$user_info['user_id']}' AND date = '{$antiDate}'");
         //Если кол-во, логов больше, то ставим блок
         if ($check['cnt'] >= $max_msg) {
             die('antispam_err');
@@ -1136,7 +1136,7 @@ function AntiSpam($act, $text = false) {
     //Если антиспам на проверку стены
     elseif ($act == 'wall') {
         //Проверяем в таблице
-        $check = $db->super_query("SELECT COUNT(*) AS cnt FROM `" . PREFIX . "_antispam` WHERE act = '3' AND user_id = '{$user_info['user_id']}' AND date = '{$antiDate}'");
+        $check = $db->super_query("SELECT COUNT(*) AS cnt FROM `antispam` WHERE act = '3' AND user_id = '{$user_info['user_id']}' AND date = '{$antiDate}'");
         //Если кол-во, логов больше, то ставим блок
         if ($check['cnt'] >= $max_wall) {
             die('antispam_err');
@@ -1145,7 +1145,7 @@ function AntiSpam($act, $text = false) {
     //Если антиспам на одинаковые тестовые данные
     elseif ($act == 'identical') {
         //Проверяем в таблице
-        $check = $db->super_query("SELECT COUNT(*) AS cnt FROM `" . PREFIX . "_antispam` WHERE act = '4' AND user_id = '{$user_info['user_id']}' AND date = '{$antiDate}' AND txt = '{$text}'");
+        $check = $db->super_query("SELECT COUNT(*) AS cnt FROM `antispam` WHERE act = '4' AND user_id = '{$user_info['user_id']}' AND date = '{$antiDate}' AND txt = '{$text}'");
         //Если кол-во, логов больше, то ставим блок
         if ($check['cnt'] >= $max_identical) {
             die('antispam_err');
@@ -1154,7 +1154,7 @@ function AntiSpam($act, $text = false) {
     //Если антиспам на проверку комментов
     elseif ($act == 'comments') {
         //Проверяем в таблице
-        $check = $db->super_query("SELECT COUNT(*) AS cnt FROM `" . PREFIX . "_antispam` WHERE act = '5' AND user_id = '{$user_info['user_id']}' AND date = '{$antiDate}'");
+        $check = $db->super_query("SELECT COUNT(*) AS cnt FROM `antispam` WHERE act = '5' AND user_id = '{$user_info['user_id']}' AND date = '{$antiDate}'");
         //Если кол-во, логов больше, то ставим блок
         if ($check['cnt'] >= $max_comm) {
             die('antispam_err');
@@ -1163,7 +1163,7 @@ function AntiSpam($act, $text = false) {
     //Если антиспам на проверку сообществ
     elseif ($act == 'groups') {
         //Проверяем в таблице
-        $check = $db->super_query("SELECT COUNT(*) AS cnt FROM `" . PREFIX . "_antispam` WHERE act = '6' AND user_id = '{$user_info['user_id']}' AND date = '{$antiDate}'");
+        $check = $db->super_query("SELECT COUNT(*) AS cnt FROM `antispam` WHERE act = '6' AND user_id = '{$user_info['user_id']}' AND date = '{$antiDate}'");
         //Если кол-во, логов больше, то ставим блок
         if ($check['cnt'] >= $max_groups) {
             die('antispam_err');
@@ -1186,27 +1186,27 @@ function AntiSpamLogInsert(string $act, bool|string $text = false): void
     $antiDate = strtotime($antiDate);
     //Если антиспам на друзей
     if ($act == 'friends') {
-        $db->query("INSERT INTO `" . PREFIX . "_antispam` SET act = '1', user_id = '{$user_info['user_id']}', date = '{$antiDate}'");
+        $db->query("INSERT INTO `antispam` SET act = '1', user_id = '{$user_info['user_id']}', date = '{$antiDate}'");
         //Если антиспам на сообщения не друзьям
         
     } elseif ($act == 'messages') {
-        $db->query("INSERT INTO `" . PREFIX . "_antispam` SET act = '2', user_id = '{$user_info['user_id']}', date = '{$antiDate}'");
+        $db->query("INSERT INTO `antispam` SET act = '2', user_id = '{$user_info['user_id']}', date = '{$antiDate}'");
         //Если антиспам на стену
         
     } elseif ($act == 'wall') {
-        $db->query("INSERT INTO `" . PREFIX . "_antispam` SET act = '3', user_id = '{$user_info['user_id']}', date = '{$antiDate}'");
+        $db->query("INSERT INTO `antispam` SET act = '3', user_id = '{$user_info['user_id']}', date = '{$antiDate}'");
         //Если антиспам на одинаковых текстов
         
     } elseif ($act == 'identical') {
-        $db->query("INSERT INTO `" . PREFIX . "_antispam` SET act = '4', user_id = '{$user_info['user_id']}', date = '{$antiDate}', txt = '{$text}'");
+        $db->query("INSERT INTO `antispam` SET act = '4', user_id = '{$user_info['user_id']}', date = '{$antiDate}', txt = '{$text}'");
         //Если антиспам комменты
         
     } elseif ($act == 'comments') {
-        $db->query("INSERT INTO `" . PREFIX . "_antispam` SET act = '5', user_id = '{$user_info['user_id']}', date = '{$antiDate}'");
+        $db->query("INSERT INTO `antispam` SET act = '5', user_id = '{$user_info['user_id']}', date = '{$antiDate}'");
         //Если антиспам комменты
         
     } elseif ($act == 'groups') {
-        $db->query("INSERT INTO `" . PREFIX . "_antispam` SET act = '6', user_id = '{$user_info['user_id']}', date = '{$antiDate}'");
+        $db->query("INSERT INTO `antispam` SET act = '6', user_id = '{$user_info['user_id']}', date = '{$antiDate}'");
     }
 }
 

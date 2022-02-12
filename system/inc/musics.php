@@ -6,36 +6,36 @@
  *   file that was distributed with this source code.
  *
  */
-if(!defined('MOZG'))
-	die('Hacking attempt!');
+if (!defined('MOZG'))
+    die('Hacking attempt!');
 
 //Редактирование
-if($_GET['act'] == 'edit'){
-	$id = intval($_GET['id']);
-	
-	//SQL Запрос на вывод информации 
-	$row = $db->super_query("SELECT auser_id, artist, name FROM `".PREFIX."_audio` WHERE aid = '".$id."'");
-	if($row){
-		if(isset($_POST['save'])){
-			$artist = requestFilter('artist', 25000, true);
-			$name = requestFilter('name', 25000, true);
+if ($_GET['act'] == 'edit') {
+    $id = intval($_GET['id']);
 
-			if(isset($artist) AND !empty($artist) AND isset($name) AND !empty($name)){
-				$db->query("UPDATE `".PREFIX."_audio` SET artist = '".$artist."', name = '".$name."' WHERE aid = '".$id."'");
-				
-				mozg_clear_cache_file('user_'.$row['auser_id'].'/audios_profile');
-				
-				msgbox('Информация', 'Аудиозапись успешно отредактирована', '?mod=musics');
-			} else
-				msgbox('Ошибка', 'Заполните все поля', '?mod=musics&act=edit&id='.$aid);
-		} else {
-			$row['artist'] = stripslashes($row['artist']);
-			$row['name'] = stripslashes($row['name']);
+    //SQL Запрос на вывод информации
+    $row = $db->super_query("SELECT auser_id, artist, name FROM `audio` WHERE aid = '" . $id . "'");
+    if ($row) {
+        if (isset($_POST['save'])) {
+            $artist = requestFilter('artist', 25000, true);
+            $name = requestFilter('name', 25000, true);
 
-			echoheader();
-			echohtmlstart('Редактирование аудиозаписи');
-			
-			echo <<<HTML
+            if (isset($artist) and !empty($artist) and isset($name) and !empty($name)) {
+                $db->query("UPDATE `audio` SET artist = '" . $artist . "', name = '" . $name . "' WHERE aid = '" . $id . "'");
+
+                mozg_clear_cache_file('user_' . $row['auser_id'] . '/audios_profile');
+
+                msgbox('Информация', 'Аудиозапись успешно отредактирована', '?mod=musics');
+            } else
+                msgbox('Ошибка', 'Заполните все поля', '?mod=musics&act=edit&id=' . $aid);
+        } else {
+            $row['artist'] = stripslashes($row['artist']);
+            $row['name'] = stripslashes($row['name']);
+
+            echoheader();
+            echohtmlstart('Редактирование аудиозаписи');
+
+            echo <<<HTML
 <style type="text/css" media="all">
 .inpu{width:447px;}
 textarea{width:450px;height:100px;}
@@ -60,45 +60,45 @@ textarea{width:450px;height:100px;}
 
 </form>
 HTML;
-			echohtmlend();
-		}
-	} else
-		msgbox('Ошибка', 'Аудиозапись не найдена', '?mod=musics');
-		
-	die();
+            echohtmlend();
+        }
+    } else
+        msgbox('Ошибка', 'Аудиозапись не найдена', '?mod=musics');
+
+    die();
 }
 
-echoheader();	
+echoheader();
 
 $se_uid = intval($_GET['se_uid']);
-if(!$se_uid) $se_uid = '';
+if (!$se_uid) $se_uid = '';
 
 $se_user_id = intval($_GET['se_user_id']);
-if(!$se_user_id) $se_user_id = '';
+if (!$se_user_id) $se_user_id = '';
 
 $sort = intval($_GET['sort']);
 $se_name = requestFilter('se_name', 25000, true);
 
-if($se_uid OR $sort OR $se_name OR $se_user_id){
-	if($se_uid) $where_sql .= "AND aid = '".$se_uid."' ";
-	if($se_user_id) $where_sql .= "AND auser_id = '".$se_user_id."' ";
-	$query = strtr($se_name, array(' ' => '%')); //Замеянем пробелы на проценты чтоб тоиск был точнее
-	if($se_name) $where_sql .= "AND name LIKE '%".$query."%' ";
-	if($sort == 1) $order_sql = "`artist` ASC";
-	else if($sort == 2) $order_sql = "`adate` ASC";
-	else $order_sql = "`adate` DESC";
+if ($se_uid or $sort or $se_name or $se_user_id) {
+    if ($se_uid) $where_sql .= "AND aid = '" . $se_uid . "' ";
+    if ($se_user_id) $where_sql .= "AND auser_id = '" . $se_user_id . "' ";
+    $query = strtr($se_name, array(' ' => '%')); //Замеянем пробелы на проценты чтоб тоиск был точнее
+    if ($se_name) $where_sql .= "AND name LIKE '%" . $query . "%' ";
+    if ($sort == 1) $order_sql = "`artist` ASC";
+    else if ($sort == 2) $order_sql = "`adate` ASC";
+    else $order_sql = "`adate` DESC";
 } else
-	$order_sql = "`adate` DESC";
-	
-//Выводим список людей
-if($_GET['page'] > 0) $page = intval($_GET['page']); else $page = 1;
-$gcount = 20;
-$limit_page = ($page-1)*$gcount;
+    $order_sql = "`adate` DESC";
 
-$sql_ = $db->super_query("SELECT tb1.aid, artist, name, adate, auser_id, tb2.user_name FROM `".PREFIX."_audio` tb1, `".PREFIX."_users` tb2 WHERE tb1.auser_id = tb2.user_id {$where_sql} ORDER by {$order_sql} LIMIT {$limit_page}, {$gcount}", true);
+//Выводим список людей
+if ($_GET['page'] > 0) $page = intval($_GET['page']); else $page = 1;
+$gcount = 20;
+$limit_page = ($page - 1) * $gcount;
+
+$sql_ = $db->super_query("SELECT tb1.aid, artist, name, adate, auser_id, tb2.user_name FROM `audio` tb1, `users` tb2 WHERE tb1.auser_id = tb2.user_id {$where_sql} ORDER by {$order_sql} LIMIT {$limit_page}, {$gcount}", true);
 
 //Кол-во людей считаем
-$numRows = $db->super_query("SELECT COUNT(*) AS cnt FROM `".PREFIX."_audio` WHERE aid != '' {$where_sql}");
+$numRows = $db->super_query("SELECT COUNT(*) AS cnt FROM `audio` WHERE aid != '' {$where_sql}");
 
 $selsorlist = installationSelected($sort, '<option value="1">по алфавиту</option><option value="2">по дате добавления</option>');
 
@@ -137,14 +137,14 @@ textarea{width:300px;height:100px;}
 </form>
 HTML;
 
-echohtmlstart('Список аудиозаписей ('.$numRows['cnt'].')');
+echohtmlstart('Список аудиозаписей (' . $numRows['cnt'] . ')');
 
-foreach($sql_ as $row){
-	$row['artist'] = stripslashes($row['artist']);
-	$row['name'] = stripslashes($row['name']);
-	$row['adate'] = langdate('j M Y в H:i', $row['adate']);
+foreach ($sql_ as $row) {
+    $row['artist'] = stripslashes($row['artist']);
+    $row['name'] = stripslashes($row['name']);
+    $row['adate'] = langdate('j M Y в H:i', $row['adate']);
 
-	$users .= <<<HTML
+    $users .= <<<HTML
 <div style="background:#fff;float:left;padding:5px;width:100px;text-align:center;"><a href="/u{$row['auser_id']}" target="_blank">{$row['user_name']}</a></div>
 <div style="background:#fff;float:left;padding:5px;width:329px;text-align:center;margin-left:1px"><a href="?mod=musics&act=edit&id={$row['aid']}">{$row['artist']} – &nbsp;{$row['name']}</a></div>
 <div style="background:#fff;float:left;padding:5px;width:110px;text-align:center;margin-left:1px">{$row['adate']}</div>
@@ -187,7 +187,7 @@ function ckeck_uncheck_all() {
 HTML;
 
 $query_string = preg_replace("/&page=[0-9]+/i", '', $_SERVER['QUERY_STRING']);
-echo navigation($gcount, $numRows['cnt'], '?'.$query_string.'&page=');
+echo navigation($gcount, $numRows['cnt'], '?' . $query_string . '&page=');
 
 htmlclear();
 echohtmlend();
