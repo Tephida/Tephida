@@ -33,7 +33,7 @@ if ($logged) {
 
             if ($public_admin) {
 
-                $db->query("INSERT INTO `communities_audio` SET public_id = '{$pid}', url = '" . $check['url'] . "', artist = '" . $db->safesql($check['artist']) . "', name = '" . $db->safesql($check['name']) . "',  adate = '{$server_time}'");
+                $db->query("INSERT INTO `communities_audio` SET public_id = '{$pid}', url = '" . $check['url'] . "', artist = '" . $check['artist'] . "', name = '" . $check['name'] . "',  adate = '{$server_time}'");
 
                 $db->query("UPDATE `communities` SET audio_num = audio_num+1 WHERE id = '{$pid}'");
 
