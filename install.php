@@ -42,7 +42,7 @@ textarea{width:300px;height:100px;}
 <div class="box clr">
  <a href="/install.php"><div class="head"><div class="logo"></div></div></a>
 HTML;
-if (!file_exists(ENGINE_DIR . '/data/config.php') AND !file_exists(ENGINE_DIR . '/data/db.php')) {
+if (!file_exists(ENGINE_DIR . '/data/config.php') and !file_exists(ENGINE_DIR . '/data/db.php')) {
     //Проверка на запись у важных файлов системы
     if ($_GET['act'] == 'files') {
         echo '<div class="h1">Проверка на запись у важных файлов системы</div>';
@@ -73,7 +73,7 @@ if (!file_exists(ENGINE_DIR . '/data/config.php') AND !file_exists(ENGINE_DIR . 
             './uploads/apps/',
             './templates/',
             './templates/Default/',
-            );
+        );
 
         try {
             createDir('./uploads/room/');
@@ -255,7 +255,6 @@ HTML;
 <div class="fllogall">Имя базы данных:</div><input type="text" name="mysql_dbname" class="inpu" /><div class="mgcler"></div>
 <div class="fllogall">Имя пользователя:</div><input type="text" name="mysql_dbuser" class="inpu" /><div class="mgcler"></div>
 <div class="fllogall">Пароль:</div><input type="text" name="mysql_pass" class="inpu" /><div class="mgcler"></div>
-<div class="fllogall">Префикс:</div><input type="text" name="mysql_prefix" class="inpu" value="vii" />&nbsp;&nbsp;<span style="color:#777">Не изменяйте параметр, если не знаете для чего он предназначен<div class="mgcler"></div>
 HTML;
         echo <<<HTML
 <div class="h1" style="margin-top:15px">Данные для доступа к панели управления</div>
@@ -273,7 +272,7 @@ HTML;
     }
     //Завершение установки
     if ($_GET['act'] == 'install') {
-        if (!empty($_POST['mysql_server']) && !empty($_POST['mysql_dbname']) && !empty($_POST['mysql_dbuser']) && !empty($_POST['mysql_prefix']) && !empty($_POST['adminfile']) && !empty($_POST['name']) && !empty($_POST['lastname']) && !empty($_POST['email']) && !empty($_POST['pass'])) {
+        if (!empty($_POST['mysql_server']) && !empty($_POST['mysql_dbname']) && !empty($_POST['mysql_dbuser']) && !empty($_POST['adminfile']) && !empty($_POST['name']) && !empty($_POST['lastname']) && !empty($_POST['email']) && !empty($_POST['pass'])) {
             $_POST['mysql_server'] = str_replace('"', '\"', str_replace("$", "\\$", $_POST['mysql_server']));
             $_POST['mysql_dbname'] = str_replace('"', '\"', str_replace("$", "\\$", $_POST['mysql_dbname']));
             $_POST['mysql_dbuser'] = str_replace('"', '\"', str_replace("$", "\\$", $_POST['mysql_dbuser']));
@@ -450,7 +449,7 @@ HTML;
             $_POST['name'] = strip_tags($_POST['name']);
             $_POST['lastname'] = strip_tags($_POST['lastname']);
             $table_Chema = array();
-            $table_Chema[] = "CREATE TABLE IF NOT EXISTS `vii_room` (
+            $table_Chema[] = "CREATE TABLE IF NOT EXISTS `room` (
   `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT,
   `title` varchar(100) NOT NULL DEFAULT '',
   `owner` bigint(20) NOT NULL DEFAULT '0',
@@ -458,7 +457,7 @@ HTML;
   `date` varchar(10) NOT NULL DEFAULT '0',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;";
-            $table_Chema[] = "CREATE TABLE IF NOT EXISTS `vii_room_users` (
+            $table_Chema[] = "CREATE TABLE IF NOT EXISTS `room_users` (
   `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT,
   `room_id` bigint(20) UNSIGNED NOT NULL DEFAULT '0',
   `oid` bigint(20) UNSIGNED NOT NULL DEFAULT '0',
@@ -4770,7 +4769,8 @@ SET user_name = '{$_POST['name']}',
     user_lastupdate = '{$server_time}',   
     user_reg_date = '{$server_time}'";
             $table_Chema[] = "INSERT INTO `log` SET uid = '1', browser = '', ip = ''";
-            foreach ($table_Chema as $query) $db->query($query);
+            foreach ($table_Chema as $query)
+                $db->query($query);
             echo <<<HTML
 <div class="h1">Установка успешно завершена</div>
 Поздравляем Вас, Vii Engine был успешно установлен на Ваш сервер. Вы можете просмотреть теперь главную <a href="/">страницу вашего сайта</a> и посмотреть возможности скрипта. Либо Вы можете <a href="/{$admin_index}">зайти</a> в панель управления Vii Engine и изменить другие настройки системы. 
@@ -4780,7 +4780,9 @@ SET user_name = '{$_POST['name']}',
 Приятной Вам работы!
 HTML;
 
-        } else echo <<<HTML
+        }
+        else
+            echo <<<HTML
 <div class="h1">Ошибка</div>
 Заполните необходимые поля!
 <input type="submit" class="inp fl_r" value="Назад" onClick="javascript:history.back()" />
@@ -4805,12 +4807,7 @@ HTML;
 Приятной Вам работы!
 HTML;
     echo <<<HTML
-<div class="h1">Лицензионное соглашение</div>
-<div style="background:lightyellow;padding:10px;border:1px solid #ccc;height:300px;overflow:auto">
-
-</div>
-<div class="fl_l" style="margin-top:11px"><input type="checkbox" id="lic" value="0" onClick="if(document.getElementById('lic').value == 0){document.getElementById('lic').value = '1'} else {document.getElementById('lic').value = '0'}" /> <b>Я принимаю данное соглашение</b></div>
-<input type="submit" class="inp fl_r" value="Начать установку" onClick="if(document.getElementById('lic').value == 0){alert('Вы должны принять лицензионное соглашение, прежде чем продолжите установку.');} else {location.href='/install.php?act=files'}" />
+<input type="submit" class="inp fl_r" value="Начать установку" onClick="location.href='/install.php?act=files'" />
 HTML;
 
 }
