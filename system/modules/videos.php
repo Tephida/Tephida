@@ -259,7 +259,7 @@ if ($logged) {
             die();
             break;
 
-        //################### Сохранение отредактированых данных ###################//
+        //################### Сохранение отредактированных данных ###################//
         case "editsave":
             NoAjaxQuery();
             $vid = intval($_POST['vid']);
@@ -394,8 +394,10 @@ if ($logged) {
 
                 $infoGroup = $db->super_query("SELECT admin FROM `communities` WHERE id = '{$row['public_id']}'");
 
-                if (strpos($infoGroup['admin'], "u{$user_id}|") !== false) $public_admin = true;
-                else $public_admin = false;
+                if (str_contains($infoGroup['admin'], "u{$user_id}|"))
+                    $public_admin = true;
+                else
+                    $public_admin = false;
 
                 if ($public_admin and $row) {
 
@@ -440,10 +442,14 @@ if ($logged) {
 
                 $infoGroup = $db->super_query("SELECT admin FROM `communities` WHERE id = '{$row['public_id']}'");
 
-                if (strpos($infoGroup['admin'], "u{$user_id}|") !== false) $public_admin = true;
-                else $public_admin = false;
+                if (str_contains($infoGroup['admin'], "u{$user_id}|"))
+                    $public_admin = true;
+                else
+                    $public_admin = false;
 
             }
+
+            $public_admin = $public_admin ?? : null;
 
             if ($comm_num > 3 and $vid and $owner_id) {
 
@@ -618,8 +624,10 @@ if ($logged) {
             if (!$CheckBlackList) {
                 if ($last_id) {
                     if ($user_id != $get_user_id)
-                        //Проверка естьли запрашиваемый юзер в друзьях у юзера который смотрит стр
+                        //Проверка есть ли запрашиваемый юзер в друзьях у юзера который смотрит стр
                         $check_friend = CheckFriends($get_user_id);
+
+                    $check_friend = $check_friend ?? null;
 
                     //Настройки приватности
                     if ($user_id == $get_user_id)
@@ -691,7 +699,7 @@ if ($logged) {
         default:
 
             //################### Вывод всех видео ###################//
-            $get_user_id = (isset($_GET['get_user_id']) and $_GET['get_user_id'] !== null) ? intval($_GET['get_user_id']) : false;
+            $get_user_id = ($_GET['get_user_id'] !== null) ? intval($_GET['get_user_id']) : false;
             if (!$get_user_id)
                 $get_user_id = $user_id;
 
@@ -807,4 +815,3 @@ if ($logged) {
     $user_speedbar = $lang['no_infooo'];
     msgbox('', $lang['not_logged'], 'info');
 }
-?>
