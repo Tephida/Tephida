@@ -617,7 +617,6 @@ if ($logged) {
                     echo 1;
             }
             die();
-            break;
 
         //################### Парсер информации о ссылке ###################//
         case "parse_link":
@@ -708,6 +707,8 @@ if ($logged) {
 
                 }
 
+                $new_imgs = $new_imgs ?? null;
+
                 preg_match("/<meta property=(\"|')og:image(\"|') content=(\"|')(.*?)(\"|')(.*?)>/is", $open_lnk, $parse_img);
                 if ($parse_img[4]) {
                     $rIMGx = explode('?', $parse_img[4]);
@@ -723,7 +724,6 @@ if ($logged) {
             } else
                 echo 1;
             die();
-            break;
 
         default:
 
@@ -799,25 +799,42 @@ if ($logged) {
                     msgbox('', $lang['wall_no_rec'], 'info_2');
             }
 
+            $CheckBlackList = $CheckBlackList ?? false;
+            $check_friend = $check_friend ?? false;
+            $user_privacy = $user_privacy ?? null;
+            $wallAuthorId = $wallAuthorId ?? null;
+
             if (!$CheckBlackList) {
                 include ENGINE_DIR . '/classes/wall.php';
                 $wall = new wall();
 
-                if ($user_privacy['val_wall1'] == 1 or $user_privacy['val_wall1'] == 2 and $check_friend or $user_id == $id)
+                if ($user_privacy['val_wall1'] == 1 or $user_privacy['val_wall1'] == 2 and $check_friend or $user_id == $id) {
                     $wall->query("SELECT tb1.id, author_user_id, text, add_date, fasts_num, likes_num, likes_users, tell_uid, type, tell_date, public, attach, tell_comm, tb2.user_photo, user_search_pref, user_last_visit, user_logged_mobile FROM `wall` tb1, `users` tb2 WHERE for_user_id = '{$id}' AND tb1.author_user_id = tb2.user_id AND tb1.fast_comm_id = 0 {$where_sql} ORDER by `add_date` DESC LIMIT {$limit_page}, {$limit_select}");
-                elseif ($wallAuthorId['author_user_id'] == $id)
+                    $Hacking = false;
+                } elseif ($wallAuthorId['author_user_id'] == $id) {
                     $wall->query("SELECT tb1.id, author_user_id, text, add_date, fasts_num, likes_num, likes_users, tell_uid, type, tell_date, public, attach, tell_comm, tb2.user_photo, user_search_pref, user_last_visit, user_logged_mobile FROM `wall` tb1, `users` tb2 WHERE for_user_id = '{$id}' AND tb1.author_user_id = tb2.user_id AND tb1.fast_comm_id = 0 {$where_sql} ORDER by `add_date` DESC LIMIT {$limit_page}, {$limit_select}");
-                else {
+                    $Hacking = false;
+                } else {
                     $wall->query("SELECT tb1.id, author_user_id, text, add_date, fasts_num, likes_num, likes_users, tell_uid, type, tell_date, public, attach, tell_comm, tb2.user_photo, user_search_pref, user_last_visit, user_logged_mobile FROM `wall` tb1, `users` tb2 WHERE for_user_id = '{$id}' AND tb1.author_user_id = tb2.user_id AND tb1.fast_comm_id = 0 AND tb1.author_user_id = '{$id}' ORDER by `add_date` DESC LIMIT {$limit_page}, {$limit_select}");
                     if ($wallAuthorId['author_user_id'])
                         $Hacking = true;
                 }
+
+                $Hacking = $Hacking ?? false;
+
                 //Если вызвана страница стены, не со страницы юзера
                 if (!$Hacking) {
+                    $rid = $rid ?? null;
+                    $walluid = $walluid ?? null;
+
                     if ($rid or $walluid) {
                         $wall->template('wall/one_record.tpl');
                         $wall->compile('content');
                         $wall->select();
+
+                        //FIXME
+                        $cnt_rec = $cnt_rec ?? null;
+                        $gcount = $gcount ?? null;
 
                         if ($cnt_rec['cnt'] > $gcount and $_GET['type'] == '' or $_GET['type'] == 'own')
                             navigation($gcount, $cnt_rec['cnt'], $page_type);
