@@ -496,7 +496,7 @@ if ($logged) {
                             $tpl->set('[/add-comm]', '');
                         } else $tpl->set_block("'\\[add-comm\\](.*?)\\[/add-comm\\]'si", "");
                         //Выводим отмеченых людей на фото если они есть
-                        $sql_mark = $db->super_query("SELECT muser_id, mphoto_name, msettings_pos, mmark_user_id, mapprove FROM `" . PREFIX . "_photos_mark` WHERE mphoto_id = '" . $photo_id . "' ORDER by `mdate` ASC", 1, 'photos_mark/p' . $photo_id);
+                        $sql_mark = $db->super_query("SELECT muser_id, mphoto_name, msettings_pos, mmark_user_id, mapprove FROM `" . PREFIX . "_photos_mark` WHERE mphoto_id = '" . $photo_id . "' ORDER by `mdate` ASC", 1);
                         if ($sql_mark) {
                             $cnt_mark = 0;
                             $mark_peoples.= '<div class="fl_l" id="peopleOnPhotoText' . $photo_id . '" style="margin-right:5px">На этой фотографии:</div>';

@@ -621,14 +621,14 @@ if($logged){
 			
 			
 			//################## Загружаем Страны ##################//
-			$sql_country = $db->super_query("SELECT * FROM `".PREFIX."_country` ORDER by `name` ASC", true, "country", true);
+			$sql_country = $db->super_query("SELECT * FROM `".PREFIX."_country` ORDER by `name` ASC", true);
 			foreach($sql_country as $row_country)
 				$all_country .= '<option value="'.$row_country['id'].'">'.stripslashes($row_country['name']).'</option>';
 					
 			$tpl->set('{country}', installationSelected($row['user_country'], $all_country));
 			
 			//################## Загружаем Города ##################//
-			$sql_city = $db->super_query("SELECT id, name FROM `".PREFIX."_city` WHERE id_country = '{$row['user_country']}' ORDER by `name` ASC", true, "country_city_".$row['user_country'], true);
+			$sql_city = $db->super_query("SELECT id, name FROM `".PREFIX."_city` WHERE id_country = '{$row['user_country']}' ORDER by `name` ASC", true);
 			foreach($sql_city as $row2) 
 				$all_city .= '<option value="'.$row2['id'].'">'.stripslashes($row2['name']).'</option>';
 

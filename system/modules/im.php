@@ -549,21 +549,26 @@ if ($logged) {
             NoAjaxQuery();
             $room_id = intval($_POST['room_id']);
             $for_user_id = intval($_POST['for_user_id']);
-            if ($room_id) $for_user_id = 0;
+            if ($room_id)
+                $for_user_id = 0;
             $last_id = intval($_POST['last_id']);
             $sess_last_id = mozg_cache('user_' . $user_id . '/im');
             if (!$room_id) {
                 $typograf = mozg_cache("user_{$user_id}/typograf{$for_user_id}");
-                if ($typograf) echo "<script>$('#im_typograf').fadeIn()</script>";
+                if ($typograf)
+                    echo "<script>$('#im_typograf').fadeIn()</script>";
             }
             if ($last_id == $sess_last_id || !$room_id && !$for_user_id) {
                 echo 'no_new';
                 die();
             }
             $count = $db->super_query("SELECT msg_num, all_msg_num FROM `" . PREFIX . "_im` WHERE iuser_id = '" . $user_id . "' AND im_user_id = '" . ($room_id ? 0 : $for_user_id) . "' and room_id = '{$room_id}'");
-            if ($count['all_msg_num'] > 20) $limit = $count['all_msg_num'] - 20;
-            else $limit = 0;
-            $sql_ = $db->super_query("SELECT tb1.id, text, information, date, read_ids, history_user_id, attach, tell_uid, tell_date, public, tell_comm, if(history_user_id > 0, tb2.user_name, '') as user_name, if(history_user_id > 0, tb2.user_photo, '') as user_photo FROM `" . PREFIX . "_messages` tb1 LEFT JOIN `" . PREFIX . "_users` tb2 ON history_user_id > 0 AND tb1.history_user_id = tb2.user_id WHERE " . ($room_id ? "tb1.room_id = '{$room_id}'" : "tb1.room_id = 0 and find_in_set('{$for_user_id}', tb1.user_ids)") . " and find_in_set('{$user_id}', tb1.user_ids) AND not find_in_set('{$user_id}', tb1.del_ids) {$sql_sort} ORDER by `date` ASC LIMIT " . $limit . ", 20", 1);
+            if ($count['all_msg_num'] > 20)
+                $limit = $count['all_msg_num'] - 20;
+            else
+                $limit = 0;
+
+            $sql_ = $db->super_query("SELECT tb1.id, text, information, date, read_ids, history_user_id, attach, tell_uid, tell_date, public, tell_comm, if(history_user_id > 0, tb2.user_name, '') as user_name, if(history_user_id > 0, tb2.user_photo, '') as user_photo FROM `" . PREFIX . "_messages` tb1 LEFT JOIN `" . PREFIX . "_users` tb2 ON history_user_id > 0 AND tb1.history_user_id = tb2.user_id WHERE " . ($room_id ? "tb1.room_id = '{$room_id}'" : "tb1.room_id = 0 and find_in_set('{$for_user_id}', tb1.user_ids)") . " and find_in_set('{$user_id}', tb1.user_ids) AND not find_in_set('{$user_id}', tb1.del_ids) ORDER by `date` ASC LIMIT " . $limit . ", 20", 1);
             mozg_create_cache('user_' . $user_id . '/im', $last_id);
             if ($sql_) {
                 $tpl->load_template('im/msg.tpl');
@@ -650,21 +655,21 @@ if ($logged) {
                                 $cnt_attach_link++;
                             } elseif ($attach_type[0] == 'doc') {
                                 $doc_id = intval($attach_type[1]);
-                                $row_doc = $db->super_query("SELECT dname, dsize FROM `" . PREFIX . "_doc` WHERE did = '{$doc_id}'", false, "wall/doc{$doc_id}");
+                                $row_doc = $db->super_query("SELECT dname, dsize FROM `" . PREFIX . "_doc` WHERE did = '{$doc_id}'", false);
                                 if ($row_doc) {
                                     $attach_result .= '<div style="margin-top:5px;margin-bottom:5px" class="clear"><div class="doc_attach_ic fl_l" style="margin-top:4px;margin-left:0px"></div><div class="attach_link_block_te"><div class="fl_l">Файл <a href="/index.php?go=doc&act=download&did=' . $doc_id . '" target="_blank" onMouseOver="myhtml.title(\'' . $doc_id . $cnt_attach . $row['id'] . '\', \'<b>Размер файла: ' . $row_doc['dsize'] . '</b>\', \'doc_\')" id="doc_' . $doc_id . $cnt_attach . $row['id'] . '">' . $row_doc['dname'] . '</a></div></div></div><div class="clear"></div>';
                                     $cnt_attach++;
                                 }
                             } elseif ($attach_type[0] == 'vote') {
                                 $vote_id = intval($attach_type[1]);
-                                $row_vote = $db->super_query("SELECT title, answers, answer_num FROM `" . PREFIX . "_votes` WHERE id = '{$vote_id}'", false, "votes/vote_{$vote_id}");
+                                $row_vote = $db->super_query("SELECT title, answers, answer_num FROM `" . PREFIX . "_votes` WHERE id = '{$vote_id}'", false);
                                 if ($vote_id) {
-                                    $checkMyVote = $db->super_query("SELECT COUNT(*) AS cnt FROM `" . PREFIX . "_votes_result` WHERE user_id = '{$user_id}' AND vote_id = '{$vote_id}'", false, "votes/check{$user_id}_{$vote_id}");
+                                    $checkMyVote = $db->super_query("SELECT COUNT(*) AS cnt FROM `" . PREFIX . "_votes_result` WHERE user_id = '{$user_id}' AND vote_id = '{$vote_id}'", false);
                                     $row_vote['title'] = stripslashes($row_vote['title']);
                                     if (!$row['text']) $row['text'] = $row_vote['title'];
                                     $arr_answe_list = explode('|', stripslashes($row_vote['answers']));
                                     $max = $row_vote['answer_num'];
-                                    $sql_answer = $db->super_query("SELECT answer, COUNT(*) AS cnt FROM `" . PREFIX . "_votes_result` WHERE vote_id = '{$vote_id}' GROUP BY answer", 1, "votes/vote_answer_cnt_{$vote_id}");
+                                    $sql_answer = $db->super_query("SELECT answer, COUNT(*) AS cnt FROM `" . PREFIX . "_votes_result` WHERE vote_id = '{$vote_id}' GROUP BY answer", 1);
                                     $answer = array();
                                     foreach ($sql_answer as $row_answer) {
                                         $answer[$row_answer['answer']]['cnt'] = $row_answer['cnt'];
@@ -700,7 +705,7 @@ if ($logged) {
                     } else $row['text'] = preg_replace('`(http(?:s)?://\w+[^\s\[\]\<]+)`i', '<a href="/away.php?url=$1" target="_blank">$1</a>', $row['text']);
                     $resLinkTitle = '';
                     if ($row['tell_uid']) {
-                        if ($row['public']) $rowUserTell = $db->super_query("SELECT title, photo FROM `" . PREFIX . "_communities` WHERE id = '{$row['tell_uid']}'", false, "wall/group{$row['tell_uid']}");
+                        if ($row['public']) $rowUserTell = $db->super_query("SELECT title, photo FROM `" . PREFIX . "_communities` WHERE id = '{$row['tell_uid']}'", false);
                         else $rowUserTell = $db->super_query("SELECT user_search_pref, user_photo FROM `" . PREFIX . "_users` WHERE user_id = '{$row['tell_uid']}'");
                         if (date('Y-m-d', $row['tell_date']) == date('Y-m-d', $server_time)) $dateTell = langdate('сегодня в H:i', $row['tell_date']);
                         elseif (date('Y-m-d', $row['tell_date']) == date('Y-m-d', ($server_time - 84600))) $dateTell = langdate('вчера в H:i', $row['tell_date']);
@@ -773,6 +778,9 @@ HTML;
                 if ($count['all_msg_num'] > $limit_msg) $limit = $count['all_msg_num'] - $limit_msg;
                 else $limit = 0;
             }
+
+            $sql_sort = $sql_sort ?? null;
+
             $sql_ = $db->super_query("SELECT tb1.id, text, information, date, read_ids, history_user_id, attach, tell_uid, tell_date, public, tell_comm, if(history_user_id > 0, tb2.user_name, '') as user_name, if(history_user_id > 0, tb2.user_photo, '') as user_photo FROM `" . PREFIX . "_messages` tb1 LEFT JOIN `" . PREFIX . "_users` tb2 ON history_user_id > 0 AND tb1.history_user_id = tb2.user_id WHERE " . ($room_id ? "tb1.room_id = '{$room_id}'" : "tb1.room_id = 0 and find_in_set('{$for_user_id}', tb1.user_ids)") . " and find_in_set('{$user_id}', tb1.user_ids) AND not find_in_set('{$user_id}', tb1.del_ids) {$sql_sort} ORDER by `date` ASC LIMIT " . $limit . ", " . $limit_msg, 1);
             $tpl->load_template('im/msg.tpl');
             if (!$first_id) {
@@ -865,21 +873,21 @@ HTML;
                                 $cnt_attach_link++;
                             } elseif ($attach_type[0] == 'doc') {
                                 $doc_id = intval($attach_type[1]);
-                                $row_doc = $db->super_query("SELECT dname, dsize FROM `" . PREFIX . "_doc` WHERE did = '{$doc_id}'", false, "wall/doc{$doc_id}");
+                                $row_doc = $db->super_query("SELECT dname, dsize FROM `" . PREFIX . "_doc` WHERE did = '{$doc_id}'", false);
                                 if ($row_doc) {
                                     $attach_result .= '<div style="margin-top:5px;margin-bottom:5px" class="clear"><div class="doc_attach_ic fl_l" style="margin-top:4px;margin-left:0px"></div><div class="attach_link_block_te"><div class="fl_l">Файл <a href="/index.php?go=doc&act=download&did=' . $doc_id . '" target="_blank" onMouseOver="myhtml.title(\'' . $doc_id . $cnt_attach . $row['id'] . '\', \'<b>Размер файла: ' . $row_doc['dsize'] . '</b>\', \'doc_\')" id="doc_' . $doc_id . $cnt_attach . $row['id'] . '">' . $row_doc['dname'] . '</a></div></div></div><div class="clear"></div>';
                                     $cnt_attach++;
                                 }
                             } elseif ($attach_type[0] == 'vote') {
                                 $vote_id = intval($attach_type[1]);
-                                $row_vote = $db->super_query("SELECT title, answers, answer_num FROM `" . PREFIX . "_votes` WHERE id = '{$vote_id}'", false, "votes/vote_{$vote_id}");
+                                $row_vote = $db->super_query("SELECT title, answers, answer_num FROM `" . PREFIX . "_votes` WHERE id = '{$vote_id}'", false);
                                 if ($vote_id) {
-                                    $checkMyVote = $db->super_query("SELECT COUNT(*) AS cnt FROM `" . PREFIX . "_votes_result` WHERE user_id = '{$user_id}' AND vote_id = '{$vote_id}'", false, "votes/check{$user_id}_{$vote_id}");
+                                    $checkMyVote = $db->super_query("SELECT COUNT(*) AS cnt FROM `" . PREFIX . "_votes_result` WHERE user_id = '{$user_id}' AND vote_id = '{$vote_id}'", false);
                                     $row_vote['title'] = stripslashes($row_vote['title']);
                                     if (!$row['text']) $row['text'] = $row_vote['title'];
                                     $arr_answe_list = explode('|', stripslashes($row_vote['answers']));
                                     $max = $row_vote['answer_num'];
-                                    $sql_answer = $db->super_query("SELECT answer, COUNT(*) AS cnt FROM `" . PREFIX . "_votes_result` WHERE vote_id = '{$vote_id}' GROUP BY answer", 1, "votes/vote_answer_cnt_{$vote_id}");
+                                    $sql_answer = $db->super_query("SELECT answer, COUNT(*) AS cnt FROM `" . PREFIX . "_votes_result` WHERE vote_id = '{$vote_id}' GROUP BY answer", 1);
                                     $answer = array();
                                     foreach ($sql_answer as $row_answer) {
                                         $answer[$row_answer['answer']]['cnt'] = $row_answer['cnt'];
@@ -915,7 +923,7 @@ HTML;
                     } else $row['text'] = preg_replace('`(http(?:s)?://\w+[^\s\[\]\<]+)`i', '<a href="/away.php?url=$1" target="_blank">$1</a>', $row['text']);
                     $resLinkTitle = '';
                     if ($row['tell_uid']) {
-                        if ($row['public']) $rowUserTell = $db->super_query("SELECT title, photo FROM `" . PREFIX . "_communities` WHERE id = '{$row['tell_uid']}'", false, "wall/group{$row['tell_uid']}");
+                        if ($row['public']) $rowUserTell = $db->super_query("SELECT title, photo FROM `" . PREFIX . "_communities` WHERE id = '{$row['tell_uid']}'", false);
                         else $rowUserTell = $db->super_query("SELECT user_search_pref, user_photo FROM `" . PREFIX . "_users` WHERE user_id = '{$row['tell_uid']}'");
                         if (date('Y-m-d', $row['tell_date']) == date('Y-m-d', $server_time)) $dateTell = langdate('сегодня в H:i', $row['tell_date']);
                         elseif (date('Y-m-d', $row['tell_date']) == date('Y-m-d', ($server_time - 84600))) $dateTell = langdate('вчера в H:i', $row['tell_date']);

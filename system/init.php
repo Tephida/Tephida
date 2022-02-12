@@ -81,7 +81,7 @@ if ($config['offline'] == "yes") include ENGINE_DIR . '/modules/offline.php';
 
 if (isset($user_info['user_delet']) and $user_info['user_delet'] > 0)
     include ENGINE_DIR . '/modules/profile_delet.php';
-$sql_banned = $db->super_query("SELECT * FROM " . PREFIX . "_banned", true, "banned", true);
+$sql_banned = $db->super_query("SELECT * FROM " . PREFIX . "_banned", true);
 if (isset($sql_banned))
     $blockip = check_ip($sql_banned);
 else

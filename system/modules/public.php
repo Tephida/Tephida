@@ -247,7 +247,7 @@ if ($logged) {
 
         //Аудиозаписи
         if ($row['audio_num']) {
-            $sql_audios = $db->super_query("SELECT url, artist, name FROM `" . PREFIX . "_communities_audio` WHERE public_id = '{$row['id']}' ORDER by `adate` DESC LIMIT 0, 3", 1, "groups/audio{$row['id']}");
+            $sql_audios = $db->super_query("SELECT url, artist, name FROM `" . PREFIX . "_communities_audio` WHERE public_id = '{$row['id']}' ORDER by `adate` DESC LIMIT 0, 3", 1);
             $jid = 0;
             foreach ($sql_audios as $row_audios) {
                 $jid++;
@@ -301,7 +301,7 @@ if ($logged) {
 
         if ($row['forum_num'] and $row['discussion']) {
 
-            $sql_forum = $db->super_query("SELECT fid, title, lastuser_id, lastdate, msg_num FROM `" . PREFIX . "_communities_forum` WHERE public_id = '{$row['id']}' ORDER by `fixed` DESC, `lastdate` DESC, `fdate` DESC LIMIT 0, 5", 1, "groups_forum/forum{$row['id']}");
+            $sql_forum = $db->super_query("SELECT fid, title, lastuser_id, lastdate, msg_num FROM `" . PREFIX . "_communities_forum` WHERE public_id = '{$row['id']}' ORDER by `fixed` DESC, `lastdate` DESC, `fdate` DESC LIMIT 0, 5", 1);
 
             foreach ($sql_forum as $row_forum) {
 
@@ -355,7 +355,7 @@ if ($logged) {
         //Видеозаписи
         if ($row['videos_num']) {
 
-            $sql_videos = $db->super_query("SELECT id, title, photo, add_date, comm_num, owner_user_id FROM `" . PREFIX . "_videos` WHERE public_id = '{$row['id']}' ORDER by `add_date` DESC LIMIT 0, 2", 1, "groups/video{$row['id']}");
+            $sql_videos = $db->super_query("SELECT id, title, photo, add_date, comm_num, owner_user_id FROM `" . PREFIX . "_videos` WHERE public_id = '{$row['id']}' ORDER by `add_date` DESC LIMIT 0, 2", 1);
 
             foreach ($sql_videos as $row_video) {
 

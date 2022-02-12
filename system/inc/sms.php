@@ -15,6 +15,9 @@ if($uid <= 0) $uid = '';
 if($uid){
 	$sql_where = "AND tb1.user_id = '{$uid}'";
 	$sql_where_a = "WHERE  user_id = '{$uid}'";
+}else{
+    $sql_where = null;
+    $sql_where_a = null;
 }
 
 if($_GET['page'] > 0) $page = intval($_GET['page']); else $page = 1;

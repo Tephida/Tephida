@@ -41,9 +41,9 @@ $limit_page = ($page-1)*$gcount;
 $approve = intval($_GET['approve']);
 
 if($approve){
-	
 	$where_sql = "AND tb1.approve = 1";
-	
+}else{
+    $where_sql = null;
 }
 
 $sql_ = $db->super_query("SELECT tb1.*, tb2.user_search_pref FROM `".PREFIX."_reviews` tb1, `".PREFIX."_users` tb2 WHERE tb1.user_id = tb2.user_id {$where_sql} ORDER by `date` DESC LIMIT {$limit_page}, {$gcount}", 1);

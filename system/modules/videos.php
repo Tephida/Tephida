@@ -708,10 +708,13 @@ if($logged){
 					if($user_id != $get_user_id)
 						//Проверка естьли запрашиваемый юзер в друзьях у юзера который смотрит стр
 						$check_friend = CheckFriends($get_user_id);
+                    else
+                        $check_friend = null;
 					
 					//Настройки приватности
 					if($user_id == $get_user_id)
 						$sql_privacy = "";
+                    $cache_pref = '';
 					elseif($check_friend){
 						$sql_privacy = "AND privacy regexp '[[:<:]](1|2)[[:>:]]'";
 						$cache_pref = '_friends';

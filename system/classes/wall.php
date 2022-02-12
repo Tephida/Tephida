@@ -108,7 +108,7 @@ class wall {
 							
 							$video_id = intval($attach_type[2]);
 							
-							$row_video = $db->super_query("SELECT video, title FROM `".PREFIX."_videos` WHERE id = '{$video_id}'", false, "wall/video{$video_id}");
+							$row_video = $db->super_query("SELECT video, title FROM `".PREFIX."_videos` WHERE id = '{$video_id}'", false);
 							$row_video['title'] = stripslashes($row_video['title']);
 							$row_video['video'] = stripslashes($row_video['video']);
 							$row_video['video'] = strtr($row_video['video'], array('width="770"' => 'width="390"', 'height="420"' => 'height="310"'));
@@ -182,7 +182,7 @@ class wall {
 					
 						$doc_id = intval($attach_type[1]);
 						
-						$row_doc = $db->super_query("SELECT dname, dsize FROM `".PREFIX."_doc` WHERE did = '{$doc_id}'", false, "wall/doc{$doc_id}");
+						$row_doc = $db->super_query("SELECT dname, dsize FROM `".PREFIX."_doc` WHERE did = '{$doc_id}'", false);
 						
 						if($row_doc){
 							
@@ -196,11 +196,11 @@ class wall {
 					
 						$vote_id = intval($attach_type[1]);
 						
-						$row_vote = $db->super_query("SELECT title, answers, answer_num FROM `".PREFIX."_votes` WHERE id = '{$vote_id}'", false, "votes/vote_{$vote_id}");
+						$row_vote = $db->super_query("SELECT title, answers, answer_num FROM `".PREFIX."_votes` WHERE id = '{$vote_id}'", false);
 						
 						if($vote_id){
 
-							$checkMyVote = $db->super_query("SELECT COUNT(*) AS cnt FROM `".PREFIX."_votes_result` WHERE user_id = '{$user_id}' AND vote_id = '{$vote_id}'", false, "votes/check{$user_id}_{$vote_id}");
+							$checkMyVote = $db->super_query("SELECT COUNT(*) AS cnt FROM `".PREFIX."_votes_result` WHERE user_id = '{$user_id}' AND vote_id = '{$vote_id}'", false);
 							
 							$row_vote['title'] = stripslashes($row_vote['title']);
 							
@@ -210,7 +210,7 @@ class wall {
 							$arr_answe_list = explode('|', stripslashes($row_vote['answers']));
 							$max = $row_vote['answer_num'];
 							
-							$sql_answer = $db->super_query("SELECT answer, COUNT(*) AS cnt FROM `".PREFIX."_votes_result` WHERE vote_id = '{$vote_id}' GROUP BY answer", 1, "votes/vote_answer_cnt_{$vote_id}");
+							$sql_answer = $db->super_query("SELECT answer, COUNT(*) AS cnt FROM `".PREFIX."_votes_result` WHERE vote_id = '{$vote_id}' GROUP BY answer", true);
 							$answer = array();
 							foreach($sql_answer as $row_answer){
 							
@@ -275,7 +275,7 @@ class wall {
 			//Если это запись с "рассказать друзьям"
 			if($row_wall['tell_uid']){
 				if($row_wall['public'])
-					$rowUserTell = $db->super_query("SELECT title, photo FROM `".PREFIX."_communities` WHERE id = '{$row_wall['tell_uid']}'", false, "wall/group{$row_wall['tell_uid']}");
+					$rowUserTell = $db->super_query("SELECT title, photo FROM `".PREFIX."_communities` WHERE id = '{$row_wall['tell_uid']}'", false);
 				else
 					$rowUserTell = $db->super_query("SELECT user_search_pref, user_photo FROM `".PREFIX."_users` WHERE user_id = '{$row_wall['tell_uid']}'");
 

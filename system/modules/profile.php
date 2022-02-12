@@ -144,11 +144,11 @@ if($logged){
 				
 				//Если страницу смотрит другой юзер, то считаем кол-во видео
 				if($user_id != $id){
-					$video_cnt = $db->super_query("SELECT COUNT(*) AS cnt FROM `".PREFIX."_videos` WHERE owner_user_id = '{$id}' {$sql_privacy} AND public_id = '0'", false, "user_{$id}/videos_num{$cache_pref_videos}");
+					$video_cnt = $db->super_query("SELECT COUNT(*) AS cnt FROM `".PREFIX."_videos` WHERE owner_user_id = '{$id}' {$sql_privacy} AND public_id = '0'", false);
 					$row['user_videos_num'] = $video_cnt['cnt'];
 				}
 					
-				$sql_videos = $db->super_query("SELECT id, title, add_date, comm_num, photo FROM `".PREFIX."_videos` WHERE owner_user_id = '{$id}' {$sql_privacy} AND public_id = '0' ORDER by `add_date` DESC LIMIT 0,2", 1, "user_{$id}/page_videos_user{$cache_pref_videos}");
+				$sql_videos = $db->super_query("SELECT id, title, add_date, comm_num, photo FROM `".PREFIX."_videos` WHERE owner_user_id = '{$id}' {$sql_privacy} AND public_id = '0' ORDER by `add_date` DESC LIMIT 0,2", 1);
 				
 				$tpl->load_template('profile_video.tpl');
 				foreach($sql_videos as $row_videos){
@@ -191,7 +191,7 @@ if($logged){
 
 			//################### Музыка ###################//
 			if($row['user_audio']){
-				$sql_audio = $db->super_query("SELECT url, artist, name FROM `".PREFIX."_audio` WHERE auser_id = '".$id."' ORDER by `adate` DESC LIMIT 0, 3", 1, 'user_'.$id.'/audios_profile');
+				$sql_audio = $db->super_query("SELECT url, artist, name FROM `".PREFIX."_audio` WHERE auser_id = '".$id."' ORDER by `adate` DESC LIMIT 0, 3", 1);
 				$tpl->load_template('audio/profile.tpl');
 				$jid = 0;
 				foreach($sql_audio as $row_audio){
@@ -464,15 +464,15 @@ if($logged){
                 $cache_pref = '';
 			} elseif(isset($check_friend) AND $check_friend){
 				$albums_privacy = "AND SUBSTRING(privacy, 1, 1) regexp '[[:<:]](1|2)[[:>:]]'";
-				$albums_count = $db->super_query("SELECT COUNT(*) AS cnt FROM `".PREFIX."_albums` WHERE user_id = '{$id}' {$albums_privacy}", false, "user_{$id}/albums_cnt_friends");
+				$albums_count = $db->super_query("SELECT COUNT(*) AS cnt FROM `".PREFIX."_albums` WHERE user_id = '{$id}' {$albums_privacy}", false);
 				$cache_pref = "_friends";
 			} else {
 				$albums_privacy = "AND SUBSTRING(privacy, 1, 1) = 1";
-				$albums_count = $db->super_query("SELECT COUNT(*) AS cnt FROM `".PREFIX."_albums` WHERE user_id = '{$id}' {$albums_privacy}", false, "user_{$id}/albums_cnt_all");
+				$albums_count = $db->super_query("SELECT COUNT(*) AS cnt FROM `".PREFIX."_albums` WHERE user_id = '{$id}' {$albums_privacy}", false);
 				$cache_pref = "_all";
 			}
 
-			$sql_albums = $db->super_query("SELECT aid, name, adate, photo_num, cover FROM `".PREFIX."_albums` WHERE user_id = '{$id}' {$albums_privacy} ORDER by `position` ASC LIMIT 0, 4", 1, "user_{$id}/albums{$cache_pref}");
+			$sql_albums = $db->super_query("SELECT aid, name, adate, photo_num, cover FROM `".PREFIX."_albums` WHERE user_id = '{$id}' {$albums_privacy} ORDER by `position` ASC LIMIT 0, 4", 1);
             $albums = '';
             if($sql_albums){
 				foreach($sql_albums as $row_albums){
@@ -759,7 +759,7 @@ if($logged){
 			
 			//################### Интересные страницы ###################//
 			if($row['user_public_num']){
-				$sql_groups = $db->super_query("SELECT tb1.friend_id, tb2.id, title, photo, adres, status_text FROM `".PREFIX."_friends` tb1, `".PREFIX."_communities` tb2 WHERE tb1.user_id = '{$id}' AND tb1.friend_id = tb2.id AND tb1.subscriptions = 2 ORDER by `traf` DESC LIMIT 0, 5", 1, "groups/".$id);
+				$sql_groups = $db->super_query("SELECT tb1.friend_id, tb2.id, title, photo, adres, status_text FROM `".PREFIX."_friends` tb1, `".PREFIX."_communities` tb2 WHERE tb1.user_id = '{$id}' AND tb1.friend_id = tb2.id AND tb1.subscriptions = 2 ORDER by `traf` DESC LIMIT 0, 5", 1);
 				foreach($sql_groups as $row_groups){
 					if($row_groups['adres']) $adres = $row_groups['adres'];
 					else $adres = 'public'.$row_groups['id'];

@@ -623,7 +623,7 @@ if($logged){
 						
 							$doc_id = intval($attach_type[1]);
 							
-							$row_doc = $db->super_query("SELECT dname, dsize FROM `".PREFIX."_doc` WHERE did = '{$doc_id}'", false, "wall/doc{$doc_id}");
+							$row_doc = $db->super_query("SELECT dname, dsize FROM `".PREFIX."_doc` WHERE did = '{$doc_id}'", false);
 							
 							if($row_doc){
 								
@@ -703,18 +703,18 @@ if($logged){
 
 				//Опрос
 				$vote_id = $row['vote'];
-				$row_vote = $db->super_query("SELECT title, answers, answer_num FROM `".PREFIX."_votes` WHERE id = '{$vote_id}'", false, "votes/vote_{$vote_id}");
+				$row_vote = $db->super_query("SELECT title, answers, answer_num FROM `".PREFIX."_votes` WHERE id = '{$vote_id}'", false);
 							
 				if($row_vote){
 
-					$checkMyVote = $db->super_query("SELECT COUNT(*) AS cnt FROM `".PREFIX."_votes_result` WHERE user_id = '{$user_id}' AND vote_id = '{$vote_id}'", false, "votes/check{$user_id}_{$vote_id}");
+					$checkMyVote = $db->super_query("SELECT COUNT(*) AS cnt FROM `".PREFIX."_votes_result` WHERE user_id = '{$user_id}' AND vote_id = '{$vote_id}'", false);
 								
 					$row_vote['title'] = stripslashes($row_vote['title']);
 								
 					$arr_answe_list = explode('|', stripslashes($row_vote['answers']));
 					$max = $row_vote['answer_num'];
 								
-					$sql_answer = $db->super_query("SELECT answer, COUNT(*) AS cnt FROM `".PREFIX."_votes_result` WHERE vote_id = '{$vote_id}' GROUP BY answer", 1, "votes/vote_answer_cnt_{$vote_id}");
+					$sql_answer = $db->super_query("SELECT answer, COUNT(*) AS cnt FROM `".PREFIX."_votes_result` WHERE vote_id = '{$vote_id}' GROUP BY answer", 1);
 					$answer = array();
 					foreach($sql_answer as $row_answer){
 								

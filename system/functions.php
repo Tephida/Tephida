@@ -36,8 +36,18 @@ function informationText($array): string
     global $db;
     $array = json_decode($array, 1);
     $row = $db->super_query("SELECT user_search_pref FROM  " . PREFIX . "_users WHERE user_id = '" . ($array['type'] == 1 ? $array['oid2'] : $array['oid']) . "'");
-    if ($array['type'] == 5) $row2 = $db->super_query("SELECT user_search_pref FROM  " . PREFIX . "_users WHERE user_id = '" . $array['oid2'] . "'");
-    $text = array(0 => $row['user_search_pref'] . ' создал(а) беседу', 1 => $row['user_search_pref'] . ' приглашен(а) в беседу', 2 => $row['user_search_pref'] . ' покинул(а) беседу', 3 => $row['user_search_pref'] . ' обновил(а) название беседы', 4 => $row['user_search_pref'] . ' обновил(а) фотографию беседы', 5 => $row['user_search_pref'] . ' исключил(а) участника "' . $row2['user_search_pref'] . '"',);
+    if ($array['type'] == 5)
+        $row2 = $db->super_query("SELECT user_search_pref FROM  " . PREFIX . "_users WHERE user_id = '" . $array['oid2'] . "'");
+    else
+        $row2['user_search_pref'] = null;
+
+    $text = array(
+        0 => $row['user_search_pref'] . ' создал(а) беседу',
+        1 => $row['user_search_pref'] . ' приглашен(а) в беседу',
+        2 => $row['user_search_pref'] . ' покинул(а) беседу',
+        3 => $row['user_search_pref'] . ' обновил(а) название беседы',
+        4 => $row['user_search_pref'] . ' обновил(а) фотографию беседы',
+        5 => $row['user_search_pref'] . ' исключил(а) участника "' . $row2['user_search_pref'] . '"',);
     return $text[$array['type']];
 }
 

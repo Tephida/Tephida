@@ -156,7 +156,7 @@ if ($logged) {
         $tpl->set_block("'\\[search-tab\\](.*?)\\[/search-tab\\]'si", "");
 
     //################## Загружаем Страны ##################//
-    $sql_country = $db->super_query("SELECT * FROM `" . PREFIX . "_country` ORDER by `name` ASC", true, "country", true);
+    $sql_country = $db->super_query("SELECT * FROM `" . PREFIX . "_country` ORDER by `name` ASC", true);
     $all_country = '';
     foreach ($sql_country as $row_country)
         $all_country .= '<option value="' . $row_country['id'] . '">' . stripslashes($row_country['name']) . '</option>';
@@ -165,7 +165,7 @@ if ($logged) {
 
     //################## Загружаем Города ##################//
     if ($type == 1) {
-        $sql_city = $db->super_query("SELECT id, name FROM `" . PREFIX . "_city` WHERE id_country = '{$country}' ORDER by `name` ASC", true, "country_city_" . $country, true);
+        $sql_city = $db->super_query("SELECT id, name FROM `" . PREFIX . "_city` WHERE id_country = '{$country}' ORDER by `name` ASC", true);
         $all_city = '';
         foreach ($sql_city as $row2)
             $all_city .= '<option value="' . $row2['id'] . '">' . stripslashes($row2['name']) . '</option>';
