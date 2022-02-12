@@ -169,28 +169,16 @@ class db
      * @return array
      * @deprecated
      */
-    function get_result_fields($query_id = ''): array
+    function get_result_fields(mysqli_result|string $query_id = ''): array
     {
+        if ($query_id == '')
+            $query_id = $this->query_id;
 
-        if ($query_id == '') $query_id = $this->query_id;
-
-        while ($field = mysqli_fetch_field($query_id))
-        {
+        while ($field = mysqli_fetch_field($query_id)) {
             $fields[] = $field;
         }
 
-        return $fields;
-    }
-
-    function safesql( $source ): string
-    {
-        if(!$this->db_id)
-            $this->connect(DBUSER, DBPASS, DBNAME, DBHOST);
-
-        if ($this->db_id)
-            return mysqli_real_escape_string ($this->db_id, $source);
-        else
-            return addslashes($source);
+        return $fields ?? array();
     }
 
     public function free( $query_id = '' ) {
@@ -212,7 +200,7 @@ class db
     private function sql_mode() {
         $remove_modes = array( 'STRICT_TRANS_TABLES', 'STRICT_ALL_TABLES', 'ONLY_FULL_GROUP_BY', 'NO_ZERO_DATE', 'NO_ZERO_IN_DATE', 'TRADITIONAL' );
 
-        $res = $this->query( "SELECT @@SESSION.sql_mode", false, false );
+        $this->query("SELECT @@SESSION.sql_mode", false, false);
 
         $row = $this->get_array();
 
