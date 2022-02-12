@@ -63,6 +63,9 @@ class mozg_template {
         return true;
     }
 
+    /**
+     * @throws ErrorException
+     */
     public function load_file($name, $include_file = "tpl"): bool|array|string|null
     {
         $name = str_replace('..', '', $name);
@@ -77,7 +80,9 @@ class mozg_template {
                 echo 'error';
                 return false;
             }
-            if ($type != "php") return "To connect permitted only files with the extension: .tpl or .php";
+            if ($type != "php") {
+                throw new ErrorException("To connect permitted only files with the extension: .tpl or .php", 0, 'null', 'null', 'null');
+            }
 
             $file_path = ROOT_DIR."/".cleanPath(dirname($url['path']));
             $url['path'] = clearFilePath( trim($url['path']) , array ("php") );
@@ -86,12 +91,17 @@ class mozg_template {
             $file_name = $file_name['basename'];
             if (stristr(php_uname("s"), "windows") === false)
                 $chmod_value = @decoct(@fileperms($file_path)) % 1000;
-            if (stristr(dirname($url['path']), "uploads") !== false) return "Include files from directory /uploads/ is denied";
-            if (stristr(dirname($url['path']), "templates") !== false) return "Include files from directory /templates/ is denied";
+            else
+                $chmod_value = null;
+
+            if (stristr(dirname($url['path']), "uploads") !== false)
+                return "Include files from directory /uploads/ is denied";
+            if (stristr(dirname($url['path']), "templates") !== false)
+                return "Include files from directory /templates/ is denied";
             if ($chmod_value == 777)
                 return "File {$url['path']} is in the folder, which is available to write (CHMOD 777). For security purposes the connection files from these folders is impossible. Change the permissions on the folder that it had no rights to the write.";
             if (!file_exists($file_path . "/" . $file_name)) return "File {$url['path']} not found.";
-            if (isset($url['query']) AND $url['query']) {
+            if (!empty($url['query'])) {
                 parse_str($url['query']);
             }
             ob_start();
@@ -106,7 +116,8 @@ class mozg_template {
     {
         $tpl_name = to_translit($tpl_name);
         if ($tpl_name == '' || !file_exists($this->dir . DIRECTORY_SEPARATOR . $tpl_name)) {
-            return "Отсутствует файл шаблона: " . $tpl_name;
+            throw new ErrorException("Отсутствует файл шаблона: " . $tpl_name, 0, 'null', 'null', 'null');
+//            return "Отсутствует файл шаблона: " . $tpl_name;
         }
         $template = file_get_contents($this->dir . DIRECTORY_SEPARATOR . $tpl_name);
         if (str_contains($template, "[aviable=")) {
@@ -138,10 +149,13 @@ class mozg_template {
         $aviable = explode('|', $aviable);
         $block = str_replace('\"', '"', $block);
         if ($action) {
-            if (!(in_array($mozg_module, $aviable)) and ($aviable[0] != "global")) return "";
-            else return $block;
+            if (!(in_array($mozg_module, $aviable)) and ($aviable[0] != "global"))
+                return "";
+            else
+                return $block;
         } else {
-            if ((in_array($mozg_module, $aviable))) return "";
+            if ((in_array($mozg_module, $aviable)))
+                return "";
             else return $block;
         }
     }
@@ -150,9 +164,11 @@ class mozg_template {
         global $user_info;
         $groups = explode(',', $groups);
         if ($action) {
-            if (!in_array($user_info['user_group'], $groups)) return "";
+            if (!in_array($user_info['user_group'], $groups))
+                return "";
         } else {
-            if (in_array($user_info['user_group'], $groups)) return "";
+            if (in_array($user_info['user_group'], $groups))
+                return "";
         }
         return str_replace('\"', '"', $block);
     }
@@ -206,9 +222,6 @@ class mozg_template {
         else
             $this->result[$tpl] = $this->copy_template;
 
-
         $this->_clear();
-//        $this->template_parse_time+= $this->get_real_time() - $time_before;
     }
-
 }
