@@ -6,6 +6,9 @@
  *   file that was distributed with this source code.
  *
  */
+
+use JetBrains\PhpStorm\Pure;
+
 if (!defined('MOZG')) die('Hacking attempt!');
 
 /**
@@ -19,7 +22,7 @@ function textFilter(string $source, int $substr_num = 25000, bool $strip_tags = 
     return htmlspecialchars(stripslashes(trim($source)), 0, $substr_num);
 }
 
-function requestFilter(string $source, int $substr_num = 25000, bool $strip_tags = false): array|string|null
+#[Pure] function requestFilter(string $source, int $substr_num = 25000, bool $strip_tags = false): array|string|null
 {
     if(isset($_POST[$source])){
         $source = $_POST[$source];
@@ -110,9 +113,7 @@ function to_translit(string $value, bool $lower = true, bool $part = true): arra
  */
 function GetVar(string $v): string
 {
-    if (ini_get('magic_quotes_gpc'))
-        return stripslashes($v);
-    return $v;
+    return stripslashes($v);
 }
 
 /**

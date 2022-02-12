@@ -46,8 +46,6 @@ if ($logged) {
                     //Проверяем на существование этой записи у себя на стене
                     $myRow = $db->super_query("SELECT COUNT(*) AS cnt FROM `wall` WHERE tell_uid = '{$row['author_user_id']}' AND tell_date = '{$row['add_date']}' AND author_user_id = '{$user_id}'");
                     if ($myRow['cnt'] == false) {
-                        $row['text'] = $db->safesql($row['text']);
-                        $row['attach'] = $db->safesql($row['attach']);
 
                         //Всталвяем себе на стену
                         $db->query("INSERT INTO `wall` SET author_user_id = '{$user_id}', for_user_id = '{$user_id}', text = '{$row['text']}', add_date = '{$server_time}', fast_comm_id = 0, tell_uid = '{$row['author_user_id']}', tell_date = '{$row['add_date']}', public = '{$row['public']}', attach = '{$row['attach']}', tell_comm = '{$comm}'");
@@ -96,9 +94,6 @@ if ($logged) {
             $myRow = $db->super_query("SELECT COUNT(*) AS cnt FROM `communities_wall` WHERE tell_uid = '{$row['author_user_id']}' AND public_id = '{$sel_group}' AND tell_date = '{$row['add_date']}'");
 
             if ($sel_group != $check_IdGR and $myRow['cnt'] == false and stripos($rowGroup['admin'], "u{$user_id}|") !== false and $rowGroup['del'] == 0 and $rowGroup['ban'] == 0) {
-                $row['text'] = $db->safesql($row['text']);
-                $row['attach'] = $db->safesql($row['attach']);
-
                 //Вставляем саму запись в БД
                 $db->query("INSERT INTO `communities_wall` SET public_id = '{$sel_group}', text = '{$row['text']}', attach = '{$row['attach']}', add_date = '{$server_time}', tell_uid = '{$row['author_user_id']}', tell_date = '{$row['add_date']}', public = '{$row['public']}', tell_comm = '{$comm}'");
                 $dbid = $db->insert_id();
@@ -141,10 +136,6 @@ if ($logged) {
             $myRow = $db->super_query("SELECT COUNT(*) AS cnt FROM `communities_wall` WHERE tell_uid = '{$tell_uid}' AND public_id = '{$sel_group}' AND tell_date = '{$tell_date}'");
 
             if ($sel_group != $row['public_id'] and $myRow['cnt'] == false and stripos($rowGroup['admin'], "u{$user_id}|") !== false and $rowGroup['del'] == 0 and $rowGroup['ban'] == 0) {
-
-                $row['text'] = $db->safesql($row['text']);
-                $row['attach'] = $db->safesql($row['attach']);
-
                 //Вставляем саму запись в БД
                 $db->query("INSERT INTO `communities_wall` SET public_id = '{$sel_group}', text = '{$row['text']}', attach = '{$row['attach']}', add_date = '{$server_time}', tell_uid = '{$tell_uid}', tell_date = '{$tell_date}', public = '{$row['public']}', tell_comm = '{$comm}'");
                 $dbid = $db->insert_id();
@@ -200,8 +191,8 @@ if ($logged) {
                             $row_rec = $db->super_query("SELECT add_date, text, author_user_id, tell_uid, tell_date, public, attach FROM `wall` WHERE fast_comm_id = '0' AND id = '{$rid}'");
 
                         if ($row_rec) {
-                            $msg = $db->safesql($row_rec['text']);
-                            $attach_files = $db->safesql($row_rec['attach']);
+                            $msg = $row_rec['text'];
+                            $attach_files = $row_rec['attach'];
                             $theme = 'Запись на стене';
 
                             if ($row_rec['tell_uid']) {

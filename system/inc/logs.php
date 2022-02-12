@@ -11,8 +11,8 @@ if (!defined('MOZG'))
 
 echoheader();
 
-$ip = $db->safesql(strip_tags($_GET['ip']));
-$browser_get = $db->safesql(strip_tags($_GET['browser']));
+$ip = strip_tags($_GET['ip']);
+$browser_get = strip_tags($_GET['browser']);
 $uid = intval($_GET['id']);
 if (!$uid) $uid = '';
 

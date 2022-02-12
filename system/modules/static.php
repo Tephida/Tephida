@@ -12,7 +12,7 @@ if (!defined('MOZG'))
 NoAjaxQuery();
 
 if ($logged) {
-    $alt_name = $db->safesql(to_translit($_GET['page']));
+    $alt_name = to_translit(requestFilter('page'));
     $row = $db->super_query("SELECT title, text FROM `static` WHERE alt_name = '" . $alt_name . "'");
     if ($row) {
         $tpl->load_template('static.tpl');

@@ -41,8 +41,6 @@ if(isset($_POST['saveconf'])){
 		$name = str_replace("{", "&#123;", $name);
 		$name = str_replace("}", "&#125;", $name);
 		
-		$value = $db->safesql($value);
-		
 		fwrite($handler, "'{$name}' => \"{$value}\",\n\n");
 	}
 	fwrite($handler, ");\n\n?>" );

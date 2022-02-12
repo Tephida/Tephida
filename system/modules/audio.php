@@ -118,12 +118,11 @@ if ($logged) {
                 $check = $db->super_query("SELECT url, artist, name FROM `communities_audio` WHERE aid = '" . $aid . "'");
 
             if ($check) {
-                $db->query("INSERT INTO `audio` SET auser_id = '" . $user_id . "', url = '" . $db->safesql($check['url']) . "', artist = '" . $db->safesql($check['artist']) . "', name = '" . $db->safesql($check['name']) . "',  adate = '" . $server_time . "'");
+                $db->query("INSERT INTO `audio` SET auser_id = '" . $user_id . "', url = '" . $check['url'] . "', artist = '" . $check['artist'] . "', name = '" . $check['name'] . "',  adate = '" . $server_time . "'");
                 $db->query("UPDATE `users` SET user_audio = user_audio+1 WHERE user_id = '" . $user_id . "'");
                 mozg_mass_clear_cache_file('user_' . $user_id . '/audios_profile|user_' . $user_id . '/profile_' . $user_id);
             }
             die();
-            break;
 
         //################### Вывод всех аудио (BOX) ###################//
         case "allMyAudiosBox":

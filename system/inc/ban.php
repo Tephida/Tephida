@@ -13,8 +13,14 @@ if (!defined('MOZG'))
 if (isset($_POST['save'])) {
     $ban_date = intval($_POST['days']);
     $this_time = $ban_date ? $server_time + ($ban_date * 60 * 60 * 24) : 0;
-    if ($this_time) $always = 1; else $always = 0;
-    if (isset($_POST['ip'])) $ip = $db->safesql(htmlspecialchars(strip_tags(trim($_POST['ip'])))); else $ip = "";
+    if ($this_time)
+        $always = 1;
+    else
+        $always = 0;
+    if (isset($_POST['ip']))
+        $ip = htmlspecialchars(strip_tags(trim($_POST['ip'])));
+    else
+        $ip = "";
     $descr = requestFilter('descr');
 
     if ($ip) {

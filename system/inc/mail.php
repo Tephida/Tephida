@@ -27,16 +27,8 @@ switch ($act) {
             $mail = new vii_mail($config, true);
 
             foreach ($sql_ as $row) {
-                $find = array('/data:/i', '/about:/i', '/vbscript:/i', '/onclick/i', '/onload/i', '/onunload/i', '/onabort/i', '/onerror/i', '/onblur/i', '/onchange/i', '/onfocus/i', '/onreset/i', '/onsubmit/i', '/ondblclick/i', '/onkeydown/i', '/onkeypress/i', '/onkeyup/i', '/onmousedown/i', '/onmouseup/i', '/onmouseover/i', '/onmouseout/i', '/onselect/i', '/javascript/i', '/javascript/i');
-                $replace = array("d&#097;ta:", "&#097;bout:", "vbscript<b></b>:", "&#111;nclick", "&#111;nload", "&#111;nunload", "&#111;nabort", "&#111;nerror", "&#111;nblur", "&#111;nchange", "&#111;nfocus", "&#111;nreset", "&#111;nsubmit", "&#111;ndblclick", "&#111;nkeydown", "&#111;nkeypress", "&#111;nkeyup", "&#111;nmousedown", "&#111;nmouseup", "&#111;nmouseover", "&#111;nmouseout", "&#111;nselect", "j&#097;vascript");
-
-                $message_send = preg_replace($find, $replace, $_POST['text']);
-                $message_send = preg_replace("#<iframe#i", "&lt;iframe", $message_send);
-                $message_send = preg_replace("#<script#i", "&lt;script", $message_send);
-                $message_send = str_replace("<?", "&lt;?", $message_send);
-                $message_send = str_replace("?>", "?&gt;", $message_send);
-                $message_send = $db->safesql($message_send);
-                $message_send = str_replace("{%user-name%}", $row['user_search_pref'], $_POST['text']);
+                $message_send = requestFilter('text');
+                $message_send = str_replace("{%user-name%}", $row['user_search_pref'], $message_send);
 
                 $mail->send($row['user_email'], $title, $message_send);
 
@@ -45,7 +37,6 @@ switch ($act) {
         }
 
         die();
-        break;
 
     default:
         $users = $db->super_query("SELECT COUNT(*) AS cnt FROM `users`");

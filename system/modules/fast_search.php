@@ -16,11 +16,11 @@ if ($logged) {
 
     $limit_sql = 7;
 
-    $query = $db->safesql(strip_data($_POST['query']));
+    $query = requestFilter('query');
     $query = strtr($query, array(' ' => '%')); //Замеянем пробелы на проценты чтоб тоиск был точнее
     $type = intval($_POST['se_type']);
 
-    if (isset($query) and !empty($query)) {
+    if (!empty($query)) {
 
         //Если критерий поиск "по людям"
         if ($type == 1)

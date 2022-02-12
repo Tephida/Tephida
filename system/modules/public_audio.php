@@ -33,7 +33,7 @@ if ($logged) {
 
             if ($public_admin) {
 
-                $db->query("INSERT INTO `communities_audio` SET public_id = '{$pid}', url = '" . $db->safesql($check['url']) . "', artist = '" . $db->safesql($check['artist']) . "', name = '" . $db->safesql($check['name']) . "',  adate = '{$server_time}'");
+                $db->query("INSERT INTO `communities_audio` SET public_id = '{$pid}', url = '" . $check['url'] . "', artist = '" . $db->safesql($check['artist']) . "', name = '" . $db->safesql($check['name']) . "',  adate = '{$server_time}'");
 
                 $db->query("UPDATE `communities` SET audio_num = audio_num+1 WHERE id = '{$pid}'");
 
@@ -115,10 +115,10 @@ if ($logged) {
 
             $pid = intval($_POST['pid']);
 
-            $query = $db->safesql(strip_data($_POST['query']));
+            $query = strip_data(requestFilter('query'));
             $query = strtr($query, array(' ' => '%')); //Замеянем пробелы на проценты чтоб тоиск был точнее
 
-            $adres = strip_tags($_POST['adres']);
+            $adres = strip_tags(requestFilter('adres'));
 
             $row_count = $db->super_query("SELECT COUNT(*) AS cnt FROM `audio` WHERE MATCH (name, artist) AGAINST ('%{$query}%') OR artist LIKE '%{$query}%' OR name LIKE '%{$query}%'");
 

@@ -89,7 +89,7 @@ if ($logged) {
             
         case "del_comm":
             NoAjaxQuery();
-            $hash = $db->safesql(substr($_POST['hash'], 0, 32));
+            $hash = requestFilter('hash', 32);
             $check_comment = $db->super_query("SELECT id, pid, album_id, owner_id FROM `photos_comments` WHERE hash = '{$hash}'");
             if ($check_comment) {
                 $db->query("DELETE FROM `photos_comments` WHERE hash = '{$hash}'");
@@ -252,10 +252,13 @@ if ($logged) {
                 //Обновляем данные у фото
                 $db->query("UPDATE `photos` SET rating_num = rating_num+{$rating}, rating_all = rating_all+1 {$rating_max} WHERE id = '{$pid}'");
                 //Вставляем в ленту "Ответы"
-                if ($rating == 1) $action_update_text = '<div class="rating rating3 fl_r" style="background:url(\'/templates/' . $config['temp'] . '/images/rating3.png\') no-repeat;padding-top:10px">' . $rating . '</div>';
-                else if ($rating == 6) $action_update_text = '<div class="rating rating3 fl_r"  style="background:url(\'/templates/' . $config['temp'] . '/images/rating2.png\') no-repeat;padding-top:10px">5+</div>';
-                else $action_update_text = '<div class="rating rating3 fl_r" style="padding-top:10px">' . $rating . '</div>';
-                $action_update_text = $db->safesql($action_update_text);
+                if ($rating == 1)
+                    $action_update_text = '<div class="rating rating3 fl_r" style="background:url(\'/templates/' . $config['temp'] . '/images/rating3.png\') no-repeat;padding-top:10px">' . $rating . '</div>';
+                else if ($rating == 6)
+                    $action_update_text = '<div class="rating rating3 fl_r"  style="background:url(\'/templates/' . $config['temp'] . '/images/rating2.png\') no-repeat;padding-top:10px">5+</div>';
+                else
+                    $action_update_text = '<div class="rating rating3 fl_r" style="padding-top:10px">' . $rating . '</div>';
+
                 $action_update_text_news = str_replace(' fl_r', ' rate_fnews_bott', $action_update_text);
                 $db->query("INSERT INTO `news` SET ac_user_id = '{$user_info['user_id']}', action_type = 12, action_text = '{$action_update_text_news}|{$row['photo_name']}|{$pid}|{$row['album_id']}', obj_id = '{$id}', for_user_id = '{$row['user_id']}', action_time = '{$server_time}'");
                 //Вставляем событие в моментальные оповещания
@@ -272,9 +275,8 @@ if ($logged) {
                 }
             }
             exit();
-            break;
-            //################### Просмотр оценок ###################//
-            
+
+        //################### Просмотр оценок ###################//
         case "view_rating":
             NoAjaxQuery();
             $pid = intval($_POST['pid']);

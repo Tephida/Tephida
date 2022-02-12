@@ -7,8 +7,8 @@
  *
  */
 if (!defined('MOZG')) die('Hacking attempt!');
-$_IP = $db->safesql($_SERVER['REMOTE_ADDR']);
-$_BROWSER = $db->safesql($_SERVER['HTTP_USER_AGENT']);
+$_IP = $_SERVER['REMOTE_ADDR'];
+$_BROWSER = $_SERVER['HTTP_USER_AGENT'];
 //Если делаем выход
 $act = $_GET['act'] ?? '';
 

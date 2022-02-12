@@ -356,7 +356,7 @@ if ($logged) {
         case "edit_page";
             NoAjaxQuery();
             $user_id = $user_info['user_id'];
-            $id = $db->safesql(intval($_POST['id']));
+            $id = intval($_POST['id']);
             $row = $db->super_query("SELECT aid, name, descr, privacy FROM `albums` WHERE aid = '{$id}' AND user_id = '{$user_id}'");
             if ($row) {
                 $album_privacy = explode('|', $row['privacy']);

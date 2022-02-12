@@ -86,7 +86,7 @@ if ($_GET['act'] == 'upload') {
                     }
 
                     //Читаем хеш
-                    $app_hash = $db->safesql($_SESSION['apps_hash']);
+                    $app_hash = $_SESSION['apps_hash'];
 
                     //Вставляем в базу
                     $db->query("INSERT INTO `games_files` SET file = '{$image_rename}{$res_type}', hash = '{$app_hash}', type = 'poster', user_id = '{$user_info['user_id']}'");
@@ -170,7 +170,7 @@ if ($_GET['act'] == 'upload_swf') {
                     }
 
                     //Читаем хеш
-                    $app_hash = $db->safesql($_SESSION['apps_hash']);
+                    $app_hash = $_SESSION['apps_hash'];
 
                     //Вставляем в базу
                     $db->query("INSERT INTO `games_files` SET file = '{$image_rename}{$res_type}', hash = '{$app_hash}', type = 'swf', user_id = '{$user_info['user_id']}'");
@@ -228,7 +228,7 @@ if ($_GET['act'] == 'upload_scrin') {
             $rImg = $upDir . $image_rename . $res_type;
 
             //Читаем хеш
-            $app_hash = $db->safesql($_SESSION['apps_hash']);
+            $app_hash = $_SESSION['apps_hash'];
 
             //Считаем кол-вол загруженных скринов
             if ($rowCheck)
@@ -308,7 +308,7 @@ if ($_GET['act'] == 'upload_scrin') {
 //Удаление файла
 if ($_GET['act'] == 'del') {
 
-    $file = $db->safesql(strip_tags($_POST['file']));
+    $file = strip_tags($_POST['file']);
 
     $row = $db->super_query("SELECT file, game_id FROM `games_files` WHERE file = '{$file}'");
 
@@ -339,7 +339,7 @@ if (isset($_POST['send'])) {
     $height = intval($_POST['height']);
 
     //Читаем хеш
-    $app_hash = $db->safesql($_SESSION['apps_hash']);
+    $app_hash = $_SESSION['apps_hash'];
 
     if (isset($title) and !empty($title)) {
 
@@ -791,7 +791,7 @@ HTML;
 //Поиск
 echohtmlstart('Поиск');
 
-$title = $db->safesql(strip_tags($_GET['title']));
+$title = strip_tags($_GET['title']);
 $id = intval($_GET['id']);
 if ($id <= 0) $id = '';
 if (isset($title) and !empty($title)) $sql_where = "WHERE title LIKE '%{$title}%'";

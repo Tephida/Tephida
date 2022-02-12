@@ -683,9 +683,6 @@ if ($logged) {
                 $expPhoto = end(explode('/', $row['photo']));
                 @copy($row['photo'], ROOT_DIR . "/uploads/videos/{$user_id}/{$expPhoto}");
                 $newPhoto = "{$config['home_url']}uploads/videos/{$user_id}/{$expPhoto}";
-                $row['video'] = $db->safesql($row['video']);
-                $row['descr'] = $db->safesql($row['descr']);
-                $row['title'] = $db->safesql($row['title']);
                 $db->query("INSERT INTO `videos` SET owner_user_id = '{$user_id}', video = '{$row['video']}', photo = '{$newPhoto}', title = '{$row['title']}', descr = '{$row['descr']}', add_date = NOW(), privacy = 1");
                 $dbid = $db->insert_id();
                 $db->query("UPDATE `users` SET user_videos_num = user_videos_num+1 WHERE user_id = '{$user_id}'");

@@ -14,7 +14,7 @@ if (isset($_POST['save'])) {
     $find = array("<", ">");
     $replace = array("&lt;", "&gt;");
     for ($i = 1; $i <= 8; $i++) {
-        $post = $db->safesql(str_replace($find, $replace, $_POST[$i]));
+        $post = str_replace($find, $replace, $_POST[$i]);
         $db->query("UPDATE `mail_tpl` SET text = '" . $post . "' WHERE id = '" . $i . "'");
     }
 }

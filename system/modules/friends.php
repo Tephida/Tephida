@@ -171,7 +171,7 @@ if ($logged) {
         //################### Отклонение заявки на дружбу ###################//
         case "reject":
             NoAjaxQuery();
-            $reject_user_id = $db->safesql(intval($_GET['reject_user_id']));
+            $reject_user_id = intval($_GET['reject_user_id']);
             $user_id = $user_info['user_id'];
 
             //Проверяем на существования юзера в таблице заявок в друзья
@@ -192,7 +192,7 @@ if ($logged) {
         //################### Удаления друга из списка друзей ###################//
         case "delete":
             NoAjaxQuery();
-            $delet_user_id = $db->safesql(intval($_POST['delet_user_id']));
+            $delet_user_id = intval($_POST['delet_user_id']);
             $user_id = $user_info['user_id'];
 
             //Проверяем на существования юзера в списке друзей

@@ -74,7 +74,7 @@ HTML;
 
         //################### Страница смены пароля ###################//
         case "prefinish":
-            $hash = $db->safesql(strip_data($_GET['h']));
+            $hash = strip_data(requestFilter('h'));
             $row = $db->super_query("SELECT email FROM `restore` WHERE hash = '{$hash}' AND ip = '{$_IP}'");
             if ($row) {
                 $info = $db->super_query("SELECT user_name FROM `users` WHERE user_email = '{$row['email']}'");
@@ -99,7 +99,7 @@ HTML;
         //################### Смена пароля ###################//
         case "finish":
             NoAjaxQuery();
-            $hash = $db->safesql(strip_data($_POST['hash']));
+            $hash = strip_data(requestFilter('hash'));
             $row = $db->super_query("SELECT email FROM `restore` WHERE hash = '{$hash}' AND ip = '{$_IP}'");
             if ($row) {
 

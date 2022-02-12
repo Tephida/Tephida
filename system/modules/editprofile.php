@@ -73,9 +73,6 @@ if ($logged) {
                         $tmb->jpeg_quality(97);
                         $tmb->save($uploaddir . '100_' . $image_rename . $res_type);
 
-                        $image_rename = $db->safesql($image_rename);
-                        $res_type = $db->safesql($res_type);
-
                         //Добавляем на стену
                         $row = $db->super_query("SELECT user_sex FROM `users` WHERE user_id = '{$user_id}'");
                         if ($row['user_sex'] == 2)
@@ -204,14 +201,15 @@ if ($logged) {
             NoAjaxQuery();
 
             $xfields = array();
-            $xfields['vk'] = $db->safesql(htmlspecialchars(substr($_POST['vk'], 0, 200)));
-            $xfields['od'] = $db->safesql(htmlspecialchars(substr($_POST['od'], 0, 200)));
-            $xfields['phone'] = $db->safesql(htmlspecialchars(substr($_POST['phone'], 0, 200)));
-            $xfields['skype'] = $db->safesql(htmlspecialchars(substr($_POST['skype'], 0, 200)));
-            $xfields['fb'] = $db->safesql(htmlspecialchars(substr($_POST['fb'], 0, 200)));
-            $xfields['icq'] = $db->safesql(htmlspecialchars(substr($_POST['icq'], 0, 200)));
-            $xfields['site'] = $db->safesql(htmlspecialchars(substr($_POST['site'], 0, 200)));
+            $xfields['vk'] = requestFilter('vk', 200);
+            $xfields['od'] = requestFilter('od', 200);
+            $xfields['phone'] = requestFilter('phone', 200);
+            $xfields['skype'] = requestFilter('skype',  200);
+            $xfields['fb'] = requestFilter('fb',  200);
+            $xfields['icq'] = requestFilter('icq',  200);
+            $xfields['site'] = requestFilter('site',  200);
 
+            $xfieldsdata = '';
             foreach ($xfields as $name => $value) {
                 $value = str_replace("|", "&#124;", $value);
                 if (strlen($value) > 0)
@@ -225,22 +223,22 @@ if ($logged) {
             echo 'ok';
 
             die();
-            break;
 
         //Сохранение интересов
         case "save_interests":
             NoAjaxQuery();
 
             $xfields = array();
-            $xfields['activity'] = $db->safesql(htmlspecialchars(substr($_POST['activity'], 0, 5000)));
-            $xfields['interests'] = $db->safesql(htmlspecialchars(substr($_POST['interests'], 0, 5000)));
-            $xfields['myinfo'] = $db->safesql(htmlspecialchars(substr($_POST['myinfo'], 0, 5000)));
-            $xfields['music'] = $db->safesql(htmlspecialchars(substr($_POST['music'], 0, 5000)));
-            $xfields['kino'] = $db->safesql(htmlspecialchars(substr($_POST['kino'], 0, 5000)));
-            $xfields['books'] = $db->safesql(htmlspecialchars(substr($_POST['books'], 0, 5000)));
-            $xfields['games'] = $db->safesql(htmlspecialchars(substr($_POST['games'], 0, 5000)));
-            $xfields['quote'] = $db->safesql(htmlspecialchars(substr($_POST['quote'], 0, 5000)));
+            $xfields['activity'] = requestFilter('activity', 5000);
+            $xfields['interests'] = requestFilter('interests',  5000);
+            $xfields['myinfo'] = requestFilter('myinfo',  5000);
+            $xfields['music'] = requestFilter('music',  5000);
+            $xfields['kino'] = requestFilter('kino',  5000);
+            $xfields['books'] = requestFilter('books',  5000);
+            $xfields['games'] = requestFilter('games',  5000);
+            $xfields['quote'] = requestFilter('quote',  5000);
 
+            $xfieldsdata = '';
             foreach ($xfields as $name => $value) {
                 $value = str_replace("|", "&#124;", $value);
                 if (strlen($value) > 0)
@@ -254,7 +252,6 @@ if ($logged) {
             echo 'ok';
 
             die();
-            break;
 
         //Сохранение доп.полей
         case "save_xfields":
@@ -294,8 +291,6 @@ if ($logged) {
                 else
                     $xfielddatavalue = textFilter($xfielddatavalue);
 
-                $xfielddataname = $db->safesql($xfielddataname);
-
                 if (isset($xfielddatavalue) and !empty($xfielddatavalue)) {
                     $xfielddataname = str_replace("|", "&#124;", $xfielddataname);
                     $xfielddatavalue = str_replace("|", "&#124;", $xfielddatavalue);
@@ -303,7 +298,7 @@ if ($logged) {
                 }
             }
 
-            if ($filecontents)
+            if (isset($filecontents))
                 $filecontents = implode("||", $filecontents);
             else
                 $filecontents = '';

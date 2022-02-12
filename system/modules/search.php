@@ -25,10 +25,10 @@ if ($logged) {
     $gcount = 20;
     $limit_page = ($page - 1) * $gcount;
 
-    $query = $db->safesql(strip_data(urldecode($_GET['query'])));
+    $query = strip_data(urldecode(requestFilter('query')));
     if (isset($_GET['n']) and $_GET['n'])
-        $query = $db->safesql(strip_data(urldecode($_GET['query'])));
-    $query = strtr($query, array(' ' => '%')); //Замеянем пробелы на проценты чтоб тоиск был точнее
+        $query = strip_data(urldecode(requestFilter('query')));
+    $query = strtr($query, array(' ' => '%')); //Заменяем пробелы на проценты чтоб поиск был точнее
 
     $type = isset($_GET['type']) ? intval($_GET['type']) : 1;
     $sex = isset($_GET['sex']) ? intval($_GET['sex']) : 0;
@@ -93,9 +93,9 @@ if ($logged) {
     else
         $tpl->set('{query}', 'Начните вводить любое слово или имя');
 
-    $_GET['query'] = $db->safesql(strip_data(urldecode($_GET['query'])));
+    $_GET['query'] = strip_data(urldecode(requestFilter('query')));
     if (isset($_GET['n']) and $_GET['n'])
-        $_GET['query'] = $db->safesql(strip_data(urldecode($_GET['query'])));
+        $_GET['query'] = strip_data(urldecode(requestFilter('query')));
 
     $tpl->set('{query-people}', str_replace(array('&type=2', '&type=3', '&type=4', '&type=5'), '&type=1', $_SERVER['QUERY_STRING']));
     $tpl->set('{query-videos}', '&type=2&query=' . $_GET['query']);

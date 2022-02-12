@@ -11,24 +11,28 @@ if (!defined('MOZG'))
 
 //Если начали замену
 if (isset($_POST['save'])) {
-    if (function_exists("get_magic_quotes_gpc") && get_magic_quotes_gpc()) {
-        $_POST['find'] = stripslashes($_POST['find']);
-        $_POST['replace'] = stripslashes($_POST['replace']);
-    }
+    $find = requestFilter('find');
+    $replace = requestFilter('replace');
 
-    $find = $db->safesql(addslashes(trim($_POST['find'])));
-    $replace = $db->safesql(addslashes(trim($_POST['replace'])));
-
-    if (isset($find) and !empty($find) and isset($replace) and !empty($replace)) {
-        if ($_POST['photo_comm']) $db->query("UPDATE `photos_comments` SET `text` = REPLACE(`text`, '" . $find . "', '" . $replace . "')");
-        if ($_POST['video_comm']) $db->query("UPDATE `videos_comments` SET `text` = REPLACE(`text`, '" . $find . "', '" . $replace . "')");
-        if ($_POST['notes_comm']) $db->query("UPDATE `notes_comments` SET `text` = REPLACE(`text`, '" . $find . "', '" . $replace . "')");
-        if ($_POST['users_wall']) $db->query("UPDATE `wall` SET `text` = REPLACE(`text`, '" . $find . "', '" . $replace . "')");
-        if ($_POST['groups_wall']) $db->query("UPDATE `communities_wall` SET `text` = REPLACE(`text`, '" . $find . "', '" . $replace . "')");
-        if ($_POST['news']) $db->query("UPDATE `news` SET `action_text` = REPLACE(`action_text`, '" . $find . "', '" . $replace . "')");
-        if ($_POST['msg']) $db->query("UPDATE `messages` SET `text` = REPLACE(`text`, '" . $find . "', '" . $replace . "')");
-        if ($_POST['gift_msg']) $db->query("UPDATE `gifts` SET `msg` = REPLACE(`msg`, '" . $find . "', '" . $replace . "')");
-        if ($_POST['notes_text']) $db->query("UPDATE `notes` SET `full_text` = REPLACE(`full_text`, '" . $find . "', '" . $replace . "')");
+    if (!empty($find) and !empty($replace)) {
+        if ($_POST['photo_comm'])
+            $db->query("UPDATE `photos_comments` SET `text` = REPLACE(`text`, '" . $find . "', '" . $replace . "')");
+        if ($_POST['video_comm'])
+            $db->query("UPDATE `videos_comments` SET `text` = REPLACE(`text`, '" . $find . "', '" . $replace . "')");
+        if ($_POST['notes_comm'])
+            $db->query("UPDATE `notes_comments` SET `text` = REPLACE(`text`, '" . $find . "', '" . $replace . "')");
+        if ($_POST['users_wall'])
+            $db->query("UPDATE `wall` SET `text` = REPLACE(`text`, '" . $find . "', '" . $replace . "')");
+        if ($_POST['groups_wall'])
+            $db->query("UPDATE `communities_wall` SET `text` = REPLACE(`text`, '" . $find . "', '" . $replace . "')");
+        if ($_POST['news'])
+            $db->query("UPDATE `news` SET `action_text` = REPLACE(`action_text`, '" . $find . "', '" . $replace . "')");
+        if ($_POST['msg'])
+            $db->query("UPDATE `messages` SET `text` = REPLACE(`text`, '" . $find . "', '" . $replace . "')");
+        if ($_POST['gift_msg'])
+            $db->query("UPDATE `gifts` SET `msg` = REPLACE(`msg`, '" . $find . "', '" . $replace . "')");
+        if ($_POST['notes_text'])
+            $db->query("UPDATE `notes` SET `full_text` = REPLACE(`full_text`, '" . $find . "', '" . $replace . "')");
 
         msgbox('Информация', 'Текст в базе данных был успешно заменен.', '?mod=search');
     } else

@@ -612,7 +612,7 @@ if ($logged) {
                     //Проверка на то, что юзер не отвечает сам себе
                     if ($user_id != $row_owner2['public_id'] and $row_owner2) {
 
-                        $answer_text = $db->safesql($row_owner2['text']);
+                        $answer_text = $row_owner2['text'];
 
                         $check2 = $db->super_query("SELECT user_last_visit, user_name FROM `users` WHERE user_id = '{$row_owner2['public_id']}'");
 
@@ -1021,8 +1021,6 @@ if ($logged) {
                 //Проверяем на существование этой записи у себя на стене
                 $myRow = $db->super_query("SELECT COUNT(*) AS cnt FROM `wall` WHERE tell_uid = '{$row['public_id']}' AND tell_date = '{$row['add_date']}' AND author_user_id = '{$user_id}' AND public = '{$row['public']}'");
                 if ($row['tell_uid'] != $user_id and $myRow['cnt'] == false) {
-                    $row['text'] = $db->safesql($row['text']);
-                    $row['attach'] = $db->safesql($row['attach']);
 
                     //Всталвяем себе на стену
                     $db->query("INSERT INTO `wall` SET author_user_id = '{$user_id}', for_user_id = '{$user_id}', text = '{$row['text']}', add_date = '{$server_time}', fast_comm_id = 0, tell_uid = '{$row['public_id']}', tell_date = '{$row['add_date']}', public = '{$row['public']}', attach = '" . $row['attach'] . "'");

@@ -45,10 +45,6 @@ if ($logged) {
 
                 $newPhoto = "{$config['home_url']}uploads/videos/{$user_id}/{$expPhoto}";
 
-                $row['video'] = $db->safesql($row['video']);
-                $row['descr'] = $db->safesql($row['descr']);
-                $row['title'] = $db->safesql($row['title']);
-
                 $db->query("INSERT INTO `videos` SET public_id = '{$pid}', owner_user_id = '{$user_id}', video = '{$row['video']}', photo = '{$newPhoto}', title = '{$row['title']}', descr = '{$row['descr']}', add_date = NOW(), privacy = '1'");
 
                 $db->query("UPDATE `communities` SET videos_num = videos_num + 1 WHERE id = '{$pid}'");
@@ -170,10 +166,10 @@ if ($logged) {
 
             $pid = intval($_POST['pid']);
 
-            $query = $db->safesql(strip_data($_POST['query']));
+            $query = strip_data(requestFilter('query'));
             $query = strtr($query, array(' ' => '%')); //Замеянем пробелы на проценты чтоб тоиск был точнее
 
-            $adres = strip_tags($_POST['adres']);
+            $adres = strip_tags(requestFilter('adres');
 
             $row_count = $db->super_query("SELECT COUNT(*) AS cnt FROM `videos` WHERE title LIKE '%{$query}%' AND public_id = '0'");
 
@@ -181,8 +177,10 @@ if ($logged) {
 
             $infoGroup = $db->super_query("SELECT admin FROM `communities` WHERE id = '{$pid}'");
 
-            if (strpos($infoGroup['admin'], "u{$user_id}|") !== false) $public_admin = true;
-            else $public_admin = false;
+            if (str_contains($infoGroup['admin'], "u{$user_id}|"))
+                $public_admin = true;
+            else
+                $public_admin = false;
 
             $tpl->load_template('public_videos/search_result.tpl');
 

@@ -21,7 +21,7 @@ if ($logged) {
         case "delcomm":
 
             $id = intval($_POST['id']);
-            $purl = $db->safesql(to_translit($_POST['purl']));
+            $purl = to_translit(requestFilter('purl'));
 
             //Выводим данные о комментариии
             $row = $db->super_query("SELECT tb1.forphoto, auser_id, tb2.ouser_id FROM `attach_comm` tb1, `attach` tb2 WHERE tb1.id = '{$id}' AND tb1.forphoto = '{$purl}'");
@@ -70,7 +70,7 @@ if ($logged) {
         case "addcomm":
 
             $text = requestFilter('text');
-            $purl = $db->safesql(to_translit($_POST['purl']));
+            $purl = to_translit(requestFilter('purl'));
 
             //Проверка на существования фотки в таблице PREFIX_attach
             $row = $db->super_query("SELECT COUNT(*) AS cnt FROM `attach` WHERE photo = '{$purl}'");
@@ -135,7 +135,7 @@ if ($logged) {
         //################### Показ пред.комментариев ###################//
         case "prevcomm":
 
-            $foSQLurl = $db->safesql(to_translit($_POST['purl']));
+            $foSQLurl = to_translit(requestFilter('purl'));
 
             //Выводим данные о владельце фото
             $row = $db->super_query("SELECT ouser_id, acomm_num FROM `attach` WHERE photo = '{$foSQLurl}'");
@@ -206,10 +206,10 @@ if ($logged) {
 
         default:
 
-            $photo_url = $_POST['photo'];
+            $photo_url = requestFilter('photo');
             $resIMGurl = explode('/', $photo_url);
             $foSQLurl = end($resIMGurl);
-            $foSQLurl = $db->safesql(to_translit($foSQLurl));
+            $foSQLurl = to_translit($foSQLurl);
 
             //Выводим данные о владельце фото
             $row = $db->super_query("SELECT tb1.ouser_id, acomm_num, add_date, tb2.user_search_pref, user_country_city_name FROM `attach` tb1, `users` tb2 WHERE tb1.ouser_id = tb2.user_id AND tb1.photo = '{$foSQLurl}'");

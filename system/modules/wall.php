@@ -601,10 +601,7 @@ if ($logged) {
                     //Проверяем на существование этой записи у себя на стене
                     $myRow = $db->super_query("SELECT COUNT(*) AS cnt FROM `wall` WHERE tell_uid = '{$row['author_user_id']}' AND tell_date = '{$row['add_date']}' AND author_user_id = '{$user_id}'");
                     if (!$myRow['cnt']) {
-                        $row['text'] = $db->safesql($row['text']);
-                        $row['attach'] = $db->safesql($row['attach']);
-
-                        //Всталвяем себе на стену
+                        //Вставляем себе на стену
                         $db->query("INSERT INTO `wall` SET author_user_id = '{$user_id}', for_user_id = '{$user_id}', text = '{$row['text']}', add_date = '{$server_time}', fast_comm_id = 0, tell_uid = '{$row['author_user_id']}', tell_date = '{$row['add_date']}', public = '{$row['public']}', attach = '{$row['attach']}'");
                         $dbid = $db->insert_id();
                         $db->query("UPDATE `users` SET user_wall_num = user_wall_num+1 WHERE user_id = '{$user_id}'");

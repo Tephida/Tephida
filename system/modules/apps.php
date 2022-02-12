@@ -121,9 +121,9 @@ if ($logged) {
             
         case "search":
             NoAjaxQuery();
-            $query_games = $db->safesql(strip_data($_POST['query_games']));
+            $query_games = requestFilter('query_games');
             $query_games = strtr($query_games, array(' ' => '%')); //Замеянем пробелы на проценты чтоб тоиск был точнее
-            if (isset($query_games) AND !empty($query_games)) {
+            if (!empty($query_games)) {
                 $lastid = intval($_POST['lastid']);
                 if ($lastid) $sql_where = "AND id > '{$lastid}'";
                 $sql_ = $db->super_query("SELECT id, title, poster, traf FROM `games` WHERE title LIKE '%{$query_games}%' {$sql_where} ORDER by `date` ASC LIMIT 0, 20", true);

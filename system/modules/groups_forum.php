@@ -84,8 +84,6 @@ if ($logged) {
                     //Проверка на то, что юзер не отвечает сам себе
                     if ($user_id != $row_owner2['muser_id'] and $row_owner2) {
 
-                        $row_owner2['msg'] = $db->safesql($row_owner2['msg']);
-
                         $check2 = $db->super_query("SELECT user_last_visit, user_name FROM `users` WHERE user_id = '{$row_owner2['muser_id']}'");
 
                         $msg = str_replace($check2['user_name'], "<a href=\"/u{$row_owner2['muser_id']}\" onClick=\"Page.Go(this.href); return false\">{$check2['user_name']}</a>", $msg);

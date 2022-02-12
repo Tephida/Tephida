@@ -11,8 +11,8 @@ if (!defined('MOZG'))
 
 header('Content-type: text/html; charset=utf-8');
 
-$_IP = $db->safesql($_SERVER['REMOTE_ADDR']);
-$_BROWSER = $db->safesql($_SERVER['HTTP_USER_AGENT']);
+$_IP = $_SERVER['REMOTE_ADDR'];
+$_BROWSER = $_SERVER['HTTP_USER_AGENT'];
 
 //Если делаем выход
 if (isset($_GET['act']) and $_GET['act'] == 'logout') {
@@ -64,7 +64,7 @@ if (isset($_SESSION['user_id']) > 0) {
 if (isset($_POST['log_in']) and !isset($_SESSION['user_id'])) {
 
     //Приготавливаем данные
-    $email = $db->safesql(trim(htmlspecialchars(strip_tags($_POST['email']))));
+    $email = requestFilter('email');
     $password = GetVar($_POST['pass']);
 
     //Проверяем правильность e-mail
