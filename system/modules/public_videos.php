@@ -177,7 +177,7 @@ if($logged){
 			
 			$row_count = $db->super_query("SELECT COUNT(*) AS cnt FROM `".PREFIX."_videos` WHERE title LIKE '%{$query}%' AND public_id = '0'");
 			
-			$sql_ = $db->super_query("SELECT id, owner_user_id, title, descr, photo, comm_num, add_date FROM `".PREFIX."_videos` WHERE title LIKE '%{$query}%' AND public_id = '0' ORDER by `add_date` DESC LIMIT {$page_cnt}, {$sql_limit}", 1);
+			$sql_ = $db->super_query("SELECT id, owner_user_id, title, descr, photo, comm_num, add_date FROM `".PREFIX."_videos` WHERE title LIKE '%{$query}%' AND public_id = '0' ORDER by `add_date` DESC LIMIT {$page_cnt}, {$sql_limit}", true);
 			
 			$infoGroup = $db->super_query("SELECT admin FROM `".PREFIX."_communities` WHERE id = '{$pid}'");
 			
@@ -265,7 +265,7 @@ if($logged){
 				
 			if($infoGroup['videos_num']){
 			
-				$sql_ = $db->super_query("SELECT id, photo, title, descr, comm_num, add_date, owner_user_id FROM `".PREFIX."_videos` WHERE public_id = '{$pid}' ORDER by `add_date` DESC LIMIT {$page_cnt}, {$sql_limit}", 1);
+				$sql_ = $db->super_query("SELECT id, photo, title, descr, comm_num, add_date, owner_user_id FROM `".PREFIX."_videos` WHERE public_id = '{$pid}' ORDER by `add_date` DESC LIMIT {$page_cnt}, {$sql_limit}", true);
 				
 				if($sql_){
 

@@ -138,7 +138,7 @@ if($logged){
 			$limit_page = ($page-1)*$gcount;
 			
 			//Делаем SQL запрос на вывод
-			$sql_ = $db->super_query("SELECT aid, url, artist, name FROM `".PREFIX."_audio` WHERE auser_id = '".$user_id."' ORDER by `adate` DESC LIMIT {$limit_page}, {$gcount}", 1);
+			$sql_ = $db->super_query("SELECT aid, url, artist, name FROM `".PREFIX."_audio` WHERE auser_id = '".$user_id."' ORDER by `adate` DESC LIMIT {$limit_page}, {$gcount}", true);
 			
 			//Выводим кол-во музыки
 			$count = $db->super_query("SELECT user_audio FROM `".PREFIX."_users` WHERE user_id = '".$user_id."'");

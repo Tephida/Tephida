@@ -80,7 +80,7 @@ if ($logged) {
     }
 
     if ($sql_query)
-        $sql_ = $db->super_query($sql_query, 1);
+        $sql_ = $db->super_query($sql_query, true);
 
     //Считаем кол-во ответов из БД
     if ($sql_count and $sql_)

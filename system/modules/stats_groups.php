@@ -54,7 +54,7 @@ if ($logged) {
                 $t_date = langdate('F', $stat_date);
 
                 //Составляем массив для вывода за этот месяц
-                $sql_ = $db->super_query("SELECT cnt, date, hits, new_users, exit_users FROM `" . PREFIX . "_communities_stats` WHERE gid = '{$gid}' AND date_x = '{$stat_date}' ORDER by `date` ASC", 1);
+                $sql_ = $db->super_query("SELECT cnt, date, hits, new_users, exit_users FROM `" . PREFIX . "_communities_stats` WHERE gid = '{$gid}' AND date_x = '{$stat_date}' ORDER by `date` ASC", true);
 
                 if ($sql_) {
 

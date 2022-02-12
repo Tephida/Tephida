@@ -24,7 +24,7 @@ if($_GET['page'] > 0) $page = intval($_GET['page']); else $page = 1;
 $gcount = 20;
 $limit_page = ($page-1)*$gcount;
 
-$sql_ = $db->super_query("SELECT tb1.user_id, from_u, abonent_cost, date, tb2.user_search_pref, balance_rub FROM `".PREFIX."_sms_log` tb1, `".PREFIX."_users` tb2 WHERE tb1.user_id = tb2.user_id {$sql_where} ORDER by `date` LIMIT {$limit_page}, {$gcount}", 1);
+$sql_ = $db->super_query("SELECT tb1.user_id, from_u, abonent_cost, date, tb2.user_search_pref, balance_rub FROM `".PREFIX."_sms_log` tb1, `".PREFIX."_users` tb2 WHERE tb1.user_id = tb2.user_id {$sql_where} ORDER by `date` LIMIT {$limit_page}, {$gcount}", true);
 	
 $numRows = $db->super_query("SELECT COUNT(*) AS cnt FROM `".PREFIX."_sms_log` {$sql_where_a}");
 

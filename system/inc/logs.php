@@ -34,7 +34,9 @@ if($_GET['page'] > 0) $page = intval($_GET['page']); else $page = 1;
 $gcount = 20;
 $limit_page = ($page-1)*$gcount;
 
-$sql_ = $db->super_query("SELECT tb1.*, tb2.user_search_pref, user_last_visit FROM `".PREFIX."_log` tb1, `".PREFIX."_users` tb2 WHERE tb1.uid = tb2.user_id {$where_sql} ORDER by `uid` DESC LIMIT {$limit_page}, {$gcount}", 1);
+$where_sql = $where_sql ?? null;
+
+$sql_ = $db->super_query("SELECT tb1.*, tb2.user_search_pref, user_last_visit FROM `".PREFIX."_log` tb1, `".PREFIX."_users` tb2 WHERE tb1.uid = tb2.user_id {$where_sql} ORDER by `uid` DESC LIMIT {$limit_page}, {$gcount}", true);
 
 $where_sql = str_replace('tb1.', '', $where_sql);
 $numRows = $db->super_query("SELECT COUNT(*) AS cnt FROM `".PREFIX."_log` WHERE ip != '' {$where_sql}");

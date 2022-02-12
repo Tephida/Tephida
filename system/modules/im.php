@@ -25,7 +25,7 @@ if ($logged) {
                         $row2 = $db->super_query("SELECT id FROM " . PREFIX . "_room_users WHERE room_id = '{$room_id}' and oid2 = '{$id}' and type = 0");
                         if ($row2) {
                             $attach_files = '';
-                            $sql = $db->super_query("SELECT oid2 FROM " . PREFIX . "_room_users WHERE room_id = '{$room_id}' and type = 0", 1);
+                            $sql = $db->super_query("SELECT oid2 FROM " . PREFIX . "_room_users WHERE room_id = '{$room_id}' and type = 0", true);
                             if ($sql) {
                                 $msg = json_encode(array('type' => 5, 'oid' => $user_id, 'oid2' => $id));
                                 $id2 = md5(rand(0, 1000000) . $server_time);
@@ -85,7 +85,7 @@ if ($logged) {
                                 $url = $config['home_url'] . 'uploads/room/' . $room_id . '/' . $image_rename . $res_type;
                                 $db->query("UPDATE `" . PREFIX . "_room` SET photo = '{$url}' WHERE id = '" . $room_id . "'");
                                 $attach_files = '';
-                                $sql = $db->super_query("SELECT oid2 FROM " . PREFIX . "_room_users WHERE room_id = '{$room_id}' and type = 0", 1);
+                                $sql = $db->super_query("SELECT oid2 FROM " . PREFIX . "_room_users WHERE room_id = '{$room_id}' and type = 0", true);
                                 if ($sql) {
                                     $msg = json_encode(array('type' => 4, 'oid' => $user_id));
                                     $id2 = md5(rand(0, 1000000) . $server_time);
@@ -125,7 +125,7 @@ if ($logged) {
             $row = $db->super_query("SELECT id, title, owner, photo FROM " . PREFIX . "_room WHERE id = '{$room_id}'");
             if ($row) {
                 $tpl->result['users'] = '';
-                $sql = $db->super_query("SELECT tb1.id, tb2.user_id, tb2.user_search_pref, tb2.user_photo FROM " . PREFIX . "_room_users tb1, " . PREFIX . "_users tb2 WHERE tb1.room_id = '{$room_id}' and tb1.type = 0 and tb1.oid2 = tb2.user_id", 1);
+                $sql = $db->super_query("SELECT tb1.id, tb2.user_id, tb2.user_search_pref, tb2.user_photo FROM " . PREFIX . "_room_users tb1, " . PREFIX . "_users tb2 WHERE tb1.room_id = '{$room_id}' and tb1.type = 0 and tb1.oid2 = tb2.user_id", true);
                 if ($sql) {
                     $tpl->load_template('im/viewRoomItem.tpl');
                     foreach ($sql as $row2) {
@@ -164,7 +164,7 @@ if ($logged) {
                     if ($room_id) {
                         $db->query("UPDATE `" . PREFIX . "_room` SET title = '{$title}' WHERE id = '" . $room_id . "'");
                         $attach_files = '';
-                        $sql = $db->super_query("SELECT oid2 FROM " . PREFIX . "_room_users WHERE room_id = '{$room_id}' and type = 0", 1);
+                        $sql = $db->super_query("SELECT oid2 FROM " . PREFIX . "_room_users WHERE room_id = '{$room_id}' and type = 0", true);
                         if ($sql) {
                             $msg = json_encode(array('type' => 3, 'oid' => $user_id));
                             $id2 = md5(rand(0, 1000000) . $server_time);
@@ -203,7 +203,7 @@ if ($logged) {
             break;
         case 'createRoomBox':
             $tpl->result['friends'] = '';
-            $sql = $db->super_query("SELECT tb1.friend_id, tb2.user_photo, tb2.user_search_pref FROM " . PREFIX . "_friends tb1, " . PREFIX . "_users tb2 WHERE tb1.user_id = '{$user_id}' AND tb1.friend_id = tb2.user_id AND tb1.subscriptions = 0 ORDER by friends_date DESC", 1);
+            $sql = $db->super_query("SELECT tb1.friend_id, tb2.user_photo, tb2.user_search_pref FROM " . PREFIX . "_friends tb1, " . PREFIX . "_users tb2 WHERE tb1.user_id = '{$user_id}' AND tb1.friend_id = tb2.user_id AND tb1.subscriptions = 0 ORDER by friends_date DESC", true);
             if ($sql) {
                 $tpl->load_template('im/createRoomItem.tpl');
                 foreach ($sql as $row) {
@@ -223,7 +223,7 @@ if ($logged) {
         case 'inviteToRoomBox':
             $room_id = intval($_POST['room_id']);
             $tpl->result['friends'] = '';
-            $sql = $db->super_query("SELECT tb1.friend_id, tb2.user_photo, tb2.user_search_pref FROM " . PREFIX . "_friends tb1, " . PREFIX . "_users tb2 WHERE tb1.user_id = '{$user_id}' AND tb1.friend_id = tb2.user_id AND tb1.subscriptions = 0 AND tb1.friend_id NOT IN (SELECT oid2 FROM " . PREFIX . "_room_users WHERE room_id = '{$room_id}' and type != 2) ORDER by friends_date DESC", 1);
+            $sql = $db->super_query("SELECT tb1.friend_id, tb2.user_photo, tb2.user_search_pref FROM " . PREFIX . "_friends tb1, " . PREFIX . "_users tb2 WHERE tb1.user_id = '{$user_id}' AND tb1.friend_id = tb2.user_id AND tb1.subscriptions = 0 AND tb1.friend_id NOT IN (SELECT oid2 FROM " . PREFIX . "_room_users WHERE room_id = '{$room_id}' and type != 2) ORDER by friends_date DESC", true);
             if ($sql) {
                 $tpl->load_template('im/createRoomItem.tpl');
                 foreach ($sql as $row) {
@@ -324,7 +324,7 @@ if ($logged) {
                             foreach ($user_ids as $k2 => $v2) {
                                 $db->query("INSERT INTO " . PREFIX . "_room_users SET room_id = '{$room_id}', oid = '{$user_id}', oid2 = '{$v2}', type = 0, date = '{$server_time}'");
                                 $attach_files = '';
-                                $sql = $db->super_query("SELECT oid2 FROM " . PREFIX . "_room_users WHERE room_id = '{$room_id}' and type = 0", 1);
+                                $sql = $db->super_query("SELECT oid2 FROM " . PREFIX . "_room_users WHERE room_id = '{$room_id}' and type = 0", true);
                                 if ($sql) {
                                     $msg = json_encode(array('type' => 1, 'oid' => $user_id, 'oid2' => $v2));
                                     $id2 = md5(rand(0, 1000000) . $server_time);
@@ -367,7 +367,7 @@ if ($logged) {
                     $row2 = $db->super_query("SELECT id FROM " . PREFIX . "_room_users WHERE oid2 = '{$user_id}' and room_id = '{$room_id}' and type = 0");
                     if ($row2) {
                         $attach_files = '';
-                        $sql = $db->super_query("SELECT oid2 FROM " . PREFIX . "_room_users WHERE room_id = '{$room_id}' and type = 0", 1);
+                        $sql = $db->super_query("SELECT oid2 FROM " . PREFIX . "_room_users WHERE room_id = '{$room_id}' and type = 0", true);
                         if ($sql) {
                             $msg = json_encode(array('type' => 2, 'oid' => $user_id));
                             $id2 = md5(rand(0, 1000000) . $server_time);
@@ -435,7 +435,7 @@ if ($logged) {
                             $user_ids[] = $for_user_id;
                             $user_ids[] = $user_id;
                         } else {
-                            $sqlUsers = $db->super_query("SELECT oid2 FROM `" . PREFIX . "_room_users` WHERE room_id = '" . $room_id . "' and type = 0", 1);
+                            $sqlUsers = $db->super_query("SELECT oid2 FROM `" . PREFIX . "_room_users` WHERE room_id = '" . $room_id . "' and type = 0", true);
                             foreach ($sqlUsers as $rowUser) $user_ids[] = $rowUser['oid2'];
                         }
                         $db->query("INSERT INTO `" . PREFIX . "_messages` SET user_ids = '" . implode(',', $user_ids) . "', theme = '...', text = '" . $msg . "', room_id = '{$room_id}', date = '" . $server_time . "', history_user_id = '" . $user_id . "', attach = '" . $attach_files . "'");
@@ -568,7 +568,7 @@ if ($logged) {
             else
                 $limit = 0;
 
-            $sql_ = $db->super_query("SELECT tb1.id, text, information, date, read_ids, history_user_id, attach, tell_uid, tell_date, public, tell_comm, if(history_user_id > 0, tb2.user_name, '') as user_name, if(history_user_id > 0, tb2.user_photo, '') as user_photo FROM `" . PREFIX . "_messages` tb1 LEFT JOIN `" . PREFIX . "_users` tb2 ON history_user_id > 0 AND tb1.history_user_id = tb2.user_id WHERE " . ($room_id ? "tb1.room_id = '{$room_id}'" : "tb1.room_id = 0 and find_in_set('{$for_user_id}', tb1.user_ids)") . " and find_in_set('{$user_id}', tb1.user_ids) AND not find_in_set('{$user_id}', tb1.del_ids) ORDER by `date` ASC LIMIT " . $limit . ", 20", 1);
+            $sql_ = $db->super_query("SELECT tb1.id, text, information, date, read_ids, history_user_id, attach, tell_uid, tell_date, public, tell_comm, if(history_user_id > 0, tb2.user_name, '') as user_name, if(history_user_id > 0, tb2.user_photo, '') as user_photo FROM `" . PREFIX . "_messages` tb1 LEFT JOIN `" . PREFIX . "_users` tb2 ON history_user_id > 0 AND tb1.history_user_id = tb2.user_id WHERE " . ($room_id ? "tb1.room_id = '{$room_id}'" : "tb1.room_id = 0 and find_in_set('{$for_user_id}', tb1.user_ids)") . " and find_in_set('{$user_id}', tb1.user_ids) AND not find_in_set('{$user_id}', tb1.del_ids) ORDER by `date` ASC LIMIT " . $limit . ", 20", true);
             mozg_create_cache('user_' . $user_id . '/im', $last_id);
             if ($sql_) {
                 $tpl->load_template('im/msg.tpl');
@@ -669,7 +669,7 @@ if ($logged) {
                                     if (!$row['text']) $row['text'] = $row_vote['title'];
                                     $arr_answe_list = explode('|', stripslashes($row_vote['answers']));
                                     $max = $row_vote['answer_num'];
-                                    $sql_answer = $db->super_query("SELECT answer, COUNT(*) AS cnt FROM `" . PREFIX . "_votes_result` WHERE vote_id = '{$vote_id}' GROUP BY answer", 1);
+                                    $sql_answer = $db->super_query("SELECT answer, COUNT(*) AS cnt FROM `" . PREFIX . "_votes_result` WHERE vote_id = '{$vote_id}' GROUP BY answer", true);
                                     $answer = array();
                                     foreach ($sql_answer as $row_answer) {
                                         $answer[$row_answer['answer']]['cnt'] = $row_answer['cnt'];
@@ -752,7 +752,7 @@ HTML;
             if ($for_user_id) mozg_create_cache("user_{$for_user_id}/typograf{$user_id}", "");
             $limit_msg = 20;
             if ($need_read) {
-                $sql = $db->super_query("SELECT id, history_user_id, read_ids, user_ids, room_id FROM `" . PREFIX . "_messages` WHERE " . ($room_id ? "room_id = '{$room_id}'" : "room_id = 0 and find_in_set('{$for_user_id}', user_ids)") . " and find_in_set('{$user_id}', user_ids) AND not find_in_set('{$user_id}', del_ids) AND not find_in_set('{$user_id}', read_ids) and history_user_id != '{$user_id}'", 1);
+                $sql = $db->super_query("SELECT id, history_user_id, read_ids, user_ids, room_id FROM `" . PREFIX . "_messages` WHERE " . ($room_id ? "room_id = '{$room_id}'" : "room_id = 0 and find_in_set('{$for_user_id}', user_ids)") . " and find_in_set('{$user_id}', user_ids) AND not find_in_set('{$user_id}', del_ids) AND not find_in_set('{$user_id}', read_ids) and history_user_id != '{$user_id}'", true);
                 if ($sql) {
                     foreach ($sql as $row) {
                         $read_ids = explode(',', $row['read_ids']);
@@ -771,17 +771,17 @@ HTML;
             if ($first_id > 0) {
                 $count = $db->super_query("SELECT COUNT(*) AS all_msg_num FROM `" . PREFIX . "_messages` WHERE " . ($room_id ? "room_id = '{$room_id}'" : "room_id = 0 and find_in_set('{$for_user_id}', user_ids)") . " and find_in_set('{$user_id}', user_ids) AND not find_in_set('{$user_id}', del_ids) AND id < " . $first_id);
                 $sql_sort = "AND id < " . $first_id;
-                if ($count['all_msg_num'] > $limit_msg) $limit = $count['all_msg_num'] - $limit_msg;
-                else $limit = 0;
             } else {
                 $count = $db->super_query("SELECT all_msg_num FROM `" . PREFIX . "_im` WHERE iuser_id = '" . $user_id . "' AND im_user_id = '" . $for_user_id . "' AND room_id = '" . $room_id . "'");
-                if ($count['all_msg_num'] > $limit_msg) $limit = $count['all_msg_num'] - $limit_msg;
-                else $limit = 0;
             }
+            if ($count['all_msg_num'] > $limit_msg)
+                $limit = $count['all_msg_num'] - $limit_msg;
+            else
+                $limit = 0;
 
             $sql_sort = $sql_sort ?? null;
 
-            $sql_ = $db->super_query("SELECT tb1.id, text, information, date, read_ids, history_user_id, attach, tell_uid, tell_date, public, tell_comm, if(history_user_id > 0, tb2.user_name, '') as user_name, if(history_user_id > 0, tb2.user_photo, '') as user_photo FROM `" . PREFIX . "_messages` tb1 LEFT JOIN `" . PREFIX . "_users` tb2 ON history_user_id > 0 AND tb1.history_user_id = tb2.user_id WHERE " . ($room_id ? "tb1.room_id = '{$room_id}'" : "tb1.room_id = 0 and find_in_set('{$for_user_id}', tb1.user_ids)") . " and find_in_set('{$user_id}', tb1.user_ids) AND not find_in_set('{$user_id}', tb1.del_ids) {$sql_sort} ORDER by `date` ASC LIMIT " . $limit . ", " . $limit_msg, 1);
+            $sql_ = $db->super_query("SELECT tb1.id, text, information, date, read_ids, history_user_id, attach, tell_uid, tell_date, public, tell_comm, if(history_user_id > 0, tb2.user_name, '') as user_name, if(history_user_id > 0, tb2.user_photo, '') as user_photo FROM `" . PREFIX . "_messages` tb1 LEFT JOIN `" . PREFIX . "_users` tb2 ON history_user_id > 0 AND tb1.history_user_id = tb2.user_id WHERE " . ($room_id ? "tb1.room_id = '{$room_id}'" : "tb1.room_id = 0 and find_in_set('{$for_user_id}', tb1.user_ids)") . " and find_in_set('{$user_id}', tb1.user_ids) AND not find_in_set('{$user_id}', tb1.del_ids) {$sql_sort} ORDER by `date` ASC LIMIT " . $limit . ", " . $limit_msg, true);
             $tpl->load_template('im/msg.tpl');
             if (!$first_id) {
                 $tpl->result['content'] .= '<div class="im_scroll">';
@@ -887,7 +887,7 @@ HTML;
                                     if (!$row['text']) $row['text'] = $row_vote['title'];
                                     $arr_answe_list = explode('|', stripslashes($row_vote['answers']));
                                     $max = $row_vote['answer_num'];
-                                    $sql_answer = $db->super_query("SELECT answer, COUNT(*) AS cnt FROM `" . PREFIX . "_votes_result` WHERE vote_id = '{$vote_id}' GROUP BY answer", 1);
+                                    $sql_answer = $db->super_query("SELECT answer, COUNT(*) AS cnt FROM `" . PREFIX . "_votes_result` WHERE vote_id = '{$vote_id}' GROUP BY answer", true);
                                     $answer = array();
                                     foreach ($sql_answer as $row_answer) {
                                         $answer[$row_answer['answer']]['cnt'] = $row_answer['cnt'];
@@ -991,7 +991,7 @@ HTML;
             NoAjaxQuery();
             $update = mozg_cache('user_' . $user_id . '/im_update');
             if ($update) {
-                $sql_ = $db->super_query("SELECT tb1.msg_num, im_user_id, room_id FROM `" . PREFIX . "_im` tb1 LEFT JOIN `" . PREFIX . "_users` tb2 ON tb1.im_user_id > 0 and tb2.user_id = tb1.im_user_id LEFT JOIN `" . PREFIX . "_room` tb3 ON tb1.room_id > 0 and tb3.id = tb1.room_id WHERE tb1.iuser_id = '" . $user_id . "' AND msg_num > 0 ORDER by `idate` DESC LIMIT 0, 50", 1);
+                $sql_ = $db->super_query("SELECT tb1.msg_num, im_user_id, room_id FROM `" . PREFIX . "_im` tb1 LEFT JOIN `" . PREFIX . "_users` tb2 ON tb1.im_user_id > 0 and tb2.user_id = tb1.im_user_id LEFT JOIN `" . PREFIX . "_room` tb3 ON tb1.room_id > 0 and tb3.id = tb1.room_id WHERE tb1.iuser_id = '" . $user_id . "' AND msg_num > 0 ORDER by `idate` DESC LIMIT 0, 50", true);
                 foreach ($sql_ as $row) {
                     $res .= '$("#upNewMsg' . ($row['room_id'] ? 'c' . $row['room_id'] : $row['im_user_id']) . '").html(\'<div class="im_new fl_l" id="msg_num' . ($row['room_id'] ? 'c' . $row['room_id'] : $row['im_user_id']) . '">' . $row['msg_num'] . '</div>\').show();';
                 }
@@ -1069,7 +1069,7 @@ HTML;
         default:
             $metatags['title'] = 'Диалоги';
             $mobile_speedbar = '<a href="/messages">Диалоги</a>';
-            $sql_ = $db->super_query("SELECT tb1.msg_num, im_user_id, room_id, if(tb1.im_user_id > 0, tb2.user_search_pref, tb3.title) as user_search_pref, if(tb1.im_user_id > 0, tb2.user_photo, tb3.photo) as user_photo FROM `" . PREFIX . "_im` tb1 LEFT JOIN `" . PREFIX . "_users` tb2 ON tb1.im_user_id > 0 and tb2.user_id = tb1.im_user_id LEFT JOIN `" . PREFIX . "_room` tb3 ON tb1.room_id > 0 and tb3.id = tb1.room_id WHERE tb1.iuser_id = '" . $user_id . "' ORDER by `idate` DESC LIMIT 0, 50", 1);
+            $sql_ = $db->super_query("SELECT tb1.msg_num, im_user_id, room_id, if(tb1.im_user_id > 0, tb2.user_search_pref, tb3.title) as user_search_pref, if(tb1.im_user_id > 0, tb2.user_photo, tb3.photo) as user_photo FROM `" . PREFIX . "_im` tb1 LEFT JOIN `" . PREFIX . "_users` tb2 ON tb1.im_user_id > 0 and tb2.user_id = tb1.im_user_id LEFT JOIN `" . PREFIX . "_room` tb3 ON tb1.room_id > 0 and tb3.id = tb1.room_id WHERE tb1.iuser_id = '" . $user_id . "' ORDER by `idate` DESC LIMIT 0, 50", true);
             $tpl->load_template('im/dialog.tpl');
             foreach ($sql_ as $row) {
                 $tpl->set('{name}', $row['user_search_pref']);

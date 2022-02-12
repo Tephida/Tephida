@@ -23,7 +23,8 @@ if($se_uid OR $sort OR $se_name OR $se_user_id){
 	if($se_uid) $where_sql .= "AND aid = '".$se_uid."' ";
 	if($se_user_id) $where_sql_2 .= "AND tb1.user_id = '".$se_user_id."' ";
 	$query = strtr($se_name, array(' ' => '%')); //Замеянем пробелы на проценты чтоб тоиск был точнее
-	if($se_name) $where_sql .= "AND name LIKE '%".$query."%' ";
+	if($se_name)
+        $where_sql .= "AND name LIKE '%".$query."%' ";
 }
 
 //Выводим список людей
@@ -31,7 +32,10 @@ if($_GET['page'] > 0) $page = intval($_GET['page']); else $page = 1;
 $gcount = 20;
 $limit_page = ($page-1)*$gcount;
 
-$sql_ = $db->super_query("SELECT tb1.user_id, name, adate, aid, photo_num, comm_num, tb2.user_name FROM `".PREFIX."_albums` tb1, `".PREFIX."_users` tb2 WHERE tb1.user_id = tb2.user_id {$where_sql} {$where_sql_2} ORDER by `adate` DESC LIMIT {$limit_page}, {$gcount}", 1);
+$where_sql = $where_sql ?? null;
+$where_sql_2 = $where_sql_2 ?? null;
+
+$sql_ = $db->super_query("SELECT tb1.user_id, name, adate, aid, photo_num, comm_num, tb2.user_name FROM `".PREFIX."_albums` tb1, `".PREFIX."_users` tb2 WHERE tb1.user_id = tb2.user_id {$where_sql} {$where_sql_2} ORDER by `adate` DESC LIMIT {$limit_page}, {$gcount}", true);
 
 //Кол-во людей считаем
 $where_sql_2 = str_replace('tb1.', '', $where_sql_2);

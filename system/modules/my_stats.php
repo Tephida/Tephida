@@ -49,7 +49,7 @@ if($logged){
 	}
 		
 	//Составляем массив для вывода за этот месяц
-	$sql_ = $db->super_query("SELECT users, views, date FROM `".PREFIX."_users_stats` WHERE user_id = '{$user_info['user_id']}' AND date_x = '{$stat_date}' ORDER by `date` ASC", 1);
+	$sql_ = $db->super_query("SELECT users, views, date FROM `".PREFIX."_users_stats` WHERE user_id = '{$user_info['user_id']}' AND date_x = '{$stat_date}' ORDER by `date` ASC", true);
 
 	if($sql_){
 				

@@ -78,7 +78,7 @@ if($logged){
 				$tpl->compile('content');
 				
 				//Выводи из базы
-				$sql_ = $db->super_query("SELECT tb1.fave_id, tb2.user_search_pref, user_photo, user_last_visit, user_logged_mobile FROM `".PREFIX."_fave` tb1, `".PREFIX."_users` tb2 WHERE tb1.user_id = '{$user_id}' AND tb1.fave_id = tb2.user_id ORDER by `date` ASC LIMIT {$limit_page}, {$gcount}", 1);
+				$sql_ = $db->super_query("SELECT tb1.fave_id, tb2.user_search_pref, user_photo, user_last_visit, user_logged_mobile FROM `".PREFIX."_fave` tb1, `".PREFIX."_users` tb2 WHERE tb1.user_id = '{$user_id}' AND tb1.fave_id = tb2.user_id ORDER by `date` ASC LIMIT {$limit_page}, {$gcount}", true);
 				$tpl->load_template('fave.tpl');
 				$tpl->result['content'] .= '<table class="food_planner" id="fave_users">';
 				foreach($sql_ as $row){

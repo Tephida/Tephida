@@ -161,7 +161,7 @@ if ($logged) {
             $num = intval($_POST['num']);
             if ($num > 7) {
                 $limit = $num - 3;
-                $sql_comm = $db->super_query("SELECT tb1.user_id,text,date,id,hash,pid, tb2.user_search_pref, user_photo, user_last_visit, user_logged_mobile FROM `" . PREFIX . "_photos_comments` tb1, `" . PREFIX . "_users` tb2 WHERE tb1.user_id = tb2.user_id AND tb1.pid = '{$pid}' ORDER by `date` ASC LIMIT 0, {$limit}", 1);
+                $sql_comm = $db->super_query("SELECT tb1.user_id,text,date,id,hash,pid, tb2.user_search_pref, user_photo, user_last_visit, user_logged_mobile FROM `" . PREFIX . "_photos_comments` tb1, `" . PREFIX . "_users` tb2 WHERE tb1.user_id = tb2.user_id AND tb1.pid = '{$pid}' ORDER by `date` ASC LIMIT 0, {$limit}", true);
                 $tpl->load_template('photo_comment.tpl');
                 foreach ($sql_comm as $row_comm) {
                     $tpl->set('{comment}', stripslashes($row_comm['text']));
@@ -381,7 +381,7 @@ if ($logged) {
                             $tpl->load_template('photo_comment.tpl');
                             if ($row['comm_num'] > 7) $limit_comm = $row['comm_num'] - 3;
                             else $limit_comm = 0;
-                            $sql_comm = $db->super_query("SELECT tb1.user_id,text,date,id,hash, tb2.user_search_pref, user_photo, user_last_visit, user_logged_mobile FROM `" . PREFIX . "_photos_comments` tb1, `" . PREFIX . "_users` tb2 WHERE tb1.user_id = tb2.user_id AND tb1.pid = '{$photo_id}' ORDER by `date` ASC LIMIT {$limit_comm}, {$row['comm_num']}", 1);
+                            $sql_comm = $db->super_query("SELECT tb1.user_id,text,date,id,hash, tb2.user_search_pref, user_photo, user_last_visit, user_logged_mobile FROM `" . PREFIX . "_photos_comments` tb1, `" . PREFIX . "_users` tb2 WHERE tb1.user_id = tb2.user_id AND tb1.pid = '{$photo_id}' ORDER by `date` ASC LIMIT {$limit_comm}, {$row['comm_num']}", true);
                             foreach ($sql_comm as $row_comm) {
                                 $tpl->set('{comment}', stripslashes($row_comm['text']));
                                 $tpl->set('{uid}', $row_comm['user_id']);
@@ -496,7 +496,7 @@ if ($logged) {
                             $tpl->set('[/add-comm]', '');
                         } else $tpl->set_block("'\\[add-comm\\](.*?)\\[/add-comm\\]'si", "");
                         //Выводим отмеченых людей на фото если они есть
-                        $sql_mark = $db->super_query("SELECT muser_id, mphoto_name, msettings_pos, mmark_user_id, mapprove FROM `" . PREFIX . "_photos_mark` WHERE mphoto_id = '" . $photo_id . "' ORDER by `mdate` ASC", 1);
+                        $sql_mark = $db->super_query("SELECT muser_id, mphoto_name, msettings_pos, mmark_user_id, mapprove FROM `" . PREFIX . "_photos_mark` WHERE mphoto_id = '" . $photo_id . "' ORDER by `mdate` ASC", true);
                         if ($sql_mark) {
                             $cnt_mark = 0;
                             $mark_peoples.= '<div class="fl_l" id="peopleOnPhotoText' . $photo_id . '" style="margin-right:5px">На этой фотографии:</div>';

@@ -173,7 +173,7 @@ $user_speedbar = $lang['blog_descr'];
 			$tpl->set('{id}', $row['id']);
 			
 			//Вывод последних 20 новостей
-			$sql_ = $db->super_query("SELECT id, title FROM `".PREFIX."_blog` ORDER by `date` DESC LIMIT 0, 20", 1);
+			$sql_ = $db->super_query("SELECT id, title FROM `".PREFIX."_blog` ORDER by `date` DESC LIMIT 0, 20", true);
 			$cnt = 0;
 			foreach($sql_ as $rowLast){
 				$cnt++;

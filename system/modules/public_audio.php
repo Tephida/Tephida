@@ -122,7 +122,7 @@ if($logged){
 			
 			$row_count = $db->super_query("SELECT COUNT(*) AS cnt FROM `".PREFIX."_audio` WHERE MATCH (name, artist) AGAINST ('%{$query}%') OR artist LIKE '%{$query}%' OR name LIKE '%{$query}%'");
 			
-			$sql_ = $db->super_query("SELECT ".PREFIX."_audio.aid, url, artist, name, auser_id, ".PREFIX."_users.user_search_pref FROM ".PREFIX."_audio LEFT JOIN ".PREFIX."_users ON ".PREFIX."_audio.auser_id = ".PREFIX."_users.user_id WHERE MATCH (name, artist) AGAINST ('%{$query}%') OR artist LIKE '%{$query}%' OR name LIKE '%{$query}%' ORDER by `adate` DESC LIMIT {$page_cnt}, {$sql_limit}", 1);
+			$sql_ = $db->super_query("SELECT ".PREFIX."_audio.aid, url, artist, name, auser_id, ".PREFIX."_users.user_search_pref FROM ".PREFIX."_audio LEFT JOIN ".PREFIX."_users ON ".PREFIX."_audio.auser_id = ".PREFIX."_users.user_id WHERE MATCH (name, artist) AGAINST ('%{$query}%') OR artist LIKE '%{$query}%' OR name LIKE '%{$query}%' ORDER by `adate` DESC LIMIT {$page_cnt}, {$sql_limit}", true);
 			
 			$infoGroup = $db->super_query("SELECT admin FROM `".PREFIX."_communities` WHERE id = '{$pid}'");
 			
@@ -196,7 +196,7 @@ if($logged){
 			if($page_cnt)
 				NoAjaxQuery();
 			
-			$sql_ = $db->super_query("SELECT aid, url, artist, name FROM `".PREFIX."_communities_audio` WHERE public_id = '{$pid}' ORDER by `adate` DESC LIMIT {$page_cnt}, {$sql_limit}", 1);
+			$sql_ = $db->super_query("SELECT aid, url, artist, name FROM `".PREFIX."_communities_audio` WHERE public_id = '{$pid}' ORDER by `adate` DESC LIMIT {$page_cnt}, {$sql_limit}", true);
 
 			$infoGroup = $db->super_query("SELECT audio_num, adres, admin FROM `".PREFIX."_communities` WHERE id = '{$pid}'");
 			

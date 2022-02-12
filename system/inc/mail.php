@@ -20,7 +20,7 @@ switch($act){
 		$title = requestFilter('title', 25000, true);
 //		$_POST['text'] = $_POST['text'];
 		
-		$sql_ = $db->super_query("SELECT user_search_pref, user_email FROM `".PREFIX."_users` ORDER by `user_id` ASC LIMIT ".$lastid.", ".$limit, 1);
+		$sql_ = $db->super_query("SELECT user_search_pref, user_email FROM `".PREFIX."_users` ORDER by `user_id` ASC LIMIT ".$lastid.", ".$limit, true);
 		
 		if($sql_){
 			include_once ENGINE_DIR.'/classes/mail.php';

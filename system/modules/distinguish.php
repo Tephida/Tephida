@@ -93,7 +93,7 @@ if($logged){
 			if($_POST['page'] == 2) $limit = $all_limit.", ".($all_limit*2);
 			else $limit = "0, ".$all_limit;
 				
-			$sql_ = $db->super_query("SELECT tb1.friend_id, tb2.user_search_pref FROM `".PREFIX."_friends` tb1, `".PREFIX."_users` tb2 WHERE tb1.user_id = '".$user_id."' AND tb1.friend_id = tb2.user_id AND tb1.subscriptions = 0 ORDER by `user_search_pref` ASC LIMIT ".$limit, 1);
+			$sql_ = $db->super_query("SELECT tb1.friend_id, tb2.user_search_pref FROM `".PREFIX."_friends` tb1, `".PREFIX."_users` tb2 WHERE tb1.user_id = '".$user_id."' AND tb1.friend_id = tb2.user_id AND tb1.subscriptions = 0 ORDER by `user_search_pref` ASC LIMIT ".$limit, true);
 			
 			$myRow = $db->super_query("SELECT user_search_pref FROM `".PREFIX."_users` WHERE user_id = '".$user_id."'");
 			

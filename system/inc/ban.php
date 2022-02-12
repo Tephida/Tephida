@@ -65,7 +65,7 @@ HTML;
 
 	echohtmlstart('Список заблокированных IP адресов');
 	
-	$sql_ = $db->super_query("SELECT id, descr, date, ip FROM `".PREFIX."_banned` ORDER by `id` DESC", 1);
+	$sql_ = $db->super_query("SELECT id, descr, date, ip FROM `".PREFIX."_banned` ORDER by `id` DESC", true);
 	if($sql_){
 		foreach($sql_ as $row){
 			if($row['date'])

@@ -45,7 +45,7 @@ if ($logged) {
         $row = $db->super_query("SELECT admin FROM `" . PREFIX . "_communities` WHERE id = '{$pid}'");
         $row['id'] = $pid;
     } else
-        $row = $db->super_query("SELECT id, title, descr, traf, ulist, photo, date, admin, feedback, comments, real_admin, rec_num, del, ban, adres, audio_num, forum_num, discussion, status_text, web, videos_num, cover, cover_pos FROM `" . PREFIX . "_communities` WHERE " . $sql_where . "");
+        $row = $db->super_query("SELECT id, title, descr, traf, ulist, photo, date, admin, feedback, comments, real_admin, rec_num, del, ban, adres, audio_num, forum_num, discussion, status_text, web, videos_num, cover, cover_pos FROM `" . PREFIX . "_communities` WHERE " . $sql_where);
 
     if ($row['del'] == 1) {
         $user_speedbar = 'Страница удалена';
@@ -159,7 +159,7 @@ if ($logged) {
             $tpl->set('[/yes]', '');
             $tpl->set_block("'\\[no\\](.*?)\\[/no\\]'si", "");
             $tpl->set('{num-feedback}', '<span id="fnumu">' . $row['feedback'] . '</span> ' . gram_record($row['feedback'], 'feedback'));
-            $sql_feedbackusers = $db->super_query("SELECT tb1.fuser_id, office, tb2.user_search_pref, user_photo FROM `" . PREFIX . "_communities_feedback` tb1, `" . PREFIX . "_users` tb2 WHERE tb1.cid = '{$row['id']}' AND tb1.fuser_id = tb2.user_id ORDER by `fdate` ASC LIMIT 0, 5", 1);
+            $sql_feedbackusers = $db->super_query("SELECT tb1.fuser_id, office, tb2.user_search_pref, user_photo FROM `" . PREFIX . "_communities_feedback` tb1, `" . PREFIX . "_users` tb2 WHERE tb1.cid = '{$row['id']}' AND tb1.fuser_id = tb2.user_id ORDER by `fdate` ASC LIMIT 0, 5", true);
             foreach ($sql_feedbackusers as $row_feedbackusers) {
                 if ($row_feedbackusers['user_photo']) $ava = "/uploads/users/{$row_feedbackusers['fuser_id']}/50_{$row_feedbackusers['user_photo']}";
                 else $ava = "{theme}/images/no_ava_50.png";
@@ -182,7 +182,7 @@ if ($logged) {
         }
 
         //Выводим подписчиков
-        $sql_users = $db->super_query("SELECT tb1.user_id, tb2.user_name, user_lastname, user_photo FROM `" . PREFIX . "_friends` tb1, `" . PREFIX . "_users` tb2 WHERE tb1.friend_id = '{$row['id']}' AND tb1.user_id = tb2.user_id AND tb1.subscriptions = 2 ORDER by rand() LIMIT 0, 6", 1);
+        $sql_users = $db->super_query("SELECT tb1.user_id, tb2.user_name, user_lastname, user_photo FROM `" . PREFIX . "_friends` tb1, `" . PREFIX . "_users` tb2 WHERE tb1.friend_id = '{$row['id']}' AND tb1.user_id = tb2.user_id AND tb1.subscriptions = 2 ORDER by rand() LIMIT 0, 6", true);
         $users = '';
         foreach ($sql_users as $row_users) {
             if ($row_users['user_photo']) $ava = "/uploads/users/{$row_users['user_id']}/50_{$row_users['user_photo']}";
@@ -247,7 +247,7 @@ if ($logged) {
 
         //Аудиозаписи
         if ($row['audio_num']) {
-            $sql_audios = $db->super_query("SELECT url, artist, name FROM `" . PREFIX . "_communities_audio` WHERE public_id = '{$row['id']}' ORDER by `adate` DESC LIMIT 0, 3", 1);
+            $sql_audios = $db->super_query("SELECT url, artist, name FROM `" . PREFIX . "_communities_audio` WHERE public_id = '{$row['id']}' ORDER by `adate` DESC LIMIT 0, 3", true);
             $jid = 0;
             foreach ($sql_audios as $row_audios) {
                 $jid++;
@@ -301,7 +301,7 @@ if ($logged) {
 
         if ($row['forum_num'] and $row['discussion']) {
 
-            $sql_forum = $db->super_query("SELECT fid, title, lastuser_id, lastdate, msg_num FROM `" . PREFIX . "_communities_forum` WHERE public_id = '{$row['id']}' ORDER by `fixed` DESC, `lastdate` DESC, `fdate` DESC LIMIT 0, 5", 1);
+            $sql_forum = $db->super_query("SELECT fid, title, lastuser_id, lastdate, msg_num FROM `" . PREFIX . "_communities_forum` WHERE public_id = '{$row['id']}' ORDER by `fixed` DESC, `lastdate` DESC, `fdate` DESC LIMIT 0, 5", true);
 
             foreach ($sql_forum as $row_forum) {
 
@@ -355,7 +355,7 @@ if ($logged) {
         //Видеозаписи
         if ($row['videos_num']) {
 
-            $sql_videos = $db->super_query("SELECT id, title, photo, add_date, comm_num, owner_user_id FROM `" . PREFIX . "_videos` WHERE public_id = '{$row['id']}' ORDER by `add_date` DESC LIMIT 0, 2", 1);
+            $sql_videos = $db->super_query("SELECT id, title, photo, add_date, comm_num, owner_user_id FROM `" . PREFIX . "_videos` WHERE public_id = '{$row['id']}' ORDER by `add_date` DESC LIMIT 0, 2", true);
 
             foreach ($sql_videos as $row_video) {
 

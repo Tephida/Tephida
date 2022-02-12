@@ -282,10 +282,10 @@ if($logged){
 		default:
 			
 			//Выводим сообщества
-			$sql_ = $db->super_query("SELECT id, title FROM `".PREFIX."_communities` WHERE admin regexp '[[:<:]](u{$user_id})[[:>:]]' ORDER by `traf` DESC LIMIT 0, 50", 1);
+			$sql_ = $db->super_query("SELECT id, title FROM `".PREFIX."_communities` WHERE admin regexp '[[:<:]](u{$user_id})[[:>:]]' ORDER by `traf` DESC LIMIT 0, 50", true);
 			
 			//Выводим список друзей
-			$sql_fr = $db->super_query("SELECT tb1.friend_id, tb2.user_search_pref FROM `".PREFIX."_friends` tb1, `".PREFIX."_users` tb2 WHERE tb1.user_id = '{$user_id}' AND tb1.friend_id = tb2.user_id AND tb1.subscriptions = 0 ORDER by `views` DESC LIMIT 0, 50", 1);
+			$sql_fr = $db->super_query("SELECT tb1.friend_id, tb2.user_search_pref FROM `".PREFIX."_friends` tb1, `".PREFIX."_users` tb2 WHERE tb1.user_id = '{$user_id}' AND tb1.friend_id = tb2.user_id AND tb1.subscriptions = 0 ORDER by `views` DESC LIMIT 0, 50", true);
 			
 			$tpl->load_template('repost/send.tpl');
 			

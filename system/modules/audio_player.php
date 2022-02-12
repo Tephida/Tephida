@@ -49,7 +49,7 @@ if($logged){
 			else
                 $page_cnt = 0;
 			
-			$sql_ = $db->super_query("SELECT aid, url, artist, name FROM `".PREFIX."_audio` {$sql_query} ORDER by `adate` DESC LIMIT {$page_cnt}, {$limit_select}", 1);
+			$sql_ = $db->super_query("SELECT aid, url, artist, name FROM `".PREFIX."_audio` {$sql_query} ORDER by `adate` DESC LIMIT {$page_cnt}, {$limit_select}", true);
 			
 			//Если есть отвеот из БД
 			if($sql_){

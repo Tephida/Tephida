@@ -186,7 +186,7 @@ if($_GET['page'] > 0) $page = intval($_GET['page']); else $page = 1;
 $gcount = 20;
 $limit_page = ($page-1)*$gcount;
 
-$sql_ = $db->super_query("SELECT tb1.id, ruser_id, act, type, text, mid, date, tb2.user_search_pref FROM `".PREFIX."_report` tb1, `".PREFIX."_users` tb2 WHERE tb1.ruser_id = tb2.user_id ".$where_sql." ORDER by `date` DESC LIMIT ".$limit_page.", ".$gcount, 1);
+$sql_ = $db->super_query("SELECT tb1.id, ruser_id, act, type, text, mid, date, tb2.user_search_pref FROM `".PREFIX."_report` tb1, `".PREFIX."_users` tb2 WHERE tb1.ruser_id = tb2.user_id ".$where_sql." ORDER by `date` DESC LIMIT ".$limit_page.", ".$gcount, true);
 
 //Кол-во считаем
 $numRows = $db->super_query("SELECT COUNT(*) AS cnt FROM `".PREFIX."_report` WHERE id != '' ".$where_sql);

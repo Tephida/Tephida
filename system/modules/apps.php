@@ -32,7 +32,7 @@ if ($logged) {
                     $tpl->set('{traf}', 'Пока никто не установил эту игру');
                 $tpl->set('{app-id}', $row['id']);
                 //Выводим скрины
-                $sql_imgs = $db->super_query("SELECT file FROM `" . PREFIX . "_games_files` WHERE game_id = '{$row['id']}' AND type = 'scrin'", 1);
+                $sql_imgs = $db->super_query("SELECT file FROM `" . PREFIX . "_games_files` WHERE game_id = '{$row['id']}' AND type = 'scrin'", true);
                 if ($sql_imgs) {
                     $ci = 0;
                     $tpl->set('{m-poster-1}', '');
@@ -126,7 +126,7 @@ if ($logged) {
             if (isset($query_games) AND !empty($query_games)) {
                 $lastid = intval($_POST['lastid']);
                 if ($lastid) $sql_where = "AND id > '{$lastid}'";
-                $sql_ = $db->super_query("SELECT id, title, poster, traf FROM `" . PREFIX . "_games` WHERE title LIKE '%{$query_games}%' {$sql_where} ORDER by `date` ASC LIMIT 0, 20", 1);
+                $sql_ = $db->super_query("SELECT id, title, poster, traf FROM `" . PREFIX . "_games` WHERE title LIKE '%{$query_games}%' {$sql_where} ORDER by `date` ASC LIMIT 0, 20", true);
                 if ($sql_) {
                     $tpl->load_template('apps/search.tpl');
                     foreach ($sql_ as $row) {
@@ -166,7 +166,7 @@ if ($logged) {
             else $page_cnt_old = 0;
             //Выводим популярные
             if ($_POST['doload'] != 2) {
-                $sql_popular = $db->super_query("SELECT id, title, poster, traf FROM `" . PREFIX . "_games` ORDER by `traf` DESC LIMIT {$page_cnt}, {$limit_news}", 1);
+                $sql_popular = $db->super_query("SELECT id, title, poster, traf FROM `" . PREFIX . "_games` ORDER by `traf` DESC LIMIT {$page_cnt}, {$limit_news}", true);
                 if ($sql_popular) {
                     $tpl->load_template('apps/game.tpl');
                     foreach ($sql_popular as $row_popular) {
@@ -183,7 +183,7 @@ if ($logged) {
             }
             //Выводим новые
             if ($_POST['doload'] != 2) {
-                $sql_new = $db->super_query("SELECT id, title, poster, traf FROM `" . PREFIX . "_games` ORDER by `date` DESC LIMIT {$page_cnt}, {$limit_news}", 1);
+                $sql_new = $db->super_query("SELECT id, title, poster, traf FROM `" . PREFIX . "_games` ORDER by `date` DESC LIMIT {$page_cnt}, {$limit_news}", true);
                 if ($sql_new) {
                     $tpl->load_template('apps/game.tpl');
                     foreach ($sql_new as $row_new) {
@@ -200,7 +200,7 @@ if ($logged) {
             }
             //Выводим "Мои игры"
             if (!$_POST['doload'] OR $_POST['doload'] == 2) {
-                $sql_my = $db->super_query("SELECT tb1.game_id, tb2.title, traf, poster FROM `" . PREFIX . "_games_users` tb1, `" . PREFIX . "_games` tb2 WHERE tb1.game_id = tb2.id AND tb1.user_id = '{$user_id}' ORDER by `lastdate` DESC LIMIT {$page_cnt_old}, {$limit_news_old}", 1);
+                $sql_my = $db->super_query("SELECT tb1.game_id, tb2.title, traf, poster FROM `" . PREFIX . "_games_users` tb1, `" . PREFIX . "_games` tb2 WHERE tb1.game_id = tb2.id AND tb1.user_id = '{$user_id}' ORDER by `lastdate` DESC LIMIT {$page_cnt_old}, {$limit_news_old}", true);
                 if ($sql_my) {
                     $tpl->load_template('apps/my.tpl');
                     foreach ($sql_my as $row_my) {
@@ -242,7 +242,7 @@ if ($logged) {
 							ORDER
 								by `date` DESC
 							LIMIT {$page_cnt_old}, {$limit_news_old}
-						", 1);
+						", true);
                     if ($sql_acti) {
                         $tpl->load_template('apps/activity.tpl');
                         foreach ($sql_acti as $row_acti) {

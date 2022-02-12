@@ -170,7 +170,7 @@ if($logged){
 			$row = $db->super_query("SELECT tb1.id, title, question, sdate, sfor_user_id, suser_id, tb2.user_search_pref, user_photo FROM `".PREFIX."_support` tb1, `".PREFIX."_users` tb2 WHERE tb1.id = '{$qid}' AND tb1.suser_id = tb2.user_id {$sql_where}");
 			if($row){
 				//Выводим ответы
-				$sql_answer = $db->super_query("SELECT id, adate, answer, auser_id FROM `".PREFIX."_support_answers` WHERE qid = '{$qid}' ORDER by `adate` ASC LIMIT 0, 100", 1);
+				$sql_answer = $db->super_query("SELECT id, adate, answer, auser_id FROM `".PREFIX."_support_answers` WHERE qid = '{$qid}' ORDER by `adate` ASC LIMIT 0, 100", true);
 				
 				$tpl->load_template('support/answer.tpl');
 				foreach($sql_answer as $row_answer){
@@ -248,7 +248,7 @@ if($logged){
 					$sql_where_cnt = "WHERE suser_id = '{$user_id}'";
 				}
 				
-				$sql_ = $db->super_query("SELECT tb1.id, title, suser_id, sfor_user_id, sdate, tb2.user_photo, user_search_pref FROM `".PREFIX."_support` tb1, `".PREFIX."_users` tb2 WHERE tb1.suser_id = tb2.user_id {$sql_where} LIMIT {$limit_page}, {$gcount}", 1);
+				$sql_ = $db->super_query("SELECT tb1.id, title, suser_id, sfor_user_id, sdate, tb2.user_photo, user_search_pref FROM `".PREFIX."_support` tb1, `".PREFIX."_users` tb2 WHERE tb1.suser_id = tb2.user_id {$sql_where} LIMIT {$limit_page}, {$gcount}", true);
 				
 				if($sql_)
 					$count = $db->super_query("SELECT COUNT(*) AS cnt FROM `".PREFIX."_support` {$sql_where_cnt}");

@@ -37,7 +37,7 @@ if($logged){
 			$sql_query = false;
 			
 		if($sql_query){
-			$sql_ = $db->super_query($sql_query, 1);
+			$sql_ = $db->super_query($sql_query, true);
 			$i = 1;
 			if($sql_){
 				foreach($sql_ as $row){

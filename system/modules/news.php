@@ -114,7 +114,7 @@ if($logged){
 					{$dop_sort}
 				ORDER BY tb1.action_time DESC
 				LIMIT {$page_cnt}, {$limit_news}
-			", 1);
+			", true);
 
 			if($sql_){
 				$c = 0;
@@ -423,7 +423,7 @@ if($logged){
 											$arr_answe_list = explode('|', stripslashes($row_vote['answers']));
 											$max = $row_vote['answer_num'];
 											
-											$sql_answer = $db->super_query("SELECT answer, COUNT(*) AS cnt FROM `".PREFIX."_votes_result` WHERE vote_id = '{$vote_id}' GROUP BY answer", 1);
+											$sql_answer = $db->super_query("SELECT answer, COUNT(*) AS cnt FROM `".PREFIX."_votes_result` WHERE vote_id = '{$vote_id}' GROUP BY answer", true);
 											$answer = array();
 											foreach($sql_answer as $row_answer){
 											
@@ -728,7 +728,7 @@ HTML;
 											$arr_answe_list = explode('|', stripslashes($row_vote['answers']));
 											$max = $row_vote['answer_num'];
 											
-											$sql_answer = $db->super_query("SELECT answer, COUNT(*) AS cnt FROM `".PREFIX."_votes_result` WHERE vote_id = '{$vote_id}' GROUP BY answer", 1);
+											$sql_answer = $db->super_query("SELECT answer, COUNT(*) AS cnt FROM `".PREFIX."_votes_result` WHERE vote_id = '{$vote_id}' GROUP BY answer", true);
 											$answer = array();
 											foreach($sql_answer as $row_answer){
 											
@@ -1017,7 +1017,7 @@ HTML;
 										
 										$video_id = intval($attach_type[2]);
 										
-										$row_video = $db->super_query("SELECT video, title FROM `".PREFIX."_videos` WHERE id = '{$video_id}'", false, "wall/video{$video_id}");
+										$row_video = $db->super_query("SELECT video, title FROM `".PREFIX."_videos` WHERE id = '{$video_id}'", false);
 										$row_video['title'] = stripslashes($row_video['title']);
 										$row_video['video'] = stripslashes($row_video['video']);
 										$row_video['video'] = strtr($row_video['video'], array('width="770"' => 'width="390"', 'height="420"' => 'height="310"'));
@@ -1118,7 +1118,7 @@ HTML;
 											$arr_answe_list = explode('|', stripslashes($row_vote['answers']));
 											$max = $row_vote['answer_num'];
 											
-											$sql_answer = $db->super_query("SELECT answer, COUNT(*) AS cnt FROM `".PREFIX."_votes_result` WHERE vote_id = '{$vote_id}' GROUP BY answer", 1);
+											$sql_answer = $db->super_query("SELECT answer, COUNT(*) AS cnt FROM `".PREFIX."_votes_result` WHERE vote_id = '{$vote_id}' GROUP BY answer", true);
 											$answer = array();
 											foreach($sql_answer as $row_answer){
 											
@@ -1292,7 +1292,7 @@ HTML;
 								else
 									$comments_limit = 0;
 								
-								$sql_comments = $db->super_query("SELECT tb1.id, author_user_id, text, add_date, tb2.user_photo, user_search_pref FROM `".PREFIX."_wall` tb1, `".PREFIX."_users` tb2 WHERE tb1.author_user_id = tb2.user_id AND tb1.fast_comm_id = '{$row['obj_id']}' ORDER by `add_date` ASC LIMIT {$comments_limit}, 3", 1);
+								$sql_comments = $db->super_query("SELECT tb1.id, author_user_id, text, add_date, tb2.user_photo, user_search_pref FROM `".PREFIX."_wall` tb1, `".PREFIX."_users` tb2 WHERE tb1.author_user_id = tb2.user_id AND tb1.fast_comm_id = '{$row['obj_id']}' ORDER by `add_date` ASC LIMIT {$comments_limit}, 3", true);
 
 								//Загружаем кнопку "Показать N запсии"
 								$tpl->set('{gram-record-all-comm}', gram_record(($rec_info['fasts_num']-3), 'prev').' '.($rec_info['fasts_num']-3).' '.gram_record(($rec_info['fasts_num']-3), 'comments'));
@@ -1551,7 +1551,7 @@ HTML;
 											$arr_answe_list = explode('|', stripslashes($row_vote['answers']));
 											$max = $row_vote['answer_num'];
 											
-											$sql_answer = $db->super_query("SELECT answer, COUNT(*) AS cnt FROM `".PREFIX."_votes_result` WHERE vote_id = '{$vote_id}' GROUP BY answer", 1);
+											$sql_answer = $db->super_query("SELECT answer, COUNT(*) AS cnt FROM `".PREFIX."_votes_result` WHERE vote_id = '{$vote_id}' GROUP BY answer", true);
 											$answer = array();
 											foreach($sql_answer as $row_answer){
 											
@@ -1715,7 +1715,7 @@ HTML;
 								else
 									$comments_limit = 0;
 								
-								$sql_comments = $db->super_query("SELECT tb1.id, public_id, text, add_date, tb2.user_photo, user_search_pref FROM `".PREFIX."_communities_wall` tb1, `".PREFIX."_users` tb2 WHERE tb1.public_id = tb2.user_id AND tb1.fast_comm_id = '{$row['obj_id']}' ORDER by `add_date` ASC LIMIT {$comments_limit}, 3", 1);
+								$sql_comments = $db->super_query("SELECT tb1.id, public_id, text, add_date, tb2.user_photo, user_search_pref FROM `".PREFIX."_communities_wall` tb1, `".PREFIX."_users` tb2 WHERE tb1.public_id = tb2.user_id AND tb1.fast_comm_id = '{$row['obj_id']}' ORDER by `add_date` ASC LIMIT {$comments_limit}, 3", true);
 
 								//Загружаем кнопку "Показать N запсии"
 								$tpl->set('{gram-record-all-comm}', gram_record(($rec_info_groups['fasts_num']-3), 'prev').' '.($rec_info_groups['fasts_num']-3).' '.gram_record(($rec_info_groups['fasts_num']-3), 'comments'));

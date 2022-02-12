@@ -71,7 +71,7 @@ if($_GET['act'] == 'upload'){
 					} else {
 					
 						//Выводим пред. загруженные постеры и удаляем их
-						$sql_ = $db->super_query("SELECT file FROM `".PREFIX."_games_files` WHERE user_id = '{$user_info['user_id']}' AND type = 'poster' AND game_id = '0'", 1);
+						$sql_ = $db->super_query("SELECT file FROM `".PREFIX."_games_files` WHERE user_id = '{$user_info['user_id']}' AND type = 'poster' AND game_id = '0'", true);
 						
 						if($sql_){
 						
@@ -155,7 +155,7 @@ if($_GET['act'] == 'upload_swf'){
 					} else {
 					
 						//Выводим пред. загруженные swf и удаляем их
-						$sql_ = $db->super_query("SELECT file FROM `".PREFIX."_games_files` WHERE user_id = '{$user_info['user_id']}' AND type = 'swf' AND game_id = '0'", 1);
+						$sql_ = $db->super_query("SELECT file FROM `".PREFIX."_games_files` WHERE user_id = '{$user_info['user_id']}' AND type = 'swf' AND game_id = '0'", true);
 						
 						if($sql_){
 						
@@ -268,7 +268,7 @@ if($_GET['act'] == 'upload_scrin'){
 						} else {
 						
 							//Удаляем все пред. скрины
-							$sql_ = $db->super_query("SELECT file FROM `".PREFIX."_games_files` WHERE hash != '{$app_hash}' AND user_id = '{$user_info['user_id']}' AND type = 'scrin' AND game_id = '0'", 1);
+							$sql_ = $db->super_query("SELECT file FROM `".PREFIX."_games_files` WHERE hash != '{$app_hash}' AND user_id = '{$user_info['user_id']}' AND type = 'scrin' AND game_id = '0'", true);
 							
 							if($sql_){
 							
@@ -344,7 +344,7 @@ if(isset($_POST['send'])){
 	if(isset($title) AND !empty($title)){
 		
 		//Выводим файлы
-		$sql_ = $db->super_query("SELECT file, type FROM `".PREFIX."_games_files` WHERE hash = '{$app_hash}' AND user_id = '{$user_info['user_id']}'", 1);
+		$sql_ = $db->super_query("SELECT file, type FROM `".PREFIX."_games_files` WHERE hash = '{$app_hash}' AND user_id = '{$user_info['user_id']}'", true);
 		
 		if($sql_){
 		
@@ -485,7 +485,7 @@ if($_GET['act'] == 'edit'){
 		$row['descr'] = stripslashes(myBrRn($row['descr']));
 		
 		//Выводим скрины
-		$sql_scr = $db->super_query("SELECT file, hash FROM `".PREFIX."_games_files` WHERE game_id = '{$id}' AND type = 'scrin'", 1);
+		$sql_scr = $db->super_query("SELECT file, hash FROM `".PREFIX."_games_files` WHERE game_id = '{$id}' AND type = 'scrin'", true);
 		
 		if($sql_scr){
 		
@@ -825,7 +825,7 @@ $limit_page = ($page-1)*$gcount;
 //Считаем кол-во игр в базе
 $numRows = $db->super_query("SELECT COUNT(*) AS cnt FROM `".PREFIX."_games` {$sql_where}");
 
-$sql_l = $db->super_query("SELECT id, poster, title, traf FROM `".PREFIX."_games` {$sql_where} ORDER by `date` DESC LIMIT {$limit_page}, {$gcount}", 1);
+$sql_l = $db->super_query("SELECT id, poster, title, traf FROM `".PREFIX."_games` {$sql_where} ORDER by `date` DESC LIMIT {$limit_page}, {$gcount}", true);
 
 if($sql_l){
 

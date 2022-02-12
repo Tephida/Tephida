@@ -188,7 +188,7 @@ if($logged){
 			if($page_cnt)
 				NoAjaxQuery();
 
-			$sql_ = $db->super_query("SELECT did, dname, ddate, ddownload_name, dsize FROM `".PREFIX."_doc` WHERE duser_id = '{$user_id}' ORDER by `ddate` DESC LIMIT {$page_cnt}, {$sql_limit}", 1);
+			$sql_ = $db->super_query("SELECT did, dname, ddate, ddownload_name, dsize FROM `".PREFIX."_doc` WHERE duser_id = '{$user_id}' ORDER by `ddate` DESC LIMIT {$page_cnt}, {$sql_limit}", true);
 			
 			$rowUser = $db->super_query("SELECT user_doc_num FROM `".PREFIX."_users` WHERE user_id = '{$user_id}'");
 			
@@ -238,7 +238,7 @@ if($logged){
 			if($_POST['page_cnt'] > 0) $page_cnt = intval($_POST['page_cnt'])*$sql_limit;
 			else $page_cnt = 0;
 
-			$sql_ = $db->super_query("SELECT did, dname, ddate, ddownload_name FROM `".PREFIX."_doc` WHERE duser_id = '{$user_id}' ORDER by `ddate` DESC LIMIT {$page_cnt}, {$sql_limit}", 1);
+			$sql_ = $db->super_query("SELECT did, dname, ddate, ddownload_name FROM `".PREFIX."_doc` WHERE duser_id = '{$user_id}' ORDER by `ddate` DESC LIMIT {$page_cnt}, {$sql_limit}", true);
 			
 			if(!$page_cnt){
 				$rowUser = $db->super_query("SELECT user_doc_num FROM `".PREFIX."_users` WHERE user_id = '{$user_id}'");

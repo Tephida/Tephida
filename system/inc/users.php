@@ -64,7 +64,7 @@ else
 $gcount = 20;
 $limit_page = ($page - 1) * $gcount;
 
-$sql_ = $db->super_query("SELECT user_group, user_search_pref, user_id, user_real, user_reg_date, user_last_visit, user_email, user_delet, user_ban, user_balance FROM `" . PREFIX . "_users`  {$where_sql} ORDER by {$order_sql} LIMIT {$limit_page}, {$gcount}", 1);
+$sql_ = $db->super_query("SELECT user_group, user_search_pref, user_id, user_real, user_reg_date, user_last_visit, user_email, user_delet, user_ban, user_balance FROM `" . PREFIX . "_users`  {$where_sql} ORDER by {$order_sql} LIMIT {$limit_page}, {$gcount}", true);
 
 //Кол-во людей считаем
 $numRows = $db->super_query("SELECT COUNT(*) AS cnt FROM `" . PREFIX . "_users` {$where_sql}");

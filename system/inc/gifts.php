@@ -75,7 +75,7 @@ echoheader();
 
 $numRows = $db->super_query("SELECT COUNT(*) AS cnt FROM `".PREFIX."_gifts_list`");
 
-$sql_ = $db->super_query("SELECT * FROM `".PREFIX."_gifts_list` ORDER by `gid` DESC", 1);
+$sql_ = $db->super_query("SELECT * FROM `".PREFIX."_gifts_list` ORDER by `gid` DESC", true);
 foreach($sql_ as $row){
 	$gifts .= <<<HTML
 <div style="float:left;width: 150px;height:150px;text-align:center;margin-bottom:15px;margin-top:10px">

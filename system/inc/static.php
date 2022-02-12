@@ -120,7 +120,10 @@ HTML;
 	
 	echohtmlstart('Список статических страниц');
 	
-	$sql_ = $db->super_query("SELECT id, title, alt_name FROM `".PREFIX."_static` ORDER by `id` DESC", 1);
+	$sql_ = $db->super_query("SELECT id, title, alt_name FROM `".PREFIX."_static` ORDER by `id` DESC", true);
+
+    $static_list = null;
+
 	foreach($sql_ as $row){
 		$row['title'] = stripslashes($row['title']);
 		$static_list .= <<<HTML

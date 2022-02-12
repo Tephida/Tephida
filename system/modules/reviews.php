@@ -68,7 +68,7 @@ switch($act){
 			}
 			
 			//Выводим отзывы
-			$sql_ = $db->super_query("SELECT tb1.user_id, text, date, tb2.user_search_pref, user_photo FROM `".PREFIX."_reviews` tb1, `".PREFIX."_users` tb2 WHERE tb1.user_id = tb2.user_id AND approve = '0' ORDER by `date` DESC LIMIT {$page_cnt}, {$limit_num}", 1);
+			$sql_ = $db->super_query("SELECT tb1.user_id, text, date, tb2.user_search_pref, user_photo FROM `".PREFIX."_reviews` tb1, `".PREFIX."_users` tb2 WHERE tb1.user_id = tb2.user_id AND approve = '0' ORDER by `date` DESC LIMIT {$page_cnt}, {$limit_num}", true);
 
 			if($sql_){
 				$tpl->load_template('reviews/review.tpl');

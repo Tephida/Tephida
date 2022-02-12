@@ -19,10 +19,13 @@ class wall {
 	function query($query){
 		global $db;
 		
-		$this->query = $db->super_query($query, 1);
+		$this->query = $db->super_query($query, true);
 	}
 
-	function template($template){
+    /**
+     * @throws ErrorException
+     */
+    function template($template){
 		global $tpl;
 		$this->template = $tpl->load_template($template);
 	}
@@ -410,7 +413,7 @@ HTML;
 					else
 						$comments_limit = 0;
 					
-					$sql_comments = $db->super_query("SELECT tb1.id, author_user_id, text, add_date, tb2.user_photo, user_search_pref FROM `".PREFIX."_wall` tb1, `".PREFIX."_users` tb2 WHERE tb1.author_user_id = tb2.user_id AND tb1.fast_comm_id = '{$row_wall['id']}' ORDER by `add_date` ASC LIMIT {$comments_limit}, 3", 1);
+					$sql_comments = $db->super_query("SELECT tb1.id, author_user_id, text, add_date, tb2.user_photo, user_search_pref FROM `".PREFIX."_wall` tb1, `".PREFIX."_users` tb2 WHERE tb1.author_user_id = tb2.user_id AND tb1.fast_comm_id = '{$row_wall['id']}' ORDER by `add_date` ASC LIMIT {$comments_limit}, 3", true);
 
 					//Загружаем кнопку "Показать N запсии"
 					$tpl->set('{gram-record-all-comm}', gram_record(($row_wall['fasts_num']-3), 'prev').' '.($row_wall['fasts_num']-3).' '.gram_record(($row_wall['fasts_num']-3), 'comments'));
@@ -497,10 +500,13 @@ HTML;
 	function comm_query($query){
 		global $db;
 		
-		$this->comm_query = $db->super_query($query, 1);
+		$this->comm_query = $db->super_query($query, true);
 	}
-	
-	function comm_template($template){
+
+    /**
+     * @throws ErrorException
+     */
+    function comm_template($template){
 		global $tpl;
 		$this->comm_template = $tpl->load_template($template);
 	}

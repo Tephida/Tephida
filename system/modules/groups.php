@@ -356,7 +356,7 @@ if($logged){
 			//Выводим ИД админа
 			$owner = $db->super_query("SELECT admin FROM `".PREFIX."_communities` WHERE id = '{$id}'");
 			
-			$sql_ = $db->super_query("SELECT tb1.fuser_id, office, fphone, femail, tb2.user_search_pref, user_photo FROM `".PREFIX."_communities_feedback` tb1, `".PREFIX."_users` tb2 WHERE tb1.cid = '{$id}' AND tb1.fuser_id = tb2.user_id ORDER by `fdate` ASC", 1);
+			$sql_ = $db->super_query("SELECT tb1.fuser_id, office, fphone, femail, tb2.user_search_pref, user_photo FROM `".PREFIX."_communities_feedback` tb1, `".PREFIX."_users` tb2 WHERE tb1.cid = '{$id}' AND tb1.fuser_id = tb2.user_id ORDER by `fdate` ASC", true);
 			$tpl->load_template('groups/allfeedbacklist.tpl');
 			if($sql_){
 				foreach($sql_ as $row){
@@ -653,7 +653,7 @@ if($logged){
 				else
 					$comments_limit = 0;
 						
-				$sql_comments = $db->super_query("SELECT tb1.id, public_id, text, add_date, tb2.user_photo, user_search_pref FROM `".PREFIX."_communities_wall` tb1, `".PREFIX."_users` tb2 WHERE tb1.public_id = tb2.user_id AND tb1.fast_comm_id = '{$rec_id}' ORDER by `add_date` ASC LIMIT {$comments_limit}, 3", 1);
+				$sql_comments = $db->super_query("SELECT tb1.id, public_id, text, add_date, tb2.user_photo, user_search_pref FROM `".PREFIX."_communities_wall` tb1, `".PREFIX."_users` tb2 WHERE tb1.public_id = tb2.user_id AND tb1.fast_comm_id = '{$rec_id}' ORDER by `add_date` ASC LIMIT {$comments_limit}, 3", true);
 				
 				//Загружаем кнопку "Показать N запсии"
 				$tpl->load_template('groups/record.tpl');
@@ -789,7 +789,7 @@ if($logged){
 			$row = $db->super_query("SELECT tb2.admin, comments FROM `".PREFIX."_communities_wall` tb1, `".PREFIX."_communities` tb2 WHERE tb1.public_id = tb2.id AND tb1.id = '{$rec_id}'");
 
 			if($row['comments'] OR stripos($row['admin'], "u{$user_id}|") !== false){
-				$sql_comments = $db->super_query("SELECT tb1.id, public_id, text, add_date, tb2.user_photo, user_search_pref FROM `".PREFIX."_communities_wall` tb1, `".PREFIX."_users` tb2 WHERE tb1.public_id = tb2.user_id AND tb1.fast_comm_id = '{$rec_id}' ORDER by `add_date` ASC", 1);
+				$sql_comments = $db->super_query("SELECT tb1.id, public_id, text, add_date, tb2.user_photo, user_search_pref FROM `".PREFIX."_communities_wall` tb1, `".PREFIX."_users` tb2 WHERE tb1.public_id = tb2.user_id AND tb1.fast_comm_id = '{$rec_id}' ORDER by `add_date` ASC", true);
 				$tpl->load_template('groups/record.tpl');
 				//Сообственно выводим комменты
 				foreach($sql_comments as $row_comments){
@@ -878,7 +878,7 @@ if($logged){
 				
 				//Выводим фотографии
 				if($rowPublic['photos_num']){
-					$sql_ = $db->super_query("SELECT photo FROM `".PREFIX."_attach` WHERE public_id = '{$public_id}' ORDER by `add_date` DESC LIMIT {$limit_page}, {$gcount}", 1);
+					$sql_ = $db->super_query("SELECT photo FROM `".PREFIX."_attach` WHERE public_id = '{$public_id}' ORDER by `add_date` DESC LIMIT {$limit_page}, {$gcount}", true);
 					$tpl->load_template('public/photos/photo.tpl');
 					foreach($sql_ as $row){
 						$tpl->set('{photo}', $row['photo']);
@@ -945,7 +945,7 @@ if($logged){
 		case "wall_like_users_five":
 			NoAjaxQuery();
 			$rec_id = intval($_POST['rec_id']);
-			$sql_ = $db->super_query("SELECT tb1.user_id, tb2.user_photo FROM `".PREFIX."_communities_wall_like` tb1, `".PREFIX."_users` tb2 WHERE tb1.user_id = tb2.user_id AND tb1.rec_id = '{$rec_id}' ORDER by `date` DESC LIMIT 0, 7", 1);
+			$sql_ = $db->super_query("SELECT tb1.user_id, tb2.user_photo FROM `".PREFIX."_communities_wall_like` tb1, `".PREFIX."_users` tb2 WHERE tb1.user_id = tb2.user_id AND tb1.rec_id = '{$rec_id}' ORDER by `date` DESC LIMIT 0, 7", true);
 			if($sql_){
 				foreach($sql_ as $row){
 					if($row['user_photo']) $ava = '/uploads/users/'.$row['user_id'].'/50_'.$row['user_photo'];
@@ -970,7 +970,7 @@ if($logged){
 				$liked_num = 24;
 			
 			if($rid AND $liked_num){
-				$sql_ = $db->super_query("SELECT tb1.user_id, tb2.user_photo, user_search_pref FROM `".PREFIX."_communities_wall_like` tb1, `".PREFIX."_users` tb2 WHERE tb1.user_id = tb2.user_id AND tb1.rec_id = '{$rid}' ORDER by `date` DESC LIMIT {$limit_page}, {$gcount}", 1);
+				$sql_ = $db->super_query("SELECT tb1.user_id, tb2.user_photo, user_search_pref FROM `".PREFIX."_communities_wall_like` tb1, `".PREFIX."_users` tb2 WHERE tb1.user_id = tb2.user_id AND tb1.rec_id = '{$rid}' ORDER by `date` DESC LIMIT {$limit_page}, {$gcount}", true);
 				
 				if($sql_){
 					$tpl->load_template('profile_subscription_box_top.tpl');
@@ -1053,7 +1053,7 @@ if($logged){
 			$public_id = intval($_POST['public_id']);
 			$subscr_num = intval($_POST['num']);
 			
-			$sql_ = $db->super_query("SELECT tb1.user_id, tb2.user_name, user_lastname, user_photo FROM `".PREFIX."_friends` tb1, `".PREFIX."_users` tb2 WHERE tb1.friend_id = '{$public_id}' AND tb1.user_id = tb2.user_id AND tb1.subscriptions = 2 ORDER by `friends_date` DESC LIMIT {$limit_page}, {$gcount}", 1);
+			$sql_ = $db->super_query("SELECT tb1.user_id, tb2.user_name, user_lastname, user_photo FROM `".PREFIX."_friends` tb1, `".PREFIX."_users` tb2 WHERE tb1.friend_id = '{$public_id}' AND tb1.user_id = tb2.user_id AND tb1.subscriptions = 2 ORDER by `friends_date` DESC LIMIT {$limit_page}, {$gcount}", true);
 			
 			if($sql_){
 				$tpl->load_template('profile_subscription_box_top.tpl');
@@ -1093,7 +1093,7 @@ if($logged){
 			$for_user_id = intval($_POST['for_user_id']);
 			$subscr_num = intval($_POST['num']);
 
-			$sql_ = $db->super_query("SELECT tb1.friend_id, tb2.id, title, photo, traf, adres FROM `".PREFIX."_friends` tb1, `".PREFIX."_communities` tb2 WHERE tb1.user_id = '{$for_user_id}' AND tb1.friend_id = tb2.id AND tb1.subscriptions = 2 ORDER by `traf` DESC LIMIT {$limit_page}, {$gcount}", 1);
+			$sql_ = $db->super_query("SELECT tb1.friend_id, tb2.id, title, photo, traf, adres FROM `".PREFIX."_friends` tb1, `".PREFIX."_communities` tb2 WHERE tb1.user_id = '{$for_user_id}' AND tb1.friend_id = tb2.id AND tb1.subscriptions = 2 ORDER by `traf` DESC LIMIT {$limit_page}, {$gcount}", true);
 			
 			if($sql_){
 				$tpl->load_template('profile_subscription_box_top.tpl');
@@ -1363,7 +1363,7 @@ if($logged){
 			$rowPub = $db->super_query("SELECT ulist FROM `".PREFIX."_communities` WHERE id = '{$pub_id}'");
 			
 			//Выводим список друзей
-			$sql_ = $db->super_query("SELECT tb1.friend_id, tb2.user_photo, user_search_pref, user_sex FROM `".PREFIX."_friends` tb1, `".PREFIX."_users` tb2 WHERE tb1.user_id = '{$user_id}' AND tb1.friend_id = tb2.user_id AND tb1.subscriptions = 0 ORDER by `friends_date` DESC LIMIT {$page_cnt}, {$limit_friends}", 1);
+			$sql_ = $db->super_query("SELECT tb1.friend_id, tb2.user_photo, user_search_pref, user_sex FROM `".PREFIX."_friends` tb1, `".PREFIX."_users` tb2 WHERE tb1.user_id = '{$user_id}' AND tb1.friend_id = tb2.user_id AND tb1.subscriptions = 0 ORDER by `friends_date` DESC LIMIT {$page_cnt}, {$limit_friends}", true);
 			
 			if($sql_){
 			
@@ -1571,7 +1571,7 @@ if($logged){
 			if($user_info['invties_pub_num']){
 				
 				//SQL Запрос на вывод
-				$sql_ = $db->super_query("SELECT tb1.user_id, tb2.id, title, photo, traf, adres, tb3.user_search_pref, user_photo FROM `".PREFIX."_communities_join` tb1, `".PREFIX."_communities` tb2, `".PREFIX."_users` tb3 WHERE tb1.for_user_id = '{$user_id}' AND tb1.public_id = tb2.id AND tb1.user_id = tb3.user_id ORDER by `id` DESC LIMIT {$page_cnt}, {$limit_num}", 1);
+				$sql_ = $db->super_query("SELECT tb1.user_id, tb2.id, title, photo, traf, adres, tb3.user_search_pref, user_photo FROM `".PREFIX."_communities_join` tb1, `".PREFIX."_communities` tb2, `".PREFIX."_users` tb3 WHERE tb1.for_user_id = '{$user_id}' AND tb1.public_id = tb2.id AND tb1.user_id = tb3.user_id ORDER by `id` DESC LIMIT {$page_cnt}, {$limit_num}", true);
 				
 				if($sql_){
 				
@@ -1683,7 +1683,7 @@ if($logged){
 			
 			if($owner['user_public_num']){
 
-				$sql_ = $db->super_query($sql_sort, 1);
+				$sql_ = $db->super_query($sql_sort, true);
 				
 				$tpl->load_template('groups/group.tpl');
 				foreach($sql_ as $row){

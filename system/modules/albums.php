@@ -247,7 +247,7 @@ if($logged){
 				mozg_mass_clear_cache_file("user_{$user_info['user_id']}/albums|user_{$user_info['user_id']}/albums_all|user_{$user_info['user_id']}/albums_friends|user_{$row['user_id']}/position_photos_album_{$row['album_id']}");
 				
 				//Выводим и удаляем отметки если они есть
-				$sql_mark = $db->super_query("SELECT muser_id FROM `".PREFIX."_photos_mark` WHERE mphoto_id = '".$id."' AND mapprove = '0'", 1);
+				$sql_mark = $db->super_query("SELECT muser_id FROM `".PREFIX."_photos_mark` WHERE mphoto_id = '".$id."' AND mapprove = '0'", true);
 				if($sql_mark){
 					foreach($sql_mark as $row_mark){
 						$db->query("UPDATE `".PREFIX."_users` SET user_new_mark_photos = user_new_mark_photos-1 WHERE user_id = '".$row_mark['muser_id']."'");
@@ -420,7 +420,7 @@ if($logged){
 				$limit_page = ($page-1)*$gcount;
 				
 				//Делаем SQL запрос на вывод
-				$sql_ = $db->super_query("SELECT id, photo_name FROM `".PREFIX."_photos` WHERE album_id = '{$id}' AND user_id = '{$user_id}' ORDER by `position` ASC LIMIT {$limit_page}, {$gcount}", 1);
+				$sql_ = $db->super_query("SELECT id, photo_name FROM `".PREFIX."_photos` WHERE album_id = '{$id}' AND user_id = '{$user_id}' ORDER by `position` ASC LIMIT {$limit_page}, {$gcount}", true);
 				
 				//Если есть SQL запрос то пропускаем
 				if($sql_){
@@ -654,12 +654,15 @@ HTML;
 						$cache_cnt_num = "_all";
 					}
 				}
-				
-				//Если вызвана страница всех комментариев юзера, если нет, то значит вызвана страница оприделенго альбома
+
+                $sql_tb3 = $sql_tb3 ?? null;
+                $privacy_sql = $privacy_sql ?? null;
+
+				//Если вызвана страница всех комментариев юзера, если нет, то значит вызвана страница определенного альбома
 				if($uid AND !$aid)
-					$sql_ = $db->super_query("SELECT tb1.user_id, text, date, id, hash, album_id, pid, owner_id, photo_name, tb2.user_search_pref, user_photo, user_last_visit, user_logged_mobile FROM `".PREFIX."_photos_comments` tb1, `".PREFIX."_users` tb2 {$sql_tb3} WHERE tb1.owner_id = '{$uid}' AND tb1.user_id = tb2.user_id {$privacy_sql} ORDER by `date` DESC LIMIT {$limit_page}, {$gcount}", 1);
+					$sql_ = $db->super_query("SELECT tb1.user_id, text, date, id, hash, album_id, pid, owner_id, photo_name, tb2.user_search_pref, user_photo, user_last_visit, user_logged_mobile FROM `".PREFIX."_photos_comments` tb1, `".PREFIX."_users` tb2 {$sql_tb3} WHERE tb1.owner_id = '{$uid}' AND tb1.user_id = tb2.user_id {$privacy_sql} ORDER by `date` DESC LIMIT {$limit_page}, {$gcount}", true);
 				else
-					$sql_ = $db->super_query("SELECT tb1.user_id, text, date, id, hash, album_id, pid, owner_id, photo_name, tb2.user_search_pref, user_photo, user_last_visit, user_logged_mobile FROM `".PREFIX."_photos_comments` tb1, `".PREFIX."_users` tb2 WHERE tb1.album_id = '{$aid}' AND tb1.user_id = tb2.user_id ORDER by `date` DESC LIMIT {$limit_page}, {$gcount}", 1);
+					$sql_ = $db->super_query("SELECT tb1.user_id, text, date, id, hash, album_id, pid, owner_id, photo_name, tb2.user_search_pref, user_photo, user_last_visit, user_logged_mobile FROM `".PREFIX."_photos_comments` tb1, `".PREFIX."_users` tb2 WHERE tb1.album_id = '{$aid}' AND tb1.user_id = tb2.user_id ORDER by `date` DESC LIMIT {$limit_page}, {$gcount}", true);
 				
 				//Выводи имя владельца альбомов
 				$row_owner = $db->super_query("SELECT user_name FROM `".PREFIX."_users` WHERE user_id = '{$uid}'");
@@ -746,9 +749,9 @@ HTML;
 					
 					if($uid AND !$aid)
 						if($user_id == $uid)
-							$row_album = $db->super_query("SELECT SUM(comm_num) AS all_comm_num FROM `".PREFIX."_albums` WHERE user_id = '{$uid}'", false, "user_{$uid}/albums_{$uid}_comm{$cache_cnt_num}");
+							$row_album = $db->super_query("SELECT SUM(comm_num) AS all_comm_num FROM `".PREFIX."_albums` WHERE user_id = '{$uid}'", false);
 						else
-							$row_album = $db->super_query("SELECT COUNT(*) AS all_comm_num FROM `".PREFIX."_photos_comments` tb1, `".PREFIX."_albums` tb3 WHERE tb1.owner_id = '{$uid}' {$privacy_sql}", false, "user_{$uid}/albums_{$uid}_comm{$cache_cnt_num}");
+							$row_album = $db->super_query("SELECT COUNT(*) AS all_comm_num FROM `".PREFIX."_photos_comments` tb1, `".PREFIX."_albums` tb3 WHERE tb1.owner_id = '{$uid}' {$privacy_sql}", false);
 					else
 						$row_album = $db->super_query("SELECT comm_num AS all_comm_num FROM `".PREFIX."_albums` WHERE aid = '{$aid}'");
 					
@@ -774,7 +777,7 @@ HTML;
 			$check_album = $db->super_query("SELECT name FROM `".PREFIX."_albums` WHERE aid = '{$aid}' AND user_id = '{$user_id}'");
 			
 			if($check_album){
-				$sql_ = $db->super_query("SELECT id, photo_name FROM `".PREFIX."_photos` WHERE album_id = '{$aid}' AND user_id = '{$user_id}' ORDER by `position` ASC", 1);
+				$sql_ = $db->super_query("SELECT id, photo_name FROM `".PREFIX."_photos` WHERE album_id = '{$aid}' AND user_id = '{$user_id}' ORDER by `position` ASC", true);
 				
 				$metatags['title'] = $lang['editphotos'];
 				$user_speedbar = $lang['editphotos'];
@@ -833,7 +836,7 @@ HTML;
 			$limit_page = ($page-1) * $gcount;
 
 			//Выводим данные о фотках
-			$sql_photos = $db->super_query("SELECT id, photo_name FROM `".PREFIX."_photos` WHERE album_id = '{$aid}' ORDER by `position` ASC LIMIT {$limit_page}, {$gcount}", 1);
+			$sql_photos = $db->super_query("SELECT id, photo_name FROM `".PREFIX."_photos` WHERE album_id = '{$aid}' ORDER by `position` ASC LIMIT {$limit_page}, {$gcount}", true);
 			
 			//Выводим данные о альбоме
 			$row_album = $db->super_query("SELECT user_id, name, photo_num, privacy FROM `".PREFIX."_albums` WHERE aid = '{$aid}'");
@@ -943,7 +946,7 @@ HTML;
 			if($_GET['page'] > 0) $page = intval($_GET['page']); else $page = 1;
 			$gcount = 25;
 			$limit_page = ($page-1) * $gcount;
-			$sql_ = $db->super_query("SELECT tb1.mphoto_id, tb2.photo_name, album_id, user_id FROM `".PREFIX."_photos_mark` tb1, `".PREFIX."_photos` tb2 WHERE tb1.mphoto_id = tb2.id AND tb1.mapprove = 0 AND tb1.muser_id = '".$user_info['user_id']."' ORDER by `mdate` DESC LIMIT ".$limit_page.", ".$gcount, 1);
+			$sql_ = $db->super_query("SELECT tb1.mphoto_id, tb2.photo_name, album_id, user_id FROM `".PREFIX."_photos_mark` tb1, `".PREFIX."_photos` tb2 WHERE tb1.mphoto_id = tb2.id AND tb1.mapprove = 0 AND tb1.muser_id = '".$user_info['user_id']."' ORDER by `mdate` DESC LIMIT ".$limit_page.", ".$gcount, true);
 			$tpl->load_template('albums_top_newphoto.tpl');
 			if($sql_){
 				foreach($sql_ as $row){
@@ -979,7 +982,7 @@ HTML;
 					$user_speedbar = $lang['title_albums'];
 					
 					//Выводи данные о альбоме
-					$sql_ = $db->super_query("SELECT aid, name, adate, photo_num, descr, comm_num, cover, ahash, privacy FROM `".PREFIX."_albums` WHERE user_id = '{$uid}' ORDER by `position` ASC", 1);
+					$sql_ = $db->super_query("SELECT aid, name, adate, photo_num, descr, comm_num, cover, ahash, privacy FROM `".PREFIX."_albums` WHERE user_id = '{$uid}' ORDER by `position` ASC", true);
 
 					//Если есть альбомы то выводи их
 					if($sql_){

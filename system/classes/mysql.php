@@ -135,20 +135,18 @@ class db
         return mysqli_fetch_array($query_id);
     }
 
-    public function super_query($query, $multi = false, $show_error=true): array|bool|null
+    public function super_query($query, bool $multi = false, $show_error=true): array|bool|null
     {
 
+        $this->query($query, $show_error);
         if(!$multi) {
 
-            $this->query($query, $show_error);
             $data = $this->get_row();
             $this->free();
 
             return $data;
 
         } else {
-
-            $this->query($query, $show_error);
 
             $rows = array();
 

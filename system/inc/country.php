@@ -38,7 +38,8 @@ if($_GET['act'] == 'del'){
 	die();
 }
 
-$sql_ = $db->super_query("SELECT * FROM `".PREFIX."_country` ORDER by `name` ASC", 1);
+$sql_ = $db->super_query("SELECT * FROM `".PREFIX."_country` ORDER by `name` ASC", true;
+$countryes = '';
 foreach($sql_ as $row){
 	$countryes .= <<<HTML
 <div style="margin-bottom:5px;border-bottom:1px dashed #ccc;padding-bottom:5px">&raquo;&nbsp; <span style="font-size:13px"><b>{$row['name']}</b></span> &nbsp; <span style="color:#777">[ <a href="?mod=country&act=del&id={$row['id']}" style="color:#777">удалить</a> ]</span></div>

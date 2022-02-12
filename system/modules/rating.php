@@ -27,7 +27,7 @@ if($logged){
 			else $page_cnt = 0;
 			
 			//Выводим список
-			$sql_ = $db->super_query("SELECT tb1.user_id, addnum, date, tb2.user_search_pref, user_photo FROM `".PREFIX."_users_rating` tb1, `".PREFIX."_users` tb2 WHERE tb1.user_id = tb2.user_id AND for_user_id = '{$user_id}' ORDER by `date` DESC LIMIT {$page_cnt}, {$limit_news}", 1);
+			$sql_ = $db->super_query("SELECT tb1.user_id, addnum, date, tb2.user_search_pref, user_photo FROM `".PREFIX."_users_rating` tb1, `".PREFIX."_users` tb2 WHERE tb1.user_id = tb2.user_id AND for_user_id = '{$user_id}' ORDER by `date` DESC LIMIT {$page_cnt}, {$limit_news}", true);
 			
 			if($sql_){
 				

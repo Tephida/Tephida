@@ -41,7 +41,7 @@ if($logged){
 		$arr_answe_list = explode('|', $rowAnswers);
 		$max = $row_vote['answer_num'];
 							
-		$sql_answer = $db->super_query("SELECT answer, COUNT(*) AS cnt FROM `".PREFIX."_votes_result` WHERE vote_id = '{$vote_id}' GROUP BY answer", 1);
+		$sql_answer = $db->super_query("SELECT answer, COUNT(*) AS cnt FROM `".PREFIX."_votes_result` WHERE vote_id = '{$vote_id}' GROUP BY answer", true);
 		$answer = array();
 		foreach($sql_answer as $row_answer){
 							

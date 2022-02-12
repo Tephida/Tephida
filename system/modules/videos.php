@@ -449,7 +449,7 @@ if($logged){
 			
 				$limit_comm = $comm_num-3;
 				
-				$sql_comm = $db->super_query("SELECT tb1.id, author_user_id, text, add_date, tb2.user_search_pref, user_photo, user_last_visit, user_logged_mobile FROM `".PREFIX."_videos_comments` tb1, `".PREFIX."_users` tb2 WHERE tb1.video_id = '{$vid}' AND tb1.author_user_id = tb2.user_id ORDER by `add_date` ASC LIMIT 0, {$limit_comm}", 1);
+				$sql_comm = $db->super_query("SELECT tb1.id, author_user_id, text, add_date, tb2.user_search_pref, user_photo, user_last_visit, user_logged_mobile FROM `".PREFIX."_videos_comments` tb1, `".PREFIX."_users` tb2 WHERE tb1.video_id = '{$vid}' AND tb1.author_user_id = tb2.user_id ORDER by `add_date` ASC LIMIT 0, {$limit_comm}", true);
 				
 				$tpl->load_template('videos/comment.tpl');
 				
@@ -558,7 +558,7 @@ if($logged){
 			$limit_page = ($page-1)*$gcount;
 
 			//Делаем SQL запрос на вывод
-			$sql_ = $db->super_query("SELECT id, photo, title FROM `".PREFIX."_videos` WHERE public_id = '{$pid}' ORDER by `add_date` DESC LIMIT {$limit_page}, {$gcount}", 1);
+			$sql_ = $db->super_query("SELECT id, photo, title FROM `".PREFIX."_videos` WHERE public_id = '{$pid}' ORDER by `add_date` DESC LIMIT {$limit_page}, {$gcount}", true);
 			
 			//Выводим кол-во видео
 			$count = $db->super_query("SELECT videos_num FROM `".PREFIX."_communities` WHERE id = '{$pid}'");
@@ -630,7 +630,7 @@ if($logged){
 						$sql_privacy = "AND privacy = 1";
 
 					//SQL Запрос
-					$sql_ = $db->super_query("SELECT id, title, photo, comm_num, add_date, SUBSTRING(descr, 1, 180) AS descr FROM `".PREFIX."_videos` WHERE owner_user_id = '{$get_user_id}' AND id < '{$last_id}' {$sql_privacy} AND public_id = '0' ORDER by `add_date` DESC LIMIT 0, {$limit_vieos}", 1);
+					$sql_ = $db->super_query("SELECT id, title, photo, comm_num, add_date, SUBSTRING(descr, 1, 180) AS descr FROM `".PREFIX."_videos` WHERE owner_user_id = '{$get_user_id}' AND id < '{$last_id}' {$sql_privacy} AND public_id = '0' ORDER by `add_date` DESC LIMIT 0, {$limit_vieos}", true);
 					
 					//Если есть ответ из БД
 					if($sql_){
@@ -737,7 +737,7 @@ if($logged){
 					if($owner['user_videos_num']){
 					
 						//SQL Запрос
-						$sql_ = $db->super_query("SELECT id, title, photo, comm_num, add_date, SUBSTRING(descr, 1, 180) AS descr FROM `".PREFIX."_videos` WHERE owner_user_id = '{$get_user_id}' {$sql_privacy} AND public_id = '0' ORDER by `add_date` DESC LIMIT 0, {$limit_vieos}", 1);
+						$sql_ = $db->super_query("SELECT id, title, photo, comm_num, add_date, SUBSTRING(descr, 1, 180) AS descr FROM `".PREFIX."_videos` WHERE owner_user_id = '{$get_user_id}' {$sql_privacy} AND public_id = '0' ORDER by `add_date` DESC LIMIT 0, {$limit_vieos}", true);
 
 						//Загружаем меню по видео
 						$tpl->load_template('videos/head.tpl');

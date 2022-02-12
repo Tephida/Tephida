@@ -22,7 +22,7 @@ if($logged){
 			NoAjaxQuery();
 			$for_user_id = intval($_POST['user_id']);
 			
-			$sql_ = $db->super_query("SELECT gid, img, price FROM `".PREFIX."_gifts_list` ORDER by `gid` DESC", 1);
+			$sql_ = $db->super_query("SELECT gid, img, price FROM `".PREFIX."_gifts_list` ORDER by `gid` DESC", true);
 	
 			foreach($sql_ as $gift){
 				
@@ -187,7 +187,7 @@ if($logged){
 			
 			$tpl->compile('info');
 			if($owner['user_gifts']){
-				$sql_ = $db->super_query("SELECT tb1.gid, gift, from_uid, msg, gdate, privacy, tb2.user_search_pref, user_photo, user_last_visit, user_logged_mobile FROM `".PREFIX."_gifts` tb1, `".PREFIX."_users` tb2 WHERE tb1.uid = '{$uid}' AND tb1.from_uid = tb2.user_id {$sql_where} ORDER by `gdate` DESC LIMIT {$limit_page}, {$gcount}", 1);
+				$sql_ = $db->super_query("SELECT tb1.gid, gift, from_uid, msg, gdate, privacy, tb2.user_search_pref, user_photo, user_last_visit, user_logged_mobile FROM `".PREFIX."_gifts` tb1, `".PREFIX."_users` tb2 WHERE tb1.uid = '{$uid}' AND tb1.from_uid = tb2.user_id {$sql_where} ORDER by `gdate` DESC LIMIT {$limit_page}, {$gcount}", true);
 				$tpl->load_template('gifts/gift.tpl');
 				foreach($sql_ as $row){
 					$tpl->set('{id}', $row['gid']);

@@ -95,7 +95,7 @@ if($_GET['page'] > 0) $page = intval($_GET['page']); else $page = 1;
 $gcount = 20;
 $limit_page = ($page-1)*$gcount;
 
-$sql_ = $db->super_query("SELECT tb1.aid, artist, name, adate, auser_id, tb2.user_name FROM `".PREFIX."_audio` tb1, `".PREFIX."_users` tb2 WHERE tb1.auser_id = tb2.user_id {$where_sql} ORDER by {$order_sql} LIMIT {$limit_page}, {$gcount}", 1);
+$sql_ = $db->super_query("SELECT tb1.aid, artist, name, adate, auser_id, tb2.user_name FROM `".PREFIX."_audio` tb1, `".PREFIX."_users` tb2 WHERE tb1.auser_id = tb2.user_id {$where_sql} ORDER by {$order_sql} LIMIT {$limit_page}, {$gcount}", true);
 
 //Кол-во людей считаем
 $numRows = $db->super_query("SELECT COUNT(*) AS cnt FROM `".PREFIX."_audio` WHERE aid != '' {$where_sql}");

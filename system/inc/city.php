@@ -39,7 +39,9 @@ if($_GET['act'] == 'del'){
 	die();
 }
 
-$sql_ = $db->super_query("SELECT * FROM `".PREFIX."_country` ORDER by `name` ASC", 1);
+$sql_ = $db->super_query("SELECT * FROM `".PREFIX."_country` ORDER by `name` ASC", true);
+$countryes = '';
+$all_country = '';
 foreach($sql_ as $row){
 	$row['name'] = stripslashes($row['name']);
 	$countryes .= <<<HTML
@@ -64,7 +66,7 @@ HTML;
 if($_GET['country']){
 	echohtmlstart('Города страны: '.$pref);
 	$ncountry_id = intval($_GET['country']);
-	$sql_c = $db->super_query("SELECT id, name FROM `".PREFIX."_city` WHERE id_country = '".$ncountry_id."'", 1);
+	$sql_c = $db->super_query("SELECT id, name FROM `".PREFIX."_city` WHERE id_country = '".$ncountry_id."'", true);
 	foreach($sql_c as $row_c){
 		$row_c['name'] = stripslashes($row_c['name']);
 		$cites .= <<<HTML

@@ -506,7 +506,7 @@ if($logged){
 					if($row['msg_num'] >= 10) $sLimit_msg = $row['msg_num']-$limit_msg;
 					else $sLimit_msg = 0;
 					
-					$sql_ = $db->super_query("SELECT tb1.mid, muser_id, msg, mdate, tb2.user_search_pref, user_photo, user_last_visit, user_logged_mobile FROM `".PREFIX."_communities_forum_msg` tb1, `".PREFIX."_users` tb2 WHERE tb1.muser_id = tb2.user_id AND tb1.fid = '{$id}' ORDER by `mdate` ASC LIMIT {$sLimit_msg}, {$limit_msg}", 1);
+					$sql_ = $db->super_query("SELECT tb1.mid, muser_id, msg, mdate, tb2.user_search_pref, user_photo, user_last_visit, user_logged_mobile FROM `".PREFIX."_communities_forum_msg` tb1, `".PREFIX."_users` tb2 WHERE tb1.muser_id = tb2.user_id AND tb1.fid = '{$id}' ORDER by `mdate` ASC LIMIT {$sLimit_msg}, {$limit_msg}", true);
 					
 					$tpl->load_template('forum/msg.tpl');
 					
@@ -714,7 +714,7 @@ if($logged){
 					$arr_answe_list = explode('|', stripslashes($row_vote['answers']));
 					$max = $row_vote['answer_num'];
 								
-					$sql_answer = $db->super_query("SELECT answer, COUNT(*) AS cnt FROM `".PREFIX."_votes_result` WHERE vote_id = '{$vote_id}' GROUP BY answer", 1);
+					$sql_answer = $db->super_query("SELECT answer, COUNT(*) AS cnt FROM `".PREFIX."_votes_result` WHERE vote_id = '{$vote_id}' GROUP BY answer", true);
 					$answer = array();
 					foreach($sql_answer as $row_answer){
 								
@@ -812,7 +812,7 @@ if($logged){
 				else
 					$page = 0;
 				
-				$sql_ = $db->super_query("SELECT fid, title, lastuser_id, lastdate, msg_num, status, fixed FROM `".PREFIX."_communities_forum` WHERE public_id = '{$public_id}' ORDER by `fixed` DESC, `lastdate` DESC, `fdate` DESC LIMIT {$page}, {$limit}", 1);
+				$sql_ = $db->super_query("SELECT fid, title, lastuser_id, lastdate, msg_num, status, fixed FROM `".PREFIX."_communities_forum` WHERE public_id = '{$public_id}' ORDER by `fixed` DESC, `lastdate` DESC, `fdate` DESC LIMIT {$page}, {$limit}", true);
 				
 				if($sql_){
 				

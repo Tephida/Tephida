@@ -448,7 +448,7 @@ if($logged){
 		case "liked_users":
 			NoAjaxQuery();
 			$rid = intval($_POST['rid']);
-			$sql_ = $db->super_query("SELECT tb1.user_id, tb2.user_photo FROM `".PREFIX."_wall_like` tb1, `".PREFIX."_users` tb2 WHERE tb1.user_id = tb2.user_id AND tb1.rec_id = '{$rid}' ORDER by `date` DESC LIMIT 0, 7", 1);
+			$sql_ = $db->super_query("SELECT tb1.user_id, tb2.user_photo FROM `".PREFIX."_wall_like` tb1, `".PREFIX."_users` tb2 WHERE tb1.user_id = tb2.user_id AND tb1.rec_id = '{$rid}' ORDER by `date` DESC LIMIT 0, 7", true);
 			if($sql_){
 				foreach($sql_ as $row){
 					if($row['user_photo']) $ava = '/uploads/users/'.$row['user_id'].'/50_'.$row['user_photo'];
@@ -473,7 +473,7 @@ if($logged){
 				$liked_num = 24;
 			
 			if($rid AND $liked_num){
-				$sql_ = $db->super_query("SELECT tb1.user_id, tb2.user_photo, user_search_pref FROM `".PREFIX."_wall_like` tb1, `".PREFIX."_users` tb2 WHERE tb1.user_id = tb2.user_id AND tb1.rec_id = '{$rid}' ORDER by `date` DESC LIMIT {$limit_page}, {$gcount}", 1);
+				$sql_ = $db->super_query("SELECT tb1.user_id, tb2.user_photo, user_search_pref FROM `".PREFIX."_wall_like` tb1, `".PREFIX."_users` tb2 WHERE tb1.user_id = tb2.user_id AND tb1.rec_id = '{$rid}' ORDER by `date` DESC LIMIT {$limit_page}, {$gcount}", true);
 				
 				if($sql_){
 					$tpl->load_template('profile_subscription_box_top.tpl');

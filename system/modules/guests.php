@@ -24,7 +24,7 @@ if($logged){
 	$gcount = 1;
 	$limit_page = ($page-1)*$gcount;
 	
-	$sql_ = $db->super_query("SELECT SQL_CALC_FOUND_ROWS tb1.guid, gdate, new, tb2.user_search_pref, user_photo FROM `".PREFIX."_guests` tb1, `".PREFIX."_users` tb2 WHERE tb1.guid = tb2.user_id AND tb1.ouid = '{$user_id}' ORDER by `gdate` DESC LIMIT {$limit_page}, {$gcount}", 1);
+	$sql_ = $db->super_query("SELECT SQL_CALC_FOUND_ROWS tb1.guid, gdate, new, tb2.user_search_pref, user_photo FROM `".PREFIX."_guests` tb1, `".PREFIX."_users` tb2 WHERE tb1.guid = tb2.user_id AND tb1.ouid = '{$user_id}' ORDER by `gdate` DESC LIMIT {$limit_page}, {$gcount}", true);
 	
 	if($sql_){
 	

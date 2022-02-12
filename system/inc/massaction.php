@@ -82,7 +82,7 @@ switch($act){
 					
 					//Удаление отправленных сообщений юзерам
 					else if($mass_type == 3){
-						$sql_msg = $db->super_query("SELECT SQL_CALC_FOUND_ROWS from_user_id FROM `".PREFIX."_messages` WHERE folder = 'outbox' AND for_user_id = '".$user_id."' GROUP by `from_user_id`", 1);
+						$sql_msg = $db->super_query("SELECT SQL_CALC_FOUND_ROWS from_user_id FROM `".PREFIX."_messages` WHERE folder = 'outbox' AND for_user_id = '".$user_id."' GROUP by `from_user_id`", true);
 						foreach($sql_msg as $row_msg){
 							$count = $db->super_query("SELECT COUNT(*) AS cnt FROM `".PREFIX."_messages` WHERE for_user_id = '".$row_msg['from_user_id']."' AND pm_read = 'no' AND from_user_id = '".$user_id."' AND folder = 'inbox'");
 
@@ -104,7 +104,7 @@ switch($act){
 					
 					//Удаление оставленных комментариев к фото
 					else if($mass_type == 4){
-						$sql_pc = $db->super_query("SELECT SQL_CALC_FOUND_ROWS pid, album_id FROM `".PREFIX."_photos_comments` WHERE user_id = '".$user_id."' GROUP by `pid`", 1);
+						$sql_pc = $db->super_query("SELECT SQL_CALC_FOUND_ROWS pid, album_id FROM `".PREFIX."_photos_comments` WHERE user_id = '".$user_id."' GROUP by `pid`", true);
 						foreach($sql_pc as $row_pc){
 							$count = $db->super_query("SELECT COUNT(*) AS cnt FROM `".PREFIX."_photos_comments` WHERE user_id = '".$user_id."' AND pid = '".$row_pc['pid']."'");
 			
@@ -119,7 +119,7 @@ switch($act){
 					
 					//Удаление оставленных комментариев к видео
 					else if($mass_type == 5){
-						$sql_pc = $db->super_query("SELECT SQL_CALC_FOUND_ROWS video_id FROM `".PREFIX."_videos_comments` WHERE author_user_id = '".$user_id."' GROUP by `video_id`", 1);
+						$sql_pc = $db->super_query("SELECT SQL_CALC_FOUND_ROWS video_id FROM `".PREFIX."_videos_comments` WHERE author_user_id = '".$user_id."' GROUP by `video_id`", true);
 						foreach($sql_pc as $row_pc){
 							$count = $db->super_query("SELECT COUNT(*) AS cnt FROM `".PREFIX."_videos_comments` WHERE author_user_id = '".$user_id."' AND video_id = '".$row_pc['video_id']."'");
 							
@@ -137,7 +137,7 @@ switch($act){
 					
 					//Удаление оставленных комментариев к заметкам
 					else if($mass_type == 11){
-						$sql_pc = $db->super_query("SELECT SQL_CALC_FOUND_ROWS note_id FROM `".PREFIX."_notes_comments` WHERE from_user_id = '".$user_id."' GROUP by `note_id`", 1);
+						$sql_pc = $db->super_query("SELECT SQL_CALC_FOUND_ROWS note_id FROM `".PREFIX."_notes_comments` WHERE from_user_id = '".$user_id."' GROUP by `note_id`", true);
 						foreach($sql_pc as $row_pc){
 							$count = $db->super_query("SELECT COUNT(*) AS cnt FROM `".PREFIX."_notes_comments` WHERE from_user_id = '".$user_id."' AND note_id = '".$row_pc['note_id']."'");
 							

@@ -928,7 +928,7 @@ function GenerateAlbumPhotosPosition($uid, $aid = false) {
     global $db;
     //Выводим все фотографии из альбома и обновляем их позицию только для просмотра альбома
     if ($uid AND $aid) {
-        $sql_ = $db->super_query("SELECT id FROM `" . PREFIX . "_photos` WHERE album_id = '{$aid}' ORDER by `position` ASC", 1);
+        $sql_ = $db->super_query("SELECT id FROM `" . PREFIX . "_photos` WHERE album_id = '{$aid}' ORDER by `position` ASC", true);
         $count = 1;
         $photo_info = '';
         foreach ($sql_ as $row) {

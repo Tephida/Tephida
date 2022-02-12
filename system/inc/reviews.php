@@ -46,7 +46,7 @@ if($approve){
     $where_sql = null;
 }
 
-$sql_ = $db->super_query("SELECT tb1.*, tb2.user_search_pref FROM `".PREFIX."_reviews` tb1, `".PREFIX."_users` tb2 WHERE tb1.user_id = tb2.user_id {$where_sql} ORDER by `date` DESC LIMIT {$limit_page}, {$gcount}", 1);
+$sql_ = $db->super_query("SELECT tb1.*, tb2.user_search_pref FROM `".PREFIX."_reviews` tb1, `".PREFIX."_users` tb2 WHERE tb1.user_id = tb2.user_id {$where_sql} ORDER by `date` DESC LIMIT {$limit_page}, {$gcount}", true);
 
 $where_sql = str_replace('AND tb1.', 'WHERE ', $where_sql);
 $numRows = $db->super_query("SELECT COUNT(*) AS cnt FROM `".PREFIX."_reviews` {$where_sql}");

@@ -161,11 +161,11 @@ if($logged){
 			
 			if($tab_photos)
 			
-				$sql_comm = $db->super_query("SELECT tb1.user_id, text, date, id, tb2.user_search_pref, user_photo, user_last_visit, user_logged_mobile FROM `".PREFIX."_photos_comments` tb1, `".PREFIX."_users` tb2 WHERE tb1.user_id = tb2.user_id AND tb1.photo_name = '{$foSQLurl}' AND id < '{$first_id}' ORDER by `date` ASC LIMIT {$start_limit}, {$limit}", 1);
+				$sql_comm = $db->super_query("SELECT tb1.user_id, text, date, id, tb2.user_search_pref, user_photo, user_last_visit, user_logged_mobile FROM `".PREFIX."_photos_comments` tb1, `".PREFIX."_users` tb2 WHERE tb1.user_id = tb2.user_id AND tb1.photo_name = '{$foSQLurl}' AND id < '{$first_id}' ORDER by `date` ASC LIMIT {$start_limit}, {$limit}", true);
 				
 			else
 			
-				$sql_comm = $db->super_query("SELECT tb1.auser_id, text, adate, id, tb2.user_search_pref, user_photo, user_last_visit, user_logged_mobile FROM `".PREFIX."_attach_comm` tb1, `".PREFIX."_users` tb2 WHERE tb1.auser_id = tb2.user_id AND tb1.forphoto = '{$foSQLurl}' AND id < '{$first_id}' ORDER by `adate` ASC LIMIT {$start_limit}, {$limit}", 1);
+				$sql_comm = $db->super_query("SELECT tb1.auser_id, text, adate, id, tb2.user_search_pref, user_photo, user_last_visit, user_logged_mobile FROM `".PREFIX."_attach_comm` tb1, `".PREFIX."_users` tb2 WHERE tb1.auser_id = tb2.user_id AND tb1.forphoto = '{$foSQLurl}' AND id < '{$first_id}' ORDER by `adate` ASC LIMIT {$start_limit}, {$limit}", true);
 			
 			$tpl->load_template('attach/comment.tpl');
 					
@@ -238,11 +238,11 @@ if($logged){
 					
 					if($tab_photos)
 					
-						$sql_comm = $db->super_query("SELECT tb1.user_id, text, date, id, tb2.user_search_pref, user_photo, user_last_visit, user_logged_mobile FROM `".PREFIX."_photos_comments` tb1, `".PREFIX."_users` tb2 WHERE tb1.user_id = tb2.user_id AND tb1.photo_name = '{$foSQLurl}' ORDER by `date` ASC LIMIT {$limit_comm}, {$row['acomm_num']}", 1);
+						$sql_comm = $db->super_query("SELECT tb1.user_id, text, date, id, tb2.user_search_pref, user_photo, user_last_visit, user_logged_mobile FROM `".PREFIX."_photos_comments` tb1, `".PREFIX."_users` tb2 WHERE tb1.user_id = tb2.user_id AND tb1.photo_name = '{$foSQLurl}' ORDER by `date` ASC LIMIT {$limit_comm}, {$row['acomm_num']}", true);
 
 					else
 					
-						$sql_comm = $db->super_query("SELECT tb1.auser_id, text, adate, id, tb2.user_search_pref, user_photo, user_last_visit, user_logged_mobile FROM `".PREFIX."_attach_comm` tb1, `".PREFIX."_users` tb2 WHERE tb1.auser_id = tb2.user_id AND tb1.forphoto = '{$foSQLurl}' ORDER by `adate` ASC LIMIT {$limit_comm}, {$row['acomm_num']}", 1);
+						$sql_comm = $db->super_query("SELECT tb1.auser_id, text, adate, id, tb2.user_search_pref, user_photo, user_last_visit, user_logged_mobile FROM `".PREFIX."_attach_comm` tb1, `".PREFIX."_users` tb2 WHERE tb1.auser_id = tb2.user_id AND tb1.forphoto = '{$foSQLurl}' ORDER by `adate` ASC LIMIT {$limit_comm}, {$row['acomm_num']}", true);
 					
 					$tpl->load_template('attach/comment.tpl');
 					

@@ -283,7 +283,7 @@ if ($logged) {
             if ($comm_num > 10 && $note_id) {
                 $limit = $comm_num - 10;
 
-                $sql_ = $db->super_query("SELECT tb1.id, from_user_id, text, date, tb2.user_search_pref, user_photo, user_last_visit, user_logged_mobile tb3.owner_user_id FROM `" . PREFIX . "_notes_comments` tb1, `" . PREFIX . "_users` tb2, `" . PREFIX . "_notes` tb3 WHERE tb1.note_id = '{$note_id}' AND tb1.from_user_id = tb2.user_id AND tb1.note_id = tb3.id ORDER by `add_date` ASC LIMIT 0, {$limit}", 1);
+                $sql_ = $db->super_query("SELECT tb1.id, from_user_id, text, date, tb2.user_search_pref, user_photo, user_last_visit, user_logged_mobile tb3.owner_user_id FROM `" . PREFIX . "_notes_comments` tb1, `" . PREFIX . "_users` tb2, `" . PREFIX . "_notes` tb3 WHERE tb1.note_id = '{$note_id}' AND tb1.from_user_id = tb2.user_id AND tb1.note_id = tb3.id ORDER by `add_date` ASC LIMIT 0, {$limit}", true);
 
                 $tpl->load_template('notes/comment.tpl');
                 foreach ($sql_ as $row_comm) {
@@ -398,7 +398,7 @@ if ($logged) {
                         else
                             $start_limit = 0;
 
-                        $sql_ = $db->super_query("SELECT tb1.id, from_user_id, text, add_date, tb2.user_search_pref, user_photo, user_last_visit, user_logged_mobile FROM `" . PREFIX . "_notes_comments` tb1, `" . PREFIX . "_users` tb2 WHERE tb1.note_id = '{$note_id}' AND tb1.from_user_id = tb2.user_id ORDER by `add_date` ASC LIMIT {$start_limit}, {$row['comm_num']}", 1);
+                        $sql_ = $db->super_query("SELECT tb1.id, from_user_id, text, add_date, tb2.user_search_pref, user_photo, user_last_visit, user_logged_mobile FROM `" . PREFIX . "_notes_comments` tb1, `" . PREFIX . "_users` tb2 WHERE tb1.note_id = '{$note_id}' AND tb1.from_user_id = tb2.user_id ORDER by `add_date` ASC LIMIT {$start_limit}, {$row['comm_num']}", true);
 
                         $tpl->load_template('notes/comment.tpl');
                         foreach ($sql_ as $row_comm) {
@@ -455,7 +455,7 @@ if ($logged) {
                 if ($owner) {
 
                     //SQL Запрос на вывод заметок из БД
-                    $sql_ = $db->super_query("SELECT id, title, full_text, date, comm_num FROM `" . PREFIX . "_notes` WHERE owner_user_id = '{$get_user_id}' ORDER by `date` DESC LIMIT {$limit_page}, {$gcount}", 1);
+                    $sql_ = $db->super_query("SELECT id, title, full_text, date, comm_num FROM `" . PREFIX . "_notes` WHERE owner_user_id = '{$get_user_id}' ORDER by `date` DESC LIMIT {$limit_page}, {$gcount}", true);
 
                     if (!$owner['user_notes_num'])
                         $owner['user_notes_num'] = '';

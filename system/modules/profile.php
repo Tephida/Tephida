@@ -70,7 +70,7 @@ if($logged){
 
 			//################### Друзья ###################//
 			if($row['user_friends_num']){
-				$sql_friends = $db->super_query("SELECT tb1.friend_id, tb2.user_search_pref, user_photo FROM `".PREFIX."_friends` tb1, `".PREFIX."_users` tb2 WHERE tb1.user_id = '{$id}' AND tb1.friend_id = tb2.user_id  AND subscriptions = 0 ORDER by rand() DESC LIMIT 0, 6", 1);
+				$sql_friends = $db->super_query("SELECT tb1.friend_id, tb2.user_search_pref, user_photo FROM `".PREFIX."_friends` tb1, `".PREFIX."_users` tb2 WHERE tb1.user_id = '{$id}' AND tb1.friend_id = tb2.user_id  AND subscriptions = 0 ORDER by rand() DESC LIMIT 0, 6", true);
 				$tpl->load_template('profile_friends.tpl');
 				foreach($sql_friends as $row_friends){
 					$friend_info = explode(' ', $row_friends['user_search_pref']);
@@ -96,7 +96,7 @@ if($logged){
 				
 				//Если друзья на сайте есть то идем дальше
 				if($online_friends['cnt']){
-					$sql_friends_online = $db->super_query("SELECT tb1.user_id, user_country_city_name, user_search_pref, user_birthday, user_photo FROM `".PREFIX."_users` tb1, `".PREFIX."_friends` tb2 WHERE tb1.user_id = tb2.friend_id AND tb2.user_id = '{$id}' AND tb1.user_last_visit >= '{$online_time}'  AND subscriptions = 0 ORDER by rand() DESC LIMIT 0, 6", 1);
+					$sql_friends_online = $db->super_query("SELECT tb1.user_id, user_country_city_name, user_search_pref, user_birthday, user_photo FROM `".PREFIX."_users` tb1, `".PREFIX."_friends` tb2 WHERE tb1.user_id = tb2.friend_id AND tb2.user_id = '{$id}' AND tb1.user_last_visit >= '{$online_time}'  AND subscriptions = 0 ORDER by rand() DESC LIMIT 0, 6", true);
 					$tpl->load_template('profile_friends.tpl');
 					foreach($sql_friends_online as $row_friends_online){
 						$friend_info_online = explode(' ', $row_friends_online['user_search_pref']);
@@ -116,7 +116,7 @@ if($logged){
 			if($row['user_notes_num']){
 				$tpl->result['notes'] = mozg_cache($cache_folder.'/notes_user_'.$id);
 				if(!$tpl->result['notes']){
-					$sql_notes = $db->super_query("SELECT id, title, date, comm_num FROM `".PREFIX."_notes` WHERE owner_user_id = '{$id}' ORDER by `date` DESC LIMIT 0,5", 1);
+					$sql_notes = $db->super_query("SELECT id, title, date, comm_num FROM `".PREFIX."_notes` WHERE owner_user_id = '{$id}' ORDER by `date` DESC LIMIT 0,5", true);
 					$tpl->load_template('profile_note.tpl');
 					foreach($sql_notes as $row_notes){
 						$tpl->set('{id}', $row_notes['id']);
@@ -166,7 +166,7 @@ if($logged){
 			if($row['user_subscriptions_num']){
 				$tpl->result['subscriptions'] = mozg_cache('/subscr_user_'.$id);
 				if(!$tpl->result['subscriptions']){
-					$sql_subscriptions = $db->super_query("SELECT tb1.friend_id, tb2.user_search_pref, user_photo, user_country_city_name, user_status FROM `".PREFIX."_friends` tb1, `".PREFIX."_users` tb2 WHERE tb1.user_id = '{$id}' AND tb1.friend_id = tb2.user_id AND  	tb1.subscriptions = 1 ORDER by `friends_date` DESC LIMIT 0,5", 1);
+					$sql_subscriptions = $db->super_query("SELECT tb1.friend_id, tb2.user_search_pref, user_photo, user_country_city_name, user_status FROM `".PREFIX."_friends` tb1, `".PREFIX."_users` tb2 WHERE tb1.user_id = '{$id}' AND tb1.friend_id = tb2.user_id AND  	tb1.subscriptions = 1 ORDER by `friends_date` DESC LIMIT 0,5", true);
 					$tpl->load_template('profile_subscription.tpl');
 					foreach($sql_subscriptions as $row_subscr){
 						$tpl->set('{user-id}', $row_subscr['friend_id']);
@@ -191,7 +191,7 @@ if($logged){
 
 			//################### Музыка ###################//
 			if($row['user_audio']){
-				$sql_audio = $db->super_query("SELECT url, artist, name FROM `".PREFIX."_audio` WHERE auser_id = '".$id."' ORDER by `adate` DESC LIMIT 0, 3", 1);
+				$sql_audio = $db->super_query("SELECT url, artist, name FROM `".PREFIX."_audio` WHERE auser_id = '".$id."' ORDER by `adate` DESC LIMIT 0, 3", true);
 				$tpl->load_template('audio/profile.tpl');
 				$jid = 0;
 				foreach($sql_audio as $row_audio){
@@ -207,7 +207,7 @@ if($logged){
 
 			//################### Праздники друзей ###################//
 			if($user_id == $id AND !isset($_SESSION['happy_friends_block_hide'])){
-				$sql_happy_friends = $db->super_query("SELECT tb1.friend_id, tb2.user_search_pref, user_photo, user_birthday FROM `".PREFIX."_friends` tb1, `".PREFIX."_users` tb2 WHERE tb1.user_id = '".$id."' AND tb1.friend_id = tb2.user_id  AND subscriptions = 0 AND user_day = '".date('j', $server_time)."' AND user_month = '".date('n', $server_time)."' ORDER by `user_last_visit` DESC LIMIT 0, 50", 1);
+				$sql_happy_friends = $db->super_query("SELECT tb1.friend_id, tb2.user_search_pref, user_photo, user_birthday FROM `".PREFIX."_friends` tb1, `".PREFIX."_users` tb2 WHERE tb1.user_id = '".$id."' AND tb1.friend_id = tb2.user_id  AND subscriptions = 0 AND user_day = '".date('j', $server_time)."' AND user_month = '".date('n', $server_time)."' ORDER by `user_last_visit` DESC LIMIT 0, 50", true);
 				$tpl->load_template('profile_happy_friends.tpl');
 				$cnt_happfr = 0;
 				foreach($sql_happy_friends as $happy_row_friends){
@@ -233,7 +233,7 @@ if($logged){
 				
 				if($count_common['cnt']){
 				
-					$sql_mutual = $db->super_query("SELECT tb1.friend_id, tb3.user_photo, user_search_pref FROM `".PREFIX."_users` tb3, `".PREFIX."_friends` tb1 INNER JOIN `".PREFIX."_friends` tb2 ON tb1.friend_id = tb2.user_id WHERE tb1.user_id = '{$user_info['user_id']}' AND tb2.friend_id = '{$id}' AND tb1.subscriptions = 0 AND tb2.subscriptions = 0 AND tb1.friend_id = tb3.user_id ORDER by rand() LIMIT 0, 3", 1);
+					$sql_mutual = $db->super_query("SELECT tb1.friend_id, tb3.user_photo, user_search_pref FROM `".PREFIX."_users` tb3, `".PREFIX."_friends` tb1 INNER JOIN `".PREFIX."_friends` tb2 ON tb1.friend_id = tb2.user_id WHERE tb1.user_id = '{$user_info['user_id']}' AND tb2.friend_id = '{$id}' AND tb1.subscriptions = 0 AND tb2.subscriptions = 0 AND tb1.friend_id = tb3.user_id ORDER by rand() LIMIT 0, 3", true);
 					
 					$tpl->load_template('profile_friends.tpl');
 					
@@ -472,7 +472,7 @@ if($logged){
 				$cache_pref = "_all";
 			}
 
-			$sql_albums = $db->super_query("SELECT aid, name, adate, photo_num, cover FROM `".PREFIX."_albums` WHERE user_id = '{$id}' {$albums_privacy} ORDER by `position` ASC LIMIT 0, 4", 1);
+			$sql_albums = $db->super_query("SELECT aid, name, adate, photo_num, cover FROM `".PREFIX."_albums` WHERE user_id = '{$id}' {$albums_privacy} ORDER by `position` ASC LIMIT 0, 4", true);
             $albums = '';
             if($sql_albums){
 				foreach($sql_albums as $row_albums){
@@ -746,7 +746,7 @@ if($logged){
 			
 			//################### Подарки ###################//
 			if($row['user_gifts']){
-				$sql_gifts = $db->super_query("SELECT gift FROM `".PREFIX."_gifts` WHERE uid = '{$id}' ORDER by `gdate` DESC LIMIT 0, 5", 1, "user_{$id}/gifts");
+				$sql_gifts = $db->super_query("SELECT gift FROM `".PREFIX."_gifts` WHERE uid = '{$id}' ORDER by `gdate` DESC LIMIT 0, 5", true);
 				foreach($sql_gifts as $row_gift){
 					$gifts .= "<img src=\"/uploads/gifts/{$row_gift['gift']}.png\" class=\"gift_onepage\" />";
 				}
@@ -759,7 +759,7 @@ if($logged){
 			
 			//################### Интересные страницы ###################//
 			if($row['user_public_num']){
-				$sql_groups = $db->super_query("SELECT tb1.friend_id, tb2.id, title, photo, adres, status_text FROM `".PREFIX."_friends` tb1, `".PREFIX."_communities` tb2 WHERE tb1.user_id = '{$id}' AND tb1.friend_id = tb2.id AND tb1.subscriptions = 2 ORDER by `traf` DESC LIMIT 0, 5", 1);
+				$sql_groups = $db->super_query("SELECT tb1.friend_id, tb2.id, title, photo, adres, status_text FROM `".PREFIX."_friends` tb1, `".PREFIX."_communities` tb2 WHERE tb1.user_id = '{$id}' AND tb1.friend_id = tb2.id AND tb1.subscriptions = 2 ORDER by `traf` DESC LIMIT 0, 5", true);
 				foreach($sql_groups as $row_groups){
 					if($row_groups['adres']) $adres = $row_groups['adres'];
 					else $adres = 'public'.$row_groups['id'];

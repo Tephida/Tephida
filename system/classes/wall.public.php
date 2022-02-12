@@ -16,10 +16,13 @@ class wall {
 	function query($query){
 		global $db;
 		
-		$this->query = $db->super_query($query, 1);
+		$this->query = $db->super_query($query, true);
 	}
 
-	function template($template){
+    /**
+     * @throws ErrorException
+     */
+    function template($template){
 		global $tpl;
 		$this->template = $tpl->load_template($template);
 	}
