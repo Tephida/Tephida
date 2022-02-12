@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /*
  *   (c) Semen Alekseev
  *
@@ -46,7 +47,7 @@ class db
 
         mysqli_set_charset ($this->db_id , COLLATE );
 
-        mysqli_query($this->db_id, "SET NAMES '" . COLLATE . "'", false );
+        mysqli_query($this->db_id, "SET NAMES '" . COLLATE . "'", 0);
 
         $this->sql_mode();
 
