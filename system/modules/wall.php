@@ -835,6 +835,7 @@ if ($logged) {
                         //FIXME
                         $cnt_rec = $cnt_rec ?? null;
                         $gcount = $gcount ?? null;
+                        $page_type = $page_type ?? null;
 
                         if ($cnt_rec['cnt'] > $gcount and $_GET['type'] == '' or $_GET['type'] == 'own')
                             navigation($gcount, $cnt_rec['cnt'], $page_type);
