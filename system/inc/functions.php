@@ -54,29 +54,6 @@ $domain_cookie = ".".implode(".", $domain_cookie);
 
 define('DOMAIN', $domain_cookie);
 
-function set_cookie($name, $value, $expires) {
-	
-	if( $expires ) {
-		
-		$expires = time() + ($expires * 86400);
-	
-	} else {
-		
-		$expires = FALSE;
-	
-	}
-	
-	if( PHP_VERSION < 5.2 ) {
-		
-		setcookie($name, $value, $expires, "/", DOMAIN . "; HttpOnly");
-	
-	} else {
-		
-		setcookie($name, $value, $expires, "/", DOMAIN, NULL, TRUE);
-	
-	}
-}
-
 /*function langdate($format, $stamp){
 	global $langdate;
 	return strtr(@date($format, $stamp), $langdate);

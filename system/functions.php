@@ -1204,3 +1204,102 @@ function createDir(string $dir, int $mode = 0777): void
         throw new Exception("Unable to create directory '$dir' with mode " );
     }
 }
+
+function normalizeName(string $value, bool $part = true): array|null|string
+{
+    $value = str_replace(chr(0), '', $value);
+
+    $value = trim(strip_tags($value));
+    $value = preg_replace("/\s+/u", "-", $value);
+    $value = str_replace("/", "-", $value);
+
+    if ($part)
+        $value = preg_replace("/[^a-z0-9\_\-.]+/mi", "", $value);
+    else
+        $value = preg_replace("/[^a-z0-9\_\-]+/mi", "", $value);
+
+    $value = preg_replace('#[\-]+#i', '-', $value);
+    return preg_replace('#[.]+#i', '.', $value);
+}
+
+function clearFilePath($file, $ext = array()): string
+{
+
+    $file = trim(str_replace(chr(0), '', (string)$file));
+    $file = str_replace(array('/', '\\'), '/', $file);
+
+    $path_parts = pathinfo($file);
+
+    if (count($ext)) {
+        if (!in_array($path_parts['extension'], $ext)) return '';
+    }
+
+    $filename = normalizeName($path_parts['basename'], true);
+
+    if (!$filename) return '';
+
+    $parts = array_filter(explode('/', $path_parts['dirname']), 'strlen');
+
+    $absolutes = array();
+
+    foreach ($parts as $part) {
+        if ('.' == $part) continue;
+        if ('..' == $part) {
+            array_pop($absolutes);
+        } else {
+            $absolutes[] = normalizeName($part, false);
+        }
+    }
+
+    $path = implode('/', $absolutes);
+
+    if ($path)
+        return implode('/', $absolutes) . '/' . $filename;
+    else
+        return '';
+
+}
+
+function cleanPath($path): string
+{
+    $path = trim(str_replace(chr(0), '', (string)$path));
+    $path = str_replace(array('/', '\\'), '/', $path);
+    $parts = array_filter(explode('/', $path), 'strlen');
+    $absolutes = array();
+    foreach ($parts as $part) {
+        if ('.' == $part) continue;
+        if ('..' == $part) {
+            array_pop($absolutes);
+        } else {
+            $absolutes[] = to_translit($part, false, false);
+        }
+    }
+
+    return implode('/', $absolutes);
+}
+
+function clean_url($url)
+{
+    $url = str_replace("http://", "", strtolower($url));
+    $url = str_replace("https://", "", $url);
+    if (str_starts_with($url, 'www.'))
+        $url = substr($url, 4);
+    $url = explode('/', $url);
+    $url = reset($url);
+    $url = explode(':', $url);
+    return reset($url);
+}
+
+function set_cookie($name, $value, $expires)
+{
+    if ($expires) {
+        $expires = time() + ($expires * 86400);
+    } else {
+        $expires = FALSE;
+    }
+    if (PHP_VERSION < 5.2) {
+        setcookie($name, $value, $expires, "/", DOMAIN . "; HttpOnly");
+    } else {
+        setcookie($name, $value, $expires, "/", DOMAIN, NULL, TRUE);
+    }
+}

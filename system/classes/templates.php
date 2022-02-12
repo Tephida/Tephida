@@ -7,64 +7,66 @@
  *
  */
 class mozg_template {
-    public $dir = '.';
-    public $template = null;
-    public $copy_template = null;
-    public $data = array();
-    public $block_data = array();
-    public $result = array('info' => '', 'vote' => '', 'speedbar' => '', 'content' => '');
-    public $allow_php_include = true;
-    public $template_parse_time = 0;
+    public string|false$dir = '.';
+    public string|null $template = null;
+    public string|null $copy_template = null;
+    public array $data = array();
+    public array $block_data = array();
+    public array $result = array('info' => '', 'vote' => '', 'speedbar' => '', 'content' => '');
+    public bool $allow_php_include = true;
 
-    function set($name, $var) {
+    public function set($name, $var) {
         if (is_array($var) && count($var)) {
             foreach ($var as $key => $key_var) {
                 $this->set($key, $key_var);
             }
         } else $this->data[$name] = $var;
     }
-    function set_block($name, $var) {
+    public function set_block($name, $var) {
         if (is_array($var) && count($var)) {
             foreach ($var as $key => $key_var) {
                 $this->set_block($key, $key_var);
             }
         } else $this->block_data[$name] = $var;
     }
-    function load_template($tpl_name) {
-//        $time_before = $this->get_real_time();
+
+    /**
+     * @throws ErrorException
+     */
+    public function load_template($tpl_name): bool
+    {
         if ($tpl_name == '' || !file_exists($this->dir . DIRECTORY_SEPARATOR . $tpl_name)) {
-            die("Невозможно загрузить шаблон: " . $tpl_name);
-//            return false;
+            throw new ErrorException("Невозможно загрузить шаблон: " . $tpl_name, 0, 'null', 'null', 'null');
         }
         $this->template = file_get_contents($this->dir . DIRECTORY_SEPARATOR . $tpl_name);
-        if (strpos($this->template, "[aviable=") !== false) {
+        if (str_contains($this->template, "[aviable=")) {
             $this->template = preg_replace_callback("#\\[aviable=(.+?)\\](.*?)\\[/aviable\\]#is", function ($matches) {
                 return $this->check_module($matches[1], $matches[2]);
             }, $this->template);
         }
-        if (strpos($this->template, "[not-aviable=") !== false) {
+        if (str_contains($this->template, "[not-aviable=")) {
             $this->template = preg_replace_callback("#\\[not-aviable=(.+?)\\](.*?)\\[/not-aviable\\]#is", function ($matches) {
                 return $this->check_module($matches[1], $matches[2], false);
             }, $this->template);
         }
-        if (strpos($this->template, "[not-group=") !== false) {
+        if (str_contains($this->template, "[not-group=")) {
             $this->template = preg_replace_callback("#\\[not-group=(.+?)\\](.*?)\\[/not-group\\]#is", function ($matches) {
                 return $this->check_group($matches[1], $matches[2], false);
             }, $this->template);
         }
-        if (strpos($this->template, "[group=") !== false) {
+        if (str_contains($this->template, "[group=")) {
             $this->template = preg_replace_callback("#\\[group=(.+?)\\](.*?)\\[/group\\]#is", function ($matches) {
                 return $this->check_group($matches[1], $matches[2]);
             }, $this->template);
         }
         $this->copy_template = $this->template;
-//        $this->template_parse_time+= $this->get_real_time() - $time_before;
         return true;
     }
-    function load_file($name, $include_file = "tpl") {
-        global $db, $is_logged, $member_id, $cat_info, $config, $category_id, $_TIME, $lang, $smartphone_detected, $mozg_module;
+
+    public function load_file($name, $include_file = "tpl"): bool|array|string|null
+    {
         $name = str_replace('..', '', $name);
-        $url = @parse_url($name);
+        $url = parse_url($name);
         $type = explode(".", $url['path']);
         $type = strtolower(end($type));
         if ($type == "tpl") {
@@ -77,15 +79,17 @@ class mozg_template {
             }
             if ($type != "php") return "To connect permitted only files with the extension: .tpl or .php";
 
-            $file_path = ROOT_DIR."/".cleanpath(dirname($url['path']));
-            $url['path'] = clearfilepath( trim($url['path']) , array ("php") );
+            $file_path = ROOT_DIR."/".cleanPath(dirname($url['path']));
+            $url['path'] = clearFilePath( trim($url['path']) , array ("php") );
 
             $file_name = pathinfo($url['path']);
             $file_name = $file_name['basename'];
-            if (stristr(php_uname("s"), "windows") === false) $chmod_value = @decoct(@fileperms($file_path)) % 1000;
+            if (stristr(php_uname("s"), "windows") === false)
+                $chmod_value = @decoct(@fileperms($file_path)) % 1000;
             if (stristr(dirname($url['path']), "uploads") !== false) return "Include files from directory /uploads/ is denied";
             if (stristr(dirname($url['path']), "templates") !== false) return "Include files from directory /templates/ is denied";
-            if ($chmod_value == 777) return "File {$url['path']} is in the folder, which is available to write (CHMOD 777). For security purposes the connection files from these folders is impossible. Change the permissions on the folder that it had no rights to the write.";
+            if ($chmod_value == 777)
+                return "File {$url['path']} is in the folder, which is available to write (CHMOD 777). For security purposes the connection files from these folders is impossible. Change the permissions on the folder that it had no rights to the write.";
             if (!file_exists($file_path . "/" . $file_name)) return "File {$url['path']} not found.";
             if (isset($url['query']) AND $url['query']) {
                 parse_str($url['query']);
@@ -98,35 +102,38 @@ class mozg_template {
         }
         return '{include file="' . $name . '"}';
     }
-    function sub_load_template($tpl_name) {
+    public function sub_load_template($tpl_name): array|bool|string|null
+    {
         $tpl_name = to_translit($tpl_name);
         if ($tpl_name == '' || !file_exists($this->dir . DIRECTORY_SEPARATOR . $tpl_name)) {
             return "Отсутствует файл шаблона: " . $tpl_name;
         }
         $template = file_get_contents($this->dir . DIRECTORY_SEPARATOR . $tpl_name);
-        if (strpos($template, "[aviable=") !== false) {
+        if (str_contains($template, "[aviable=")) {
             $template = preg_replace_callback("#\\[aviable=(.+?)\\](.*?)\\[/aviable\\]#is", function ($matches) {
                 return $this->check_module($matches[1], $matches[2]);
             }, $template);
         }
-        if (strpos($template, "[not-aviable=") !== false) {
+        if (str_contains($template, "[not-aviable=")) {
             $template = preg_replace_callback("#\\[not-aviable=(.+?)\\](.*?)\\[/not-aviable\\]#is", function ($matches) {
                 return $this->check_module($matches[1], $matches[2], false);
             }, $template);
         }
-        if (strpos($template, "[not-group=") !== false) {
+        if (str_contains($template, "[not-group=")) {
             $template = preg_replace_callback("#\\[not-group=(.+?)\\](.*?)\\[/not-group\\]#is", function ($matches) {
                 return $this->check_group($matches[1], $matches[2], false);
             }, $template);
         }
-        if (strpos($template, "[group=") !== false) {
+        if (str_contains($template, "[group=")) {
             $template = preg_replace_callback("#\\[group=(.+?)\\](.*?)\\[/group\\]#is", function ($matches) {
                 return $this->check_group($matches[1], $matches[2]);
             }, $template);
         }
         return $template;
     }
-    function check_module($aviable, $block, $action = true) {
+
+    public function check_module($aviable, $block, $action = true): array|string
+    {
         global $mozg_module;
         $aviable = explode('|', $aviable);
         $block = str_replace('\"', '"', $block);
@@ -138,7 +145,8 @@ class mozg_template {
             else return $block;
         }
     }
-    function check_group($groups, $block, $action = true) {
+    public function check_group($groups, $block, $action = true): array|string
+    {
         global $user_info;
         $groups = explode(',', $groups);
         if ($action) {
@@ -146,34 +154,31 @@ class mozg_template {
         } else {
             if (in_array($user_info['user_group'], $groups)) return "";
         }
-        $block = str_replace('\"', '"', $block);
-        return $block;
+        return str_replace('\"', '"', $block);
     }
-    function _clear() {
+    public function _clear() {
         $this->data = array();
         $this->block_data = array();
         $this->copy_template = $this->template;
     }
-    function clear() {
+    public function clear() {
         $this->data = array();
         $this->block_data = array();
         $this->copy_template = null;
         $this->template = null;
     }
-    function global_clear() {
+    public function global_clear() {
         $this->data = array();
         $this->block_data = array();
         $this->result = array();
         $this->copy_template = null;
         $this->template = null;
     }
-    function load_lang($var) {
+    private function load_lang($var) {
         global $lang;
         return $lang[$var];
     }
-    function compile($tpl) {
-//        $time_before = $this->get_real_time();
-
+    public function compile($tpl) {
         $find = $find_preg = $replace = $replace_preg = array();
 
         if (count($this->block_data)) {
@@ -194,7 +199,6 @@ class mozg_template {
             return $this->load_lang($match);
         }, $this->copy_template);
 
-
         $this->copy_template = str_replace(array("_&#123;_", "_&#91;_"), array("{", "["), $this->copy_template);
 
         if( isset( $this->result[$tpl] ) )
@@ -206,9 +210,5 @@ class mozg_template {
         $this->_clear();
 //        $this->template_parse_time+= $this->get_real_time() - $time_before;
     }
-    function get_real_time(): float
-    {
-        list($seconds, $microSeconds) = explode(' ', microtime());
-        return (( float )$seconds + ( float )$microSeconds);
-    }
+
 }

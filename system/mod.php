@@ -44,7 +44,8 @@ switch ($go) {
     /** Альбомы */
     case "albums":
         $spBar = true;
-        if ($config['album_mod'] == 'yes') include ENGINE_DIR . '/modules/albums.php';
+        if ($config['album_mod'] == 'yes')
+            include ENGINE_DIR . '/modules/albums.php';
         else {
             $user_speedbar = 'Информация';
             msgbox('', 'Сервис отключен.', 'info');
@@ -93,7 +94,8 @@ switch ($go) {
     /** Видео */
     case "videos":
         $spBar = true;
-        if ($config['video_mod'] == 'yes') include ENGINE_DIR . '/modules/videos.php';
+        if ($config['video_mod'] == 'yes')
+            include ENGINE_DIR . '/modules/videos.php';
         else {
             $user_speedbar = 'Информация';
             msgbox('', 'Сервис отключен.', 'info');
