@@ -505,13 +505,15 @@ HTML;
   KEY `public_id` (`public_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;";
             $table_Chema[] = "CREATE TABLE IF NOT EXISTS `{$_POST['mysql_prefix']}_antispam` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
   `act` tinyint(3) NOT NULL,
   `user_id` int(11) NOT NULL,
   `date` int(10) NOT NULL,
   `txt` varchar(32) NOT NULL,
+  PRIMARY KEY (`id`),
   KEY `act` (`act`,`user_id`,`date`),
   KEY `act_2` (`act`,`user_id`,`date`,`txt`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;";
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;";
             $table_Chema[] = "CREATE TABLE IF NOT EXISTS `{$_POST['mysql_prefix']}_apps` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `url` varchar(255) NOT NULL,
