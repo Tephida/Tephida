@@ -16,12 +16,11 @@ class db
     public array $query_list = array();
     public array $query_errors_list = array();
     public string $mysql_error = '';
-    public string $mysql_version = '';
     public int $mysql_error_num = 0;
     public bool|mysqli_result $query_id = false;
 
 
-    public function connect($db_user, $db_pass, $db_name, $db_location = 'localhost', $show_error=1) : bool
+    public function connect(?string $db_user, ?string $db_pass, ?string $db_name, ?string $db_location = 'localhost', $show_error=1) : bool
     {
         $db_location = explode(":", $db_location);
 
@@ -45,16 +44,6 @@ class db
             }
         }
 
-/*        $res = $this->super_query( "SELECT VERSION() AS `version`", false, false, false );
-
-        $this->mysql_version = $res['version'];
-
-        if( version_compare($this->mysql_version, '5.5.3', '<') ) {
-
-            die ("Datalife Engine required MySQL version 5.5.3 or greater. You need upgrade MySQL version on your server.");
-
-        }*/
-
         mysqli_set_charset ($this->db_id , COLLATE );
 
         mysqli_query($this->db_id, "SET NAMES '" . COLLATE . "'", false );
@@ -64,8 +53,10 @@ class db
         return true;
     }
 
-    public function query($query, $show_error=true,) {
-        if(!$this->db_id) $this->connect(DBUSER, DBPASS, DBNAME, DBHOST);
+    public function query($query, $show_error=true,): mysqli_result|bool
+    {
+        if(!$this->db_id)
+            $this->connect(DBUSER, DBPASS, DBNAME, DBHOST);
 
         if(!($this->query_id = mysqli_query($this->db_id, $query) )) {
 
@@ -191,8 +182,10 @@ class db
         return $fields;
     }
 
-    function safesql( $source ) {
-        if(!$this->db_id) $this->connect(DBUSER, DBPASS, DBNAME, DBHOST);
+    function safesql( $source ): string
+    {
+        if(!$this->db_id)
+            $this->connect(DBUSER, DBPASS, DBNAME, DBHOST);
 
         if ($this->db_id)
             return mysqli_real_escape_string ($this->db_id, $source);
