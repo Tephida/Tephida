@@ -14,6 +14,9 @@ $jsonResponse = array();
 if ($logged) {
     $act = $_GET['act'] ?? '';
     $user_id = $user_info['user_id'];
+
+    $server_time = $server_time ?? time();
+
     switch ($act) {
         case 'exclude':
             $id = intval($_POST['id']);
@@ -59,7 +62,6 @@ if ($logged) {
             } else $jsonResponse['error'] = 'Ошибка доступа';
             echo json_encode($jsonResponse);
             die();
-            break;
 
         case 'uploadRoomAvatar':
             $room_id = intval($_GET['room_id']);
@@ -119,7 +121,6 @@ if ($logged) {
             } else $jsonResponse['error'] = 'Ошибка доступа';
             echo json_encode($jsonResponse);
             die();
-            break;
         case 'viewRoomBox':
             $room_id = intval($_POST['room_id']);
             $row = $db->super_query("SELECT id, title, owner, photo FROM room WHERE id = '{$room_id}'");
@@ -154,7 +155,6 @@ if ($logged) {
                 AjaxTpl();
             }
             die();
-            break;
         case 'saveRoomName':
             $room_id = intval($_POST['room_id']);
             $title = substr(requestFilter('title'), 0, 100);
@@ -200,7 +200,6 @@ if ($logged) {
             echo
             json_encode($jsonResponse);
             die();
-            break;
         case 'createRoomBox':
             $tpl->result['friends'] = '';
             $sql = $db->super_query("SELECT tb1.friend_id, tb2.user_photo, tb2.user_search_pref FROM friends tb1, users tb2 WHERE tb1.user_id = '{$user_id}' AND tb1.friend_id = tb2.user_id AND tb1.subscriptions = 0 ORDER by friends_date DESC", true);
@@ -219,7 +218,6 @@ if ($logged) {
             $tpl->compile('content');
             AjaxTpl();
             die();
-            break;
         case 'inviteToRoomBox':
             $room_id = intval($_POST['room_id']);
             $tpl->result['friends'] = '';
@@ -240,7 +238,6 @@ if ($logged) {
             $tpl->compile('content');
             AjaxTpl();
             die();
-            break;
         case 'createRoom':
             $title = requestFilter('title');
             $user_ids = $_POST['user_ids'] ?? null;
@@ -304,7 +301,6 @@ if ($logged) {
             echo
             json_encode($jsonResponse);
             die();
-            break;
         case 'inviteToRoom':
             $room_id = intval($_POST['room_id']);
             $user_ids = $_POST['user_ids'];
@@ -358,7 +354,6 @@ if ($logged) {
             } else $jsonResponse['error'] = 'Выберите друзей';
             echo json_encode($jsonResponse);
             die();
-            break;
         case 'exitFromRoom':
             $room_id = intval($_POST['room_id']);
             if ($room_id) {
@@ -400,7 +395,6 @@ if ($logged) {
             } else $jsonResponse['error'] = 'Ошибка доступа';
             echo json_encode($jsonResponse);
             die();
-            break;
         case "send":
             NoAjaxQuery();
             AntiSpam('messages');
@@ -516,7 +510,6 @@ if ($logged) {
                 } else echo 'no_user';
             } else echo 'max_strlen';
             die();
-            break;
         case "read":
             NoAjaxQuery();
             $msg_id = intval($_POST['msg_id']);
@@ -534,7 +527,6 @@ if ($logged) {
                 mozg_clear_cache_file('user_' . $check['history_user_id'] . '/im');
             }
             die();
-            break;
         case "typograf":
             NoAjaxQuery();
             $room_id = intval($_POST['room_id']);
@@ -544,7 +536,6 @@ if ($logged) {
                 else mozg_create_cache("user_{$for_user_id}/typograf{$user_id}", 1);
             }
             exit();
-            break;
         case "update":
             NoAjaxQuery();
             $room_id = intval($_POST['room_id']);
@@ -699,11 +690,21 @@ if ($logged) {
                                 }
                             } else $attach_result .= '';
                         }
-                        if ($resLinkTitle and $row['text'] == $resLinkUrl or !$row['text']) $row['text'] = $resLinkTitle . '<div class="clear"></div>' . $attach_result;
-                        else if ($attach_result) $row['text'] = preg_replace('`(http(?:s)?://\w+[^\s\[\]\<]+)`i', '<a href="/away.php?url=$1" target="_blank">$1</a>', $row['text']) . $attach_result;
-                        else $row['text'] = preg_replace('`(http(?:s)?://\w+[^\s\[\]\<]+)`i', '<a href="/away.php?url=$1" target="_blank">$1</a>', $row['text']);
-                    } else $row['text'] = preg_replace('`(http(?:s)?://\w+[^\s\[\]\<]+)`i', '<a href="/away.php?url=$1" target="_blank">$1</a>', $row['text']);
+
+                        $resLinkTitle = $resLinkTitle ?? null;
+                        $resLinkUrl = $resLinkUrl ?? null;
+
+                        if ($resLinkTitle and $row['text'] == $resLinkUrl or !$row['text'])
+                            $row['text'] = $resLinkTitle . '<div class="clear"></div>' . $attach_result;
+                        else if ($attach_result)
+                            $row['text'] = preg_replace('`(http(?:s)?://\w+[^\s\[\]\<]+)`i', '<a href="/away.php?url=$1" target="_blank">$1</a>', $row['text']) . $attach_result;
+                        else
+                            $row['text'] = preg_replace('`(http(?:s)?://\w+[^\s\[\]\<]+)`i', '<a href="/away.php?url=$1" target="_blank">$1</a>', $row['text']);
+                    } else
+                        $row['text'] = preg_replace('`(http(?:s)?://\w+[^\s\[\]\<]+)`i', '<a href="/away.php?url=$1" target="_blank">$1</a>', $row['text']);
+
                     $resLinkTitle = '';
+
                     if ($row['tell_uid']) {
                         if ($row['public']) $rowUserTell = $db->super_query("SELECT title, photo FROM `communities` WHERE id = '{$row['tell_uid']}'", false);
                         else $rowUserTell = $db->super_query("SELECT user_search_pref, user_photo FROM `users` WHERE user_id = '{$row['tell_uid']}'");
@@ -741,15 +742,17 @@ HTML;
                 AjaxTpl();
             }
             die();
-            break;
+
         case "history":
             NoAjaxQuery();
             $need_read = intval($_POST['need_read']);
             $room_id = intval($_POST['room_id']);
             $for_user_id = intval($_POST['for_user_id']);
             $first_id = intval($_POST['first_id']);
-            if ($room_id) $for_user_id = 0;
-            if ($for_user_id) mozg_create_cache("user_{$for_user_id}/typograf{$user_id}", "");
+            if ($room_id)
+                $for_user_id = 0;
+            if ($for_user_id)
+                mozg_create_cache("user_{$for_user_id}/typograf{$user_id}", "");
             $limit_msg = 20;
             if ($need_read) {
                 $sql = $db->super_query("SELECT id, history_user_id, read_ids, user_ids, room_id FROM `messages` WHERE " . ($room_id ? "room_id = '{$room_id}'" : "room_id = 0 and find_in_set('{$for_user_id}', user_ids)") . " and find_in_set('{$user_id}', user_ids) AND not find_in_set('{$user_id}', del_ids) AND not find_in_set('{$user_id}', read_ids) and history_user_id != '{$user_id}'", true);
@@ -761,7 +764,8 @@ HTML;
                         if (!$row['room_id']) {
                             $user_ids = explode(',', $row['user_ids']);
                             $im_user_id = $user_ids[0] == $user_id ? $user_ids[1] : $user_ids[0];
-                        } else $im_user_id = 0;
+                        } else
+                            $im_user_id = 0;
                         $db->query("UPDATE `im` SET msg_num = msg_num-1 WHERE iuser_id = '" . $user_id . "' and im_user_id = '" . $im_user_id . "' AND room_id = '" . $row['room_id'] . "'");
                         mozg_clear_cache_file('user_' . $row['history_user_id'] . '/im');
                     }
@@ -794,10 +798,14 @@ HTML;
                     $tpl->set('{name}', $row['user_name']);
                     $tpl->set('{user-id}', $row['history_user_id']);
                     $tpl->set('{msg-id}', $row['id']);
-                    if (date('Y-m-d', $row['date']) == date('Y-m-d', $server_time)) $tpl->set('{date}', langdate('H:i:s', $row['date']));
-                    else $tpl->set('{date}', langdate('d.m.y', $row['date']));
-                    if ($row['user_photo']) $tpl->set('{ava}', '/uploads/users/' . $row['history_user_id'] . '/50_' . $row['user_photo']);
-                    else $tpl->set('{ava}', '{theme}/images/no_ava_50.png');
+                    if (date('Y-m-d', $row['date']) == date('Y-m-d', $server_time))
+                        $tpl->set('{date}', langdate('H:i:s', $row['date']));
+                    else
+                        $tpl->set('{date}', langdate('d.m.y', $row['date']));
+                    if ($row['user_photo'])
+                        $tpl->set('{ava}', '/uploads/users/' . $row['history_user_id'] . '/50_' . $row['user_photo']);
+                    else
+                        $tpl->set('{ava}', '{theme}/images/no_ava_50.png');
                     $read_ids = $row['read_ids'] ? explode(',', $row['read_ids']) : array();
                     if (in_array($user_id, $read_ids) || $read_ids && $user_id == $row['history_user_id']) {
                         $tpl->set('{new}', '');
@@ -848,10 +856,10 @@ HTML;
                             } elseif ($attach_type[0] == 'smile' and file_exists(ROOT_DIR . "/uploads/smiles/{$attach_type[1]}")) {
                                 $attach_result .= '<img src=\"/uploads/smiles/' . $attach_type[1] . '\" style="margin-right:5px" />';
                                 $resLinkTitle = '';
-                            } elseif ($attach_type[0] == 'link' and preg_match('/http:\/\/(.*?)+$/i', $attach_type[1]) and $cnt_attach_link == 1 and stripos(str_replace('http://www.', 'http://', $attach_type[1]), $config['home_url']) === false) {
+                            } elseif ($attach_type[0] == 'link' and preg_match('/https:\/\/(.*?)+$/i', $attach_type[1]) and $cnt_attach_link == 1 and stripos(str_replace('https://www.', 'https://', $attach_type[1]), $config['home_url']) === false) {
                                 $count_num = count($attach_type);
                                 $domain_url_name = explode('/', $attach_type[1]);
-                                $rdomain_url_name = str_replace('http://', '', $domain_url_name[2]);
+                                $rdomain_url_name = str_replace('https://', '', $domain_url_name[2]);
                                 $attach_type[3] = stripslashes($attach_type[3]);
                                 $attach_type[3] = substr($attach_type[3], 0, 200);
                                 $attach_type[2] = stripslashes($attach_type[2]);
@@ -917,26 +925,41 @@ HTML;
                                 }
                             } else $attach_result .= '';
                         }
-                        if ($resLinkTitle and $row['text'] == $resLinkUrl or !$row['text']) $row['text'] = $resLinkTitle . '<div class="clear"></div>' . $attach_result;
-                        else if ($attach_result) $row['text'] = preg_replace('`(http(?:s)?://\w+[^\s\[\]\<]+)`i', '<a href="/away.php?url=$1" target="_blank">$1</a>', $row['text']) . $attach_result;
-                        else $row['text'] = preg_replace('`(http(?:s)?://\w+[^\s\[\]\<]+)`i', '<a href="/away.php?url=$1" target="_blank">$1</a>', $row['text']);
-                    } else $row['text'] = preg_replace('`(http(?:s)?://\w+[^\s\[\]\<]+)`i', '<a href="/away.php?url=$1" target="_blank">$1</a>', $row['text']);
+                        if ($resLinkTitle and $row['text'] == $resLinkUrl or !$row['text'])
+                            $row['text'] = $resLinkTitle . '<div class="clear"></div>' . $attach_result;
+                        else if ($attach_result)
+                            $row['text'] = preg_replace('`(http(?:s)?://\w+[^\s\[\]\<]+)`i', '<a href="/away.php?url=$1" target="_blank">$1</a>', $row['text']) . $attach_result;
+                        else
+                            $row['text'] = preg_replace('`(http(?:s)?://\w+[^\s\[\]\<]+)`i', '<a href="/away.php?url=$1" target="_blank">$1</a>', $row['text']);
+                    } else
+                        $row['text'] = preg_replace('`(http(?:s)?://\w+[^\s\[\]\<]+)`i', '<a href="/away.php?url=$1" target="_blank">$1</a>', $row['text']);
+
                     $resLinkTitle = '';
+
                     if ($row['tell_uid']) {
-                        if ($row['public']) $rowUserTell = $db->super_query("SELECT title, photo FROM `communities` WHERE id = '{$row['tell_uid']}'", false);
-                        else $rowUserTell = $db->super_query("SELECT user_search_pref, user_photo FROM `users` WHERE user_id = '{$row['tell_uid']}'");
-                        if (date('Y-m-d', $row['tell_date']) == date('Y-m-d', $server_time)) $dateTell = langdate('сегодня в H:i', $row['tell_date']);
-                        elseif (date('Y-m-d', $row['tell_date']) == date('Y-m-d', ($server_time - 84600))) $dateTell = langdate('вчера в H:i', $row['tell_date']);
-                        else $dateTell = langdate('j F Y в H:i', $row['tell_date']);
+                        if ($row['public'])
+                            $rowUserTell = $db->super_query("SELECT title, photo FROM `communities` WHERE id = '{$row['tell_uid']}'", false);
+                        else
+                            $rowUserTell = $db->super_query("SELECT user_search_pref, user_photo FROM `users` WHERE user_id = '{$row['tell_uid']}'");
+                        if (date('Y-m-d', $row['tell_date']) == date('Y-m-d', $server_time))
+                            $dateTell = langdate('сегодня в H:i', $row['tell_date']);
+                        elseif (date('Y-m-d', $row['tell_date']) == date('Y-m-d', ($server_time - 84600)))
+                            $dateTell = langdate('вчера в H:i', $row['tell_date']);
+                        else
+                            $dateTell = langdate('j F Y в H:i', $row['tell_date']);
                         if ($row['public']) {
                             $rowUserTell['user_search_pref'] = stripslashes($rowUserTell['title']);
                             $tell_link = 'public';
-                            if ($rowUserTell['photo']) $avaTell = '/uploads/groups/' . $row['tell_uid'] . '/50_' . $rowUserTell['photo'];
-                            else $avaTell = '{theme}/images/no_ava_50.png';
+                            if ($rowUserTell['photo'])
+                                $avaTell = '/uploads/groups/' . $row['tell_uid'] . '/50_' . $rowUserTell['photo'];
+                            else
+                                $avaTell = '{theme}/images/no_ava_50.png';
                         } else {
                             $tell_link = 'u';
-                            if ($rowUserTell['user_photo']) $avaTell = '/uploads/users/' . $row['tell_uid'] . '/50_' . $rowUserTell['user_photo'];
-                            else $avaTell = '{theme}/images/no_ava_50.png';
+                            if ($rowUserTell['user_photo'])
+                                $avaTell = '/uploads/users/' . $row['tell_uid'] . '/50_' . $rowUserTell['user_photo'];
+                            else
+                                $avaTell = '{theme}/images/no_ava_50.png';
                         }
                         $row['text'] = <<<HTML
 {$row['tell_comm']}
@@ -957,7 +980,8 @@ HTML;
                     $tpl->compile('content');
                 }
             }
-            if (!$first_id) $tpl->result['content'] .= '</div></div>';
+            if (!$first_id)
+                $tpl->result['content'] .= '</div></div>';
             if (!$first_id) {
                 $tpl->load_template('im/form.tpl');
                 $tpl->set('{for_user_id}', $room_id ? 'c' . $room_id : $for_user_id);
@@ -986,7 +1010,6 @@ HTML;
             }
             AjaxTpl();
             die();
-            break;
         case "upDialogs":
             NoAjaxQuery();
             $update = mozg_cache('user_' . $user_id . '/im_update');
@@ -1009,7 +1032,6 @@ HTML;
 				</script>';
             }
             die();
-            break;
         case 'del':
             $room_id = intval($_POST['room_id']);
             $im_user_id = intval($_POST['im_user_id']);
@@ -1041,7 +1063,6 @@ HTML;
                 $db->query("DELETE FROM `im` WHERE id = '{$row['id']}'");
             }
             exit;
-            break;
         case 'delet':
             NoAjaxQuery();
             $mid = intval($_POST['mid']);
@@ -1065,7 +1086,6 @@ HTML;
                 }
             }
             die();
-            break;
         default:
             $metatags['title'] = 'Диалоги';
             $mobile_speedbar = '<a href="/messages">Диалоги</a>';
@@ -1097,4 +1117,3 @@ HTML;
     $user_speedbar = $lang['no_infooo'];
     msgbox('', $lang['not_logged'], 'info');
 }
-?>
