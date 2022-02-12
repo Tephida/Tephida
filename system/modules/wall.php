@@ -621,7 +621,7 @@ if ($logged) {
 
         //################### Парсер информации о ссылке ###################//
         case "parse_link":
-            $lnk = 'http://' . str_replace('http://', '', trim($_POST['lnk']));
+            $lnk = 'https://' . str_replace('https://', '', trim($_POST['lnk']));
             $check_url = @get_headers(stripslashes($lnk));
 
             if (strpos($check_url[0], '200')) {
@@ -680,18 +680,21 @@ if ($logged) {
 
                         $exp3 = explode('"', $exp2[0]);
 
-                        $expFormat = end(explode('.', $exp3[0]));
+                        $array1 = explode('.', $exp3[0]);
+                        $expFormat = end($array1);
 
                         if (in_array(strtolower($expFormat), $allowed_files)) {
 
                             $i++;
 
                             $domain_url_name = explode('/', $lnk);
-                            $rdomain_url_name = str_replace('http://', '', $domain_url_name[2]);
+                            $rdomain_url_name = str_replace('https://', '', $domain_url_name[2]);
 
-                            if (stripos(strtolower($exp3[0]), 'http://') === false)
+                            $new_imgs = '';
 
-                                $new_imgs .= 'http://' . $rdomain_url_name . '/' . $exp3[0] . '|';
+                            if (stripos(strtolower($exp3[0]), 'https://') === false)
+
+                                $new_imgs .= 'https://' . $rdomain_url_name . '/' . $exp3[0] . '|';
 
                             else
 
@@ -712,6 +715,8 @@ if ($logged) {
                     if (!$new_imgs)
                         $new_imgs = $img_link;
                 }
+
+                $img_link = $img_link ?? null;
 
                 echo $res_title . '<f>' . $res_descr . '<f>' . $img_link . '<f>' . $new_imgs;
 
