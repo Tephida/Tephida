@@ -23,6 +23,7 @@ if ($logged) {
         case "invite":
             $tpl->load_template('balance/invite.tpl');
             $tpl->set('{uid}', $user_id);
+            $tpl->set('{site}', $_SERVER['HTTP_HOST']);
             $tpl->compile('content');
             break;
 
