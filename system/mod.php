@@ -294,7 +294,14 @@ switch ($go) {
 
     /** Игры */
     case "apps":
-        include ENGINE_DIR . '/modules/apps.php';
+        $app_mod = false;
+        if ($app_mod == true) {
+            include ENGINE_DIR . '/modules/apps.php';
+        } else {
+            $user_speedbar = 'Информация';
+            msgbox('', 'Сервис отключен.', 'info');
+        }
+
         break;
 
     /** Отзывы */
