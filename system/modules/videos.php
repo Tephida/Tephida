@@ -449,7 +449,7 @@ if ($logged) {
 
             }
 
-            $public_admin = $public_admin ?? : null;
+            $public_admin = $public_admin ?? null;
 
             if ($comm_num > 3 and $vid and $owner_id) {
 
@@ -717,14 +717,13 @@ if ($logged) {
                         $check_friend = null;
 
                     //Настройки приватности
-                    if ($user_id == $get_user_id)
+                    if ($user_id == $get_user_id) {
                         $sql_privacy = "";
-                    $cache_pref = '';
-                elseif
-                    ($check_friend){
-                    $sql_privacy = "AND privacy regexp '[[:<:]](1|2)[[:>:]]'";
-                    $cache_pref = '_friends';
-                } else {
+                        $cache_pref = '';
+                    } elseif ($check_friend) {
+                        $sql_privacy = "AND privacy regexp '[[:<:]](1|2)[[:>:]]'";
+                        $cache_pref = '_friends';
+                    } else {
                         $sql_privacy = "AND privacy = 1";
                         $cache_pref = '_all';
                     }

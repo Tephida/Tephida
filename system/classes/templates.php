@@ -17,7 +17,7 @@ class mozg_template
     public array $block_data = array();
     public array $result = array('info' => '', 'vote' => '', 'speedbar' => '', 'content' => '');
 
-    public function set(string $name, array|string $var): void
+    public function set(string $name, array|string|int $var): void
     {
         if (is_array($var) && count($var)) {
             foreach ($var as $key => $key_var) {
@@ -26,7 +26,7 @@ class mozg_template
         } else $this->data[$name] = $var;
     }
 
-    public function set_block(string $name, array|string $var): void
+    public function set_block(string $name, array|string|int $var): void
     {
         if (is_array($var) && count($var)) {
             foreach ($var as $key => $key_var) {

@@ -71,7 +71,7 @@ if ($logged) {
         $type = '';
         $dop_sort = '';
         $sql_where = "
-					tb1.ac_user_id IN (SELECT tb2.friend_id FROM `friends` tb2 WHERE user_id = '{$user_id}' AND tb1.action_type IN (1,2,3) AND subscriptions != 2) 
+					tb1.ac_user_id IN (SELECT tb2.friend_id FROM `friends` tb2 WHERE user_id = '{$user_id}' AND tb1.action_type IN (1,2,3) /*AND subscriptions != 2*/) 
 				OR 
 					tb1.ac_user_id IN (SELECT tb2.friend_id FROM `friends` tb2 WHERE user_id = '{$user_id}' AND tb1.action_type = 11 AND subscriptions = 2) 
 				AND";

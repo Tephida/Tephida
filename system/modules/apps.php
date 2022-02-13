@@ -157,15 +157,20 @@ if ($logged) {
         default:
             $metatags['title'] = 'Игры';
             //Если вызвана подгрузка
-            if ($_POST['doload']) NoAjaxQuery();
+            if (isset($_POST['doload']))
+                NoAjaxQuery();
             $limit_news = 20;
             $limit_news_old = 5;
-            if ($_POST['page_cnt'] > 0) $page_cnt = intval($_POST['page_cnt']) * $limit_news;
-            else $page_cnt = 0;
-            if ($_POST['page_cnt_old'] > 0) $page_cnt_old = intval($_POST['page_cnt_old']) * $limit_news_old;
-            else $page_cnt_old = 0;
+            if (isset($_POST['page_cnt']) and $_POST['page_cnt'] > 0)
+                $page_cnt = intval($_POST['page_cnt']) * $limit_news;
+            else
+                $page_cnt = 0;
+            if (isset($_POST['page_cnt_old']) and $_POST['page_cnt_old'] > 0)
+                $page_cnt_old = intval($_POST['page_cnt_old']) * $limit_news_old;
+            else
+                $page_cnt_old = 0;
             //Выводим популярные
-            if ($_POST['doload'] != 2) {
+            if (isset($_POST['doload']) and $_POST['doload'] != 2) {
                 $sql_popular = $db->super_query("SELECT id, title, poster, traf FROM `games` ORDER by `traf` DESC LIMIT {$page_cnt}, {$limit_news}", true);
                 if ($sql_popular) {
                     $tpl->load_template('apps/game.tpl');
@@ -182,7 +187,7 @@ if ($logged) {
                 }
             }
             //Выводим новые
-            if ($_POST['doload'] != 2) {
+            if (isset($_POST['doload']) and $_POST['doload'] != 2) {
                 $sql_new = $db->super_query("SELECT id, title, poster, traf FROM `games` ORDER by `date` DESC LIMIT {$page_cnt}, {$limit_news}", true);
                 if ($sql_new) {
                     $tpl->load_template('apps/game.tpl');
@@ -199,7 +204,7 @@ if ($logged) {
                 }
             }
             //Выводим "Мои игры"
-            if (!$_POST['doload'] OR $_POST['doload'] == 2) {
+            if (!isset($_POST['doload']) or isset($_POST['doload']) and $_POST['doload'] == 2) {
                 $sql_my = $db->super_query("SELECT tb1.game_id, tb2.title, traf, poster FROM `games_users` tb1, `games` tb2 WHERE tb1.game_id = tb2.id AND tb1.user_id = '{$user_id}' ORDER by `lastdate` DESC LIMIT {$page_cnt_old}, {$limit_news_old}", true);
                 if ($sql_my) {
                     $tpl->load_template('apps/my.tpl');
@@ -213,10 +218,11 @@ if ($logged) {
                         $tpl->set('{type}', 'new');
                         $tpl->compile('my_games');
                     }
-                } else if (!$_POST['doload']) $tpl->result['my_games'] = '<div class="info_center" style="width:370px;padding-top:125px;padding-bottom:100px">Здесь будут отображаться последние игры,<br /> которые Вы посещали.</div>';
+                } else if (!isset($_POST['doload']))
+                    $tpl->result['my_games'] = '<div class="info_center" style="width:370px;padding-top:125px;padding-bottom:100px">Здесь будут отображаться последние игры,<br /> которые Вы посещали.</div>';
             }
             //Выводим "Активность друзей"
-            if (!$_POST['doload'] OR $_POST['doload'] == 2) {
+            if (!isset($_POST['doload']) or isset($_POST['doload']) and $_POST['doload'] == 2) {
                 $myFrList = mozg_cache("user_{$user_id}/friends");
                 $expListFr = explode('|', $myFrList);
                 $sqlFRlist = array();
@@ -267,33 +273,37 @@ if ($logged) {
                             $tpl->set('{app-id}', $row_acti['game_id']);
                             $tpl->compile('activity');
                         }
-                    } else if (!$_POST['doload']) $tpl->result['activity'] = '<div class="info_center" style="width:370px;padding-top:125px;padding-bottom:100px">Здесь будет отображаться активность<br /> Ваших друзей в разделе игр.</div>';
-                } else if (!$_POST['doload']) $tpl->result['activity'] = '<div class="info_center" style="width:370px;padding-top:125px;padding-bottom:100px">Здесь будет отображаться активность<br /> Ваших друзей в разделе игр.</div>';
+                    } else if (!isset($_POST['doload']))
+                        $tpl->result['activity'] = '<div class="info_center" style="width:370px;padding-top:125px;padding-bottom:100px">Здесь будет отображаться активность<br /> Ваших друзей в разделе игр.</div>';
+                } else if (!isset($_POST['doload']))
+                    $tpl->result['activity'] = '<div class="info_center" style="width:370px;padding-top:125px;padding-bottom:100px">Здесь будет отображаться активность<br /> Ваших друзей в разделе игр.</div>';
             }
-            if (!$_POST['doload']) {
+            if (!isset($_POST['doload'])) {
                 $tpl->load_template('apps/main.tpl');
-                $tpl->set('{pop_games}', $tpl->result['pop_games']);
-                $tpl->set('{new_games}', $tpl->result['new_games']);
-                $tpl->set('{my_games}', $tpl->result['my_games']);
-                $tpl->set('{activity}', $tpl->result['activity']);
+                $tpl->set('{pop_games}', $tpl->result['pop_games'] ?? '');
+                $tpl->set('{new_games}', $tpl->result['new_games'] ?? '');
+                $tpl->set('{my_games}', $tpl->result['my_games'] ?? '');
+                $tpl->set('{activity}', $tpl->result['activity'] ?? '');
                 $cntMy = count($sql_my);
                 $cntActi = $sql_acti ? count($sql_acti) : 0;
-                $cntPop = count($sql_popular);
-                $cntNew = count($sql_new);
-                if ($cntMy == 5 OR $cntActi == 5) {
+                $cntPop = $sql_popular ? count($sql_popular) : 0;
+                $cntNew = $sql_new ? count($sql_new) : 0;
+                if ($cntMy == 5 or $cntActi == 5) {
                     $tpl->set('[but-preload]', '');
                     $tpl->set('[/but-preload]', '');
                 } else $tpl->set_block("'\\[but-preload](.*?)\\[/but-preload]'si", "");
-                if ($cntPop == 20 OR $cntNew == 20) {
+                if ($cntPop == 20 or $cntNew == 20) {
                     $tpl->set('[but-preload-2]', '');
                     $tpl->set('[/but-preload-2]', '');
                 } else $tpl->set_block("'\\[but-preload-2](.*?)\\[/but-preload-2]'si", "");
                 $tpl->compile('content');
             }
             //Если вызвана подгрузка
-            if ($_POST['doload']) {
-                if ($_POST['doload'] == 2) $tpl->result['content'] = $tpl->result['my_games'] . '||' . $tpl->result['activity'];
-                else $tpl->result['content'] = $tpl->result['pop_games'] . '||' . $tpl->result['new_games'];
+            if (isset($_POST['doload'])) {
+                if (isset($_POST['doload']) and $_POST['doload'] == 2)
+                    $tpl->result['content'] = $tpl->result['my_games'] . '||' . $tpl->result['activity'];
+                else
+                    $tpl->result['content'] = $tpl->result['pop_games'] . '||' . $tpl->result['new_games'];
                 AjaxTpl();
                 exit();
             }
