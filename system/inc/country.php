@@ -38,7 +38,7 @@ if ($_GET['act'] == 'del') {
     die();
 }
 
-$sql_ = $db->super_query("SELECT * FROM `country` ORDER by `name` ASC", true;
+$sql_ = $db->super_query("SELECT * FROM `country` ORDER by `name` ASC", true);
 $countryes = '';
 foreach ($sql_ as $row) {
     $countryes .= <<<HTML
