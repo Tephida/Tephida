@@ -93,9 +93,9 @@ if (isset($user_info['user_id'])){
 
 }
 
-//Если включен AJAX то загружаем стр.
+//Если включен AJAX, то загружаем стр.
 if (!empty($_POST['ajax']) AND $_POST['ajax'] == 'yes') {
-    //Если есть POST Запрос и значение AJAX, а $ajax не равняется "yes" то не пропускаем
+    //Если есть POST Запрос и значение AJAX, а $ajax не равняется "yes", то не пропускаем
     if ($_SERVER['REQUEST_METHOD'] == 'POST' and $ajax != 'yes') die('Неизвестная ошибка');
     if (isset($spBar) AND $spBar)
         $ajaxSpBar = "$('#speedbar').show().html('{$speedbar}')";
