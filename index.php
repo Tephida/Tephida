@@ -132,7 +132,7 @@ HTML;
 //Если обращение к модулю регистрации или главной и юзер не авторизован то показываем регистрацию
 if ($go == 'register' or $go == 'main' and !$logged) include ENGINE_DIR . '/modules/register_main.php';
 $tpl->load_template('main.tpl');
-//Если юзер залогинен
+//Если юзер авторизован
 if ($logged) {
     $tpl->set_block("'\\[not-logged\\](.*?)\\[/not-logged\\]'si", "");
     $tpl->set('[logged]', '');
