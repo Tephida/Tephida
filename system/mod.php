@@ -21,7 +21,7 @@ $lang['online'] = $config['temp'] == 'mobile' ? '<img src="{theme}/images/monlin
 switch ($go) {
     /** Регистрация */
     case "register":
-        include ENGINE_DIR . '/modules/register.php';
+        include './modules/register.php';
         break;
 
     /** Профиль пользователя */
