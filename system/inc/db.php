@@ -118,4 +118,3 @@ echo <<<HTML
 HTML;
 
 echohtmlend();
-?>

@@ -101,4 +101,3 @@ echo <<<HTML
 HTML;
 
 echohtmlend();
-?>

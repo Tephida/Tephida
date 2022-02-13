@@ -140,4 +140,3 @@ $tpl->clear();
 $db->free();
 
 exit();
-?>

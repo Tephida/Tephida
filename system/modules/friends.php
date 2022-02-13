@@ -676,4 +676,3 @@ if ($logged) {
     $user_speedbar = 'Информация';
     msgbox('', $lang['not_logged'], 'info');
 }
-?>

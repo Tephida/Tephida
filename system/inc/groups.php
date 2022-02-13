@@ -243,4 +243,3 @@ echo navigation($gcount, $numRows['cnt'], '?' . $query_string . '&page=');
 
 htmlclear();
 echohtmlend();
-?>

@@ -13,7 +13,7 @@
 function clean_url($url){
   $url = str_replace("http://", "", strtolower($url));
   $url = str_replace("https://", "", $url );
-  if (substr($url, 0, 4) == 'www.')  $url = substr($url, 4);
+  if (str_starts_with($url, 'www.')) $url = substr($url, 4);
   $url = explode('/', $url);
   $url = reset($url);
   $url = explode(':', $url);

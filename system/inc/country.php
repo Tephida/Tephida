@@ -63,4 +63,3 @@ echo <<<HTML
 HTML;
 
 echohtmlend();
-?>

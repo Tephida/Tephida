@@ -133,4 +133,3 @@ if ($row) {
         echo 'err_privacy';
 } else
     echo 'no_video';
-?>

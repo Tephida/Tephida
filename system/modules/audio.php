@@ -245,4 +245,3 @@ if ($logged) {
     $user_speedbar = $lang['no_infooo'];
     msgbox('', $lang['not_logged'], 'info');
 }
-?>

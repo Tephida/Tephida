@@ -73,4 +73,3 @@ HTML;
     htmlclear();
     echohtmlend();
 }
-?>

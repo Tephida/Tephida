@@ -526,4 +526,3 @@ switch ($act) {
 
         header("Location: ?mod");
 }
-?>

@@ -275,5 +275,3 @@ if ($logged) {
 
 } else
     echo 'no_log';
-
-?>

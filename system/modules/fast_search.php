@@ -94,4 +94,3 @@ HTML;
     echo 'no_log';
 
 die();
-?>

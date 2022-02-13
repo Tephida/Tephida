@@ -123,4 +123,3 @@ echo <<<HTML
 HTML;
 
 echohtmlend();
-?>

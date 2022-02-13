@@ -19,4 +19,3 @@ if($user_info['user_group'] != '1'){
 	echo str_replace('{theme}', '/templates/'.$config['temp'], $tpl->result['main']);
 	die();
 }
-?>

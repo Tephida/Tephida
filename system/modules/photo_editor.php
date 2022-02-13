@@ -78,4 +78,3 @@ if ($logged) {
 }
 
 exit();
-?>

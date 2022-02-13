@@ -250,4 +250,3 @@ HTML;
 	htmlclear();
 	echohtmlend();
 }
-?>

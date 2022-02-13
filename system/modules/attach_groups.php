@@ -69,4 +69,3 @@ if ($logged) {
     echo 'no_log';
 
 die();
-?>

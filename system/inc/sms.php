@@ -73,4 +73,3 @@ $query_string = preg_replace("/&page=[0-9]+/i", '', $_SERVER['QUERY_STRING']);
 echo navigation($gcount, $numRows['cnt'], '?' . $query_string . '&page=');
 
 echohtmlend();
-?>

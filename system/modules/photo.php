@@ -576,4 +576,3 @@ if ($logged) {
         $db->free();
     } else echo 'no_photo';
     die();
-?>

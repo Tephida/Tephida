@@ -363,4 +363,3 @@ if ($logged) {
     msgbox('', $lang['not_logged'], 'info');
 
 }
-?>

@@ -265,4 +265,3 @@ function formatsize($file_size){
 function system_mozg_clear_cache_file($prefix) {
 	@unlink(ENGINE_DIR.'/cache/system/'.$prefix.'.php');
 }
-?>

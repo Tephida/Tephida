@@ -853,4 +853,3 @@ if ($logged) {
     $db->free();
 } else
     echo 'no_log';
-?>
