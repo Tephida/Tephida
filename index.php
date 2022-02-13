@@ -25,7 +25,8 @@ $logged = false;
 $user_info = false;
 include ENGINE_DIR . '/init.php';
 //Если юзер перешел по реф ссылке, то добавляем ид реферала в сессию
-if ( isset($_GET['reg']) ) $_SESSION['ref_id'] = intval($_GET['reg']);
+if (isset($_GET['reg']))
+    $_SESSION['ref_id'] = intval($_GET['reg']);
 
 if (isset($user_info['user_id'])){
     //Загружаем кол-во новых новостей
@@ -93,9 +94,9 @@ if (isset($user_info['user_id'])){
 
 }
 
-//Если включен AJAX то загружаем стр.
+//Если включен AJAX, то загружаем стр.
 if (!empty($_POST['ajax']) AND $_POST['ajax'] == 'yes') {
-    //Если есть POST Запрос и значение AJAX, а $ajax не равняется "yes" то не пропускаем
+    //Если есть POST Запрос и значение AJAX, а $ajax не равняется "yes", то не пропускаем
     if ($_SERVER['REQUEST_METHOD'] == 'POST' and $ajax != 'yes') die('Неизвестная ошибка');
     if (isset($spBar) AND $spBar)
         $ajaxSpBar = "$('#speedbar').show().html('{$speedbar}')";
@@ -129,10 +130,12 @@ HTML;
     if ($config['gzip'] == 'yes') GzipOut();
     die();
 }
-//Если обращение к модулю регистрации или главной и юзер не авторизован то показываем регистрацию
-if ($go == 'register' or $go == 'main' and !$logged) include ENGINE_DIR . '/modules/register_main.php';
+//Если обращение к модулю регистрации или главной и юзер не авторизован, то показываем регистрацию
+if ($go == 'register' or $go == 'main' and !$logged)
+    include ENGINE_DIR . '/modules/register_main.php';
+
 $tpl->load_template('main.tpl');
-//Если юзер залогинен
+//Если юзер авторизован
 if ($logged) {
     $tpl->set_block("'\\[not-logged\\](.*?)\\[/not-logged\\]'si", "");
     $tpl->set('[logged]', '');
@@ -157,32 +160,36 @@ if ($logged) {
         $tpl->set('{news-link}', '');
     }
     //Сообщения
-    if ($user_pm_num) $tpl->set('{msg}', $user_pm_num);
-    else $tpl->set('{msg}', '');
+    if ($user_pm_num)
+        $tpl->set('{msg}', $user_pm_num);
+    else
+        $tpl->set('{msg}', '');
     //Поддержка
-    if ($user_support) $tpl->set('{new-support}', $support);
-    else $tpl->set('{new-support}', '');
+    if ($user_support)
+        $tpl->set('{new-support}', $support);
+    else
+        $tpl->set('{new-support}', '');
     //Отметки на фото
     if ($user_info['user_new_mark_photos']) {
         $tpl->set('{my-id}', 'newphotos');
         $tpl->set('{new_photos}', $new_photos);
-    } else $tpl->set('{new_photos}', '');
+    } else
+        $tpl->set('{new_photos}', '');
     //UBM
     if ($CacheGift) {
         $tpl->set('{new-ubm}', $new_ubm);
-        $tpl->set('{ubm-link}', $gifts_link);
     } else {
         $tpl->set('{new-ubm}', '');
-        $tpl->set('{ubm-link}', $gifts_link);
     }
+    $tpl->set('{ubm-link}', $gifts_link);
+
     //Приглашения в сообщества
     if ($user_info['invties_pub_num']) {
-        $tpl->set('{groups-link}', $new_groups_lnk);
         $tpl->set('{new_groups}', $new_groups);
     } else {
-        $tpl->set('{groups-link}', $new_groups_lnk);
         $tpl->set('{new_groups}', '');
     }
+    $tpl->set('{groups-link}', $new_groups_lnk);
 } else {
     $tpl->set_block("'\\[logged\\](.*?)\\[/logged\\]'si", "");
     $tpl->set('[not-logged]', '');
@@ -202,11 +209,15 @@ $tpl->set('{info}', $tpl->result['info']);
 // FOR MOBILE VERSION 1.0
 if ($config['temp'] == 'mobile') {
     $tpl->result['content'] = str_replace('onClick="Page.Go(this.href); return false"', '', $tpl->result['content']);
-    if ($user_info['user_status']) $tpl->set('{status-mobile}', '<span style="font-size:11px;color:#000">' . $user_info['user_status'] . '</span>');
-    else $tpl->set('{status-mobile}', '<span style="font-size:11px;color:#999">установить статус</span>');
+    if ($user_info['user_status'])
+        $tpl->set('{status-mobile}', '<span style="font-size:11px;color:#000">' . $user_info['user_status'] . '</span>');
+    else
+        $tpl->set('{status-mobile}', '<span style="font-size:11px;color:#999">установить статус</span>');
     $new_actions = $user_friends_demands + $user_support + $CacheNews + $CacheGift + $user_info['user_pm_num'];
-    if ($new_actions) $tpl->set('{new-actions}', "<div class=\"headm_newac\" style=\"margin-top:5px;margin-left:30px\">+{$new_actions}</div>");
-    else $tpl->set('{new-actions}', "");
+    if ($new_actions)
+        $tpl->set('{new-actions}', "<div class=\"headm_newac\" style=\"margin-top:5px;margin-left:30px\">+{$new_actions}</div>");
+    else
+        $tpl->set('{new-actions}', "");
 }
 $tpl->set('{content}', $tpl->result['content']);
 if (isset($spBar) AND $spBar)
@@ -216,11 +227,13 @@ else {
     $tpl->set('[/speedbar]', '');
 }
 //BUILD JS
-if ($logged) $tpl->set('{js}', '<script type="text/javascript" src="{theme}/js/jquery.lib.js"></script>
+if ($logged)
+    $tpl->set('{js}', '<script type="text/javascript" src="{theme}/js/jquery.lib.js"></script>
 <script type="text/javascript" src="{theme}/js/' . $checkLang . '/lang.js"></script>
 <script type="text/javascript" src="{theme}/js/main.js"></script>
 <script type="text/javascript" src="{theme}/js/profile.js"></script>');
-else $tpl->set('{js}', '<script type="text/javascript" src="{theme}/js/jquery.lib.js"></script>
+else
+    $tpl->set('{js}', '<script type="text/javascript" src="{theme}/js/jquery.lib.js"></script>
 <script type="text/javascript" src="{theme}/js/' . $checkLang . '/lang.js"></script>
 <script type="text/javascript" src="{theme}/js/main.js"></script>');
 

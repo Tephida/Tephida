@@ -16,7 +16,7 @@ if(isset($_POST['action']) AND count($_REQUEST['ta'])){
 	$tables = "";
 	
 	while(list($key, $val) = each($arr)){
-		$tables .= ", `" . $db->safesql( $val ) . "`";
+		$tables .= ", `" . $val  . "`";
 	}
 	
 	$tables = substr($tables, 1);
@@ -118,4 +118,3 @@ echo <<<HTML
 HTML;
 
 echohtmlend();
-?>

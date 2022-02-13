@@ -21,19 +21,6 @@ include __DIR__ .'/../functions.php';
 		return stripslashes($v) ;
 	return $v;
 }*/
-function clean_url($url) {
-	if( $url == '' ) return;
-	
-	$url = str_replace( "http://", "", strtolower( $url ) );
-	$url = str_replace( "https://", "", $url );
-	if( substr( $url, 0, 4 ) == 'www.' ) $url = substr( $url, 4 );
-	$url = explode( '/', $url );
-	$url = reset( $url );
-	$url = explode( ':', $url );
-	$url = reset( $url );
-	
-	return $url;
-}
 
 $domain_cookie = explode (".", clean_url( $_SERVER['HTTP_HOST'] ));
 $domain_cookie_count = count($domain_cookie);
@@ -53,29 +40,6 @@ if($domain_cookie_count > 2){
 $domain_cookie = ".".implode(".", $domain_cookie);
 
 define('DOMAIN', $domain_cookie);
-
-function set_cookie($name, $value, $expires) {
-	
-	if( $expires ) {
-		
-		$expires = time() + ($expires * 86400);
-	
-	} else {
-		
-		$expires = FALSE;
-	
-	}
-	
-	if( PHP_VERSION < 5.2 ) {
-		
-		setcookie($name, $value, $expires, "/", DOMAIN . "; HttpOnly");
-	
-	} else {
-		
-		setcookie($name, $value, $expires, "/", DOMAIN, NULL, TRUE);
-	
-	}
-}
 
 /*function langdate($format, $stamp){
 	global $langdate;
@@ -301,4 +265,3 @@ function formatsize($file_size){
 function system_mozg_clear_cache_file($prefix) {
 	@unlink(ENGINE_DIR.'/cache/system/'.$prefix.'.php');
 }
-?>

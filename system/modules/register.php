@@ -14,17 +14,17 @@ if ($logged == null) {
 //    NoAjaxQuery();
     //Код безопасности
     $session_sec_code = $_SESSION['sec_code'] ?? null;
-    $sec_code = textFilter($_POST['sec_code']) ?? null;
+    $sec_code = requestFilter('sec_code') ?? null;
     //Если код введные юзером совпадает, то пропускаем, иначе выводим ошибку
     if ($sec_code == $session_sec_code) {
         //Входные POST Данные
 
-        $user_name = textFilter($_POST['name']) ?? null;
-        $user_lastname = textFilter($_POST['lastname']) ?? null;
-        $user_email = textFilter($_POST['email']) ?? null;
-        $user_name = textFilter($user_name, 60, true);
-        $user_lastname = textFilter($user_lastname, 60, true);
-        $user_email = textFilter($user_email, 100, true);
+        $user_name = requestFilter('name');
+        $user_lastname = requestFilter('lastname');
+        $user_email = requestFilter('email');
+//        $user_name = textFilter($user_name, 60, true);
+//        $user_lastname = textFilter($user_lastname, 60, true);
+        $user_email = requestFilter('email', 100, true);
         $user_name = ucfirst($user_name);
         $user_lastname = ucfirst($user_lastname);
         $user_sex = $_POST['sex'] ? intval($_POST['sex']) : null;
@@ -45,8 +45,8 @@ if ($logged == null) {
         $user_city = $_POST['city'] ? intval($_POST['city']) : 0;
         if ($user_city < 0 OR $user_city > 1587)
             $user_city = 0;
-        $password_first = textFilter($_POST['password_first']) ?? null;
-        $password_second = textFilter($_POST['password_second']) ?? null;
+        $password_first = requestFilter('password_first') ?? null;
+        $password_second = requestFilter('password_second') ?? null;
 //        $password_first = GetVar($password_first);
 //        $password_second = GetVar($password_second);
         $user_birthday = $user_year . '-' . $user_month . '-' . $user_day;
@@ -83,13 +83,13 @@ if ($logged == null) {
 
         //Если нет ошибок, то пропускаем и добавляем в базу
         if ($allEr == 4) {
-            $check_email = $db->super_query("SELECT COUNT(*) AS cnt FROM `" . PREFIX . "_users` WHERE user_email = '{$user_email}'");
+            $check_email = $db->super_query("SELECT COUNT(*) AS cnt FROM `users` WHERE user_email = '{$user_email}'");
             if (!$check_email['cnt']) {
                 $md5_pass = md5(md5($password_first));
                 $user_group = '5';
                 if ($user_country > 0 or $user_city > 0) {
-                    $country_info = $db->super_query("SELECT name FROM `" . PREFIX . "_country` WHERE id = '" . $user_country . "'");
-                    $city_info = $db->super_query("SELECT name FROM `" . PREFIX . "_city` WHERE id = '" . $user_city . "'");
+                    $country_info = $db->super_query("SELECT name FROM `country` WHERE id = '" . $user_country . "'");
+                    $city_info = $db->super_query("SELECT name FROM `city` WHERE id = '" . $user_city . "'");
                     $user_country_city_name = $country_info['name'] . '|' . $city_info['name'];
                 }else{
                     $user_country_city_name = '' . '|' . '';
@@ -98,7 +98,7 @@ if ($logged == null) {
                 //Hash ID
                 $_IP = $_IP ?? null;
                 $hid = $md5_pass . md5(md5($_IP));
-                $db->query("INSERT INTO `" . PREFIX . "_users` (user_last_visit, user_email, user_password, user_name, user_lastname, user_sex, user_day, user_month, user_year, user_country, user_city, user_reg_date, user_lastdate, user_group, user_hid, user_country_city_name, user_search_pref, user_birthday, user_privacy) VALUES ('{$server_time}', '{$user_email}', '{$md5_pass}', '{$user_name}', '{$user_lastname}', '{$user_sex}', '{$user_day}', '{$user_month}', '{$user_year}', '{$user_country}', '{$user_city}', '{$server_time}', '{$server_time}', '{$user_group}', '{$hid}', '{$user_country_city_name}', '{$user_search_pref}', '{$user_birthday}', 'val_msg|1||val_wall1|1||val_wall2|1||val_wall3|1||val_info|1||')");
+                $db->query("INSERT INTO `users` (user_last_visit, user_email, user_password, user_name, user_lastname, user_sex, user_day, user_month, user_year, user_country, user_city, user_reg_date, user_lastdate, user_group, user_hid, user_country_city_name, user_search_pref, user_birthday, user_privacy) VALUES ('{$server_time}', '{$user_email}', '{$md5_pass}', '{$user_name}', '{$user_lastname}', '{$user_sex}', '{$user_day}', '{$user_month}', '{$user_year}', '{$user_country}', '{$user_city}', '{$server_time}', '{$server_time}', '{$user_group}', '{$hid}', '{$user_country_city_name}', '{$user_search_pref}', '{$user_birthday}', 'val_msg|1||val_wall1|1||val_wall2|1||val_wall3|1||val_info|1||')");
                 $id = $db->insert_id();
                 //Устанавливаем в сессию ИД юзера
                 $_SESSION['user_id'] = intval($id);
@@ -110,27 +110,27 @@ if ($logged == null) {
                 mozg_create_folder_cache("user_{$id}");
                 //Директория юзеров
                 $upload_dir = ROOT_DIR . '/uploads/users/';
-                @mkdir($upload_dir . $id, 0777);
-//                @chmod($upload_dir . $id, 0777);
-                @mkdir($upload_dir . $id . '/albums', 0777);
-//                @chmod($upload_dir . $id . '/albums', 0777);
+
+                createDir($upload_dir . $id);
+                createDir($upload_dir . $id . '/albums');
+
                 //Если юзер регистрировался по ссылке, то начисляем юзеру 10 убм
                 $ref_id = $_SESSION['ref_id'] ?? null;
 
                 if ($ref_id) {
                     //Проверяем на накрутку убм, что юзер не сам регистрирует анкеты
-                    $check_ref = $db->super_query("SELECT COUNT(*) AS cnt FROM `" . PREFIX . "_log` WHERE ip = '{$_IP}'");
+                    $check_ref = $db->super_query("SELECT COUNT(*) AS cnt FROM `log` WHERE ip = '{$_IP}'");
                     if (!$check_ref['cnt']) {
                         $ref_id = intval($ref_id);
                         //Даём +10 убм
-                        $db->query("UPDATE `" . PREFIX . "_users` SET user_balance = user_balance+10 WHERE user_id = '{$ref_id}'");
+                        $db->query("UPDATE `users` SET user_balance = user_balance+10 WHERE user_id = '{$ref_id}'");
                         //Вставляем ид регистратора
-                        $db->query("INSERT INTO `" . PREFIX . "_invites` SET uid = '{$ref_id}', ruid = '{$id}'");
+                        $db->query("INSERT INTO `invites` SET uid = '{$ref_id}', ruid = '{$id}'");
                     }
                 }
                 //Вставляем лог в бд
                 $_BROWSER = $_BROWSER ?? null;
-                $db->query("INSERT INTO `" . PREFIX . "_log` SET uid = '{$id}', browser = '{$_BROWSER}', ip = '{$_IP}'");
+                $db->query("INSERT INTO `log` SET uid = '{$id}', browser = '{$_BROWSER}', ip = '{$_IP}'");
                 echo 'ok|' . $id;
             }else
                 echo 'err_mail|';

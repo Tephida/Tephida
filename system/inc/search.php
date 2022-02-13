@@ -6,38 +6,42 @@
  *   file that was distributed with this source code.
  *
  */
-if(!defined('MOZG'))
-	die('Hacking attempt!');
+if (!defined('MOZG'))
+    die('Hacking attempt!');
 
 //Если начали замену
-if(isset($_POST['save'])){
-	if(function_exists("get_magic_quotes_gpc") && get_magic_quotes_gpc()){
-		$_POST['find'] = stripslashes($_POST['find']);
-		$_POST['replace'] = stripslashes($_POST['replace']);
-	} 
+if (isset($_POST['save'])) {
+    $find = requestFilter('find');
+    $replace = requestFilter('replace');
 
-	$find = $db->safesql(addslashes(trim($_POST['find'])));
-	$replace = $db->safesql(addslashes(trim($_POST['replace'])));
-	
-	if(isset($find) AND !empty($find) AND isset($replace) AND !empty($replace)){
-		if($_POST['photo_comm']) $db->query("UPDATE `".PREFIX."_photos_comments` SET `text` = REPLACE(`text`, '".$find."', '".$replace."')");
-		if($_POST['video_comm']) $db->query("UPDATE `".PREFIX."_videos_comments` SET `text` = REPLACE(`text`, '".$find."', '".$replace."')");
-		if($_POST['notes_comm']) $db->query("UPDATE `".PREFIX."_notes_comments` SET `text` = REPLACE(`text`, '".$find."', '".$replace."')");
-		if($_POST['users_wall']) $db->query("UPDATE `".PREFIX."_wall` SET `text` = REPLACE(`text`, '".$find."', '".$replace."')");
-		if($_POST['groups_wall']) $db->query("UPDATE `".PREFIX."_communities_wall` SET `text` = REPLACE(`text`, '".$find."', '".$replace."')");
-		if($_POST['news']) $db->query("UPDATE `".PREFIX."_news` SET `action_text` = REPLACE(`action_text`, '".$find."', '".$replace."')");
-		if($_POST['msg']) $db->query("UPDATE `".PREFIX."_messages` SET `text` = REPLACE(`text`, '".$find."', '".$replace."')");
-		if($_POST['gift_msg']) $db->query("UPDATE `".PREFIX."_gifts` SET `msg` = REPLACE(`msg`, '".$find."', '".$replace."')");
-		if($_POST['notes_text']) $db->query("UPDATE `".PREFIX."_notes` SET `full_text` = REPLACE(`full_text`, '".$find."', '".$replace."')");
-		
-		msgbox('Информация', 'Текст в базе данных был успешно заменен.', '?mod=search');
-	} else
-		msgbox('Ошибка', 'Все поля обязательны к заполнению', 'javascript:history.go(-1)');
+    if (!empty($find) and !empty($replace)) {
+        if ($_POST['photo_comm'])
+            $db->query("UPDATE `photos_comments` SET `text` = REPLACE(`text`, '" . $find . "', '" . $replace . "')");
+        if ($_POST['video_comm'])
+            $db->query("UPDATE `videos_comments` SET `text` = REPLACE(`text`, '" . $find . "', '" . $replace . "')");
+        if ($_POST['notes_comm'])
+            $db->query("UPDATE `notes_comments` SET `text` = REPLACE(`text`, '" . $find . "', '" . $replace . "')");
+        if ($_POST['users_wall'])
+            $db->query("UPDATE `wall` SET `text` = REPLACE(`text`, '" . $find . "', '" . $replace . "')");
+        if ($_POST['groups_wall'])
+            $db->query("UPDATE `communities_wall` SET `text` = REPLACE(`text`, '" . $find . "', '" . $replace . "')");
+        if ($_POST['news'])
+            $db->query("UPDATE `news` SET `action_text` = REPLACE(`action_text`, '" . $find . "', '" . $replace . "')");
+        if ($_POST['msg'])
+            $db->query("UPDATE `messages` SET `text` = REPLACE(`text`, '" . $find . "', '" . $replace . "')");
+        if ($_POST['gift_msg'])
+            $db->query("UPDATE `gifts` SET `msg` = REPLACE(`msg`, '" . $find . "', '" . $replace . "')");
+        if ($_POST['notes_text'])
+            $db->query("UPDATE `notes` SET `full_text` = REPLACE(`full_text`, '" . $find . "', '" . $replace . "')");
+
+        msgbox('Информация', 'Текст в базе данных был успешно заменен.', '?mod=search');
+    } else
+        msgbox('Ошибка', 'Все поля обязательны к заполнению', 'javascript:history.go(-1)');
 } else {
-	echoheader();
-	
-	echohtmlstart('Быстрая замена текста в базе данных скрипта');
-	echo <<<HTML
+    echoheader();
+
+    echohtmlstart('Быстрая замена текста в базе данных скрипта');
+    echo <<<HTML
 <style type="text/css" media="all">
 .inpu{width:308px;}
 textarea{width:300px;height:100px;}
@@ -72,6 +76,5 @@ textarea{width:300px;height:100px;}
 </form>
 HTML;
 
-	echohtmlend();
+    echohtmlend();
 }
-?>

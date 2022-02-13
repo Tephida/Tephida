@@ -6,36 +6,40 @@
  *   file that was distributed with this source code.
  *
  */
-if(!defined('MOZG'))
-	die('Hacking attempt!');
+if (!defined('MOZG'))
+    die('Hacking attempt!');
 
-echoheader();	
+echoheader();
 
 $se_uid = intval($_GET['se_uid']);
-if(!$se_uid) $se_uid = '';
+if (!$se_uid) $se_uid = '';
 
 $se_user_id = intval($_GET['se_user_id']);
-if(!$se_user_id) $se_user_id = '';
+if (!$se_user_id) $se_user_id = '';
 
-$se_name = textFilter($_GET['se_name'], 25000, true);
+$se_name = requestFilter('se_name', 25000, true);
 
-if($se_uid OR $sort OR $se_name OR $se_user_id){
-	if($se_uid) $where_sql .= "AND aid = '".$se_uid."' ";
-	if($se_user_id) $where_sql_2 .= "AND tb1.user_id = '".$se_user_id."' ";
-	$query = strtr($se_name, array(' ' => '%')); //Замеянем пробелы на проценты чтоб тоиск был точнее
-	if($se_name) $where_sql .= "AND name LIKE '%".$query."%' ";
+if ($se_uid or $sort or $se_name or $se_user_id) {
+    if ($se_uid) $where_sql .= "AND aid = '" . $se_uid . "' ";
+    if ($se_user_id) $where_sql_2 .= "AND tb1.user_id = '" . $se_user_id . "' ";
+    $query = strtr($se_name, array(' ' => '%')); //Замеянем пробелы на проценты чтоб тоиск был точнее
+    if ($se_name)
+        $where_sql .= "AND name LIKE '%" . $query . "%' ";
 }
 
 //Выводим список людей
-if($_GET['page'] > 0) $page = intval($_GET['page']); else $page = 1;
+if ($_GET['page'] > 0) $page = intval($_GET['page']); else $page = 1;
 $gcount = 20;
-$limit_page = ($page-1)*$gcount;
+$limit_page = ($page - 1) * $gcount;
 
-$sql_ = $db->super_query("SELECT tb1.user_id, name, adate, aid, photo_num, comm_num, tb2.user_name FROM `".PREFIX."_albums` tb1, `".PREFIX."_users` tb2 WHERE tb1.user_id = tb2.user_id {$where_sql} {$where_sql_2} ORDER by `adate` DESC LIMIT {$limit_page}, {$gcount}", 1);
+$where_sql = $where_sql ?? null;
+$where_sql_2 = $where_sql_2 ?? null;
+
+$sql_ = $db->super_query("SELECT tb1.user_id, name, adate, aid, photo_num, comm_num, tb2.user_name FROM `albums` tb1, `users` tb2 WHERE tb1.user_id = tb2.user_id {$where_sql} {$where_sql_2} ORDER by `adate` DESC LIMIT {$limit_page}, {$gcount}", true);
 
 //Кол-во людей считаем
 $where_sql_2 = str_replace('tb1.', '', $where_sql_2);
-$numRows = $db->super_query("SELECT COUNT(*) AS cnt FROM `".PREFIX."_albums` WHERE aid != '' {$where_sql} {$where_sql_2}");
+$numRows = $db->super_query("SELECT COUNT(*) AS cnt FROM `albums` WHERE aid != '' {$where_sql} {$where_sql_2}");
 
 echo <<<HTML
 <style type="text/css" media="all">
@@ -65,12 +69,12 @@ textarea{width:300px;height:100px;}
 </form>
 HTML;
 
-echohtmlstart('Список альбомов ('.$numRows['cnt'].')');
+echohtmlstart('Список альбомов (' . $numRows['cnt'] . ')');
 
-foreach($sql_ as $row){
-	$row['name'] = stripslashes($row['name']);
-	$row['adate'] = langdate('j M Y в H:i', strtotime($row['adate']));
-	$users .= <<<HTML
+foreach ($sql_ as $row) {
+    $row['name'] = stripslashes($row['name']);
+    $row['adate'] = langdate('j M Y в H:i', strtotime($row['adate']));
+    $users .= <<<HTML
 <div style="background:#fff;float:left;padding:5px;width:130px;text-align:center;"><a href="/u{$row['user_id']}" target="_blank">{$row['user_name']}</a></div>
 <div style="background:#fff;float:left;padding:5px;width:299px;text-align:center;margin-left:1px" title="Комментариев: {$row['comm_num']}, Фотографий: {$row['photo_num']}"><a href="/albums/view/{$row['aid']}" target="_blank">{$row['name']}</a></div>
 <div style="background:#fff;float:left;padding:5px;width:110px;text-align:center;margin-left:1px">{$row['adate']}</div>
@@ -114,8 +118,7 @@ function ckeck_uncheck_all() {
 HTML;
 
 $query_string = preg_replace("/&page=[0-9]+/i", '', $_SERVER['QUERY_STRING']);
-echo navigation($gcount, $numRows['cnt'], '?'.$query_string.'&page=');
+echo navigation($gcount, $numRows['cnt'], '?' . $query_string . '&page=');
 
 htmlclear();
 echohtmlend();
-?>

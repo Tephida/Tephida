@@ -6,6 +6,9 @@
  *   file that was distributed with this source code.
  *
  */
+
+use JetBrains\PhpStorm\Pure;
+
 if (!defined('MOZG')) die('Hacking attempt!');
 
 /**
@@ -19,13 +22,35 @@ function textFilter(string $source, int $substr_num = 25000, bool $strip_tags = 
     return htmlspecialchars(stripslashes(trim($source)), 0, $substr_num);
 }
 
+#[Pure] function requestFilter(string $source, int $substr_num = 25000, bool $strip_tags = false): array|string|null
+{
+    if(isset($_POST[$source])){
+        $source = $_POST[$source];
+    }elseif(isset($_GET[$source])){
+        $source = $_GET[$source];
+    }else{
+        return null;
+    }
+    return textFilter($source, $substr_num, $strip_tags);
+}
+
 function informationText($array): string
 {
     global $db;
     $array = json_decode($array, 1);
-    $row = $db->super_query("SELECT user_search_pref FROM  " . PREFIX . "_users WHERE user_id = '" . ($array['type'] == 1 ? $array['oid2'] : $array['oid']) . "'");
-    if ($array['type'] == 5) $row2 = $db->super_query("SELECT user_search_pref FROM  " . PREFIX . "_users WHERE user_id = '" . $array['oid2'] . "'");
-    $text = array(0 => $row['user_search_pref'] . ' создал(а) беседу', 1 => $row['user_search_pref'] . ' приглашен(а) в беседу', 2 => $row['user_search_pref'] . ' покинул(а) беседу', 3 => $row['user_search_pref'] . ' обновил(а) название беседы', 4 => $row['user_search_pref'] . ' обновил(а) фотографию беседы', 5 => $row['user_search_pref'] . ' исключил(а) участника "' . $row2['user_search_pref'] . '"',);
+    $row = $db->super_query("SELECT user_search_pref FROM  users WHERE user_id = '" . ($array['type'] == 1 ? $array['oid2'] : $array['oid']) . "'");
+    if ($array['type'] == 5)
+        $row2 = $db->super_query("SELECT user_search_pref FROM  users WHERE user_id = '" . $array['oid2'] . "'");
+    else
+        $row2['user_search_pref'] = null;
+
+    $text = array(
+        0 => $row['user_search_pref'] . ' создал(а) беседу',
+        1 => $row['user_search_pref'] . ' приглашен(а) в беседу',
+        2 => $row['user_search_pref'] . ' покинул(а) беседу',
+        3 => $row['user_search_pref'] . ' обновил(а) название беседы',
+        4 => $row['user_search_pref'] . ' обновил(а) фотографию беседы',
+        5 => $row['user_search_pref'] . ' исключил(а) участника "' . $row2['user_search_pref'] . '"',);
     return $text[$array['type']];
 }
 
@@ -88,9 +113,7 @@ function to_translit(string $value, bool $lower = true, bool $part = true): arra
  */
 function GetVar(string $v): string
 {
-    if (ini_get('magic_quotes_gpc'))
-        return stripslashes($v);
-    return $v;
+    return stripslashes($v);
 }
 
 /**
@@ -287,12 +310,17 @@ function mozg_mass_clear_cache_file($prefix): void
     $arr_prefix = explode('|', $prefix);
     foreach ($arr_prefix as $file) @unlink(ENGINE_DIR . '/cache/' . $file . '.tmp');
 }
+
+/**
+ * @throws Exception
+ */
 function mozg_create_folder_cache($prefix): void
 {
-    if (!is_dir(ROOT_DIR . '/system/cache/' . $prefix)) {
-        @mkdir(ROOT_DIR . '/system/cache/' . $prefix, 0777);
-        @chmod(ROOT_DIR . '/system/cache/' . $prefix, 0777);
-    }
+//    if (!is_dir(ROOT_DIR . '/system/cache/' . $prefix)) {
+//        @mkdir(ROOT_DIR . '/system/cache/' . $prefix, 0777);
+//        @chmod(ROOT_DIR . '/system/cache/' . $prefix, 0777);
+//    }
+    createDir(ROOT_DIR . '/system/cache/' . $prefix);
 }
 function mozg_create_cache($prefix, $cache_text): false|int
 {
@@ -901,11 +929,11 @@ function GenerateAlbumPhotosPosition($uid, $aid = false) {
     global $db;
     //Выводим все фотографии из альбома и обновляем их позицию только для просмотра альбома
     if ($uid AND $aid) {
-        $sql_ = $db->super_query("SELECT id FROM `" . PREFIX . "_photos` WHERE album_id = '{$aid}' ORDER by `position` ASC", 1);
+        $sql_ = $db->super_query("SELECT id FROM `photos` WHERE album_id = '{$aid}' ORDER by `position` ASC", true);
         $count = 1;
         $photo_info = '';
         foreach ($sql_ as $row) {
-            $db->query("UPDATE LOW_PRIORITY `" . PREFIX . "_photos` SET position = '{$count}' WHERE id = '{$row['id']}'");
+            $db->query("UPDATE LOW_PRIORITY `photos` SET position = '{$count}' WHERE id = '{$row['id']}'");
             $photo_info.= $count . '|' . $row['id'] . '||';
             $count++;
         }
@@ -1091,7 +1119,7 @@ function AntiSpam($act, $text = false) {
     //Если антиспам на друзей
     if ($act == 'friends') {
         //Проверяем в таблице
-        $check = $db->super_query("SELECT COUNT(*) AS cnt FROM `" . PREFIX . "_antispam` WHERE act = '1' AND user_id = '{$user_info['user_id']}' AND date = '{$antiDate}'");
+        $check = $db->super_query("SELECT COUNT(*) AS cnt FROM `antispam` WHERE act = '1' AND user_id = '{$user_info['user_id']}' AND date = '{$antiDate}'");
         //Если кол-во, логов больше, то ставим блок
         if ($check['cnt'] >= $max_frieds) {
             die('antispam_err');
@@ -1100,7 +1128,7 @@ function AntiSpam($act, $text = false) {
     //Если антиспам на сообщения
     elseif ($act == 'messages') {
         //Проверяем в таблице
-        $check = $db->super_query("SELECT COUNT(*) AS cnt FROM `" . PREFIX . "_antispam` WHERE act = '2' AND user_id = '{$user_info['user_id']}' AND date = '{$antiDate}'");
+        $check = $db->super_query("SELECT COUNT(*) AS cnt FROM `antispam` WHERE act = '2' AND user_id = '{$user_info['user_id']}' AND date = '{$antiDate}'");
         //Если кол-во, логов больше, то ставим блок
         if ($check['cnt'] >= $max_msg) {
             die('antispam_err');
@@ -1109,7 +1137,7 @@ function AntiSpam($act, $text = false) {
     //Если антиспам на проверку стены
     elseif ($act == 'wall') {
         //Проверяем в таблице
-        $check = $db->super_query("SELECT COUNT(*) AS cnt FROM `" . PREFIX . "_antispam` WHERE act = '3' AND user_id = '{$user_info['user_id']}' AND date = '{$antiDate}'");
+        $check = $db->super_query("SELECT COUNT(*) AS cnt FROM `antispam` WHERE act = '3' AND user_id = '{$user_info['user_id']}' AND date = '{$antiDate}'");
         //Если кол-во, логов больше, то ставим блок
         if ($check['cnt'] >= $max_wall) {
             die('antispam_err');
@@ -1118,7 +1146,7 @@ function AntiSpam($act, $text = false) {
     //Если антиспам на одинаковые тестовые данные
     elseif ($act == 'identical') {
         //Проверяем в таблице
-        $check = $db->super_query("SELECT COUNT(*) AS cnt FROM `" . PREFIX . "_antispam` WHERE act = '4' AND user_id = '{$user_info['user_id']}' AND date = '{$antiDate}' AND txt = '{$text}'");
+        $check = $db->super_query("SELECT COUNT(*) AS cnt FROM `antispam` WHERE act = '4' AND user_id = '{$user_info['user_id']}' AND date = '{$antiDate}' AND txt = '{$text}'");
         //Если кол-во, логов больше, то ставим блок
         if ($check['cnt'] >= $max_identical) {
             die('antispam_err');
@@ -1127,7 +1155,7 @@ function AntiSpam($act, $text = false) {
     //Если антиспам на проверку комментов
     elseif ($act == 'comments') {
         //Проверяем в таблице
-        $check = $db->super_query("SELECT COUNT(*) AS cnt FROM `" . PREFIX . "_antispam` WHERE act = '5' AND user_id = '{$user_info['user_id']}' AND date = '{$antiDate}'");
+        $check = $db->super_query("SELECT COUNT(*) AS cnt FROM `antispam` WHERE act = '5' AND user_id = '{$user_info['user_id']}' AND date = '{$antiDate}'");
         //Если кол-во, логов больше, то ставим блок
         if ($check['cnt'] >= $max_comm) {
             die('antispam_err');
@@ -1136,7 +1164,7 @@ function AntiSpam($act, $text = false) {
     //Если антиспам на проверку сообществ
     elseif ($act == 'groups') {
         //Проверяем в таблице
-        $check = $db->super_query("SELECT COUNT(*) AS cnt FROM `" . PREFIX . "_antispam` WHERE act = '6' AND user_id = '{$user_info['user_id']}' AND date = '{$antiDate}'");
+        $check = $db->super_query("SELECT COUNT(*) AS cnt FROM `antispam` WHERE act = '6' AND user_id = '{$user_info['user_id']}' AND date = '{$antiDate}'");
         //Если кол-во, логов больше, то ставим блок
         if ($check['cnt'] >= $max_groups) {
             die('antispam_err');
@@ -1159,27 +1187,27 @@ function AntiSpamLogInsert(string $act, bool|string $text = false): void
     $antiDate = strtotime($antiDate);
     //Если антиспам на друзей
     if ($act == 'friends') {
-        $db->query("INSERT INTO `" . PREFIX . "_antispam` SET act = '1', user_id = '{$user_info['user_id']}', date = '{$antiDate}'");
+        $db->query("INSERT INTO `antispam` SET act = '1', user_id = '{$user_info['user_id']}', date = '{$antiDate}'");
         //Если антиспам на сообщения не друзьям
         
     } elseif ($act == 'messages') {
-        $db->query("INSERT INTO `" . PREFIX . "_antispam` SET act = '2', user_id = '{$user_info['user_id']}', date = '{$antiDate}'");
+        $db->query("INSERT INTO `antispam` SET act = '2', user_id = '{$user_info['user_id']}', date = '{$antiDate}'");
         //Если антиспам на стену
         
     } elseif ($act == 'wall') {
-        $db->query("INSERT INTO `" . PREFIX . "_antispam` SET act = '3', user_id = '{$user_info['user_id']}', date = '{$antiDate}'");
+        $db->query("INSERT INTO `antispam` SET act = '3', user_id = '{$user_info['user_id']}', date = '{$antiDate}'");
         //Если антиспам на одинаковых текстов
         
     } elseif ($act == 'identical') {
-        $db->query("INSERT INTO `" . PREFIX . "_antispam` SET act = '4', user_id = '{$user_info['user_id']}', date = '{$antiDate}', txt = '{$text}'");
+        $db->query("INSERT INTO `antispam` SET act = '4', user_id = '{$user_info['user_id']}', date = '{$antiDate}', txt = '{$text}'");
         //Если антиспам комменты
         
     } elseif ($act == 'comments') {
-        $db->query("INSERT INTO `" . PREFIX . "_antispam` SET act = '5', user_id = '{$user_info['user_id']}', date = '{$antiDate}'");
+        $db->query("INSERT INTO `antispam` SET act = '5', user_id = '{$user_info['user_id']}', date = '{$antiDate}'");
         //Если антиспам комменты
         
     } elseif ($act == 'groups') {
-        $db->query("INSERT INTO `" . PREFIX . "_antispam` SET act = '6', user_id = '{$user_info['user_id']}', date = '{$antiDate}'");
+        $db->query("INSERT INTO `antispam` SET act = '6', user_id = '{$user_info['user_id']}', date = '{$antiDate}'");
     }
 }
 
@@ -1190,5 +1218,104 @@ function createDir(string $dir, int $mode = 0777): void
 {
     if (!is_dir($dir) && !mkdir($dir, $mode, true) && !is_dir($dir)) { // @ - dir may already exist
         throw new Exception("Unable to create directory '$dir' with mode " );
+    }
+}
+
+function normalizeName(string $value, bool $part = true): array|null|string
+{
+    $value = str_replace(chr(0), '', $value);
+
+    $value = trim(strip_tags($value));
+    $value = preg_replace("/\s+/u", "-", $value);
+    $value = str_replace("/", "-", $value);
+
+    if ($part)
+        $value = preg_replace("/[^a-z0-9\_\-.]+/mi", "", $value);
+    else
+        $value = preg_replace("/[^a-z0-9\_\-]+/mi", "", $value);
+
+    $value = preg_replace('#[\-]+#i', '-', $value);
+    return preg_replace('#[.]+#i', '.', $value);
+}
+
+function clearFilePath($file, $ext = array()): string
+{
+
+    $file = trim(str_replace(chr(0), '', (string)$file));
+    $file = str_replace(array('/', '\\'), '/', $file);
+
+    $path_parts = pathinfo($file);
+
+    if (count($ext)) {
+        if (!in_array($path_parts['extension'], $ext)) return '';
+    }
+
+    $filename = normalizeName($path_parts['basename'], true);
+
+    if (!$filename) return '';
+
+    $parts = array_filter(explode('/', $path_parts['dirname']), 'strlen');
+
+    $absolutes = array();
+
+    foreach ($parts as $part) {
+        if ('.' == $part) continue;
+        if ('..' == $part) {
+            array_pop($absolutes);
+        } else {
+            $absolutes[] = normalizeName($part, false);
+        }
+    }
+
+    $path = implode('/', $absolutes);
+
+    if ($path)
+        return implode('/', $absolutes) . '/' . $filename;
+    else
+        return '';
+
+}
+
+function cleanPath($path): string
+{
+    $path = trim(str_replace(chr(0), '', (string)$path));
+    $path = str_replace(array('/', '\\'), '/', $path);
+    $parts = array_filter(explode('/', $path), 'strlen');
+    $absolutes = array();
+    foreach ($parts as $part) {
+        if ('.' == $part) continue;
+        if ('..' == $part) {
+            array_pop($absolutes);
+        } else {
+            $absolutes[] = to_translit($part, false, false);
+        }
+    }
+
+    return implode('/', $absolutes);
+}
+
+function clean_url($url)
+{
+    $url = str_replace("http://", "", strtolower($url));
+    $url = str_replace("https://", "", $url);
+    if (str_starts_with($url, 'www.'))
+        $url = substr($url, 4);
+    $url = explode('/', $url);
+    $url = reset($url);
+    $url = explode(':', $url);
+    return reset($url);
+}
+
+function set_cookie($name, $value, $expires)
+{
+    if ($expires) {
+        $expires = time() + ($expires * 86400);
+    } else {
+        $expires = FALSE;
+    }
+    if (PHP_VERSION < 5.2) {
+        setcookie($name, $value, $expires, "/", DOMAIN . "; HttpOnly");
+    } else {
+        setcookie($name, $value, $expires, "/", DOMAIN, NULL, TRUE);
     }
 }

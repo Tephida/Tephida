@@ -21,7 +21,7 @@ $lang['online'] = $config['temp'] == 'mobile' ? '<img src="{theme}/images/monlin
 switch ($go) {
     /** Регистрация */
     case "register":
-        include ENGINE_DIR . '/modules/register.php';
+        include './modules/register.php';
         break;
 
     /** Профиль пользователя */
@@ -44,7 +44,8 @@ switch ($go) {
     /** Альбомы */
     case "albums":
         $spBar = true;
-        if ($config['album_mod'] == 'yes') include ENGINE_DIR . '/modules/albums.php';
+        if ($config['album_mod'] == 'yes')
+            include ENGINE_DIR . '/modules/albums.php';
         else {
             $user_speedbar = 'Информация';
             msgbox('', 'Сервис отключен.', 'info');
@@ -68,12 +69,6 @@ switch ($go) {
         include ENGINE_DIR . '/modules/fave.php';
         break;
 
-    /** Сообщения */
-    case "messages":
-        $spBar = true;
-        include ENGINE_DIR . '/modules/messages.php';
-        break;
-
     /** Диалоги */
     case "im":
         include ENGINE_DIR . '/modules/im.php';
@@ -93,7 +88,8 @@ switch ($go) {
     /** Видео */
     case "videos":
         $spBar = true;
-        if ($config['video_mod'] == 'yes') include ENGINE_DIR . '/modules/videos.php';
+        if ($config['video_mod'] == 'yes')
+            include ENGINE_DIR . '/modules/videos.php';
         else {
             $user_speedbar = 'Информация';
             msgbox('', 'Сервис отключен.', 'info');
@@ -253,27 +249,7 @@ switch ($go) {
 
     /** Удаление страницы */
     case "del_my_page":
-        NoAjaxQuery();
-        if ($logged) {
-            $user_id = $user_info['user_id'];
-            $uploaddir = ROOT_DIR . '/uploads/users/' . $user_id . '/';
-            $row = $db->super_query("SELECT user_photo, user_wall_id FROM `" . PREFIX . "_users` WHERE user_id = '" . $user_id . "'");
-            if ($row['user_photo']) {
-                $check_wall_rec = $db->super_query("SELECT COUNT(*) AS cnt FROM `" . PREFIX . "_wall` WHERE id = '" . $row['user_wall_id'] . "'");
-                if ($check_wall_rec['cnt']) {
-                    $update_wall = ", user_wall_num = user_wall_num-1";
-                    $db->query("DELETE FROM `" . PREFIX . "_wall` WHERE id = '" . $row['user_wall_id'] . "'");
-                    $db->query("DELETE FROM `" . PREFIX . "_news` WHERE obj_id = '" . $row['user_wall_id'] . "'");
-                }
-                $db->query("UPDATE `" . PREFIX . "_users` SET user_delet = 1, user_photo = '', user_wall_id = '' " . $update_wall . " WHERE user_id = '" . $user_id . "'");
-                @unlink($uploaddir . $row['user_photo']);
-                @unlink($uploaddir . '50_' . $row['user_photo']);
-                @unlink($uploaddir . '100_' . $row['user_photo']);
-                @unlink($uploaddir . 'o_' . $row['user_photo']);
-                @unlink($uploaddir . '130_' . $row['user_photo']);
-            } else $db->query("UPDATE `" . PREFIX . "_users` SET user_delet = 1, user_photo = '' WHERE user_id = '" . $user_id . "'");
-            mozg_clear_cache_file('user_' . $user_id . '/profile_' . $user_id);
-        }
+        include ENGINE_DIR . '/modules/del_my_page.php';
         die();
         break;
 
@@ -290,7 +266,14 @@ switch ($go) {
 
     /** Игры */
     case "apps":
-        include ENGINE_DIR . '/modules/apps.php';
+        $app_mod = false;
+        if ($app_mod == true) {
+            include ENGINE_DIR . '/modules/apps.php';
+        } else {
+            $user_speedbar = 'Информация';
+            msgbox('', 'Сервис отключен.', 'info');
+        }
+
         break;
 
     /** Отзывы */
@@ -324,7 +307,8 @@ switch ($go) {
         break;
     default:
         $spBar = true;
-        if ($go != 'main') msgbox('', $lang['no_str_bar'], 'info');
+        if ($go != 'main')
+            msgbox('', $lang['no_str_bar'], 'info');
 }
 if (empty($metatags['title']))
     $metatags['title'] = $config['home'];

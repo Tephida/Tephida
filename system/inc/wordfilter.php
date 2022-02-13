@@ -20,7 +20,7 @@ if(isset($_POST['send'])){
 		
 	}
 	
-	$word_replace = textFilter($_POST['word_replace']);
+	$word_replace = requestFilter('word_replace');
 	
 	$word_id = $server_time;
 	
@@ -188,4 +188,3 @@ echo navigation($gcount, $numRows['cnt'], '?'.$query_string.'&page=');
 
 htmlclear();
 echohtmlend();
-?>

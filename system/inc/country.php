@@ -6,41 +6,42 @@
  *   file that was distributed with this source code.
  *
  */
-if(!defined('MOZG'))
-	die('Hacking attempt!');
+if (!defined('MOZG'))
+    die('Hacking attempt!');
 
 //Добавление
-if(isset($_POST['add'])){
-	$country = textFilter($_POST['country'], 25000, true);
-	if(isset($country) AND !empty($country)){
-		$row = $db->super_query("SELECT COUNT(*) AS cnt FROM `".PREFIX."_country` WHERE name = '".$country."'");
-		if(!$row['cnt']){
-			$db->query("INSERT INTO `".PREFIX."_country` SET name = '".$country."'");
-			system_mozg_clear_cache_file('country');
-			msgbox('Информация', 'Страна успешно добавлена', '?mod=country');
-		} else
-			msgbox('Ошибка', 'Такая страна уже добавлена', 'javascript:history.go(-1)');
-	} else
-		msgbox('Ошибка', 'Введите название страницы', 'javascript:history.go(-1)');
-	
-	die();
+if (isset($_POST['add'])) {
+    $country = requestFilter('country', 25000, true);
+    if (isset($country) and !empty($country)) {
+        $row = $db->super_query("SELECT COUNT(*) AS cnt FROM `country` WHERE name = '" . $country . "'");
+        if (!$row['cnt']) {
+            $db->query("INSERT INTO `country` SET name = '" . $country . "'");
+            system_mozg_clear_cache_file('country');
+            msgbox('Информация', 'Страна успешно добавлена', '?mod=country');
+        } else
+            msgbox('Ошибка', 'Такая страна уже добавлена', 'javascript:history.go(-1)');
+    } else
+        msgbox('Ошибка', 'Введите название страницы', 'javascript:history.go(-1)');
+
+    die();
 }
 
 //Удаление
-if($_GET['act'] == 'del'){
-	$id = intval($_GET['id']);
-	$row = $db->super_query("SELECT COUNT(*) AS cnt FROM `".PREFIX."_country` WHERE id = '".$id."'");
-	if($row['cnt']){
-		$db->query("DELETE FROM `".PREFIX."_country` WHERE id = '".$id."'");
-		system_mozg_clear_cache_file('country');
-		header("Location: ?mod=country");
-	}
-	die();
+if ($_GET['act'] == 'del') {
+    $id = intval($_GET['id']);
+    $row = $db->super_query("SELECT COUNT(*) AS cnt FROM `country` WHERE id = '" . $id . "'");
+    if ($row['cnt']) {
+        $db->query("DELETE FROM `country` WHERE id = '" . $id . "'");
+        system_mozg_clear_cache_file('country');
+        header("Location: ?mod=country");
+    }
+    die();
 }
 
-$sql_ = $db->super_query("SELECT * FROM `".PREFIX."_country` ORDER by `name` ASC", 1);
-foreach($sql_ as $row){
-	$countryes .= <<<HTML
+$sql_ = $db->super_query("SELECT * FROM `country` ORDER by `name` ASC", true);
+$countryes = '';
+foreach ($sql_ as $row) {
+    $countryes .= <<<HTML
 <div style="margin-bottom:5px;border-bottom:1px dashed #ccc;padding-bottom:5px">&raquo;&nbsp; <span style="font-size:13px"><b>{$row['name']}</b></span> &nbsp; <span style="color:#777">[ <a href="?mod=country&act=del&id={$row['id']}" style="color:#777">удалить</a> ]</span></div>
 HTML;
 }
@@ -62,4 +63,3 @@ echo <<<HTML
 HTML;
 
 echohtmlend();
-?>

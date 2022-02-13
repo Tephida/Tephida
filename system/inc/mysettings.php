@@ -7,14 +7,14 @@
  *
  */
 if (!defined('MOZG')) die('Hacking attempt!');
-$row = $db->super_query("SELECT user_email, user_name, user_lastname, user_password FROM `" . PREFIX . "_users` WHERE user_id = '" . $user_info['user_id'] . "'");
+$row = $db->super_query("SELECT user_email, user_name, user_lastname, user_password FROM `users` WHERE user_id = '" . $user_info['user_id'] . "'");
 //Если сохраянем
 if (isset($_POST['save'])) {
     $old_pass = md5(md5(GetVar($_POST['old_pass'])));
     $new_pass = md5(md5(GetVar($_POST['new_pass'])));
-    $user_name = textFilter($_POST['name'], 25000, true);
-    $user_lastname = textFilter($_POST['lastname'], 25000, true);
-    $user_email = textFilter($_POST['email'], 25000, true);
+    $user_name = requestFilter('name', 25000, true);
+    $user_lastname = requestFilter('lastname', 25000, true);
+    $user_email = requestFilter('email', 25000, true);
     $errors = array();
     //Проверка имени
     if (isset($user_name)) {
@@ -36,8 +36,10 @@ if (isset($_POST['save'])) {
     foreach ($errors as $er) if ($er) $all_er.= '<li>' . $er . '</li>';
     if ($all_er) msgbox('Ошибка', $all_er, '?mod=mysettings');
     else {
-        if ($newPassOk) $db->query("UPDATE `" . PREFIX . "_users` SET user_name = '" . $user_name . "', user_lastname = '" . $user_lastname . "', user_email = '" . $user_email . "', user_search_pref = '" . $user_name . " " . $user_lastname . "' WHERE user_id = '" . $user_info['user_id'] . "'");
-        else $db->query("UPDATE `" . PREFIX . "_users` SET user_name = '" . $user_name . "', user_lastname = '" . $user_lastname . "', user_email = '" . $user_email . "', user_password = '" . $new_pass . "', user_search_pref = '" . $user_name . " " . $user_lastname . "' WHERE user_id = '" . $user_info['user_id'] . "'");
+        if ($newPassOk)
+            $db->query("UPDATE `users` SET user_name = '" . $user_name . "', user_lastname = '" . $user_lastname . "', user_email = '" . $user_email . "', user_search_pref = '" . $user_name . " " . $user_lastname . "' WHERE user_id = '" . $user_info['user_id'] . "'");
+        else
+            $db->query("UPDATE `users` SET user_name = '" . $user_name . "', user_lastname = '" . $user_lastname . "', user_email = '" . $user_email . "', user_password = '" . $new_pass . "', user_search_pref = '" . $user_name . " " . $user_lastname . "' WHERE user_id = '" . $user_info['user_id'] . "'");
         //clear cache
         mozg_clear_cache_file('user_' . $user_info['user_id'] . '/profile_' . $user_info['user_id']);
         mozg_clear_cache();
@@ -71,4 +73,3 @@ HTML;
     htmlclear();
     echohtmlend();
 }
-?>

@@ -6,47 +6,48 @@
  *   file that was distributed with this source code.
  *
  */
-if(!defined('MOZG'))
-	die('Hacking attempt!');
+if (!defined('MOZG'))
+    die('Hacking attempt!');
 
 echoheader();
 echohtmlstart('Общая статистика сайта');
 
-$users = $db->super_query("SELECT COUNT(*) AS cnt FROM `".PREFIX."_users`");
-$albums = $db->super_query("SELECT COUNT(*) AS cnt FROM `".PREFIX."_albums`");
-$attach = $db->super_query("SELECT COUNT(*) AS cnt FROM `".PREFIX."_attach`");
-$audio = $db->super_query("SELECT COUNT(*) AS cnt FROM `".PREFIX."_audio`");
-$groups = $db->super_query("SELECT COUNT(*) AS cnt FROM `".PREFIX."_communities`");
-$groups_wall = $db->super_query("SELECT COUNT(*) AS cnt FROM `".PREFIX."_communities_wall`");
-$invites = $db->super_query("SELECT COUNT(*) AS cnt FROM `".PREFIX."_invites`");
-$notes = $db->super_query("SELECT COUNT(*) AS cnt FROM `".PREFIX."_notes`");
-$videos = $db->super_query("SELECT COUNT(*) AS cnt FROM `".PREFIX."_videos`");
+$users = $db->super_query("SELECT COUNT(*) AS cnt FROM `users`");
+$albums = $db->super_query("SELECT COUNT(*) AS cnt FROM `albums`");
+$attach = $db->super_query("SELECT COUNT(*) AS cnt FROM `attach`");
+$audio = $db->super_query("SELECT COUNT(*) AS cnt FROM `audio`");
+$groups = $db->super_query("SELECT COUNT(*) AS cnt FROM `communities`");
+$groups_wall = $db->super_query("SELECT COUNT(*) AS cnt FROM `communities_wall`");
+$invites = $db->super_query("SELECT COUNT(*) AS cnt FROM `invites`");
+$notes = $db->super_query("SELECT COUNT(*) AS cnt FROM `notes`");
+$videos = $db->super_query("SELECT COUNT(*) AS cnt FROM `videos`");
 
-$db->query("SHOW TABLE STATUS FROM `".DBNAME."`");
+$db->query("SHOW TABLE STATUS FROM `" . DBNAME . "`");
 $mysql_size = 0;
-while ($r = $db->get_array()){
-	if(strpos($r['Name'], PREFIX."_") !== false) 
-		$mysql_size += $r['Data_length'] + $r['Index_length'];
+while ($r = $db->get_array()) {
+    if (strpos($r['Name'], PREFIX . "_") !== false)
+        $mysql_size += $r['Data_length'] + $r['Index_length'];
 }
 $db->free();
 $mysql_size = formatsize($mysql_size);
 
-function dirsize($directory){
-	if(!is_dir($directory)) return - 1;
-	$size = 0;
-	if($DIR = opendir($directory)){
-		while(($dirfile = readdir($DIR)) !== false){
-			if(@is_link($directory.'/'.$dirfile) || $dirfile == '.' || $dirfile == '..') continue;
-			if(@is_file($directory.'/'.$dirfile)) $size += filesize($directory . '/' . $dirfile);
-			else if(@is_dir($directory.'/'.$dirfile)){
-				$dirSize = dirsize($directory.'/'.$dirfile);
-				if($dirSize >= 0) $size += $dirSize;
-				else return - 1;
-			}
-		}
-		closedir( $DIR );
-	}
-	return $size;
+function dirsize($directory)
+{
+    if (!is_dir($directory)) return -1;
+    $size = 0;
+    if ($DIR = opendir($directory)) {
+        while (($dirfile = readdir($DIR)) !== false) {
+            if (@is_link($directory . '/' . $dirfile) || $dirfile == '.' || $dirfile == '..') continue;
+            if (@is_file($directory . '/' . $dirfile)) $size += filesize($directory . '/' . $dirfile);
+            else if (@is_dir($directory . '/' . $dirfile)) {
+                $dirSize = dirsize($directory . '/' . $dirfile);
+                if ($dirSize >= 0) $size += $dirSize;
+                else return -1;
+            }
+        }
+        closedir($DIR);
+    }
+    return $size;
 }
 
 $cache_size = formatsize(dirsize("uploads"));
@@ -100,4 +101,3 @@ echo <<<HTML
 HTML;
 
 echohtmlend();
-?>

@@ -1,4 +1,6 @@
 <?php
+declare(strict_types=1);
+
 /*
  *   (c) Semen Alekseev
  *
@@ -6,6 +8,8 @@
  *   file that was distributed with this source code.
  *
  */
+
+use JetBrains\PhpStorm\NoReturn;
 
 if (!defined('MOZG')) die('Hacking attempt!');
 
@@ -16,12 +20,11 @@ class db
     public array $query_list = array();
     public array $query_errors_list = array();
     public string $mysql_error = '';
-    public string $mysql_version = '';
     public int $mysql_error_num = 0;
     public bool|mysqli_result $query_id = false;
 
 
-    public function connect($db_user, $db_pass, $db_name, $db_location = 'localhost', $show_error=1) : bool
+    public function connect(?string $db_user, ?string $db_pass, ?string $db_name, ?string $db_location = 'localhost', $show_error = 1): bool
     {
         $db_location = explode(":", $db_location);
 
@@ -34,88 +37,89 @@ class db
         }
 
         $this->query_list[] = array('query' => 'Connection with MySQL Server',
-            'num'   => 0);
+            'num' => 0);
 
-        if(!$this->db_id) {
-            if($show_error == 1) {
+        if (!$this->db_id) {
+            if ($show_error == 1) {
                 $this->display_error(mysqli_connect_error(), '1');
             } else {
-                $this->query_errors_list[] = array( 'error' => mysqli_connect_error() );
+                $this->query_errors_list[] = array('error' => mysqli_connect_error());
                 return false;
             }
         }
 
-/*        $res = $this->super_query( "SELECT VERSION() AS `version`", false, false, false );
+        mysqli_set_charset($this->db_id, COLLATE);
 
-        $this->mysql_version = $res['version'];
-
-        if( version_compare($this->mysql_version, '5.5.3', '<') ) {
-
-            die ("Datalife Engine required MySQL version 5.5.3 or greater. You need upgrade MySQL version on your server.");
-
-        }*/
-
-        mysqli_set_charset ($this->db_id , COLLATE );
-
-        mysqli_query($this->db_id, "SET NAMES '" . COLLATE . "'", false );
+        mysqli_query($this->db_id, "SET NAMES '" . COLLATE . "'", 0);
 
         $this->sql_mode();
 
         return true;
     }
 
-    public function query($query, $show_error=true,) {
-        if(!$this->db_id) $this->connect(DBUSER, DBPASS, DBNAME, DBHOST);
+    public function query(string $query, bool $show_error = true,): mysqli_result|bool
+    {
+        if (!$this->db_id)
+            $this->connect(DBUSER, DBPASS, DBNAME, DBHOST);
 
-        if(!($this->query_id = mysqli_query($this->db_id, $query) )) {
+        if (!($this->query_id = mysqli_query($this->db_id, $query))) {
 
             $this->mysql_error = mysqli_error($this->db_id);
             $this->mysql_error_num = mysqli_errno($this->db_id);
 
-            if($show_error) {
+            if ($show_error) {
 
                 $this->display_error($this->mysql_error, $this->mysql_error_num, $query);
 
             } else {
 
-                $this->query_errors_list[] = array( 'query' => $query, 'error' => $this->mysql_error );
+                $this->query_errors_list[] = array('query' => $query, 'error' => $this->mysql_error);
 
             }
         }
         return $this->query_id;
     }
 
-    public function multi_query($query, $show_error=true) {
+    /**
+     * Unused
+     * @param string $query
+     * @param bool $show_error
+     * @return void
+     */
+    public function multi_query(string $query, bool $show_error = true): void
+    {
 
-        if(!$this->db_id) $this->connect(DBUSER, DBPASS, DBNAME, DBHOST);
+        if (!$this->db_id) $this->connect(DBUSER, DBPASS, DBNAME, DBHOST);
 
-        if( mysqli_multi_query($this->db_id, $query) ) {
-            while( mysqli_more_results($this->db_id) && mysqli_next_result($this->db_id) ){
+        if (mysqli_multi_query($this->db_id, $query)) {
+            while (mysqli_more_results($this->db_id) && mysqli_next_result($this->db_id)) {
                 ;
             }
         }
 
-        if( mysqli_error($this->db_id) ) {
+        if (mysqli_error($this->db_id)) {
 
             $this->mysql_error = mysqli_error($this->db_id);
             $this->mysql_error_num = mysqli_errno($this->db_id);
 
-            if($show_error) {
+            if ($show_error) {
 
                 $this->display_error($this->mysql_error, $this->mysql_error_num, $query);
 
             } else {
 
-                $this->query_errors_list[] = array( 'query' => $query, 'error' => $this->mysql_error );
+                $this->query_errors_list[] = array('query' => $query, 'error' => $this->mysql_error);
 
             }
         }
-        $this->query_num ++;
+        $this->query_num++;
     }
 
     /** 1 used */
-    public function get_row($query_id = '') {
-        if ($query_id == '') $query_id = $this->query_id;
+    public function get_row(mysqli_result|string $query_id = ''): array|bool|null|string
+    {
+        if ($query_id == '')
+            $query_id = $this->query_id;
 
         return mysqli_fetch_assoc($query_id);
     }
@@ -124,23 +128,26 @@ class db
      * @return int|string
      * @deprecated
      */
-    public function get_affected_rows() {
+    public function get_affected_rows(): int|string
+    {
         return mysqli_affected_rows($this->db_id);
     }
 
     /** 2 used */
-    function get_array($query_id = '') {
-        if ($query_id == '') $query_id = $this->query_id;
+    function get_array(mysqli_result|string $query_id = ''): bool|array|null
+    {
+        if ($query_id == '')
+            $query_id = $this->query_id;
 
         return mysqli_fetch_array($query_id);
     }
 
-    public function super_query($query, $multi = false, $show_error=true): array|bool|null
+    public function super_query(string $query, bool $multi = false, $show_error = true): array|bool|null
     {
 
-        if(!$multi) {
+        $this->query($query, $show_error);
+        if (!$multi) {
 
-            $this->query($query, $show_error);
             $data = $this->get_row();
             $this->free();
 
@@ -148,11 +155,9 @@ class db
 
         } else {
 
-            $this->query($query, $show_error);
-
             $rows = array();
 
-            while($row = $this->get_row()) {
+            while ($row = $this->get_row()) {
                 $rows[] = $row;
             }
 
@@ -163,9 +168,10 @@ class db
     }
 
     /** 1 used */
-    function num_rows($query_id = ''): int|string
+    function num_rows(mysqli_result|string $query_id = ''): int|string
     {
-        if ($query_id == '') $query_id = $this->query_id;
+        if ($query_id == '')
+            $query_id = $this->query_id;
 
         return mysqli_num_rows($query_id);
     }
@@ -180,80 +186,76 @@ class db
      * @return array
      * @deprecated
      */
-    function get_result_fields($query_id = ''): array
+    function get_result_fields(mysqli_result|string $query_id = ''): array
     {
+        if ($query_id == '')
+            $query_id = $this->query_id;
 
-        if ($query_id == '') $query_id = $this->query_id;
-
-        while ($field = mysqli_fetch_field($query_id))
-        {
+        while ($field = mysqli_fetch_field($query_id)) {
             $fields[] = $field;
         }
 
-        return $fields;
+        return $fields ?? array();
     }
 
-    function safesql( $source ) {
-        if(!$this->db_id) $this->connect(DBUSER, DBPASS, DBNAME, DBHOST);
-
-        if ($this->db_id)
-            return mysqli_real_escape_string ($this->db_id, $source);
-        else
-            return addslashes($source);
-    }
-
-    public function free( $query_id = '' ) {
+    public function free(mysqli_result|string $query_id = ''): void
+    {
 
         if ($query_id == '')
             $query_id = $this->query_id;
 
-        if ( $query_id ) {
+        if ($query_id) {
             mysqli_free_result($query_id);
             $this->query_id = false;
         }
     }
 
-    public function close() {
-        if( $this->db_id )  mysqli_close($this->db_id);
+    public function close(): void
+    {
+        if ($this->db_id)
+            mysqli_close($this->db_id);
         $this->db_id = false;
     }
 
-    private function sql_mode() {
-        $remove_modes = array( 'STRICT_TRANS_TABLES', 'STRICT_ALL_TABLES', 'ONLY_FULL_GROUP_BY', 'NO_ZERO_DATE', 'NO_ZERO_IN_DATE', 'TRADITIONAL' );
+    private function sql_mode(): void
+    {
+        $remove_modes = array('STRICT_TRANS_TABLES', 'STRICT_ALL_TABLES', 'ONLY_FULL_GROUP_BY', 'NO_ZERO_DATE', 'NO_ZERO_IN_DATE', 'TRADITIONAL');
 
-        $res = $this->query( "SELECT @@SESSION.sql_mode", false, false );
+        $this->query("SELECT @@SESSION.sql_mode", false, false);
 
         $row = $this->get_array();
 
-        if ( !$row[0] ) {
+        if (!$row[0]) {
             return;
         }
 
-        $modes_array = explode( ',', $row[0] );
-        $modes_array = array_change_key_case( $modes_array, CASE_UPPER );
+        $modes_array = explode(',', $row[0]);
+        $modes_array = array_change_key_case($modes_array, CASE_UPPER);
 
-        foreach ( $modes_array as $key => $value ) {
-            if ( in_array( $value, $remove_modes ) ) {
-                unset( $modes_array[ $key ] );
+        foreach ($modes_array as $key => $value) {
+            if (in_array($value, $remove_modes)) {
+                unset($modes_array[$key]);
             }
         }
 
         $mode_list = implode(',', $modes_array);
 
-        if($row[0] != $mode_list) {
-            $this->query( "SET SESSION sql_mode='{$mode_list}'", false, false );
+        if ($row[0] != $mode_list) {
+            $this->query("SET SESSION sql_mode='{$mode_list}'", false, false);
         }
 
     }
 
-    function __destruct() {
+    function __destruct()
+    {
 
-        if( $this->db_id ) mysqli_close($this->db_id);
+        if ($this->db_id) mysqli_close($this->db_id);
 
         $this->db_id = false;
     }
 
-    private function display_error($error, $error_num, $query = '') {
+    #[NoReturn] private function display_error(string $error, int $error_num, string $query = ''): void
+    {
 
         $query = htmlspecialchars($query, ENT_QUOTES, 'utf-8');
         $error = htmlspecialchars($error, ENT_QUOTES, 'utf-8');
@@ -261,54 +263,19 @@ class db
         $trace = debug_backtrace();
 
         $level = 0;
-        if (isset($trace[1]['function']) AND $trace[1]['function'] == "query" ) $level = 1;
-        if (isset($trace[1]['function']) AND $trace[2]['function'] == "super_query" ) $level = 2;
+        if (isset($trace[1]['function']) and $trace[1]['function'] == "query")
+            $level = 1;
+        if (isset($trace[1]['function']) and $trace[2]['function'] == "super_query")
+            $level = 2;
 
         $trace[$level]['file'] = str_replace(ROOT_DIR, "", $trace[$level]['file']);
 
         echo <<<HTML
-<?xml version="1.0" encoding="iso-8859-1"?>
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml">
+<!DOCTYPE html>
+<html>
 <head>
 <title>MySQL Fatal Error</title>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-<style type="text/css">
-<!--
-body {
-	font-family: Verdana, Arial, Helvetica, sans-serif;
-	font-size: 11px;
-	font-style: normal;
-	color: #000000;
-}
-.top {
-  color: #ffffff;
-  font-size: 15px;
-  font-weight: bold;
-  padding-left: 20px;
-  padding-top: 10px;
-  padding-bottom: 10px;
-  text-shadow: 0 1px 1px rgba(0, 0, 0, 0.75);
-  background-color: #AB2B2D;
-  background-image: -moz-linear-gradient(top, #CC3C3F, #982628);
-  background-image: -ms-linear-gradient(top, #CC3C3F, #982628);
-  background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#CC3C3F), to(#982628));
-  background-image: -webkit-linear-gradient(top, #CC3C3F, #982628);
-  background-image: -o-linear-gradient(top, #CC3C3F, #982628);
-  background-image: linear-gradient(top, #CC3C3F, #982628);
-  filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#CC3C3F', endColorstr='#982628',GradientType=0 ); 
-  background-repeat: repeat-x;
-  border-bottom: 1px solid #ffffff;
-}
-.box {
-	margin: 10px;
-	padding: 4px;
-	background-color: #EFEDED;
-	border: 1px solid #DEDCDC;
-
-}
--->
-</style>
 </head>
 <body>
 	<div style="width: 700px;margin: 20px; border: 1px solid #D9D9D9; background-color: #F1EFEF; -moz-border-radius: 5px; -webkit-border-radius: 5px; border-radius: 5px; -moz-box-shadow: 0px 0px 8px rgba(0, 0, 0, 0.3); -webkit-box-shadow: 0px 0px 8px rgba(0, 0, 0, 0.3); box-shadow: 0px 0px 8px rgba(0, 0, 0, 0.3);" >

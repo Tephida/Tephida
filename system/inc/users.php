@@ -23,11 +23,11 @@ if (!$se_uid)
     $se_uid = '';
 
 $sort = isset($_GET['sort']) ? intval($_GET['sort']) : null;
-$se_name = $_GET['se_name'] ?? '';
-$se_email = $_GET['se_email'] ?? '';
+//$se_name = $_GET['se_name'] ?? '';
+//$se_email = $_GET['se_email'] ?? '';
 
-$se_name = textFilter($se_name, 25000, true);
-$se_email = textFilter($se_email, 25000, true);
+$se_name = requestFilter('se_name', 25000, true);
+$se_email = requestFilter('se_email', 25000, true);
 $ban = $_GET['ban'] ?? null;
 $delet = $_GET['delet'] ?? null;
 
@@ -64,10 +64,10 @@ else
 $gcount = 20;
 $limit_page = ($page - 1) * $gcount;
 
-$sql_ = $db->super_query("SELECT user_group, user_search_pref, user_id, user_real, user_reg_date, user_last_visit, user_email, user_delet, user_ban, user_balance FROM `" . PREFIX . "_users`  {$where_sql} ORDER by {$order_sql} LIMIT {$limit_page}, {$gcount}", 1);
+$sql_ = $db->super_query("SELECT user_group, user_search_pref, user_id, user_real, user_reg_date, user_last_visit, user_email, user_delet, user_ban, user_balance FROM `users`  {$where_sql} ORDER by {$order_sql} LIMIT {$limit_page}, {$gcount}", true);
 
 //Кол-во людей считаем
-$numRows = $db->super_query("SELECT COUNT(*) AS cnt FROM `" . PREFIX . "_users` {$where_sql}");
+$numRows = $db->super_query("SELECT COUNT(*) AS cnt FROM `users` {$where_sql}");
 $admin_index = $admin_index ?? null;
 
 echo <<<HTML

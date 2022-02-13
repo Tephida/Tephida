@@ -388,4 +388,3 @@ echo <<<HTML
 HTML;
 
 echohtmlend();
-?>

@@ -6,69 +6,69 @@
  *   file that was distributed with this source code.
  *
  */
-if(!defined('MOZG'))
-	die('Hacking attempt!');
+if (!defined('MOZG'))
+    die('Hacking attempt!');
 
 //Если начали замену
-if(isset($_POST['save'])){
-	//Подключаем парсер
-	include_once ENGINE_DIR.'/classes/parse.php';
-	$parse = new parse();
-			
-	$title = textFilter($_POST['title'], 25000, true);
-	$alt_name = to_translit($_POST['alt_name']);
-	$text = $parse->BBparse(textFilter($_POST['text']));
-	
-	if(isset($title) AND !empty($title) AND isset($text) AND !empty($text) AND isset($alt_name) AND !empty($alt_name)){
-		$db->query("INSERT INTO `".PREFIX."_static` SET alt_name = '".$alt_name."', title = '".$title."', text = '".$text."'");
-		header("Location: ?mod=static");
-	} else
-		msgbox('Ошибка', 'Все поля обязательны к заполнению', 'javascript:history.go(-1)');
+if (isset($_POST['save'])) {
+    //Подключаем парсер
+    include_once ENGINE_DIR . '/classes/parse.php';
+    $parse = new parse();
+
+    $title = requestFilter('title', 25000, true);
+    $alt_name = to_translit($_POST['alt_name']);
+    $text = $parse->BBparse(requestFilter('text'));
+
+    if (!empty($title) and !empty($text) and and !empty($alt_name)) {
+        $db->query("INSERT INTO `static` SET alt_name = '" . $alt_name . "', title = '" . $title . "', text = '" . $text . "'");
+        header("Location: ?mod=static");
+    } else
+        msgbox('Ошибка', 'Все поля обязательны к заполнению', 'javascript:history.go(-1)');
 } else {
-	//Удаление
-	if($_GET['act'] == 'del'){
-		$id = intval($_GET['id']);
-		$db->query("DELETE FROM `".PREFIX."_static` WHERE id = '".$id."'");
-		header("Location: ?mod=static");
-	}
-	
-	//Редактирование
-	if($_GET['act'] == 'edit'){
-		$id = intval($_GET['id']);
-		$row = $db->super_query("SELECT title, alt_name, text FROM `".PREFIX."_static` WHERE id = '".$id."'");
-		if($row){
-		
-			//Сохраняем
-			if(isset($_POST['save_edit'])){
-				//Подключаем парсер
-				include_once ENGINE_DIR.'/classes/parse.php';
-				$parse = new parse();
-						
-				$title = textFilter($_POST['title'], 25000, true);
-				$alt_name = to_translit($_POST['alt_name']);
-				$text = $parse->BBparse(textFilter($_POST['text']));
-				
-				if(isset($title) AND !empty($title) AND isset($text) AND !empty($text) AND isset($alt_name) AND !empty($alt_name)){
-					$db->query("UPDATE`".PREFIX."_static` SET alt_name = '".$alt_name."', title = '".$title."', text = '".$text."' WHERE id = '".$id."'");
-					header("Location: ?mod=static");
-				} else
-					msgbox('Ошибка', 'Все поля обязательны к заполнению', 'javascript:history.go(-1)');
-					
-				die();
-			}
-			
-			echoheader();
-			
-			$row['title'] = stripslashes($row['title']);
-			
-			//Подключаем парсер
-			include_once ENGINE_DIR.'/classes/parse.php';
-			$parse = new parse();
-	
-			$row['text'] = $parse->BBdecode(myBrRn(stripslashes($row['text'])));
-			
-			echohtmlstart('Редактирование страницы');
-			echo <<<HTML
+    //Удаление
+    if ($_GET['act'] == 'del') {
+        $id = intval($_GET['id']);
+        $db->query("DELETE FROM `static` WHERE id = '" . $id . "'");
+        header("Location: ?mod=static");
+    }
+
+    //Редактирование
+    if ($_GET['act'] == 'edit') {
+        $id = intval($_GET['id']);
+        $row = $db->super_query("SELECT title, alt_name, text FROM `static` WHERE id = '" . $id . "'");
+        if ($row) {
+
+            //Сохраняем
+            if (isset($_POST['save_edit'])) {
+                //Подключаем парсер
+                include_once ENGINE_DIR . '/classes/parse.php';
+                $parse = new parse();
+
+                $title = requestFilter('title', 25000, true);
+                $alt_name = to_translit($_POST['alt_name']);
+                $text = $parse->BBparse(requestFilter('text'));
+
+                if (!empty($title) and !empty($text) and !empty($alt_name)) {
+                    $db->query("UPDATE`static` SET alt_name = '" . $alt_name . "', title = '" . $title . "', text = '" . $text . "' WHERE id = '" . $id . "'");
+                    header("Location: ?mod=static");
+                } else
+                    msgbox('Ошибка', 'Все поля обязательны к заполнению', 'javascript:history.go(-1)');
+
+                die();
+            }
+
+            echoheader();
+
+            $row['title'] = stripslashes($row['title']);
+
+            //Подключаем парсер
+            include_once ENGINE_DIR . '/classes/parse.php';
+            $parse = new parse();
+
+            $row['text'] = $parse->BBdecode(myBrRn(stripslashes($row['text'])));
+
+            echohtmlstart('Редактирование страницы');
+            echo <<<HTML
 <form method="POST" action="">
 
 <style type="text/css" media="all">
@@ -89,17 +89,17 @@ textarea{width:300px;height:300px;}
 
 </form>
 HTML;
-			echohtmlend();
-		} else
-			msgbox('Информация', 'Страница не найдена', '?mod=static');
-		
-		die();
-	}
-	
-	echoheader();
-	
-	echohtmlstart('Создание новой страницы');
-	echo <<<HTML
+            echohtmlend();
+        } else
+            msgbox('Информация', 'Страница не найдена', '?mod=static');
+
+        die();
+    }
+
+    echoheader();
+
+    echohtmlstart('Создание новой страницы');
+    echo <<<HTML
 <form method="POST" action="">
 
 <style type="text/css" media="all">
@@ -117,19 +117,21 @@ textarea{width:300px;height:300px;}
 
 </form>
 HTML;
-	
-	echohtmlstart('Список статических страниц');
-	
-	$sql_ = $db->super_query("SELECT id, title, alt_name FROM `".PREFIX."_static` ORDER by `id` DESC", 1);
-	foreach($sql_ as $row){
-		$row['title'] = stripslashes($row['title']);
-		$static_list .= <<<HTML
+
+    echohtmlstart('Список статических страниц');
+
+    $sql_ = $db->super_query("SELECT id, title, alt_name FROM `static` ORDER by `id` DESC", true);
+
+    $static_list = null;
+
+    foreach ($sql_ as $row) {
+        $row['title'] = stripslashes($row['title']);
+        $static_list .= <<<HTML
 <div style="margin-bottom:5px;border-bottom:1px dashed #ccc;padding-bottom:5px">&raquo; <a href="?mod=static&act=edit&id={$row['id']}" style="font-size:13px"><b>{$row['title']}</b></a> &nbsp; <span style="color:#777">[ <a href="?mod=static&act=del&id={$row['id']}" style="color:#777">удалить</a> ] [ <a href="/{$row['alt_name']}.html" target="_blank" style="color:#777">просмотр</a> ]</span></div>
 HTML;
-	}
-	
-	echo $static_list;
-	
-	echohtmlend();
+    }
+
+    echo $static_list;
+
+    echohtmlend();
 }
-?>

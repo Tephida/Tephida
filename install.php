@@ -42,7 +42,7 @@ textarea{width:300px;height:100px;}
 <div class="box clr">
  <a href="/install.php"><div class="head"><div class="logo"></div></div></a>
 HTML;
-if (!file_exists(ENGINE_DIR . '/data/config.php') AND !file_exists(ENGINE_DIR . '/data/db.php')) {
+if (!file_exists(ENGINE_DIR . '/data/config.php') and !file_exists(ENGINE_DIR . '/data/db.php')) {
     //Проверка на запись у важных файлов системы
     if ($_GET['act'] == 'files') {
         echo '<div class="h1">Проверка на запись у важных файлов системы</div>';
@@ -73,7 +73,7 @@ if (!file_exists(ENGINE_DIR . '/data/config.php') AND !file_exists(ENGINE_DIR . 
             './uploads/apps/',
             './templates/',
             './templates/Default/',
-            );
+        );
 
         try {
             createDir('./uploads/room/');
@@ -255,7 +255,6 @@ HTML;
 <div class="fllogall">Имя базы данных:</div><input type="text" name="mysql_dbname" class="inpu" /><div class="mgcler"></div>
 <div class="fllogall">Имя пользователя:</div><input type="text" name="mysql_dbuser" class="inpu" /><div class="mgcler"></div>
 <div class="fllogall">Пароль:</div><input type="text" name="mysql_pass" class="inpu" /><div class="mgcler"></div>
-<div class="fllogall">Префикс:</div><input type="text" name="mysql_prefix" class="inpu" value="vii" />&nbsp;&nbsp;<span style="color:#777">Не изменяйте параметр, если не знаете для чего он предназначен<div class="mgcler"></div>
 HTML;
         echo <<<HTML
 <div class="h1" style="margin-top:15px">Данные для доступа к панели управления</div>
@@ -273,7 +272,7 @@ HTML;
     }
     //Завершение установки
     if ($_GET['act'] == 'install') {
-        if (isset($_POST['mysql_server']) && !empty($_POST['mysql_server']) && isset($_POST['mysql_dbname']) && !empty($_POST['mysql_dbname']) && isset($_POST['mysql_dbuser']) && !empty($_POST['mysql_dbuser']) && isset($_POST['mysql_prefix']) && !empty($_POST['mysql_prefix']) && isset($_POST['adminfile']) && !empty($_POST['adminfile']) && isset($_POST['name']) && !empty($_POST['name']) && isset($_POST['lastname']) && !empty($_POST['lastname']) && isset($_POST['email']) && !empty($_POST['email']) && isset($_POST['pass']) && !empty($_POST['pass'])) {
+        if (!empty($_POST['mysql_server']) && !empty($_POST['mysql_dbname']) && !empty($_POST['mysql_dbuser']) && !empty($_POST['adminfile']) && !empty($_POST['name']) && !empty($_POST['lastname']) && !empty($_POST['email']) && !empty($_POST['pass'])) {
             $_POST['mysql_server'] = str_replace('"', '\"', str_replace("$", "\\$", $_POST['mysql_server']));
             $_POST['mysql_dbname'] = str_replace('"', '\"', str_replace("$", "\\$", $_POST['mysql_dbname']));
             $_POST['mysql_dbuser'] = str_replace('"', '\"', str_replace("$", "\\$", $_POST['mysql_dbuser']));
@@ -283,21 +282,18 @@ HTML;
             $dbconfig = <<<HTML
 <?php
 
-define ("DBHOST", "{$_POST['mysql_server']}"); 
+const DBHOST = "{$_POST['mysql_server']}"; 
 
-define ("DBNAME", "{$_POST['mysql_dbname']}");
+const DBNAME = "{$_POST['mysql_dbname']}";
 
-define ("DBUSER", "{$_POST['mysql_dbuser']}");
+const DBUSER = "{$_POST['mysql_dbuser']}";
 
-define ("DBPASS", "{$_POST['mysql_pass']}");  
+const DBPASS = "{$_POST['mysql_pass']}";
 
-define ("PREFIX", "{$_POST['mysql_prefix']}"); 
-
-define ("COLLATE", "utf8");
+const COLLATE = "utf8";
 
 \$db = new db;
 
-?>
 HTML;
             $con_file = fopen("system/data/db.php", "w+") or die("Извините, но невозможно создать файл <b>.system/data/db.php</b>.<br />Проверьте правильность проставленного CHMOD!");
             fwrite($con_file, $dbconfig);
@@ -317,14 +313,12 @@ HTML;
 @ob_start();
 @ob_implicit_flush(0);
 
-@error_reporting(E_ALL ^ E_WARNING ^ E_NOTICE);
-
-define('MOZG', true);
+const MOZG = true;
 define('ROOT_DIR', dirname (__FILE__));
-define('ENGINE_DIR', ROOT_DIR.'/system');
-define('ADMIN_DIR', ROOT_DIR.'/system/inc');
+const ENGINE_DIR = ROOT_DIR . '/system';
+const ADMIN_DIR = ROOT_DIR . '/system/inc';
 
-@include ENGINE_DIR.'/data/config.php';
+include ENGINE_DIR.'/data/config.php';
 
 \$admin_index = \$config['admin_index'];
 
@@ -336,7 +330,7 @@ include ADMIN_DIR.'/functions.php';
 include ADMIN_DIR.'/login.php';
 
 \$db->close();
-?>
+
 HTML;
             $con_file = fopen($_POST['adminfile'], "w+") or die("Извините, но невозможно создать файл <b>{$_POST['adminfile']}</b>.<br />Проверьте правильность проставленного CHMOD!");
             fwrite($con_file, $admin);
@@ -442,9 +436,7 @@ HTML;
 
 'sms_number' => "123456", 
 
-); 
-
-?>
+);
 
 HTML;
             $con_file = fopen(ROOT_DIR . "/system/data/config.php", "w+") or die("Извините, но невозможно создать файл <b>.system/data/config.php</b>.<br />Проверьте правильность проставленного CHMOD!");
@@ -457,7 +449,7 @@ HTML;
             $_POST['name'] = strip_tags($_POST['name']);
             $_POST['lastname'] = strip_tags($_POST['lastname']);
             $table_Chema = array();
-            $table_Chema[] = "CREATE TABLE IF NOT EXISTS `vii_room` (
+            $table_Chema[] = "CREATE TABLE IF NOT EXISTS `room` (
   `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT,
   `title` varchar(100) NOT NULL DEFAULT '',
   `owner` bigint(20) NOT NULL DEFAULT '0',
@@ -465,7 +457,7 @@ HTML;
   `date` varchar(10) NOT NULL DEFAULT '0',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;";
-            $table_Chema[] = "CREATE TABLE IF NOT EXISTS `vii_room_users` (
+            $table_Chema[] = "CREATE TABLE IF NOT EXISTS `room_users` (
   `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT,
   `room_id` bigint(20) UNSIGNED NOT NULL DEFAULT '0',
   `oid` bigint(20) UNSIGNED NOT NULL DEFAULT '0',
@@ -474,7 +466,7 @@ HTML;
   `type` tinyint(1) UNSIGNED NOT NULL DEFAULT '0',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;";
-            $table_Chema[] = "CREATE TABLE IF NOT EXISTS `{$_POST['mysql_prefix']}_albums` (
+            $table_Chema[] = "CREATE TABLE IF NOT EXISTS `albums` (
   `aid` int(11) unsigned NOT NULL AUTO_INCREMENT,
   `user_id` int(11) unsigned NOT NULL,
   `name` varchar(100) NOT NULL,
@@ -493,7 +485,7 @@ HTML;
   KEY `privacy` (`privacy`),
   KEY `ahash` (`ahash`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;";
-            $table_Chema[] = "CREATE TABLE IF NOT EXISTS `{$_POST['mysql_prefix']}_attach` (
+            $table_Chema[] = "CREATE TABLE IF NOT EXISTS `attach` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `photo` varchar(255) NOT NULL,
   `ouser_id` int(11) NOT NULL,
@@ -504,15 +496,17 @@ HTML;
   KEY `photo` (`photo`),
   KEY `public_id` (`public_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;";
-            $table_Chema[] = "CREATE TABLE IF NOT EXISTS `{$_POST['mysql_prefix']}_antispam` (
+            $table_Chema[] = "CREATE TABLE IF NOT EXISTS `antispam` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
   `act` tinyint(3) NOT NULL,
   `user_id` int(11) NOT NULL,
   `date` int(10) NOT NULL,
   `txt` varchar(32) NOT NULL,
+  PRIMARY KEY (`id`),
   KEY `act` (`act`,`user_id`,`date`),
   KEY `act_2` (`act`,`user_id`,`date`,`txt`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;";
-            $table_Chema[] = "CREATE TABLE IF NOT EXISTS `{$_POST['mysql_prefix']}_apps` (
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;";
+            $table_Chema[] = "CREATE TABLE IF NOT EXISTS `apps` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `url` varchar(255) NOT NULL,
   `flash` varchar(255) NOT NULL DEFAULT '',
@@ -536,7 +530,7 @@ HTML;
   `tb1.game_id` int(11) NOT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;";
-            $table_Chema[] = "CREATE TABLE IF NOT EXISTS `{$_POST['mysql_prefix']}_apps_transactions` (
+            $table_Chema[] = "CREATE TABLE IF NOT EXISTS `apps_transactions` (
   `id` int(11) NOT NULL,
   `application_id` int(11) NOT NULL,
   `votes` int(11) NOT NULL,
@@ -544,7 +538,7 @@ HTML;
   `whom` int(11) NOT NULL,
   `date` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;";
-            $table_Chema[] = "CREATE TABLE IF NOT EXISTS `{$_POST['mysql_prefix']}_apps_users` (
+            $table_Chema[] = "CREATE TABLE IF NOT EXISTS `apps_users` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `user_id` int(11) NOT NULL,
   `application_id` int(11) NOT NULL,
@@ -552,7 +546,7 @@ HTML;
   `date` int(11) NOT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;";
-            $table_Chema[] = "CREATE TABLE IF NOT EXISTS `{$_POST['mysql_prefix']}_attach` (
+            $table_Chema[] = "CREATE TABLE IF NOT EXISTS `attach` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `photo` varchar(255) NOT NULL,
   `ouser_id` int(11) NOT NULL,
@@ -563,7 +557,7 @@ HTML;
   KEY `photo` (`photo`),
   KEY `public_id` (`public_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;";
-            $table_Chema[] = "CREATE TABLE IF NOT EXISTS `{$_POST['mysql_prefix']}_attach_comm` (
+            $table_Chema[] = "CREATE TABLE IF NOT EXISTS `attach_comm` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `forphoto` varchar(30) NOT NULL,
   `auser_id` int(11) NOT NULL,
@@ -572,7 +566,7 @@ HTML;
   PRIMARY KEY (`id`),
   KEY `forphoto` (`forphoto`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;";
-            $table_Chema[] = "CREATE TABLE IF NOT EXISTS `{$_POST['mysql_prefix']}_audio` (
+            $table_Chema[] = "CREATE TABLE IF NOT EXISTS `audio` (
   `aid` int(11) unsigned NOT NULL AUTO_INCREMENT,
   `auser_id` int(11) unsigned NOT NULL,
   `url` text NOT NULL,
@@ -584,7 +578,7 @@ HTML;
   KEY `adate` (`adate`),
   FULLTEXT KEY `artist` (`artist`,`name`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;";
-            $table_Chema[] = "CREATE TABLE IF NOT EXISTS `{$_POST['mysql_prefix']}_banned` (
+            $table_Chema[] = "CREATE TABLE IF NOT EXISTS `banned` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `descr` text NOT NULL,
   `date` varchar(15) NOT NULL,
@@ -592,7 +586,7 @@ HTML;
   `ip` varchar(50) NOT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;";
-            $table_Chema[] = "CREATE TABLE IF NOT EXISTS `{$_POST['mysql_prefix']}_blog` (
+            $table_Chema[] = "CREATE TABLE IF NOT EXISTS `blog` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
   `title` varchar(65) NOT NULL,
   `story` text NOT NULL,
@@ -600,14 +594,14 @@ HTML;
   PRIMARY KEY (`id`),
   KEY `date` (`date`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;";
-            $table_Chema[] = "CREATE TABLE IF NOT EXISTS `{$_POST['mysql_prefix']}_city` (
+            $table_Chema[] = "CREATE TABLE IF NOT EXISTS `city` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
   `id_country` int(11) unsigned NOT NULL,
   `name` varchar(255) NOT NULL,
   PRIMARY KEY (`id`),
   KEY `id_country` (`id_country`)
 ) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=3349 ;";
-            $table_Chema[] = "INSERT INTO `{$_POST['mysql_prefix']}_city` (`id`, `id_country`, `name`) VALUES
+            $table_Chema[] = "INSERT INTO `city` (`id`, `id_country`, `name`) VALUES
 (1, 1, 'Москва'),
 (2, 1, 'Абрамцево'),
 (3, 1, 'Алабино'),
@@ -2231,7 +2225,7 @@ HTML;
 (1621, 1, 'Спасск-Дальний'),
 (1622, 1, 'Терней'),
 (1623, 1, 'Уссурийск');";
-            $table_Chema[] = "INSERT INTO `{$_POST['mysql_prefix']}_city` (`id`, `id_country`, `name`) VALUES
+            $table_Chema[] = "INSERT INTO `city` (`id`, `id_country`, `name`) VALUES
 (1624, 1, 'Фокино'),
 (1625, 1, 'Хасан'),
 (1626, 1, 'Хороль'),
@@ -3835,7 +3829,7 @@ HTML;
 (3224, 2, 'Новая Ушица'),
 (3225, 2, 'Полонное'),
 (3226, 2, 'Славута');";
-            $table_Chema[] = "INSERT INTO `{$_POST['mysql_prefix']}_city` (`id`, `id_country`, `name`) VALUES
+            $table_Chema[] = "INSERT INTO `city` (`id`, `id_country`, `name`) VALUES
 (3227, 2, 'Старая Синява'),
 (3228, 2, 'Староконстантинов'),
 (3229, 2, 'Теофиполь'),
@@ -3958,7 +3952,7 @@ HTML;
 (3346, 7, 'Таллин'),
 (3347, 7, 'Тарту'),
 (3348, 7, 'Хаапсалу');";
-            $table_Chema[] = "CREATE TABLE IF NOT EXISTS `{$_POST['mysql_prefix']}_communities` (
+            $table_Chema[] = "CREATE TABLE IF NOT EXISTS `communities` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
   `admin` text NOT NULL,
   `title` varchar(60) NOT NULL,
@@ -3992,7 +3986,7 @@ HTML;
   KEY `photo` (`photo`),
   FULLTEXT KEY `title` (`title`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;";
-            $table_Chema[] = "CREATE TABLE IF NOT EXISTS `{$_POST['mysql_prefix']}_communities_audio` (
+            $table_Chema[] = "CREATE TABLE IF NOT EXISTS `communities_audio` (
   `aid` int(11) unsigned NOT NULL AUTO_INCREMENT,
   `public_id` int(11) unsigned NOT NULL,
   `url` text NOT NULL,
@@ -4003,7 +3997,7 @@ HTML;
   KEY `auser_id` (`public_id`),
   KEY `adate` (`adate`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;";
-            $table_Chema[] = "CREATE TABLE IF NOT EXISTS `{$_POST['mysql_prefix']}_communities_feedback` (
+            $table_Chema[] = "CREATE TABLE IF NOT EXISTS `communities_feedback` (
   `cid` int(11) NOT NULL,
   `fuser_id` int(11) NOT NULL,
   `office` varchar(30) NOT NULL,
@@ -4014,7 +4008,7 @@ HTML;
   KEY `fuser_id` (`fuser_id`),
   KEY `fdate` (`fdate`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;";
-            $table_Chema[] = "CREATE TABLE IF NOT EXISTS `{$_POST['mysql_prefix']}_communities_forum` (
+            $table_Chema[] = "CREATE TABLE IF NOT EXISTS `communities_forum` (
   `fid` int(11) unsigned NOT NULL AUTO_INCREMENT,
   `public_id` int(11) unsigned NOT NULL,
   `fuser_id` int(11) unsigned NOT NULL,
@@ -4034,7 +4028,7 @@ HTML;
   KEY `lastdate` (`lastdate`),
   KEY `fixed` (`fixed`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;";
-            $table_Chema[] = "CREATE TABLE IF NOT EXISTS `{$_POST['mysql_prefix']}_communities_forum_msg` (
+            $table_Chema[] = "CREATE TABLE IF NOT EXISTS `communities_forum_msg` (
   `mid` int(11) unsigned NOT NULL AUTO_INCREMENT,
   `fid` int(11) unsigned NOT NULL,
   `muser_id` int(11) unsigned NOT NULL,
@@ -4046,7 +4040,7 @@ HTML;
   KEY `muser_id` (`muser_id`),
   KEY `mdate` (`mdate`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;";
-            $table_Chema[] = "CREATE TABLE IF NOT EXISTS `{$_POST['mysql_prefix']}_communities_join` (
+            $table_Chema[] = "CREATE TABLE IF NOT EXISTS `communities_join` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `user_id` int(11) NOT NULL,
   `for_user_id` int(11) NOT NULL,
@@ -4057,7 +4051,7 @@ HTML;
   KEY `for_sel_1` (`user_id`,`public_id`,`date`),
   KEY `for_sel_2` (`for_user_id`,`public_id`,`user_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;";
-            $table_Chema[] = "CREATE TABLE IF NOT EXISTS `{$_POST['mysql_prefix']}_communities_stats` (
+            $table_Chema[] = "CREATE TABLE IF NOT EXISTS `communities_stats` (
   `gid` int(11) NOT NULL,
   `date` int(10) NOT NULL,
   `cnt` int(11) NOT NULL,
@@ -4073,14 +4067,14 @@ HTML;
   KEY `exit_users` (`exit_users`),
   KEY `sel_1` (`gid`,`date_x`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;";
-            $table_Chema[] = "CREATE TABLE IF NOT EXISTS `{$_POST['mysql_prefix']}_communities_stats_log` (
+            $table_Chema[] = "CREATE TABLE IF NOT EXISTS `communities_stats_log` (
   `gid` int(11) NOT NULL,
   `user_id` int(11) NOT NULL,
   `act` tinyint(3) NOT NULL,
   `date` int(10) NOT NULL,
   KEY `gid` (`gid`,`user_id`,`date`,`act`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;";
-            $table_Chema[] = "CREATE TABLE IF NOT EXISTS `{$_POST['mysql_prefix']}_communities_wall` (
+            $table_Chema[] = "CREATE TABLE IF NOT EXISTS `communities_wall` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
   `public_id` int(11) unsigned NOT NULL,
   `text` text NOT NULL,
@@ -4101,7 +4095,7 @@ HTML;
   KEY `add_date` (`add_date`),
   KEY `tell_date` (`tell_date`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;";
-            $table_Chema[] = "CREATE TABLE IF NOT EXISTS `{$_POST['mysql_prefix']}_communities_wall_like` (
+            $table_Chema[] = "CREATE TABLE IF NOT EXISTS `communities_wall_like` (
   `rec_id` int(11) unsigned NOT NULL,
   `user_id` int(11) unsigned NOT NULL,
   `date` varchar(10) NOT NULL,
@@ -4109,12 +4103,12 @@ HTML;
   KEY `user_id` (`user_id`),
   KEY `date` (`date`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;";
-            $table_Chema[] = "CREATE TABLE IF NOT EXISTS `{$_POST['mysql_prefix']}_country` (
+            $table_Chema[] = "CREATE TABLE IF NOT EXISTS `country` (
   `id` int(5) unsigned NOT NULL AUTO_INCREMENT,
   `name` varchar(255) NOT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=16 ;";
-            $table_Chema[] = "INSERT INTO `{$_POST['mysql_prefix']}_country` (`id`, `name`) VALUES
+            $table_Chema[] = "INSERT INTO `country` (`id`, `name`) VALUES
 (4, 'Беларусь'),
 (3, 'Казахстан'),
 (2, 'Украина'),
@@ -4125,7 +4119,7 @@ HTML;
 (8, 'Азербайджан'),
 (9, 'Литва'),
 (10, 'США');";
-            $table_Chema[] = "CREATE TABLE IF NOT EXISTS `{$_POST['mysql_prefix']}_doc` (
+            $table_Chema[] = "CREATE TABLE IF NOT EXISTS `doc` (
   `did` int(11) unsigned NOT NULL AUTO_INCREMENT,
   `duser_id` int(11) unsigned NOT NULL,
   `dname` varchar(255) NOT NULL,
@@ -4136,13 +4130,13 @@ HTML;
   KEY `duser_id` (`duser_id`),
   KEY `ddate` (`ddate`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;";
-            $table_Chema[] = "CREATE TABLE IF NOT EXISTS `{$_POST['mysql_prefix']}_fave` (
+            $table_Chema[] = "CREATE TABLE IF NOT EXISTS `fave` (
   `user_id` int(11) unsigned NOT NULL,
   `fave_id` int(11) unsigned NOT NULL,
   `date` datetime NOT NULL,
   KEY `for_fast_select1` (`user_id`,`fave_id`,`date`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;";
-            $table_Chema[] = "CREATE TABLE IF NOT EXISTS `{$_POST['mysql_prefix']}_friends` (
+            $table_Chema[] = "CREATE TABLE IF NOT EXISTS `friends` (
   `user_id` int(11) NOT NULL,
   `friend_id` int(11) unsigned NOT NULL,
   `friends_date` datetime NOT NULL,
@@ -4153,13 +4147,13 @@ HTML;
   KEY `views` (`views`),
   KEY `friends_date` (`friends_date`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;";
-            $table_Chema[] = "CREATE TABLE IF NOT EXISTS `{$_POST['mysql_prefix']}_friends_demands` (
+            $table_Chema[] = "CREATE TABLE IF NOT EXISTS `friends_demands` (
   `for_user_id` int(11) unsigned NOT NULL,
   `from_user_id` int(11) unsigned NOT NULL,
   `demand_date` datetime NOT NULL,
   KEY `for_fast_select1` (`for_user_id`,`from_user_id`,`demand_date`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;";
-            $table_Chema[] = "CREATE TABLE IF NOT EXISTS `{$_POST['mysql_prefix']}_games` (
+            $table_Chema[] = "CREATE TABLE IF NOT EXISTS `games` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `poster` varchar(25) NOT NULL,
   `title` varchar(200) NOT NULL,
@@ -4172,7 +4166,7 @@ HTML;
   PRIMARY KEY (`id`),
   FULLTEXT KEY `title` (`title`)
 ) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=2 ;";
-            $table_Chema[] = "CREATE TABLE IF NOT EXISTS `{$_POST['mysql_prefix']}_games_activity` (
+            $table_Chema[] = "CREATE TABLE IF NOT EXISTS `games_activity` (
   `user_id` int(11) NOT NULL,
   `action` tinyint(2) NOT NULL,
   `date` varchar(10) NOT NULL,
@@ -4180,7 +4174,7 @@ HTML;
   KEY `for_select` (`user_id`,`game_id`),
   KEY `game_id` (`game_id`)
 ) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=2 ;";
-            $table_Chema[] = "CREATE TABLE IF NOT EXISTS `{$_POST['mysql_prefix']}_games_files` (
+            $table_Chema[] = "CREATE TABLE IF NOT EXISTS `games_files` (
   `game_id` int(11) NOT NULL,
   `user_id` int(11) NOT NULL,
   `file` varchar(25) NOT NULL,
@@ -4194,13 +4188,7 @@ HTML;
   KEY `for_select` (`hash`,`user_id`,`type`,`game_id`),
   KEY `file` (`file`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;";
-            $table_Chema[] = "INSERT INTO `{$_POST['mysql_prefix']}_games_files` (`game_id`, `user_id`, `file`, `hash`, `type`) VALUES
-(1, 1, '0eb8395d2ef2dc545c68.jpg', '03aeafe25b1037f0e1cd6622c47e4413', 'poster'),
-(1, 1, '65dafa59883c2b6e66ab.swf', '03aeafe25b1037f0e1cd6622c47e4413', 'swf'),
-(1, 1, '02be94644e6491869490.png', '03aeafe25b1037f0e1cd6622c47e4413', 'scrin'),
-(1, 1, 'd8ca5b2f12d3119e253f.png', '03aeafe25b1037f0e1cd6622c47e4413', 'scrin'),
-(1, 1, '3b631e1fb3651a566136.png', '03aeafe25b1037f0e1cd6622c47e4413', 'scrin');";
-            $table_Chema[] = "CREATE TABLE IF NOT EXISTS `{$_POST['mysql_prefix']}_games_users` (
+            $table_Chema[] = "CREATE TABLE IF NOT EXISTS `games_users` (
   `user_id` int(11) NOT NULL,
   `game_id` int(11) NOT NULL,
   `setdate` varchar(10) NOT NULL,
@@ -4208,7 +4196,7 @@ HTML;
   KEY `for_select` (`user_id`,`game_id`),
   KEY `game_id` (`game_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;";
-            $table_Chema[] = "CREATE TABLE IF NOT EXISTS `{$_POST['mysql_prefix']}_gifts` (
+            $table_Chema[] = "CREATE TABLE IF NOT EXISTS `gifts` (
   `gid` int(11) unsigned NOT NULL AUTO_INCREMENT,
   `uid` int(11) unsigned NOT NULL,
   `from_uid` int(11) unsigned NOT NULL,
@@ -4223,14 +4211,14 @@ HTML;
   KEY `status` (`status`),
   KEY `gdate` (`gdate`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;";
-            $table_Chema[] = "CREATE TABLE IF NOT EXISTS `{$_POST['mysql_prefix']}_gifts_list` (
+            $table_Chema[] = "CREATE TABLE IF NOT EXISTS `gifts_list` (
   `gid` int(11) NOT NULL AUTO_INCREMENT,
   `img` varchar(50) NOT NULL,
   `price` mediumint(8) NOT NULL,
   PRIMARY KEY (`gid`),
   KEY `img` (`img`)
 ) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=83 ;";
-            $table_Chema[] = "INSERT INTO `{$_POST['mysql_prefix']}_gifts_list` (`gid`, `img`, `price`) VALUES
+            $table_Chema[] = "INSERT INTO `gifts_list` (`gid`, `img`, `price`) VALUES
 (8, '11', 30),
 (9, '14', 3),
 (10, '22', 2),
@@ -4305,7 +4293,7 @@ HTML;
 (79, '500', 25),
 (80, '501', 30),
 (82, '502', 20);";
-            $table_Chema[] = "CREATE TABLE IF NOT EXISTS `{$_POST['mysql_prefix']}_guests` (
+            $table_Chema[] = "CREATE TABLE IF NOT EXISTS `guests` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
   `ouid` int(11) NOT NULL,
   `guid` int(11) NOT NULL,
@@ -4316,7 +4304,7 @@ HTML;
   KEY `guid` (`guid`),
   KEY `new` (`new`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1;";
-            $table_Chema[] = "CREATE TABLE IF NOT EXISTS `{$_POST['mysql_prefix']}_im` (
+            $table_Chema[] = "CREATE TABLE IF NOT EXISTS `im` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
   `iuser_id` int(11) unsigned NOT NULL,
   `im_user_id` int(11) unsigned NOT NULL,
@@ -4329,32 +4317,33 @@ HTML;
   KEY `im_user_id` (`im_user_id`),
   KEY `idate` (`idate`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1;";
-            $table_Chema[] = "CREATE TABLE IF NOT EXISTS `{$_POST['mysql_prefix']}_invites` (
+            $table_Chema[] = "CREATE TABLE IF NOT EXISTS `invites` (
   `uid` int(11) NOT NULL,
   `ruid` int(11) NOT NULL,
   KEY `uid` (`uid`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;";
-            $table_Chema[] = "CREATE TABLE IF NOT EXISTS `{$_POST['mysql_prefix']}_log` (
+            $table_Chema[] = "CREATE TABLE IF NOT EXISTS `log` (
   `uid` int(11) NOT NULL,
   `browser` text NOT NULL,
   `ip` varchar(15) NOT NULL,
   KEY `uid` (`uid`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;";
-            $table_Chema[] = "CREATE TABLE IF NOT EXISTS `{$_POST['mysql_prefix']}_mail_tpl` (
+            $table_Chema[] = "CREATE TABLE IF NOT EXISTS `mail_tpl` (
   `id` mediumint(8) NOT NULL AUTO_INCREMENT,
   `text` text NOT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;";
-            $table_Chema[] = "INSERT INTO `{$_POST['mysql_prefix']}_mail_tpl` (`id`, `text`) VALUES
-			(1, 'Доброго времени суток, {%user%}!\r\nПользователь {%user-friend%}, отправил Вам заявку на дружбу.\r\n\r\nПросмотреть заявку Вы можете по ссылке: http://mysocial.ua/friends/requests\r\n\r\nС уважением, Социальная сеть.\r\nАдминистрация http://mysocial.ua/'),
-			(2, 'Доброго времени суток, {%user%}!\r\nПользователь {%user-friend%}, ответил на Вашу запись {%rec-link%}\r\n\r\nС уважением, Социальная сеть.\r\nАдминистрация http://mysocial.ua/'),
-			(3, 'Доброго времени суток, {%user%}!\r\nПользователь {%user-friend%}, оставил комментарий к Вашей видеозаписи {%rec-link%}\r\n\r\nС уважением, Социальная сеть.\r\nАдминистрация http://mysocial.ua/'),
-			(4, 'Доброго времени суток, {%user%}!\r\nПользователь {%user-friend%}, оставил комментарий к Вашей фотографии {%rec-link%}\r\n\r\nС уважением, Социальная сеть.\r\nАдминистрация http://mysocial.ua/'),
-			(5, 'Доброго времени суток, {%user%}!\r\nПользователь {%user-friend%}, оставил комментарий к Вашей заметке {%rec-link%}\r\n\r\nС уважением, Социальная сеть.\r\nАдминистрация http://mysocial.ua/'),
-			(6, 'Доброго времени суток, {%user%}!\r\nПользователь {%user-friend%}, отправил Вам подарок.\r\n\r\nПросмотреть подарок Вы можете по ссылке: {%rec-link%}\r\n\r\nС уважением, Социальная сеть.\r\nАдминистрация http://mysocial.ua/'),
-			(7, 'Доброго времени суток, {%user%}!\r\nПользователь {%user-friend%}, оставил на Вашей стене новую запись.\r\n\r\nПросмотреть запись можете по ссылке: {%rec-link%}\r\n\r\nС уважением, Социальная сеть.\r\nАдминистрация http://mysocial.ua/'),
-			(8, 'Доброго времени суток, {%user%}!\r\nПользователь {%user-friend%}, отправил Вам новое личное сообщение.\r\n\r\nПросмотреть сообщение можете по ссылке: {%rec-link%}\r\n\r\nС уважением, Социальная сеть.\r\nАдминистрация http://mysocial.ua/');";
-            $table_Chema[] = "CREATE TABLE IF NOT EXISTS `{$_POST['mysql_prefix']}_messages` (
+            $table_Chema[] = "INSERT INTO `mail_tpl` (`id`, `text`) VALUES
+			(1, 'Доброго времени суток, {%user%}!\r\nПользователь {%user-friend%}, отправил Вам заявку на дружбу.\r\n\r\nПросмотреть заявку Вы можете по ссылке: https://{$_SERVER['HTTP_HOST']}/friends/requests\r\n\r\nС уважением, Социальная сеть.\r\nАдминистрация https://{$_SERVER['HTTP_HOST']}/'),
+			(2, 'Доброго времени суток, {%user%}!\r\nПользователь {%user-friend%}, ответил на Вашу запись {%rec-link%}\r\n\r\nС уважением, Социальная сеть.\r\nАдминистрация https://{$_SERVER['HTTP_HOST']}/'),
+			(3, 'Доброго времени суток, {%user%}!\r\nПользователь {%user-friend%}, оставил комментарий к Вашей видеозаписи {%rec-link%}\r\n\r\nС уважением, Социальная сеть.\r\nАдминистрация https://{$_SERVER['HTTP_HOST']}/'),
+			(4, 'Доброго времени суток, {%user%}!\r\nПользователь {%user-friend%}, оставил комментарий к Вашей фотографии {%rec-link%}\r\n\r\nС уважением, Социальная сеть.\r\nАдминистрация https://{$_SERVER['HTTP_HOST']}/'),
+			(5, 'Доброго времени суток, {%user%}!\r\nПользователь {%user-friend%}, оставил комментарий к Вашей заметке {%rec-link%}\r\n\r\nС уважением, Социальная сеть.\r\nАдминистрация https://{$_SERVER['HTTP_HOST']}/'),
+			(6, 'Доброго времени суток, {%user%}!\r\nПользователь {%user-friend%}, отправил Вам подарок.\r\n\r\nПросмотреть подарок Вы можете по ссылке: {%rec-link%}\r\n\r\nС уважением, Социальная сеть.\r\nАдминистрация https://{$_SERVER['HTTP_HOST']}/'),
+			(7, 'Доброго времени суток, {%user%}!\r\nПользователь {%user-friend%}, оставил на Вашей стене новую запись.\r\n\r\nПросмотреть запись можете по ссылке: {%rec-link%}\r\n\r\nС уважением, Социальная сеть.\r\nАдминистрация https://{$_SERVER['HTTP_HOST']}/'),
+			(8, 'Доброго времени суток, {%user%}!\r\nПользователь {%user-friend%}, отправил Вам новое личное сообщение.\r\n\r\nПросмотреть сообщение можете по ссылке: {%rec-link%}\r\n\r\nС уважением, Социальная сеть.\r\nАдминистрация https://{$_SERVER['HTTP_HOST']}/');";
+
+            $table_Chema[] = "CREATE TABLE IF NOT EXISTS `messages` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
   `id2` varchar(255) NOT NULL DEFAULT '0',
   `room_id` bigint(20) UNSIGNED NOT NULL DEFAULT '0',
@@ -4384,7 +4373,7 @@ HTML;
   KEY `history_user_id` (`history_user_id`),
   KEY `folder` (`folder`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;";
-            $table_Chema[] = "CREATE TABLE IF NOT EXISTS `{$_POST['mysql_prefix']}_news` (
+            $table_Chema[] = "CREATE TABLE IF NOT EXISTS `news` (
   `ac_id` int(11) unsigned NOT NULL AUTO_INCREMENT,
   `ac_user_id` int(11) unsigned NOT NULL,
   `action_type` tinyint(4) unsigned NOT NULL,
@@ -4401,7 +4390,7 @@ HTML;
   KEY `obj_id` (`obj_id`),
   KEY `action_time` (`action_time`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;";
-            $table_Chema[] = "CREATE TABLE IF NOT EXISTS `{$_POST['mysql_prefix']}_notes` (
+            $table_Chema[] = "CREATE TABLE IF NOT EXISTS `notes` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
   `owner_user_id` int(11) unsigned NOT NULL,
   `title` varchar(65) NOT NULL,
@@ -4413,7 +4402,7 @@ HTML;
   KEY `date` (`date`),
   FULLTEXT KEY `title` (`title`,`full_text`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;";
-            $table_Chema[] = "CREATE TABLE IF NOT EXISTS `{$_POST['mysql_prefix']}_notes_comments` (
+            $table_Chema[] = "CREATE TABLE IF NOT EXISTS `notes_comments` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
   `note_id` int(11) unsigned NOT NULL,
   `from_user_id` int(11) unsigned NOT NULL,
@@ -4424,7 +4413,7 @@ HTML;
   KEY `from_user_id` (`from_user_id`),
   KEY `add_date` (`add_date`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;";
-            $table_Chema[] = "CREATE TABLE IF NOT EXISTS `{$_POST['mysql_prefix']}_photos` (
+            $table_Chema[] = "CREATE TABLE IF NOT EXISTS `photos` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
   `album_id` int(11) unsigned NOT NULL,
   `photo_name` varchar(25) NOT NULL,
@@ -4443,7 +4432,7 @@ HTML;
   KEY `date` (`date`),
   KEY `photo_name` (`photo_name`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;";
-            $table_Chema[] = "CREATE TABLE IF NOT EXISTS `{$_POST['mysql_prefix']}_photos_comments` (
+            $table_Chema[] = "CREATE TABLE IF NOT EXISTS `photos_comments` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
   `owner_id` int(11) unsigned NOT NULL,
   `album_id` int(11) unsigned NOT NULL,
@@ -4461,7 +4450,7 @@ HTML;
   KEY `photo_name` (`photo_name`),
   KEY `date` (`date`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;";
-            $table_Chema[] = "CREATE TABLE IF NOT EXISTS `{$_POST['mysql_prefix']}_photos_mark` (
+            $table_Chema[] = "CREATE TABLE IF NOT EXISTS `photos_mark` (
   `muser_id` int(11) unsigned NOT NULL,
   `mphoto_id` int(11) unsigned NOT NULL,
   `mphoto_name` varchar(50) NOT NULL,
@@ -4474,7 +4463,7 @@ HTML;
   KEY `mdate` (`mdate`),
   FULLTEXT KEY `mphoto_name` (`mphoto_name`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;";
-            $table_Chema[] = "CREATE TABLE IF NOT EXISTS `{$_POST['mysql_prefix']}_photos_rating` (
+            $table_Chema[] = "CREATE TABLE IF NOT EXISTS `photos_rating` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `photo_id` int(11) NOT NULL,
   `user_id` int(11) NOT NULL,
@@ -4485,7 +4474,7 @@ HTML;
   KEY `for_select_1` (`id`,`user_id`),
   KEY `for_select_2` (`photo_id`,`user_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;";
-            $table_Chema[] = "CREATE TABLE IF NOT EXISTS `{$_POST['mysql_prefix']}_report` (
+            $table_Chema[] = "CREATE TABLE IF NOT EXISTS `report` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
   `act` varchar(10) NOT NULL,
   `type` smallint(5) unsigned NOT NULL,
@@ -4499,7 +4488,7 @@ HTML;
   KEY `act` (`act`),
   KEY `date` (`date`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;";
-            $table_Chema[] = "CREATE TABLE IF NOT EXISTS `{$_POST['mysql_prefix']}_restore` (
+            $table_Chema[] = "CREATE TABLE IF NOT EXISTS `restore` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `email` varchar(50) NOT NULL,
   `hash` varchar(32) NOT NULL,
@@ -4509,7 +4498,7 @@ HTML;
   KEY `hash` (`hash`),
   KEY `ip` (`ip`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;";
-            $table_Chema[] = "CREATE TABLE IF NOT EXISTS `{$_POST['mysql_prefix']}_reviews` (
+            $table_Chema[] = "CREATE TABLE IF NOT EXISTS `reviews` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `user_id` int(11) NOT NULL,
   `text` text NOT NULL,
@@ -4520,7 +4509,7 @@ HTML;
   KEY `for_sel` (`user_id`,`approve`),
   KEY `approve` (`approve`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;";
-            $table_Chema[] = "CREATE TABLE IF NOT EXISTS `{$_POST['mysql_prefix']}_sms_log` (
+            $table_Chema[] = "CREATE TABLE IF NOT EXISTS `sms_log` (
   `user_id` int(11) NOT NULL,
   `from_u` varchar(20) NOT NULL,
   `msg` varchar(100) NOT NULL,
@@ -4531,7 +4520,7 @@ HTML;
   `date` varchar(10) NOT NULL,
   KEY `user_id` (`user_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;";
-            $table_Chema[] = "CREATE TABLE IF NOT EXISTS `{$_POST['mysql_prefix']}_static` (
+            $table_Chema[] = "CREATE TABLE IF NOT EXISTS `static` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `alt_name` varchar(50) NOT NULL,
   `title` varchar(150) NOT NULL,
@@ -4539,7 +4528,7 @@ HTML;
   PRIMARY KEY (`id`),
   KEY `alt_name` (`alt_name`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;";
-            $table_Chema[] = "CREATE TABLE IF NOT EXISTS `{$_POST['mysql_prefix']}_support` (
+            $table_Chema[] = "CREATE TABLE IF NOT EXISTS `support` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
   `title` varchar(65) NOT NULL,
   `question` text NOT NULL,
@@ -4551,7 +4540,7 @@ HTML;
   KEY `suser_id` (`suser_id`),
   KEY `сdate` (`сdate`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;";
-            $table_Chema[] = "CREATE TABLE IF NOT EXISTS `{$_POST['mysql_prefix']}_support_answers` (
+            $table_Chema[] = "CREATE TABLE IF NOT EXISTS `support_answers` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
   `qid` int(11) unsigned NOT NULL,
   `auser_id` int(11) unsigned NOT NULL,
@@ -4562,7 +4551,7 @@ HTML;
   KEY `auser_id` (`auser_id`),
   KEY `adate` (`adate`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;";
-            $table_Chema[] = "CREATE TABLE IF NOT EXISTS `{$_POST['mysql_prefix']}_updates` (
+            $table_Chema[] = "CREATE TABLE IF NOT EXISTS `updates` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
   `for_user_id` mediumint(8) unsigned NOT NULL,
   `from_user_id` mediumint(8) unsigned NOT NULL,
@@ -4576,7 +4565,7 @@ HTML;
   KEY `for_user_id` (`for_user_id`),
   KEY `date` (`date`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;";
-            $table_Chema[] = "CREATE TABLE IF NOT EXISTS `{$_POST['mysql_prefix']}_users` (
+            $table_Chema[] = "CREATE TABLE IF NOT EXISTS `users` (
   `user_id` mediumint(11) NOT NULL AUTO_INCREMENT,
   `user_email` varchar(50) NOT NULL,
   `user_password` varchar(32) NOT NULL,
@@ -4654,7 +4643,7 @@ HTML;
   KEY `user_rating` (`user_rating`),
   KEY `user_search_pref` (`user_search_pref`)
 ) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;";
-            $table_Chema[] = "CREATE TABLE IF NOT EXISTS `{$_POST['mysql_prefix']}_users_rating` (
+            $table_Chema[] = "CREATE TABLE IF NOT EXISTS `users_rating` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `user_id` int(11) NOT NULL,
   `for_user_id` int(11) NOT NULL,
@@ -4663,7 +4652,7 @@ HTML;
   PRIMARY KEY (`id`),
   KEY `for_select` (`user_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;";
-            $table_Chema[] = "CREATE TABLE IF NOT EXISTS `{$_POST['mysql_prefix']}_users_stats` (
+            $table_Chema[] = "CREATE TABLE IF NOT EXISTS `users_stats` (
   `user_id` int(11) unsigned NOT NULL,
   `users` int(11) unsigned NOT NULL,
   `views` int(11) unsigned NOT NULL,
@@ -4675,13 +4664,13 @@ HTML;
   KEY `views` (`views`),
   KEY `users` (`users`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;";
-            $table_Chema[] = "CREATE TABLE IF NOT EXISTS `{$_POST['mysql_prefix']}_users_stats_log` (
+            $table_Chema[] = "CREATE TABLE IF NOT EXISTS `users_stats_log` (
   `user_id` int(11) unsigned NOT NULL,
   `for_user_id` int(11) unsigned NOT NULL,
   `date` int(8) unsigned NOT NULL,
   KEY `user_id` (`user_id`,`for_user_id`,`date`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;";
-            $table_Chema[] = "CREATE TABLE IF NOT EXISTS `{$_POST['mysql_prefix']}_videos` (
+            $table_Chema[] = "CREATE TABLE IF NOT EXISTS `videos` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
   `owner_user_id` int(11) unsigned NOT NULL,
   `public_id` int(11) unsigned NOT NULL,
@@ -4700,7 +4689,7 @@ HTML;
   KEY `add_date` (`add_date`),
   FULLTEXT KEY `title` (`title`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;";
-            $table_Chema[] = "CREATE TABLE IF NOT EXISTS `{$_POST['mysql_prefix']}_videos_comments` (
+            $table_Chema[] = "CREATE TABLE IF NOT EXISTS `videos_comments` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
   `author_user_id` int(11) unsigned NOT NULL,
   `video_id` int(11) unsigned NOT NULL,
@@ -4710,14 +4699,14 @@ HTML;
   KEY `for_fast_select1` (`author_user_id`,`video_id`),
   KEY `add_date` (`add_date`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;";
-            $table_Chema[] = "CREATE TABLE IF NOT EXISTS `{$_POST['mysql_prefix']}_votes` (
+            $table_Chema[] = "CREATE TABLE IF NOT EXISTS `votes` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `title` varchar(80) NOT NULL,
   `answers` text NOT NULL,
   `answer_num` mediumint(8) NOT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;";
-            $table_Chema[] = "CREATE TABLE IF NOT EXISTS `{$_POST['mysql_prefix']}_votes_result` (
+            $table_Chema[] = "CREATE TABLE IF NOT EXISTS `votes_result` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `user_id` int(11) NOT NULL,
   `vote_id` int(11) NOT NULL,
@@ -4727,7 +4716,7 @@ HTML;
   KEY `vote_id` (`vote_id`),
   KEY `answer` (`answer`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;";
-            $table_Chema[] = "CREATE TABLE IF NOT EXISTS `{$_POST['mysql_prefix']}_wall` (
+            $table_Chema[] = "CREATE TABLE IF NOT EXISTS `wall` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
   `author_user_id` int(11) unsigned NOT NULL,
   `for_user_id` int(11) unsigned NOT NULL,
@@ -4749,7 +4738,7 @@ HTML;
   KEY `tell_uid` (`tell_uid`,`tell_date`),
   KEY `add_date` (`add_date`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;";
-            $table_Chema[] = "CREATE TABLE IF NOT EXISTS `{$_POST['mysql_prefix']}_wall_like` (
+            $table_Chema[] = "CREATE TABLE IF NOT EXISTS `wall_like` (
   `rec_id` int(11) unsigned NOT NULL,
   `user_id` int(11) unsigned NOT NULL,
   `date` varchar(15) NOT NULL,
@@ -4762,7 +4751,7 @@ HTML;
 
             $server_time = $server_time ?? time();
 
-            $table_Chema[] = "INSERT INTO `{$_POST['mysql_prefix']}_users` 
+            $table_Chema[] = "INSERT INTO `users` 
 SET user_name = '{$_POST['name']}', 
     user_lastname = '{$_POST['lastname']}', 
     user_email = '{$_POST['email']}', 
@@ -4780,8 +4769,9 @@ SET user_name = '{$_POST['name']}',
     user_lastdate = '{$server_time}', 
     user_lastupdate = '{$server_time}',   
     user_reg_date = '{$server_time}'";
-            $table_Chema[] = "INSERT INTO `{$_POST['mysql_prefix']}_log` SET uid = '1', browser = '', ip = ''";
-            foreach ($table_Chema as $query) $db->query($query);
+            $table_Chema[] = "INSERT INTO `log` SET uid = '1', browser = '', ip = ''";
+            foreach ($table_Chema as $query)
+                $db->query($query);
             echo <<<HTML
 <div class="h1">Установка успешно завершена</div>
 Поздравляем Вас, Vii Engine был успешно установлен на Ваш сервер. Вы можете просмотреть теперь главную <a href="/">страницу вашего сайта</a> и посмотреть возможности скрипта. Либо Вы можете <a href="/{$admin_index}">зайти</a> в панель управления Vii Engine и изменить другие настройки системы. 
@@ -4791,7 +4781,9 @@ SET user_name = '{$_POST['name']}',
 Приятной Вам работы!
 HTML;
 
-        } else echo <<<HTML
+        }
+        else
+            echo <<<HTML
 <div class="h1">Ошибка</div>
 Заполните необходимые поля!
 <input type="submit" class="inp fl_r" value="Назад" onClick="javascript:history.back()" />
@@ -4816,12 +4808,7 @@ HTML;
 Приятной Вам работы!
 HTML;
     echo <<<HTML
-<div class="h1">Лицензионное соглашение</div>
-<div style="background:lightyellow;padding:10px;border:1px solid #ccc;height:300px;overflow:auto">
-
-</div>
-<div class="fl_l" style="margin-top:11px"><input type="checkbox" id="lic" value="0" onClick="if(document.getElementById('lic').value == 0){document.getElementById('lic').value = '1'} else {document.getElementById('lic').value = '0'}" /> <b>Я принимаю данное соглашение</b></div>
-<input type="submit" class="inp fl_r" value="Начать установку" onClick="if(document.getElementById('lic').value == 0){alert('Вы должны принять лицензионное соглашение, прежде чем продолжите установку.');} else {location.href='/install.php?act=files'}" />
+<input type="submit" class="inp fl_r" value="Начать установку" onClick="location.href='/install.php?act=files'" />
 HTML;
 
 }

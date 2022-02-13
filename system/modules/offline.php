@@ -17,4 +17,3 @@ if($user_info['user_group'] != '1'){
 	echo $tpl->result['main'];
 	die();
 }
-?>

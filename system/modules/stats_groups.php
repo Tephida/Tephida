@@ -30,7 +30,7 @@ if ($logged) {
             if ($year and $year < 2013 or $year > 2020) $year = 2013;
 
             //Выводим админа сообщества
-            $owner = $db->super_query("SELECT admin FROM `" . PREFIX . "_communities` WHERE id = '{$gid}'");
+            $owner = $db->super_query("SELECT admin FROM `communities` WHERE id = '{$gid}'");
 
             //ПРоверка на админа
             if (strpos($owner['admin'], "u{$user_info['user_id']}|") !== false) {
@@ -54,7 +54,7 @@ if ($logged) {
                 $t_date = langdate('F', $stat_date);
 
                 //Составляем массив для вывода за этот месяц
-                $sql_ = $db->super_query("SELECT cnt, date, hits, new_users, exit_users FROM `" . PREFIX . "_communities_stats` WHERE gid = '{$gid}' AND date_x = '{$stat_date}' ORDER by `date` ASC", 1);
+                $sql_ = $db->super_query("SELECT cnt, date, hits, new_users, exit_users FROM `communities_stats` WHERE gid = '{$gid}' AND date_x = '{$stat_date}' ORDER by `date` ASC", true);
 
                 if ($sql_) {
 
@@ -95,7 +95,7 @@ if ($logged) {
                 }
 
                 //Выводим максимальное кол-во юзеров за этот месяц
-                $row_max = $db->super_query("SELECT cnt FROM `" . PREFIX . "_communities_stats` WHERE gid = '{$gid}' AND date_x = '{$stat_date}' ORDER by `cnt` DESC");
+                $row_max = $db->super_query("SELECT cnt FROM `communities_stats` WHERE gid = '{$gid}' AND date_x = '{$stat_date}' ORDER by `cnt` DESC");
 
                 $rNum = round($row_max['cnt'] / 15);
                 if ($rNum < 1) $rNum = 1;
@@ -103,16 +103,16 @@ if ($logged) {
                 $tickSize = $rNum;
 
                 //Выводим максимальное кол-во просмотров за этот месяц
-                $row_max_hits = $db->super_query("SELECT hits FROM `" . PREFIX . "_communities_stats` WHERE gid = '{$gid}' AND date_x = '{$stat_date}' ORDER by `hits` DESC");
+                $row_max_hits = $db->super_query("SELECT hits FROM `communities_stats` WHERE gid = '{$gid}' AND date_x = '{$stat_date}' ORDER by `hits` DESC");
 
                 $rNum_hits = round($row_max_hits['hits'] / 15);
                 if ($rNum_hits < 1) $rNum_hits = 1;
 
                 $tickSize_hits = $rNum_hits;
-                $tickSize = $rNum;
+//                $tickSize = $rNum;
 
                 //Выводим максимальное кол-во новых юзеров за этот месяц
-                $row_max_new_users = $db->super_query("SELECT new_users FROM `" . PREFIX . "_communities_stats` WHERE gid = '{$gid}' AND date_x = '{$stat_date}' ORDER by `new_users` DESC");
+                $row_max_new_users = $db->super_query("SELECT new_users FROM `communities_stats` WHERE gid = '{$gid}' AND date_x = '{$stat_date}' ORDER by `new_users` DESC");
 
                 $rNum_new_users = round($row_max_new_users['new_users'] / 15);
                 if ($rNum_new_users < 1) $rNum_new_users = 1;
@@ -120,7 +120,7 @@ if ($logged) {
                 $tickSize_new_users = $rNum_new_users;
 
                 //Выводим максимальное кол-во вышедних юзеров за этот месяц
-                $row_max_exit_users = $db->super_query("SELECT exit_users FROM `" . PREFIX . "_communities_stats` WHERE gid = '{$gid}' AND date_x = '{$stat_date}' ORDER by `exit_users` DESC");
+                $row_max_exit_users = $db->super_query("SELECT exit_users FROM `communities_stats` WHERE gid = '{$gid}' AND date_x = '{$stat_date}' ORDER by `exit_users` DESC");
 
                 $rNum_exit_users = round($row_max_exit_users['exit_users'] / 15);
                 if ($rNum_exit_users < 1) $rNum_exit_users = 1;
@@ -161,4 +161,3 @@ if ($logged) {
     msgbox('', $lang['not_logged'], 'info');
 
 }
-?>
