@@ -759,6 +759,9 @@ if ($logged) {
             //################### Интересные страницы ###################//
             if ($row['user_public_num']) {
                 $sql_groups = $db->super_query("SELECT tb1.friend_id, tb2.id, title, photo, adres, status_text FROM `friends` tb1, `communities` tb2 WHERE tb1.user_id = '{$id}' AND tb1.friend_id = tb2.id AND tb1.subscriptions = 2 ORDER by `traf` DESC LIMIT 0, 5", true);
+
+                $groups = '';
+
                 foreach ($sql_groups as $row_groups) {
                     if ($row_groups['adres']) $adres = $row_groups['adres'];
                     else $adres = 'public' . $row_groups['id'];
