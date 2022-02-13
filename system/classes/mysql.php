@@ -1,5 +1,6 @@
 <?php
 declare(strict_types=1);
+
 /*
  *   (c) Semen Alekseev
  *
@@ -7,6 +8,8 @@ declare(strict_types=1);
  *   file that was distributed with this source code.
  *
  */
+
+use JetBrains\PhpStorm\NoReturn;
 
 if (!defined('MOZG')) die('Hacking attempt!');
 
@@ -21,7 +24,7 @@ class db
     public bool|mysqli_result $query_id = false;
 
 
-    public function connect(?string $db_user, ?string $db_pass, ?string $db_name, ?string $db_location = 'localhost', $show_error=1) : bool
+    public function connect(?string $db_user, ?string $db_pass, ?string $db_name, ?string $db_location = 'localhost', $show_error = 1): bool
     {
         $db_location = explode(":", $db_location);
 
@@ -34,18 +37,18 @@ class db
         }
 
         $this->query_list[] = array('query' => 'Connection with MySQL Server',
-            'num'   => 0);
+            'num' => 0);
 
-        if(!$this->db_id) {
-            if($show_error == 1) {
+        if (!$this->db_id) {
+            if ($show_error == 1) {
                 $this->display_error(mysqli_connect_error(), '1');
             } else {
-                $this->query_errors_list[] = array( 'error' => mysqli_connect_error() );
+                $this->query_errors_list[] = array('error' => mysqli_connect_error());
                 return false;
             }
         }
 
-        mysqli_set_charset ($this->db_id , COLLATE );
+        mysqli_set_charset($this->db_id, COLLATE);
 
         mysqli_query($this->db_id, "SET NAMES '" . COLLATE . "'", 0);
 
@@ -54,60 +57,69 @@ class db
         return true;
     }
 
-    public function query($query, $show_error=true,): mysqli_result|bool
+    public function query(string $query, bool $show_error = true,): mysqli_result|bool
     {
-        if(!$this->db_id)
+        if (!$this->db_id)
             $this->connect(DBUSER, DBPASS, DBNAME, DBHOST);
 
-        if(!($this->query_id = mysqli_query($this->db_id, $query) )) {
+        if (!($this->query_id = mysqli_query($this->db_id, $query))) {
 
             $this->mysql_error = mysqli_error($this->db_id);
             $this->mysql_error_num = mysqli_errno($this->db_id);
 
-            if($show_error) {
+            if ($show_error) {
 
                 $this->display_error($this->mysql_error, $this->mysql_error_num, $query);
 
             } else {
 
-                $this->query_errors_list[] = array( 'query' => $query, 'error' => $this->mysql_error );
+                $this->query_errors_list[] = array('query' => $query, 'error' => $this->mysql_error);
 
             }
         }
         return $this->query_id;
     }
 
-    public function multi_query($query, $show_error=true) {
+    /**
+     * Unused
+     * @param string $query
+     * @param bool $show_error
+     * @return void
+     */
+    public function multi_query(string $query, bool $show_error = true): void
+    {
 
-        if(!$this->db_id) $this->connect(DBUSER, DBPASS, DBNAME, DBHOST);
+        if (!$this->db_id) $this->connect(DBUSER, DBPASS, DBNAME, DBHOST);
 
-        if( mysqli_multi_query($this->db_id, $query) ) {
-            while( mysqli_more_results($this->db_id) && mysqli_next_result($this->db_id) ){
+        if (mysqli_multi_query($this->db_id, $query)) {
+            while (mysqli_more_results($this->db_id) && mysqli_next_result($this->db_id)) {
                 ;
             }
         }
 
-        if( mysqli_error($this->db_id) ) {
+        if (mysqli_error($this->db_id)) {
 
             $this->mysql_error = mysqli_error($this->db_id);
             $this->mysql_error_num = mysqli_errno($this->db_id);
 
-            if($show_error) {
+            if ($show_error) {
 
                 $this->display_error($this->mysql_error, $this->mysql_error_num, $query);
 
             } else {
 
-                $this->query_errors_list[] = array( 'query' => $query, 'error' => $this->mysql_error );
+                $this->query_errors_list[] = array('query' => $query, 'error' => $this->mysql_error);
 
             }
         }
-        $this->query_num ++;
+        $this->query_num++;
     }
 
     /** 1 used */
-    public function get_row($query_id = '') {
-        if ($query_id == '') $query_id = $this->query_id;
+    public function get_row(mysqli_result|string $query_id = ''): array|bool|null|string
+    {
+        if ($query_id == '')
+            $query_id = $this->query_id;
 
         return mysqli_fetch_assoc($query_id);
     }
@@ -116,22 +128,25 @@ class db
      * @return int|string
      * @deprecated
      */
-    public function get_affected_rows() {
+    public function get_affected_rows(): int|string
+    {
         return mysqli_affected_rows($this->db_id);
     }
 
     /** 2 used */
-    function get_array($query_id = '') {
-        if ($query_id == '') $query_id = $this->query_id;
+    function get_array(mysqli_result|string $query_id = ''): bool|array|null
+    {
+        if ($query_id == '')
+            $query_id = $this->query_id;
 
         return mysqli_fetch_array($query_id);
     }
 
-    public function super_query($query, bool $multi = false, $show_error=true): array|bool|null
+    public function super_query(string $query, bool $multi = false, $show_error = true): array|bool|null
     {
 
         $this->query($query, $show_error);
-        if(!$multi) {
+        if (!$multi) {
 
             $data = $this->get_row();
             $this->free();
@@ -142,7 +157,7 @@ class db
 
             $rows = array();
 
-            while($row = $this->get_row()) {
+            while ($row = $this->get_row()) {
                 $rows[] = $row;
             }
 
@@ -153,9 +168,10 @@ class db
     }
 
     /** 1 used */
-    function num_rows($query_id = ''): int|string
+    function num_rows(mysqli_result|string $query_id = ''): int|string
     {
-        if ($query_id == '') $query_id = $this->query_id;
+        if ($query_id == '')
+            $query_id = $this->query_id;
 
         return mysqli_num_rows($query_id);
     }
@@ -182,58 +198,64 @@ class db
         return $fields ?? array();
     }
 
-    public function free( $query_id = '' ) {
+    public function free(mysqli_result|string $query_id = ''): void
+    {
 
         if ($query_id == '')
             $query_id = $this->query_id;
 
-        if ( $query_id ) {
+        if ($query_id) {
             mysqli_free_result($query_id);
             $this->query_id = false;
         }
     }
 
-    public function close() {
-        if( $this->db_id )  mysqli_close($this->db_id);
+    public function close(): void
+    {
+        if ($this->db_id)
+            mysqli_close($this->db_id);
         $this->db_id = false;
     }
 
-    private function sql_mode() {
-        $remove_modes = array( 'STRICT_TRANS_TABLES', 'STRICT_ALL_TABLES', 'ONLY_FULL_GROUP_BY', 'NO_ZERO_DATE', 'NO_ZERO_IN_DATE', 'TRADITIONAL' );
+    private function sql_mode(): void
+    {
+        $remove_modes = array('STRICT_TRANS_TABLES', 'STRICT_ALL_TABLES', 'ONLY_FULL_GROUP_BY', 'NO_ZERO_DATE', 'NO_ZERO_IN_DATE', 'TRADITIONAL');
 
         $this->query("SELECT @@SESSION.sql_mode", false, false);
 
         $row = $this->get_array();
 
-        if ( !$row[0] ) {
+        if (!$row[0]) {
             return;
         }
 
-        $modes_array = explode( ',', $row[0] );
-        $modes_array = array_change_key_case( $modes_array, CASE_UPPER );
+        $modes_array = explode(',', $row[0]);
+        $modes_array = array_change_key_case($modes_array, CASE_UPPER);
 
-        foreach ( $modes_array as $key => $value ) {
-            if ( in_array( $value, $remove_modes ) ) {
-                unset( $modes_array[ $key ] );
+        foreach ($modes_array as $key => $value) {
+            if (in_array($value, $remove_modes)) {
+                unset($modes_array[$key]);
             }
         }
 
         $mode_list = implode(',', $modes_array);
 
-        if($row[0] != $mode_list) {
-            $this->query( "SET SESSION sql_mode='{$mode_list}'", false, false );
+        if ($row[0] != $mode_list) {
+            $this->query("SET SESSION sql_mode='{$mode_list}'", false, false);
         }
 
     }
 
-    function __destruct() {
+    function __destruct()
+    {
 
-        if( $this->db_id ) mysqli_close($this->db_id);
+        if ($this->db_id) mysqli_close($this->db_id);
 
         $this->db_id = false;
     }
 
-    private function display_error($error, $error_num, $query = '') {
+    #[NoReturn] private function display_error(string $error, int $error_num, string $query = ''): void
+    {
 
         $query = htmlspecialchars($query, ENT_QUOTES, 'utf-8');
         $error = htmlspecialchars($error, ENT_QUOTES, 'utf-8');
