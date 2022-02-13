@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 /*
  *   (c) Semen Alekseev
  *
@@ -10,7 +11,7 @@
 class wall
 {
 
-    public $query = false;
+    public array|bool|null $query = false;
     public $template = false;
     public $compile = false;
     public $comm_query = false;

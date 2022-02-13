@@ -23,7 +23,7 @@ if ($logged) {
             $wall_text = requestFilter('wall_text');
             $attach_files = requestFilter('attach_files', 25000, true);
             $for_user_id = intval($_POST['for_user_id']);
-            $fast_comm_id = intval($_POST['rid']);
+            $fast_comm_id = isset($_POST['rid']) ? intval($_POST['rid']) : null;
             $answer_comm_id = intval($_POST['answer_comm_id']);
             $str_date = time();
 
@@ -77,9 +77,9 @@ if ($logged) {
                                 $cnt_attach_link = 1;
                                 foreach ($attach_arr as $attach_file) {
                                     $attach_type = explode('|', $attach_file);
-                                    if ($attach_type[0] == 'link' and preg_match('/http:\/\/(.*?)+$/i', $attach_type[1]) and $cnt_attach_link == 1) {
+                                    if ($attach_type[0] == 'link' and preg_match('/https:\/\/(.*?)+$/i', $attach_type[1]) and $cnt_attach_link == 1) {
                                         $domain_url_name = explode('/', $attach_type[1]);
-                                        $rdomain_url_name = str_replace('http://', '', $domain_url_name[2]);
+                                        $rdomain_url_name = str_replace('https://', '', $domain_url_name[2]);
                                         $rImgUrl = $attach_type[4];
                                         $rImgUrl = str_replace("\\", "/", $rImgUrl);
                                         $img_name_arr = explode(".", $rImgUrl);
@@ -90,7 +90,7 @@ if ($logged) {
                                         $allowed_files = array('jpg', 'jpeg', 'jpe', 'png');
 
                                         //Загружаем картинку на сайт
-                                        if (in_array(strtolower($img_format), $allowed_files) and preg_match("/http:\/\/(.*?)(.jpg|.png|.jpeg|.jpe)/i", $rImgUrl)) {
+                                        if (in_array(strtolower($img_format), $allowed_files) and preg_match("/https:\/\/(.*?)(.jpg|.png|.jpeg|.jpe)/i", $rImgUrl)) {
 
                                             //Директория загрузки фото
                                             $upload_dir = ROOT_DIR . '/uploads/attach/' . $user_id;
@@ -170,7 +170,7 @@ if ($logged) {
 
                                         mozg_create_cache("user_{$row_owner2['author_user_id']}/updates", 1);
 
-                                        //ИНАЧЕ Добавляем +1 юзеру для оповещания
+                                        //ИНАЧЕ Добавляем +1 юзеру для оповещения
                                     } else {
 
                                         $cntCacheNews = mozg_cache("user_{$row_owner2['author_user_id']}/new_news");
