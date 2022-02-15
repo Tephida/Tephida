@@ -12,7 +12,7 @@ if (!defined('MOZG'))
 NoAjaxQuery();
 
 if ($logged) {
-    $act = $_GET['act'] ?? '';
+    $act = requestFilter('act');
     $user_id = $user_info['user_id'];
     $metatags['title'] = $lang['balance'];
     $mobile_speedbar = $lang['balance'];
@@ -117,7 +117,7 @@ if ($logged) {
 
             NoAjaxQuery();
 
-            $num = intval($_POST['num']);
+            $num = intFilter('num');
             if ($num <= 0) $num = 0;
 
             $resCost = $num * $config['cost_balance'];

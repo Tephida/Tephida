@@ -12,15 +12,15 @@ if (!defined('MOZG'))
 NoAjaxQuery();
 $jsonResponse = array();
 if ($logged) {
-    $act = $_GET['act'] ?? '';
+    $act = requestFilter('act');
     $user_id = $user_info['user_id'];
 
     $server_time = $server_time ?? time();
 
     switch ($act) {
         case 'exclude':
-            $id = intval($_POST['id']);
-            $room_id = intval($_POST['room_id']);
+            $id = intFilter('id');
+            $room_id = intFilter('room_id');
             if ($room_id) {
                 if ($id) {
                     $row = $db->super_query("SELECT id, photo FROM room WHERE id = '{$room_id}' and owner = '{$user_id}'");
@@ -70,7 +70,7 @@ if ($logged) {
             die();
 
         case 'uploadRoomAvatar':
-            $room_id = intval($_GET['room_id']);
+            $room_id = intFilter('room_id');
             if ($room_id) {
                 $row = $db->super_query("SELECT id, photo FROM room WHERE id = '{$room_id}' and owner = '{$user_id}'");
                 if ($row) {
@@ -136,7 +136,7 @@ if ($logged) {
             die();
 
         case 'viewRoomBox':
-            $room_id = intval($_POST['room_id']);
+            $room_id = intFilter('room_id');
             $row = $db->super_query("SELECT id, title, owner, photo FROM room WHERE id = '{$room_id}'");
             if ($row) {
                 $tpl->result['users'] = '';
@@ -171,7 +171,7 @@ if ($logged) {
             die();
 
         case 'saveRoomName':
-            $room_id = intval($_POST['room_id']);
+            $room_id = intFilter('room_id');
             $title = substr(requestFilter('title'), 0, 100);
             if ($room_id) {
                 if ($title) {
@@ -236,7 +236,7 @@ if ($logged) {
             die();
 
         case 'inviteToRoomBox':
-            $room_id = intval($_POST['room_id']);
+            $room_id = intFilter('room_id');
             $tpl->result['friends'] = '';
             $sql = $db->super_query("SELECT tb1.friend_id, tb2.user_photo, tb2.user_search_pref FROM friends tb1, users tb2 WHERE tb1.user_id = '{$user_id}' AND tb1.friend_id = tb2.user_id AND tb1.subscriptions = 0 AND tb1.friend_id NOT IN (SELECT oid2 FROM room_users WHERE room_id = '{$room_id}' and type != 2) ORDER by friends_date DESC", true);
             if ($sql) {
@@ -258,7 +258,7 @@ if ($logged) {
 
         case 'createRoom':
             $title = requestFilter('title');
-            $user_ids = $_POST['user_ids'] ?? null;
+            $user_ids = requestFilter($_POST['user_ids']);
             if ($title) {
                 $user_ids = array_diff($user_ids, array(''));
                 $user_ids = array_diff($user_ids, array($user_id));
@@ -321,8 +321,8 @@ if ($logged) {
             die();
 
         case 'inviteToRoom':
-            $room_id = intval($_POST['room_id']);
-            $user_ids = $_POST['user_ids'];
+            $room_id = intFilter('room_id');
+            $user_ids = requestFilter('user_ids');
             if ($user_ids) {
                 if ($room_id) {
                     $user_ids = array_diff($user_ids, array(''));
@@ -379,7 +379,7 @@ if ($logged) {
             die();
 
         case 'exitFromRoom':
-            $room_id = intval($_POST['room_id']);
+            $room_id = intFilter('room_id');
             if ($room_id) {
                 $row = $db->super_query("SELECT id FROM room WHERE id = '{$room_id}' AND owner != '{$user_id}'");
                 if ($row) {
@@ -426,8 +426,8 @@ if ($logged) {
         case "send":
             NoAjaxQuery();
             AntiSpam('messages');
-            $room_id = intval($_POST['room_id']);
-            $for_user_id = intval($_POST['for_user_id']);
+            $room_id = intFilter('room_id');
+            $for_user_id = intFilter('for_user_id');
             if ($room_id) $for_user_id = 0;
             $msg = requestFilter('msg');
             $my_ava = requestFilter('my_ava');
@@ -456,7 +456,8 @@ if ($logged) {
                         $xPrivasy = 1;
                     if ($xPrivasy and $user_id != $for_user_id) {
                         AntiSpamLogInsert('identical', $msg . $attach_files);
-                        if (!$room_id && !CheckFriends($for_user_id)) AntiSpamLogInsert('messages');
+                        if (!$room_id && !CheckFriends($for_user_id))
+                            AntiSpamLogInsert('messages');
                         $user_ids = array();
                         if (!$room_id) {
                             $user_ids[] = $for_user_id;
@@ -557,7 +558,7 @@ if ($logged) {
 
         case "read":
             NoAjaxQuery();
-            $msg_id = intval($_POST['msg_id']);
+            $msg_id = intFilter('msg_id');
             $check = $db->super_query("SELECT id, id2, date, room_id, history_user_id, room_id, read_ids, user_ids FROM `messages` WHERE id = '" . $msg_id . "' and find_in_set('{$user_id}', user_ids) AND not find_in_set('{$user_id}', del_ids) AND not find_in_set('{$user_id}', read_ids) and history_user_id != '{$user_id}'");
             if ($check) {
                 $read_ids = explode(',', $check['read_ids']);
@@ -575,8 +576,8 @@ if ($logged) {
 
         case "typograf":
             NoAjaxQuery();
-            $room_id = intval($_POST['room_id']);
-            $for_user_id = intval($_POST['for_user_id']);
+            $room_id = intFilter('room_id');
+            $for_user_id = intFilter('for_user_id');
             if (!$room_id) {
                 if ($_GET['stop'] == 1) mozg_create_cache("user_{$for_user_id}/typograf{$user_id}", "");
                 else mozg_create_cache("user_{$for_user_id}/typograf{$user_id}", 1);
@@ -585,11 +586,11 @@ if ($logged) {
 
         case "update":
             NoAjaxQuery();
-            $room_id = intval($_POST['room_id']);
-            $for_user_id = intval($_POST['for_user_id']);
+            $room_id = intFilter('room_id');
+            $for_user_id = intFilter('for_user_id');
             if ($room_id)
                 $for_user_id = 0;
-            $last_id = intval($_POST['last_id']);
+            $last_id = intFilter('last_id');
             $sess_last_id = mozg_cache('user_' . $user_id . '/im');
             if (!$room_id) {
                 $typograf = mozg_cache("user_{$user_id}/typograf{$for_user_id}");
@@ -818,10 +819,10 @@ HTML;
 
         case "history":
             NoAjaxQuery();
-            $need_read = intval($_POST['need_read']);
-            $room_id = intval($_POST['room_id']);
-            $for_user_id = intval($_POST['for_user_id']);
-            $first_id = intval($_POST['first_id']);
+            $need_read = intFilter('need_read');
+            $room_id = intFilter('room_id');
+            $for_user_id = intFilter('for_user_id');
+            $first_id = intFilter('first_id');
             if ($room_id)
                 $for_user_id = 0;
             if ($for_user_id)
@@ -1129,8 +1130,8 @@ HTML;
             }
             die();
         case 'del':
-            $room_id = intval($_POST['room_id']);
-            $im_user_id = intval($_POST['im_user_id']);
+            $room_id = intFilter('room_id');
+            $im_user_id = intFilter('im_user_id');
             if ($room_id)
                 $im_user_id = 0;
             $row = $db->super_query("SELECT id, msg_num, all_msg_num FROM `im` WHERE iuser_id = '{$user_id}' AND im_user_id = '{$im_user_id}' AND room_id = '{$room_id}'");
@@ -1165,7 +1166,7 @@ HTML;
 
         case 'delet':
             NoAjaxQuery();
-            $mid = intval($_POST['mid']);
+            $mid = intFilter('mid');
             $row = $db->super_query("SELECT read_ids, room_id, history_user_id, del_ids FROM `messages` WHERE id = '{$mid}' AND find_in_set('{$user_id}', user_ids) and not find_in_set('{$user_id}', del_ids)");
             if ($row) {
                 $del_ids = $row['del_ids'] ? explode(',', $row['del_ids']) : array();

@@ -14,7 +14,7 @@ NoAjaxQuery();
 if ($logged) {
 
     $user_id = $user_info['user_id'];
-    $act = $_GET['act'] ?? '';
+    $act = requestFilter('act');
 
     switch ($act) {
 
@@ -22,8 +22,8 @@ if ($logged) {
         case "view":
 
             $limit_news = 10;
-
-            if ($_POST['page_cnt'] > 0) $page_cnt = intval($_POST['page_cnt']) * $limit_news;
+            $page_cnt = intFilter('page_cnt');
+            if ($page_cnt > 0) $page_cnt = $page_cnt * $limit_news;
             else $page_cnt = 0;
 
             //Выводим список
@@ -79,8 +79,8 @@ if ($logged) {
         //################### Начисление рейтинга ###################//
         case "add":
 
-            $for_user_id = intval($_POST['for_user_id']);
-            $num = intval($_POST['num']);
+            $for_user_id = intFilter('for_user_id');
+            $num = intFilter('num');
             if ($num < 0) $num = 0;
 
             //Выводим текущий баланс свой

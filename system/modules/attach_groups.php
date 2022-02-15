@@ -12,7 +12,7 @@ if (!defined('MOZG'))
 NoAjaxQuery();
 
 if ($logged) {
-    $public_id = intval($_GET['public_id']);
+    $public_id = intFilter('public_id');
 
     $rowPublic = $db->super_query("SELECT admin FROM `communities` WHERE id = '{$public_id}'");
 
@@ -20,17 +20,17 @@ if ($logged) {
         //Если нет папки альбома, то создаём её
         $album_dir = ROOT_DIR . "/uploads/groups/{$public_id}/photos/";
 
-        //Разришенные форматы
+        //Разрешенные форматы
         $allowed_files = array('jpg', 'jpeg', 'jpe', 'png', 'gif');
 
         //Получаем данные о фотографии
         $image_tmp = $_FILES['uploadfile']['tmp_name'];
-        $image_name = to_translit($_FILES['uploadfile']['name']); // оригинальное название для оприделения формата
+        $image_name = to_translit($_FILES['uploadfile']['name']); // оригинальное название для определения формата
         $image_rename = substr(md5($server_time + rand(1, 100000)), 0, 20); // имя фотографии
         $image_size = $_FILES['uploadfile']['size']; // размер файла
         $type = end(explode(".", $image_name)); // формат файла
 
-        //Проверям если, формат верный то пропускаем
+        //Проверяем если, формат верный то пропускаем
         if (in_array(strtolower($type), $allowed_files)) {
             if ($image_size < 5000000) {
                 $res_type = strtolower('.' . $type);

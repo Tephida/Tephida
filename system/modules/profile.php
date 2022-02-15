@@ -14,7 +14,7 @@ NoAjaxQuery();
 $user_id = $user_info['user_id'] ?? null;
 
 if ($logged) {
-    $id = intval($_GET['id']);
+    $id = intFilter('id');
     $cache_folder = 'user_' . $id;
 
     //Читаем кеш
@@ -89,6 +89,9 @@ if ($logged) {
             if ($user_id != $id)
                 //Проверка естьли запрашиваемый юзер в друзьях у юзера который смотрит стр
                 $check_friend = CheckFriends($row['user_id']);
+            else
+                $check_friend = null;
+
 
             //Кол-во друзей в онлайне
             if ($row['user_friends_num']) {
@@ -220,6 +223,8 @@ if ($logged) {
                     else $tpl->set('{ava}', '{theme}/images/100_no_ava.png');
                     $tpl->compile('happy_all_friends');
                 }
+            } else {
+                $cnt_happfr = 0;
             }
 
             //################### Загрузка стены ###################//
@@ -338,13 +343,13 @@ if ($logged) {
             $tpl->set('{icq}', stripslashes($xfields['icq']));
             $tpl->set('{phone}', stripslashes($xfields['phone']));
 
-            if (preg_match('/http:\/\//i', $xfields['site'])) {
+            if (preg_match('/https:\/\//i', $xfields['site'])) {
                 if (preg_match('/\.ru|\.com|\.net|\.su|\.in\.ua|\.ua/i', $xfields['site']))
                     $tpl->set('{site}', '<a href="' . stripslashes($xfields['site']) . '" target="_blank">' . stripslashes($xfields['site']) . '</a>');
                 else
                     $tpl->set('{site}', stripslashes($xfields['site']));
             } else
-                $tpl->set('{site}', 'http://' . stripslashes($xfields['site']));
+                $tpl->set('{site}', 'https://' . stripslashes($xfields['site']));
 
             if (!$xfields['vk'] && !$xfields['od'] && !$xfields['fb'] && !$xfields['skype'] && !$xfields['icq'] && !$xfields['phone'] && !$xfields['site'])
                 $tpl->set_block("'\\[not-block-contact\\](.*?)\\[/not-block-contact\\]'si", "");
@@ -496,7 +501,7 @@ if ($logged) {
             //Делаем проверки на существования запрашиваемого юзера у себя в друзьяз, заклаках, в подписка, делаем всё это если страницу смотрет другой человек
             if ($user_id != $id) {
 
-                //Проверка естьли запрашиваемый юзер в друзьях у юзера который смотрит стр
+                //Проверка есть ли запрашиваемый юзер в друзьях у юзера который смотрит стр
                 if ($check_friend) {
                     $tpl->set('[yes-friends]', '');
                     $tpl->set('[/yes-friends]', '');
@@ -507,7 +512,7 @@ if ($logged) {
                     $tpl->set_block("'\\[yes-friends\\](.*?)\\[/yes-friends\\]'si", "");
                 }
 
-                //Проверка естьли запрашиваемый юзер в закладках у юзера который смотрит стр
+                //Проверка есть ли запрашиваемый юзер в закладках у юзера который смотрит стр
                 $check_fave = $db->super_query("SELECT user_id FROM `fave` WHERE user_id = '{$user_info['user_id']}' AND fave_id = '{$id}'");
                 if ($check_fave) {
                     $tpl->set('[yes-fave]', '');
@@ -519,7 +524,7 @@ if ($logged) {
                     $tpl->set_block("'\\[yes-fave\\](.*?)\\[/yes-fave\\]'si", "");
                 }
 
-                //Проверка естьли запрашиваемый юзер в подписках у юзера который смотрит стр
+                //Проверка есть ли запрашиваемый юзер в подписках у юзера который смотрит стр
                 $check_subscr = $db->super_query("SELECT user_id FROM `friends` WHERE user_id = '{$user_info['user_id']}' AND friend_id = '{$id}' AND subscriptions = 1");
                 if ($check_subscr) {
                     $tpl->set('[yes-subscription]', '');
@@ -531,7 +536,7 @@ if ($logged) {
                     $tpl->set_block("'\\[yes-subscription\\](.*?)\\[/yes-subscription\\]'si", "");
                 }
 
-                //Проверка естьли запрашиваемый юзер в черном списке
+                //Проверка есть ли запрашиваемый юзер в черном списке
                 $MyCheckBlackList = MyCheckBlackList($id);
                 if ($MyCheckBlackList) {
                     $tpl->set('[yes-blacklist]', '');
@@ -674,11 +679,18 @@ if ($logged) {
             $user_sp = explode('|', $row['user_sp']);
             if (isset($user_sp[1]) and $user_sp[1]) {
                 $rowSpUserName = $db->super_query("SELECT user_search_pref, user_sp, user_sex FROM `users` WHERE user_id = '{$user_sp[1]}'");
-                if ($row['user_sex'] == 1) $check_sex = 2;
-                if ($row['user_sex'] == 2) $check_sex = 1;
+                if ($row['user_sex'] == 1)
+                    $check_sex = 2;
+                elseif ($row['user_sex'] == 2)
+                    $check_sex = 1;
+                else
+                    $check_sex = null;
+
                 if ($rowSpUserName['user_sp'] == $user_sp[0] . '|' . $id or $user_sp[0] == 5 and $rowSpUserName['user_sex'] == $check_sex) {
                     $spExpName = explode(' ', $rowSpUserName['user_search_pref']);
                     $spUserName = $spExpName[0] . ' ' . $spExpName[1];
+                } else {
+                    $spUserName = '';
                 }
             } else {
                 $spUserName = '';
@@ -693,8 +705,7 @@ if ($logged) {
                 $sp4_4 = '<a href="/?go=search&sp=4" onClick="Page.Go(this.href); return false">женат</a>';
                 $sp5 = "любимая <a href=\"/u{$user_sp[1]}\" onClick=\"Page.Go(this.href); return false\">{$spUserName}</a>";
                 $sp5_5 = '<a href="/?go=search&sp=5" onClick="Page.Go(this.href); return false">влюблён</a>';
-            }
-            if ($row['user_sex'] == 2) {
+            } elseif ($row['user_sex'] == 2) {
                 $sp1 = '<a href="/?go=search&sp=1" onClick="Page.Go(this.href); return false">не замужем</a>';
                 $sp2 = "друг <a href=\"/u{$user_sp[1]}\" onClick=\"Page.Go(this.href); return false\">{$spUserName}</a>";
                 $sp2_2 = '<a href="/?go=search&sp=2" onClick="Page.Go(this.href); return false">есть друг</a>';
@@ -704,7 +715,10 @@ if ($logged) {
                 $sp4_4 = '<a href="/?go=search&sp=4" onClick="Page.Go(this.href); return false">замужем</a>';
                 $sp5 = "любимый <a href=\"/u{$user_sp[1]}\" onClick=\"Page.Go(this.href); return false\">{$spUserName}</a>";
                 $sp5_5 = '<a href="/?go=search&sp=5" onClick="Page.Go(this.href); return false">влюблена</a>';
+            } else {
+                $sp1 = $sp2 = $sp2_2 = $sp3 = $sp3_3 = $sp4 = $sp4_4 = $sp5 = $sp5_5 = '';
             }
+
             $user_sp[1] = $user_sp[1] ?? '';
             $sp6 = "партнёр <a href=\"/u{$user_sp[1]}\" onClick=\"Page.Go(this.href); return false\">{$spUserName}</a>";
             $sp6_6 = '<a href="/?go=search&sp=6" onClick="Page.Go(this.href); return false">всё сложно</a>';
@@ -746,6 +760,7 @@ if ($logged) {
             //################### Подарки ###################//
             if ($row['user_gifts']) {
                 $sql_gifts = $db->super_query("SELECT gift FROM `gifts` WHERE uid = '{$id}' ORDER by `gdate` DESC LIMIT 0, 5", true);
+                $gifts = '';
                 foreach ($sql_gifts as $row_gift) {
                     $gifts .= "<img src=\"/uploads/gifts/{$row_gift['gift']}.png\" class=\"gift_onepage\" />";
                 }
@@ -818,8 +833,8 @@ if ($logged) {
 
             }
 
-            if ($id == 7) $tpl->set('{group}', '<font color="#f87d7d">Модератор</font>');
-            else $tpl->set('{group}', '');
+//            if ($id == 7) $tpl->set('{group}', '<font color="#f87d7d">Модератор</font>');
+//            else $tpl->set('{group}', '');
 
             //Обложка
             if ($row['user_photo']) {
@@ -832,6 +847,8 @@ if ($logged) {
 
                     $ava_marg_top = 'style="margin-top:-' . $rForme . 'px"';
 
+                } else {
+                    $ava_marg_top = '';
                 }
 
                 $tpl->set('{cover-param-7}', $ava_marg_top);
@@ -905,7 +922,7 @@ if ($logged) {
                     $db->query("INSERT INTO `guests` SET gdate = '{$server_time}', ouid = '{$id}', guid = '{$user_id}', new = '1'");
                 }
 
-                $db->query("UPDATE `vii_users` SET guests = guests + 1 WHERE user_id = '{$id}'");
+                $db->query("UPDATE `users` SET guests = guests + 1 WHERE user_id = '{$id}'");
 
             }
 //

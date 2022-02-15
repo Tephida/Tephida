@@ -77,8 +77,10 @@ if ($logged) {
 				AND";
     }
 
-    if (isset($_POST['page_cnt']) and $_POST['page_cnt'] > 0)
-        $page_cnt = intval($_POST['page_cnt']) * $limit_news;
+
+    $page_cnt = intFilter('page_cnt');
+    if ($page_cnt > 0)
+        $page_cnt = $page_cnt * $limit_news;
     else
         $page_cnt = 0;
 
@@ -1036,10 +1038,10 @@ HTML;
 
                             $resLinkTitle = '';
                             //Если ссылка
-                        } elseif ($attach_type[0] == 'link' and preg_match('/http:\/\/(.*?)+$/i', $attach_type[1]) and $cnt_attach_link == 1 and stripos(str_replace('http://www.', 'http://', $attach_type[1]), $config['home_url']) === false) {
+                        } elseif ($attach_type[0] == 'link' and preg_match('/https:\/\/(.*?)+$/i', $attach_type[1]) and $cnt_attach_link == 1 and stripos(str_replace('https://www.', 'https://', $attach_type[1]), $config['home_url']) === false) {
                             $count_num = count($attach_type);
                             $domain_url_name = explode('/', $attach_type[1]);
-                            $rdomain_url_name = str_replace('http://', '', $domain_url_name[2]);
+                            $rdomain_url_name = str_replace('https://', '', $domain_url_name[2]);
 
                             $attach_type[3] = stripslashes($attach_type[3]);
                             $attach_type[3] = substr($attach_type[3], 0, 200);
@@ -1469,10 +1471,10 @@ HTML;
                             $resLinkTitle = '';
 
                             //Если ссылка
-                        } elseif ($attach_type[0] == 'link' and preg_match('/http:\/\/(.*?)+$/i', $attach_type[1]) and $cnt_attach_link == 1 and stripos(str_replace('http://www.', 'http://', $attach_type[1]), $config['home_url']) === false) {
+                        } elseif ($attach_type[0] == 'link' and preg_match('/https:\/\/(.*?)+$/i', $attach_type[1]) and $cnt_attach_link == 1 and stripos(str_replace('https://www.', 'https://', $attach_type[1]), $config['home_url']) === false) {
                             $count_num = count($attach_type);
                             $domain_url_name = explode('/', $attach_type[1]);
-                            $rdomain_url_name = str_replace('http://', '', $domain_url_name[2]);
+                            $rdomain_url_name = str_replace('https://', '', $domain_url_name[2]);
 
                             $attach_type[3] = stripslashes($attach_type[3]);
                             $attach_type[3] = substr($attach_type[3], 0, 200);
@@ -1803,7 +1805,7 @@ HTML;
         }
 
         //Выводи низ, если новостей больше 20
-        if ($c > 19 and !$_POST['page_cnt']) {
+        if ($c > 19 and !isset($_POST['page_cnt'])) {
             $tpl->load_template('news/head.tpl');
             $tpl->set('{type}', $type);
             $tpl->set('[bottom]', '');

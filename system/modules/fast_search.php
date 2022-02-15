@@ -17,8 +17,8 @@ if ($logged) {
     $limit_sql = 7;
 
     $query = requestFilter('query');
-    $query = strtr($query, array(' ' => '%')); //Замеянем пробелы на проценты чтоб тоиск был точнее
-    $type = intval($_POST['se_type']);
+    $query = strtr($query, array(' ' => '%')); //Заменяем пробелы на проценты чтоб поиск был точнее
+    $type = intFilter('se_type');
 
     if (!empty($query)) {
 
@@ -53,26 +53,38 @@ if ($logged) {
 
                         //Если критерий поиск "по сообществам"
                     } else if ($type == 4) {
-                        if ($row['photo']) $ava = '/uploads/groups/' . $row['id'] . '/50_' . $row['photo'];
-                        else $ava = '/templates/' . $config['temp'] . '/images/no_ava_50.png';
+                        if ($row['photo'])
+                            $ava = '/uploads/groups/' . $row['id'] . '/50_' . $row['photo'];
+                        else
+                            $ava = '/templates/' . $config['temp'] . '/images/no_ava_50.png';
 
                         $img_width = 50;
                         $row['user_search_pref'] = $row['title'];
                         $countr = $row['traf'] . ' ' . gram_record($row['traf'], 'groups_users');
 
-                        if ($row['adres']) $row['user_id'] = $row['adres'];
-                        else $row['user_id'] = 'public' . $row['id'];
+                        if ($row['adres'])
+                            $row['user_id'] = $row['adres'];
+                        else
+                            $row['user_id'] = 'public' . $row['id'];
 
                         //Если критерий поиск "по людям"
                     } else {
                         //АВА
-                        if ($row['user_photo']) $ava = '/uploads/users/' . $row['user_id'] . '/50_' . $row['user_photo'];
-                        else $ava = '/templates/' . $config['temp'] . '/images/no_ava_50.png';
+                        if ($row['user_photo'])
+                            $ava = '/uploads/users/' . $row['user_id'] . '/50_' . $row['user_photo'];
+                        else
+                            $ava = '/templates/' . $config['temp'] . '/images/no_ava_50.png';
 
                         //Страна город
                         $expCountry = explode('|', $row['user_country_city_name']);
-                        if ($expCountry[0]) $countr = $expCountry[0]; else $countr = '';
-                        if ($expCountry[1]) $city = ', ' . $expCountry[1]; else $city = '';
+                        if ($expCountry[0])
+                            $countr = $expCountry[0];
+                        else
+                            $countr = '';
+                        if ($expCountry[1])
+                            $city = ', ' . $expCountry[1];
+                        else
+                            $city = '';
 
                         //Возраст юзера
                         $user_birthday = explode('-', $row['user_birthday']);

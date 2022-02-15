@@ -11,7 +11,7 @@ if (!defined('MOZG'))
 
 if ($logged) {
 
-    $act = $_GET['act'] ?? '';
+    $act = requestFilter('act');
     $user_id = $user_info['user_id'];
 
     switch ($act) {
@@ -20,17 +20,17 @@ if ($logged) {
         case "close":
 
             $tpl->load_template('photos/editor_close.tpl');
-            $tpl->set('{photo}', $_GET['image']);
+            $tpl->set('{photo}', requestFilter('image'));
             $tpl->compile('content');
 
             AjaxTpl();
 
             break;
 
-        //################## Сохранение отредактированой фотки ##################//
+        //################## Сохранение отредактированной фотки ##################//
         default:
 
-            //Разришенные форматы
+            //Разрешенные форматы
             $allowed_files = explode(', ', $config['photo_format']);
 
             $res_image = $_GET['image'];
@@ -39,7 +39,7 @@ if ($logged) {
 
             if (stripos($_SERVER['HTTP_REFERER'], 'pixlr.com') !== false and $pid and $format) {
 
-                //Выодим информацию о фото
+                //Выводим информацию о фото
                 $row = $db->super_query("SELECT photo_name, album_id FROM `photos` WHERE user_id = '{$user_id}' AND id = '{$pid}'");
 
                 //Проверям если, формат верный то пропускаем

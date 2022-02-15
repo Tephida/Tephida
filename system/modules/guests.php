@@ -17,10 +17,8 @@ if ($logged) {
     $metatags['title'] = 'Гости';
     $user_speedbar = 'Гости';
 
-    if (isset($_GET['page']) and $_GET['page'] > 0)
-        $page = intval($_GET['page']);
-    else
-        $page = 1;
+    $page = intFilter('page', 1);
+
     $gcount = 1;
     $limit_page = ($page - 1) * $gcount;
 

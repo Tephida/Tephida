@@ -12,14 +12,14 @@ if (!defined('MOZG'))
 NoAjaxQuery();
 
 if ($logged) {
-    $act = $_GET['act'] ?? '';
+    $act = requestFilter($_GET['act']);
     $user_id = $user_info['user_id'];
 
     switch ($act) {
 
-        //################### Добвление юзера в подписки ###################//
+        //################### Добавление юзера в подписки ###################//
         case "add":
-            $for_user_id = intval($_POST['for_user_id']);
+            $for_user_id = intFilter('for_user_id');
 
             //Проверка на существование юзера в подписках
             $check = $db->super_query("SELECT user_id FROM `friends` WHERE user_id = '{$user_id}' AND friend_id = '{$for_user_id}' AND subscriptions = 1");
@@ -31,7 +31,7 @@ if ($logged) {
                 $db->query("INSERT INTO `friends` SET user_id = '{$user_id}', friend_id = '{$for_user_id}', friends_date = NOW(), subscriptions = 1");
                 $db->query("UPDATE `users` SET user_subscriptions_num = user_subscriptions_num+1 WHERE user_id = '{$user_id}'");
 
-                //Вставляем событие в моментальные оповещания
+                //Вставляем событие в моментальные оповещения
                 $row_owner = $db->super_query("SELECT user_last_visit, user_sex FROM `users` WHERE user_id = '{$for_user_id}'");
                 $update_time = $server_time - 70;
 
@@ -74,12 +74,12 @@ if ($logged) {
 
         default:
 
-            //################### Показ всех подпискок юзера ###################//
-            if ($_POST['page'] > 0) $page = intval($_POST['page']); else $page = 1;
+            //################### Показ всех подписок юзера ###################//
+            $page = intFilter('page', 1);
             $gcount = 24;
             $limit_page = ($page - 1) * $gcount;
-            $for_user_id = intval($_POST['for_user_id']);
-            $subscr_num = intval($_POST['subscr_num']);
+            $for_user_id = intFilter('for_user_id');
+            $subscr_num = intFilter('subscr_num');
 
             $sql_ = $db->super_query("SELECT tb1.friend_id, tb2.user_search_pref, user_photo, user_country_city_name, user_status FROM `friends` tb1, `users` tb2 WHERE tb1.user_id = '{$for_user_id}' AND tb1.friend_id = tb2.user_id AND tb1.subscriptions = 1 ORDER by `friends_date` DESC LIMIT {$limit_page}, {$gcount}", true);
 

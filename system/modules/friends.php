@@ -13,13 +13,11 @@ if (!defined('MOZG'))
 NoAjaxQuery();
 
 if ($logged) {
-    $act = $_GET['act'] ?? '';
+    $act = requestFilter('act');
     $metatags['title'] = $lang['friends'];
 
-    if (isset($_GET['page']) and $_GET['page'] > 0)
-        $page = intval($_GET['page']);
-    else
-        $page = 1;
+    $page = intFilter('page', 1);
+
     $gcount = 20;
     $limit_page = ($page - 1) * $gcount;
 
@@ -31,7 +29,7 @@ if ($logged) {
 
             AntiSpam('friends');
 
-            $for_user_id = intval($_GET['for_user_id']);
+            $for_user_id = intFilter('for_user_id');
             $from_user_id = $user_info['user_id'];
 
             //Проверяем на факт сушествования заявки для пользователя, если она уже есть, то даёт ответ "yes_demand"
@@ -43,7 +41,7 @@ if ($logged) {
                 $check_demands = $db->super_query("SELECT for_user_id FROM `friends_demands` WHERE for_user_id = '{$from_user_id}' AND from_user_id = '{$for_user_id}'");
                 if (!$check_demands) {
 
-                    //Проверяем нетли этого юзера уже в списке друзей
+                    //Проверяем нет ли этого юзера уже в списке друзей
                     $check_friendlist = $db->super_query("SELECT user_id FROM `friends` WHERE friend_id = '{$for_user_id}' AND user_id = '{$from_user_id}' AND subscriptions = 0");
                     if (!$check_friendlist) {
                         $db->query("INSERT INTO `friends_demands` (for_user_id, from_user_id, demand_date) VALUES ('{$for_user_id}', '{$from_user_id}', NOW())");
@@ -91,7 +89,7 @@ if ($logged) {
         //################### Принятие заявки на дружбу ###################//
         case "take":
             NoAjaxQuery();
-            $take_user_id = intval($_GET['take_user_id']);
+            $take_user_id = intFilter('take_user_id');
             $user_id = $user_info['user_id'];
 
             //Проверяем на существования юзера в таблице заявок в друзья
@@ -126,7 +124,7 @@ if ($logged) {
                 else
                     $db->query("INSERT INTO `news` SET ac_user_id = '{$take_user_id}', action_type = 4, action_text = '{$user_id}', action_time = '{$server_time}'");
 
-                //Вставляем событие в моментальные оповещания
+                //Вставляем событие в моментальные оповещения
                 $row_owner = $db->super_query("SELECT user_last_visit FROM `users` WHERE user_id = '{$take_user_id}'");
                 $update_time = $server_time - 70;
 
@@ -171,7 +169,7 @@ if ($logged) {
         //################### Отклонение заявки на дружбу ###################//
         case "reject":
             NoAjaxQuery();
-            $reject_user_id = intval($_GET['reject_user_id']);
+            $reject_user_id = intFilter('reject_user_id');
             $user_id = $user_info['user_id'];
 
             //Проверяем на существования юзера в таблице заявок в друзья
@@ -192,7 +190,7 @@ if ($logged) {
         //################### Удаления друга из списка друзей ###################//
         case "delete":
             NoAjaxQuery();
-            $delet_user_id = intval($_POST['delet_user_id']);
+            $delet_user_id = intFilter('delet_user_id');
             $user_id = $user_info['user_id'];
 
             //Проверяем на существования юзера в списке друзей
@@ -214,7 +212,7 @@ if ($logged) {
                 mozg_clear_cache_file('user_' . $user_id . '/profile_' . $user_id);
                 mozg_clear_cache_file('user_' . $delet_user_id . '/profile_' . $delet_user_id);
 
-                //Удаляем пользователя из кеш файл друзей
+                //Удаляем пользователя из кеша файл друзей
                 $openMyList = mozg_cache("user_{$user_id}/friends");
                 mozg_create_cache("user_{$user_id}/friends", str_replace("u{$delet_user_id}|", "", $openMyList));
 
@@ -296,7 +294,8 @@ if ($logged) {
         case "online":
             $mobile_speedbar = 'Друзья на сайте';
 
-            $get_user_id = intval($_GET['user_id']);
+            $get_user_id = intFilter('user_id');
+
             if (!$get_user_id)
                 $get_user_id = $user_info['user_id'];
 
@@ -319,10 +318,13 @@ if ($logged) {
                     $gram_name = 'Вас';
 
                 if ($sql_)
-                    //Кол-во друзей в онлайне
+                    //Кол-во друзей в онлайн
                     $online_friends = $db->super_query("SELECT COUNT(*) AS cnt FROM `users` tb1, `friends` tb2 WHERE tb1.user_id = tb2.friend_id AND tb2.user_id = '{$get_user_id}' AND tb1.user_last_visit >= '{$online_time}' AND tb2.subscriptions = 0");
+                else
+                    $online_friends = null;
 
-                if (!empty($online_friends['cnt']) and $online_friends['cnt'])
+
+                if (!empty($online_friends['cnt']))
                     $user_speedbar = 'У ' . $gram_name . ' ' . $online_friends['cnt'] . ' ' . gram_record($online_friends['cnt'], 'friends_online');
                 else
                     $user_speedbar = $lang['no_requests_online'];
@@ -407,13 +409,14 @@ if ($logged) {
 
             $user_id = $user_info['user_id'];
 
-            if ($_POST['page'] > 0) $page = intval($_POST['page']); else $page = 1;
+            $page = intFilter('page', 1);
+
             $gcount = 18;
             $limit_page = ($page - 1) * $gcount;
 
-            if ($_POST['user_sex'] == 1)
+            if (isset($_POST['user_sex']) and $_POST['user_sex'] == 1)
                 $sql_usSex = 2;
-            elseif ($_POST['user_sex'] == 2)
+            elseif (isset($_POST['user_sex']) and $_POST['user_sex'] == 2)
                 $sql_usSex = 1;
             else
                 $sql_usSex = false;
@@ -453,7 +456,7 @@ if ($logged) {
             $metatags['title'] = 'Общие друзья';
             $user_speedbar = 'Общие друзья';
 
-            $uid = intval($_GET['uid']);
+            $uid = intFilter('uid');
 
             //Выводим информацию о человеке, у которого смотрим общих друзей
             $owner = $db->super_query("SELECT user_friends_num, user_name FROM `users` WHERE user_id = '{$uid}'");
@@ -550,7 +553,7 @@ if ($logged) {
             //################### Просмотр всех друзей ###################//
             $mobile_speedbar = 'Друзья';
 
-            $get_user_id = isset($_GET['user_id']) ? intval($_GET['user_id']) : null;
+            $get_user_id = intFilter('user_id');
             if (!$get_user_id)
                 $get_user_id = $user_info['user_id'];
 

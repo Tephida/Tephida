@@ -13,7 +13,7 @@ NoAjaxQuery();
 
 if ($logged) {
 
-    $act = $_GET['act'] ?? '';
+    $act = requestFilter('act');
     $user_id = $user_info['user_id'];
 
     switch ($act) {
@@ -23,10 +23,10 @@ if ($logged) {
 
             //Если поиск
             $query = (isset($_POST['query'])) ? textFilter(strip_data(urldecode($_POST['query']))) : '';
-            $query = strtr($query, array(' ' => '%')); //Замеянем пробелы на проценты чтоб тоиск был точнее
-            $do_load = (isset($_POST['doload'])) ? intval($_POST['doload']) : null;
+            $query = strtr($query, array(' ' => '%')); //Заменяем пробелы на проценты чтоб поиск был точнее
+            $do_load = intFilter('doload');
 
-            $get_user_id = (isset($_POST['get_user_id'])) ? intval($_POST['get_user_id']) : null;
+            $get_user_id = intFilter('get_user_id');
             if ($get_user_id == $user_id or !$get_user_id)
                 $get_user_id = $user_id;
 
@@ -44,8 +44,9 @@ if ($logged) {
 
             //Выводим из БД
             $limit_select = 20;
-            if (isset($_POST['page_cnt']) and $_POST['page_cnt'] > 0)
-                $page_cnt = intval($_POST['page_cnt']) * $limit_select;
+            $page_cnt = intFilter('page_cnt');
+            if ($page_cnt > 0)
+                $page_cnt = $page_cnt * $limit_select;
             else
                 $page_cnt = 0;
 

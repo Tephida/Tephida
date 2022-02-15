@@ -12,7 +12,7 @@ if (!defined('MOZG'))
 NoAjaxQuery();
 
 if ($logged) {
-    $act = $_GET['act'] ?? '';
+    $act = requestFilter('act');
 
     switch ($act) {
 
@@ -22,13 +22,15 @@ if ($logged) {
 
             $name = requestFilter('name', 25000, true);
             $descr = requestFilter('descr');
-            $privacy = intval($_POST['privacy']);
-            $privacy_comm = intval($_POST['privacy_comm']);
-            if ($privacy <= 0 or $privacy > 3) $privacy = 1;
-            if ($privacy_comm <= 0 or $privacy_comm > 3) $privacy_comm = 1;
+            $privacy = intFilter('privacy');
+            $privacy_comm = intFilter('privacy_comm');
+            if ($privacy <= 0 or $privacy > 3)
+                $privacy = 1;
+            if ($privacy_comm <= 0 or $privacy_comm > 3)
+                $privacy_comm = 1;
             $sql_privacy = $privacy . '|' . $privacy_comm;
 
-            if (isset($name) and !empty($name)) {
+            if (!empty($name)) {
 
                 //Выводи кол-во альбомов у юзера
                 $row = $db->super_query("SELECT user_albums_num FROM `users` WHERE user_id = '{$user_info['user_id']}'");
@@ -66,7 +68,7 @@ if ($logged) {
 
         //################### Страница добавление фотографий в альбом ###################//
         case "add":
-            $aid = intval($_GET['aid']);
+            $aid = intFilter('aid');
             $user_id = $user_info['user_id'];
 
             //Проверка на существование альбома
@@ -88,7 +90,7 @@ if ($logged) {
         case "upload":
             NoAjaxQuery();
 
-            $aid = intval($_GET['aid']);
+            $aid = intFilter('aid');
             $user_id = $user_info['user_id'];
 
             //Проверка на существование альбома и то что загружает владелец альбома
@@ -113,15 +115,16 @@ if ($logged) {
                         //
                     }
 
-                    //Разришенные форматы
+                    //Разрешенные форматы
                     $allowed_files = explode(', ', $config['photo_format']);
 
                     //Получаем данные о фотографии
                     $image_tmp = $_FILES['uploadfile']['tmp_name'];
-                    $image_name = to_translit($_FILES['uploadfile']['name']); // оригинальное название для оприделения формата
+                    $image_name = to_translit($_FILES['uploadfile']['name']); // оригинальное название для определения формата
                     $image_rename = substr(md5($server_time + rand(1, 100000)), 0, 20); // имя фотографии
                     $image_size = $_FILES['uploadfile']['size']; // размер файла
-                    $type = end(explode(".", $image_name)); // формат файла
+                    $array1 = explode(".", $image_name);
+                    $type = end($array1); // формат файла
 
                     //Проверяем если, формат верный то пропускаем
                     if (in_array(strtolower($type), $allowed_files)) {
@@ -206,7 +209,7 @@ if ($logged) {
         //################### Удаление фотографии из альбома ###################//
         case "del_photo":
             NoAjaxQuery();
-            $id = intval($_GET['id']);
+            $id = intFilter('id');
             $user_id = $user_info['user_id'];
 
             $row = $db->super_query("SELECT user_id, album_id, photo_name, comm_num, position FROM `photos` WHERE id = '{$id}'");
@@ -218,8 +221,8 @@ if ($logged) {
                 $del_dir = ROOT_DIR . '/uploads/users/' . $user_id . '/albums/' . $row['album_id'] . '/';
 
                 //Удаление фотки с сервера
-                @unlink($del_dir . 'c_' . $row['photo_name']);
-                @unlink($del_dir . $row['photo_name']);
+                unlink($del_dir . 'c_' . $row['photo_name']);
+                unlink($del_dir . $row['photo_name']);
 
                 //Удаление фотки из БД
                 $db->query("DELETE FROM `photos` WHERE id = '{$id}'");
@@ -227,7 +230,7 @@ if ($logged) {
                 $check_photo_album = $db->super_query("SELECT id FROM `photos` WHERE album_id = '{$row['album_id']}'");
                 $album_row = $db->super_query("SELECT cover FROM `albums` WHERE aid = '{$row['album_id']}'");
 
-                //Если удаляемая фотография является обложкой то обновляем обложку на последнюю фотографию, если фотки еще есть из альбома
+                //Если удаляемая фотография является обложкой, то обновляем обложку на последнюю фотографию, если фотки еще есть из альбома
                 if ($album_row['cover'] == $row['photo_name'] and $check_photo_album) {
                     $row_last_photo = $db->super_query("SELECT photo_name FROM `photos` WHERE user_id = '{$user_id}' AND album_id = '{$row['album_id']}' ORDER by `id` DESC");
                     $set_cover = ", cover = '{$row_last_photo['photo_name']}'";
@@ -264,7 +267,7 @@ if ($logged) {
         //################### Установка новой обложки для альбома ###################//
         case "set_cover":
             NoAjaxQuery();
-            $id = intval($_GET['id']);
+            $id = intFilter('id');
             $user_id = $user_info['user_id'];
 
             //Выводи фотку из БД, если она есть
@@ -282,7 +285,7 @@ if ($logged) {
         //################### Сохранение описания к фотографии ###################//
         case "save_descr":
             NoAjaxQuery();
-            $id = intval($_POST['id']);
+            $id = intFilter('id');
             $user_id = $user_info['user_id'];
             $descr = requestFilter('descr');
 
@@ -292,7 +295,7 @@ if ($logged) {
                 $db->query("UPDATE `photos` SET descr = '{$descr}' WHERE id = '{$id}' AND user_id = '{$user_id}'");
 
                 //Ответ скрипта
-                echo stripslashes(myBr(htmlspecialchars(trim($_POST['descr']))));
+                echo requestFilter('descr');
             }
             die();
             break;
@@ -300,23 +303,23 @@ if ($logged) {
         //################### Страница редактирование фотографии ###################//
         case "editphoto":
             NoAjaxQuery();
-            $id = intval($_GET['id']);
+            $id = intFilter('id');
             $user_id = $user_info['user_id'];
             $row = $db->super_query("SELECT descr FROM `photos` WHERE id = '{$id}' AND user_id = '{$user_id}'");
             if ($row)
-                echo stripslashes(myBrRn($row['descr']));
+                echo requestFilter('descr');
             die();
             break;
 
         //################### Сохранение сортировки альбомов ###################//
         case "save_pos_albums";
             NoAjaxQuery();
-            $array = $_POST['album'];
+            $array = requestFilter('album');
             $count = 1;
 
-            //Если есть данные о масиве
+            //Если есть данные о массиве
             if ($array and $config['albums_drag'] == 'yes') {
-                //Выводим масивом и обновляем порядок
+                //Выводим массивом и обновляем порядок
                 foreach ($array as $idval) {
                     $idval = intval($idval);
                     $db->query("UPDATE `albums` SET position = " . $count . " WHERE aid = '{$idval}' AND user_id = '{$user_info['user_id']}'");
@@ -332,14 +335,15 @@ if ($logged) {
         //################### Сохранение сортировки фотографий ###################//
         case "save_pos_photos";
             NoAjaxQuery();
-            $array = $_POST['photo'];
+            $array = requestFilter('photo');
             $count = 1;
 
-            //Если есть данные о масиве
+            //Если есть данные о массиве
             if ($array and $config['photos_drag'] == 'yes') {
-                //Выводим масивом и обновляем порядок
+                //Выводим массивом и обновляем порядок
                 $row = $db->super_query("SELECT album_id FROM `photos` WHERE id = '{$array[1]}'");
                 if ($row) {
+                    $photo_info = '';
                     foreach ($array as $idval) {
                         $idval = intval($idval);
                         $db->query("UPDATE `photos` SET position = '{$count}' WHERE id = '{$idval}' AND user_id = '{$user_info['user_id']}'");
@@ -356,7 +360,7 @@ if ($logged) {
         case "edit_page";
             NoAjaxQuery();
             $user_id = $user_info['user_id'];
-            $id = intval($_POST['id']);
+            $id = intFilter('id');
             $row = $db->super_query("SELECT aid, name, descr, privacy FROM `albums` WHERE aid = '{$id}' AND user_id = '{$user_id}'");
             if ($row) {
                 $album_privacy = explode('|', $row['privacy']);
@@ -377,15 +381,17 @@ if ($logged) {
         //################### Сохранение настроек альбома ###################//
         case "save_album":
             NoAjaxQuery();
-            $id = intval($_POST['id']);
+            $id = intFilter('id');
             $user_id = $user_info['user_id'];
             $name = requestFilter('name', 25000, true);
             $descr = requestFilter('descr');
 
-            $privacy = intval($_POST['privacy']);
-            $privacy_comm = intval($_POST['privacy_comm']);
-            if ($privacy <= 0 or $privacy > 3) $privacy = 1;
-            if ($privacy_comm <= 0 or $privacy_comm > 3) $privacy_comm = 1;
+            $privacy = intFilter('privacy');
+            $privacy_comm = intFilter('privacy_comm');
+            if ($privacy <= 0 or $privacy > 3)
+                $privacy = 1;
+            if ($privacy_comm <= 0 or $privacy_comm > 3)
+                $privacy_comm = 1;
             $sql_privacy = $privacy . '|' . $privacy_comm;
 
             //Проверка на существование юзера
@@ -402,20 +408,17 @@ if ($logged) {
             die();
             break;
 
-        //################### Страница изминения обложки ###################//
+        //################### Страница изменения обложки ###################//
         case "edit_cover";
             NoAjaxQuery();
 
             $user_id = $user_info['user_id'];
-            $id = intval($_POST['id']);
+            $id = intFilter('id');
 
             if ($user_id and $id) {
 
                 //Для навигатор
-                if ($_POST['page'] > 0)
-                    $page = intval($_POST['page']);
-                else
-                    $page = 1;
+                $page = intFilter('page', 1);
                 $gcount = 36;
                 $limit_page = ($page - 1) * $gcount;
 
@@ -425,7 +428,7 @@ if ($logged) {
                 //Если есть SQL запрос то пропускаем
                 if ($sql_) {
 
-                    //Выводим данные о альбоме (кол-во фотографй)
+                    //Выводим данные об альбоме (кол-во фотографий)
                     $row_album = $db->super_query("SELECT photo_num FROM `albums` WHERE aid = '{$id}' AND user_id = '{$user_id}'");
 
                     $tpl->load_template('albums_editcover.tpl');
@@ -435,7 +438,7 @@ if ($logged) {
                     $tpl->set_block("'\\[bottom\\](.*?)\\[/bottom\\]'si", "");
                     $tpl->compile('content');
 
-                    //Выводим масивом фотографии
+                    //Выводим массивом фотографии
                     $tpl->load_template('albums_editcover_photo.tpl');
                     foreach ($sql_ as $row) {
                         $tpl->set('{photo}', $config['home_url'] . 'uploads/users/' . $user_id . '/albums/' . $id . '/c_' . $row['photo_name']);
@@ -464,13 +467,10 @@ if ($logged) {
         case "all_photos_box";
             NoAjaxQuery();
             $user_id = $user_info['user_id'];
-            $notes = intval($_POST['notes']);
+            $notes = intFilter('notes');
 
             //Для навигатор
-            if ($_POST['page'] > 0)
-                $page = intval($_POST['page']);
-            else
-                $page = 1;
+            $page = intFilter('page', 1);
             $gcount = 36;
             $limit_page = ($page - 1) * $gcount;
 
@@ -556,7 +556,7 @@ HTML;
         //################### Удаление альбома ###################//
         case "del_album":
             NoAjaxQuery();
-            $hash = substr($_POST['hash'], 0, 32);
+            $hash = isset($_POST['hash']) ? substr($_POST['hash'], 0, 32) : null;
             $row = $db->super_query("SELECT aid, user_id, photo_num FROM `albums` WHERE ahash = '{$hash}'");
 
             if ($row) {
@@ -566,7 +566,7 @@ HTML;
                 //Удаляем альбом
                 $db->query("DELETE FROM `albums` WHERE ahash = '{$hash}'");
 
-                //Проверяем еслить ли фотки в альбоме
+                //Проверяем есть ли фотки в альбоме
                 if ($row['photo_num']) {
 
                     //Удаляем фотки
@@ -583,7 +583,7 @@ HTML;
                     @rmdir(ROOT_DIR . '/uploads/users/' . $user_id . '/albums/' . $aid);
                 }
 
-                //Обновлям кол-во альбом в юзера
+                //Обновляем кол-во альбом в юзера
                 $db->query("UPDATE `users` SET user_albums_num = user_albums_num-1 WHERE user_id = '{$user_id}'");
 
                 //Удаляем кеш позиций фотографий и кеш профиля
@@ -601,16 +601,15 @@ HTML;
             $mobile_speedbar = 'Комментарии';
 
             $user_id = $user_info['user_id'];
-            $uid = intval($_GET['uid']);
-            $aid = intval($_GET['aid']);
+            $uid = intFilter('uid');
+            $aid = intFilter('aid');
 
-            if ($aid) $uid = false;
-            if ($uid) $aid = false;
+            if ($aid)
+                $uid = false;
+            if ($uid)
+                $aid = false;
 
-            if ($_GET['page'] > 0)
-                $page = intval($_GET['page']);
-            else
-                $page = 1;
+            $page = intFilter('page', 1);
             $gcount = 25;
             $limit_page = ($page - 1) * $gcount;
 
@@ -623,13 +622,19 @@ HTML;
                 $uid = $row_album['user_id'];
                 if (!$uid)
                     Hacking();
+            } else {
+                $album_privacy = null;
+                $row_album = null;
             }
 
             $CheckBlackList = CheckBlackList($uid);
 
             if ($user_id != $uid)
-                //Проверка естьли запрашиваемый юзер в друзьях у юзера который смотрит стр
+                //Проверка есть ли запрашиваемый юзер в друзьях у юзера который смотрит стр
                 $check_friend = CheckFriends($uid);
+            else {
+                $check_friend = null;
+            }
 
             if ($aid and $album_privacy) {
                 if ($album_privacy[0] == 1 or $album_privacy[0] == 2 and $check_friend or $user_id == $uid)
@@ -706,7 +711,7 @@ HTML;
                 }
                 $tpl->compile('info');
 
-                //Если есть ответ о запросе то выводим
+                //Если есть ответ о запросе, то выводим
                 if ($sql_) {
 
                     $tpl->load_template('albums_comment.tpl');
@@ -769,10 +774,10 @@ HTML;
             }
             break;
 
-        //################### Страница изминения порядка фотографий ###################//
+        //################### Страница изменения порядка фотографий ###################//
         case "edit_pos_photos":
             $user_id = $user_info['user_id'];
-            $aid = intval($_GET['aid']);
+            $aid = intFilter('aid');
 
             $check_album = $db->super_query("SELECT name FROM `albums` WHERE aid = '{$aid}' AND user_id = '{$user_id}'");
 
@@ -829,9 +834,9 @@ HTML;
             $mobile_speedbar = 'Просмотр альбома';
 
             $user_id = $user_info['user_id'];
-            $aid = intval($_GET['aid']);
+            $aid = intFilter('aid');
 
-            if ($_GET['page'] > 0) $page = intval($_GET['page']); else $page = 1;
+            $page = intFilter('page', 1);
             $gcount = 25;
             $limit_page = ($page - 1) * $gcount;
 
@@ -851,6 +856,8 @@ HTML;
                 //Проверка естьли запрашиваемый юзер в друзьях у юзера который смотрит стр
                 if ($user_id != $row_album['user_id'])
                     $check_friend = CheckFriends($row_album['user_id']);
+                else
+                    $check_friend = false;
 
                 //Приватность
                 if ($album_privacy[0] == 1 or $album_privacy[0] == 2 and $check_friend or $user_info['user_id'] == $row_album['user_id']) {
@@ -912,10 +919,10 @@ HTML;
                     } else
                         msgbox('', '<br /><br />В альбоме нет фотографий<br /><br /><br />', 'info_2');
 
-                    //Проверяем на наличии файла с позициям фоток
+                    //Проверяем на наличии файла с позициями фоток
                     $check_pos = mozg_cache('user_' . $row_album['user_id'] . '/position_photos_album_' . $aid);
 
-                    //Если нету, то вызываем функцию генерации
+                    //Если нет, то вызываем функцию генерации
                     if (!$check_pos)
                         GenerateAlbumPhotosPosition($row_album['user_id'], $aid);
                 } else {
@@ -943,7 +950,7 @@ HTML;
             $tpl->compile('info');
 
             //Выводим сами фотографии
-            if ($_GET['page'] > 0) $page = intval($_GET['page']); else $page = 1;
+            $page = intFilter('page', 1);
             $gcount = 25;
             $limit_page = ($page - 1) * $gcount;
             $sql_ = $db->super_query("SELECT tb1.mphoto_id, tb2.photo_name, album_id, user_id FROM `photos_mark` tb1, `photos` tb2 WHERE tb1.mphoto_id = tb2.id AND tb1.mapprove = 0 AND tb1.muser_id = '" . $user_info['user_id'] . "' ORDER by `mdate` DESC LIMIT " . $limit_page . ", " . $gcount, true);
@@ -967,7 +974,7 @@ HTML;
             //################### Просмотр всех альбомов юзера ###################//
             $mobile_speedbar = 'Альбомы';
 
-            $uid = intval($_GET['uid']);
+            $uid = intFilter('uid');
 
             //Выводим данные о владельце альбома(ов)
             $row_owner = $db->super_query("SELECT user_search_pref, user_albums_num, user_new_mark_photos FROM `users` WHERE user_id = '{$uid}'");
@@ -981,7 +988,7 @@ HTML;
                     $metatags['title'] = $lang['title_albums'] . ' ' . gramatikName($author_info[0]) . ' ' . gramatikName($author_info[1]);
                     $user_speedbar = $lang['title_albums'];
 
-                    //Выводи данные о альбоме
+                    //Выводи данные об альбоме
                     $sql_ = $db->super_query("SELECT aid, name, adate, photo_num, descr, comm_num, cover, ahash, privacy FROM `albums` WHERE user_id = '{$uid}' ORDER by `position` ASC", true);
 
                     //Если есть альбомы то выводи их
@@ -996,6 +1003,8 @@ HTML;
                         //Проверка естьли запрашиваемый юзер в друзьях у юзера который смотрит стр
                         if ($user_info['user_id'] != $uid)
                             $check_friend = CheckFriends($uid);
+                        else
+                            $check_friend = false;
 
                         foreach ($sql_ as $row) {
 

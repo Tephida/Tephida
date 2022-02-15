@@ -10,7 +10,7 @@ if (!defined('MOZG'))
     die('Hacking attempt!');
 
 if ($logged) {
-    $act = $_GET['act'] ?? '';
+    $act = requestFilter('act');
     $user_id = $user_info['user_id'];
     $limit_select = 10;
     $limit_page = 0;
@@ -22,9 +22,9 @@ if ($logged) {
 //			NoAjaxQuery();
             $wall_text = requestFilter('wall_text');
             $attach_files = requestFilter('attach_files', 25000, true);
-            $for_user_id = intval($_POST['for_user_id']);
-            $fast_comm_id = isset($_POST['rid']) ? intval($_POST['rid']) : null;
-            $answer_comm_id = intval($_POST['answer_comm_id']);
+            $for_user_id = intFilter('for_user_id');
+            $fast_comm_id = intFilter('rid');
+            $answer_comm_id = intFilter('answer_comm_id');
             $str_date = time();
 
             if (!$fast_comm_id)
@@ -37,12 +37,12 @@ if ($logged) {
 
             if ($check) {
 
-                if (isset($wall_text) and !empty($wall_text) or isset($attach_files) and !empty($attach_files)) {
+                if (!empty($wall_text) or !empty($attach_files)) {
 
                     //Приватность
                     $user_privacy = xfieldsdataload($check['user_privacy']);
 
-                    //Проверка естьли запрашиваемый юзер в друзьях у юзера который смотрит стр
+                    //Проверка есть ли запрашиваемый юзер в друзьях у юзера который смотрит стр
                     if ($user_privacy['val_wall2'] == 2 or $user_privacy['val_wall1'] == 2 or $user_privacy['val_wall3'] == 2 and $user_id != $for_user_id)
                         $check_friend = CheckFriends($for_user_id);
                     else {
@@ -71,7 +71,7 @@ if ($logged) {
                     if (!$CheckBlackList) {
                         if ($xPrivasy) {
 
-                            //Оприделение изображения к ссылке
+                            //Определение изображения к ссылке
                             if (stripos($attach_files, 'link|') !== false) {
                                 $attach_arr = explode('||', $attach_files);
                                 $cnt_attach_link = 1;
@@ -86,7 +86,7 @@ if ($logged) {
                                         $img_format = to_translit(end($img_name_arr));
                                         $image_name = substr(md5($server_time . md5($rImgUrl)), 0, 15);
 
-                                        //Разришенные форматы
+                                        //Разрешенные форматы
                                         $allowed_files = array('jpg', 'jpeg', 'jpe', 'png');
 
                                         //Загружаем картинку на сайт
@@ -145,10 +145,10 @@ if ($logged) {
 
                             }
 
-                            //Если добавляется ответ на комментарий то вносим в ленту новостей "ответы"
+                            //Если добавляется ответ на комментарий, то вносим в ленту новостей "ответы"
                             if ($answer_comm_id) {
 
-                                //Выводим ид владельца комменатрия
+                                //Выводим ид владельца комментария
                                 $row_owner2 = $db->super_query("SELECT author_user_id FROM `wall` WHERE id = '{$answer_comm_id}' AND fast_comm_id != '0'");
 
                                 //Проверка на то, что юзер не отвечает сам себе
@@ -161,7 +161,7 @@ if ($logged) {
                                     //Вставляем в ленту новостей
                                     $db->query("INSERT INTO `news` SET ac_user_id = '{$user_id}', action_type = 6, action_text = '{$wall_text}', obj_id = '{$answer_comm_id}', for_user_id = '{$row_owner2['author_user_id']}', action_time = '{$server_time}'");
 
-                                    //Вставляем событие в моментальные оповещания
+                                    //Вставляем событие в моментальные оповещения
                                     $update_time = $server_time - 70;
 
                                     if ($check2['user_last_visit'] >= $update_time) {
@@ -191,7 +191,7 @@ if ($logged) {
                                 $db->query("INSERT INTO `news` SET ac_user_id = '{$user_id}', action_type = 1, action_text = '{$wall_text}', obj_id = '{$dbid}', action_time = '{$str_date}'");
                             }
 
-                            //Если добавляется комментарий к записи то вносим в ленту новостей "ответы"
+                            //Если добавляется комментарий к записи, то вносим в ленту новостей "ответы"
                             if ($fast_comm_id and !$answer_comm_id) {
                                 //Выводим ид владельца записи
                                 $row_owner = $db->super_query("SELECT author_user_id FROM `wall` WHERE id = '{$fast_comm_id}'");
@@ -199,7 +199,7 @@ if ($logged) {
                                 if ($user_id != $row_owner['author_user_id'] and $row_owner) {
                                     $db->query("INSERT INTO `news` SET ac_user_id = '{$user_id}', action_type = 6, action_text = '{$wall_text}', obj_id = '{$fast_comm_id}', for_user_id = '{$row_owner['author_user_id']}', action_time = '{$str_date}'");
 
-                                    //Вставляем событие в моментальные оповещания
+                                    //Вставляем событие в моментальные оповещения
                                     $update_time = $server_time - 70;
 
                                     if ($check['user_last_visit'] >= $update_time) {
@@ -208,7 +208,7 @@ if ($logged) {
 
                                         mozg_create_cache("user_{$row_owner['author_user_id']}/updates", 1);
 
-                                        //ИНАЧЕ Добавляем +1 юзеру для оповещания
+                                        //ИНАЧЕ Добавляем +1 юзеру для оповещения
                                     } else {
 
                                         $cntCacheNews = mozg_cache('user_' . $row_owner['author_user_id'] . '/new_news');
@@ -270,7 +270,7 @@ if ($logged) {
                                     }
                                 }
 
-                                //Если добавлен комментарий к записи то просто обновляем нужную часть, тоесть только часть комментариев, но не всю стену
+                                //Если добавлен комментарий к записи, то просто обновляем нужную часть, то есть только часть комментариев, но не всю стену
                             } else {
 
                                 AntiSpamLogInsert('comments');
@@ -311,7 +311,7 @@ if ($logged) {
         //################### Удаление записи со стены ###################//
         case "delet":
             NoAjaxQuery();
-            $rid = intval($_POST['rid']);
+            $rid = intFilter('rid');
             //Проверка на существование записи и выводим ID владельца записи и кому предназначена запись
             $row = $db->super_query("SELECT author_user_id, for_user_id, fast_comm_id, add_date, attach FROM `wall` WHERE id = '{$rid}'");
             if ($row['author_user_id'] == $user_id or $row['for_user_id'] == $user_id) {
@@ -369,7 +369,7 @@ if ($logged) {
         //################### Ставим "Мне нравится" ###################//
         case "like_yes":
             NoAjaxQuery();
-            $rid = intval($_POST['rid']);
+            $rid = intFilter('rid');
             //Проверка на существование записи
             $row = $db->super_query("SELECT text, for_user_id, likes_users, author_user_id FROM `wall` WHERE id = '{$rid}'");
             if ($row) {
@@ -382,7 +382,7 @@ if ($logged) {
 
                     if ($user_id != $row['author_user_id']) {
 
-                        //Вставляем событие в моментальные оповещания
+                        //Вставляем событие в моментальные оповещения
                         $row_owner = $db->super_query("SELECT user_last_visit FROM `users` WHERE user_id = '{$row['author_user_id']}'");
                         $update_time = $server_time - 70;
 
@@ -420,7 +420,7 @@ if ($logged) {
         //################### Удаляем "Мне нравится" ###################//
         case "like_no":
             NoAjaxQuery();
-            $rid = intval($_POST['rid']);
+            $rid = intFilter('rid');
             //Проверка на существование записи
             $row = $db->super_query("SELECT likes_users FROM `wall` WHERE id = '{$rid}'");
             if ($row) {
@@ -447,7 +447,7 @@ if ($logged) {
         //################### Выводим первых 7 юзеров которые поставили "мне нравится" ###################//
         case "liked_users":
             NoAjaxQuery();
-            $rid = intval($_POST['rid']);
+            $rid = intFilter('rid');
             $sql_ = $db->super_query("SELECT tb1.user_id, tb2.user_photo FROM `wall_like` tb1, `users` tb2 WHERE tb1.user_id = tb2.user_id AND tb1.rec_id = '{$rid}' ORDER by `date` DESC LIMIT 0, 7", true);
             if ($sql_) {
                 foreach ($sql_ as $row) {
@@ -462,10 +462,10 @@ if ($logged) {
         //################### Выводим всех юзеров которые поставили "мне нравится" ###################//
         case "all_liked_users":
             NoAjaxQuery();
-            $rid = intval($_POST['rid']);
-            $liked_num = intval($_POST['liked_num']);
+            $rid = intFilter('rid');
+            $liked_num = intFilter('liked_num');
+            $page = intFilter('page', 1);
 
-            if ($_POST['page'] > 0) $page = intval($_POST['page']); else $page = 1;
             $gcount = 24;
             $limit_page = ($page - 1) * $gcount;
 
@@ -521,9 +521,11 @@ if ($logged) {
                     //Приватность
                     $user_privacy = xfieldsdataload($row['user_privacy']);
 
-                    //Если приватность "Только друщья" то Проверка естьли запрашиваемый юзер в друзьях у юзера который смотрит стр
+                    //Если приватность "Только друзья", то Проверка есть ли запрашиваемый юзер в друзьях у юзера который смотрит стр
                     if ($user_privacy['val_wall3'] == 2 and $user_id != $for_user_id)
                         $check_friend = $db->super_query("SELECT user_id FROM `friends` WHERE user_id = '{$user_id}' AND friend_id = '{$for_user_id}' AND subscriptions = 0");
+                    else
+                        $check_friend = null;
 
                     if ($user_privacy['val_wall3'] == 1 or $user_privacy['val_wall3'] == 2 and $check_friend or $user_id == $for_user_id) {
                         $wall->comm_query("SELECT tb1.id, author_user_id, text, add_date, fasts_num, tb2.user_photo, user_search_pref, user_last_visit FROM `wall` tb1, `users` tb2 WHERE tb1.author_user_id = tb2.user_id AND tb1.fast_comm_id = '{$fast_comm_id}' ORDER by `add_date` ASC LIMIT 0, 200", '');
@@ -548,8 +550,8 @@ if ($logged) {
         //################### Показ предыдущих записей ###################//
         case "page":
             NoAjaxQuery();
-            $last_id = intval($_POST['last_id']);
-            $for_user_id = intval($_POST['for_user_id']);
+            $last_id = intFilter('last_id');
+            $for_user_id = intFilter('for_user_id');
 
             //ЧС
             $CheckBlackList = CheckBlackList($for_user_id);
@@ -565,10 +567,11 @@ if ($logged) {
                     //Приватность
                     $user_privacy = xfieldsdataload($row['user_privacy']);
 
-                    //Если приватность "Только друщья" то Проверка естьли запрашиваемый юзер в друзьях у юзера который смотрит стр
+                    //Если приватность "Только друзья", то Проверка есть ли запрашиваемый юзер в друзьях у юзера который смотрит стр
                     if ($user_privacy['val_wall1'] == 2 and $user_id != $for_user_id)
                         $check_friend = $db->super_query("SELECT user_id FROM `friends` WHERE user_id = '{$user_id}' AND friend_id = '{$for_user_id}' AND subscriptions = 0");
-
+                    else
+                        $check_friend = null;
                     if ($user_privacy['val_wall1'] == 1 or $user_privacy['val_wall1'] == 2 and $check_friend or $user_id == $for_user_id)
                         $wall->query("SELECT tb1.id, author_user_id, text, add_date, fasts_num, likes_num, likes_users, type, tell_uid, tell_date, public, attach, tell_comm, tb2.user_photo, user_search_pref, user_last_visit, user_logged_mobile FROM `wall` tb1, `users` tb2 WHERE tb1.id < '{$last_id}' AND for_user_id = '{$for_user_id}' AND tb1.author_user_id = tb2.user_id AND tb1.fast_comm_id = '0' ORDER by `add_date` DESC LIMIT 0, {$limit_select}");
                     else
@@ -583,10 +586,10 @@ if ($logged) {
             die();
             break;
 
-        //################### Рассказать друзьям "Мне нравитсяя" ###################//
+        //################### Рассказать друзьям "Мне нравится" ###################//
         case "tell":
             NoAjaxQuery();
-            $rid = intval($_POST['rid']);
+            $rid = intFilter('rid');
 
             //Проверка на существование записи
             $row = $db->super_query("SELECT add_date, text, author_user_id, tell_uid, tell_date, public, attach FROM `wall` WHERE fast_comm_id = '0' AND id = '{$rid}'");
@@ -626,10 +629,9 @@ if ($logged) {
             if (strpos($check_url[0], '200')) {
                 $open_lnk = @file_get_contents($lnk);
 
-                if (stripos(strtolower($open_lnk), 'charset=utf-8') or stripos(strtolower($check_url[2]), 'charset=utf-8'))
-                    $open_lnk = $open_lnk;
-                else
-                    $open_lnk = iconv('windows-1251', 'utf-8', $open_lnk);
+//                if (stripos(strtolower($open_lnk), 'charset=utf-8') or stripos(strtolower($check_url[2]), 'charset=utf-8')){
+//                }else
+//                    $open_lnk = iconv('windows-1251', 'utf-8', $open_lnk);
 
                 if (stripos(strtolower($open_lnk), 'charset=KOI8-R'))
                     $open_lnk = iconv('KOI8-R', 'utf-8', $open_lnk);
@@ -731,17 +733,16 @@ if ($logged) {
 
             //Если вызвана страница стены, не со страницы юзера
             if (!$id) {
-                $rid = intval($_GET['rid']);
+                $rid = intFilter('rid');
 
-                $id = intval($_GET['uid']);
+                $id = intFilter('uid');
                 if (!$id)
                     $id = $user_id;
 
                 $walluid = $id;
                 $metatags['title'] = $lang['wall_title'];
                 $user_speedbar = 'На стене нет записей';
-
-                if ($_GET['page'] > 0) $page = intval($_GET['page']); else $page = 1;
+                $page = intFilter('page', 1);
                 $gcount = 10;
                 $limit_page = ($page - 1) * $gcount;
 
@@ -762,18 +763,20 @@ if ($logged) {
                         else
                             $cnt_rec = $db->super_query("SELECT COUNT(*) AS cnt FROM `wall` WHERE for_user_id = '{$id}' AND author_user_id = '{$id}' AND fast_comm_id = 0");
 
-                        if ($_GET['type'] == 'own') {
+                        $type = requestFilter('type');
+
+                        if ($type == 'own') {
                             $cnt_rec = $db->super_query("SELECT COUNT(*) AS cnt FROM `wall` WHERE for_user_id = '{$id}' AND author_user_id = '{$id}' AND fast_comm_id = 0");
                             $where_sql = "AND tb1.author_user_id = '{$id}'";
                             $tpl->set_block("'\\[record-tab\\](.*?)\\[/record-tab\\]'si", "");
                             $page_type = '/wall' . $id . '_sec=own&page=';
-                        } else if ($_GET['type'] == 'record') {
+                        } else if ($type == 'record') {
                             $where_sql = "AND tb1.id = '{$rid}'";
                             $tpl->set('[record-tab]', '');
                             $tpl->set('[/record-tab]', '');
                             $wallAuthorId = $db->super_query("SELECT author_user_id FROM `wall` WHERE id = '{$rid}'");
                         } else {
-                            $_GET['type'] = '';
+                            $type = '';
                             $where_sql = '';
                             $tpl->set_block("'\\[record-tab\\](.*?)\\[/record-tab\\]'si", "");
                             $page_type = '/wall' . $id . '/page/';
@@ -786,7 +789,7 @@ if ($logged) {
                         $tpl->set('{name}', gramatikName($row_user['user_name']));
                         $tpl->set('{uid}', $id);
                         $tpl->set('{rec-id}', $rid);
-                        $tpl->set("{activetab-{$_GET['type']}}", 'activetab');
+                        $tpl->set("{activetab-{$type}}", 'activetab');
                         $tpl->compile('info');
 
                         if ($cnt_rec['cnt'] < 1)
@@ -839,7 +842,9 @@ if ($logged) {
                         $gcount = $gcount ?? null;
                         $page_type = $page_type ?? null;
 
-                        if ($cnt_rec['cnt'] > $gcount and $_GET['type'] == '' or $_GET['type'] == 'own')
+                        $type = requestFilter('type');
+
+                        if ($cnt_rec['cnt'] > $gcount and $type == '' or $type == 'own')
                             navigation($gcount, $cnt_rec['cnt'], $page_type);
                     } else {
                         $wall->template('wall/record.tpl');

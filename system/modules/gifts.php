@@ -12,7 +12,7 @@ if (!defined('MOZG'))
 NoAjaxQuery();
 
 if ($logged) {
-    $act = $_GET['act'] ?? '';
+    $act = requestFilter('act');
     $user_id = $user_info['user_id'];
 
     switch ($act) {
@@ -20,7 +20,7 @@ if ($logged) {
         //################### Страница всех подарков ###################//
         case "view":
             NoAjaxQuery();
-            $for_user_id = intval($_POST['user_id']);
+            $for_user_id = intFilter('user_id');
 
             $sql_ = $db->super_query("SELECT gid, img, price FROM `gifts_list` ORDER by `gid` DESC", true);
 
@@ -46,10 +46,11 @@ if ($logged) {
         //################### Отправка подарка в БД ###################//
         case "send":
             NoAjaxQuery();
-            $for_user_id = intval($_POST['for_user_id']);
-            $gift = intval($_POST['gift']);
-            $privacy = intval($_POST['privacy']);
-            if ($privacy < 0 or $privacy > 3) $privacy = 1;
+            $for_user_id = intFilter('for_user_id');
+            $gift = intFilter('gift');
+            $privacy = intFilter('privacy']);
+            if ($privacy < 0 or $privacy > 3)
+                $privacy = 1;
             $msg = requestFilter('msg');
             $gifts = $db->super_query("SELECT price FROM `gifts_list` WHERE img = '" . $gift . "'");
 
@@ -61,7 +62,7 @@ if ($logged) {
                     $db->query("UPDATE `users` SET user_balance = user_balance-{$gifts['price']} WHERE user_id = '{$user_id}'");
                     $db->query("UPDATE `users` SET user_gifts = user_gifts+1 WHERE user_id = '{$for_user_id}'");
 
-                    //Вставляем событие в моментальные оповещания
+                    //Вставляем событие в моментальные оповещения
                     $check2 = $db->super_query("SELECT user_last_visit FROM `users` WHERE user_id = '{$for_user_id}'");
 
                     $update_time = $server_time - 70;
@@ -83,7 +84,7 @@ if ($logged) {
 
                         mozg_create_cache("user_{$for_user_id}/updates", 1);
 
-                        //ИНАЧЕ Добавляем +1 юзеру для оповещания
+                        //ИНАЧЕ Добавляем +1 юзеру для оповещения
                     } else {
 
                         $cntCacheNews = mozg_cache("user_{$for_user_id}/new_gift");
@@ -127,7 +128,7 @@ if ($logged) {
         //################### Удаление подарка ###################//
         case "del":
             NoAjaxQuery();
-            $gid = intval($_POST['gid']);
+            $gid = intFilter('gid']);
             $row = $db->super_query("SELECT uid FROM `gifts` WHERE gid = '{$gid}'");
             if ($user_id == $row['uid']) {
                 $db->query("DELETE FROM `gifts` WHERE gid = '{$gid}'");
@@ -141,9 +142,9 @@ if ($logged) {
 
             //################### Всех подарков пользователя ###################//
             $metatags['title'] = $lang['gifts'];
-            $uid = intval($_GET['uid']);
+            $uid = intFilter($_GET['uid']);
 
-            if ($_GET['page'] > 0) $page = intval($_GET['page']); else $page = 1;
+            $page = intFilter('page', 1);
             $gcount = 15;
             $limit_page = ($page - 1) * $gcount;
 
@@ -172,7 +173,7 @@ if ($logged) {
                 $tpl->set_block("'\\[yes\\](.*?)\\[/yes\\]'si", "");
             }
 
-            if ($_GET['new'] and $user_id == $uid) {
+            if (isset($_GET['new']) and $_GET['new'] and $user_id == $uid) {
                 $tpl->set('[new]', '');
                 $tpl->set('[/new]', '');
                 $tpl->set_block("'\\[no-new\\](.*?)\\[/no-new\\]'si", "");

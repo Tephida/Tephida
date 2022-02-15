@@ -13,7 +13,7 @@ if (!defined('MOZG')) {
 NoAjaxQuery();
 
 if ($logged) {
-    $act = $_GET['act'] ?? '';
+    $act = requestFilter('act');
     $user_id = $user_info['user_id'];
     $limit_vieos = 20;
 
@@ -36,7 +36,7 @@ if ($logged) {
                 $good_video_lnk = requestFilter('good_video_lnk');
                 $title = requestFilter('title', 25000, true);
                 $descr = requestFilter('descr', 3000);
-                $privacy = intval($_POST['privacy']);
+                $privacy = intFilter('privacy');
                 if ($privacy <= 0 or $privacy > 3) $privacy = 1;
 
                 //Если youtube то добавляем префикс src=" и составляем ответ для скрипта, для вставки в БД
@@ -118,7 +118,7 @@ if ($logged) {
                     //Чистим кеш
                     mozg_mass_clear_cache_file("user_{$user_id}/page_videos_user|user_{$user_id}/page_videos_user_friends|user_{$user_id}/page_videos_user_all|user_{$user_id}/profile_{$user_id}|user_{$user_id}/videos_num_all|user_{$user_id}/videos_num_friends");
 
-                    if ($_POST['notes'] == 1)
+                    if (intFilter('notes') == 1)
                         echo "{$photo}|{$user_id}|{$dbid}";
                 }
             } else
@@ -131,7 +131,7 @@ if ($logged) {
         case "load":
             NoAjaxQuery();
 
-            $video_lnk = $_POST['video_lnk'];
+            $video_lnk = requestFilter('video_lnk');
 
             if (preg_match("/https:\/\/www.youtube.com|https:\/\/youtube.com|https:\/\/www.vimeo.com|https:\/\/vimeo.com/i", $video_lnk)) {
 
@@ -186,7 +186,7 @@ if ($logged) {
                         $res_img = "https://img.youtube.com/vi/{$parse_end[0]}/0.jpg";
                     }
 
-                    //Если видеосервис vimeo
+                    //Если видео сервис vimeo
                     if (preg_match("/http:\/\/www.vimeo.com|http:\/\/vimeo.com/i", $video_lnk)) {
                         preg_match_all('`(<title>[^\[]+\</title>)`si', $data, $parse);
                         $res_title = str_replace(array('<title>', '</title>'), '', $parse[1][0]);
@@ -219,7 +219,7 @@ if ($logged) {
         //################### Удаление видео ###################//
         case "delet":
             NoAjaxQuery();
-            $vid = intval($_POST['vid']);
+            $vid = intFilter('vid');
 
             if ($vid) {
                 $row = $db->super_query("SELECT owner_user_id, photo, public_id FROM `videos` WHERE id = '{$vid}'");
@@ -262,12 +262,12 @@ if ($logged) {
         //################### Сохранение отредактированных данных ###################//
         case "editsave":
             NoAjaxQuery();
-            $vid = intval($_POST['vid']);
+            $vid = intFilter('vid');
 
             if ($vid) {
                 $title = requestFilter('title', 25000, true);
                 $descr = requestFilter('descr', 3000);
-                $privacy = intval($_POST['privacy']);
+                $privacy = intFilter('privacy');
                 if ($privacy <= 0 or $privacy > 3) $privacy = 1;
 
                 //Проверка на существования записи
@@ -294,10 +294,10 @@ if ($logged) {
         case "addcomment":
             NoAjaxQuery();
             if ($config['video_mod_comm'] == 'yes') {
-                $vid = intval($_POST['vid']);
+                $vid = intFilter('vid');
                 $comment = requestFilter('comment');
 
-                //Провекра на существования видео
+                //Проверка на существования видео
                 $check_video = $db->super_query("SELECT owner_user_id, photo, public_id FROM `videos` WHERE id = '{$vid}'");
 
                 //ЧС
@@ -331,7 +331,7 @@ if ($logged) {
                                 $comment = str_replace("|", "&#124;", $comment);
                                 $db->query("INSERT INTO `news` SET ac_user_id = '{$user_id}', action_type = 9, action_text = '{$comment}|{$check_video['photo']}|{$vid}', obj_id = '{$id}', for_user_id = '{$check_video['owner_user_id']}', action_time = '{$server_time}'");
 
-                                //Вставляем событие в моментальные оповещания
+                                //Вставляем событие в моментальные оповещения
                                 $row_userOW = $db->super_query("SELECT user_last_visit FROM `users` WHERE user_id = '{$check_video['owner_user_id']}'");
                                 $update_time = $server_time - 70;
 
@@ -341,7 +341,7 @@ if ($logged) {
 
                                     mozg_create_cache("user_{$check_video['owner_user_id']}/updates", 1);
 
-                                    //ИНАЧЕ Добавляем +1 юзеру для оповещания
+                                    //ИНАЧЕ Добавляем +1 юзеру для оповещения
                                 } else {
 
                                     $cntCacheNews = mozg_cache('user_' . $check_video['owner_user_id'] . '/new_news');
@@ -385,7 +385,7 @@ if ($logged) {
         case "delcomment":
 
             NoAjaxQuery();
-            $comm_id = intval($_POST['comm_id']);
+            $comm_id = intFilter('comm_id');
 
             //Проверка на существования комментария, и выводим ИД владельца видео
             $row = $db->super_query("SELECT tb1.video_id, author_user_id, tb2.owner_user_id, public_id FROM `videos_comments` tb1, `videos` tb2 WHERE tb1.id = '{$comm_id}' AND tb1.video_id = tb2.id");
@@ -431,9 +431,9 @@ if ($logged) {
         //################### Показ всех комментариев ###################//
         case "all_comm":
             NoAjaxQuery();
-            $vid = intval($_POST['vid']);
-            $comm_num = intval($_POST['num']);
-            $owner_id = intval($_POST['owner_id']);
+            $vid = intFilter('vid');
+            $comm_num = intFilter('num');
+            $owner_id = intFilter('owner_id');
 
 
             $row = $db->super_query("SELECT public_id FROM `videos` WHERE id = '{$vid}'");
@@ -447,9 +447,9 @@ if ($logged) {
                 else
                     $public_admin = false;
 
+            } else {
+                $public_admin = false;
             }
-
-            $public_admin = $public_admin ?? null;
 
             if ($comm_num > 3 and $vid and $owner_id) {
 
@@ -495,10 +495,10 @@ if ($logged) {
         //################### Страница всех видео юзера, для прикрепления видео кому-то на стену ###################//
         case "all_videos":
             NoAjaxQuery();
-            $notes = intval($_POST['notes']);
+            $notes = intFilter('notes');
 
             //Для навигатор
-            if ($_POST['page'] > 0) $page = intval($_POST['page']); else $page = 1;
+            $page = intFilter('page', 1);
             $gcount = 24;
             $limit_page = ($page - 1) * $gcount;
 
@@ -556,10 +556,10 @@ if ($logged) {
 
             NoAjaxQuery();
 
-            $pid = intval($_POST['pid']);
+            $pid = intFilter('pid');
 
             //Для навигатор
-            if ($_POST['page'] > 0) $page = intval($_POST['page']); else $page = 1;
+            $page = intFilter('page', 1);
             $gcount = 24;
             $limit_page = ($page - 1) * $gcount;
 
@@ -614,8 +614,8 @@ if ($logged) {
         case "page":
             NoAjaxQuery();
 
-            $get_user_id = intval($_POST['get_user_id']);
-            $last_id = intval($_POST['last_id']);
+            $get_user_id = intFilter('get_user_id');
+            $last_id = intFilter('last_id');
             if (!$get_user_id)
                 $get_user_id = $user_id;
 
@@ -671,7 +671,7 @@ if ($logged) {
         //################### Добавление видео к себе в список ###################//
         case "addmylist":
             NoAjaxQuery();
-            $vid = intval($_POST['vid']);
+            $vid = intFilter('vid');
             $row = $db->super_query("SELECT video, photo, title, descr FROM `videos` WHERE id = '{$vid}'");
             if ($row and $config['video_mod_add_my'] == 'yes') {
                 //Директория загрузки фото
@@ -696,7 +696,7 @@ if ($logged) {
         default:
 
             //################### Вывод всех видео ###################//
-            $get_user_id = ($_GET['get_user_id'] !== null) ? intval($_GET['get_user_id']) : false;
+            $get_user_id = intFilter('get_user_id');
             if (!$get_user_id)
                 $get_user_id = $user_id;
 

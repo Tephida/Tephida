@@ -13,12 +13,12 @@ if ($ajax == 'yes')
     NoAjaxQuery();
 
 if (!$logged) {
-    $act = $_GET['act'] ?? '';
+    $act = requestFilter('act');
     $metatags['title'] = $lang['restore_title'];
 
     switch ($act) {
 
-        //################### Проверка данных на воостановления ###################//
+        //################### Проверка данных на восстановления ###################//
         case "next":
             NoAjaxQuery();
             $email = requestFilter('email');
@@ -36,7 +36,7 @@ if (!$logged) {
             die();
             break;
 
-        //################### Отправка данных на почту на воостановления ###################//
+        //################### Отправка данных на почту на восстановления ###################//
         case "send":
             NoAjaxQuery();
             $email = requestFilter('email');
@@ -46,15 +46,16 @@ if (!$logged) {
                 $db->query("DELETE FROM `restore` WHERE email = '{$email}'");
 
                 $salt = "abchefghjkmnpqrstuvwxyz0123456789";
+                $rand_lost = '';
                 for ($i = 0; $i < 15; $i++) {
-                    $rand_lost .= $salt{rand(0, 33)};
+                    $rand_lost .= $salt[rand(0, 33)];
                 }
                 $hash = md5($server_time . $email . rand(0, 100000) . $rand_lost . $check['user_name']);
 
                 //Вставляем в базу
                 $db->query("INSERT INTO `restore` SET email = '{$email}', hash = '{$hash}', ip = '{$_IP}'");
 
-                //Отправляем письмо на почту для воостановления
+                //Отправляем письмо на почту для восстановления
                 include_once ENGINE_DIR . '/classes/mail.php';
                 $mail = new vii_mail($config);
                 $message = <<<HTML
@@ -82,6 +83,7 @@ HTML;
                 $tpl->set('{name}', $info['user_name']);
 
                 $salt = "abchefghjkmnpqrstuvwxyz0123456789";
+                $rand_lost = '';
                 for ($i = 0; $i < 15; $i++) {
                     $rand_lost .= $salt[rand(0, 33)];
                 }

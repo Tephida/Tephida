@@ -13,10 +13,10 @@ NoAjaxQuery();
 
 if ($logged) {
 
-    $month = intval($_GET['m']);
+    $month = intFilter('m');
     if ($month and $month <= 0 or $month > 12) $month = 1;
 
-    $year = intval($_GET['y']);
+    $year = intFilter('y');
     if ($year and $year < 2013 or $year > 2020) $year = 2013;
 
     if ($month and $year) {
@@ -69,6 +69,10 @@ if ($logged) {
     elseif ($r_month == '02') $limit_day = 28;
     else $limit_day = 30;
 
+    $r_unik = '';
+    $r_moneys = '';
+
+
     for ($i = 1; $i <= $limit_day; $i++) {
 
         if (!$arr_r_unik[$i]) $arr_r_unik[$i] = 0;
@@ -83,7 +87,8 @@ if ($logged) {
     $row_max = $db->super_query("SELECT users FROM `users_stats` WHERE user_id = '{$user_info['user_id']}' AND date_x = '{$stat_date}' ORDER by `users` DESC");
 
     $rNum = round($row_max['users'] / 15);
-    if ($rNum < 1) $rNum = 1;
+    if ($rNum < 1)
+        $rNum = 1;
 
     $tickSize = $rNum;
 
@@ -91,7 +96,8 @@ if ($logged) {
     $row_max_hits = $db->super_query("SELECT views FROM `users_stats` WHERE user_id = '{$user_info['user_id']}' AND date_x = '{$stat_date}' ORDER by `views` DESC");
 
     $rNum_moenys = round($row_max_hits['views'] / 15);
-    if ($rNum_moenys < 1) $rNum_moenys = 1;
+    if ($rNum_moenys < 1)
+        $rNum_moenys = 1;
 
     $tickSize_moneys = $rNum_moenys;
 

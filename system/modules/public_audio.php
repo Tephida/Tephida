@@ -11,7 +11,7 @@ if (!defined('MOZG'))
 
 if ($logged) {
 
-    $act = $_GET['act'] ?? '';
+    $act = requestFilter('act');
     $user_id = $user_info['user_id'];
 
     switch ($act) {
@@ -45,13 +45,13 @@ if ($logged) {
 
             break;
 
-        //################### Сохранение отредактированых данных ###################//
+        //################### Сохранение отредактированных данных ###################//
         case "editsave":
 
             NoAjaxQuery();
 
-            $aid = intval($_POST['aid']);
-            $pid = intval($_POST['pid']);
+            $aid = intFilter('aid');
+            $pid = intFilter('pid');
             $artist = requestFilter('artist', 25000, true);
             $name = requestFilter('name', 25000, true);
 
@@ -81,8 +81,8 @@ if ($logged) {
 
             NoAjaxQuery();
 
-            $aid = intval($_POST['aid']);
-            $pid = intval($_POST['pid']);
+            $aid = intFilter('aid');
+            $pid = intFilter('pid');
 
             $infoGroup = $db->super_query("SELECT admin FROM `communities` WHERE id = '{$pid}'");
 
@@ -110,10 +110,11 @@ if ($logged) {
 
             $sql_limit = 20;
 
-            if ($_POST['page'] > 0) $page_cnt = intval($_POST['page']) * $sql_limit;
+            $page_cnt = intFilter('page');
+            if ($page_cnt > 0) $page_cnt = $page_cnt * $sql_limit;
             else $page_cnt = 0;
 
-            $pid = intval($_POST['pid']);
+            $pid = intFilter('pid');
 
             $query = strip_data(requestFilter('query'));
             $query = strtr($query, array(' ' => '%')); //Замеянем пробелы на проценты чтоб тоиск был точнее
@@ -186,11 +187,12 @@ if ($logged) {
 
             $metatags['title'] = 'Аудиозаписи сообщества';
 
-            $pid = intval($_GET['pid']);
+            $pid = intFilter('pid');
 
             $sql_limit = 20;
 
-            if ($_POST['page'] > 0) $page_cnt = intval($_POST['page']) * $sql_limit;
+            $page_cnt = intFilter('page');
+            if ($page_cnt > 0) $page_cnt = $page_cnt * $sql_limit;
             else $page_cnt = 0;
 
             if ($page_cnt)

@@ -22,4 +22,6 @@ if ($country_id) {
 }
 ?>
     <script type="text/javascript">$('#load_mini').hide();</script>
-<? die(); ?>
+<?php
+die();
+?>

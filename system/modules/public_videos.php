@@ -11,7 +11,7 @@ if (!defined('MOZG'))
 
 if ($logged) {
 
-    $act = $_GET['act'] ?? '';
+    $act = requestFilter($_GET['act']);
     $user_id = $user_info['user_id'];
 
     switch ($act) {
@@ -21,12 +21,12 @@ if ($logged) {
 
             NoAjaxQuery();
 
-            $pid = intval($_POST['pid']);
-            $id = intval($_POST['id']);
+            $pid = intFilter(['pid');
+            $id = intFilter('id');
 
             $infoGroup = $db->super_query("SELECT admin FROM `communities` WHERE id = '{$pid}'");
 
-            if (strpos($infoGroup['admin'], "u{$user_id}|") !== false) $public_admin = true;
+            if (str_contains($infoGroup['admin'], "u{$user_id}|")) $public_admin = true;
             else $public_admin = false;
 
             $row = $db->super_query("SELECT video, photo, title, descr FROM `videos` WHERE id = '{$id}'");
@@ -62,12 +62,12 @@ if ($logged) {
 
             NoAjaxQuery();
 
-            $pid = intval($_POST['pid']);
-            $id = intval($_POST['id']);
+            $pid = intFilter('pid');
+            $id = intFilter('id');
 
             $infoGroup = $db->super_query("SELECT admin FROM `communities` WHERE id = '{$pid}'");
 
-            if (strpos($infoGroup['admin'], "u{$user_id}|") !== false) $public_admin = true;
+            if (str_contains($infoGroup['admin'], "u{$user_id}|")) $public_admin = true;
             else $public_admin = false;
 
             $row = $db->super_query("SELECT photo, public_id, owner_user_id FROM `videos` WHERE id = '{$id}'");
@@ -97,12 +97,12 @@ if ($logged) {
 
             NoAjaxQuery();
 
-            $pid = intval($_POST['pid']);
-            $id = intval($_POST['id']);
+            $pid = intFilter('pid');
+            $id = intFilter('id');
 
             $infoGroup = $db->super_query("SELECT admin FROM `communities` WHERE id = '{$pid}'");
 
-            if (strpos($infoGroup['admin'], "u{$user_id}|") !== false) $public_admin = true;
+            if (str_contains($infoGroup['admin'], "u{$user_id}|")) $public_admin = true;
             else $public_admin = false;
 
             $row = $db->super_query("SELECT public_id, title, descr FROM `videos` WHERE id = '{$id}'");
@@ -127,15 +127,15 @@ if ($logged) {
 
             NoAjaxQuery();
 
-            $pid = intval($_POST['pid']);
-            $id = intval($_POST['id']);
+            $pid = intFilter('pid');
+            $id = intFilter('id');
 
             $title = requestFilter('title', 25000, true);
             $descr = requestFilter('descr', 3000);
 
             $infoGroup = $db->super_query("SELECT admin FROM `communities` WHERE id = '{$pid}'");
 
-            if (strpos($infoGroup['admin'], "u{$user_id}|") !== false) $public_admin = true;
+            if (str_contains($infoGroup['admin'], "u{$user_id}|")) $public_admin = true;
             else $public_admin = false;
 
             $row = $db->super_query("SELECT public_id FROM `videos` WHERE id = '{$id}'");
@@ -161,10 +161,11 @@ if ($logged) {
 
             $sql_limit = 20;
 
-            if ($_POST['page'] > 0) $page_cnt = intval($_POST['page']) * $sql_limit;
+            $page_cnt = intFilter('page');
+            if ($page_cnt > 0) $page_cnt = $page_cnt * $sql_limit;
             else $page_cnt = 0;
 
-            $pid = intval($_POST['pid']);
+            $pid = intFilter('pid');
 
             $query = strip_data(requestFilter('query'));
             $query = strtr($query, array(' ' => '%')); //Замеянем пробелы на проценты чтоб тоиск был точнее
@@ -246,11 +247,11 @@ if ($logged) {
 
             $metatags['title'] = 'Видеозаписи сообщества';
 
-            $pid = intval($_GET['pid']);
+            $pid = intFilter('pid');
 
             $sql_limit = 20;
-
-            if ($_POST['page'] > 0) $page_cnt = intval($_POST['page']) * $sql_limit;
+            $page_cnt = intFilter('page');
+            if ($page_cnt > 0) $page_cnt = $page_cnt * $sql_limit;
             else $page_cnt = 0;
 
             if ($page_cnt)
@@ -258,7 +259,7 @@ if ($logged) {
 
             $infoGroup = $db->super_query("SELECT videos_num, adres, admin FROM `communities` WHERE id = '{$pid}'");
 
-            if (strpos($infoGroup['admin'], "u{$user_id}|") !== false) $public_admin = true;
+            if (str_contains($infoGroup['admin'], "u{$user_id}|")) $public_admin = true;
             else $public_admin = false;
 
             if ($infoGroup['videos_num']) {

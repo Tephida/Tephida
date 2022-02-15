@@ -12,7 +12,7 @@ if (!defined('MOZG'))
 NoAjaxQuery();
 
 if ($logged) {
-    $act = $_GET['act'] ?? '';
+    $act = requestFilter('act');
     $user_id = $user_info['user_id'];
 
     $user_speedbar = $lang['blog_descr'];
@@ -56,7 +56,7 @@ if ($logged) {
         case "del":
             NoAjaxQuery();
             if ($user_info['user_group'] == 1) {
-                $id = intval($_POST['id']);
+                $id = intFilter('id');
                 $db->query("DELETE FROM `blog` WHERE id = '{$id}'");
             }
             die();
@@ -65,7 +65,7 @@ if ($logged) {
         //################### Страница редактирования ###################//
         case "edit":
             if ($user_info['user_group'] == 1) {
-                $id = intval($_GET['id']);
+                $id = intFilter('id');
                 $row = $db->super_query("SELECT title, story FROM `blog` WHERE id = '{$id}'");
                 if ($row) {
                     //Подключаем парсер
@@ -122,7 +122,7 @@ if ($logged) {
                 //Если нет папки альбома, то создаём её
                 $album_dir = ROOT_DIR . "/uploads/blog/";
 
-                //Разришенные форматы
+                //Разрешенные форматы
                 $allowed_files = array('jpg', 'jpeg', 'jpe', 'png', 'gif');
 
                 //Получаем данные о фотографии
@@ -132,7 +132,7 @@ if ($logged) {
                 $image_size = $_FILES['uploadfile']['size']; // размер файла
                 $type = end(explode(".", $image_name)); // формат файла
 
-                //Проверям если, формат верный то пропускаем
+                //Проверяем если, формат верный то пропускаем
                 if (in_array(strtolower($type), $allowed_files)) {
                     if ($image_size < 5000000) {
                         $res_type = strtolower('.' . $type);
@@ -165,6 +165,8 @@ if ($logged) {
             $id = intval($_GET['id']);
             if ($id) {
                 $sqlWhere = "WHERE id = '{$id}'";
+            } else {
+                $sqlWhere = '';
             }
 
             //Вывод последней новости
@@ -181,10 +183,12 @@ if ($logged) {
             //Вывод последних 20 новостей
             $sql_ = $db->super_query("SELECT id, title FROM `blog` ORDER by `date` DESC LIMIT 0, 20", true);
             $cnt = 0;
+            $lastNews = '';
             foreach ($sql_ as $rowLast) {
                 $cnt++;
                 $rowLast['title'] = stripslashes($rowLast['title']);
-                if ($_GET['id'] == $rowLast['id'] or $cnt == 1 and !$_GET['id'])
+
+                if (isset($_GET['id']) and $_GET['id'] == $rowLast['id'] or $cnt == 1 and !$_GET['id'])
                     $lastNews .= "<div><a href=\"/blog?id={$rowLast['id']}\" class=\"bloglnkactive\" onClick=\"Page.Go(this.href); return false\">{$rowLast['title']}</a></div>";
                 else
                     $lastNews .= "<a href=\"/blog?id={$rowLast['id']}\" onClick=\"Page.Go(this.href); return false\">{$rowLast['title']}</a>";

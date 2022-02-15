@@ -19,16 +19,31 @@ if (!defined('MOZG')) die('Hacking attempt!');
  */
 function textFilter(string $source, int $substr_num = 25000, bool $strip_tags = false): array|string|null
 {
-    return htmlspecialchars(stripslashes(trim($source)), 0, $substr_num);
+    $source = trim($source);
+    $source = stripslashes($source);
+
+    return htmlspecialchars($source, ENT_QUOTES, 'UTF-8');
+}
+
+function intFilter(string $source, int $default = 0): int
+{
+    if (isset($_POST[$source])) {
+        $source = $_POST[$source];
+    } elseif (isset($_GET[$source])) {
+        $source = $_GET[$source];
+    } else {
+        return $default;
+    }
+    return intval($source);
 }
 
 #[Pure] function requestFilter(string $source, int $substr_num = 25000, bool $strip_tags = false): array|string|null
 {
-    if(isset($_POST[$source])){
+    if (isset($_POST[$source])) {
         $source = $_POST[$source];
-    }elseif(isset($_GET[$source])){
+    } elseif (isset($_GET[$source])) {
         $source = $_GET[$source];
-    }else{
+    } else {
         return null;
     }
     return textFilter($source, $substr_num, $strip_tags);

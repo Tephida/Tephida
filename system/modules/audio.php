@@ -13,7 +13,7 @@ if ($ajax == 'yes')
     NoAjaxQuery();
 
 if ($logged) {
-    $act = $_GET['act'] ?? '';
+    $act = requestFilter('act');
     $user_id = $user_info['user_id'];
 
     $metatags['title'] = $lang['audio'];
@@ -63,10 +63,10 @@ if ($logged) {
             die();
             break;
 
-        //################### Сохранение отредактированых данных ###################//
+        //################### Сохранение отредактированных данных ###################//
         case "editsave":
             NoAjaxQuery();
-            $aid = intval($_POST['aid']);
+            $aid = intFilter('aid');
             $artist = requestFilter('artist', 25000, true);
             $name = requestFilter('name', 25000, true);
 
@@ -87,7 +87,7 @@ if ($logged) {
         //################### Удаление песни из БД ###################//
         case "del":
             NoAjaxQuery();
-            $aid = intval($_POST['aid']);
+            $aid = intFilter('aid');
 
             $check = $db->super_query("SELECT auser_id, url FROM `audio` WHERE aid = '" . $aid . "'");
 
@@ -95,7 +95,7 @@ if ($logged) {
                 $audioName = end(explode('/', $check['url']));
                 $checkMusSite = explode('http://', $check['url']);
                 $expMusO = explode('/', $checkMusSite[1]);
-                $checkMusSite2 = explode('http://', $config['home_url']);
+                $checkMusSite2 = explode('https://', $config['home_url']);
                 $expMusO2 = explode('/', $checkMusSite2[1]);
                 if ($expMusO[0] == $expMusO2[0])
                     @unlink(ROOT_DIR . '/uploads/audio/' . $user_id . '/' . $audioName);
@@ -110,7 +110,7 @@ if ($logged) {
         //################### Добавление песни к себе в список ###################//
         case "addmylist":
             NoAjaxQuery();
-            $aid = intval($_POST['aid']);
+            $aid = intFilter('aid');
 
             $check = $db->super_query("SELECT url, artist, name FROM `audio` WHERE aid = '" . $aid . "'");
 
@@ -129,10 +129,7 @@ if ($logged) {
             NoAjaxQuery();
 
             //Для навигатор
-            if ($_POST['page'] > 0)
-                $page = intval($_POST['page']);
-            else
-                $page = 1;
+            $page = intFilter('page', 1);
             $gcount = 20;
             $limit_page = ($page - 1) * $gcount;
 
@@ -232,7 +229,7 @@ if ($logged) {
 
             //################### Вывод всех аудио ###################//
 
-            $uid = intval($_GET['uid']);
+            $uid = intFilter('uid');
 
             $tpl->load_template('audio/head.tpl');
             $tpl->set('{user-id}', $uid);

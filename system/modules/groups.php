@@ -12,10 +12,11 @@ if (!defined('MOZG'))
 NoAjaxQuery();
 
 if ($logged) {
-    $act = $_GET['act'] ?? '';
+    $act = requestFilter('act');
     $user_id = $user_info['user_id'];
 
-    if (isset($_GET['page']) and $_GET['page'] > 0) $page = intval($_GET['page']); else $page = 1;
+    $page = intFilter('page', 1);
+
     $gcount = 20;
     $limit_page = ($page - 1) * $gcount;
 
@@ -51,7 +52,7 @@ if ($logged) {
         //################### Выход из сообщества ###################//
         case "exit":
             NoAjaxQuery();
-            $id = intval($_POST['id']);
+            $id = intFilter('id');
             $check = $db->super_query("SELECT COUNT(*) AS cnt FROM `friends` WHERE friend_id = '{$id}' AND user_id = '{$user_id}' AND subscriptions = 2");
             if ($check['cnt']) {
                 $db->query("DELETE FROM `friends` WHERE friend_id = '{$id}' AND user_id = '{$user_id}' AND subscriptions = 2");
@@ -92,7 +93,7 @@ if ($logged) {
         case "loadphoto_page":
             NoAjaxQuery();
             $tpl->load_template('groups/load_photo.tpl');
-            $tpl->set('{id}', $_POST['id']);
+            $tpl->set('{id}', intFilter('id'));
             $tpl->compile('content');
             AjaxTpl();
             die();
@@ -102,13 +103,13 @@ if ($logged) {
         case "loadphoto":
             NoAjaxQuery();
 
-            $id = intval($_GET['id']);
+            $id = intFilter('id');
 
             //Проверка на то, что фото обновляет адмиH
             $row = $db->super_query("SELECT admin, photo, del, ban FROM `communities` WHERE id = '{$id}'");
             if (stripos($row['admin'], "u{$user_id}|") !== false and $row['del'] == 0 and $row['ban'] == 0) {
 
-                //Разришенные форматы
+                //Разрешенные форматы
                 $allowed_files = array('jpg', 'jpeg', 'jpe', 'png', 'gif');
 
                 //Получаем данные о фотографии
@@ -118,7 +119,7 @@ if ($logged) {
                 $image_size = $_FILES['uploadfile']['size']; // размер файла
                 $type = end(explode(".", $image_name)); // формат файла
 
-                //Проверям если, формат верный то пропускаем
+                //Проверяем если, формат верный то пропускаем
                 if (in_array(strtolower($type), $allowed_files)) {
                     if ($image_size < 5000000) {
                         $res_type = strtolower('.' . $type);
@@ -175,9 +176,9 @@ if ($logged) {
         //################### Удаление фото сообщества ###################//
         case "delphoto":
             NoAjaxQuery();
-            $id = intval($_POST['id']);
+            $id = intFilter('id');
 
-            //Проверка на то, что фото удалет админ
+            //Проверка на то, что фото удалит админ
             $row = $db->super_query("SELECT photo, admin FROM `communities` WHERE id = '{$id}'");
             if (stripos($row['admin'], "u{$user_id}|") !== false) {
                 $upload_dir = ROOT_DIR . "/uploads/groups/{$id}/";
@@ -196,7 +197,7 @@ if ($logged) {
         //################### Вступление в сообщество ###################//
         case "login":
             NoAjaxQuery();
-            $id = intval($_POST['id']);
+            $id = intFilter('id');
 
             //Проверка на существования юзера в сообществе
             $row = $db->super_query("SELECT ulist, del, ban FROM `communities` WHERE id = '{$id}'");
@@ -245,7 +246,8 @@ if ($logged) {
                     $db->query("DELETE FROM `communities_join` WHERE for_user_id = '{$user_id}' AND public_id = '{$id}'");
                     $appSQLDel = ", invties_pub_num = invties_pub_num - 1";
 
-                }
+                } else
+                    $appSQLDel = null;
 
                 //Обновляем кол-во сообществ у юзера
                 $db->query("UPDATE `users` SET user_public_num = user_public_num + 1 {$appSQLDel} WHERE user_id = '{$user_id}'");
@@ -269,8 +271,8 @@ if ($logged) {
         //################### Добавления контакт в БД ###################//
         case "addfeedback_db":
             NoAjaxQuery();
-            $id = intval($_POST['id']);
-            $upage = intval($_POST['upage']);
+            $id = intFilter('id');
+            $upage = intFilter('upage');
             $office = requestFilter('office', 25000, true);
             $phone = requestFilter('phone', 25000, true);
             $email = requestFilter('email', 25000, true);
@@ -296,10 +298,10 @@ if ($logged) {
         //################### Удаление контакта из БД ###################//
         case "delfeedback":
             NoAjaxQuery();
-            $id = intval($_POST['id']);
-            $uid = intval($_POST['uid']);
+            $id = intFilter('id');
+            $uid = intFilter('uid');
 
-            //Проверка на то, что действиие делает админ
+            //Проверка на то, что действие делает админ
             $checkAdmin = $db->super_query("SELECT admin FROM `communities` WHERE id = '{$id}'");
 
             //Проверяем на то что юзера есть в списке контактов
@@ -316,22 +318,22 @@ if ($logged) {
         //################### Выводим фотографию юзера при указании ИД страницы ###################//
         case "checkFeedUser":
             NoAjaxQuery();
-            $id = intval($_POST['id']);
+            $id = intFilter('id');
             $row = $db->super_query("SELECT user_photo, user_search_pref FROM `users` WHERE user_id = '{$id}'");
             if ($row) echo $row['user_search_pref'] . "|" . $row['user_photo'];
             die();
             break;
 
-        //################### Сохранение отредактированых данных контакт в БД ###################//
+        //################### Сохранение отредактированных данных контакт в БД ###################//
         case "editfeeddave":
             NoAjaxQuery();
-            $id = intval($_POST['id']);
-            $upage = intval($_POST['uid']);
+            $id = intFilter('id');
+            $upage = intFilter('uid');
             $office = requestFilter('office', 25000, true);
             $phone = requestFilter('phone', 25000, true);
             $email = requestFilter('email', 25000, true);
 
-            //Проверка на то, что действиие делает админ
+            //Проверка на то, что действие делает админ
             $checkAdmin = $db->super_query("SELECT admin FROM `communities` WHERE id = '{$id}'");
 
             //Проверяем на то что юзера есть в списке контактов
@@ -351,7 +353,7 @@ if ($logged) {
         //################### Все контакты (БОКС) ###################//
         case "allfeedbacklist":
             NoAjaxQuery();
-            $id = intval($_POST['id']);
+            $id = intFilter('id');
 
             //Выводим ИД админа
             $owner = $db->super_query("SELECT admin FROM `communities` WHERE id = '{$id}'");
@@ -386,23 +388,24 @@ if ($logged) {
             die();
             break;
 
-        //################### Сохранение отредактированых данных группы ###################//
+        //################### Сохранение отредактированных данных группы ###################//
         case "saveinfo":
             NoAjaxQuery();
-            $id = intval($_POST['id']);
-            $comments = intval($_POST['comments']);
-            $discussion = intval($_POST['discussion']);
+            $id = intFilter('id');
+            $comments = intFilter('comments');
+            $discussion = intFilter('discussion');
             $title = requestFilter('title', 25000, true);
             $adres_page = strtolower(requestFilter('adres_page', 25000, true));
             $descr = requestFilter('descr', 5000);
 
-            $_POST['web'] = str_replace(array('"', "'"), '', $_POST['web']);
+            $_POST['web'] = str_replace(array('"', "'"), '', $_POST['web']);//TODO update
+
             $web = requestFilter('web', 25000, true);
 
             if (!preg_match("/^[a-zA-Z0-9_-]+$/", $adres_page)) $adress_ok = false;
             else $adress_ok = true;
 
-            //Проверка на то, что действиие делает админ
+            //Проверка на то, что действие делает админ
             $checkAdmin = $db->super_query("SELECT admin FROM `communities` WHERE id = '" . $id . "'");
 
             if (stripos($checkAdmin['admin'], "u{$user_id}|") !== false and isset($title) and !empty($title) and $adress_ok) {
@@ -414,6 +417,8 @@ if ($logged) {
                 //Проверка на то, что адрес страницы свободен
                 if ($adres_page)
                     $checkAdres = $db->super_query("SELECT COUNT(*) AS cnt FROM `communities` WHERE adres = '" . $adres_page . "' AND id != '" . $id . "'");
+                else
+                    $checkAdres = null;
 
                 if (!$checkAdres['cnt'] or $adres_page == '') {
                     $db->query("UPDATE `communities` SET title = '" . $title . "', descr = '" . $descr . "', comments = '" . $comments . "', discussion = '{$discussion}', adres = '" . $adres_page . "', web = '{$web}' WHERE id = '" . $id . "'");
@@ -432,7 +437,7 @@ if ($logged) {
         //################### Выводим информацию о пользователе которого будем делать админом ###################//
         case "new_admin":
             NoAjaxQuery();
-            $new_admin_id = intval($_POST['new_admin_id']);
+            $new_admin_id = intFilter('new_admin_id');
             $row = $db->super_query("SELECT tb1.user_id, tb2.user_photo, user_search_pref, user_sex FROM `friends` tb1, `users` tb2 WHERE tb1.user_id = '{$new_admin_id}' AND tb1.user_id = tb2.user_id AND tb1.subscriptions = 2");
             if ($row and $user_id != $new_admin_id) {
                 if ($row['user_photo']) $ava = "/uploads/users/{$new_admin_id}/100_{$row['user_photo']}";
@@ -449,8 +454,8 @@ if ($logged) {
         //################### Запись нового админа в БД ###################//
         case "send_new_admin":
             NoAjaxQuery();
-            $id = intval($_POST['id']);
-            $new_admin_id = intval($_POST['new_admin_id']);
+            $id = intFilter('id');
+            $new_admin_id = intFilter('new_admin_id');
             $row = $db->super_query("SELECT admin, ulist FROM `communities` WHERE id = '{$id}'");
             if (stripos($row['admin'], "u{$user_id}|") !== false and stripos($row['admin'], "u{$new_admin_id}|") === false and stripos($row['ulist'], "|{$user_id}|") !== false) {
                 $admin = $row['admin'] . "u{$new_admin_id}|";
@@ -462,8 +467,8 @@ if ($logged) {
         //################### Удаление админа из БД ###################//
         case "deladmin":
             NoAjaxQuery();
-            $id = intval($_POST['id']);
-            $uid = intval($_POST['uid']);
+            $id = intFilter('id');
+            $uid = intFilter('uid');
             $row = $db->super_query("SELECT admin, ulist, real_admin FROM `communities` WHERE id = '{$id}'");
             if (stripos($row['admin'], "u{$user_id}|") !== false and stripos($row['admin'], "u{$uid}|") !== false and $uid != $row['real_admin']) {
                 $admin = str_replace("u{$uid}|", '', $row['admin']);
@@ -475,7 +480,7 @@ if ($logged) {
         //################### Добавление записи на стену ###################//
         case "wall_send":
             NoAjaxQuery();
-            $id = intval($_POST['id']);
+            $id = intFilter('id');
             $wall_text = requestFilter('wall_text');
             $attach_files = requestFilter('attach_files', 25000, true);
 
@@ -492,20 +497,20 @@ if ($logged) {
                     $cnt_attach_link = 1;
                     foreach ($attach_arr as $attach_file) {
                         $attach_type = explode('|', $attach_file);
-                        if ($attach_type[0] == 'link' and preg_match('/http:\/\/(.*?)+$/i', $attach_type[1]) and $cnt_attach_link == 1) {
+                        if ($attach_type[0] == 'link' and preg_match('/https:\/\/(.*?)+$/i', $attach_type[1]) and $cnt_attach_link == 1) {
                             $domain_url_name = explode('/', $attach_type[1]);
-                            $rdomain_url_name = str_replace('http://', '', $domain_url_name[2]);
+                            $rdomain_url_name = str_replace('https://', '', $domain_url_name[2]);
                             $rImgUrl = $attach_type[4];
                             $rImgUrl = str_replace("\\", "/", $rImgUrl);
                             $img_name_arr = explode(".", $rImgUrl);
                             $img_format = to_translit(end($img_name_arr));
                             $image_name = substr(md5($server_time . md5($rImgUrl)), 0, 15);
 
-                            //Разришенные форматы
+                            //Разрешенные форматы
                             $allowed_files = array('jpg', 'jpeg', 'jpe', 'png', 'gif');
 
                             //Загружаем картинку на сайт
-                            if (in_array(strtolower($img_format), $allowed_files) and preg_match("/http:\/\/(.*?)(.jpg|.png|.gif|.jpeg|.jpe)/i", $rImgUrl)) {
+                            if (in_array(strtolower($img_format), $allowed_files) and preg_match("/https:\/\/(.*?)(.jpg|.png|.gif|.jpeg|.jpe)/i", $rImgUrl)) {
 
                                 //Директория загрузки фото
                                 $upload_dir = ROOT_DIR . '/uploads/attach/' . $user_id;
@@ -563,7 +568,7 @@ if ($logged) {
                 $dbid = $db->insert_id();
                 $db->query("UPDATE `communities` SET rec_num = rec_num+1 WHERE id = '{$id}'");
 
-                //Вставляем в ленту новотсей
+                //Вставляем в ленту новостей
                 $db->query("INSERT INTO `news` SET ac_user_id = '{$id}', action_type = 11, action_text = '{$wall_text}', obj_id = '{$dbid}', action_time = '{$server_time}'");
 
                 //Загружаем все записи
@@ -591,10 +596,10 @@ if ($logged) {
 
             AntiSpam('comments');
 
-            $rec_id = intval($_POST['rec_id']);
-            $public_id = intval($_POST['public_id']);
+            $rec_id = intFilter('rec_id');
+            $public_id = intFilter('public_id');
             $wall_text = requestFilter('wall_text');
-            $answer_comm_id = intval($_POST['answer_comm_id']);
+            $answer_comm_id = intFilter('answer_comm_id');
 
             //Проверка на админа и проверяем включены ли комменты
             $row = $db->super_query("SELECT tb1.fasts_num, public_id, tb2.admin, comments FROM `communities_wall` tb1, `communities` tb2 WHERE tb1.public_id = tb2.id AND tb1.id = '{$rec_id}'");
@@ -603,10 +608,10 @@ if ($logged) {
 
                 AntiSpamLogInsert('comments');
 
-                //Если добавляется ответ на комментарий то вносим в ленту новостей "ответы"
+                //Если добавляется ответ на комментарий, то вносим в ленту новостей "ответы"
                 if ($answer_comm_id) {
 
-                    //Выводим ид владельца комменатрия
+                    //Выводим ид владельца комментария
                     $row_owner2 = $db->super_query("SELECT public_id, text FROM `communities_wall` WHERE id = '{$answer_comm_id}' AND fast_comm_id != '0'");
 
                     //Проверка на то, что юзер не отвечает сам себе
@@ -621,7 +626,7 @@ if ($logged) {
                         //Вставляем в ленту новостей
                         $db->query("INSERT INTO `news` SET ac_user_id = '{$user_id}', action_type = 6, action_text = '{$wall_text}', obj_id = '{$answer_comm_id}', for_user_id = '{$row_owner2['public_id']}', action_time = '{$server_time}', answer_text = '{$answer_text}', link = '/wallgroups{$row['public_id']}_{$rec_id}'");
 
-                        //Вставляем событие в моментальные оповещания
+                        //Вставляем событие в моментальные оповещения
                         $update_time = $server_time - 70;
 
                         if ($check2['user_last_visit'] >= $update_time) {
@@ -630,16 +635,13 @@ if ($logged) {
 
                             mozg_create_cache("user_{$row_owner2['public_id']}/updates", 1);
 
-                            //ИНАЧЕ Добавляем +1 юзеру для оповещания
+                            //ИНАЧЕ Добавляем +1 юзеру для оповещения
                         } else {
 
                             $cntCacheNews = mozg_cache("user_{$row_owner2['public_id']}/new_news");
                             mozg_create_cache("user_{$row_owner2['public_id']}/new_news", ($cntCacheNews + 1));
-
                         }
-
                     }
-
                 }
 
                 //Вставляем саму запись в БД
@@ -655,7 +657,7 @@ if ($logged) {
 
                 $sql_comments = $db->super_query("SELECT tb1.id, public_id, text, add_date, tb2.user_photo, user_search_pref FROM `communities_wall` tb1, `users` tb2 WHERE tb1.public_id = tb2.user_id AND tb1.fast_comm_id = '{$rec_id}' ORDER by `add_date` ASC LIMIT {$comments_limit}, 3", true);
 
-                //Загружаем кнопку "Показать N запсии"
+                //Загружаем кнопку "Показать N запси"
                 $tpl->load_template('groups/record.tpl');
                 $tpl->set('{gram-record-all-comm}', gram_record(($row['fasts_num'] - 3), 'prev') . ' ' . ($row['fasts_num'] - 3) . ' ' . gram_record(($row['fasts_num'] - 3), 'comments'));
                 if ($row['fasts_num'] < 4)
@@ -672,7 +674,7 @@ if ($logged) {
                 $tpl->compile('content');
 
                 $tpl->load_template('groups/record.tpl');
-                //Сообственно выводим комменты
+                //Собственно выводим комменты
                 foreach ($sql_comments as $row_comments) {
                     $tpl->set('{public-id}', $public_id);
                     $tpl->set('{name}', $row_comments['user_search_pref']);
@@ -739,8 +741,8 @@ if ($logged) {
         //################### Удаление записи ###################//
         case "wall_del":
             NoAjaxQuery();
-            $rec_id = intval($_POST['rec_id']);
-            $public_id = intval($_POST['public_id']);
+            $rec_id = intFilter('rec_id');
+            $public_id = intFilter('public_id');
 
             //Проверка на админа и проверяем включены ли комменты
             if ($public_id) {
@@ -763,7 +765,7 @@ if ($logged) {
                     $db->query("DELETE FROM `news` WHERE obj_id = '{$rec_id}' AND action_type = '11'");
                     $db->query("UPDATE `communities` SET rec_num = rec_num-1 WHERE id = '{$row['public_id']}'");
 
-                    //Удаляем фотку из прикрипленой ссылке, если она есть
+                    //Удаляем фотку из прикрепленной ссылке, если она есть
                     if (stripos($row['attach'], 'link|') !== false) {
                         $attach_arr = explode('link|', $row['attach']);
                         $attach_arr2 = explode('|/uploads/attach/' . $user_id . '/', $attach_arr[1]);
@@ -782,8 +784,8 @@ if ($logged) {
         //################### Показ всех комментариев к записи ###################//
         case "all_comm":
             NoAjaxQuery();
-            $rec_id = intval($_POST['rec_id']);
-            $public_id = intval($_POST['public_id']);
+            $rec_id = intFilter('rec_id');
+            $public_id = intFilter('public_id');
 
             //Проверка на админа и проверяем включены ли комменты
             $row = $db->super_query("SELECT tb2.admin, comments FROM `communities_wall` tb1, `communities` tb2 WHERE tb1.public_id = tb2.id AND tb1.id = '{$rec_id}'");
@@ -859,11 +861,11 @@ if ($logged) {
         //################### Страница загрузки фото в сообщество ###################//
         case "photos":
             NoAjaxQuery();
-            $public_id = intval($_POST['public_id']);
+            $public_id = intFilter('public_id');
             $rowPublic = $db->super_query("SELECT admin, photos_num FROM `communities` WHERE id = '{$public_id}'");
             if (stripos($rowPublic['admin'], "u{$user_id}|") !== false) {
+                $page = intFilter('page', 1);
 
-                if ($_POST['page'] > 0) $page = intval($_POST['page']); else $page = 1;
                 $gcount = 36;
                 $limit_page = ($page - 1) * $gcount;
 
@@ -901,10 +903,10 @@ if ($logged) {
             die();
             break;
 
-        //################### Выводим инфу о видео при прикриплении видео на стену ###################//
+        //################### Выводим инфу о видео при прикреплении видео на стену ###################//
         case "select_video_info":
             NoAjaxQuery();
-            $video_id = intval($_POST['video_id']);
+            $video_id = intFilter('video_id');
             $row = $db->super_query("SELECT photo FROM `videos` WHERE id = '" . $video_id . "'");
             if ($row) {
                 $photo = end(explode('/', $row['photo']));
@@ -918,7 +920,7 @@ if ($logged) {
         //################### Ставим мне нравится ###################//
         case "wall_like_yes":
             NoAjaxQuery();
-            $rec_id = intval($_POST['rec_id']);
+            $rec_id = intFilter('rec_id');
             $row = $db->super_query("SELECT likes_users FROM `communities_wall` WHERE id = '" . $rec_id . "'");
             if ($row and stripos($row['likes_users'], "u{$user_id}|") === false) {
                 $likes_users = "u{$user_id}|" . $row['likes_users'];
@@ -931,7 +933,7 @@ if ($logged) {
         //################### Убераем мне нравится ###################//
         case "wall_like_remove":
             NoAjaxQuery();
-            $rec_id = intval($_POST['rec_id']);
+            $rec_id = intFilter('rec_id');
             $row = $db->super_query("SELECT likes_users FROM `communities_wall` WHERE id = '" . $rec_id . "'");
             if (stripos($row['likes_users'], "u{$user_id}|") !== false) {
                 $likes_users = str_replace("u{$user_id}|", '', $row['likes_users']);
@@ -944,7 +946,7 @@ if ($logged) {
         //################### Выводим последних 7 юзеров кто поставил "Мне нравится" ###################//
         case "wall_like_users_five":
             NoAjaxQuery();
-            $rec_id = intval($_POST['rec_id']);
+            $rec_id = intFilter('rec_id');
             $sql_ = $db->super_query("SELECT tb1.user_id, tb2.user_photo FROM `communities_wall_like` tb1, `users` tb2 WHERE tb1.user_id = tb2.user_id AND tb1.rec_id = '{$rec_id}' ORDER by `date` DESC LIMIT 0, 7", true);
             if ($sql_) {
                 foreach ($sql_ as $row) {
@@ -959,10 +961,11 @@ if ($logged) {
         //################### Выводим всех юзеров которые поставили "мне нравится" ###################//
         case "all_liked_users":
             NoAjaxQuery();
-            $rid = intval($_POST['rid']);
-            $liked_num = intval($_POST['liked_num']);
+            $rid = intFilter('rid');
+            $liked_num = intFilter('liked_num');
 
-            if ($_POST['page'] > 0) $page = intval($_POST['page']); else $page = 1;
+            $page = intFilter('page', 1);
+
             $gcount = 24;
             $limit_page = ($page - 1) * $gcount;
 
@@ -1005,7 +1008,7 @@ if ($logged) {
         //################### Рассказать друзьям "Мне нравится" ###################//
         case "wall_tell":
             NoAjaxQuery();
-            $rid = intval($_POST['rec_id']);
+            $rid = intFilter('rec_id');
 
             //Проверка на существование записи
             $row = $db->super_query("SELECT add_date, text, public_id, attach, tell_uid, tell_date, public FROM `communities_wall` WHERE fast_comm_id = 0 AND id = '{$rid}'");
@@ -1022,7 +1025,7 @@ if ($logged) {
                 $myRow = $db->super_query("SELECT COUNT(*) AS cnt FROM `wall` WHERE tell_uid = '{$row['public_id']}' AND tell_date = '{$row['add_date']}' AND author_user_id = '{$user_id}' AND public = '{$row['public']}'");
                 if ($row['tell_uid'] != $user_id and $myRow['cnt'] == false) {
 
-                    //Всталвяем себе на стену
+                    //Вставляем себе на стену
                     $db->query("INSERT INTO `wall` SET author_user_id = '{$user_id}', for_user_id = '{$user_id}', text = '{$row['text']}', add_date = '{$server_time}', fast_comm_id = 0, tell_uid = '{$row['public_id']}', tell_date = '{$row['add_date']}', public = '{$row['public']}', attach = '" . $row['attach'] . "'");
                     $dbid = $db->insert_id();
                     $db->query("UPDATE `users` SET user_wall_num = user_wall_num+1 WHERE user_id = '{$user_id}'");
@@ -1040,16 +1043,17 @@ if ($logged) {
             die();
             break;
 
-        //################### Показ всех подпискок ###################//
+        //################### Показ всех подписок ###################//
         case "all_people":
             NoAjaxQuery();
 
-            if ($_POST['page'] > 0) $page = intval($_POST['page']); else $page = 1;
+            $page = intFilter('page', 1);
+
             $gcount = 24;
             $limit_page = ($page - 1) * $gcount;
 
-            $public_id = intval($_POST['public_id']);
-            $subscr_num = intval($_POST['num']);
+            $public_id = intFilter('public_id');
+            $subscr_num = intFilter('num');
 
             $sql_ = $db->super_query("SELECT tb1.user_id, tb2.user_name, user_lastname, user_photo FROM `friends` tb1, `users` tb2 WHERE tb1.friend_id = '{$public_id}' AND tb1.user_id = tb2.user_id AND tb1.subscriptions = 2 ORDER by `friends_date` DESC LIMIT {$limit_page}, {$gcount}", true);
 
@@ -1084,12 +1088,13 @@ if ($logged) {
 
         //################### Показ всех сообщества юзера на которые он подписан (BOX) ###################//
         case "all_groups_user":
-            if ($_POST['page'] > 0) $page = intval($_POST['page']); else $page = 1;
+            $page = intFilter('page', 1);
+
             $gcount = 20;
             $limit_page = ($page - 1) * $gcount;
 
-            $for_user_id = intval($_POST['for_user_id']);
-            $subscr_num = intval($_POST['num']);
+            $for_user_id = intFilter('for_user_id');
+            $subscr_num = intFilter('num');
 
             $sql_ = $db->super_query("SELECT tb1.friend_id, tb2.id, title, photo, traf, adres FROM `friends` tb1, `communities` tb2 WHERE tb1.user_id = '{$for_user_id}' AND tb1.friend_id = tb2.id AND tb1.subscriptions = 2 ORDER by `traf` DESC LIMIT {$limit_page}, {$gcount}", true);
 
@@ -1112,21 +1117,17 @@ if ($logged) {
                     else $tpl->set('{adres}', 'public' . $row['id']);
                     $tpl->compile('content');
                 }
-
                 box_navigation($gcount, $subscr_num, $for_user_id, 'groups.all_groups_user', $subscr_num);
-
             }
-
             AjaxTpl();
-
             die();
             break;
 
         //################### Одна запись со стены ###################//
         case "wallgroups":
 
-            $id = intval($_GET['id']);
-            $pid = intval($_GET['pid']);
+            $id = intFilter('id');
+            $pid = intFilter('pid');
 
             $row = $db->super_query("SELECT id, adres, del, ban FROM `communities` WHERE id = '{$pid}'");
 
@@ -1163,7 +1164,7 @@ if ($logged) {
 
             NoAjaxQuery();
 
-            $rec_id = intval($_POST['rec_id']);
+            $rec_id = intFilter('rec_id');
 
             //Выводим ИД группы
             $row = $db->super_query("SELECT public_id FROM `communities_wall` WHERE id = '{$rec_id}'");
@@ -1185,12 +1186,12 @@ if ($logged) {
 
             break;
 
-        //################### Убераем фиксацию ###################//
+        //################### Убираем фиксацию ###################//
         case "unfasten":
 
             NoAjaxQuery();
 
-            $rec_id = intval($_POST['rec_id']);
+            $rec_id = intFilter('rec_id');
 
             //Выводим ИД группы
             $row = $db->super_query("SELECT public_id FROM `communities_wall` WHERE id = '{$rec_id}'");
@@ -1199,12 +1200,9 @@ if ($logged) {
             $row_pub = $db->super_query("SELECT admin FROM `communities` WHERE id = '{$row['public_id']}'");
 
             if (stripos($row_pub['admin'], "u{$user_id}|") !== false) {
-
-                //Убераем фиксацию записи
+                //Убираем фиксацию записи
                 $db->query("UPDATE `communities_wall` SET fixed = '0' WHERE id = '{$rec_id}'");
-
             }
-
             exit();
 
             break;
@@ -1214,7 +1212,7 @@ if ($logged) {
 
             NoAjaxQuery();
 
-            $public_id = intval($_GET['id']);
+            $public_id = intFilter('id');
 
             //Проверка на админа
             $row_pub = $db->super_query("SELECT admin FROM `communities` WHERE id = '{$public_id}'");
@@ -1233,10 +1231,10 @@ if ($logged) {
                 //Проверка размера
                 if ($image_size <= $max_size) {
 
-                    //Разришенные форматы
+                    //Разрешенные форматы
                     $allowed_files = explode(', ', 'jpg, jpeg, jpe, png, gif');
 
-                    //Проверям если, формат верный то пропускаем
+                    //Проверяем если, формат верный то пропускаем
                     if (in_array(strtolower($type), $allowed_files)) {
 
                         $res_type = strtolower('.' . $type);
@@ -1267,7 +1265,7 @@ if ($logged) {
                             $imgData = getimagesize($rImg);
                             $rImgsData = round($imgData[1] / ($imgData[0] / 800));
 
-                            //Обновдяем обложку в базе
+                            //Обновляем обложку в базе
                             $pos = round(($rImgsData / 2) - 100);
 
                             if ($rImgsData <= 230) {
@@ -1298,22 +1296,16 @@ if ($logged) {
 
             NoAjaxQuery();
 
-            $public_id = intval($_GET['id']);
+            $public_id = intFilter('id');
 
             //Проверка на админа
             $row_pub = $db->super_query("SELECT admin FROM `communities` WHERE id = '{$public_id}'");
 
             if (stripos($row_pub['admin'], "u{$user_id}|") !== false) {
-
-                $pos = intval($_POST['pos']);
-                if ($pos < 0) $pos = 0;
-
+                $pos = intFilter('pos');
                 $db->query("UPDATE `communities` SET cover_pos = '{$pos}' WHERE id = '{$public_id}'");
-
             }
-
             exit();
-
             break;
 
         //################### Удаление обложки ###################//
@@ -1321,7 +1313,7 @@ if ($logged) {
 
             NoAjaxQuery();
 
-            $public_id = intval($_GET['id']);
+            $public_id = intFilter('id');
 
             //Проверка на админа
             $row_pub = $db->super_query("SELECT admin FROM `communities` WHERE id = '{$public_id}'");
@@ -1351,10 +1343,12 @@ if ($logged) {
 
             NoAjaxQuery();
 
-            $pub_id = intval($_POST['id']);
+            $pub_id = intFilter('id');
 
             $limit_friends = 20;
-            if ($_POST['page_cnt'] > 0) $page_cnt = intval($_POST['page_cnt']) * $limit_friends;
+            $page_cnt = intFilter('page_cnt');
+            if ($page_cnt > 0)
+                $page_cnt = $page_cnt * $limit_friends;
             else $page_cnt = 0;
 
             //Выводим список участников группы
@@ -1416,7 +1410,8 @@ if ($logged) {
 
                 $numFr = count($sql_);
 
-            }
+            } else
+                $numFr = null;
 
             if (!$page_cnt) {
 
@@ -1452,7 +1447,7 @@ if ($logged) {
 
             NoAjaxQuery();
 
-            $pub_id = intval($_POST['id']);
+            $pub_id = intFilter('id');
             $limit = 50; #лимит в день
 
             //Выводим список участников группы
@@ -1467,10 +1462,10 @@ if ($logged) {
             //Создаем точку отчета для цикла foreach, чтоб если было уже 49 отправок, и юзер еще выбрал 49 то скрипт в масиве заметил это и прекратил действия
             $i = $rowCnt['cnt'];
 
-            //Если заявок меньше указаного лимита, то пропускаем
+            //Если заявок меньше указанного лимита, то пропускаем
             if ($rowCnt['cnt'] < $limit) {
 
-                //Если такая гурппа есть
+                //Если такая группа есть
                 if ($rowPub['id']) {
 
                     //Получаем список, которых надо пригласить и формируем его
@@ -1493,7 +1488,7 @@ if ($logged) {
                                     //Проверка, юзеру отправлялось приглашение или нет
                                     $check = $db->super_query("SELECT COUNT(*) AS cnt FROM `communities_join` WHERE for_user_id = '{$ruser_id}' AND public_id = '{$pub_id}'");
 
-                                    //Проверка естьли запрашиваемый юзер в друзьях у юзера который смотрит стр
+                                    //Проверка есть ли запрашиваемый юзер в друзьях у юзера который смотрит стр
                                     $check_friend = CheckFriends($ruser_id);
 
                                     //Если нет приглашения, то отправляем приглашение
@@ -1537,7 +1532,9 @@ if ($logged) {
             }
 
             $limit_num = 20;
-            if ($_POST['page_cnt'] > 0) $page_cnt = intval($_POST['page_cnt']) * $limit_num;
+
+            $page_cnt = intFilter('page_cnt');
+            if ($page_cnt > 0) $page_cnt = $page_cnt * $limit_num;
             else $page_cnt = 0;
 
             //Загружаем верхушку
@@ -1631,7 +1628,7 @@ if ($logged) {
 
             NoAjaxQuery();
 
-            $id = intval($_POST['id']);
+            $id = intFilter('id');
 
             //Проверка на приглашению юзеру
             $check = $db->super_query("SELECT COUNT(*) AS cnt FROM `communities_join` WHERE for_user_id = '{$user_id}' AND public_id = '{$id}'");
