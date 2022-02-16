@@ -279,7 +279,7 @@ if (Registry::get('logged')) {
 
                     //Возраст юзера
                     $user_birthday = explode('-', $row['user_birthday']);
-                    $tpl->set('{age}', user_age($user_birthday[0], $user_birthday[1], $user_birthday[2]));
+                    $tpl->set('{age}', user_age($user_birthday[0], $user_birthday[1], $user_birthday[2]) ?? '');
 
                     $tpl->compile('content');
                 }
