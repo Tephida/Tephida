@@ -129,7 +129,7 @@ if (Registry::get('logged')) {
                         megaDate(strtotime($row_notes['date']), 'no_year');
                         $tpl->compile('notes');
                     }
-                    mozg_create_cache($cache_folder . '/notes_user_' . $id, $tpl->result['notes']);
+                    mozg_create_cache($cache_folder . '/notes_user_' . $id, $tpl->result['notes'] ?? '');
                 }
             }
 
@@ -269,7 +269,7 @@ if (Registry::get('logged')) {
 
             if (isset($count_common['cnt']) and $count_common['cnt']) {
 
-                $tpl->set('{mutual_friends}', $tpl->result['mutual_friends']);
+                $tpl->set('{mutual_friends}', $tpl->result['mutual_friends'] ?? '');
                 $tpl->set('{mutual-num}', $count_common['cnt']);
                 $tpl->set('[common-friends]', '');
                 $tpl->set('[/common-friends]', '');
@@ -565,7 +565,7 @@ if (Registry::get('logged')) {
             if ($row['user_notes_num']) {
                 $tpl->set('[notes]', '');
                 $tpl->set('[/notes]', '');
-                $tpl->set('{notes}', $tpl->result['notes']);
+                $tpl->set('{notes}', $tpl->result['notes'] ?? '');
             } else
                 $tpl->set_block("'\\[notes\\](.*?)\\[/notes\\]'si", "");
 
@@ -573,7 +573,7 @@ if (Registry::get('logged')) {
             if ($row['user_videos_num'] and $config['video_mod'] == 'yes') {
                 $tpl->set('[videos]', '');
                 $tpl->set('[/videos]', '');
-                $tpl->set('{videos}', $tpl->result['videos']);
+                $tpl->set('{videos}', $tpl->result['videos'] ?? '');
             } else
                 $tpl->set_block("'\\[videos\\](.*?)\\[/videos\\]'si", "");
 
@@ -581,7 +581,7 @@ if (Registry::get('logged')) {
             if ($row['user_friends_num']) {
                 $tpl->set('[friends]', '');
                 $tpl->set('[/friends]', '');
-                $tpl->set('{friends}', $tpl->result['all_friends']);
+                $tpl->set('{friends}', $tpl->result['all_friends'] ?? '');
             } else
                 $tpl->set_block("'\\[friends\\](.*?)\\[/friends\\]'si", "");
 
@@ -589,7 +589,7 @@ if (Registry::get('logged')) {
             if ($row['user_subscriptions_num']) {
                 $tpl->set('[subscriptions]', '');
                 $tpl->set('[/subscriptions]', '');
-                $tpl->set('{subscriptions}', $tpl->result['subscriptions']);
+                $tpl->set('{subscriptions}', $tpl->result['subscriptions'] ?? '');
             } else
                 $tpl->set_block("'\\[subscriptions\\](.*?)\\[/subscriptions\\]'si", "");
 
@@ -597,7 +597,7 @@ if (Registry::get('logged')) {
             if ($online_friends['cnt']) {
                 $tpl->set('[online-friends]', '');
                 $tpl->set('[/online-friends]', '');
-                $tpl->set('{online-friends}', $tpl->result['all_online_friends']);
+                $tpl->set('{online-friends}', $tpl->result['all_online_friends'] ?? '');
             } else
                 $tpl->set_block("'\\[online-friends\\](.*?)\\[/online-friends\\]'si", "");
 
@@ -609,9 +609,7 @@ if (Registry::get('logged')) {
                 $tpl->set_block("'\\[after-reg\\](.*?)\\[/after-reg\\]'si", "");
 
             //Стена
-            if (!isset($tpl->result['wall']))
-                $tpl->result['wall'] = '';
-            $tpl->set('{records}', $tpl->result['wall']);
+            $tpl->set('{records}', $tpl->result['wall'] ?? '');
 
             if ($user_id != $id) {
                 if ($user_privacy['val_wall1'] == 3 or $user_privacy['val_wall1'] == 2 and !$check_friend) {
@@ -797,14 +795,14 @@ if (Registry::get('logged')) {
             if ($row['user_audio'] and $config['audio_mod'] == 'yes') {
                 $tpl->set('[audios]', '');
                 $tpl->set('[/audios]', '');
-                $tpl->set('{audios}', $tpl->result['audios']);
+                $tpl->set('{audios}', $tpl->result['audios'] ?? '');
                 $tpl->set('{audios-num}', $row['user_audio'] . ' ' . gram_record($row['user_audio'], 'audio'));
             } else
                 $tpl->set_block("'\\[audios\\](.*?)\\[/audios\\]'si", "");
 
             //################### Праздники друзей ###################//
             if ($cnt_happfr) {
-                $tpl->set('{happy-friends}', $tpl->result['happy_all_friends']);
+                $tpl->set('{happy-friends}', $tpl->result['happy_all_friends'] ?? '');
                 $tpl->set('{happy-friends-num}', $cnt_happfr);
                 $tpl->set('[happy-friends]', '');
                 $tpl->set('[/happy-friends]', '');
