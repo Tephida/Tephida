@@ -84,6 +84,7 @@ if (Registry::get('logged')) {
                 $tpl->load_template('fave.tpl');
                 $tpl->result['content'] .= '<table class="food_planner" id="fave_users">';
                 foreach ($sql_ as $row) {
+                    $config = settings_get();
                     if ($row['user_photo'])
                         $tpl->set('{ava}', $config['home_url'] . 'uploads/users/' . $row['fave_id'] . '/100_' . $row['user_photo']);
                     else

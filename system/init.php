@@ -7,7 +7,7 @@
  *
  */
 if (!defined('MOZG')) die('Hacking attempt!');
-include ENGINE_DIR . '/classes/Filesystem.php';
+
 include ENGINE_DIR . '/functions.php';
 
 try {

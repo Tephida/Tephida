@@ -51,7 +51,7 @@ if (Registry::get('logged')) {
             $tpl->compile('content');
 
         }
-
+        $config = settings_get();
         navigation($gcount, $num['cnt'], $config['home_url'] . '?go=guests&page=');
 
         //Убираем новых гостей

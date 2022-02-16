@@ -63,7 +63,7 @@ if (Registry::get('logged')) {
                             mozg_create_cache("user_{$for_user_id}/updates", 1);
 
                         }
-
+                        $config = settings_get();
                         //Отправка уведомления на E-mail
                         if ($config['news_mail_1'] == 'yes') {
                             $rowUserEmail = $db->super_query("SELECT user_name, user_email FROM `users` WHERE user_id = '" . $for_user_id . "'");
@@ -260,6 +260,7 @@ if (Registry::get('logged')) {
                     $tpl->set('{user-id}', $row['from_user_id']);
                     $tpl->set('{name}', $row['user_search_pref']);
 
+                    $config = settings_get();
                     // FOR MOBILE VERSION 1.0
                     if ($config['temp'] == 'mobile') {
 
@@ -369,6 +370,7 @@ if (Registry::get('logged')) {
                         $tpl->set('{user-id}', $row['user_id']);
                         $tpl->set('{name}', $row['user_search_pref']);
 
+                        $config = settings_get();
                         if ($row['user_photo'])
                             $tpl->set('{ava}', $config['home_url'] . 'uploads/users/' . $row['user_id'] . '/100_' . $row['user_photo']);
                         else
@@ -433,6 +435,7 @@ if (Registry::get('logged')) {
                         $tpl->set('{user-id}', $row['friend_id']);
                         $tpl->set('{name}', $row['user_search_pref']);
 
+                        $config = settings_get();
                         if ($row['user_photo'])
                             $tpl->set('{ava}', $config['home_url'] . 'uploads/users/' . $row['friend_id'] . '/50_' . $row['user_photo']);
                         else
@@ -512,6 +515,9 @@ if (Registry::get('logged')) {
                             $tpl->set('{user-id}', $row['friend_id']);
                             $tpl->set('{name}', $row['user_search_pref']);
 
+                            $config = settings_get();
+                            $avaPREFver = $avaPREFver ?? '';
+                            $noAvaPrf = $noAvaPrf ?? '';
                             if ($row['user_photo'])
                                 $tpl->set('{ava}', $config['home_url'] . 'uploads/users/' . $row['friend_id'] . '/' . $avaPREFver . $row['user_photo']);
                             else
@@ -625,6 +631,7 @@ if (Registry::get('logged')) {
                             $tpl->set('{user-id}', $row['friend_id']);
                             $tpl->set('{name}', $row['user_search_pref']);
 
+                            $config = settings_get();
                             // FOR MOBILE VERSION 1.0
                             if ($config['temp'] == 'mobile') {
 

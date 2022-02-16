@@ -586,6 +586,7 @@ if (Registry::get('logged')) {
 
                             if ($attach_type[1] == 'attach' and file_exists(ROOT_DIR . "/uploads/attach/{$attauthor_user_id}/c_{$attach_type[2]}")) {
 
+                                $rodImHeigh = $rodImHeigh ?? '';
                                 $attach_result .= "<img id=\"photo_wall_{$row['fid']}_{$cnt_attach}\" src=\"/uploads/attach/{$attauthor_user_id}/c_{$attach_type[2]}\" style=\"margin-top:3px;margin-right:3px\" align=\"left\" onClick=\"groups.wall_photo_view('{$row['fid']}', '', '{$attach_type[1]}', '{$cnt_attach}')\" class=\"cursor_pointer page_num{$row['fid']}\" height=\"{$rodImHeigh}\" />";
 
 
@@ -594,6 +595,7 @@ if (Registry::get('logged')) {
 
                             } elseif (file_exists(ROOT_DIR . "/uploads/users/{$attauthor_user_id}/albums/{$attach_type[2]}/c_{$attach_type[1]}")) {
 
+                                $row_wall['tell_uid'] = $row_wall['tell_uid'] ?? '';;
                                 $attach_result .= "<img id=\"photo_wall_{$row['fid']}_{$cnt_attach}\" src=\"/uploads/users/{$attauthor_user_id}/albums/{$attach_type[2]}/c_{$attach_type[1]}\" style=\"margin-top:3px;margin-right:3px\" align=\"left\" onClick=\"groups.wall_photo_view('{$row['fid']}', '{$row_wall['tell_uid']}', '{$attach_type[1]}', '{$cnt_attach}')\" class=\"cursor_pointer page_num{$row['fid']}\" />";
 
                                 $cnt_attach++;

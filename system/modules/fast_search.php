@@ -54,6 +54,7 @@ if (Registry::get('logged')) {
 
                         //Если критерий поиск "по сообществам"
                     } else if ($type == 4) {
+                        $config = settings_get();
                         if ($row['photo'])
                             $ava = '/uploads/groups/' . $row['id'] . '/50_' . $row['photo'];
                         else

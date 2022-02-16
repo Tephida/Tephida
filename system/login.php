@@ -40,6 +40,7 @@ if (isset($_SESSION['user_id']) > 0) {
 
     //Если юзер нажимает "Главная", и он зашел не с моб версии. То скидываем на его стр.
     $host_site = $_SERVER['QUERY_STRING'];
+    $config = settings_get();
     if (!$host_site and $config['temp'] != 'mobile')
         header('Location: /u' . $user_info['user_id']);
     //Если есть данные о COOKIE, то проверяем
@@ -64,6 +65,7 @@ if (isset($_SESSION['user_id']) > 0) {
     }
     //Если юзер нажимает "Главная" и он зашел не с моб версии, то скидываем на его стр.
     $host_site = $_SERVER['QUERY_STRING'];
+    $config = settings_get();
     if ($logged AND !$host_site AND $config['temp'] != 'mobile')
         header('Location: /u' . $user_info['user_id']);
 } else {

@@ -24,6 +24,7 @@ $ajax = $_POST['ajax'] ?? null;
 $logged = false;
 $user_info = false;
 include_once ENGINE_DIR . '/classes/Registry.php';
+include ENGINE_DIR . '/classes/Filesystem.php';
 include ENGINE_DIR . '/init.php';
 //Если юзер перешел по реф ссылке, то добавляем ид реферала в сессию
 if (isset($_GET['reg']))

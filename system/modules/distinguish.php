@@ -127,7 +127,7 @@ if (Registry::get('logged')) {
                 $friend = null;
                 $added_script = null;
             }
-
+            $config = settings_get();
             echo <<<HTML
 <script type="text/javascript" src="/templates/{$config['temp']}/js/fave.filter.js"></script>
 <script type="text/javascript">

@@ -9,7 +9,6 @@
 if (!defined('MOZG'))
     die('Hacking attempt!');
 
-if ($ajax == 'yes')
     NoAjaxQuery();
 
 if (Registry::get('logged') == false) {
@@ -60,6 +59,7 @@ if (Registry::get('logged') == false) {
 
                 //Отправляем письмо на почту для восстановления
                 include_once ENGINE_DIR . '/classes/mail.php';
+                $config = settings_get();
                 $mail = new vii_mail($config);
                 $message = <<<HTML
 Здравствуйте, {$check['user_name']}.

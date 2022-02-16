@@ -33,6 +33,7 @@ if (Registry::get('logged')) {
         //################## Сохранение отредактированной фотки ##################//
         default:
 
+            $config = settings_get();
             //Разрешенные форматы
             $allowed_files = explode(', ', $config['photo_format']);
 

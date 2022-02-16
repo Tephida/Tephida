@@ -34,7 +34,7 @@ if (Registry::get('logged')) {
         //################### Добавление видео в БД ###################//
         case "send":
             NoAjaxQuery();
-
+            $config = settings_get();
             if ($config['video_mod_add'] == 'yes') {
                 $good_video_lnk = requestFilter('good_video_lnk');
                 $title = requestFilter('title', 25000, true);
@@ -296,6 +296,7 @@ if (Registry::get('logged')) {
         //################### Добавления комментария в базу ###################//
         case "addcomment":
             NoAjaxQuery();
+            $config = settings_get();
             if ($config['video_mod_comm'] == 'yes') {
                 $vid = intFilter('vid');
                 $comment = requestFilter('comment');
@@ -479,7 +480,7 @@ if (Registry::get('logged')) {
                     } else
 
                         $tpl->set_block("'\\[owner\\](.*?)\\[/owner\\]'si", "");
-
+                    $config = settings_get();
                     if ($row_comm['user_photo'])
                         $tpl->set('{ava}', $config['home_url'] . 'uploads/users/' . $row_comm['author_user_id'] . '/50_' . $row_comm['user_photo']);
                     else
@@ -677,6 +678,7 @@ if (Registry::get('logged')) {
             NoAjaxQuery();
             $vid = intFilter('vid');
             $row = $db->super_query("SELECT video, photo, title, descr FROM `videos` WHERE id = '{$vid}'");
+            $config = settings_get();
             if ($row and $config['video_mod_add_my'] == 'yes') {
                 //Директория загрузки фото
                 $upload_dir = ROOT_DIR . '/uploads/videos/' . $user_id;
@@ -762,7 +764,7 @@ if (Registry::get('logged')) {
                             $tpl->set('[/not-owner]', '');
                             $tpl->set_block("'\\[owner\\](.*?)\\[/owner\\]'si", "");
                         }
-
+                        $config = settings_get();
                         if ($config['video_mod_add'] == 'yes') {
                             $tpl->set('[admin-video-add]', '');
                             $tpl->set('[/admin-video-add]', '');

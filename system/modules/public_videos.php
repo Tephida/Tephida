@@ -44,7 +44,7 @@ if (Registry::get('logged')) {
                 $img_name_arr = end(explode(".", $row['photo']));
                 $expPhoto = substr(md5(time() . md5($row['photo'])), 0, 15) . '.' . $img_name_arr;
                 Filesystem::copy($row['photo'], ROOT_DIR . "/uploads/videos/{$user_id}/{$expPhoto}");
-
+                $config = settings_get();
                 $newPhoto = "{$config['home_url']}uploads/videos/{$user_id}/{$expPhoto}";
 
                 $db->query("INSERT INTO `videos` SET public_id = '{$pid}', owner_user_id = '{$user_id}', video = '{$row['video']}', photo = '{$newPhoto}', title = '{$row['title']}', descr = '{$row['descr']}', add_date = NOW(), privacy = '1'");

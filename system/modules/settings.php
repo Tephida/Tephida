@@ -189,6 +189,7 @@ if (Registry::get('logged')) {
         case "change_mail":
             //Отправляем письмо на обе почты
             include_once ENGINE_DIR . '/classes/mail.php';
+            $config = settings_get();
             $mail = new vii_mail($config);
             $email = requestFilter('email', 25000, true);
             //Проверка E-mail

@@ -315,17 +315,23 @@ if (Registry::get('logged')) {
                         $tpl->set('{name}', $row['user_search_pref']);
                         $tpl->set('{user-id}', $row['user_id']);
                         $tpl->set('{user-id}', $row['user_id']);
-                        if ($row['rating'] == 1) $tpl->set('{rate}', '<div class="rating rating3" style="background:url(\'{theme}/images/rating3.png\')">' . $row['rating'] . '</div>');
-                        else if ($row['rating'] == 6) $tpl->set('{rate}', '<div class="rating rating3"  style="background:url(\'{theme}/images/rating2.png\')">5+</div>');
-                        else $tpl->set('{rate}', '<div class="rating rating3">' . $row['rating'] . '</div>');
-                        if ($row['user_photo']) $tpl->set('{ava}', "/uploads/users/{$row['user_id']}/50_{$row['user_photo']}");
-                        else $tpl->set('{ava}', "{theme}/images/no_ava_50.png");
+                        if ($row['rating'] == 1)
+                            $tpl->set('{rate}', '<div class="rating rating3" style="background:url(\'{theme}/images/rating3.png\')">' . $row['rating'] . '</div>');
+                        else if ($row['rating'] == 6)
+                            $tpl->set('{rate}', '<div class="rating rating3"  style="background:url(\'{theme}/images/rating2.png\')">5+</div>');
+                        else
+                            $tpl->set('{rate}', '<div class="rating rating3">' . $row['rating'] . '</div>');
+                        if ($row['user_photo'])
+                            $tpl->set('{ava}', "/uploads/users/{$row['user_id']}/50_{$row['user_photo']}");
+                        else
+                            $tpl->set('{ava}', "{theme}/images/no_ava_50.png");
                         $date_str = megaDate($row['date']);
                         $tpl->set('{date}', $date_str);
                         $tpl->compile('rates_users');
                     }
                 } else {
-                    if (!$lid) $tpl->result['rates_users'] = '<div class="info_center"><br /><br />Пока что никто не оценил Вашу фотографию.<br /><br /><br /></div>';
+                    if (!$lid)
+                        $tpl->result['rates_users'] = '<div class="info_center"><br /><br />Пока что никто не оценил Вашу фотографию.<br /><br /><br /></div>';
                 }
                 //Загружаем шаблон вывода
                 if (!$lid) {

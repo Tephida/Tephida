@@ -26,7 +26,7 @@ if (Registry::get('logged')) {
             $for_user_id = intFilter('user_id');
 
             $sql_ = $db->super_query("SELECT gid, img, price FROM `gifts_list` ORDER by `gid` DESC", true);
-
+            $config = settings_get();
             foreach ($sql_ as $gift) {
 
                 if ($config['temp'] == 'mobile')
@@ -96,7 +96,7 @@ if (Registry::get('logged')) {
                     }
 
                     mozg_mass_clear_cache_file("user_{$for_user_id}/profile_{$for_user_id}|user_{$for_user_id}/gifts");
-
+                    $config = settings_get();
                     //Если цена подарка выше бонусного, то начисляем цену подарка на рейтинг
                     if ($gifts['price'] > $config['bonus_rate']) {
 

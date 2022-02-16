@@ -148,7 +148,7 @@ if (Registry::get('logged')) {
                             $tmb->size_auto('570', 1);
                             $tmb->jpeg_quality('100');
                             $tmb->save($album_dir . $image_rename . $res_type);
-
+                            $config = settings_get();
                             $img_url = $config['home_url'] . 'uploads/blog/' . $image_rename . $res_type;
 
                             //Результат для ответа

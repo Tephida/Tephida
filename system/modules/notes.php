@@ -201,6 +201,7 @@ if (Registry::get('logged')) {
 
                     $tpl->load_template('notes/comment.tpl');
                     $tpl->set('{author}', $user_info['user_search_pref']);
+                    $config = settings_get();
                     if ($user_info['user_photo'])
                         $tpl->set('{ava}', $config['home_url'] . 'uploads/users/' . $user_id . '/50_' . $user_info['user_photo']);
                     else
@@ -289,6 +290,7 @@ if (Registry::get('logged')) {
                 $sql_ = $db->super_query("SELECT tb1.id, from_user_id, text, date, tb2.user_search_pref, user_photo, user_last_visit, user_logged_mobile tb3.owner_user_id FROM `notes_comments` tb1, `users` tb2, `notes` tb3 WHERE tb1.note_id = '{$note_id}' AND tb1.from_user_id = tb2.user_id AND tb1.note_id = tb3.id ORDER by `add_date` ASC LIMIT 0, {$limit}", true);
 
                 $tpl->load_template('notes/comment.tpl');
+                $config = settings_get();
                 foreach ($sql_ as $row_comm) {
                     if ($row_comm['user_photo'])
                         $tpl->set('{ava}', $config['home_url'] . 'uploads/users/' . $row_comm['from_user_id'] . '/50_' . $row_comm['user_photo']);
@@ -404,6 +406,7 @@ if (Registry::get('logged')) {
                         $sql_ = $db->super_query("SELECT tb1.id, from_user_id, text, add_date, tb2.user_search_pref, user_photo, user_last_visit, user_logged_mobile FROM `notes_comments` tb1, `users` tb2 WHERE tb1.note_id = '{$note_id}' AND tb1.from_user_id = tb2.user_id ORDER by `add_date` ASC LIMIT {$start_limit}, {$row['comm_num']}", true);
 
                         $tpl->load_template('notes/comment.tpl');
+                        $config = settings_get();
                         foreach ($sql_ as $row_comm) {
                             if ($row_comm['user_photo'])
                                 $tpl->set('{ava}', $config['home_url'] . 'uploads/users/' . $row_comm['from_user_id'] . '/50_' . $row_comm['user_photo']);
@@ -492,6 +495,7 @@ if (Registry::get('logged')) {
                     //Выводим
                     if ($sql_) {
                         $tpl->load_template('notes/short.tpl');
+                        $config = settings_get();
                         foreach ($sql_ as $row) {
                             if ($owner['user_photo'])
                                 $tpl->set('{ava}', $config['home_url'] . 'uploads/users/' . $get_user_id . '/50_' . $owner['user_photo']);

@@ -59,7 +59,7 @@ if (Registry::get('logged')) {
     else {
         $where_sql_gen = "WHERE user_delet = '0' AND user_ban = '0'";
     }
-
+    $config = settings_get();
     //Делаем SQL Запрос в БД на вывод данных
     if ($type == 1) { //Если критерий поиск "по людям"
         $sql_query = "SELECT user_id, user_search_pref, user_photo, user_birthday, user_country_city_name, user_last_visit, user_logged_mobile FROM `users` {$where_sql_gen} {$sql_sort} ORDER by `user_rating` DESC LIMIT {$limit_page}, {$gcount}";

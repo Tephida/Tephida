@@ -112,7 +112,7 @@ if (Registry::get('logged')) {
                     $tpl->result['content'] = '<div class="info_center" style="padding-top:145px;padding-bottom:125px">По запросу <b>' . $query . '</b> не найдено ни одной аудиозаписи.</div>';
 
                 } else
-
+                    $config = settings_get();
                     if (!$page_cnt)
                         $tpl->result['content'] = '<div class="info_center" style="padding-top:145px;padding-bottom:125px"><center><img src="/templates/' . $config['temp'] . '/images/snone.png" style="marign-bottom:60px;margin-top:-80px" /></center><div>Здесь Вы можете хранить Ваши аудиозаписи.<br />Для того, чтобы загрузить Вашу первую аудиозапись, <a href="/audio17" onClick="audio.addBox(1); return false;">нажмите здесь</a>.</div></div>';
 

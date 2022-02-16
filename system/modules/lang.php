@@ -16,6 +16,7 @@ $tpl->load_template('lang/main.tpl');
 $useLang = isset($_COOKIE['lang']) ? intval($_COOKIE['lang']) : null;
 
 if($useLang <= 0) $useLang = 1;
+$config = settings_get();
 $config['lang_list'] = nl2br($config['lang_list']);
 $expLangList = explode('<br />', $config['lang_list']);
 $numLangs = count($expLangList);

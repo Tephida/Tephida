@@ -34,6 +34,7 @@ if ($row) {
         $privacy = false;
 
     if ($privacy) {
+        $config = settings_get();
         //Выводим комментарии если они есть
         if ($row['comm_num'] and $config['video_mod_comm'] == 'yes') {
 

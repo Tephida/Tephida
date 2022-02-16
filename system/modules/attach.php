@@ -54,7 +54,7 @@ if (Registry::get('logged')) {
                 //Вставляем фотографию
                 $db->query("INSERT INTO `attach` SET photo = '{$image_rename}{$res_type}', ouser_id = '{$user_id}', add_date = '{$server_time}'");
                 $ins_id = $db->insert_id();
-
+                $config = settings_get();
                 $img_url = $config['home_url'] . 'uploads/attach/' . $user_id . '/c_' . $image_rename . $res_type;
 
                 //Результат для ответа

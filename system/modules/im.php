@@ -87,6 +87,7 @@ if (Registry::get('logged')) {
                     $image_size = $_FILES['uploadfile']['size'];
                     $type = end(explode(".", $image_name));
                     if ($type == 'jpg' || $type == 'png') {
+                        $config = settings_get();
                         $config['max_photo_size'] = $config['max_photo_size'] * 1000;
                         if ($image_size < $config['max_photo_size']) {
                             $res_type = strtolower('.' . $type);
@@ -222,6 +223,7 @@ if (Registry::get('logged')) {
             $sql = $db->super_query("SELECT tb1.friend_id, tb2.user_photo, tb2.user_search_pref FROM friends tb1, users tb2 WHERE tb1.user_id = '{$user_id}' AND tb1.friend_id = tb2.user_id AND tb1.subscriptions = 0 ORDER by friends_date DESC", true);
             if ($sql) {
                 $tpl->load_template('im/createRoomItem.tpl');
+                $config = settings_get();
                 foreach ($sql as $row) {
                     $tpl->set('{avatar}', $row['user_photo'] ? $config['home_url'] . 'uploads/users/' . $row['friend_id'] . '/50_' . $row['user_photo'] : "{theme}/images/100_no_ava.png");
                     $tpl->set('{id}', $row['friend_id']);
@@ -242,6 +244,7 @@ if (Registry::get('logged')) {
             $sql = $db->super_query("SELECT tb1.friend_id, tb2.user_photo, tb2.user_search_pref FROM friends tb1, users tb2 WHERE tb1.user_id = '{$user_id}' AND tb1.friend_id = tb2.user_id AND tb1.subscriptions = 0 AND tb1.friend_id NOT IN (SELECT oid2 FROM room_users WHERE room_id = '{$room_id}' and type != 2) ORDER by friends_date DESC", true);
             if ($sql) {
                 $tpl->load_template('im/createRoomItem.tpl');
+                $config = settings_get();
                 foreach ($sql as $row) {
                     $tpl->set('{avatar}', $row['user_photo'] ? $config['home_url'] . 'uploads/users/' . $row['friend_id'] . '/50_' . $row['user_photo'] : "{theme}/images/100_no_ava.png");
                     $tpl->set('{id}', $row['friend_id']);
@@ -498,11 +501,12 @@ if (Registry::get('logged')) {
                         $tpl->set('{ava}', $my_ava);
                         $tpl->set('{name}', $my_name);
                         $tpl->set('{user-id}', $user_id);
+                        $attach_result = '';
                         if ($attach_files) {
                             $attach_arr = explode('||', $attach_files);
                             $cnt_attach = 1;
                             $jid = 0;
-                            $attach_result = '';
+
                             foreach ($attach_arr as $attach_file) {
                                 $attach_type = explode('|', $attach_file);
                                 if ($attach_type[0] == 'photo_u') {
@@ -634,6 +638,7 @@ if (Registry::get('logged')) {
                         $cnt_attach_link = 1;
                         $jid = 0;
                         $attach_result = '';
+                        $config = settings_get();
                         foreach ($attach_arr as $attach_file) {
                             $attach_type = explode('|', $attach_file);
                             if ($attach_type[0] == 'photo' and file_exists(ROOT_DIR . "/uploads/groups/{$row['tell_uid']}/photos/c_{$attach_type[1]}")) {
@@ -897,6 +902,7 @@ HTML;
                         $cnt_attach_link = 1;
                         $jid = 0;
                         $attach_result = '';
+                        $config = settings_get();
                         foreach ($attach_arr as $attach_file) {
                             $attach_type = explode('|', $attach_file);
                             if ($attach_type[0] == 'photo' and file_exists(ROOT_DIR . "/uploads/groups/{$row['tell_uid']}/photos/c_{$attach_type[1]}")) {
