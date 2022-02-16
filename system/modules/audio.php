@@ -200,10 +200,13 @@ if (Registry::get('logged')) {
 
             //Получаем данные о файле
             $file_tmp = $_FILES['uploadfile']['tmp_name'];
-            $file_name = to_translit($_FILES['uploadfile']['name']); // оригинальное название для оприделения формата
+//            $file_name = to_translit($_FILES['uploadfile']['name']); // оригинальное название для определения формата
+            $file_name = $_FILES['uploadfile']['name'];
+
             $file_rename = substr(md5($server_time + rand(1, 100000)), 0, 15); // имя
             $file_size = $_FILES['uploadfile']['size']; // размер файла
-            $type = strtolower(end(explode(".", $file_name))); // формат файла
+            $array = explode(".", $file_name);
+            $type = strtolower(end($array)); // формат файла
             $config = settings_get();
             if ($type == 'mp3' and $config['audio_mod_add'] == 'yes' and $file_size < 10000000) {
                 $audio_dir = ROOT_DIR . '/uploads/audio/' . $user_id . '/';
