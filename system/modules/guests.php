@@ -12,6 +12,7 @@ if (!defined('MOZG'))
 NoAjaxQuery();
 
 if (Registry::get('logged')) {
+    $user_info = $user_info ?? Registry::get('user_info');
     $user_id = $user_info['user_id'];
     $db = Registry::get('db');
     $metatags['title'] = 'Гости';

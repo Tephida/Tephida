@@ -13,6 +13,7 @@ NoAjaxQuery();
 
 if (Registry::get('logged')) {
     $server_time = Registry::get('server_time');
+    $user_info = $user_info ?? Registry::get('user_info');
     $user_id = $user_info['user_id'];
     $db = Registry::get('db');
     //Если нет папки альбома, то создаём её

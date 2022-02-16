@@ -15,6 +15,7 @@ if ($ajax == 'yes')
 if (Registry::get('logged') == false) {
     $db = Registry::get('db');
     $act = requestFilter('act');
+    $user_info = $user_info ?? Registry::get('user_info');
     $metatags['title'] = $lang['restore_title'];
     $server_time = Registry::get('server_time');
 

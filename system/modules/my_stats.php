@@ -13,6 +13,7 @@ NoAjaxQuery();
 
 if (Registry::get('logged')) {
     $db = Registry::get('db');
+    $user_info = $user_info ?? Registry::get('user_info');
     $server_time = Registry::get('server_time');
     $month = intFilter('m');
     if ($month and $month <= 0 or $month > 12) $month = 1;

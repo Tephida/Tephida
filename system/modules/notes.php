@@ -13,6 +13,7 @@ NoAjaxQuery();
 
 if (Registry::get('logged')) {
     $act = requestFilter('act');
+    $user_info = $user_info ?? Registry::get('user_info');
     $user_id = intval($user_info['user_id']);
     $yesterday_date = Registry::get('server_time');
     $server_time = Registry::get('server_time');

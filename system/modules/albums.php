@@ -15,6 +15,7 @@ if (Registry::get('logged')) {
     $act = requestFilter('act');
     $server_time = Registry::get('server_time');
     $db = Registry::get('db');
+    $user_info = $user_info ?? Registry::get('user_info');
     switch ($act) {
 
         //################### Создание альбома ###################//

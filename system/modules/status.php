@@ -13,6 +13,7 @@ NoAjaxQuery();
 
 if (Registry::get('logged')) {
     $db = Registry::get('db');
+    $user_info = $user_info ?? Registry::get('user_info');
     $user_id = $user_info['user_id'];
     $text = requestFilter('text', 25000, true);
     $public_id = intFilter('public_id');

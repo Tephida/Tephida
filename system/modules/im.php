@@ -13,6 +13,7 @@ NoAjaxQuery();
 $jsonResponse = array();
 if (Registry::get('logged')) {
     $act = requestFilter('act');
+    $user_info = $user_info ?? Registry::get('user_info');
     $user_id = $user_info['user_id'];
     $db = Registry::get('db');
     $server_time = Registry::get('server_time');

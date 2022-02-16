@@ -8,7 +8,7 @@
  */
 if(!defined('MOZG'))
 	die("Hacking attempt!");
-
+$user_info = $user_info ?? Registry::get('user_info');
 if($user_info['user_group'] != '1'){
 	$tpl->load_template('offline.tpl');
 	$config['offline_msg'] = str_replace('&quot;', '"', stripslashes($config['offline_msg']));

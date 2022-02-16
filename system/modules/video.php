@@ -12,6 +12,7 @@ if (!defined('MOZG'))
 $vid = intFilter('vid');
 $close_link = requestFilter('close_link');
 $db = Registry::get('db');
+$user_info = $user_info ?? Registry::get('user_info');
 //Выводи данные о видео если оно есть
 $row = $db->super_query("SELECT tb1.video, title, add_date, descr, owner_user_id, views, comm_num, privacy, public_id, tb2.user_search_pref FROM `videos` tb1, `users` tb2 WHERE tb1.id = '{$vid}' AND tb1.owner_user_id = tb2.user_id");
 

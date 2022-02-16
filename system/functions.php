@@ -952,7 +952,7 @@ function GenerateAlbumPhotosPosition($uid, $aid = false) {
 }
 function CheckFriends($friendId): bool
 {
-    global $user_info;
+    $user_info = Registry::get('user_info');
     $openMyList = mozg_cache("user_{$user_info['user_id']}/friends");
     if (stripos($openMyList, "u{$friendId}|") !== false)
         return true;
@@ -961,7 +961,7 @@ function CheckFriends($friendId): bool
 }
 function CheckBlackList($userId): bool
 {
-    global $user_info;
+    $user_info = Registry::get('user_info');
     $openMyList = mozg_cache("user_{$userId}/blacklist");
     if (stripos($openMyList, "|{$user_info['user_id']}|") !== false)
         return true;
@@ -970,7 +970,7 @@ function CheckBlackList($userId): bool
 }
 function MyCheckBlackList($userId): bool
 {
-    global $user_info;
+    $user_info = Registry::get('user_info');
     $openMyList = mozg_cache("user_{$user_info['user_id']}/blacklist");
     if (stripos($openMyList, "|{$userId}|") !== false)
         return true;
@@ -1109,7 +1109,7 @@ if (isset($_SESSION['mobile']) AND $_SESSION['mobile'] == 1) {
 }
 function AntiSpam($act, $text = false)
 {
-    global $user_info;
+    $user_info = Registry::get('user_info');
     $db = Registry::get('db');
     if ($text) $text = md5($text);
     /* Типы
@@ -1192,7 +1192,7 @@ function AntiSpam($act, $text = false)
  */
 function AntiSpamLogInsert(string $act, bool|string $text = false): void
 {
-    global $user_info;
+    $user_info = Registry::get('user_info');
     $db = Registry::get('db');
     if ($text)
         $text = md5($text);

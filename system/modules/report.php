@@ -14,6 +14,7 @@ NoAjaxQuery();
 if (Registry::get('logged')) {
     $db = Registry::get('db');
     $server_time = Registry::get('server_time');
+    $user_info = $user_info ?? Registry::get('user_info');
     $act = requestFilter('act');
     $mid = intFilter('id');
     $type_report = intFilter('type_report');

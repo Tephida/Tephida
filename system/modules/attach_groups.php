@@ -14,6 +14,7 @@ NoAjaxQuery();
 if (Registry::get('logged')) {
     $public_id = intFilter('public_id');
     $server_time = Registry::get('server_time');
+    $user_info = $user_info ?? Registry::get('user_info');
     $db = Registry::get('db');
     $rowPublic = $db->super_query("SELECT admin FROM `communities` WHERE id = '{$public_id}'");
     if (stripos($rowPublic['admin'], "u{$user_info['user_id']}|") !== false) {

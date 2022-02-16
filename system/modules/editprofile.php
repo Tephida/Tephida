@@ -16,6 +16,7 @@ if (Registry::get('logged')) {
     $server_time = Registry::get('server_time');
     $metatags['title'] = $lang['editmyprofile'];
     $db = Registry::get('db');
+    $user_info = $user_info ?? Registry::get('user_info');
 
     switch ($act) {
 

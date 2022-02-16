@@ -12,6 +12,7 @@ if (!defined('MOZG'))
 NoAjaxQuery();
 
 if (Registry::get('logged')) {
+    $user_info = $user_info ?? Registry::get('user_info');
     $user_id = $user_info['user_id'];
     $server_time = Registry::get('server_time');
     $limit_sql = 7;

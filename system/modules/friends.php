@@ -15,6 +15,7 @@ NoAjaxQuery();
 if (Registry::get('logged')) {
     $act = requestFilter('act');
     $metatags['title'] = $lang['friends'];
+    $user_info = $user_info ?? Registry::get('user_info');
     $server_time = Registry::get('server_time');
     $page = intFilter('page', 1);
     $db = Registry::get('db');
