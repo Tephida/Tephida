@@ -235,11 +235,12 @@ class wall
 
                                 } else {
 
-                                    $num = $answer[$ai]['cnt'];
+                                    $num = $answer[$ai]['cnt'] ?? 0;
 
-                                    if (!$num) $num = 0;
-                                    if ($max != 0) $proc = (100 * $num) / $max;
-                                    else $proc = 0;
+                                    if ($max != 0)
+                                        $proc = (100 * $num) / $max;
+                                    else
+                                        $proc = 0;
                                     $proc = round($proc, 2);
 
                                     $attach_result .= "<div class=\"wall_vote_oneanswe cursor_default\">

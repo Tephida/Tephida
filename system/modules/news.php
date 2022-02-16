@@ -145,7 +145,7 @@ if (Registry::get('logged')) {
             }
 
             //Выводим данные о том кто инсцинировал действие
-            if ($row['user_sex'] == 2) {
+            if (!empty($row['user_sex']) and $row['user_sex'] == 2) {
                 $sex_text = 'добавила';
                 $sex_text_2 = 'ответила';
                 $sex_text_3 = 'оценила';
@@ -159,7 +159,7 @@ if (Registry::get('logged')) {
 
             $tpl->set('{author}', $row['user_search_pref']);
             $tpl->set('{author-id}', $row['ac_user_id']);
-            OnlineTpl($row['user_last_visit'], $row['user_logged_mobile']);
+            OnlineTpl(($row['user_last_visit'] ?? time()), ($row['user_logged_mobile'] ?? false));
 
             if ($row['action_type'] != 11)
                 if ($row['user_photo'])
