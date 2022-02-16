@@ -25,32 +25,13 @@ $videos = $db->super_query("SELECT COUNT(*) AS cnt FROM `videos`");
 $db->query("SHOW TABLE STATUS FROM `" . DBNAME . "`");
 $mysql_size = 0;
 while ($r = $db->get_array()) {
-    if (strpos($r['Name'], PREFIX . "_") !== false)
+    if (str_contains($r['Name'], ""))
         $mysql_size += $r['Data_length'] + $r['Index_length'];
 }
 $db->free();
 $mysql_size = formatsize($mysql_size);
 
-function dirsize($directory)
-{
-    if (!is_dir($directory)) return -1;
-    $size = 0;
-    if ($DIR = opendir($directory)) {
-        while (($dirfile = readdir($DIR)) !== false) {
-            if (is_link($directory . '/' . $dirfile) || $dirfile == '.' || $dirfile == '..') continue;
-            if (is_file($directory . '/' . $dirfile)) $size += filesize($directory . '/' . $dirfile);
-            else if (is_dir($directory . '/' . $dirfile)) {
-                $dirSize = dirsize($directory . '/' . $dirfile);
-                if ($dirSize >= 0) $size += $dirSize;
-                else return -1;
-            }
-        }
-        closedir($DIR);
-    }
-    return $size;
-}
-
-$cache_size = formatsize(dirsize("uploads"));
+$cache_size = formatsize(Filesystem::dirSize("uploads"));
 
 echo <<<HTML
 

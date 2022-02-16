@@ -11,6 +11,7 @@ if(!defined('MOZG'))
 
 include __DIR__.'/../classes/templates.php';
 $tpl = new mozg_template;
+$config['temp'] = $config['temp'] ?? 'Default';
 $tpl->dir = ROOT_DIR . '/templates/' . $config['temp'];
 define('TEMPLATE_DIR', $tpl->dir);
 $_DOCUMENT_DATE = false;
@@ -161,19 +162,35 @@ function echohtmlstart($title){
 <div class="h1" style="margin-top:10px">{$title}</div>
 HTML;
 }
-function echohtmlend(){
+function echohtmlend()
+{
+    echo <<<HTML
+<div style="color: red">fdhbdfbdf</div>
+
+HTML;
+
     global $admin_link;
 
+    $admin_link = $admin_link ?? '';
     if (Registry::get('logged')) {
         $stat_lnk = "<a href=\"{$admin_link}?mod=stats\" style=\"margin-right:10px\">статистика</a>";
         $exit_lnk = "<a href=\"{$admin_link}?act=logout\">выйти</a>";
+    } else {
+        $stat_lnk = null;
+        $exit_lnk = null;
     }
 
     echo <<<HTML
 <div class="clr"></div>
 </div>
 <div class="clr"></div>
-<div class="foot"><div style="margin-bottom:-10px"><a href="{$admin_link}" style="margin-right:10px">главная</a>{$stat_lnk}<a href="/" style="margin-right:10px" target="_blank">просмотр сайта</a>{$exit_lnk}</div><br />Vii Engine<br />Copyright 2014 © <a href="http://niceweb.in.ua/" target="_blank" style="color:#999">NiceWeb</a> Group. All rights reserved.</div>
+<div class="foot"><div style="margin-bottom:-10px">
+<a href="{$admin_link}" style="margin-right:10px">главная</a>
+{$stat_lnk}
+<a href="/" style="margin-right:10px" target="_blank">просмотр сайта</a>
+{$exit_lnk}
+</div>
+<br />Vii Engine<br /></div>
 </body>
 </html>
 HTML;

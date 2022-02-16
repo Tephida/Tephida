@@ -79,7 +79,7 @@ class Filesystem
             return false;
     }
 
-    function dirsize($directory)
+    public static function dirSize($directory): bool|int
     {
         if (!is_dir($directory))
             return -1;
@@ -91,7 +91,7 @@ class Filesystem
                 if (is_file($directory . '/' . $dirfile))
                     $size += filesize($directory . '/' . $dirfile);
                 else if (is_dir($directory . '/' . $dirfile)) {
-                    $dirSize = dirsize($directory . '/' . $dirfile);
+                    $dirSize = self::dirSize($directory . '/' . $dirfile);
                     if ($dirSize >= 0)
                         $size += $dirSize;
                     else
