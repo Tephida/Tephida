@@ -918,6 +918,7 @@ function megaDate(?int $date, bool $func = false, bool $full = false): string
     else
         return langdate('j M Y в H:i', $date);
 }
+
 function OnlineTpl($time, $mobile = false) {
     global $tpl, $online_time, $lang;
     //Если человек сидит с мобильнйо версии

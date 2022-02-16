@@ -38,7 +38,7 @@ class mozg_template
     /**
      * @throws ErrorException
      */
-    public function load_template(string $tpl_name): bool
+    public function load_template(string $tpl_name): false|string
     {
         if ($tpl_name == '' || !file_exists($this->dir . DIRECTORY_SEPARATOR . $tpl_name)) {
             throw new ErrorException("Невозможно загрузить шаблон: " . $tpl_name, 0, 0, 'null', 0);
@@ -65,7 +65,7 @@ class mozg_template
             }, $this->template);
         }
         $this->copy_template = $this->template;
-        return true;
+        return $this->template;
     }
 
     public function check_module(string $aviable, array|string $block, bool $action = true): array|string

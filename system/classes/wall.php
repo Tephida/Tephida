@@ -12,11 +12,11 @@ class wall
 {
 
     public array|bool|null $query = false;
-    public $template = false;
-    public $compile = false;
-    public $comm_query = false;
-    public $comm_template = false;
-    public $comm_compile = false;
+    public false|string $template = false;
+    public false|string $compile = false;
+    public array|bool|null $comm_query = false;
+    public false|string $comm_template = false;
+    public false|string $comm_compile = false;
 
     function query($query)
     {
@@ -42,7 +42,7 @@ class wall
     {
         global $tpl, $config, $user_id, $id, $for_user_id, $user_privacy, $check_friend, $user_info;
         $db = Registry::get('db');
-        $this->template;
+//        $this->template;
         foreach ($this->query as $row_wall) {
             $tpl->set('{rec-id}', $row_wall['id']);
 
@@ -80,6 +80,8 @@ class wall
                         else $attauthor_user_id = $row_wall['author_user_id'];
 
                         if ($attach_type[1] == 'attach' and file_exists(ROOT_DIR . "/uploads/attach/{$attauthor_user_id}/c_{$attach_type[2]}")) {
+
+                            $rodImHeigh = $rodImHeigh ?? null;
 
                             if ($cnt_attach == 1)
 

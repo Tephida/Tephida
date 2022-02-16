@@ -10,9 +10,9 @@
 class wall
 {
 
-    public $query = false;
-    public $template = false;
-    public $compile = false;
+    public array|bool|null $query = false;
+    public false|string $template = false;
+    public false|string $compile = false;
 
     function query($query)
     {
@@ -40,7 +40,7 @@ class wall
         $db = Registry::get('db');
         $user_id = $user_info['user_id'];
 
-        $this->template;
+//        $this->template;
 
         foreach ($this->query as $row_wall) {
             $tpl->set('{rec-id}', $row_wall['id']);
