@@ -167,6 +167,7 @@ function langdate($format, $stamp): string
  * @param $num
  * @param $type
  * @return void
+ * @throws ErrorException
  */
 function navigation($gc, $num, $type) {
     global $tpl, $page;
@@ -213,6 +214,7 @@ function navigation($gc, $num, $type) {
  * @param $function
  * @param $act
  * @return void
+ * @throws ErrorException
  */
 function box_navigation($gc, $num, $id, $function, $act) {
     global $tpl, $page;
@@ -259,6 +261,7 @@ function box_navigation($gc, $num, $id, $function, $act) {
  * @param $text
  * @param $tpl_name
  * @return void
+ * @throws ErrorException
  */
 function msgbox($title, $text, $tpl_name) {
     global $tpl;

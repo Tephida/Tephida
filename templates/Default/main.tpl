@@ -19,96 +19,102 @@
 					<a href="/messages" onClick="Page.Go(this.href); return false;">
 						<div class="headm_posic">
 							<div id="new_msg">{msg}</div>
-							<img src="{theme}/images/spacer.gif" class="headm_ic_mess" /><br />
+							<img src="{theme}/images/spacer.gif" class="headm_ic_mess" alt="spacer"/><br/>
 							Сообщения
 						</div>
 					</a>
 					<a href="/friends{requests-link}" onClick="Page.Go(this.href); return false;" id="requests_link">
 						<div class="headm_posic">
 							<div id="new_requests">{demands}</div>
-							<img src="{theme}/images/spacer.gif" class="headm_ic_friend" /><br />
+							<img src="{theme}/images/spacer.gif" class="headm_ic_friend" alt="spacer"/><br/>
 							Друзья
 						</div>
 					</a>
 					<a href="/albums/{my-id}" onClick="Page.Go(this.href); return false;" id="requests_link_new_photos">
 						<div class="headm_posic">
 							<div id="new_photos">{new_photos}</div>
-							<img src="{theme}/images/spacer.gif" class="headm_ic_photo" /><br />
+							<img src="{theme}/images/spacer.gif" class="headm_ic_photo" alt="spacer"/><br/>
 							Фото
 						</div>
 					</a>
 					<a href="/index.php?go=guests" onClick="Page.Go(this.href); return false;">
 						<div class="headm_posic">
-							<img src="{theme}/images/spacer.gif" class="headm_ic_support" /><br />
+							<img src="{theme}/images/spacer.gif" class="headm_ic_support" alt="spacer"/><br/>
 							Гости
 						</div>
 					</a>
 					<a href="/fave" onClick="Page.Go(this.href); return false;">
-						<div class="headm_posic"><img src="{theme}/images/spacer.gif" class="headm_ic_fave" /><br />
+						<div class="headm_posic"><img src="{theme}/images/spacer.gif" class="headm_ic_fave"
+													  alt="spacer"/><br/>
 							Закладки
 						</div>
 					</a>
 					<a href="/apps" onClick="Page.Go(this.href); return false;">
-						<div class="headm_posic"><img src="/templates/Default/images/spacer.gif" class="headm_ic_games" /><br />
+						<div class="headm_posic"><img src="/templates/Default/images/spacer.gif" class="headm_ic_games"
+													  alt="spacer"/><br/>
 							Игры
 						</div>
 					</a>
 					<a href="/videos" onClick="Page.Go(this.href); return false;">
-						<div class="headm_posic"><img src="{theme}/images/spacer.gif" class="headm_ic_videos" /><br />
+						<div class="headm_posic"><img src="{theme}/images/spacer.gif" class="headm_ic_videos"
+													  alt="spacer"/><br/>
 							Видео
 						</div>
 					</a>
 					<a href="/audio" onClick="doLoad.js(0); player.open(); return false;">
-						<div class="headm_posic"><img src="/templates/Default/images/spacer.gif" class="headm_ic_music" id="fplayer_pos" /><br />
+						<div class="headm_posic"><img src="/templates/Default/images/spacer.gif" class="headm_ic_music"
+													  id="fplayer_pos" alt="spacer"/><br/>
 							Музыка
 						</div>
 					</a>
 					<a href="{groups-link}" onClick="Page.Go(this.href); return false;" id="new_groups_lnk">
 						<div class="headm_posic">
 							<div id="new_groups">{new_groups}</div>
-							<img src="{theme}/images/spacer.gif" class="headm_ic_groups" /><br />
+							<img src="{theme}/images/spacer.gif" class="headm_ic_groups" alt="spacer"/><br/>
 							Группы
 						</div>
 					</a>
 					<a href="/news{news-link}" onClick="Page.Go(this.href); return false;" id="news_link">
 						<div class="headm_posic">
 							<div id="new_news">{new-news}</div>
-							<img src="{theme}/images/spacer.gif" class="headm_ic_news" /><br />
+							<img src="{theme}/images/spacer.gif" class="headm_ic_news" alt="spacer"/><br/>
 							Лента
 						</div>
 					</a>
 					<a href="/notes" onClick="Page.Go(this.href); return false;">
-						<div class="headm_posic"><img src="{theme}/images/spacer.gif" class="headm_ic_notes" /><br />
+						<div class="headm_posic"><img src="{theme}/images/spacer.gif" class="headm_ic_notes"
+													  alt="spacer"/><br/>
 							Заметки
 						</div>
 					</a>
 					<a href="/" onClick="gSearch.open_tab(); return false;" id="se_link">
-						<div class="headm_posic"><img src="{theme}/images/spacer.gif" class="headm_ic_se" /><br />
+						<div class="headm_posic"><img src="{theme}/images/spacer.gif" class="headm_ic_se" alt="spacer"/><br/>
 							Поиск
 						</div>
 					</a>
 					<a href="/settings" onClick="Page.Go(this.href); return false;">
-						<div class="headm_posic"><img src="{theme}/images/spacer.gif" class="headm_ic_settings" /><br />
+						<div class="headm_posic"><img src="{theme}/images/spacer.gif" class="headm_ic_settings"
+													  alt="spacer"/><br/>
 							Настройки
 						</div>
 					</a>
 					<a href="/support" onClick="Page.Go(this.href); return false;">
 						<div class="headm_posic">
 							<div id="new_support">{new-support}</div>
-							<img src="{theme}/images/spacer.gif" class="headm_ic_support" /><br />
+							<img src="{theme}/images/spacer.gif" class="headm_ic_support" alt="spacer"/><br/>
 							Помощь
 						</div>
 					</a>
 					<a href="{ubm-link}" onClick="Page.Go(this.href); return false;" id="ubm_link">
 						<div class="headm_posic">
 							<div id="new_ubm">{new-ubm}</div>
-							<img src="{theme}/images/spacer.gif" class="headm_ic_ubm" /><br />
+							<img src="{theme}/images/spacer.gif" class="headm_ic_ubm" alt="spacer"/><br/>
 							Баланс
 						</div>
 					</a>
 					<a href="/?act=logout">
 						<div class="headm_posic">
-							<img src="{theme}/images/spacer.gif" class="headm_ic_logout" /><br />
+							<img src="{theme}/images/spacer.gif" class="headm_ic_logout" alt="spacer"/><br/>
 							Выйти
 						</div>
 					</a>
@@ -116,9 +122,9 @@
 				</div>
 				<!--search-->
 				<div class="search_tab no_display" id="search_tab">
-					<input type="text" value="Поиск" class="fave_input search_input" 
-						onBlur="if(this.value=='') this.value='Поиск';this.style.color = '#c1cad0';" 
-						onFocus="if(this.value=='Поиск')this.value='';this.style.color = '#000'" 
+					<input type="text" value="Поиск" class="fave_input search_input"
+						   onBlur="if(this.value=='') this.value='Поиск';this.style.color = '#c1cad0';"
+						   onFocus="if(this.value=='Поиск')this.value='';this.style.color = '#000'"
 						onKeyPress="if(event.keyCode == 13) gSearch.go();"
 						onKeyUp="FSE.Txt()"
 						id="query" maxlength="65" />
