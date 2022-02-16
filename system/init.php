@@ -7,14 +7,15 @@
  *
  */
 if (!defined('MOZG')) die('Hacking attempt!');
-@include ENGINE_DIR . '/data/config.php';
+include ENGINE_DIR . '/functions.php';
+$config = settings_get();
+//include ENGINE_DIR . '/data/config.php';
 
 if (!isset($config['home_url']))
     die("Vii Engine not installed. Please run install.php");
 include ENGINE_DIR . '/classes/mysql.php';
 include ENGINE_DIR . '/data/db.php';
 Registry::set('db', $db);
-include ENGINE_DIR . '/functions.php';
 include ENGINE_DIR . '/classes/templates.php';
 if ($config['gzip'] == 'yes')
     include ENGINE_DIR . '/modules/gzip.php';

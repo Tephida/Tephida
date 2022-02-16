@@ -342,7 +342,7 @@ HTML;
 
 //System Configurations 
 
-\$config= array ( 
+return array ( 
 
 'home' => "Социальная сеть", 
 

@@ -1356,3 +1356,13 @@ function set_cookie($name, $value, $expires)
         setcookie($name, $value, $expires, "/", DOMAIN, NULL, TRUE);
     }
 }
+
+function settings_get(): array
+{
+    if (file_exists(ENGINE_DIR . '/data/config.php')) {
+        return require ENGINE_DIR . '/data/config.php';
+    } else {
+        die("Vii Engine not installed. Please run install.php");
+    }
+
+}
