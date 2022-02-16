@@ -137,14 +137,16 @@ function GetVar(string $v): string
 function check_xss() {
     $url = html_entity_decode(urldecode($_SERVER['QUERY_STRING']));
     if ($url) {
-        if ((strpos($url, '<') !== false) || (strpos($url, '>') !== false) || (strpos($url, '"') !== false) || (strpos($url, './') !== false) || (strpos($url, '../') !== false) || (strpos($url, '\'') !== false) || (strpos($url, '.php') !== false)) {
-            if ($_GET['go'] != "search" AND $_GET['go'] != "messages") die('Hacking attempt!');
+        if ((str_contains($url, '<')) || (str_contains($url, '>')) || (str_contains($url, '"')) || (str_contains($url, './')) || (str_contains($url, '../')) || (str_contains($url, '\'')) || (str_contains($url, '.php'))) {
+            if ($_GET['go'] != "search" and $_GET['go'] != "messages")
+                die('Hacking attempt!');
         }
     }
     $url = html_entity_decode(urldecode($_SERVER['REQUEST_URI']));
     if ($url) {
-        if ((strpos($url, '<') !== false) || (strpos($url, '>') !== false) || (strpos($url, '"') !== false) || (strpos($url, '\'') !== false)) {
-            if ($_GET['go'] != "search" AND $_GET['go'] != "messages") die('Hacking attempt!');
+        if ((str_contains($url, '<')) || (str_contains($url, '>')) || (str_contains($url, '"')) || (str_contains($url, '\''))) {
+            if ($_GET['go'] != "search" and $_GET['go'] != "messages")
+                die('Hacking attempt!');
         }
     }
 }
