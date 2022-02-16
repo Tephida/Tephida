@@ -123,7 +123,7 @@ if ($logged) {
 
             $tpl->load_template('rating/main.tpl');
 
-            $tpl->set('{user-id}', intval($_POST['for_user_id']));
+            $tpl->set('{user-id}', intFilter('for_user_id'));
 
             $tpl->set('{num}', $row['user_balance'] - 1);
             $tpl->set('{balance}', $row['user_balance']);

@@ -38,7 +38,7 @@ if ($logged) {
                     if ($row['tell_uid']) {
                         $row['add_date'] = $row['tell_date'];
                         $row['author_user_id'] = $row['tell_uid'];
-                    } elseif ($_POST['g_tell'] == 1) {
+                    } elseif (intFilter('g_tell') == 1) {
                         $row['public'] = 1;
                         $row['author_user_id'] = $row['public_id'];
                     }
@@ -204,7 +204,7 @@ if ($logged) {
 
                             } else {
 
-                                if ($_POST['g_tell'] == 1) {
+                                if (intFilter('g_tell') == 1) {
 
                                     $row_rec['author_user_id'] = $row_rec['public_id'];
                                     $row_rec['public'] = 1;

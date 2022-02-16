@@ -192,14 +192,18 @@ if ($logged) {
             
         case "profile":
             $uid = intFilter('uid');
-            if (isset($_POST['type'])) $photo = ROOT_DIR . "/uploads/attach/{$uid}/c_{$_POST['photo']}";
-            else $photo = ROOT_DIR . "/uploads/users/{$uid}/o_{$_POST['photo']}";
+            $photo_name = requestFilter('photo');
+            if (isset($_POST['type'])) {
+                $photo = ROOT_DIR . "/uploads/attach/{$uid}/c_{$photo_name}";
+            } else {
+                $photo = ROOT_DIR . "/uploads/users/{$uid}/o_{$photo_name}";
+            }
             if (file_exists($photo)) {
                 $tpl->load_template('photos/photo_profile.tpl');
                 $tpl->set('{uid}', $uid);
-                if ($_POST['type']) $tpl->set('{photo}', "/uploads/attach/{$uid}/{$_POST['photo']}");
-                else $tpl->set('{photo}', "/uploads/users/{$uid}/o_{$_POST['photo']}");
-                $tpl->set('{close-link}', $_POST['close_link']);
+                if (isset($_POST['type'])) $tpl->set('{photo}', "/uploads/attach/{$uid}/{$photo_name}");
+                else $tpl->set('{photo}', "/uploads/users/{$uid}/o_{$photo_name}");
+                $tpl->set('{close-link}', requestFilter('close_link'));
                 $tpl->compile('content');
                 AjaxTpl();
             } else echo 'no_photo';
@@ -209,11 +213,12 @@ if ($logged) {
         case "rotation":
             $id = intFilter('id');
             $row = $db->super_query("SELECT photo_name, album_id, user_id FROM `photos` WHERE id = '" . $id . "'");
-            if ($row['photo_name'] AND $_POST['pos'] == 'left' OR $_POST['pos'] == 'right' AND $user_id == $row['user_id']) {
+            $photo_position = requestFilter('pos');
+            if ($row['photo_name'] and $photo_position == 'left' or $photo_position == 'right' and $user_id == $row['user_id']) {
                 $filename = ROOT_DIR . '/uploads/users/' . $user_id . '/albums/' . $row['album_id'] . '/' . $row['photo_name'];
-                if ($_POST['pos'] == 'right')
+                if ($photo_position == 'right')
                     $degrees = -90;
-                if ($_POST['pos'] == 'left')
+                if ($photo_position == 'left')
                     $degrees = 90;
 
                 $degrees = $degrees ?? 0;

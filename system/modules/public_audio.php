@@ -21,8 +21,8 @@ if ($logged) {
 
             NoAjaxQuery();
 
-            $pid = intval($_POST['pid']);
-            $aid = intval($_POST['aid']);
+            $pid = intFilter('pid');
+            $aid = intFilter('aid');
 
             $check = $db->super_query("SELECT url, artist, name FROM `audio` WHERE aid = '{$aid}'");
 

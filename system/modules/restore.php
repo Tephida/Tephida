@@ -108,8 +108,8 @@ HTML;
 //				$_POST['new_pass'] = ajax_utf8($_POST['new_pass']);
 //				$_POST['new_pass2'] = ajax_utf8($_POST['new_pass2']);
 
-                $new_pass = md5(md5($_POST['new_pass']));
-                $new_pass2 = md5(md5($_POST['new_pass2']));
+                $new_pass = md5(md5(requestFilter('new_pass')));
+                $new_pass2 = md5(md5(requestFilter('new_pass2')));
 
                 if (strlen($new_pass) >= 6 and $new_pass == $new_pass2) {
                     $db->query("UPDATE `users` SET user_password = '{$new_pass}' WHERE user_email = '{$row['email']}'");

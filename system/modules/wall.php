@@ -285,9 +285,9 @@ if ($logged) {
 
                                 $wall->comm_query("SELECT tb1.id, author_user_id, text, add_date, fasts_num, tb2.user_photo, user_search_pref, user_last_visit FROM `wall` tb1, `users` tb2 WHERE tb1.author_user_id = tb2.user_id AND tb1.fast_comm_id = '{$fast_comm_id}' ORDER by `add_date` ASC LIMIT {$limit_comm_num}, 3");
 
-                                if ($_POST['type'] == 1)
+                                if (intFilter('type') == 1)
                                     $wall->comm_template('news/news.tpl');
-                                else if ($_POST['type'] == 2)
+                                else if (intFilter('type') == 2)
                                     $wall->comm_template('wall/one_record.tpl');
                                 else
                                     $wall->comm_template('wall/record.tpl');
@@ -508,8 +508,8 @@ if ($logged) {
         //################### Показ всех комментариев к записи ###################//
         case "all_comm":
             NoAjaxQuery();
-            $fast_comm_id = intval($_POST['fast_comm_id']);
-            $for_user_id = intval($_POST['for_user_id']);
+            $fast_comm_id = intFilter('fast_comm_id');
+            $for_user_id = intFilter('for_user_id');
             if ($fast_comm_id and $for_user_id) {
                 //Подгружаем и объявляем класс для стены
                 include ENGINE_DIR . '/classes/wall.php';
@@ -530,9 +530,9 @@ if ($logged) {
                     if ($user_privacy['val_wall3'] == 1 or $user_privacy['val_wall3'] == 2 and $check_friend or $user_id == $for_user_id) {
                         $wall->comm_query("SELECT tb1.id, author_user_id, text, add_date, fasts_num, tb2.user_photo, user_search_pref, user_last_visit FROM `wall` tb1, `users` tb2 WHERE tb1.author_user_id = tb2.user_id AND tb1.fast_comm_id = '{$fast_comm_id}' ORDER by `add_date` ASC LIMIT 0, 200", '');
 
-                        if ($_POST['type'] == 1)
+                        if (intFilter('type') == 1)
                             $wall->comm_template('news/news.tpl');
-                        else if ($_POST['type'] == 2)
+                        else if (intFilter('type') == 2)
                             $wall->comm_template('wall/one_record.tpl');
                         else
                             $wall->comm_template('wall/record.tpl');
@@ -623,7 +623,7 @@ if ($logged) {
 
         //################### Парсер информации о ссылке ###################//
         case "parse_link":
-            $lnk = 'https://' . str_replace('https://', '', trim($_POST['lnk']));
+            $lnk = 'https://' . str_replace('https://', '', requestFilter('lnk'));
             $check_url = @get_headers(stripslashes($lnk));
 
             if (strpos($check_url[0], '200')) {
