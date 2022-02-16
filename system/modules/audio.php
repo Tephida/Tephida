@@ -46,10 +46,17 @@ if (Registry::get('logged')) {
                     $id3v2 = new Id3v2;
                     $res = $id3v2->read(ROOT_DIR . '/uploads/audio_tmp/' . $ranTmp . '.mp3');
 
-                    $artist = textFilter($res['Artist'], 25000, true);
-                    $name = textFilter($res['Title'], 25000, true);
-                    if (isset($artist) and empty($artist)) $artist = 'Неизвестный исполнитель';
-                    if (isset($name) and empty($name)) $name = 'Без названия';
+                    if (empty($res['Artist'])) {
+                        $artist = 'Неизвестный исполнитель';
+                    } else {
+                        $artist = textFilter($res['Artist'], 25000, true);
+                    }
+
+                    if (empty($res['Title'])) {
+                        $name = 'Без названия';
+                    } else {
+                        $name = textFilter($res['Title'], 25000, true);
+                    }
 
                     $db->query("INSERT INTO `audio` SET auser_id = '" . $user_id . "', url = '" . $lnk . "', artist = '" . $artist . "', name = '" . $name . "',  adate = '" . $server_time . "'");
                     $db->query("UPDATE `users` SET user_audio = user_audio+1 WHERE user_id = '" . $user_id . "'");
@@ -207,10 +214,17 @@ if (Registry::get('logged')) {
                     $id3v2 = new Id3v2;
                     $res = $id3v2->read(ROOT_DIR . '/uploads/audio/' . $user_id . '/' . $file_rename . $res_type);
 
-                    $artist = textFilter($res['Artist'], 25000, true);
-                    $name = textFilter($res['Title'], 25000, true);
-                    if (isset($artist) and empty($artist)) $artist = 'Неизвестный исполнитель';
-                    if (isset($name) and empty($name)) $name = 'Без названия';
+                    if (empty($res['Artist'])) {
+                        $artist = 'Неизвестный исполнитель';
+                    } else {
+                        $artist = textFilter($res['Artist'], 25000, true);
+                    }
+
+                    if (empty($res['Title'])) {
+                        $name = 'Без названия';
+                    } else {
+                        $name = textFilter($res['Title'], 25000, true);
+                    }
 
                     $lnk = $config['home_url'] . 'uploads/audio/' . $user_id . '/' . $file_rename . $res_type;
 

@@ -21,8 +21,12 @@ function textFilter(string $source, int $substr_num = 25000, bool $strip_tags = 
 {
     $source = trim($source);
     $source = stripslashes($source);
+    if (empty($source)) {
+        return '';
+    } else {
+        return htmlspecialchars($source, ENT_QUOTES, 'UTF-8');
+    }
 
-    return htmlspecialchars($source, ENT_QUOTES, 'UTF-8');
 }
 
 function intFilter(string $source, int $default = 0): int
@@ -44,9 +48,14 @@ function intFilter(string $source, int $default = 0): int
     } elseif (isset($_GET[$source])) {
         $source = $_GET[$source];
     } else {
-        return null;
+        return '';
     }
-    return textFilter($source, $substr_num, $strip_tags);
+    if (empty($source)) {
+        return '';
+    } else {
+        return textFilter($source, $substr_num, $strip_tags);
+    }
+
 }
 
 function informationText($array): string
