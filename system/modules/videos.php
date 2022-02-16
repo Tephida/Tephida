@@ -468,8 +468,8 @@ if (Registry::get('logged')) {
                     $tpl->set('{comment}', stripslashes($row_comm['text']));
                     $tpl->set('{id}', $row_comm['id']);
                     OnlineTpl($row_comm['user_last_visit'], $row_comm['user_logged_mobile']);
-                    megaDate(strtotime($row_comm['add_date']));
-
+                    $date_str = megaDate(strtotime($row_comm['add_date']));
+                    $tpl->set('{date}', $date_str);
                     if ($row_comm['author_user_id'] == $user_id or $owner_id == $user_id or $public_admin) {
 
                         $tpl->set('[owner]', '');
@@ -655,7 +655,8 @@ if (Registry::get('logged')) {
                             else
                                 $tpl->set('{descr}', '');
                             $tpl->set('{comm}', $row['comm_num'] . ' ' . gram_record($row['comm_num'], 'comments'));
-                            megaDate(strtotime($row['add_date']));
+                            $date_str = megaDate(strtotime($row['add_date']));
+                            $tpl->set('{date}', $date_str);
                             if ($get_user_id == $user_id) {
                                 $tpl->set('[owner]', '');
                                 $tpl->set('[/owner]', '');
@@ -782,7 +783,8 @@ if (Registry::get('logged')) {
                                 else
                                     $tpl->set('{descr}', '');
                                 $tpl->set('{comm}', $row['comm_num'] . ' ' . gram_record($row['comm_num'], 'comments'));
-                                megaDate(strtotime($row['add_date']));
+                                $date_str = megaDate(strtotime($row['add_date']));
+                                $tpl->set('{date}', $date_str);
                                 if ($get_user_id == $user_id) {
                                     $tpl->set('[owner]', '');
                                     $tpl->set('[/owner]', '');

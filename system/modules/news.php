@@ -172,7 +172,8 @@ if (Registry::get('logged')) {
                     $tpl->set('{ava}', '{theme}/images/no_ava_50.png');
 
             //Выводим данные о действии
-            megaDate($row['action_time'], 1, 1);
+            $date_str = megaDate($row['action_time'], 1, 1);
+            $tpl->set('{date}', $date_str);
             $tpl->set('{comment}', stripslashes($row['action_text']));
             $tpl->set('{news-id}', $row['ac_id']);
 
@@ -1325,7 +1326,8 @@ HTML;
                             $row_comments['text'] = preg_replace('`(http(?:s)?://\w+[^\s\[\]\<]+)`i', '<a href="/away.php?url=$1" target="_blank">$1</a>', $row_comments['text']);
 
                             $tpl->set('{text}', stripslashes($row_comments['text']));
-                            megaDate($row_comments['add_date']);
+                            $date_str = megaDate($row_comments['add_date']);
+                            $tpl->set('{date}', $date_str);
                             if ($user_id == $row_comments['author_user_id']) {
                                 $tpl->set('[owner]', '');
                                 $tpl->set('[/owner]', '');
@@ -1749,7 +1751,8 @@ HTML;
                             $row_comments['text'] = preg_replace('`(http(?:s)?://\w+[^\s\[\]\<]+)`i', '<a href="/away.php?url=$1" target="_blank">$1</a>', $row_comments['text']);
 
                             $tpl->set('{text}', stripslashes($row_comments['text']));
-                            megaDate($row_comments['add_date']);
+                            $date_str = megaDate($row_comments['add_date']);
+                            $tpl->set('{date}', $date_str);
                             if ($user_id == $row_comments['public_id']) {
                                 $tpl->set('[owner]', '');
                                 $tpl->set('[/owner]', '');

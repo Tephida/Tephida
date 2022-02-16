@@ -180,9 +180,10 @@ if (Registry::get('logged')) {
                     if ($row_comm['user_photo']) $tpl->set('{ava}', $config['home_url'] . 'uploads/users/' . $row_comm['user_id'] . '/50_' . $row_comm['user_photo']);
                     else $tpl->set('{ava}', '{theme}/images/no_ava_50.png');
                     OnlineTpl($row_comm['user_last_visit'], $row_comm['user_logged_mobile']);
-                    megaDate(strtotime($row_comm['date']));
+                    $date_str = megaDate(strtotime($row_comm['date']));
+                    $tpl->set('{date}', $date_str);
                     $row_photo = $db->super_query("SELECT user_id FROM `photos` WHERE id = '{$row_comm['pid']}'");
-                    if ($row_comm['user_id'] == $user_info['user_id'] OR $row_photo['user_id'] == $user_info['user_id']) {
+                    if ($row_comm['user_id'] == $user_info['user_id'] or $row_photo['user_id'] == $user_info['user_id']) {
                         $tpl->set('[owner]', '');
                         $tpl->set('[/owner]', '');
                     } else $tpl->set_block("'\\[owner\\](.*?)\\[/owner\\]'si", "");
@@ -318,7 +319,8 @@ if (Registry::get('logged')) {
                         else $tpl->set('{rate}', '<div class="rating rating3">' . $row['rating'] . '</div>');
                         if ($row['user_photo']) $tpl->set('{ava}', "/uploads/users/{$row['user_id']}/50_{$row['user_photo']}");
                         else $tpl->set('{ava}', "{theme}/images/no_ava_50.png");
-                        megaDate($row['date']);
+                        $date_str = megaDate($row['date']);
+                        $tpl->set('{date}', $date_str);
                         $tpl->compile('rates_users');
                     }
                 } else {
@@ -423,8 +425,9 @@ if (Registry::get('logged')) {
                                 if ($row_comm['user_photo']) $tpl->set('{ava}', $config['home_url'] . 'uploads/users/' . $row_comm['user_id'] . '/50_' . $row_comm['user_photo']);
                                 else $tpl->set('{ava}', '{theme}/images/no_ava_50.png');
                                 OnlineTpl($row_comm['user_last_visit'], $row_comm['user_logged_mobile']);
-                                megaDate(strtotime($row_comm['date']));
-                                if ($row_comm['user_id'] == $user_info['user_id'] OR $row['user_id'] == $user_info['user_id']) {
+                                $date_str = megaDate(strtotime($row_comm['date']));
+                                $tpl->set('{date}', $date_str);
+                                if ($row_comm['user_id'] == $user_info['user_id'] or $row['user_id'] == $user_info['user_id']) {
                                     $tpl->set('[owner]', '');
                                     $tpl->set('[/owner]', '');
                                 } else $tpl->set_block("'\\[owner\\](.*?)\\[/owner\\]'si", "");
@@ -492,7 +495,8 @@ if (Registry::get('logged')) {
                         if ($author_info[0]) $tpl->set('{author-info}', $author_info[0]);
                         else $tpl->set('{author-info}', '');
                         if ($author_info[1]) $tpl->set('{author-info}', $author_info[0] . ', ' . $author_info[1] . '<br />');
-                        megaDate(strtotime($row['date']), 1, 1);
+                        $date_str = megaDate(strtotime($row['date']), 1, 1);
+                        $tpl->set('{date}', $date_str);
                         if ($uid == $user_info['user_id']) {
                             $tpl->set('[owner]', '');
                             $tpl->set('[/owner]', '');

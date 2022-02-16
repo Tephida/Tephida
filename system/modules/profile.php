@@ -126,7 +126,8 @@ if (Registry::get('logged')) {
                         $tpl->set('{id}', $row_notes['id']);
                         $tpl->set('{title}', stripslashes($row_notes['title']));
                         $tpl->set('{comm-num}', $row_notes['comm_num'] . ' ' . gram_record($row_notes['comm_num'], 'comments'));
-                        megaDate(strtotime($row_notes['date']), 'no_year');
+                        $date_str = megaDate(strtotime($row_notes['date']), 'no_year');
+                        $tpl->set('{date}', $date_str);
                         $tpl->compile('notes');
                     }
                     mozg_create_cache($cache_folder . '/notes_user_' . $id, $tpl->result['notes'] ?? '');
@@ -161,7 +162,8 @@ if (Registry::get('logged')) {
                     $tpl->set('{user-id}', $id);
                     $tpl->set('{title}', stripslashes($row_videos['title']));
                     $tpl->set('{comm-num}', $row_videos['comm_num'] . ' ' . gram_record($row_videos['comm_num'], 'comments'));
-                    megaDate(strtotime($row_videos['add_date']), '');
+                    $date_str = megaDate(strtotime($row_videos['add_date']), '');
+                    $tpl->set('{date}', $date_str);
                     $tpl->compile('videos');
                 }
             }
@@ -482,7 +484,7 @@ if (Registry::get('logged')) {
             if ($sql_albums) {
                 foreach ($sql_albums as $row_albums) {
                     $row_albums['name'] = stripslashes($row_albums['name']);
-                    $album_date = megaDateNoTpl(strtotime($row_albums['adate']));
+                    $album_date = megaDate(strtotime($row_albums['adate']));
                     $albums_photonums = gram_record($row_albums['photo_num'], 'photos');
                     if ($row_albums['cover'])
                         $album_cover = "/uploads/users/{$id}/albums/{$row_albums['aid']}/c_{$row_albums['cover']}";

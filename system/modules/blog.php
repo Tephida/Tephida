@@ -176,7 +176,8 @@ if (Registry::get('logged')) {
                 $row = $db->super_query("SELECT id, title, story, date FROM `blog` ORDER by `date` DESC");
 
             $tpl->load_template('blog/story.tpl');
-            megaDate($row['date'], 1, 1);
+            $date_str = megaDate($row['date'], 1, 1);
+            $tpl->set('{date}', $date_str);
             $tpl->set('{story}', stripslashes($row['story']));
             $tpl->set('{title}', stripslashes($row['title']));
             $tpl->set('{id}', $row['id']);

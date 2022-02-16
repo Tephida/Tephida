@@ -192,8 +192,8 @@ if (Registry::get('logged')) {
                 else $tpl->set('{ava}', '{theme}/images/no_ava_50.png');
 
                 OnlineTpl($row_comm['user_last_visit'], $row_comm['user_logged_mobile']);
-                megaDate($row_comm['adate']);
-
+                $date_str = megaDate($row_comm['adate']);
+                $tpl->set('{date}', $date_str);
                 if ($row_comm['auser_id'] == $user_id or $row['ouser_id'] == $user_id) {
                     $tpl->set('[owner]', '');
                     $tpl->set('[/owner]', '');
@@ -270,8 +270,8 @@ if (Registry::get('logged')) {
                         else $tpl->set('{ava}', '{theme}/images/no_ava_50.png');
 
                         OnlineTpl($row_comm['user_last_visit'], $row_comm['user_logged_mobile']);
-                        megaDate($row_comm['adate']);
-
+                        $date_str = megaDate($row_comm['adate']);
+                        $tpl->set('{date}', $date_str);
                         if ($row_comm['auser_id'] == $user_id or $row['ouser_id'] == $user_id) {
                             $tpl->set('[owner]', '');
                             $tpl->set('[/owner]', '');
@@ -299,9 +299,10 @@ if (Registry::get('logged')) {
                 $tpl->set('{purl}', $foSQLurl);
                 $tpl->set('{purl-js}', substr($foSQLurl, 0, 20));
 
-                if ($row['add_date'])
-                    megaDate($row['add_date']);
-                else
+                if ($row['add_date']) {
+                    $date_str = megaDate($row['add_date']);
+                    $tpl->set('{date}', $date_str);
+                } else
                     $tpl->set('{date}', '');
 
                 $author_info = explode('|', $row['user_country_city_name']);

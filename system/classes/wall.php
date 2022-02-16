@@ -328,7 +328,9 @@ HTML;
             $tpl->set('{name}', $row_wall['user_search_pref']);
             $tpl->set('{user-id}', $row_wall['author_user_id']);
             OnlineTpl($row_wall['user_last_visit'], $row_wall['user_logged_mobile']);
-            megaDate($row_wall['add_date']);
+            $date_str = megaDate(intval($row_wall['add_date']));
+
+            $tpl->set('{date}', $date_str);
 
             if ($row_wall['user_photo'])
                 $tpl->set('{ava}', '/uploads/users/' . $row_wall['author_user_id'] . '/50_' . $row_wall['user_photo']);
@@ -460,7 +462,10 @@ HTML;
                         $row_comments['text'] = preg_replace('`(http(?:s)?://\w+[^\s\[\]\<]+)`i', '<a href="/away.php?url=$1" target="_blank">$1</a>', $row_comments['text']);
 
                         $tpl->set('{text}', stripslashes($row_comments['text']));
-                        megaDate($row_comments['add_date']);
+                        $date_str = megaDate(intval($row_comments['add_date']));
+
+                        $tpl->set('{date}', $date_str);
+
                         if ($user_id == $row_comments['author_user_id'] || $user_id == $id) {
                             $tpl->set('[owner]', '');
                             $tpl->set('[/owner]', '');
@@ -575,7 +580,9 @@ HTML;
 
                 $tpl->set('{text}', stripslashes($row_comments['text']));
 
-                megaDate($row_comments['add_date']);
+                $date_str = megaDate(intval($row_comments['add_date']));
+
+                $tpl->set('{date}', $date_str);
 
                 if (!$id)
                     $id = $for_user_id;

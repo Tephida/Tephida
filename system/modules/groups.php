@@ -698,7 +698,8 @@ if (Registry::get('logged')) {
                     $row_comments['text'] = preg_replace('`(http(?:s)?://\w+[^\s\[\]\<]+)`i', '<a href="/away.php?url=$1" target="_blank">$1</a>', $row_comments['text']);
 
                     $tpl->set('{text}', stripslashes($row_comments['text']));
-                    megaDate($row_comments['add_date']);
+                    $date_str = megaDate($row_comments['add_date']);
+                    $tpl->set('{date}', $date_str);
                     if (stripos($row['admin'], "u{$user_id}|") !== false or $user_id == $row_comments['public_id']) {
                         $tpl->set('[owner]', '');
                         $tpl->set('[/owner]', '');
@@ -818,7 +819,8 @@ if (Registry::get('logged')) {
                     $row_comments['text'] = preg_replace('`(http(?:s)?://\w+[^\s\[\]\<]+)`i', '<a href="/away.php?url=$1" target="_blank">$1</a>', $row_comments['text']);
 
                     $tpl->set('{text}', stripslashes($row_comments['text']));
-                    megaDate($row_comments['add_date']);
+                    $date_str = megaDate($row_comments['add_date']);
+                    $tpl->set('{date}', $date_str);
                     if (stripos($row['admin'], "u{$user_id}|") !== false or $user_id == $row_comments['public_id']) {
                         $tpl->set('[owner]', '');
                         $tpl->set('[/owner]', '');

@@ -236,7 +236,8 @@ if (Registry::get('logged')) {
                 $tpl->set('{id}', $row['id']);
                 $tpl->set('{close-link}', '/index.php?' . $query_string . '&page=' . $page);
                 $tpl->set('{comm}', $row['comm_num'] . ' ' . gram_record($row['comm_num'], 'comments'));
-                megaDate(strtotime($row['add_date']), 1, 1);
+                $date_str = megaDate(strtotime($row['add_date']), 1, 1);
+                $tpl->set('{date}', $date_str);
                 $tpl->compile('content');
             }
 
@@ -254,7 +255,8 @@ if (Registry::get('logged')) {
                 $tpl->set('{title}', stripslashes($row['title']));
                 $tpl->set('{name}', $row['user_search_pref']);
                 $tpl->set('{note-id}', $row['id']);
-                megaDate(strtotime($row['date']), 1, 1);
+                $date_str = megaDate(strtotime($row['date']), 1, 1);
+                $tpl->set('{date}', $date_str);
                 if ($row['comm_num'])
                     $tpl->set('{comm-num}', $row['comm_num'] . ' ' . gram_record($row['comm_num'], 'comments'));
                 else

@@ -336,7 +336,9 @@ HTML;
             if ($row_wall['adres']) $tpl->set('{adres-id}', $row_wall['adres']);
             else $tpl->set('{adres-id}', 'public' . $row_wall['public_id']);
 
-            megaDate($row_wall['add_date']);
+            $date_str = megaDate(intval($row_wall['add_date']));
+
+            $tpl->set('{date}', $date_str);
 
             if ($row_wall['photo'])
                 $tpl->set('{ava}', '/uploads/groups/' . $row_wall['public_id'] . '/50_' . $row_wall['photo']);
@@ -452,7 +454,10 @@ HTML;
                         $row_comments['text'] = preg_replace('`(http(?:s)?://\w+[^\s\[\]\<]+)`i', '<a href="/away.php?url=$1" target="_blank">$1</a>', $row_comments['text']);
 
                         $tpl->set('{text}', stripslashes($row_comments['text']));
-                        megaDate($row_comments['add_date']);
+                        $date_str = megaDate(intval($row_comments['add_date']));
+
+                        $tpl->set('{date}', $date_str);
+
                         if ($public_admin or $user_id == $row_comments['public_id']) {
                             $tpl->set('[owner]', '');
                             $tpl->set('[/owner]', '');

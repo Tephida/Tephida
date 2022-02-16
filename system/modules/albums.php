@@ -742,8 +742,8 @@ HTML;
                             $tpl->set('{ava}', '{theme}/images/no_ava_50.png');
 
                         OnlineTpl($row_comm['user_last_visit'], $row_comm['user_logged_mobile']);
-                        megaDate(strtotime($row_comm['date']));
-
+                        $date_str = megaDate(strtotime($row_comm['date']));
+                        $tpl->set('{date}', $date_str);
                         if ($row_comm['user_id'] == $user_info['user_id'] or $user_info['user_id'] == $uid) {
                             $tpl->set('[owner]', '');
                             $tpl->set('[/owner]', '');
@@ -1031,8 +1031,8 @@ HTML;
                                 $tpl->set('{photo-num}', $row['photo_num'] . ' ' . gram_record($row['photo_num'], 'photos'));
                                 $tpl->set('{comm-num}', $row['comm_num'] . ' ' . gram_record($row['comm_num'], 'comments'));
 
-                                megaDate(strtotime($row['adate']), 1, 1);
-
+                                $date_str = megaDate(strtotime($row['adate']), 1, 1);
+                                $tpl->set('{date}', $date_str);
                                 if ($row['cover'])
                                     $tpl->set('{cover}', $config['home_url'] . 'uploads/users/' . $uid . '/albums/' . $row['aid'] . '/c_' . $row['cover']);
                                 else

@@ -205,8 +205,8 @@ if (Registry::get('logged')) {
                         $tpl->set('{descr}', '');
 
                     $tpl->set('{comm}', $row['comm_num'] . ' ' . gram_record($row['comm_num'], 'comments'));
-                    megaDate(strtotime($row['add_date']));
-
+                    $date_str = megaDate(strtotime($row['add_date']));
+                    $tpl->set('{date}', $date_str);
                     //Права админа
                     if ($public_admin) {
 
@@ -287,8 +287,8 @@ if (Registry::get('logged')) {
                             $tpl->set('{descr}', '');
 
                         $tpl->set('{comm}', $row['comm_num'] . ' ' . gram_record($row['comm_num'], 'comments'));
-                        megaDate(strtotime($row['add_date']));
-
+                        $date_str = megaDate(strtotime($row['add_date']));
+                        $tpl->set('{date}', $date_str);
                         //Права админа
                         if ($public_admin) {
 

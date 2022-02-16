@@ -50,7 +50,10 @@ function intFilter(string $source, int $default = 0): int
     } else {
         return '';
     }
-    if (empty($source)) {
+
+    if (is_array($source)) {
+        return $source;
+    } elseif (empty($source)) {
         return '';
     } else {
         return textFilter($source, $substr_num, $strip_tags);
@@ -456,32 +459,6 @@ function NoAjaxQuery() : void
     if(!empty($_POST['ajax']) AND $_POST['ajax'] == 'yes')
         if (clean_url($_SERVER['HTTP_REFERER']) != clean_url($_SERVER['HTTP_HOST']) AND $_SERVER['REQUEST_METHOD'] != 'POST')
             header('Location: /index.php?go=none');
-}
-
-/**
- * @param array|string $source
- * @return array|string|null
- */
-function replace_rn(array|string $source): array|string|null
-{
-    $find[] = "'\r'";
-    $replace[] = "";
-    $find[] = "'\n'";
-    $replace[] = "";
-    return preg_replace($find, $replace, $source);
-}
-
-/**
- * @param array|string $source
- * @return array|string
- */
-function myBr(array|string $source): array|string
-{
-    $find[] = "'\r'";
-    $replace[] = "<br />";
-    $find[] = "'\n'";
-    $replace[] = "<br />";
-    return preg_replace($find, $replace, $source);
 }
 
 /**
@@ -922,37 +899,24 @@ function user_age($user_year, $user_month, $user_day) {
 }
 
 /**
- * @param $date
+ * @param int|null $date
  * @param bool $func
  * @param bool $full
- * @return void
+ * @return string
  */
-function megaDate($date, bool $func = false, bool $full = false)
+function megaDate(?int $date, bool $func = false, bool $full = false): string
 {
-    global $tpl;
-    $date_comm = $date;
-    if (date('Y-m-d', $date_comm) == date('Y-m-d', Registry::get('server_time')))
-        return $tpl->set('{date}', langdate('сегодня в H:i', $date_comm));
-    elseif (date('Y-m-d', $date_comm) == date('Y-m-d', (Registry::get('server_time') - 84600)))
-        return $tpl->set('{date}', langdate('вчера в H:i', $date_comm));
+    $server_time = Registry::get('server_time');
+    if (date('Y-m-d', $date) == date('Y-m-d', $server_time))
+        return langdate('сегодня в H:i', $date);
+    elseif (date('Y-m-d', $date) == date('Y-m-d', ($server_time - 84600)))
+        return langdate('вчера в H:i', $date);
     else if ($func == 'no_year')
-        return $tpl->set('{date}', langdate('j M в H:i', $date_comm));
+        return langdate('j M в H:i', $date);
     else if ($full)
-        return $tpl->set('{date}', langdate('j F Y в H:i', $date_comm));
+        return langdate('j F Y в H:i', $date);
     else
-        return $tpl->set('{date}', langdate('j M Y в H:i', $date_comm));
-}
-function megaDateNoTpl($date, $func = false, $full = false) {
-    if (date('Y-m-d', $date) == date('Y-m-d', Registry::get('server_time')))
-        return $date = langdate('сегодня в H:i', $date);
-    elseif (date('Y-m-d', $date) == date('Y-m-d', (Registry::get('server_time') - 84600)))
-        return $date = langdate('вчера в H:i', $date);
-    else if ($func == 'no_year')
-        return $date = langdate('j M в H:i', $date);
-    else if ($full)
-        return $date = langdate('j F Y в H:i', $date);
-    else
-        return $date = langdate('j M Y в H:i', $date);
+        return langdate('j M Y в H:i', $date);
 }
 function OnlineTpl($time, $mobile = false) {
     global $tpl, $online_time, $lang;

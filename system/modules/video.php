@@ -62,8 +62,8 @@ if ($row) {
                 $tpl->set('{author}', $row_comm['user_search_pref']);
                 $tpl->set('{comment}', stripslashes($row_comm['text']));
                 $tpl->set('{id}', $row_comm['id']);
-                megaDate(strtotime($row_comm['add_date']));
-
+                $date_str = megaDate(strtotime($row_comm['add_date']));
+                $tpl->set('{date}', $date_str);
                 if ($row_comm['author_user_id'] == $user_id || $row['owner_user_id'] == $user_id || $public_admin) {
                     $tpl->set('[owner]', '');
                     $tpl->set('[/owner]', '');
@@ -93,8 +93,8 @@ if ($row) {
         $tpl->set('{comm-num}', $row['comm_num']);
         $tpl->set('{owner-id}', $row['owner_user_id']);
         $tpl->set('{close-link}', $close_link);
-        megaDate(strtotime($row['add_date']));
-
+        $date_str = megaDate(strtotime($row['add_date']));
+        $tpl->set('{date}', $date_str);
         if ($row['owner_user_id'] == $user_id) {
             $tpl->set('[owner]', '');
             $tpl->set('[/owner]', '');

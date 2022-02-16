@@ -48,7 +48,7 @@ if (Registry::get('logged')) {
                         $ava = $row['photo'];
                         $img_width = 100;
                         $row['user_search_pref'] = $row['title'];
-                        $countr = 'Добавлено ' . megaDateNoTpl(strtotime($row['add_date']), 1, 1);
+                        $countr = 'Добавлено ' . megaDate(strtotime($row['add_date']), 1, 1);
                         $row['user_id'] = 'video' . $row['owner_user_id'] . '_' . $row['id'] . '" onClick="videos.show(' . $row['id'] . ', this.href, location.href); return false';
 
                         //Если критерий поиск "по сообществам"

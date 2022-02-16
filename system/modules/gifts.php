@@ -209,7 +209,8 @@ if (Registry::get('logged')) {
                         $tpl->set('[/link]', '');
                     }
                     $tpl->set('{gift}', $row['gift']);
-                    megaDate($row['gdate'], 1, 1);
+                    $date_str = megaDate($row['gdate'], 1, 1);
+                    $tpl->set('{date}', $date_str);
                     $tpl->set('[privacy]', '');
                     $tpl->set('[/privacy]', '');
                     if ($row['privacy'] == 3 and $user_id == $uid) {

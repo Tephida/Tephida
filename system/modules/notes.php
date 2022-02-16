@@ -296,8 +296,8 @@ if (Registry::get('logged')) {
 
                     OnlineTpl($row_comm['user_last_visit'], $row_comm['user_logged_mobile']);
 
-                    megaDate(strtotime($row_comm['date']));
-
+                    $date_str = megaDate(strtotime($row_comm['date']));
+                    $tpl->set('{date}', $date_str);
                     if ($row_comm['from_user_id'] == $user_id || $row_comm['owner_user_id'] == $user_id) {
                         $tpl->set('[owner]', '');
                         $tpl->set('[/owner]', '');
@@ -411,8 +411,8 @@ if (Registry::get('logged')) {
 
                             OnlineTpl($row_comm['user_last_visit'], $row_comm['user_logged_mobile']);
 
-                            megaDate(strtotime($row_comm['add_date']));
-
+                            $date_str = megaDate(strtotime($row_comm['add_date']));
+                            $tpl->set('{date}', $date_str);
                             if ($row_comm['from_user_id'] == $user_id || $row['owner_user_id'] == $user_id) {
                                 $tpl->set('[owner]', '');
                                 $tpl->set('[/owner]', '');

@@ -45,8 +45,8 @@ if (Registry::get('logged')) {
                     $tpl->set('{user-id}', $row['user_id']);
                     $tpl->set('{name}', $row['user_search_pref']);
                     $tpl->set('{rate}', $row['addnum']);
-                    megaDate($row['date']);
-
+                    $date_str = megaDate($row['date']);
+                    $tpl->set('{date}', $date_str);
                     $tpl->compile('users');
 
                 }
