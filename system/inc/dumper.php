@@ -33,18 +33,19 @@ define('SC', 0);
 // Типы таблиц у которых сохраняется только структура, разделенные запятой
 define('ONLY_CREATE', 'MRG_MyISAM,MERGE,HEAP,MEMORY');
 $is_safe_mode = ini_get('safe_mode') == '1' ? 1 : 0;
-if (!$is_safe_mode && function_exists('set_time_limit')) @set_time_limit(TIME_LIMIT);
+if (!$is_safe_mode && function_exists('set_time_limit'))
+    set_time_limit(TIME_LIMIT);
 $timer = array_sum(explode(' ', microtime()));
 ob_implicit_flush();
 $auth = 0;
 $error = '';
-if (@mysql_connect(DBHOST, DBNUSER, DBPASS)) {
+if (mysql_connect(DBHOST, DBNUSER, DBPASS)) {
     $auth = 1;
 } else {
     $error = '#' . mysql_errno() . ': ' . mysql_error();
 }
 if (!file_exists(PATH)) {
-    @mkdir(PATH, 0777) || die("Не удалось создать каталог для бекапа");
+    mkdir(PATH, 0777) || die("Не удалось создать каталог для бекапа");
     @chmod(PATH, 0777);
 }
 $SK = new dumper();

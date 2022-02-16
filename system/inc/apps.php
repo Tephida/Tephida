@@ -373,19 +373,12 @@ if (isset($_POST['send'])) {
             //Копируем файлы из временной папки в новую папку игры
             foreach ($sql_ as $row) {
 
+                Filesystem::delete($gameDir . $row['file']);
+                Filesystem::delete($upDir . $row['file']);
+
                 if ($row['type'] == 'scrin') {
-
-                    @copy($upDir . 'm' . $row['file'], $gameDir . 'm' . $row['file']);
+                    Filesystem::copy($upDir . 'm' . $row['file'], $gameDir . 'm' . $row['file']);
                     Filesystem::delete($upDir . 'm' . $row['file']);
-
-                    Filesystem::delete($upDir . $row['file'], $gameDir . $row['file']);
-                    Filesystem::delete($upDir . $row['file']);
-
-                } else {
-
-                    Filesystem::delete($upDir . $row['file'], $gameDir . $row['file']);
-                    Filesystem::delete($upDir . $row['file']);
-
                 }
 
             }
@@ -428,7 +421,7 @@ if ($_GET['act'] == 'del_game') {
 
         }
 
-        @rmdir(ROOT_DIR . '/uploads/apps/' . $id . '/');
+        Filesystem::delete(ROOT_DIR . '/uploads/apps/' . $id . '/');
 
         //Удаляем все файлы к игре
         $db->query("DELETE FROM `games_files` WHERE game_id = '{$id}'");

@@ -33,14 +33,14 @@ if (Registry::get('logged')) {
                     //Узнаем исполнителя и название песни по id3
                     $ranTmp = rand(0, 100500);
 
-                    $fp = @fopen(stripslashes($lnk), "rb");
-                    $fd = @fopen(ROOT_DIR . '/uploads/audio_tmp/' . $ranTmp . '.mp3', "w");
+                    $fp = fopen(stripslashes($lnk), "rb");
+                    $fd = fopen(ROOT_DIR . '/uploads/audio_tmp/' . $ranTmp . '.mp3', "w");
                     if ($fp and $fd) {
                         $st = fread($fp, 4096);
                         fwrite($fd, $st);
                     }
-                    @fclose($fp);
-                    @fclose($fd);
+                    fclose($fp);
+                    fclose($fd);
 
                     include ENGINE_DIR . "/classes/id3v2.php";
                     $id3v2 = new Id3v2;

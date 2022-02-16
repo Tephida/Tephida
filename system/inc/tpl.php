@@ -21,9 +21,9 @@ switch($act){
 		$temp = strip_data($_POST['temp']);
 		$file_include = $_POST['tpl'];
 		$file_include = str_replace(array('..', '...', '/../', '//', './', '\..', '\.'), '', $file_include);		
-		$temp_dir = ROOT_DIR.'/templates/'.$temp;
-		$content = @file_get_contents($temp_dir.'/'.$file_include);
-		$format_file = strtolower(end(explode('.', $file_include)));
+		$temp_dir = ROOT_DIR . '/templates/' . $temp;
+        $content = file_get_contents($temp_dir . '/' . $file_include);
+        $format_file = strtolower(end(explode('.', $file_include)));
 
 		if(is_writable($temp_dir.'/'.$file_include) && in_array($format_file, $allowed_extensions) && file_exists($temp_dir.'/'.$file_include))
 			echo $content;

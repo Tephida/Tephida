@@ -116,16 +116,16 @@ class vii_mail {
 		if( ($this->to) and ($this->from) and ($this->subject) ) {
 			if( $this->mail_method != 'smtp' ) {
 
-				if( !@mail( $this->to, $this->subject, $this->message, $this->mail_headers, $this->additional_parameters )  ) {
+				if (!mail($this->to, $this->subject, $this->message, $this->mail_headers, $this->additional_parameters)) {
 
-					if( !@mail( $this->to, $this->subject, $this->message, $this->mail_headers)  ) {
+                    if (!mail($this->to, $this->subject, $this->message, $this->mail_headers)) {
 
-						$this->smtp_msg = "PHP Mail Error.";
-						$this->send_error = true;
+                        $this->smtp_msg = "PHP Mail Error.";
+                        $this->send_error = true;
 
-					}
+                    }
 
-				}
+                }
 			
 			} else {
 				$this->smtp_send();
@@ -150,7 +150,7 @@ class vii_mail {
 	}
 	
 	function smtp_send() {
-		$this->smtp_fp = @fsockopen( $this->smtp_host, intval( $this->smtp_port ), $errno, $errstr, 30 );
+        $this->smtp_fp = fsockopen($this->smtp_host, intval($this->smtp_port), $errno, $errstr, 30);
 		
 		if( ! $this->smtp_fp ) {
 			$this->smtp_error( "Could not open a socket to the SMTP server" );
@@ -245,8 +245,8 @@ class vii_mail {
 				$this->smtp_error("Error on quit");
 				return;
 			}
-			
-			@fclose( $this->smtp_fp );
+
+            fclose($this->smtp_fp);
 		} else {
 			$this->smtp_error( "SMTP service unaviable" );
 			return;

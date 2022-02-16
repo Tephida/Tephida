@@ -503,7 +503,7 @@ switch ($act) {
                             while ($file = readdir($fdir))
                                 Filesystem::delete(ROOT_DIR . '/uploads/users/' . $row['user_id'] . '/albums/' . $aid . '/' . $file);
 
-                            @rmdir(ROOT_DIR . '/uploads/users/' . $row['user_id'] . '/albums/' . $aid);
+                            Filesystem::delete(ROOT_DIR . '/uploads/users/' . $row['user_id'] . '/albums/' . $aid);
                         }
 
                         //Обновлям кол-во альбом в юзера

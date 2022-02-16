@@ -92,7 +92,7 @@ if($_GET['act'] == 'del'){
 	
 	unset($xfields[$xfieldsindex]);
 
-	@profilesave($xfields);
+	profilesave($xfields);
 		
 	exit;
 }
@@ -149,7 +149,7 @@ if(isset($_POST['save'])){
 		$xfields[$xfieldsindex] = $editedxfield;
 		ksort($xfields);
 
-		@profilesave($xfields);
+        profilesave($xfields);
 	
 	} else {
 	
@@ -169,9 +169,9 @@ if($_GET['act'] == 'moveup'){
 		msgbox('Информация', 'Выберите поле, которое хотите сдвинуть!', 'javascript:history.go(-1)');
 		exit;
 	}
-	
-	array_move($xfields, $xfieldsindex, -1);
-	@profilesave($xfields);
+
+    array_move($xfields, $xfieldsindex, -1);
+    profilesave($xfields);
 		
 }
 
@@ -184,9 +184,9 @@ if($_GET['act'] == 'movedown'){
 		msgbox('Информация', 'Выберите поле, которое хотите сдвинуть!', 'javascript:history.go(-1)');
 		exit;
 	}
-	
-	array_move($xfields, $xfieldsindex, +1);
-	@profilesave($xfields);
+
+    array_move($xfields, $xfieldsindex, +1);
+    profilesave($xfields);
 		
 }
 
@@ -244,7 +244,7 @@ if($_GET['act'] == 'edit'){
 			$xfields[$xfieldsindex] = $editedxfield;
 			ksort($xfields);
 
-			@profilesave($xfields);
+            profilesave($xfields);
 
 		} else {
 	

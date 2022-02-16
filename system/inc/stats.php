@@ -37,9 +37,9 @@ function dirsize($directory)
     $size = 0;
     if ($DIR = opendir($directory)) {
         while (($dirfile = readdir($DIR)) !== false) {
-            if (@is_link($directory . '/' . $dirfile) || $dirfile == '.' || $dirfile == '..') continue;
-            if (@is_file($directory . '/' . $dirfile)) $size += filesize($directory . '/' . $dirfile);
-            else if (@is_dir($directory . '/' . $dirfile)) {
+            if (is_link($directory . '/' . $dirfile) || $dirfile == '.' || $dirfile == '..') continue;
+            if (is_file($directory . '/' . $dirfile)) $size += filesize($directory . '/' . $dirfile);
+            else if (is_dir($directory . '/' . $dirfile)) {
                 $dirSize = dirsize($directory . '/' . $dirfile);
                 if ($dirSize >= 0) $size += $dirSize;
                 else return -1;

@@ -47,7 +47,7 @@ if (Registry::get('logged')) {
                 //Проверяем если, формат верный то пропускаем
                 if (in_array(strtolower($format), $allowed_files) and $row['photo_name']) {
 
-                    @copy($res_image, ROOT_DIR . "/uploads/users/{$user_id}/albums/{$row['album_id']}/{$row['photo_name']}");
+                    Filesystem::copy($res_image, ROOT_DIR . "/uploads/users/{$user_id}/albums/{$row['album_id']}/{$row['photo_name']}");
 
                     //Подключаем класс для фотографий
                     include ENGINE_DIR . '/classes/images.php';

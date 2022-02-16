@@ -581,7 +581,7 @@ HTML;
                     while ($file = readdir($fdir))
                         Filesystem::delete(ROOT_DIR . '/uploads/users/' . $user_id . '/albums/' . $aid . '/' . $file);
 
-                    @rmdir(ROOT_DIR . '/uploads/users/' . $user_id . '/albums/' . $aid);
+                    Filesystem::delete(ROOT_DIR . '/uploads/users/' . $user_id . '/albums/' . $aid);
                 }
 
                 //Обновляем кол-во альбом в юзера

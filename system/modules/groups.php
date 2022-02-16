@@ -521,7 +521,7 @@ if (Registry::get('logged')) {
                                 //Подключаем класс для фотографий
                                 include ENGINE_DIR . '/classes/images.php';
 
-                                if (@copy($rImgUrl, $upload_dir . '/' . $image_name . '.' . $img_format)) {
+                                if (Filesystem::copy($rImgUrl, $upload_dir . '/' . $image_name . '.' . $img_format)) {
                                     $tmb = new thumbnail($upload_dir . '/' . $image_name . '.' . $img_format);
                                     $tmb->size_auto('100x80');
                                     $tmb->jpeg_quality(100);

@@ -18,7 +18,7 @@ class download {
 		$name = explode( "/", $name );
 		$name = end( $name );
 		
-		$file_size = @filesize( $path );
+		$file_size = filesize($path);
 		
 		$this->properties = array ('old_name' => $path, 'new_name' => $name, 'type' => "application/force-download", 'size' => $file_size, 'resume' => $resume, 'max_speed' => $max_speed );
 		
@@ -65,21 +65,21 @@ class download {
 		if( $this->properties['resume'] ) header( "Accept-Ranges: bytes" );
 		
 		if( $this->range ) {
-			
-			header( "Content-Range: bytes {$this->range}-" . ($this->properties['size'] - 1) . "/" . $this->properties['size'] );
-			header( "Content-Length: " . ($this->properties['size'] - $this->range) );
-		
-		} else {
-			
-			header( "Content-Length: " . $this->properties['size'] );
-		
-		}
-		
-		@ini_set( 'max_execution_time', 0 );
-		@set_time_limit();
-		
-		$this->_download( $this->properties['old_name'], $this->range );
-	}
+
+            header("Content-Range: bytes {$this->range}-" . ($this->properties['size'] - 1) . "/" . $this->properties['size']);
+            header("Content-Length: " . ($this->properties['size'] - $this->range));
+
+        } else {
+
+            header("Content-Length: " . $this->properties['size']);
+
+        }
+
+//		ini_set( 'max_execution_time', 0 );
+//		set_time_limit();
+
+        $this->_download($this->properties['old_name'], $this->range);
+    }
 	
 	function _download($filename, $range = 0) {
 		

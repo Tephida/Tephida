@@ -683,7 +683,7 @@ if (Registry::get('logged')) {
                 Filesystem::createDir($upload_dir);
 
                 $expPhoto = end(explode('/', $row['photo']));
-                @copy($row['photo'], ROOT_DIR . "/uploads/videos/{$user_id}/{$expPhoto}");
+                Filesystem::copy($row['photo'], ROOT_DIR . "/uploads/videos/{$user_id}/{$expPhoto}");
                 $newPhoto = "{$config['home_url']}uploads/videos/{$user_id}/{$expPhoto}";
                 $db->query("INSERT INTO `videos` SET owner_user_id = '{$user_id}', video = '{$row['video']}', photo = '{$newPhoto}', title = '{$row['title']}', descr = '{$row['descr']}', add_date = NOW(), privacy = 1");
                 $dbid = $db->insert_id();

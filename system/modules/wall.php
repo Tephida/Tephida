@@ -103,7 +103,7 @@ if (Registry::get('logged')) {
                                             //Подключаем класс для фотографий
                                             include ENGINE_DIR . '/classes/images.php';
 
-                                            if (@copy($rImgUrl, $upload_dir . '/' . $image_name . '.' . $img_format)) {
+                                            if (Filesystem::copy($rImgUrl, $upload_dir . '/' . $image_name . '.' . $img_format)) {
                                                 $tmb = new thumbnail($upload_dir . '/' . $image_name . '.' . $img_format);
                                                 $tmb->size_auto('100x80');
                                                 $tmb->jpeg_quality(100);
@@ -626,10 +626,10 @@ if (Registry::get('logged')) {
         //################### Парсер информации о ссылке ###################//
         case "parse_link":
             $lnk = 'https://' . str_replace('https://', '', requestFilter('lnk'));
-            $check_url = @get_headers(stripslashes($lnk));
+            $check_url = get_headers(stripslashes($lnk));
 
             if (strpos($check_url[0], '200')) {
-                $open_lnk = @file_get_contents($lnk);
+                $open_lnk = file_get_contents($lnk);
 
 //                if (stripos(strtolower($open_lnk), 'charset=utf-8') or stripos(strtolower($check_url[2]), 'charset=utf-8')){
 //                }else

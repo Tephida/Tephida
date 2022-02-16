@@ -41,8 +41,8 @@ class thumbnail
             exit();
         }
 
-        $this->img['lebar'] = @imagesx($this->img['src']);
-        $this->img['tinggi'] = @imagesy($this->img['src']);
+        $this->img['lebar'] = imagesx($this->img['src']);
+        $this->img['tinggi'] = imagesy($this->img['src']);
         $this->img['lebar_thumb'] = $this->img['lebar'];
         $this->img['tinggi_thumb'] = $this->img['tinggi'];
         //default quality jpeg
@@ -198,7 +198,7 @@ class thumbnail
             imagesavealpha($this->img['des'], true);
         }
 
-        @imagecopyresampled($this->img['des'], $this->img['src'], 0, 0, 0, 0, $this->img['lebar_thumb'], $this->img['tinggi_thumb'], $this->img['lebar'], $this->img['tinggi']);
+        imagecopyresampled($this->img['des'], $this->img['src'], 0, 0, 0, 0, $this->img['lebar_thumb'], $this->img['tinggi_thumb'], $this->img['lebar'], $this->img['tinggi']);
 
         $this->img['src'] = $this->img['des'];
         return 1;

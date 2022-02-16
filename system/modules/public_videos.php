@@ -42,7 +42,7 @@ if (Registry::get('logged')) {
 
                 $img_name_arr = end(explode(".", $row['photo']));
                 $expPhoto = substr(md5(time() . md5($row['photo'])), 0, 15) . '.' . $img_name_arr;
-                @copy($row['photo'], ROOT_DIR . "/uploads/videos/{$user_id}/{$expPhoto}");
+                Filesystem::copy($row['photo'], ROOT_DIR . "/uploads/videos/{$user_id}/{$expPhoto}");
 
                 $newPhoto = "{$config['home_url']}uploads/videos/{$user_id}/{$expPhoto}";
 
