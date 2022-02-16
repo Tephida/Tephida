@@ -269,6 +269,9 @@ class wall
 
                 }
 
+                $resLinkTitle = $resLinkTitle ?? '';
+                $resLinkUrl = $resLinkUrl ?? '';
+
                 if ($resLinkTitle and $row_wall['text'] == $resLinkUrl or !$row_wall['text'])
                     $row_wall['text'] = $resLinkTitle . $attach_result;
                 else if ($attach_result)
