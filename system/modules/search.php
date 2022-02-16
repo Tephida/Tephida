@@ -97,15 +97,15 @@ if ($logged) {
     else
         $tpl->set('{query}', 'Начните вводить любое слово или имя');
 
-    $_GET['query'] = strip_data(urldecode(requestFilter('query')));
+    $query = strip_data(urldecode(requestFilter('query')));
     if (isset($_GET['n']) and $_GET['n'])
-        $_GET['query'] = strip_data(urldecode(requestFilter('query')));
+        $query = strip_data(urldecode(requestFilter('query')));
 
     $tpl->set('{query-people}', str_replace(array('&type=2', '&type=3', '&type=4', '&type=5'), '&type=1', $_SERVER['QUERY_STRING']));
-    $tpl->set('{query-videos}', '&type=2&query=' . $_GET['query']);
-    $tpl->set('{query-notes}', '&type=3&query=' . $_GET['query']);
-    $tpl->set('{query-groups}', '&type=4&query=' . $_GET['query']);
-    $tpl->set('{query-audios}', '&type=5&query=' . $_GET['query']);
+    $tpl->set('{query-videos}', '&type=2&query=' . $query);
+    $tpl->set('{query-notes}', '&type=3&query=' . $query);
+    $tpl->set('{query-groups}', '&type=4&query=' . $query);
+    $tpl->set('{query-audios}', '&type=5&query=' . $query);
 
     if ($online) $tpl->set('{checked-online}', 'online');
     else $tpl->set('{checked-online}', '0');

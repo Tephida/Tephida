@@ -11,7 +11,7 @@ if (!defined('MOZG'))
 
 if ($logged) {
 
-    $act = requestFilter($_GET['act']);
+    $act = requestFilter('act');
     $user_id = $user_info['user_id'];
 
     switch ($act) {
@@ -21,7 +21,7 @@ if ($logged) {
 
             NoAjaxQuery();
 
-            $pid = intFilter(['pid');
+            $pid = intFilter('pid');
             $id = intFilter('id');
 
             $infoGroup = $db->super_query("SELECT admin FROM `communities` WHERE id = '{$pid}'");

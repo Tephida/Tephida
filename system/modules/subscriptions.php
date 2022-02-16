@@ -12,7 +12,7 @@ if (!defined('MOZG'))
 NoAjaxQuery();
 
 if ($logged) {
-    $act = requestFilter($_GET['act']);
+    $act = requestFilter('act');
     $user_id = $user_info['user_id'];
 
     switch ($act) {

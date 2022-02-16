@@ -100,7 +100,7 @@ if ($logged) {
 
                 $title = requestFilter('title', 25000, true);
                 $text = $parse->BBparse(requestFilter('text'));
-                $id = intval($_POST['id']);
+                $id = intFilter('id');
 
                 function BBimg($source)
                 {
@@ -162,7 +162,7 @@ if ($logged) {
             break;
 
         default:
-            $id = intval($_GET['id']);
+            $id = intFilter('id');
             if ($id) {
                 $sqlWhere = "WHERE id = '{$id}'";
             } else {
@@ -188,7 +188,7 @@ if ($logged) {
                 $cnt++;
                 $rowLast['title'] = stripslashes($rowLast['title']);
 
-                if (isset($_GET['id']) and $_GET['id'] == $rowLast['id'] or $cnt == 1 and !$_GET['id'])
+                if (intFilter('id') == $rowLast['id'] or $cnt == 1 and !intFilter('id'))
                     $lastNews .= "<div><a href=\"/blog?id={$rowLast['id']}\" class=\"bloglnkactive\" onClick=\"Page.Go(this.href); return false\">{$rowLast['title']}</a></div>";
                 else
                     $lastNews .= "<a href=\"/blog?id={$rowLast['id']}\" onClick=\"Page.Go(this.href); return false\">{$rowLast['title']}</a>";

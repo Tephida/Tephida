@@ -376,7 +376,7 @@ if ($logged) {
         case "delvote":
             NoAjaxQuery();
 
-            $fid = intval($_POST['fid']);
+            $fid = intFilter('fid');
 
             $row = $db->super_query("SELECT fuser_id, vote, public_id FROM `communities_forum` WHERE fid = '{$fid}'");
             $row2 = $db->super_query("SELECT admin, discussion FROM `communities` WHERE id = '{$row['public_id']}'");

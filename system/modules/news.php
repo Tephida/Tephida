@@ -17,7 +17,7 @@ if ($logged) {
 
     //################### Вывод новостей ###################//
 //			$type = $_GET['type']; #тип сортировки
-    $type = $_GET['type'] ?? 'no';
+    $type = requestFilter('type');
 
     //Если вызвана страница обновлений
     if ($type == 'updates' or $type == 'photos' or $type == 'videos')
@@ -338,7 +338,7 @@ if ($logged) {
                                 $audioId = intval($attach_type[1]);
                                 $audioInfo = $db->super_query("SELECT artist, name, url FROM `audio` WHERE aid = '" . $audioId . "'");
                                 if ($audioInfo) {
-                                    if ($_GET['uid']) $appClassWidth = 'player_mini_mbar_wall_all';
+                                    if (intFilter('uid')) $appClassWidth = 'player_mini_mbar_wall_all';
                                     $jid++;
                                     $attach_result .= '<div class="audioForSize' . $row_info['id'] . ' ' . $appClassWidth . '" id="audioForSize"><div class="audio_onetrack audio_wall_onemus"><div class="audio_playic cursor_pointer fl_l" onClick="music.newStartPlay(\'' . $jid . '\', ' . $row_info['id'] . ')" id="icPlay_' . $row_info['id'] . $jid . '"></div><div id="music_' . $row_info['id'] . $jid . '" data="' . $audioInfo['url'] . '" class="fl_l" style="margin-top:-1px"><a href="/?go=search&type=5&query=' . $audioInfo['artist'] . '&n=1" onClick="Page.Go(this.href); return false"><b>' . stripslashes($audioInfo['artist']) . '</b></a> &ndash; ' . stripslashes($audioInfo['name']) . '</div><div id="play_time' . $row_info['id'] . $jid . '" class="color777 fl_r no_display" style="margin-top:2px;margin-right:5px">00:00</div><div class="player_mini_mbar fl_l no_display player_mini_mbar_wall ' . $appClassWidth . '" id="ppbarPro' . $row_info['id'] . $jid . '"></div></div></div>';
                                 }
@@ -641,7 +641,8 @@ HTML;
                                 $audioId = intval($attach_type[1]);
                                 $audioInfo = $db->super_query("SELECT artist, name, url FROM `audio` WHERE aid = '" . $audioId . "'");
                                 if ($audioInfo) {
-                                    if ($_GET['uid']) $appClassWidth = 'player_mini_mbar_wall_all';
+                                    if (intFilter('uid'))
+                                        $appClassWidth = 'player_mini_mbar_wall_all';
                                     $jid++;
                                     $attach_result .= '<div class="audioForSize' . $row_info_likes['id'] . ' ' . $appClassWidth . '" id="audioForSize"><div class="audio_onetrack audio_wall_onemus"><div class="audio_playic cursor_pointer fl_l" onClick="music.newStartPlay(\'' . $jid . '\', ' . $row_info_likes['id'] . ')" id="icPlay_' . $row_info_likes['id'] . $jid . '"></div><div id="music_' . $row_info_likes['id'] . $jid . '" data="' . $audioInfo['url'] . '" class="fl_l" style="margin-top:-1px"><a href="/?go=search&type=5&query=' . $audioInfo['artist'] . '&n=1" onClick="Page.Go(this.href); return false"><b>' . stripslashes($audioInfo['artist']) . '</b></a> &ndash; ' . stripslashes($audioInfo['name']) . '</div><div id="play_time' . $row_info_likes['id'] . $jid . '" class="color777 fl_r no_display" style="margin-top:2px;margin-right:5px">00:00</div><div class="player_mini_mbar fl_l no_display player_mini_mbar_wall ' . $appClassWidth . '" id="ppbarPro' . $row_info_likes['id'] . $jid . '"></div></div></div>';
                                 }

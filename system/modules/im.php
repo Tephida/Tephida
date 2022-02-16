@@ -258,7 +258,7 @@ if ($logged) {
 
         case 'createRoom':
             $title = requestFilter('title');
-            $user_ids = requestFilter($_POST['user_ids']);
+            $user_ids = requestFilter('user_ids');
             if ($title) {
                 $user_ids = array_diff($user_ids, array(''));
                 $user_ids = array_diff($user_ids, array($user_id));
@@ -579,7 +579,7 @@ if ($logged) {
             $room_id = intFilter('room_id');
             $for_user_id = intFilter('for_user_id');
             if (!$room_id) {
-                if ($_GET['stop'] == 1) mozg_create_cache("user_{$for_user_id}/typograf{$user_id}", "");
+                if (intFilter('stop') == 1) mozg_create_cache("user_{$for_user_id}/typograf{$user_id}", "");
                 else mozg_create_cache("user_{$for_user_id}/typograf{$user_id}", 1);
             }
             exit();

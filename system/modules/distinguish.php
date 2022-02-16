@@ -47,7 +47,7 @@ if ($logged) {
             elseif ($row_no['cnt'])
                 $db->query("UPDATE `photos_mark` SET msettings_pos = '" . $msettings_pos . "' WHERE mphoto_id = '" . $photo_id . "' AND mphoto_name = '" . $mphoto_name . "'");
             else
-                if (isset($_POST['user_ok']) and $_POST['user_ok'] == 'yes') {
+                if (requestFilter('user_ok') == 'yes') {
                     $db->query("INSERT INTO `photos_mark` SET muser_id = '" . $muser_id . "', mphoto_id = '" . $photo_id . "', mdate = '" . $server_time . "', msettings_pos = '" . $msettings_pos . "', mapprove = '" . $approve . "', mmark_user_id = '" . $user_id . "'");
 
                     if ($user_id != $muser_id)
@@ -98,7 +98,7 @@ if ($logged) {
         case "load_friends":
             $photo_id = intFilter(['photo_id');
             $all_limit = 110;
-            if (isset($_POST['page']) and $_POST['page'] == 2)
+            if (requestFilter('page') == 2)
                 $limit = $all_limit . ", " . ($all_limit * 2);
             else $limit = "0, " . $all_limit;
 
@@ -114,7 +114,7 @@ if ($logged) {
                     $cnt++;
                 }
 
-                if ($cnt == $all_limit and !$_POST['page'])
+                if ($cnt == $all_limit and !isset($_POST['page']))
                     $added_script = "setTimeout('Distinguish.FriendPage(2, " . $photo_id . "')', 2500)";
                 else {
                     $added_script = null;

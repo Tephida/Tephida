@@ -22,7 +22,7 @@ if ($logged) {
         default:
 
             //Если поиск
-            $query = (isset($_POST['query'])) ? textFilter(strip_data(urldecode($_POST['query']))) : '';
+            $query = requestFilter('query');
             $query = strtr($query, array(' ' => '%')); //Заменяем пробелы на проценты чтоб поиск был точнее
             $do_load = intFilter('doload');
 

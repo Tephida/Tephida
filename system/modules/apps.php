@@ -8,7 +8,7 @@
  */
 if (!defined('MOZG')) die('Hacking attempt!');
 if ($logged) {
-    $act = $_GET['act'] ?? '';
+    $act = requestFilter('act');
     $user_id = $user_info['user_id'];
     switch ($act) {
             //################### Страница приложения ###################//

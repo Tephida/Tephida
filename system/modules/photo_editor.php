@@ -33,16 +33,16 @@ if ($logged) {
             //Разрешенные форматы
             $allowed_files = explode(', ', $config['photo_format']);
 
-            $res_image = $_GET['image'];
+            $res_image = requestFilter('image');
             $format = end(explode('.', $res_image));
-            $pid = $_GET['pid'];
+            $pid = intFilter('pid');
 
             if (stripos($_SERVER['HTTP_REFERER'], 'pixlr.com') !== false and $pid and $format) {
 
                 //Выводим информацию о фото
                 $row = $db->super_query("SELECT photo_name, album_id FROM `photos` WHERE user_id = '{$user_id}' AND id = '{$pid}'");
 
-                //Проверям если, формат верный то пропускаем
+                //Проверяем если, формат верный то пропускаем
                 if (in_array(strtolower($format), $allowed_files) and $row['photo_name']) {
 
                     @copy($res_image, ROOT_DIR . "/uploads/users/{$user_id}/albums/{$row['album_id']}/{$row['photo_name']}");

@@ -11,7 +11,7 @@ if (!defined('MOZG'))
 
 NoAjaxQuery();
 
-$country_id = intval($_POST['country']);
+$country_id = intFilter('country');
 
 echo '<option value="0">- Выбрать -</option>';
 

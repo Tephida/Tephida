@@ -8,7 +8,7 @@
  */
 if (!defined('MOZG')) die('Hacking attempt!');
 if ($logged) {
-    $act = $_GET['act'] ?? '';
+    $act = requestFilter('act');
     $user_id = $user_info['user_id'];
     switch ($act) {
             //################### Добавления комментария ###################//
@@ -192,7 +192,7 @@ if ($logged) {
             
         case "profile":
             $uid = intFilter('uid');
-            if ($_POST['type']) $photo = ROOT_DIR . "/uploads/attach/{$uid}/c_{$_POST['photo']}";
+            if (isset($_POST['type'])) $photo = ROOT_DIR . "/uploads/attach/{$uid}/c_{$_POST['photo']}";
             else $photo = ROOT_DIR . "/uploads/users/{$uid}/o_{$_POST['photo']}";
             if (file_exists($photo)) {
                 $tpl->load_template('photos/photo_profile.tpl');

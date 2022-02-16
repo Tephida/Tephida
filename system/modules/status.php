@@ -18,7 +18,7 @@ if ($logged) {
     $public_id = intFilter('public_id');
 
     //Если обновляем статус группы
-    if ($_GET['act'] == 'public') {
+    if (requestFilter('act') == 'public') {
 
         $row = $db->super_query("SELECT admin FROM `communities` WHERE id = '{$public_id}'");
 

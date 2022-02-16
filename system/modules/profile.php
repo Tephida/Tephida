@@ -601,7 +601,7 @@ if ($logged) {
                 $tpl->set_block("'\\[online-friends\\](.*?)\\[/online-friends\\]'si", "");
 
             //Если человек пришел после реги, то открываем ему окно загрузи фотографии
-            if (isset($_GET['after']) and intval($_GET['after'])) {
+            if (intFilter('after')) {
                 $tpl->set('[after-reg]', '');
                 $tpl->set('[/after-reg]', '');
             } else

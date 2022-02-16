@@ -258,7 +258,7 @@ if ($logged) {
 
             $xfields = profileload();
 
-            $postedxfields = $_POST['xfields'];
+            $postedxfields = requestFilter('xfields');
 
             $newpostedxfields = array();
 
