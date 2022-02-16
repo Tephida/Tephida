@@ -162,14 +162,14 @@ function echohtmlstart($title){
 HTML;
 }
 function echohtmlend(){
-	global $admin_link, $logged;
-	
-	if($logged){
-		$stat_lnk = "<a href=\"{$admin_link}?mod=stats\" style=\"margin-right:10px\">статистика</a>";
-		$exit_lnk = "<a href=\"{$admin_link}?act=logout\">выйти</a>";
-	}
-	
-	echo <<<HTML
+    global $admin_link;
+
+    if (Registry::get('logged')) {
+        $stat_lnk = "<a href=\"{$admin_link}?mod=stats\" style=\"margin-right:10px\">статистика</a>";
+        $exit_lnk = "<a href=\"{$admin_link}?act=logout\">выйти</a>";
+    }
+
+    echo <<<HTML
 <div class="clr"></div>
 </div>
 <div class="clr"></div>

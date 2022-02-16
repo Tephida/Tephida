@@ -20,7 +20,6 @@ class wall
 
     function query($query)
     {
-        global $db;
         $db = Registry::get('db');
         $this->query = $db->super_query($query, true);
     }
@@ -41,20 +40,20 @@ class wall
 
     function select()
     {
-        global $tpl, $db, $config, $user_id, $id, $for_user_id, $user_privacy, $check_friend, $user_info;
+        global $tpl, $config, $user_id, $id, $for_user_id, $user_privacy, $check_friend, $user_info;
         $db = Registry::get('db');
         $this->template;
         foreach ($this->query as $row_wall) {
             $tpl->set('{rec-id}', $row_wall['id']);
 
-            //КНопка Показать полностью..
+            //Кнопка Показать полностью..
             $expBR = explode('<br />', $row_wall['text']);
             $textLength = count($expBR);
             $strTXT = strlen($row_wall['text']);
             if ($textLength > 9 or $strTXT > 600)
                 $row_wall['text'] = '<div class="wall_strlen" id="hide_wall_rec' . $row_wall['id'] . '">' . $row_wall['text'] . '</div><div class="wall_strlen_full" onMouseDown="wall.FullText(' . $row_wall['id'] . ', this.id)" id="hide_wall_rec_lnk' . $row_wall['id'] . '">Показать полностью..</div>';
 
-            //Прикрипленные файлы
+            //Прикрепленные файлы
             if ($row_wall['attach']) {
                 $attach_arr = explode('||', $row_wall['attach']);
                 $cnt_attach = 1;
@@ -508,7 +507,6 @@ HTML;
 
     function comm_query($query)
     {
-        global $db;
         $db = Registry::get('db');
         $this->comm_query = $db->super_query($query, true);
     }
@@ -529,7 +527,7 @@ HTML;
 
     function comm_select()
     {
-        global $tpl, $db, $config, $user_id, $id, $for_user_id, $fast_comm_id, $record_fasts_num;
+        global $tpl, $user_id, $id, $for_user_id, $fast_comm_id, $record_fasts_num;
         $db = Registry::get('db');
         if ($this->comm_query) {
             $this->comm_template;

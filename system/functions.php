@@ -51,7 +51,6 @@ function intFilter(string $source, int $default = 0): int
 
 function informationText($array): string
 {
-    global $db;
     $db = Registry::get('db');
     $array = json_decode($array, 1);
     $row = $db->super_query("SELECT user_search_pref FROM  users WHERE user_id = '" . ($array['type'] == 1 ? $array['oid2'] : $array['oid']) . "'");
@@ -884,18 +883,18 @@ HTML;
  * @return false|string|void
  */
 function user_age($user_year, $user_month, $user_day) {
-    global $server_time;
+    $server_time = Registry::get('server_time');
     if ($user_year) {
-        $current_year = date('Y', Registry::get('server_time'));
-        $current_month = date('n', Registry::get('server_time'));
-        $current_day = date('j', Registry::get('server_time'));
+        $current_year = date('Y', $server_time);
+        $current_month = date('n', $server_time);
+        $current_day = date('j', $server_time);
         $current_str = strtotime($current_year . '-' . $current_month . '-' . $current_day);
         $current_user = strtotime($current_year . '-' . $user_month . '-' . $user_day);
         if ($current_str >= $current_user)
             $user_age = $current_year - $user_year;
         else
             $user_age = $current_year - $user_year - 1;
-        if ($user_month and $user_month and $user_day)
+        if ($user_month and $user_day)
             return $user_age . ' ' . gram_record($user_age, 'user_age');
         else
             return false;
@@ -910,7 +909,7 @@ function user_age($user_year, $user_month, $user_day) {
  */
 function megaDate($date, bool $func = false, bool $full = false)
 {
-    global $tpl, $server_time;
+    global $tpl;
     $date_comm = $date;
     if (date('Y-m-d', $date_comm) == date('Y-m-d', Registry::get('server_time')))
         return $tpl->set('{date}', langdate('сегодня в H:i', $date_comm));
@@ -924,7 +923,6 @@ function megaDate($date, bool $func = false, bool $full = false)
         return $tpl->set('{date}', langdate('j M Y в H:i', $date_comm));
 }
 function megaDateNoTpl($date, $func = false, $full = false) {
-    global $server_time;
     if (date('Y-m-d', $date) == date('Y-m-d', Registry::get('server_time')))
         return $date = langdate('сегодня в H:i', $date);
     elseif (date('Y-m-d', $date) == date('Y-m-d', (Registry::get('server_time') - 84600)))
@@ -953,7 +951,6 @@ function AjaxTpl() {
     echo str_replace('{theme}', '/templates/' . $config['temp'], $tpl->result['info'] . $tpl->result['content']);
 }
 function GenerateAlbumPhotosPosition($uid, $aid = false) {
-    global $db;
     $db = Registry::get('db');
     //Выводим все фотографии из альбома и обновляем их позицию только для просмотра альбома
     if ($uid AND $aid) {
@@ -1126,7 +1123,7 @@ if (isset($_SESSION['mobile']) AND $_SESSION['mobile'] == 1) {
 }
 function AntiSpam($act, $text = false)
 {
-    global $db, $user_info;
+    global $user_info;
     $db = Registry::get('db');
     if ($text) $text = md5($text);
     /* Типы
@@ -1209,7 +1206,7 @@ function AntiSpam($act, $text = false)
  */
 function AntiSpamLogInsert(string $act, bool|string $text = false): void
 {
-    global $db, $user_info;
+    global $user_info;
     $db = Registry::get('db');
     if ($text)
         $text = md5($text);
