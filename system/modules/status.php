@@ -11,14 +11,14 @@ if (!defined('MOZG'))
 
 NoAjaxQuery();
 
-if ($logged) {
-
+if (Registry::get('logged')) {
+    $db = Registry::get('db');
     $user_id = $user_info['user_id'];
     $text = requestFilter('text', 25000, true);
     $public_id = intFilter('public_id');
 
     //Если обновляем статус группы
-    if ($_GET['act'] == 'public') {
+    if (requestFilter('act') == 'public') {
 
         $row = $db->super_query("SELECT admin FROM `communities` WHERE id = '{$public_id}'");
 

@@ -9,7 +9,7 @@
 if(!defined('MOZG'))
 	die('Hacking attempt!');
 
-//Если сохраянем
+//Если сохраняем
 if(isset($_POST['saveconf'])){
 	$saves = $_POST['save'];
 
@@ -18,8 +18,8 @@ if(isset($_POST['saveconf'])){
 	$find[] = "'\n'";
 	$replace[] = "";
 	
-	$handler = fopen(ENGINE_DIR.'/data/config.php', "w");
-	fwrite($handler, "<?php \n\n//System Configurations\n\n\$config = array (\n\n");
+	$handler = fopen(ENGINE_DIR . '/data/config.php', "w");
+    fwrite($handler, "<?php \n\n//System Configurations\n\nreturn array (\n\n");
 
 	foreach($saves as $name => $value ) {
 	
@@ -57,13 +57,15 @@ if(isset($_POST['saveconf'])){
 	//Чтение всех шаблон в папке "templates"
 	$root = './templates/';
 	$root_dir = scandir($root);
+    $for_select = '';
 	foreach($root_dir as $templates){
 		if($templates != '.' AND $templates != '..' AND $templates != '.htaccess')
 			$for_select .= str_replace('value="'.$config['temp'].'"', 'value="'.$config['temp'].'" selected', '<option value="'.$templates.'">'.$templates.'</option>');
 	}
 	
 	//Чтение всех языков
-	$root_dir2 = scandir('./lang/');
+    $root_dir2 = scandir('./lang/');
+    $for_select_lang = '';
 	foreach($root_dir2 as $lang){
 		if($lang != '.' AND $lang != '..' AND $lang != '.htaccess')
 			$for_select_lang .= str_replace('value="'.$config['lang'].'"', 'value="'.$config['lang'].'" selected', '<option value="'.$lang.'">'.$lang.'</option>');

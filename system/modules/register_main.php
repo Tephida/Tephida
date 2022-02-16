@@ -10,7 +10,7 @@ if (!defined('MOZG'))
     die('Hacking attempt!');
 
 $tpl->load_template('reg.tpl');
-
+$db = Registry::get('db');
 //################## Загружаем Страны ##################//
 $sql_country = $db->super_query("SELECT * FROM `country` ORDER by `name` ASC", true);
 $all_country = '';

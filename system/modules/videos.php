@@ -12,10 +12,12 @@ if (!defined('MOZG')) {
 
 NoAjaxQuery();
 
-if ($logged) {
+if (Registry::get('logged')) {
+    $db = Registry::get('db');
     $act = requestFilter('act');
     $user_id = $user_info['user_id'];
     $limit_vieos = 20;
+    $server_time = Registry::get('server_time');
 
     switch ($act) {
 
@@ -56,7 +58,7 @@ if ($logged) {
                 $result_video_lnk = $result_video_lnk ?? null;
 
                 //Формируем данные о фото
-                $photo = htmlspecialchars(trim($_POST['photo']));
+                $photo = requestFilter('photo');
                 $photo = str_replace("\\", "/", $photo);
                 $img_name_arr = explode(".", $photo);
                 $img_format = to_translit(end($img_name_arr));
@@ -243,7 +245,7 @@ if ($logged) {
         //################### Страница редактирования видео ###################//
         case "edit":
             NoAjaxQuery();
-            $vid = intval($_POST['vid']);
+            $vid = intFilter('vid');
             if ($vid) {
                 $row = $db->super_query("SELECT title, descr, privacy FROM `videos` WHERE id = '{$vid}' AND owner_user_id = '{$user_id}'");
                 if ($row) {

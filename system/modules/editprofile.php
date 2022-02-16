@@ -11,10 +11,11 @@ if (!defined('MOZG'))
 
 NoAjaxQuery();
 
-if ($logged) {
+if (Registry::get('logged')) {
     $act = requestFilter('act');
-
+    $server_time = Registry::get('server_time');
     $metatags['title'] = $lang['editmyprofile'];
+    $db = Registry::get('db');
 
     switch ($act) {
 
@@ -258,7 +259,7 @@ if ($logged) {
 
             $xfields = profileload();
 
-            $postedxfields = $_POST['xfields'];
+            $postedxfields = requestFilter('xfields');
 
             $newpostedxfields = array();
 

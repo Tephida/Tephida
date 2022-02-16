@@ -199,9 +199,7 @@ var Photo = {
 			fuser[1] = msg_id[1];
 		}
 		$('.photo_view').hide();
-		if (is_moz && !is_chrome) scrollTopForFirefox = $(window).scrollTop();
 		$('html').css('overflow', 'hidden');
-		if (is_moz && !is_chrome) $(window).scrollTop(scrollTopForFirefox);
 		if (ge('photo_view_' + id[1])) {
 			$('#photo_view_' + id[1]).show();
 			history.pushState({
@@ -274,17 +272,14 @@ var Photo = {
 		});
 		$('.photo_view').remove();
 		$('html, body').css('overflow-y', 'auto');
-		if (is_moz && !is_chrome) $(window).scrollTop(scrollTopForFirefox);
 		if (close_link != false) history.pushState({
 			link: close_link
 		}, null, close_link);
 	},
 	Loading: function(f) {
 		if (f == 'start') {
-			if (is_moz && !is_chrome) scrollTopForFirefox = $(window).scrollTop();
 			$('html').css('overflow', 'hidden');
-			if (is_moz && !is_chrome) $(window).scrollTop(scrollTopForFirefox);
-			var loadcontent = '<div class="photo_view" id="photo_load" style="padding-right:17px" onClick="Photo.setEvent(event, false)">' + '<div class="photo_close" onClick="Photo.LoadingClose(); return false" style="right:15px;"></div>' + '<div class="photo_bg" style="height:310px;padding-top:290px;">' + '<center><img src="/templates/Default/images/progress.gif" alt="" /></center>' + '</div>' + '</div>';
+			const loadcontent = '<div class="photo_view" id="photo_load" style="padding-right:17px" onClick="Photo.setEvent(event, false)">' + '<div class="photo_close" onClick="Photo.LoadingClose(); return false" style="right:15px;"></div>' + '<div class="photo_bg" style="height:310px;padding-top:290px;">' + '<center><img src="/templates/Default/images/progress.gif" alt="" /></center>' + '</div>' + '</div>';
 			$('body').append(loadcontent);
 			$('#photo_load').show();
 		}
@@ -883,7 +878,6 @@ var videos = {
 	close: function(owner_id, close_link) {
 		$('.video_view').remove();
 		$('html, body').css('overflow-y', 'auto');
-		if (is_moz && !is_chrome) $(window).scrollTop(scrollTopForFirefox);
 		if (close_link) history.pushState({
 			link: close_link
 		}, null, close_link);
@@ -1364,7 +1358,7 @@ var wall = {
 		}
 		if (notes) notes = '&notes=1';
 		else notes = '';
-		Box.Page('/index.php?go=albums&act=all_photos_box', page + notes, 'all_photos_' + page_num, 627, lang_wall_attatch_photos, lang_box_canсel, 0, 0, 400, 1, 1, 1, 0, 1);
+		Box.Page('/index.php?go=albums&act=all_photos_box', page + notes, 'all_photos_' + page_num, 627, lang_wall_attatch_photos, lang_box_cancel, 0, 0, 400, 1, 1, 1, 0, 1);
 	},
 	attach_addvideo: function(id, page_num, notes) {
 		wall.attach_menu('close', 'wall_attach', 'wall_attach_menu');
@@ -1375,7 +1369,7 @@ var wall = {
 		}
 		if (notes) notes = '&notes=1';
 		else notes = '';
-		Box.Page('/index.php?go=videos&act=all_videos', page + notes, 'all_videos_' + page_num, 627, lang_wall_attatch_videos, lang_box_canсel, 0, 0, 400, 1, 1, 1, 0, 1);
+		Box.Page('/index.php?go=videos&act=all_videos', page + notes, 'all_videos_' + page_num, 627, lang_wall_attatch_videos, lang_box_cancel, 0, 0, 400, 1, 1, 1, 0, 1);
 	},
 	attach_addvideo_public: function(id, page_num, pid) {
 		wall.attach_menu('close', 'wall_attach', 'wall_attach_menu');
@@ -1384,7 +1378,7 @@ var wall = {
 			page = '';
 			page_num = 1;
 		}
-		Box.Page('/index.php?go=videos&act=all_videos_public', 'pid=' + pid + page, 'all_videos_' + page_num, 627, lang_wall_attatch_videos, lang_box_canсel, 0, 0, 400, 1, 1, 1, 0, 1);
+		Box.Page('/index.php?go=videos&act=all_videos_public', 'pid=' + pid + page, 'all_videos_' + page_num, 627, lang_wall_attatch_videos, lang_box_cancel, 0, 0, 400, 1, 1, 1, 0, 1);
 	},
 	attach_addaudio: function(id, page_num) {
 		wall.attach_menu('close', 'wall_attach', 'wall_attach_menu');
@@ -1393,11 +1387,11 @@ var wall = {
 			page = '';
 			page_num = 1;
 		}
-		Box.Page('/index.php?go=audio&act=allMyAudiosBox', page, 'all_audios', 627, lang_audio_wall_attatch, lang_box_canсel, 0, 0, 400, 1, 1, 1, 0, 0);
+		Box.Page('/index.php?go=audio&act=allMyAudiosBox', page, 'all_audios', 627, lang_audio_wall_attatch, lang_box_cancel, 0, 0, 400, 1, 1, 1, 0, 0);
 		music.jPlayerInc();
 	},
 	attach_addDoc: function() {
-		Box.Page('/index.php?go=doc', '', 'all_doc', 627, 'Выберите документ', lang_box_canсel, 0, 0, 400, 1, 0, 1, 0, 0);
+		Box.Page('/index.php?go=doc', '', 'all_doc', 627, 'Выберите документ', lang_box_cancel, 0, 0, 400, 1, 0, 1, 0, 0);
 	},
 	tell: function(id) {
 		$('#wall_tell_' + id).hide();
@@ -2440,9 +2434,7 @@ var groups = {
 		var content = '<div id="photo_view" class="photo_view" onClick="groups.wall_photo_view_setEvent(event)">' + '<div class="photo_close" onClick="Photo.Close(\'\'); return false;"></div>' + '<div class="photo_bg" style="min-height:400px">' + '<div class="photo_com_title" style="padding-top:0px;">' + topTxt + '<div><a href="/" onClick="Photo.Close(\'\'); return false">Закрыть</a></div></div>' + '<div class="photo_img_box cursor_pointer" onClick="' + next + '"><img src="' + photo + '" id=\"photo_view_src\" style="margin-bottom:7px" /></div><div class="line_height">' + '<input type="hidden" id="photo_pos" value="' + pos + '" />' + '</div><div class="clear"></div>' + '<div id="cData"><center><img src="/templates/Default/images/progress.gif" style="margin-top:20px;margin-bottom:20px" /></center></div>' + '</div>' + '<div class="clear"></div>' + '</div>';
 		$('body').append(content);
 		$('#photo_view').show();
-		if (is_moz && !is_chrome) scrollTopForFirefox = $(window).scrollTop();
 		$('html, body').css('overflow-y', 'hidden');
-		if (is_moz && !is_chrome) $(window).scrollTop(scrollTopForFirefox);
 	},
 	wall_photo_view_next: function(rec_id) {
 		var pos = parseInt($('#photo_pos').val()) + 1;
@@ -2763,7 +2755,7 @@ var audio = {
 	},
 	del: function(aid) {
 		$('.js_titleRemove').remove();
-		$('#jQaudios').html('<center><img src="' + template_dir + '/images/loading_im.gif" style="margin-top:135px" /></center>');
+		$('#jQaudios').html('<div style="text-align: center"><img src="' + template_dir + '/images/loading_im.gif" style="margin-top:135px" /></div>');
 		$('.staticpl_albut').hide();
 		$.post('/index.php?go=audio&act=del', {
 			aid: aid

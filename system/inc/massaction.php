@@ -65,7 +65,7 @@ switch ($act) {
                         mozg_clear_cache_file('user_' . $user_id . '/profile_' . $user_id);
                     } //Блокировка пользователей
                     else if ($mass_type == 8) {
-                        $this_time = $ban_date ? $server_time + ($ban_date * 60 * 60 * 24) : 0;
+                        $this_time = $ban_date ? Registry::get('server_time') + ($ban_date * 60 * 60 * 24) : 0;
                         $db->query("UPDATE `users` SET user_ban = 1, user_active = 1, user_ban_date = '" . $this_time . "' WHERE user_id = '" . $user_id . "'");
                         mozg_clear_cache_file('user_' . $user_id . '/profile_' . $user_id);
                     } //Разблокировка пользователей

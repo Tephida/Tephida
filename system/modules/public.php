@@ -11,11 +11,12 @@ if (!defined('MOZG'))
 
 NoAjaxQuery();
 
-if ($logged) {
+if (Registry::get('logged')) {
+    $db = Registry::get('db');
     $user_id = $user_info['user_id'];
     $pid = intFilter('pid');
     $mobile_speedbar = 'Сообщество';
-
+    $server_time = Registry::get('server_time');
     $get_adres = requestFilter('get_adres', 100);
 //	if(preg_match("/^[a-zA-Z0-9_-]+$/", $get_adres))
 //        $get_adres = $db->safesql($_GET['get_adres']);

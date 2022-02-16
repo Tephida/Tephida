@@ -12,9 +12,11 @@ if (!defined('MOZG'))
 if ($ajax == 'yes')
     NoAjaxQuery();
 
-if (!$logged) {
+if (Registry::get('logged') == false) {
+    $db = Registry::get('db');
     $act = requestFilter('act');
     $metatags['title'] = $lang['restore_title'];
+    $server_time = Registry::get('server_time');
 
     switch ($act) {
 
@@ -108,8 +110,8 @@ HTML;
 //				$_POST['new_pass'] = ajax_utf8($_POST['new_pass']);
 //				$_POST['new_pass2'] = ajax_utf8($_POST['new_pass2']);
 
-                $new_pass = md5(md5($_POST['new_pass']));
-                $new_pass2 = md5(md5($_POST['new_pass2']));
+                $new_pass = md5(md5(requestFilter('new_pass')));
+                $new_pass2 = md5(md5(requestFilter('new_pass2')));
 
                 if (strlen($new_pass) >= 6 and $new_pass == $new_pass2) {
                     $db->query("UPDATE `users` SET user_password = '{$new_pass}' WHERE user_email = '{$row['email']}'");

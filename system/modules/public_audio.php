@@ -9,10 +9,11 @@
 if (!defined('MOZG'))
     die('Hacking attempt!');
 
-if ($logged) {
-
+if (Registry::get('logged')) {
+    $db = Registry::get('db');
     $act = requestFilter('act');
     $user_id = $user_info['user_id'];
+    $server_time = Registry::get('server_time');
 
     switch ($act) {
 
@@ -21,8 +22,8 @@ if ($logged) {
 
             NoAjaxQuery();
 
-            $pid = intval($_POST['pid']);
-            $aid = intval($_POST['aid']);
+            $pid = intFilter('pid');
+            $aid = intFilter('aid');
 
             $check = $db->super_query("SELECT url, artist, name FROM `audio` WHERE aid = '{$aid}'");
 

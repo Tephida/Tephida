@@ -20,8 +20,7 @@ class wall
 
     function query($query)
     {
-        global $db;
-
+        $db = Registry::get('db');
         $this->query = $db->super_query($query, true);
     }
 
@@ -41,27 +40,26 @@ class wall
 
     function select()
     {
-        global $tpl, $db, $config, $user_id, $id, $for_user_id, $lang, $user_privacy, $check_friend, $server_time, $user_info;
-
+        global $tpl, $config, $user_id, $id, $for_user_id, $user_privacy, $check_friend, $user_info;
+        $db = Registry::get('db');
         $this->template;
         foreach ($this->query as $row_wall) {
             $tpl->set('{rec-id}', $row_wall['id']);
 
-            //КНопка Показать полностью..
+            //Кнопка Показать полностью..
             $expBR = explode('<br />', $row_wall['text']);
             $textLength = count($expBR);
             $strTXT = strlen($row_wall['text']);
             if ($textLength > 9 or $strTXT > 600)
                 $row_wall['text'] = '<div class="wall_strlen" id="hide_wall_rec' . $row_wall['id'] . '">' . $row_wall['text'] . '</div><div class="wall_strlen_full" onMouseDown="wall.FullText(' . $row_wall['id'] . ', this.id)" id="hide_wall_rec_lnk' . $row_wall['id'] . '">Показать полностью..</div>';
 
-            //Прикрипленные файлы
+            //Прикрепленные файлы
             if ($row_wall['attach']) {
                 $attach_arr = explode('||', $row_wall['attach']);
                 $cnt_attach = 1;
                 $cnt_attach_link = 1;
                 $jid = 0;
-                $attach_result = '';
-                $attach_result .= '<div class="clear"></div>';
+                $attach_result = '<div class="clear"></div>';
                 foreach ($attach_arr as $attach_file) {
                     $attach_type = explode('|', $attach_file);
 
@@ -138,7 +136,11 @@ class wall
                         $audioId = intval($attach_type[1]);
                         $audioInfo = $db->super_query("SELECT artist, name, url FROM `audio` WHERE aid = '" . $audioId . "'");
                         if ($audioInfo) {
-                            if ($_GET['uid']) $appClassWidth = 'player_mini_mbar_wall_all';
+                            if (intFilter('uid'))
+                                $appClassWidth = 'player_mini_mbar_wall_all';
+                            else
+                                $appClassWidth = '';
+
                             $jid++;
                             $attach_result .= '<div class="audioForSize' . $row_wall['id'] . ' ' . $appClassWidth . '" id="audioForSize"><div class="audio_onetrack audio_wall_onemus"><div class="audio_playic cursor_pointer fl_l" onClick="music.newStartPlay(\'' . $jid . '\', ' . $row_wall['id'] . ')" id="icPlay_' . $row_wall['id'] . $jid . '"></div><div id="music_' . $row_wall['id'] . $jid . '" data="' . $audioInfo['url'] . '" class="fl_l" style="margin-top:-1px"><a href="/?go=search&type=5&query=' . $audioInfo['artist'] . '&n=1" onClick="Page.Go(this.href); return false"><b>' . stripslashes($audioInfo['artist']) . '</b></a> &ndash; ' . stripslashes($audioInfo['name']) . '</div><div id="play_time' . $row_wall['id'] . $jid . '" class="color777 fl_r no_display" style="margin-top:2px;margin-right:5px">00:00</div><div class="player_mini_mbar fl_l no_display player_mini_mbar_wall ' . $appClassWidth . '" id="ppbarPro' . $row_wall['id'] . $jid . '"></div></div></div>';
                         }
@@ -154,7 +156,7 @@ class wall
                     } elseif ($attach_type[0] == 'link' and preg_match('/http:\/\/(.*?)+$/i', $attach_type[1]) and $cnt_attach_link == 1 and stripos(str_replace('http://www.', 'http://', $attach_type[1]), $config['home_url']) === false) {
                         $count_num = count($attach_type);
                         $domain_url_name = explode('/', $attach_type[1]);
-                        $rdomain_url_name = str_replace('http://', '', $domain_url_name[2]);
+                        $rdomain_url_name = str_replace('https://', '', $domain_url_name[2]);
 
                         $attach_type[3] = stripslashes($attach_type[3]);
                         $attach_type[3] = iconv_substr($attach_type[3], 0, 200, 'utf-8');
@@ -288,9 +290,9 @@ class wall
                 else
                     $rowUserTell = $db->super_query("SELECT user_search_pref, user_photo FROM `users` WHERE user_id = '{$row_wall['tell_uid']}'");
 
-                if (date('Y-m-d', $row_wall['tell_date']) == date('Y-m-d', $server_time))
+                if (date('Y-m-d', $row_wall['tell_date']) == date('Y-m-d', Registry::get('server_time')))
                     $dateTell = langdate('сегодня в H:i', $row_wall['tell_date']);
-                elseif (date('Y-m-d', $row_wall['tell_date']) == date('Y-m-d', ($server_time - 84600)))
+                elseif (date('Y-m-d', $row_wall['tell_date']) == date('Y-m-d', (Registry::get('server_time') - 84600)))
                     $dateTell = langdate('вчера в H:i', $row_wall['tell_date']);
                 else
                     $dateTell = langdate('j F Y в H:i', $row_wall['tell_date']);
@@ -436,7 +438,7 @@ HTML;
                     $tpl->set_block("'\\[comment\\](.*?)\\[/comment\\]'si", "");
                     $tpl->compile($this->compile);
 
-                    //Сообственно выводим комменты
+                    //Собственно выводим комменты
                     foreach ($sql_comments as $row_comments) {
                         $tpl->set('{name}', $row_comments['user_search_pref']);
                         if ($row_comments['user_photo'])
@@ -505,8 +507,7 @@ HTML;
 
     function comm_query($query)
     {
-        global $db;
-
+        $db = Registry::get('db');
         $this->comm_query = $db->super_query($query, true);
     }
 
@@ -526,8 +527,8 @@ HTML;
 
     function comm_select()
     {
-        global $tpl, $db, $config, $user_id, $id, $for_user_id, $fast_comm_id, $record_fasts_num;
-
+        global $tpl, $user_id, $id, $for_user_id, $fast_comm_id, $record_fasts_num;
+        $db = Registry::get('db');
         if ($this->comm_query) {
             $this->comm_template;
 
@@ -551,7 +552,7 @@ HTML;
             } else
                 $tpl->set_block("'\\[all-comm\\](.*?)\\[/all-comm\\]'si", "");
 
-            //Сообственно выводим комменты
+            //Собственно выводим комменты
             foreach ($this->comm_query as $row_comments) {
                 $tpl->set('{name}', $row_comments['user_search_pref']);
                 if ($row_comments['user_photo'])

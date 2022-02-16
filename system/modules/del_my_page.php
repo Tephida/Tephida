@@ -1,7 +1,8 @@
 <?php
 
 NoAjaxQuery();
-if ($logged) {
+if (Registry::get('logged')) {
+    $db = Registry::get('db');
     $user_id = $user_info['user_id'];
     $uploaddir = ROOT_DIR . '/uploads/users/' . $user_id . '/';
     $row = $db->super_query("SELECT user_photo, user_wall_id FROM `users` WHERE user_id = '" . $user_id . "'");

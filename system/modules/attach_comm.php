@@ -11,10 +11,11 @@ if (!defined('MOZG'))
 
 NoAjaxQuery();
 
-if ($logged) {
+if (Registry::get('logged')) {
     $act = requestFilter('act');
     $user_id = $user_info['user_id'];
-
+    $server_time = Registry::get('server_time');
+    $db = Registry::get('db');
     switch ($act) {
 
         //################### Удаление комментария ###################//

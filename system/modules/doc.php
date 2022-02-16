@@ -9,9 +9,11 @@
 if (!defined('MOZG'))
     die('Hacking attempt!');
 
-if ($logged) {
+if (Registry::get('logged')) {
     $act = requestFilter('act');
     $user_id = $user_info['user_id'];
+    $server_time = Registry::get('server_time');
+    $db = Registry::get('db');
 
     switch ($act) {
 
@@ -182,9 +184,9 @@ if ($logged) {
             $metatags['title'] = 'Документы';
 
             $sql_limit = 20;
-
-            if (isset($_POST['page_cnt']) and $_POST['page_cnt'] > 0)
-                $page_cnt = intval($_POST['page_cnt']) * $sql_limit;
+            $page_cnt = intFilter('page_cnt');
+            if ($page_cnt > 0)
+                $page_cnt = $page_cnt * $sql_limit;
             else $page_cnt = 0;
 
             if ($page_cnt)
@@ -236,9 +238,9 @@ if ($logged) {
             NoAjaxQuery();
 
             $sql_limit = 20;
-
-            if (isset($_POST['page_cnt']) and $_POST['page_cnt'] > 0)
-                $page_cnt = intval($_POST['page_cnt']) * $sql_limit;
+            $page_cnt = intFilter('page_cnt');
+            if ($page_cnt > 0)
+                $page_cnt = $page_cnt * $sql_limit;
             else
                 $page_cnt = 0;
 

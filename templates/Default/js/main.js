@@ -5,26 +5,9 @@
  *   file that was distributed with this source code.
  *
  */
-
-var uagent = navigator.userAgent.toLowerCase();
-var is_safari = ((uagent.indexOf('safari') != -1) || (navigator.vendor == "Apple Computer, Inc."));
-var is_ie = ((uagent.indexOf('msie') != -1) && (!is_opera) && (!is_safari) && (!is_webtv));
-var is_ie4 = ((is_ie) && (uagent.indexOf("msie 4.") != -1));
-var is_moz = (navigator.product == 'Gecko');
-var is_ns = ((uagent.indexOf('compatible') == -1) && (uagent.indexOf('mozilla') != -1) && (!is_opera) && (!is_webtv) && (!is_safari));
-var is_ns4 = ((is_ns) && (parseInt(navigator.appVersion) == 4));
-var is_opera = (uagent.indexOf('opera') != -1);
-var is_kon = (uagent.indexOf('konqueror') != -1);
-var is_webtv = (uagent.indexOf('webtv') != -1);
-var is_win = ((uagent.indexOf("win") != -1) || (uagent.indexOf("16bit") != -1));
-var is_mac = ((uagent.indexOf("mac") != -1) || (navigator.vendor == "Apple Computer, Inc."));
-var is_chrome = (uagent.match(/Chrome\/\w+\.\w+/i));
-if (is_chrome == 'null' || !is_chrome || is_chrome == 0) is_chrome = '';
-var ua_vers = parseInt(navigator.appVersion);
 var req_href = location.href;
 var vii_interval = false;
 var vii_interval_im = false;
-var scrollTopForFirefox = 0;
 var url_next_id = 1;
 $(document).ready(function() {
 	var mw = ($('html, body').width() - 800) / 2;
@@ -170,9 +153,7 @@ var Profile = {
 			Page.Loading('stop');
 			if (d == 1) addAllErr('Вы пока что не загрузили фотографию.');
 			else {
-				if (is_moz && !is_chrome) scrollTopForFirefox = $(window).scrollTop();
 				$('html, body').css('overflow-y', 'hidden');
-				if (is_moz && !is_chrome) $(window).scrollTop(scrollTopForFirefox);
 				$('body').append('<div id="newbox_miniature">' + d + '</div>');
 			}
 			$(window).keydown(function(event) {
@@ -274,9 +255,7 @@ var viiBox = {
 	},
 	win: function(i, d, o, h) {
 		viiBox.stop();
-		if (is_moz && !is_chrome) scrollTopForFirefox = $(window).scrollTop();
 		$('html, body').css('overflow-y', 'hidden');
-		if (is_moz && !is_chrome) $(window).scrollTop(scrollTopForFirefox);
 		$('body').append('<div class="vii_box" id="newbox_miniature' + i + '">' + d + '</div>');
 		$(window).keydown(function(event) {
 			if (event.keyCode == 27) viiBox.clos(i, o, h);
@@ -313,9 +292,7 @@ var Box = {
 				Box.Close(name, cache);
 				$('#box_' + name).show();
 				$('#box_content_' + name).scrollTop(0);
-				if (is_moz && !is_chrome) scrollTopForFirefox = $(window).scrollTop();
 				$('html').css('overflow', 'hidden');
-				if (is_moz && !is_chrome) $(window).scrollTop(scrollTopForFirefox);
 				return false;
 			}
 		Page.Loading('start');
@@ -359,9 +336,7 @@ var Box = {
 		else var sheight = '';
 		$('body').append('<div id="modal_box"><div id="box_' + name + '" class="box_pos"><div class="box_bg" style="width:' + width + 'px;margin-top:' + top_pad + 'px;"><div class="box_title" id="box_title_' + name + '">' + title + '<div class="box_close" onClick="Box.Close(\'' + name + '\', ' + cache + '); return false;"></div></div><div class="box_conetnt" id="box_content_' + name + '" style="' + sheight + ';' + overflow + '">' + bg_show + content + '<div class="clear"></div></div>' + bg_show_bottom + '<div class="box_footer"><div id="box_bottom_left_text" class="fl_l">' + box_loading + '</div>' + close_but + func_but + '</div></div></div></div>');
 		$('#box_' + name).show();
-		if (is_moz && !is_chrome) scrollTopForFirefox = $(window).scrollTop();
 		$('html').css('overflow', 'hidden');
-		if (is_moz && !is_chrome) $(window).scrollTop(scrollTopForFirefox);
 		$(window).keydown(function(event) {
 			if (event.keyCode == 27) {
 				Box.Close(name, cache);
@@ -373,18 +348,16 @@ var Box = {
 		else $('.box_pos').hide();
 		if (CheckRequestVideo(location.href) == false && CheckRequestPhoto(location.href) == false) $('html, body').css('overflow-y', 'auto');
 		if (CheckRequestVideo(location.href)) $('#video_object').show();
-		if (is_moz && !is_chrome) $(window).scrollTop(scrollTopForFirefox);
 	},
 	GeneralClose: function() {
 		$('#modal_box').hide();
 	},
-	Info: function(bid, title, content, width, tout) {
+	Info: function (bid, title, content, width, tout = 1400) {
 		var top_pad = ($(window).height() - 115) / 2;
 		$('body').append('<div id="' + bid + '" class="box_info"><div class="box_info_margin" style="width: ' + width + 'px; margin-top: ' + top_pad + 'px"><b><span>' + title + '</span></b><br /><br />' + content + '</div></div>');
 		$(bid).show();
-		if (!tout) var tout = 1400;
 		setTimeout("Box.InfoClose()", tout);
-		$(window).keydown(function(event) {
+		$(window).keydown(function (event) {
 			if (event.keyCode == 27) {
 				Box.InfoClose();
 			}
@@ -419,13 +392,11 @@ function updateNum(i, type) {
 }
 
 function setErrorInputMsg(i) {
-	$("#" + i).css('background', '#ffefef');
-	$("#" + i).focus();
+	$("#" + i).css('background', '#ffefef').focus();
 	setTimeout("$('#" + i + "').css('background', '#fff').focus()", 700);
 }
 
-function addAllErr(text, tim) {
-	if (!tim) var tim = 2500;
+function addAllErr(text, tim = 2500) {
 	$('.privacy_err').remove();
 	$('body').append('<div class="privacy_err no_display">' + text + '</div>');
 	$('.privacy_err').fadeIn('fast');
@@ -433,7 +404,10 @@ function addAllErr(text, tim) {
 }
 
 function langNumric(id, num, text1, text2, text3, text4, text5) {
-	strlen_num = num.length;
+	let strlen_num = num.length;
+	let numres;
+	let parsnum;
+
 	if (num <= 21) {
 		numres = num;
 	} else if (strlen_num == 2) {
@@ -488,7 +462,7 @@ function AntiSpam(act) {
 }
 
 function delMyPage() {
-	Box.Show('del_page', 400, 'Удаление страницы', '<div style="padding:15px;">Вы уверены, что хотите удалить свою страницу ?</div>', lang_box_canсel, 'Да, удалить страницу', 'startDelpage()');
+	Box.Show('del_page', 400, 'Удаление страницы', '<div style="padding:15px;">Вы уверены, что хотите удалить свою страницу ?</div>', lang_box_cancel, 'Да, удалить страницу', 'startDelpage()');
 }
 
 function startDelpage() {

@@ -11,10 +11,12 @@ if (!defined('MOZG'))
 
 NoAjaxQuery();
 
-if ($logged) {
+if (Registry::get('logged')) {
 
     $act = requestFilter('act');
     $user_id = $user_info['user_id'];
+    $server_time = Registry::get('server_time');
+    $db = Registry::get('db');
 
     switch ($act) {
 
@@ -22,7 +24,7 @@ if ($logged) {
         default:
 
             //Если поиск
-            $query = (isset($_POST['query'])) ? textFilter(strip_data(urldecode($_POST['query']))) : '';
+            $query = requestFilter('query');
             $query = strtr($query, array(' ' => '%')); //Заменяем пробелы на проценты чтоб поиск был точнее
             $do_load = intFilter('doload');
 

@@ -9,10 +9,11 @@
 if (!defined('MOZG'))
     die('Hacking attempt!');
 
-if ($logged) {
-
-    $act = requestFilter($_GET['act']);
+if (Registry::get('logged')) {
+    $db = Registry::get('db');
+    $act = requestFilter('act');
     $user_id = $user_info['user_id'];
+    $server_time = Registry::get('server_time');
 
     switch ($act) {
 
@@ -21,7 +22,7 @@ if ($logged) {
 
             NoAjaxQuery();
 
-            $pid = intFilter(['pid');
+            $pid = intFilter('pid');
             $id = intFilter('id');
 
             $infoGroup = $db->super_query("SELECT admin FROM `communities` WHERE id = '{$pid}'");

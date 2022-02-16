@@ -11,11 +11,11 @@ if (!defined('MOZG'))
 
 NoAjaxQuery();
 
-if ($logged) {
+if (Registry::get('logged')) {
     $user_id = $user_info['user_id'];
-
+    $server_time = Registry::get('server_time');
     $limit_sql = 7;
-
+    $db = Registry::get('db');
     $query = requestFilter('query');
     $query = strtr($query, array(' ' => '%')); //Заменяем пробелы на проценты чтоб поиск был точнее
     $type = intFilter('se_type');

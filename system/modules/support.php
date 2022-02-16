@@ -11,9 +11,10 @@ if (!defined('MOZG'))
 
 NoAjaxQuery();
 
-if ($logged) {
+if (Registry::get('logged')) {
+    $db = Registry::get('db');
     $act = requestFilter('act');
-
+    $server_time = Registry::get('server_time');
 //	$act = $_GET['act'];
     $user_id = $user_info['user_id'];
     $metatags['title'] = $lang['support_title'];

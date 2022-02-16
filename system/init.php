@@ -7,21 +7,19 @@
  *
  */
 if (!defined('MOZG')) die('Hacking attempt!');
-@include ENGINE_DIR . '/data/config.php';
+include ENGINE_DIR . '/functions.php';
+$config = settings_get();
+//include ENGINE_DIR . '/data/config.php';
 
 if (!isset($config['home_url']))
     die("Vii Engine not installed. Please run install.php");
 include ENGINE_DIR . '/classes/mysql.php';
 include ENGINE_DIR . '/data/db.php';
-include ENGINE_DIR . '/functions.php';
-
-
-
+Registry::set('db', $db);
 include ENGINE_DIR . '/classes/templates.php';
-if ($config['gzip'] == 'yes') include ENGINE_DIR . '/modules/gzip.php';
+if ($config['gzip'] == 'yes')
+    include ENGINE_DIR . '/modules/gzip.php';
 //FUNC. COOKIES
-
-
 $domain_cookie = explode(".", clean_url($_SERVER['HTTP_HOST']));
 $domain_cookie_count = count($domain_cookie);
 $domain_allow_count = -2;
@@ -32,7 +30,6 @@ if ($domain_cookie_count > 2) {
 }
 $domain_cookie = "." . implode(".", $domain_cookie);
 define('DOMAIN', $domain_cookie);
-
 
 //Смена языка
 if (requestFilter('act') == 'chage_lang') {
@@ -73,7 +70,7 @@ $tpl = new mozg_template;
 $tpl->dir = ROOT_DIR . '/templates/' . $config['temp'];
 define('TEMPLATE_DIR', $tpl->dir);
 $_DOCUMENT_DATE = false;
-$server_time = time();
+Registry::set('server_time', time());
 
 include ENGINE_DIR . '/modules/login.php';
 
@@ -86,16 +83,16 @@ if (isset($sql_banned))
     $blockip = check_ip($sql_banned);
 else
     $blockip = false;
-if (isset($user_info['user_ban_date']) and $user_info['user_ban_date'] >= $server_time or isset($user_info['user_ban_date']) and $user_info['user_ban_date'] == '0' or $blockip)
+if (isset($user_info['user_ban_date']) and $user_info['user_ban_date'] >= Registry::get('server_time') or isset($user_info['user_ban_date']) and $user_info['user_ban_date'] == '0' or $blockip)
     include ENGINE_DIR . '/modules/profile_ban.php';
-//Елси юзер залогинен то обновляем последнюю дату посещения в таблице друзей и на личной стр
-if (isset($logged)) {
+//Если юзер авторизован, то обновляем последнюю дату посещения в таблице друзей и на личной стр
+if (Registry::get('logged')) {
     //Начисления 1 убм.
     if (empty($user_info['user_lastupdate'])) {
         $user_info['user_lastupdate'] = 1;
     }
-
-    if (date('Y-m-d', $user_info['user_lastupdate']) < date('Y-m-d', $server_time)) {
+    $server_time = Registry::get('server_time');
+    if (date('Y-m-d', $user_info['user_lastupdate']) < date('Y-m-d', Registry::get('server_time'))) {
         $sql_balance = ", user_balance = user_balance+1, user_lastupdate = '{$server_time}'";
     } else {
         $sql_balance = '';
@@ -111,6 +108,6 @@ if (isset($logged)) {
     }
 }
 
-//Время онлайна
-$online_time = $server_time - $config['online_time'];
+//Время онлайн
+$online_time = Registry::get('server_time') - $config['online_time'];
 include ENGINE_DIR . '/mod.php';

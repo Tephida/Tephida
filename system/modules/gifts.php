@@ -11,9 +11,11 @@ if (!defined('MOZG'))
 
 NoAjaxQuery();
 
-if ($logged) {
+if (Registry::get('logged')) {
     $act = requestFilter('act');
     $user_id = $user_info['user_id'];
+    $server_time = Registry::get('server_time');
+    $db = Registry::get('db');
 
     switch ($act) {
 
@@ -142,7 +144,7 @@ if ($logged) {
 
             //################### Всех подарков пользователя ###################//
             $metatags['title'] = $lang['gifts'];
-            $uid = intFilter($_GET['uid']);
+            $uid = intFilter('uid');
 
             $page = intFilter('page', 1);
             $gcount = 15;
@@ -173,7 +175,7 @@ if ($logged) {
                 $tpl->set_block("'\\[yes\\](.*?)\\[/yes\\]'si", "");
             }
 
-            if (isset($_GET['new']) and $_GET['new'] and $user_id == $uid) {
+            if (requestFilter('new') and $user_id == $uid) {
                 $tpl->set('[new]', '');
                 $tpl->set('[/new]', '');
                 $tpl->set_block("'\\[no-new\\](.*?)\\[/no-new\\]'si", "");

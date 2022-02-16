@@ -12,12 +12,12 @@ if (!defined('MOZG'))
 //Если страница вызвана через AJAX то включаем защиту, чтоб не могли обращаться напрямую к странице
 NoAjaxQuery();
 
-if ($logged) {
+if (Registry::get('logged')) {
     $act = requestFilter('act');
     $metatags['title'] = $lang['friends'];
-
+    $server_time = Registry::get('server_time');
     $page = intFilter('page', 1);
-
+    $db = Registry::get('db');
     $gcount = 20;
     $limit_page = ($page - 1) * $gcount;
 
@@ -414,9 +414,9 @@ if ($logged) {
             $gcount = 18;
             $limit_page = ($page - 1) * $gcount;
 
-            if (isset($_POST['user_sex']) and $_POST['user_sex'] == 1)
+            if (intFilter('user_sex') == 1)
                 $sql_usSex = 2;
-            elseif (isset($_POST['user_sex']) and $_POST['user_sex'] == 2)
+            elseif (intFilter('user_sex') == 2)
                 $sql_usSex = 1;
             else
                 $sql_usSex = false;

@@ -22,7 +22,7 @@ if(isset($_POST['send'])){
 	
 	$word_replace = requestFilter('word_replace');
 	
-	$word_id = $server_time;
+	$word_id = Registry::get('server_time');
 	
 	$all_items = file(ENGINE_DIR.'/data/wordfilter.db.php');
 	foreach($all_items as $item_line){

@@ -11,8 +11,9 @@ if (!defined('MOZG'))
 
 NoAjaxQuery();
 
-if ($logged) {
-
+if (Registry::get('logged')) {
+    $db = Registry::get('db');
+    $server_time = Registry::get('server_time');
     $user_id = $user_info['user_id'];
 
     $cntCacheUp = mozg_cache("user_{$user_id}/updates");

@@ -9,9 +9,11 @@
 if (!defined('MOZG'))
     die('Hacking attempt!');
 
-if ($logged) {
+if (Registry::get('logged')) {
     $act = requestFilter('act');
     $user_id = $user_info['user_id'];
+    $server_time = Registry::get('server_time');
+    $db = Registry::get('db');
 
     switch ($act) {
 
@@ -376,7 +378,7 @@ if ($logged) {
         case "delvote":
             NoAjaxQuery();
 
-            $fid = intval($_POST['fid']);
+            $fid = intFilter('fid');
 
             $row = $db->super_query("SELECT fuser_id, vote, public_id FROM `communities_forum` WHERE fid = '{$fid}'");
             $row2 = $db->super_query("SELECT admin, discussion FROM `communities` WHERE id = '{$row['public_id']}'");

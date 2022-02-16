@@ -11,9 +11,11 @@ if (!defined('MOZG'))
 
 NoAjaxQuery();
 
-if ($logged) {
-    $act = requestFilter($_GET['act']);
+if (Registry::get('logged')) {
+    $db = Registry::get('db');
+    $act = requestFilter('act');
     $user_id = $user_info['user_id'];
+    $server_time = Registry::get('server_time');
 
     switch ($act) {
 
@@ -58,7 +60,7 @@ if ($logged) {
 
         //################### Удаление юзера из подписок ###################//
         case "del":
-            $del_user_id = intval($_POST['del_user_id']);
+            $del_user_id = intFilter('del_user_id');
 
             //Проверка на существование юзера в подписках
             $check = $db->super_query("SELECT user_id FROM `friends` WHERE user_id = '{$user_id}' AND friend_id = '{$del_user_id}' AND subscriptions = 1");

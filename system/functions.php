@@ -21,8 +21,12 @@ function textFilter(string $source, int $substr_num = 25000, bool $strip_tags = 
 {
     $source = trim($source);
     $source = stripslashes($source);
+    if (empty($source)) {
+        return '';
+    } else {
+        return htmlspecialchars($source, ENT_QUOTES, 'UTF-8');
+    }
 
-    return htmlspecialchars($source, ENT_QUOTES, 'UTF-8');
 }
 
 function intFilter(string $source, int $default = 0): int
@@ -44,14 +48,19 @@ function intFilter(string $source, int $default = 0): int
     } elseif (isset($_GET[$source])) {
         $source = $_GET[$source];
     } else {
-        return null;
+        return '';
     }
-    return textFilter($source, $substr_num, $strip_tags);
+    if (empty($source)) {
+        return '';
+    } else {
+        return textFilter($source, $substr_num, $strip_tags);
+    }
+
 }
 
 function informationText($array): string
 {
-    global $db;
+    $db = Registry::get('db');
     $array = json_decode($array, 1);
     $row = $db->super_query("SELECT user_search_pref FROM  users WHERE user_id = '" . ($array['type'] == 1 ? $array['oid2'] : $array['oid']) . "'");
     if ($array['type'] == 5)
@@ -137,14 +146,16 @@ function GetVar(string $v): string
 function check_xss() {
     $url = html_entity_decode(urldecode($_SERVER['QUERY_STRING']));
     if ($url) {
-        if ((strpos($url, '<') !== false) || (strpos($url, '>') !== false) || (strpos($url, '"') !== false) || (strpos($url, './') !== false) || (strpos($url, '../') !== false) || (strpos($url, '\'') !== false) || (strpos($url, '.php') !== false)) {
-            if ($_GET['go'] != "search" AND $_GET['go'] != "messages") die('Hacking attempt!');
+        if ((str_contains($url, '<')) || (str_contains($url, '>')) || (str_contains($url, '"')) || (str_contains($url, './')) || (str_contains($url, '../')) || (str_contains($url, '\'')) || (str_contains($url, '.php'))) {
+            if ($_GET['go'] != "search" and $_GET['go'] != "messages")
+                die('Hacking attempt!');
         }
     }
     $url = html_entity_decode(urldecode($_SERVER['REQUEST_URI']));
     if ($url) {
-        if ((strpos($url, '<') !== false) || (strpos($url, '>') !== false) || (strpos($url, '"') !== false) || (strpos($url, '\'') !== false)) {
-            if ($_GET['go'] != "search" AND $_GET['go'] != "messages") die('Hacking attempt!');
+        if ((str_contains($url, '<')) || (str_contains($url, '>')) || (str_contains($url, '"')) || (str_contains($url, '\''))) {
+            if ($_GET['go'] != "search" and $_GET['go'] != "messages")
+                die('Hacking attempt!');
         }
     }
 }
@@ -165,6 +176,7 @@ function langdate($format, $stamp): string
  * @param $num
  * @param $type
  * @return void
+ * @throws ErrorException
  */
 function navigation($gc, $num, $type) {
     global $tpl, $page;
@@ -211,6 +223,7 @@ function navigation($gc, $num, $type) {
  * @param $function
  * @param $act
  * @return void
+ * @throws ErrorException
  */
 function box_navigation($gc, $num, $id, $function, $act) {
     global $tpl, $page;
@@ -257,6 +270,7 @@ function box_navigation($gc, $num, $id, $function, $act) {
  * @param $text
  * @param $tpl_name
  * @return void
+ * @throws ErrorException
  */
 function msgbox($title, $text, $tpl_name) {
     global $tpl;
@@ -878,7 +892,7 @@ HTML;
  * @return false|string|void
  */
 function user_age($user_year, $user_month, $user_day) {
-    global $server_time;
+    $server_time = Registry::get('server_time');
     if ($user_year) {
         $current_year = date('Y', $server_time);
         $current_month = date('n', $server_time);
@@ -889,7 +903,7 @@ function user_age($user_year, $user_month, $user_day) {
             $user_age = $current_year - $user_year;
         else
             $user_age = $current_year - $user_year - 1;
-        if ($user_month AND $user_month AND $user_day)
+        if ($user_month and $user_day)
             return $user_age . ' ' . gram_record($user_age, 'user_age');
         else
             return false;
@@ -898,24 +912,29 @@ function user_age($user_year, $user_month, $user_day) {
 
 /**
  * @param $date
- * @param $func
- * @param $full
+ * @param bool $func
+ * @param bool $full
  * @return void
  */
-function megaDate($date, $func = false, $full = false) {
-    global $tpl, $server_time;
+function megaDate($date, bool $func = false, bool $full = false)
+{
+    global $tpl;
     $date_comm = $date;
-    if (date('Y-m-d', $date_comm) == date('Y-m-d', $server_time)) return $tpl->set('{date}', langdate('сегодня в H:i', $date_comm));
-    elseif (date('Y-m-d', $date_comm) == date('Y-m-d', ($server_time - 84600))) return $tpl->set('{date}', langdate('вчера в H:i', $date_comm));
-    else if ($func == 'no_year') return $tpl->set('{date}', langdate('j M в H:i', $date_comm));
-    else if ($full) return $tpl->set('{date}', langdate('j F Y в H:i', $date_comm));
-    else return $tpl->set('{date}', langdate('j M Y в H:i', $date_comm));
+    if (date('Y-m-d', $date_comm) == date('Y-m-d', Registry::get('server_time')))
+        return $tpl->set('{date}', langdate('сегодня в H:i', $date_comm));
+    elseif (date('Y-m-d', $date_comm) == date('Y-m-d', (Registry::get('server_time') - 84600)))
+        return $tpl->set('{date}', langdate('вчера в H:i', $date_comm));
+    else if ($func == 'no_year')
+        return $tpl->set('{date}', langdate('j M в H:i', $date_comm));
+    else if ($full)
+        return $tpl->set('{date}', langdate('j F Y в H:i', $date_comm));
+    else
+        return $tpl->set('{date}', langdate('j M Y в H:i', $date_comm));
 }
 function megaDateNoTpl($date, $func = false, $full = false) {
-    global $server_time;
-    if (date('Y-m-d', $date) == date('Y-m-d', $server_time))
+    if (date('Y-m-d', $date) == date('Y-m-d', Registry::get('server_time')))
         return $date = langdate('сегодня в H:i', $date);
-    elseif (date('Y-m-d', $date) == date('Y-m-d', ($server_time - 84600)))
+    elseif (date('Y-m-d', $date) == date('Y-m-d', (Registry::get('server_time') - 84600)))
         return $date = langdate('вчера в H:i', $date);
     else if ($func == 'no_year')
         return $date = langdate('j M в H:i', $date);
@@ -941,7 +960,7 @@ function AjaxTpl() {
     echo str_replace('{theme}', '/templates/' . $config['temp'], $tpl->result['info'] . $tpl->result['content']);
 }
 function GenerateAlbumPhotosPosition($uid, $aid = false) {
-    global $db;
+    $db = Registry::get('db');
     //Выводим все фотографии из альбома и обновляем их позицию только для просмотра альбома
     if ($uid AND $aid) {
         $sql_ = $db->super_query("SELECT id FROM `photos` WHERE album_id = '{$aid}' ORDER by `position` ASC", true);
@@ -1111,8 +1130,10 @@ if (check_smartphone()) {
 if (isset($_SESSION['mobile']) AND $_SESSION['mobile'] == 1) {
     $config['temp'] = "mobile";
 }
-function AntiSpam($act, $text = false) {
-    global $db, $user_info, $server_time;
+function AntiSpam($act, $text = false)
+{
+    global $user_info;
+    $db = Registry::get('db');
     if ($text) $text = md5($text);
     /* Типы
     1 - Друзья
@@ -1122,7 +1143,7 @@ function AntiSpam($act, $text = false) {
     5 - Комментарии к записям (стены групп/людей)
     */
     //Антиспам дата
-    $antiDate = date('Y-m-d', $server_time);
+    $antiDate = date('Y-m-d', Registry::get('server_time'));
     $antiDate = strtotime($antiDate);
     //Лимиты на день
     $max_frieds = 40; #макс. заявок в друзья
@@ -1194,11 +1215,12 @@ function AntiSpam($act, $text = false) {
  */
 function AntiSpamLogInsert(string $act, bool|string $text = false): void
 {
-    global $db, $user_info, $server_time;
+    global $user_info;
+    $db = Registry::get('db');
     if ($text)
         $text = md5($text);
     //Антиспам дата
-    $antiDate = date('Y-m-d', $server_time);
+    $antiDate = date('Y-m-d', Registry::get('server_time'));
     $antiDate = strtotime($antiDate);
     //Если антиспам на друзей
     if ($act == 'friends') {
@@ -1333,4 +1355,14 @@ function set_cookie($name, $value, $expires)
     } else {
         setcookie($name, $value, $expires, "/", DOMAIN, NULL, TRUE);
     }
+}
+
+function settings_get(): array
+{
+    if (file_exists(ENGINE_DIR . '/data/config.php')) {
+        return require ENGINE_DIR . '/data/config.php';
+    } else {
+        die("Vii Engine not installed. Please run install.php");
+    }
+
 }

@@ -11,10 +11,13 @@ if (!defined('MOZG'))
 
 NoAjaxQuery();
 
-if ($logged) {
+if (Registry::get('logged')) {
+    $db = Registry::get('db');
     $user_id = $user_info['user_id'];
     $act = requestFilter('act');
 //    $metatags['title'] = $lang['settings'];
+    $server_time = Registry::get('server_time');
+
     switch ($act) {
         /** Изменение пароля */
         case "newpass":
@@ -22,9 +25,9 @@ if ($logged) {
 //            $_POST['old_pass'] = $_POST['old_pass'];
 //            $_POST['new_pass'] = $_POST['new_pass'];
 //            $_POST['new_pass2'] = $_POST['new_pass2'];
-            $old_pass = md5(md5(GetVar($_POST['old_pass'])));
-            $new_pass = md5(md5(GetVar($_POST['new_pass'])));
-            $new_pass2 = md5(md5(GetVar($_POST['new_pass2'])));
+            $old_pass = md5(md5(requestFilter('old_pass')));
+            $new_pass = md5(md5(requestFilter('new_pass')));
+            $new_pass2 = md5(md5(requestFilter('new_pass2')));
             //Выводим текущий пароль
             $row = $db->super_query("SELECT user_password FROM `users` WHERE user_id = '{$user_id}'");
             if ($row['user_password'] == $old_pass) {

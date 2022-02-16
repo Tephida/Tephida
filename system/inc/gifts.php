@@ -33,7 +33,7 @@ if (isset($_POST['save'])) {
         if (in_array(strtolower($type), $allowed_files) and in_array(strtolower($type_2), $allowed_files)) {
             if ($image_size < 200000) {
                 if ($image_size_2 < 100000) {
-                    $rand_name = $server_time;
+                    $rand_name = Registry::get('server_time');
                     move_uploaded_file($image_tmp, ROOT_DIR . '/uploads/gifts/' . $rand_name . '.' . $type);
                     move_uploaded_file($image_tmp_2, ROOT_DIR . '/uploads/gifts/' . $rand_name . '.' . $type_2);
                     $db->query("INSERT INTO `gifts_list` SET img = '" . $rand_name . "', price = '" . $price . "'");

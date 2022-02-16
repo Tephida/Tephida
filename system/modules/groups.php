@@ -11,12 +11,12 @@ if (!defined('MOZG'))
 
 NoAjaxQuery();
 
-if ($logged) {
+if (Registry::get('logged')) {
     $act = requestFilter('act');
     $user_id = $user_info['user_id'];
-
+    $server_time = Registry::get('server_time');
     $page = intFilter('page', 1);
-
+    $db = Registry::get('db');
     $gcount = 20;
     $limit_page = ($page - 1) * $gcount;
 
@@ -262,7 +262,7 @@ if ($logged) {
         case "addfeedback_pg":
             NoAjaxQuery();
             $tpl->load_template('groups/addfeedback_pg.tpl');
-            $tpl->set('{id}', $_POST['id']);
+            $tpl->set('{id}', intFilter('id'));
             $tpl->compile('content');
             AjaxTpl();
             die();
@@ -398,12 +398,14 @@ if ($logged) {
             $adres_page = strtolower(requestFilter('adres_page', 25000, true));
             $descr = requestFilter('descr', 5000);
 
-            $_POST['web'] = str_replace(array('"', "'"), '', $_POST['web']);//TODO update
-
             $web = requestFilter('web', 25000, true);
 
-            if (!preg_match("/^[a-zA-Z0-9_-]+$/", $adres_page)) $adress_ok = false;
-            else $adress_ok = true;
+            $web = str_replace(array('"', "'"), '', $web);
+
+            if (!preg_match("/^[a-zA-Z0-9_-]+$/", $adres_page))
+                $adress_ok = false;
+            else
+                $adress_ok = true;
 
             //Проверка на то, что действие делает админ
             $checkAdmin = $db->super_query("SELECT admin FROM `communities` WHERE id = '" . $id . "'");
@@ -1469,7 +1471,7 @@ if ($logged) {
                 if ($rowPub['id']) {
 
                     //Получаем список, которых надо пригласить и формируем его
-                    $arr_list = explode('|', $_POST['ulist']);
+                    $arr_list = explode('|', requestFilter('ulist'));
 
                     foreach ($arr_list as $ruser_id) {
 

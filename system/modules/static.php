@@ -11,7 +11,9 @@ if (!defined('MOZG'))
 
 NoAjaxQuery();
 
-if ($logged) {
+if (Registry::get('logged')) {
+    $db = Registry::get('db');
+    $server_time = Registry::get('server_time');
     $alt_name = to_translit(requestFilter('page'));
     $row = $db->super_query("SELECT title, text FROM `static` WHERE alt_name = '" . $alt_name . "'");
     if ($row) {
