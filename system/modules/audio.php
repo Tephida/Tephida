@@ -200,9 +200,7 @@ if (Registry::get('logged')) {
 
             //Получаем данные о файле
             $file_tmp = $_FILES['uploadfile']['tmp_name'];
-//            $file_name = to_translit($_FILES['uploadfile']['name']); // оригинальное название для определения формата
-            $file_name = $_FILES['uploadfile']['name'];
-
+            $file_name = to_translit($_FILES['uploadfile']['name']); // оригинальное название для определения формата
             $file_rename = substr(md5($server_time + rand(1, 100000)), 0, 15); // имя
             $file_size = $_FILES['uploadfile']['size']; // размер файла
             $array = explode(".", $file_name);
