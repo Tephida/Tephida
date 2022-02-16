@@ -322,22 +322,33 @@ function mozg_clear_cache(): void
     $folder = '';
     $fdir = opendir(ENGINE_DIR . '/cache/' . $folder);
     while ($file = readdir($fdir))
-        if ($file != '.' and $file != '..' and $file != '.htaccess' and $file != 'system')
-            @unlink(ENGINE_DIR . '/cache/' . $file);
+        if ($file != '.' and $file != '..' and $file != '.htaccess' and $file != 'system') {
+            if (is_file(ENGINE_DIR . '/cache/' . $file))
+                unlink(ENGINE_DIR . '/cache/' . $file);
+        }
 }
 function mozg_clear_cache_folder($folder): void
 {
     $fdir = opendir(ENGINE_DIR . '/cache/' . $folder);
-    while ($file = readdir($fdir)) @unlink(ENGINE_DIR . '/cache/' . $folder . '/' . $file);
+    while ($file = readdir($fdir)) {
+        if (is_file(ENGINE_DIR . '/cache/' . $folder . '/' . $file))
+            unlink(ENGINE_DIR . '/cache/' . $folder . '/' . $file);
+    }
 }
 function mozg_clear_cache_file($prefix): bool
 {
-    return unlink(ENGINE_DIR . '/cache/' . $prefix . '.tmp');
+    if (is_file(ENGINE_DIR . '/cache/' . $prefix . '.tmp'))
+        return unlink(ENGINE_DIR . '/cache/' . $prefix . '.tmp');
+    else
+        return false;
 }
 function mozg_mass_clear_cache_file($prefix): void
 {
     $arr_prefix = explode('|', $prefix);
-    foreach ($arr_prefix as $file) @unlink(ENGINE_DIR . '/cache/' . $file . '.tmp');
+    foreach ($arr_prefix as $file)
+        if (is_file(ENGINE_DIR . '/cache/' . $file . '.tmp'))
+            unlink(ENGINE_DIR . '/cache/' . $file . '.tmp');
+
 }
 
 /**
@@ -1254,7 +1265,34 @@ function AntiSpamLogInsert(string $act, bool|string $text = false): void
 function createDir(string $dir, int $mode = 0777): void
 {
     if (!is_dir($dir) && !mkdir($dir, $mode, true) && !is_dir($dir)) { // @ - dir may already exist
-        throw new Exception("Unable to create directory '$dir' with mode " );
+        throw new InvalidArgumentException("Unable to create directory '$dir' with mode ");
+    }
+}
+
+function deleteFile(string $file): bool
+{
+    if (is_dir($file)) {
+        if (!str_ends_with($file, '/')) {
+            $file .= '/';
+        }
+        $files = glob($file . '*', GLOB_MARK);
+        foreach ($files as $file_) {
+            if (is_dir($file_)) {
+                deleteFile($file_);
+            } else {
+                unlink($file_);
+            }
+        }
+        if (is_dir($file)) {
+            rmdir($file);
+            return true;
+        } else
+            return false;
+    } elseif (is_file($file)) {
+        unlink($file);
+        return true;
+    } else {
+        return false;
     }
 }
 

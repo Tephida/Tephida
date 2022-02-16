@@ -384,7 +384,7 @@ HTML;
                 $tpl->set('[/comments-link]', '');
             }
 
-            $tpl->set('{public-id}', $row['id']);
+            $tpl->set('{public-id}', $row['id'] ?? '');
 
             //Приватность комментирования записей
             if ($row_wall['comments'] or $public_admin) {
