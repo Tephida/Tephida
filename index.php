@@ -98,7 +98,11 @@ if (isset($user_info['user_id'])){
 //Если включен AJAX, то загружаем стр.
 if (requestFilter('ajax') == 'yes') {
     //Если есть POST Запрос и значение AJAX, а $ajax не равняется "yes", то не пропускаем
-    if ($_SERVER['REQUEST_METHOD'] == 'POST' and $ajax != 'yes') die('Неизвестная ошибка');
+    if ($_SERVER['REQUEST_METHOD'] == 'POST' and $ajax != 'yes')
+        die('Неизвестная ошибка');
+
+    $speedbar = $speedbar ?? null;
+    $metatags = $metatags ?? null;
     if (isset($spBar) and $spBar)
         $ajaxSpBar = "$('#speedbar').show().html('{$speedbar}')";
     else
@@ -132,12 +136,12 @@ HTML;
     die();
 }
 //Если обращение к модулю регистрации или главной и юзер не авторизован, то показываем регистрацию
-if ($go == 'register' or $go == 'main' and !$logged)
+if ($go == 'register' or $go == 'main' and Registry::get('logged') == false)
     include ENGINE_DIR . '/modules/register_main.php';
 
 $tpl->load_template('main.tpl');
 //Если юзер авторизован
-if ($logged) {
+if (Registry::get('logged')) {
     $tpl->set_block("'\\[not-logged\\](.*?)\\[/not-logged\\]'si", "");
     $tpl->set('[logged]', '');
     $tpl->set('[/logged]', '');
@@ -166,6 +170,8 @@ if ($logged) {
         $tpl->set('{msg}', $user_pm_num);
     else
         $tpl->set('{msg}', '');
+
+    $user_support = $user_support ?? null;
     //Поддержка
     if ($user_support)
         $tpl->set('{new-support}', $support);
@@ -178,6 +184,8 @@ if ($logged) {
     } else
         $tpl->set('{new_photos}', '');
     //UBM
+
+    $CacheGift = $CacheGift ?? null;
     if ($CacheGift) {
         $tpl->set('{new-ubm}', $new_ubm);
     } else {
@@ -215,6 +223,12 @@ if ($config['temp'] == 'mobile') {
         $tpl->set('{status-mobile}', '<span style="font-size:11px;color:#000">' . $user_info['user_status'] . '</span>');
     else
         $tpl->set('{status-mobile}', '<span style="font-size:11px;color:#999">установить статус</span>');
+
+    $user_friends_demands = $user_friends_demands ?? null;
+    $user_support = $user_support ?? null;
+    $CacheNews = $CacheNews ?? null;
+    $CacheGift = $CacheGift ?? null;
+
     $new_actions = $user_friends_demands + $user_support + $CacheNews + $CacheGift + $user_info['user_pm_num'];
     if ($new_actions)
         $tpl->set('{new-actions}', "<div class=\"headm_newac\" style=\"margin-top:5px;margin-left:30px\">+{$new_actions}</div>");
@@ -229,7 +243,7 @@ else {
     $tpl->set('[/speedbar]', '');
 }
 //BUILD JS
-if ($logged)
+if (Registry::get('logged'))
     $tpl->set('{js}', '<script type="text/javascript" src="{theme}/js/jquery.lib.js"></script>
 <script type="text/javascript" src="{theme}/js/' . $checkLang . '/lang.js"></script>
 <script type="text/javascript" src="{theme}/js/main.js"></script>

@@ -7,7 +7,7 @@
  *
  */
 if (!defined('MOZG')) die('Hacking attempt!');
-if ($logged) {
+if (Registry::get('logged')) {
     $act = requestFilter('act');
     $user_id = $user_info['user_id'];
     $server_time = Registry::get('server_time');

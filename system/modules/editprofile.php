@@ -11,7 +11,7 @@ if (!defined('MOZG'))
 
 NoAjaxQuery();
 
-if ($logged) {
+if (Registry::get('logged')) {
     $act = requestFilter('act');
     $server_time = Registry::get('server_time');
     $metatags['title'] = $lang['editmyprofile'];

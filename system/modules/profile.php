@@ -14,7 +14,7 @@ NoAjaxQuery();
 $user_id = $user_info['user_id'] ?? null;
 $db = Registry::get('db');
 
-if ($logged) {
+if (Registry::get('logged')) {
     $id = intFilter('id');
     $cache_folder = 'user_' . $id;
     $server_time = Registry::get('server_time');

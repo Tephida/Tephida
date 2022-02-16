@@ -12,7 +12,7 @@ if (!defined('MOZG'))
 if ($ajax == 'yes')
     NoAjaxQuery();
 
-if (!$logged) {
+if (Registry::get('logged') == false) {
     $db = Registry::get('db');
     $act = requestFilter('act');
     $metatags['title'] = $lang['restore_title'];

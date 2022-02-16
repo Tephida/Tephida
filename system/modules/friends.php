@@ -12,7 +12,7 @@ if (!defined('MOZG'))
 //Если страница вызвана через AJAX то включаем защиту, чтоб не могли обращаться напрямую к странице
 NoAjaxQuery();
 
-if ($logged) {
+if (Registry::get('logged')) {
     $act = requestFilter('act');
     $metatags['title'] = $lang['friends'];
     $server_time = Registry::get('server_time');

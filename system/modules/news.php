@@ -11,7 +11,7 @@ if (!defined('MOZG'))
 
 NoAjaxQuery();
 
-if ($logged) {
+if (Registry::get('logged')) {
     $user_id = $user_info['user_id'];
     $limit_news = 20;
     $server_time = Registry::get('server_time');

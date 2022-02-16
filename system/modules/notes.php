@@ -11,7 +11,7 @@ if (!defined('MOZG'))
 
 NoAjaxQuery();
 
-if ($logged) {
+if (Registry::get('logged')) {
     $act = requestFilter('act');
     $user_id = intval($user_info['user_id']);
     $yesterday_date = Registry::get('server_time');

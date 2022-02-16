@@ -24,7 +24,7 @@ switch ($act) {
 
         $text = requestFilter('text');
 
-        if (!empty($text) and $logged) {
+        if (!empty($text) and Registry::get('logged')) {
 
             //Вставляем в базу
             $db->query("INSERT INTO `reviews` SET user_id = '{$user_info['user_id']}', text = '{$text}', date = '{$server_time}', approve = 1");
@@ -57,7 +57,7 @@ switch ($act) {
         //Верх
         if ($page_cnt == 0) {
             $tpl->load_template('reviews/main.tpl');
-            if (isset($logged) and $logged) {
+            if (Registry::get('logged')) {
                 $tpl->set('[logged]', '');
                 $tpl->set('[/logged]', '');
                 $tpl->set_block("'\\[not-logged\\](.*?)\\[/not-logged\\]'si", "");

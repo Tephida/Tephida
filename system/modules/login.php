@@ -21,6 +21,7 @@ if ($act == 'logout') {
     @session_destroy();
     @session_unset();
     $logged = false;
+    Registry::set('logged', false);
     $user_info = array();
     header('Location: /');
     die();
@@ -28,6 +29,7 @@ if ($act == 'logout') {
 //Если есть данные сессии
 if (isset($_SESSION['user_id']) > 0) {
     $logged = true;
+    Registry::set('logged', true);
     $logged_user_id = intval($_SESSION['user_id']);
     $user_info = $db->super_query("SELECT user_id, user_email, user_group, user_friends_demands, user_pm_num, user_support, user_lastupdate, user_photo, user_msg_type, user_delet, user_ban_date, user_new_mark_photos, user_search_pref, user_status, user_last_visit, invties_pub_num FROM `users` WHERE user_id = '" . $logged_user_id . "'");
     //Если есть данные о сессии, но нет инфы о юзере, то выкидываем его
@@ -50,9 +52,11 @@ if (isset($_SESSION['user_id']) > 0) {
         //Удаляем все рание события
         $db->query("DELETE FROM `updates` WHERE for_user_id = '{$user_info['user_id']}'");
         $logged = true;
+        Registry::set('logged', true);
     } else {
         $user_info = array();
         $logged = false;
+        Registry::set('logged', false);
     }
     //Если юзер нажимает "Главная" и он зашел не с моб версии, то скидываем на его стр.
     $host_site = $_SERVER['QUERY_STRING'];
@@ -61,6 +65,7 @@ if (isset($_SESSION['user_id']) > 0) {
 } else {
     $user_info = array();
     $logged = false;
+    Registry::set('logged', false);
 }
 //Если данные поступили через пост и пользователь не авторизован
 if (isset($_POST['log_in']) AND !$logged) {

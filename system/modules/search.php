@@ -12,7 +12,7 @@ if (!defined('MOZG')) {
 
 NoAjaxQuery();
 
-if ($logged) {
+if (Registry::get('logged')) {
     $metatags['title'] = $lang['search'];
     $db = Registry::get('db');
     $mobile_speedbar = 'Поиск';

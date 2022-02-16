@@ -84,8 +84,8 @@ else
     $blockip = false;
 if (isset($user_info['user_ban_date']) and $user_info['user_ban_date'] >= Registry::get('server_time') or isset($user_info['user_ban_date']) and $user_info['user_ban_date'] == '0' or $blockip)
     include ENGINE_DIR . '/modules/profile_ban.php';
-//Елси юзер залогинен то обновляем последнюю дату посещения в таблице друзей и на личной стр
-if (isset($logged)) {
+//Если юзер авторизован, то обновляем последнюю дату посещения в таблице друзей и на личной стр
+if (Registry::get('logged')) {
     //Начисления 1 убм.
     if (empty($user_info['user_lastupdate'])) {
         $user_info['user_lastupdate'] = 1;

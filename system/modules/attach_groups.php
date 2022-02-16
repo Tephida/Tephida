@@ -11,7 +11,7 @@ if (!defined('MOZG'))
 
 NoAjaxQuery();
 
-if ($logged) {
+if (Registry::get('logged')) {
     $public_id = intFilter('public_id');
     $server_time = Registry::get('server_time');
     $db = Registry::get('db');

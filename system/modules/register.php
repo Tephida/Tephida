@@ -9,8 +9,7 @@
 //if (!defined('MOZG')) die('Hacking attempt!');
 //Проверяем была ли нажата кнопка, если нет, то делаем редирект на главную
 
-$logged = $logged ?? null;
-if ($logged == null) {
+if (Registry::get('logged') == false) {
     $db = Registry::get('db');
     $server_time = Registry::get('server_time');
 //    NoAjaxQuery();

@@ -11,7 +11,7 @@ if (!defined('MOZG'))
     die('Hacking attempt!');
 NoAjaxQuery();
 $jsonResponse = array();
-if ($logged) {
+if (Registry::get('logged')) {
     $act = requestFilter('act');
     $user_id = $user_info['user_id'];
     $db = Registry::get('db');

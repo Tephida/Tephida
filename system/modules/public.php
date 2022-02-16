@@ -11,7 +11,7 @@ if (!defined('MOZG'))
 
 NoAjaxQuery();
 
-if ($logged) {
+if (Registry::get('logged')) {
     $db = Registry::get('db');
     $user_id = $user_info['user_id'];
     $pid = intFilter('pid');
