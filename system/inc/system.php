@@ -9,7 +9,7 @@
 if(!defined('MOZG'))
 	die('Hacking attempt!');
 
-//Если сохраянем
+//Если сохраняем
 if(isset($_POST['saveconf'])){
 	$saves = $_POST['save'];
 
