@@ -32,7 +32,7 @@ if (Registry::get('logged')) {
         //Составляем новый ответ
         mozg_create_cache("votes/check{$user_id}_{$vote_id}", "a:1:{s:3:\"cnt\";s:1:\"1\";}");
 
-        $row_vote = $db->super_query("SELECT title, answers, answer_num FROM `votes` WHERE id = '{$vote_id}'", false, "votes/vote_{$vote_id}");
+        $row_vote = $db->super_query("SELECT title, answers, answer_num FROM `votes` WHERE id = '{$vote_id}'", false);
 
         $row_vote['title'] = stripslashes($row_vote['title']);
 
