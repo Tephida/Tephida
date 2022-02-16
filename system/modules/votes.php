@@ -15,8 +15,8 @@ if ($logged) {
 
     $user_id = $user_info['user_id'];
 
-    $vote_id = intval($_POST['vote_id']);
-    $answer_id = intval($_POST['answer_id']);
+    $vote_id = intFilter('vote_id');
+    $answer_id = intFilter('answer_id');
 
     $row = $db->super_query("SELECT COUNT(*) AS cnt FROM `votes_result` WHERE user_id = '{$user_id}' AND vote_id = '{$vote_id}'");
 
@@ -35,7 +35,7 @@ if ($logged) {
 
         $row_vote['title'] = stripslashes($row_vote['title']);
 
-        $result .= "<div class=\"wall_vote_title\">{$row_vote['title']}</div>";
+        $result = "<div class=\"wall_vote_title\">{$row_vote['title']}</div>";
 
         $rowAnswers = stripslashes($row_vote['answers']);
         $arr_answe_list = explode('|', $rowAnswers);

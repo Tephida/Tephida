@@ -27,22 +27,22 @@ if ($logged == null) {
         $user_email = requestFilter('email', 100, true);
         $user_name = ucfirst($user_name);
         $user_lastname = ucfirst($user_lastname);
-        $user_sex = $_POST['sex'] ? intval($_POST['sex']) : null;
+        $user_sex = intFilter('sex');
         if ($user_sex < 0 OR $user_sex > 2)
             $user_sex = 0;
-        $user_day = $_POST['day'] ? intval($_POST['day']) : null;
+        $user_day = intFilter('day');
         if ($user_day < 0 OR $user_day > 31)
             $user_day = 0;
-        $user_month = $_POST['month'] ? intval($_POST['month']) : null;
+        $user_month = intFilter('month');
         if ($user_month < 0 OR $user_month > 12)
             $user_month = 0;
-        $user_year = $_POST['year'] ? intval($_POST['year']) : null;
+        $user_year = intFilter('year');
         if ($user_year < 1930 OR $user_year > 2007)
             $user_year = 0;
-        $user_country = $_POST['country'] ? intval($_POST['country']) : 0;
+        $user_country = intFilter('country');
         if ($user_country < 0 OR $user_country > 10)
             $user_country = 0;
-        $user_city = $_POST['city'] ? intval($_POST['city']) : 0;
+        $user_city = intFilter('city');
         if ($user_city < 0 OR $user_city > 1587)
             $user_city = 0;
         $password_first = requestFilter('password_first') ?? null;

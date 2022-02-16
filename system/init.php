@@ -35,8 +35,8 @@ define('DOMAIN', $domain_cookie);
 
 
 //Смена языка
-if (!empty($_GET['act']) and $_GET['act'] == 'chage_lang') {
-    $langId = intval($_GET['id']);
+if (requestFilter('act') == 'chage_lang') {
+    $langId = intFilter('id');
     $config['lang_list'] = nl2br($config['lang_list']);
     $expLangList = explode('<br />', $config['lang_list']);
     $numLangs = count($expLangList);
@@ -63,7 +63,7 @@ foreach ($expLangList as $expLangData) {
         $checkLang = $expLangName[1];
     }
 }
-if (!$checkLang) {
+if (!isset($checkLang)) {
     $rMyLang = 'Русский';
     $checkLang = 'Russian';
 }

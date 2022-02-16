@@ -13,14 +13,14 @@ NoAjaxQuery();
 
 if ($logged) {
     $user_id = $user_info['user_id'];
-    $pid = intval($_GET['pid']);
+    $pid = intFilter('pid');
     $mobile_speedbar = 'Сообщество';
 
     $get_adres = requestFilter('get_adres', 100);
 //	if(preg_match("/^[a-zA-Z0-9_-]+$/", $get_adres))
 //        $get_adres = $db->safesql($_GET['get_adres']);
 
-    $sql_where = "id = '" . $pid . "'";
+//    $sql_where = "id = '" . $pid . "'";
 
     if ($pid) {
         $get_adres = '';
@@ -29,15 +29,18 @@ if ($logged) {
     if ($get_adres) {
         $pid = '';
         $sql_where = "adres = '" . $get_adres . "'";
-    } else
+    } else {
+        echo $get_adres;
+    }
 
-	echo $get_adres;
+    $sql_where = $sql_where ?? "id = '" . $pid . "'";
 
-        //Если страница вызвана через "к предыдущим записям"
+
+    //Если страница вызвана через "к предыдущим записям"
     $limit_select = 10;
-    if (isset($_POST['page_cnt']) and $_POST['page_cnt'] > 0) {
-        $limit_select = 10;
-        $page_cnt = intval($_POST['page_cnt']) * $limit_select;
+    $page_cnt = intFilter('page_cnt');
+    if ($page_cnt > 0) {
+        $page_cnt = $page_cnt * $limit_select;
     } else
         $page_cnt = 0;
 
@@ -71,14 +74,14 @@ if ($logged) {
         $wall = new wall();
         $wall->query("SELECT tb1.id, text, public_id, add_date, fasts_num, attach, likes_num, likes_users, tell_uid, public, tell_date, tell_comm, fixed, tb2.title, photo, comments, adres FROM `communities_wall` tb1, `communities` tb2 WHERE tb1.public_id = '{$row['id']}' AND tb1.public_id = tb2.id AND fast_comm_id = 0 ORDER by `fixed` DESC, `add_date` DESC LIMIT {$page_cnt}, {$limit_select}");
         $wall->template('groups/record.tpl');
-        //Если страница вывзана через "к предыдущим записям"
+        //Если страница вызвана через "к предыдущим записям"
         if ($page_cnt)
             $wall->compile('content');
         else
             $wall->compile('wall');
         $wall->select($public_admin, $server_time);
 
-        //Если страница вывзана через "к предыдущим записям"
+        //Если страница вызвана через "к предыдущим записям"
         if ($page_cnt) {
             AjaxTpl();
             exit;
@@ -160,6 +163,7 @@ if ($logged) {
             $tpl->set_block("'\\[no\\](.*?)\\[/no\\]'si", "");
             $tpl->set('{num-feedback}', '<span id="fnumu">' . $row['feedback'] . '</span> ' . gram_record($row['feedback'], 'feedback'));
             $sql_feedbackusers = $db->super_query("SELECT tb1.fuser_id, office, tb2.user_search_pref, user_photo FROM `communities_feedback` tb1, `users` tb2 WHERE tb1.cid = '{$row['id']}' AND tb1.fuser_id = tb2.user_id ORDER by `fdate` ASC LIMIT 0, 5", true);
+            $feedback_users = '';
             foreach ($sql_feedbackusers as $row_feedbackusers) {
                 if ($row_feedbackusers['user_photo']) $ava = "/uploads/users/{$row_feedbackusers['fuser_id']}/50_{$row_feedbackusers['user_photo']}";
                 else $ava = "{theme}/images/no_ava_50.png";
@@ -220,7 +224,7 @@ if ($logged) {
             $tpl->set('{admins}', $adminO);
         }
 
-        $wall_response = $tpl->result['wall'] ?? null;
+        $wall_response = $tpl->result['wall'] ?? '';
         $tpl->set('{records}', $wall_response);
 
         //Стена
@@ -239,7 +243,7 @@ if ($logged) {
                 $tpl->set('{records}', '<div class="wall_none">Новостей пока нет.</div>');
         }
 
-        //Выводим информцию о том кто смотрит страницу для себя
+        //Выводим информацию о том кто смотрит страницу для себя
         $tpl->set('{viewer-id}', $user_id);
 
         if (!$row['adres']) $row['adres'] = 'public' . $row['id'];
@@ -249,6 +253,7 @@ if ($logged) {
         if ($row['audio_num']) {
             $sql_audios = $db->super_query("SELECT url, artist, name FROM `communities_audio` WHERE public_id = '{$row['id']}' ORDER by `adate` DESC LIMIT 0, 3", true);
             $jid = 0;
+            $audios = '';
             foreach ($sql_audios as $row_audios) {
                 $jid++;
 
@@ -302,7 +307,7 @@ if ($logged) {
         if ($row['forum_num'] and $row['discussion']) {
 
             $sql_forum = $db->super_query("SELECT fid, title, lastuser_id, lastdate, msg_num FROM `communities_forum` WHERE public_id = '{$row['id']}' ORDER by `fixed` DESC, `lastdate` DESC, `fdate` DESC LIMIT 0, 5", true);
-
+            $thems = '';
             foreach ($sql_forum as $row_forum) {
 
                 $row_last_user = $db->super_query("SELECT user_search_pref FROM `users` WHERE user_id = '{$row_forum['lastuser_id']}'");
@@ -356,7 +361,7 @@ if ($logged) {
         if ($row['videos_num']) {
 
             $sql_videos = $db->super_query("SELECT id, title, photo, add_date, comm_num, owner_user_id FROM `videos` WHERE public_id = '{$row['id']}' ORDER by `add_date` DESC LIMIT 0, 2", true);
-
+            $videos = '';
             foreach ($sql_videos as $row_video) {
 
                 $row_video['title'] = stripslashes($row_video['title']);
@@ -405,6 +410,8 @@ if ($logged) {
 
                 $ava_marg_top = 'style="margin-top:-' . $rForme . 'px"';
 
+            } else {
+                $ava_marg_top = '';
             }
 
             $tpl->set('{cover-param-7}', $ava_marg_top);

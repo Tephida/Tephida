@@ -10,15 +10,17 @@
 
 @error_reporting(E_ALL ^ E_WARNING ^ E_NOTICE);
 
-function clean_url($url){
-  $url = str_replace("http://", "", strtolower($url));
-  $url = str_replace("https://", "", $url );
-  if (str_starts_with($url, 'www.')) $url = substr($url, 4);
-  $url = explode('/', $url);
-  $url = reset($url);
-  $url = explode(':', $url);
+function clean_url(string $url)
+{
+    $url = str_replace("http://", "", strtolower($url));
+    $url = str_replace("https://", "", $url);
+    if (str_starts_with($url, 'www.'))
+        $url = substr($url, 4);
+    $url = explode('/', $url);
+    $url = reset($url);
+    $url = explode(':', $url);
     return reset($url);
-  }
+}
 
 if(clean_url($_SERVER['HTTP_REFERER']) != clean_url($_SERVER['HTTP_HOST'])) 
 	die("Hacking attempt!");
@@ -28,7 +30,12 @@ $height = 50;				//Высота изображения
 $font_size = 16;   			//Размер шрифта
 $let_amount = 5;			//Количество символов, которые нужно набрать
 $fon_let_amount = 30;		//Количество символов на фоне
+
+
 $font = "../system/fonts/cour.ttf";	//Путь к шрифту
+if (!file_exists($font)) {
+    throw new ErrorException("Невозможно загрузить : " . $font, 0, 0, 'null', 0);
+}
  
 //набор символов
 $letters = array('1', '2', '3', '4', '5', '6', '7', '8', '9', '0');		

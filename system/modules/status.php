@@ -15,7 +15,7 @@ if ($logged) {
 
     $user_id = $user_info['user_id'];
     $text = requestFilter('text', 25000, true);
-    $public_id = intval($_POST['public_id']);
+    $public_id = intFilter('public_id');
 
     //Если обновляем статус группы
     if ($_GET['act'] == 'public') {

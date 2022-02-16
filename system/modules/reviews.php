@@ -9,10 +9,9 @@
 if (!defined('MOZG'))
     die('Hacking attempt!');
 
-if (!empty($_POST['ajax']) and $_POST['ajax'] == 'yes')
     NoAjaxQuery();
 
-$act = $_GET['act'] ?? '';
+$act = requestFilter('act');
 
 switch ($act) {
 
@@ -42,8 +41,9 @@ switch ($act) {
 //            exit();
 
         $limit_num = 25;
-        if (isset($_POST['page_cnt']) and $_POST['page_cnt'] > 0)
-            $page_cnt = intval($_POST['page_cnt']) * $limit_num;
+        $page_cnt = intFilter('page_cnt');
+        if ($page_cnt > 0)
+            $page_cnt = $page_cnt * $limit_num;
         else
             $page_cnt = 0;
 

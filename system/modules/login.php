@@ -10,9 +10,9 @@ if (!defined('MOZG')) die('Hacking attempt!');
 $_IP = $_SERVER['REMOTE_ADDR'];
 $_BROWSER = $_SERVER['HTTP_USER_AGENT'];
 //Если делаем выход
-$act = $_GET['act'] ?? '';
+$act = requestFilter('act');
 
-if (isset($_GET['act']) AND $_GET['act'] == 'logout') {
+if ($act == 'logout') {
     set_cookie("user_id", "", 0);
     set_cookie("password", "", 0);
     set_cookie("hid", "", 0);
@@ -24,19 +24,20 @@ if (isset($_GET['act']) AND $_GET['act'] == 'logout') {
     header('Location: /');
     die();
 }
-//Если есть данные сесии
+//Если есть данные сессии
 if (isset($_SESSION['user_id']) > 0) {
     $logged = true;
     $logged_user_id = intval($_SESSION['user_id']);
     $user_info = $db->super_query("SELECT user_id, user_email, user_group, user_friends_demands, user_pm_num, user_support, user_lastupdate, user_photo, user_msg_type, user_delet, user_ban_date, user_new_mark_photos, user_search_pref, user_status, user_last_visit, invties_pub_num FROM `users` WHERE user_id = '" . $logged_user_id . "'");
-    //Если есть данные о сесии, но нет инфы о юзере, то выкидываем его
-    if (!$user_info['user_id']) header('Location: /index.php?act=logout');
-    //Если юзер нажимает "Главная" и он зашел не с моб версии. то скидываем на его стр.
+    //Если есть данные о сессии, но нет инфы о юзере, то выкидываем его
+    if (!$user_info['user_id'])
+        header('Location: /index.php?act=logout');
+    //Если юзер нажимает "Главная", и он зашел не с моб версии. То скидываем на его стр.
     $host_site = $_SERVER['QUERY_STRING'];
-    if ($logged AND !$host_site AND $config['temp'] != 'mobile')
+    if (!$host_site and $config['temp'] != 'mobile')
         header('Location: /u' . $user_info['user_id']);
-    //Если есть данные о COOKIE то проверяем
-    
+    //Если есть данные о COOKIE, то проверяем
+
 } elseif (isset($_COOKIE['user_id']) > 0 AND $_COOKIE['password'] AND $_COOKIE['hid']) {
     $cookie_user_id = intval($_COOKIE['user_id']);
     $user_info = $db->super_query("SELECT user_id, user_email, user_group, user_password, user_hid, user_friends_demands, user_pm_num, user_support, user_lastupdate, user_photo, user_msg_type, user_delet, user_ban_date, user_new_mark_photos, user_search_pref, user_status, user_last_visit, invties_pub_num FROM `users` WHERE user_id = '" . $cookie_user_id . "'");
@@ -78,7 +79,7 @@ if (isset($_POST['log_in']) AND !$logged) {
                 $hid = $password . md5(md5($_IP));
                 //Обновляем хэш входа
                 $db->query("UPDATE `users` SET user_hid = '" . $hid . "' WHERE user_id = '" . $check_user['user_id'] . "'");
-                //Удаляем все рание события
+                //Удаляем все ранние события
                 $db->query("DELETE FROM `updates` WHERE for_user_id = '{$check_user['user_id']}'");
                 //Устанавливаем в сессию ИД юзера
                 $_SESSION['user_id'] = intval($check_user['user_id']);

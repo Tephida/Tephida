@@ -10,7 +10,7 @@ if (!defined('MOZG'))
     die('Hacking attempt!');
 
 if ($logged) {
-    $act = $_GET['act'] ?? '';
+    $act = requestFilter('act');
     $user_id = $user_info['user_id'];
 
     switch ($act) {
@@ -19,7 +19,7 @@ if ($logged) {
         case "new_send":
             NoAjaxQuery();
 
-            $public_id = intval($_POST['public_id']);
+            $public_id = intFilter('public_id');
             $title = requestFilter('title', 25000, true);
             $attach_files = requestFilter('attach_files', 25000, true);
             $text = requestFilter('text');
@@ -47,7 +47,7 @@ if ($logged) {
         //################### Страница создания новой темы ###################//
         case "new":
 
-            $public_id = intval($_GET['public_id']);
+            $public_id = intFilter('public_id');
 
             $row = $db->super_query("SELECT ulist, discussion FROM `communities` WHERE id = '{$public_id}'");
 
@@ -66,8 +66,8 @@ if ($logged) {
         case "add_msg":
             NoAjaxQuery();
 
-            $fid = intval($_POST['fid']);
-            $answer_id = intval($_POST['answer_id']);
+            $fid = intFilter('fid');
+            $answer_id = intFilter('answer_id');
             $msg = requestFilter('msg');
 
             $row = $db->super_query("SELECT status, public_id FROM `communities_forum` WHERE fid = '{$fid}'");
@@ -88,14 +88,14 @@ if ($logged) {
 
                         $msg = str_replace($check2['user_name'], "<a href=\"/u{$row_owner2['muser_id']}\" onClick=\"Page.Go(this.href); return false\">{$check2['user_name']}</a>", $msg);
 
-                        //Всталвяем саму запись в БД
+                        //Вставляем саму запись в БД
                         $db->query("INSERT INTO `communities_forum_msg` SET fid = '{$fid}', muser_id = '{$user_id}', msg = '{$msg}', mdate = '{$server_time}'");
                         $dbid = $db->insert_id();
 
                         //Вставляем в ленту новостей
                         $db->query("INSERT INTO `news` SET ac_user_id = '{$user_id}', action_type = 6, action_text = '{$msg}', obj_id = '{$dbid}', for_user_id = '{$row_owner2['muser_id']}', action_time = '{$server_time}', answer_text = '{$row_owner2['msg']}', link = '/forum{$row['public_id']}?act=view&id={$fid}'");
 
-                        //Вставляем событие в моментальные оповещания
+                        //Вставляем событие в моментальные оповещения
                         $update_time = $server_time - 70;
 
                         if ($check2['user_last_visit'] >= $update_time) {
@@ -116,7 +116,7 @@ if ($logged) {
 
                 } else {
 
-                    //Всталвяем саму запись в БД
+                    //Вставляем саму запись в БД
                     $db->query("INSERT INTO `communities_forum_msg` SET fid = '{$fid}', muser_id = '{$user_id}', msg = '{$msg}', mdate = '{$server_time}'");
                     $dbid = $db->insert_id();
 
@@ -159,8 +159,8 @@ if ($logged) {
         case "prev_msg":
             NoAjaxQuery();
 
-            $id = intval($_POST['fid']);
-            $pid = intval($_POST['pid']);
+            $id = intFilter('fid');
+            $pid = intFilter('pid');
 
             //SQL запрос на вывод
             $row = $db->super_query("SELECT msg_num, public_id FROM `communities_forum` WHERE fid = '{$id}'");
@@ -174,8 +174,8 @@ if ($logged) {
 
             $limit = 10;
 
-            $first_id = intval($_POST['first_id']);
-            $page_post = intval($_POST['page']);
+            $first_id = intFilter('first_id');
+            $page_post = intFilter('page');
             if ($page_post <= 0) $page_post = 1;
 
             $start_limit = $row['msg_num'] - ($page_post * $limit) - 10;
@@ -240,7 +240,7 @@ if ($logged) {
         case "saveedit":
             NoAjaxQuery();
 
-            $fid = intval($_POST['fid']);
+            $fid = intFilter('fid');
             $text = requestFilter('text');
 
             $row = $db->super_query("SELECT fuser_id, public_id FROM `communities_forum` WHERE fid = '{$fid}'");
@@ -266,7 +266,7 @@ if ($logged) {
         case "savetitle":
             NoAjaxQuery();
 
-            $fid = intval($_POST['fid']);
+            $fid = intFilter('fid');
             $title = requestFilter('title', 25000, true);
 
             $row = $db->super_query("SELECT fuser_id, public_id FROM `communities_forum` WHERE fid = '{$fid}'");
@@ -288,11 +288,11 @@ if ($logged) {
             exit();
             break;
 
-        //################### Фиксирование темы . закрипление ###################//
+        //################### Фиксирование темы . закрепление ###################//
         case "fix":
             NoAjaxQuery();
 
-            $fid = intval($_POST['fid']);
+            $fid = intFilter('fid');
 
             $row = $db->super_query("SELECT fuser_id, public_id, fixed FROM `communities_forum` WHERE fid = '{$fid}'");
             $row2 = $db->super_query("SELECT admin, discussion FROM `communities` WHERE id = '{$row['public_id']}'");
@@ -320,7 +320,7 @@ if ($logged) {
         case "status":
             NoAjaxQuery();
 
-            $fid = intval($_POST['fid']);
+            $fid = intFilter('fid');
 
             $row = $db->super_query("SELECT fuser_id, public_id, status FROM `communities_forum` WHERE fid = '{$fid}'");
             $row2 = $db->super_query("SELECT admin, discussion FROM `communities` WHERE id = '{$row['public_id']}'");
@@ -342,11 +342,11 @@ if ($logged) {
             exit();
             break;
 
-        //################### Уадаление темы ###################//
+        //################### Удаление темы ###################//
         case "del":
             NoAjaxQuery();
 
-            $fid = intval($_POST['fid']);
+            $fid = intFilter('fid');
 
             $row = $db->super_query("SELECT fuser_id, public_id, vote FROM `communities_forum` WHERE fid = '{$fid}'");
             $row2 = $db->super_query("SELECT admin, discussion FROM `communities` WHERE id = '{$row['public_id']}'");
@@ -403,7 +403,7 @@ if ($logged) {
         case "delmsg":
             NoAjaxQuery();
 
-            $mid = intval($_POST['mid']);
+            $mid = intFilter('mid');
 
             $row = $db->super_query("SELECT muser_id, fid, mdate FROM `communities_forum_msg` WHERE mid = '{$mid}'");
             $row2 = $db->super_query("SELECT public_id FROM `communities_forum` WHERE fid = '{$row['fid']}'");
@@ -429,11 +429,11 @@ if ($logged) {
             exit();
             break;
 
-        //################### Прикрипление опроса ###################//
+        //################### Прикрепление опроса ###################//
         case "createvote":
             NoAjaxQuery();
 
-            $fid = intval($_POST['fid']);
+            $fid = intFilter('fid');
 
             $row = $db->super_query("SELECT fuser_id, public_id FROM `communities_forum` WHERE fid = '{$fid}'");
             $row2 = $db->super_query("SELECT admin, discussion FROM `communities` WHERE id = '{$row['public_id']}'");
@@ -469,19 +469,16 @@ if ($logged) {
                     $db->query("INSERT INTO `votes` SET title = '{$vote_title}', answers = '{$sql_answers_list}'");
 
                     $db->query("UPDATE `communities_forum` SET vote = '{$db->insert_id()}' WHERE fid = '{$fid}'");
-
                 }
-
             }
-
             exit();
             break;
 
         //################### Просмотр темы ###################//
         case "view":
 
-            $public_id = intval($_GET['public_id']);
-            $id = intval($_GET['id']);
+            $public_id = intFilter('public_id');
+            $id = intFilter('id');
 
             //Выводим данные о теме
             $row = $db->super_query("SELECT tb1.fid, fixed, title, text, status, fdate, fuser_id, attach, vote, msg_num, public_id, tb2.user_search_pref, user_photo, user_last_visit, user_logged_mobile FROM `communities_forum` tb1, `users` tb2 WHERE tb1.fid = '{$id}' AND tb1.fuser_id = tb2.user_id");
@@ -567,13 +564,14 @@ if ($logged) {
                 $tpl->set('{title}', stripslashes($row['title']));
                 $tpl->set('{edit-text}', stripslashes(myBrRn($row['text'])));
 
-                //Прикрипленные файлы
+                //Прикрепленные файлы
                 if ($row['attach']) {
                     $attach_arr = explode('||', $row['attach']);
                     $cnt_attach = 1;
                     $cnt_attach_link = 1;
                     $jid = 0;
                     $attach_result = '';
+                    $attach_result_smiles = '';
                     foreach ($attach_arr as $attach_file) {
                         $attach_type = explode('|', $attach_file);
 
@@ -703,6 +701,8 @@ if ($logged) {
                 $vote_id = $row['vote'];
                 $row_vote = $db->super_query("SELECT title, answers, answer_num FROM `votes` WHERE id = '{$vote_id}'", false);
 
+                $vote_result = $vote_result ?? '';
+
                 if ($row_vote) {
 
                     $checkMyVote = $db->super_query("SELECT COUNT(*) AS cnt FROM `votes_result` WHERE user_id = '{$user_id}' AND vote_id = '{$vote_id}'", false);
@@ -776,17 +776,17 @@ if ($logged) {
         default:
 
             //Если вызвана Forum.Page()
-            if ($_POST['a'])
+            if (isset($_POST['a']))
                 NoAjaxQuery();
 
-            $public_id = intval($_GET['public_id']);
+            $public_id = intFilter('public_id');
 
             $row = $db->super_query("SELECT forum_num, discussion, ulist FROM `communities` WHERE id = '{$public_id}'");
 
             if ($row['discussion']) {
 
                 //Верхушка
-                if (!$_POST['a']) {
+                if (!isset($_POST['a'])) {
                     $tpl->load_template('forum/head.tpl');
                     $tpl->set('{id}', $public_id);
                     if (!$row['forum_num']) $row['forum_num'] = '';
@@ -800,11 +800,13 @@ if ($logged) {
                         $tpl->set('{no}', 'no_display');
 
                     $tpl->compile('info');
+                } else {
+                    $forum_num = null;
                 }
 
                 //SQL запрос на вывод
                 $limit = 20;
-                $page_post = intval($_POST['page']);
+                $page_post = intFilter('page');
                 if ($page_post > 0)
                     $page = $page_post * $limit;
                 else
@@ -841,11 +843,11 @@ if ($logged) {
                     }
 
                 } else
-                    if (!$_POST['a'])
+                    if (!isset($_POST['a']))
                         msgbox('', '<br /><br />В сообществе ещё нет тем.<br /><br /><br />', 'info_2');
 
                 //Низ
-                if (!$_POST['a'] and $forum_num > 20) {
+                if (!isset($_POST['a']) and $forum_num > 20) {
                     $tpl->load_template('forum/bottom.tpl');
                     $tpl->set('{id}', $public_id);
                     if (!$row['forum_num']) $row['forum_num'] = '';
@@ -854,7 +856,7 @@ if ($logged) {
                 }
 
                 //Если вызвана Forum.Page()
-                if ($_POST['a']) {
+                if (isset($_POST['a'])) {
 
                     AjaxTpl();
                     exit();
@@ -862,7 +864,7 @@ if ($logged) {
                 }
 
             } else
-                if (!$_POST['a'])
+                if (!isset($_POST['a']))
                     msgbox('', '<br /><br />Ошибка доступа.<br /><br /><br />', 'info_2');
 
     }

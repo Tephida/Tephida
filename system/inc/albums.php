@@ -11,29 +11,31 @@ if (!defined('MOZG'))
 
 echoheader();
 
-$se_uid = intval($_GET['se_uid']);
+$se_uid = intFilter('se_uid');
 if (!$se_uid) $se_uid = '';
 
-$se_user_id = intval($_GET['se_user_id']);
+$se_user_id = intFilter('se_user_id');
 if (!$se_user_id) $se_user_id = '';
 
 $se_name = requestFilter('se_name', 25000, true);
 
+$sort = $sort ?? null;
+$where_sql = $where_sql ?? '';
+$where_sql_2 = $where_sql_2 ?? '';
+$admin_index = $admin_index ?? '';
+
 if ($se_uid or $sort or $se_name or $se_user_id) {
     if ($se_uid) $where_sql .= "AND aid = '" . $se_uid . "' ";
     if ($se_user_id) $where_sql_2 .= "AND tb1.user_id = '" . $se_user_id . "' ";
-    $query = strtr($se_name, array(' ' => '%')); //Замеянем пробелы на проценты чтоб тоиск был точнее
+    $query = strtr($se_name, array(' ' => '%')); //Замеянем пробелы на проценты чтоб поиск был точнее
     if ($se_name)
         $where_sql .= "AND name LIKE '%" . $query . "%' ";
 }
 
 //Выводим список людей
-if ($_GET['page'] > 0) $page = intval($_GET['page']); else $page = 1;
+$page = intFilter('page');
 $gcount = 20;
 $limit_page = ($page - 1) * $gcount;
-
-$where_sql = $where_sql ?? null;
-$where_sql_2 = $where_sql_2 ?? null;
 
 $sql_ = $db->super_query("SELECT tb1.user_id, name, adate, aid, photo_num, comm_num, tb2.user_name FROM `albums` tb1, `users` tb2 WHERE tb1.user_id = tb2.user_id {$where_sql} {$where_sql_2} ORDER by `adate` DESC LIMIT {$limit_page}, {$gcount}", true);
 
@@ -71,6 +73,7 @@ HTML;
 
 echohtmlstart('Список альбомов (' . $numRows['cnt'] . ')');
 
+$users = '';
 foreach ($sql_ as $row) {
     $row['name'] = stripslashes($row['name']);
     $row['adate'] = langdate('j M Y в H:i', strtotime($row['adate']));

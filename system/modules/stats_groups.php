@@ -13,7 +13,7 @@ NoAjaxQuery();
 
 if ($logged) {
 
-    $act = $_GET['act'] ?? '';
+    $act = requestFilter('act');
 
     switch ($act) {
 
@@ -21,19 +21,19 @@ if ($logged) {
 
             //################### Выводим статистику ###################//
 
-            $gid = intval($_GET['gid']);
+            $gid = intFilter('gid');
 
-            $month = intval($_GET['m']);
+            $month = intFilter('m');
             if ($month and $month <= 0 or $month > 12) $month = 2;
 
-            $year = intval($_GET['y']);
+            $year = intFilter('y'];
             if ($year and $year < 2013 or $year > 2020) $year = 2013;
 
             //Выводим админа сообщества
             $owner = $db->super_query("SELECT admin FROM `communities` WHERE id = '{$gid}'");
 
             //ПРоверка на админа
-            if (strpos($owner['admin'], "u{$user_info['user_id']}|") !== false) {
+            if (str_contains($owner['admin'], "u{$user_info['user_id']}|")) {
 
                 if ($month and $year) {
 
@@ -72,11 +72,20 @@ if ($logged) {
 
                     }
 
+                } else {
+                    $arr_r_unik = null;
+                    $arr_r_hits = null;
+                    $arr_r_new_users = null;
+                    $arr_r_exit_users = null;
                 }
 
                 if ($r_month == '01' or $r_month == '03' or $r_month == '05' or $r_month == '07' or $r_month == '08' or $r_month == '10' or $r_month == '12' or $r_month == '1' or $r_month == '3' or $r_month == '5' or $r_month == '7' or $r_month == '8') $limit_day = 31;
                 elseif ($r_month == '02') $limit_day = 28;
                 else $limit_day = 30;
+                $r_unik = '';
+                $r_hits = '';
+                $r_new_users = '';
+                $r_exit_users = '';
 
                 for ($i = 1; $i <= $limit_day; $i++) {
 
@@ -119,7 +128,7 @@ if ($logged) {
 
                 $tickSize_new_users = $rNum_new_users;
 
-                //Выводим максимальное кол-во вышедних юзеров за этот месяц
+                //Выводим максимальное кол-во вышедших юзеров за этот месяц
                 $row_max_exit_users = $db->super_query("SELECT exit_users FROM `communities_stats` WHERE gid = '{$gid}' AND date_x = '{$stat_date}' ORDER by `exit_users` DESC");
 
                 $rNum_exit_users = round($row_max_exit_users['exit_users'] / 15);

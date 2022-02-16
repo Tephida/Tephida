@@ -12,17 +12,12 @@ if (!defined('MOZG'))
 NoAjaxQuery();
 
 if ($logged) {
-    $act = $_GET['act'] ?? '';
+    $act = requestFilter('act');
 
 //	$act = $_GET['act'];
     $user_id = $user_info['user_id'];
     $metatags['title'] = $lang['support_title'];
-
-    if (isset($_GET['page']) and $_GET['page'] > 0)
-        $page = intval($_GET['page']);
-    else
-        $page = 1;
-
+    $page = intFilter('page', 1);
     $gcount = 20;
     $limit_page = ($page - 1) * $gcount;
 
@@ -73,7 +68,7 @@ if ($logged) {
         //################### Удаление вопроса  ###################//
         case "delet":
             NoAjaxQuery();
-            $qid = intval($_POST['qid']);
+            $qid = intFilter('qid');
             $row = $db->super_query("SELECT suser_id FROM `support` WHERE id = '{$qid}'");
             if ($row['suser_id'] == $user_id or $user_info['user_group'] == 4) {
                 $db->query("DELETE FROM `support` WHERE id = '{$qid}'");
@@ -85,7 +80,7 @@ if ($logged) {
         //################### Удаление Ответа  ###################//
         case "delet_answer":
             NoAjaxQuery();
-            $id = intval($_POST['id']);
+            $id = intFilter('id');
             $row = $db->super_query("SELECT auser_id FROM `support_answers` WHERE id = '{$id}'");
             if ($row['auser_id'] == $user_id or $user_info['user_group'] == 4)
                 $db->query("DELETE FROM `support_answers` WHERE id = '{$id}'");
@@ -96,7 +91,7 @@ if ($logged) {
         //################### Закрытие вопроса  ###################//
         case "close":
             NoAjaxQuery();
-            $qid = intval($_POST['qid']);
+            $qid = intFilter('qid');
             if ($user_info['user_group'] == 4) {
                 $row = $db->super_query("SELECT COUNT(*) AS cnt FROM `support` WHERE id = '{$qid}'");
                 if ($row['cnt'])
@@ -108,7 +103,7 @@ if ($logged) {
         //################### Отправка ответа ###################//
         case "answer":
             NoAjaxQuery();
-            $qid = intval($_POST['qid']);
+            $qid = intFilter('qid');
             $answer = requestFilter('answer');
             $check = $db->super_query("SELECT suser_id FROM `support` WHERE id = '{$qid}'");
             if ($check['suser_id'] == $user_id or $user_info['user_group'] == 4 and isset($answer) and !empty($answer)) {
@@ -158,7 +153,7 @@ if ($logged) {
 
         //################### Просмотр вопроса ###################//
         case "show":
-            $qid = intval($_GET['qid']);
+            $qid = intFilter('qid');
 
             $mobile_speedbar = 'Просмотр вопроса';
 

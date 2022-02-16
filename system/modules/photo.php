@@ -15,17 +15,22 @@ if ($logged) {
             
         case "addcomm":
             NoAjaxQuery();
-            $pid = intval($_POST['pid']);
+            $pid = intFilter('pid');
             $comment = requestFilter('comment');
             $date = date('Y-m-d H:i:s', $server_time);
             $hash = md5($user_id . $server_time . $_IP . $user_info['user_email'] . rand(0, 1000000000)) . $comment . $pid;
             $check_photo = $db->super_query("SELECT album_id, user_id, photo_name FROM `photos` WHERE id = '{$pid}'");
-            //Проверка естьли запрашиваемый юзер в друзьях у юзера который смотрит стр
+            //Проверка есть ли запрашиваемый юзер в друзьях у юзера который смотрит стр
             if ($user_info['user_id'] != $check_photo['user_id']) {
                 $check_friend = CheckFriends($check_photo['user_id']);
                 $row_album = $db->super_query("SELECT privacy FROM `albums` WHERE aid = '{$check_photo['album_id']}'");
                 $album_privacy = explode('|', $row_album['privacy']);
+            } else {
+                $album_privacy = null;
+                $check_friend = null;
             }
+
+
             //ЧС
             $CheckBlackList = CheckBlackList($check_photo['user_id']);
             //Проверка на существование фотки и приватность
@@ -105,13 +110,13 @@ if ($logged) {
             
         case "crop":
             NoAjaxQuery();
-            $pid = intval($_POST['pid']);
-            $i_left = intval($_POST['i_left']);
-            $i_top = intval($_POST['i_top']);
-            $i_width = intval($_POST['i_width']);
-            $i_height = intval($_POST['i_height']);
+            $pid = intFilter('pid');
+            $i_left = intFilter('i_left');
+            $i_top = intFilter('i_top');
+            $i_width = intFilter('i_width');
+            $i_height = intFilter('i_height');
             $check_photo = $db->super_query("SELECT photo_name, album_id FROM `photos` WHERE id = '{$pid}' AND user_id = '{$user_id}'");
-            if ($check_photo AND $i_width >= 100 AND $i_height >= 100 AND $i_left >= 0 AND $i_height >= 0) {
+            if ($check_photo and $i_width >= 100 and $i_height >= 100 and $i_left >= 0) {
                 $imgInfo = explode('.', $check_photo['photo_name']);
                 $newName = substr(md5($server_time . $check_photo['check_photo']), 0, 15) . "." . $imgInfo[1];
                 $newDir = ROOT_DIR . "/uploads/users/{$user_id}/";
@@ -126,12 +131,12 @@ if ($logged) {
                 $tmb->size_auto(200, 1);
                 $tmb->jpeg_quality(100);
                 $tmb->save($newDir . $newName);
-                //Создание уменьшеной копии 50х50
+                //Создание уменьшенной копии 50х50
                 $tmb = new thumbnail($newDir . "o_{$newName}");
                 $tmb->size_auto('50x50');
                 $tmb->jpeg_quality(100);
                 $tmb->save($newDir . '50_' . $newName);
-                //Создание уменьшеной копии 100х100
+                //Создание уменьшенной копии 100х100
                 $tmb = new thumbnail($newDir . "o_{$newName}");
                 $tmb->size_auto('100x100');
                 $tmb->jpeg_quality(100);
@@ -157,8 +162,8 @@ if ($logged) {
             
         case "all_comm":
             NoAjaxQuery();
-            $pid = intval($_POST['pid']);
-            $num = intval($_POST['num']);
+            $pid = intFilter('pid');
+            $num = intFilter('num');
             if ($num > 7) {
                 $limit = $num - 3;
                 $sql_comm = $db->super_query("SELECT tb1.user_id,text,date,id,hash,pid, tb2.user_search_pref, user_photo, user_last_visit, user_logged_mobile FROM `photos_comments` tb1, `users` tb2 WHERE tb1.user_id = tb2.user_id AND tb1.pid = '{$pid}' ORDER by `date` ASC LIMIT 0, {$limit}", true);
@@ -186,7 +191,7 @@ if ($logged) {
             //################### Просмотр ПРОСТОЙ фотографии не из альбома ###################//
             
         case "profile":
-            $uid = intval($_POST['uid']);
+            $uid = intFilter('uid');
             if ($_POST['type']) $photo = ROOT_DIR . "/uploads/attach/{$uid}/c_{$_POST['photo']}";
             else $photo = ROOT_DIR . "/uploads/users/{$uid}/o_{$_POST['photo']}";
             if (file_exists($photo)) {
@@ -202,12 +207,17 @@ if ($logged) {
             //################### Поворот фотографии ###################//
             
         case "rotation":
-            $id = intval($_POST['id']);
+            $id = intFilter('id');
             $row = $db->super_query("SELECT photo_name, album_id, user_id FROM `photos` WHERE id = '" . $id . "'");
             if ($row['photo_name'] AND $_POST['pos'] == 'left' OR $_POST['pos'] == 'right' AND $user_id == $row['user_id']) {
                 $filename = ROOT_DIR . '/uploads/users/' . $user_id . '/albums/' . $row['album_id'] . '/' . $row['photo_name'];
-                if ($_POST['pos'] == 'right') $degrees = - 90;
-                if ($_POST['pos'] == 'left') $degrees = 90;
+                if ($_POST['pos'] == 'right')
+                    $degrees = -90;
+                if ($_POST['pos'] == 'left')
+                    $degrees = 90;
+
+                $degrees = $degrees ?? 0;
+
                 $source = imagecreatefromjpeg($filename);
                 $rotate = imagerotate($source, $degrees, 0);
                 imagejpeg($rotate, ROOT_DIR . '/uploads/users/' . $user_id . '/albums/' . $row['album_id'] . '/' . $row['photo_name'], 93);
@@ -225,9 +235,9 @@ if ($logged) {
             
         case "addrating":
             NoAjaxQuery();
-            $rating = intval($_POST['rating']);
+            $rating = intFilter('rating');
             if ($rating <= 0 OR $rating > 6) $rating = 5;
-            $pid = intval($_POST['pid']);
+            $pid = intFilter('pid');
             //Проверка на существование фото в базе
             $row = $db->super_query("SELECT user_id, album_id, photo_name FROM `photos` WHERE id = '{$pid}'");
             //Проверка ставил человек на это фото уже оценку или нет
@@ -240,7 +250,7 @@ if ($logged) {
                     $row_user = $db->super_query("SELECT user_balance FROM `users` WHERE user_id = '{$user_id}'");
                     if ($row_user['user_balance'] >= $rate_price) $price = true;
                     else $price = false;
-                    //Если хватает голосов то отнимаем их, и пропускаем оценку
+                    //Если хватает голосов, то отнимаем их, и пропускаем оценку
                     if ($price) {
                         $db->query("UPDATE `users` SET user_balance = user_balance-{$rate_price} WHERE user_id = '{$user_id}'");
                         $rating_max = ", rating_max = rating_max+1";
@@ -279,8 +289,8 @@ if ($logged) {
         //################### Просмотр оценок ###################//
         case "view_rating":
             NoAjaxQuery();
-            $pid = intval($_POST['pid']);
-            $lid = intval($_POST['lid']);
+            $pid = intFilter('pid');
+            $lid = intFilter('lid');
             //Проверка на то, что есть фото
             $check = $db->super_query("SELECT rating_all FROM `photos` WHERE user_id = '{$user_info['user_id']}' AND id = '{$pid}'");
             //Если фото есть, то продолжаем вывод
@@ -327,7 +337,7 @@ if ($logged) {
             
         case "del_rate":
             NoAjaxQuery();
-            $id = intval($_POST['id']);
+            $id = intFilter('id');
             //Выводим ИД фото и проверяем на админа фотки
             $row = $db->super_query("SELECT photo_id, rating FROM `photos_rating` WHERE id = '{$id}' AND owner_user_id = '{$user_info['user_id']}'");
             if ($row['photo_id']) {
@@ -344,18 +354,18 @@ if ($logged) {
         default:
             //################### Просмотр фотографии ###################//
             NoAjaxQuery();
-            $uid = intval($_POST['uid']);
-            $photo_id = intval($_POST['pid']);
-            $fuser = intval($_POST['fuser']);
-            $section = $_POST['section'];
+            $uid = intFilter('uid');
+            $photo_id = intFilter('pid');
+            $fuser = intFilter('fuser');
+            $section = requestFilter('section');
             //ЧС
             $CheckBlackList = CheckBlackList($uid);
             if (!$CheckBlackList) {
                 //Получаем ID альбома
                 $check_album = $db->super_query("SELECT album_id FROM `photos` WHERE id = '{$photo_id}'");
                 //Если фотография вызвана не со стены
-                if (!$fuser AND $check_album) {
-                    //Проверяем на наличии файла с позициям только для этого фоток
+                if (!$fuser and $check_album) {
+                    //Проверяем на наличии файла с позициями только для этого фоток
                     $check_pos = mozg_cache('user_' . $uid . '/position_photos_album_' . $check_album['album_id']);
                     //Если нету, то вызываем функцию генерации
                     if (!$check_pos) {
@@ -363,21 +373,33 @@ if ($logged) {
                         $check_pos = mozg_cache('user_' . $uid . '/position_photos_album_' . $check_album['album_id']);
                     }
                     $position = xfieldsdataload($check_pos);
+                } else {
+                    $check_pos = null;
+                    $position = null;
                 }
+
+
                 $row = $db->super_query("SELECT tb1.id, photo_name, comm_num, descr, date, position, rating_num, rating_all, rating_max, tb2.user_id, user_search_pref, user_country_city_name FROM `photos` tb1, `users` tb2 WHERE id = '{$photo_id}' AND tb1.user_id = tb2.user_id");
                 if ($row) {
                     //Вывод названия альбома, приватноть из БД
                     $info_album = $db->super_query("SELECT name, privacy FROM `albums` WHERE aid = '{$check_album['album_id']}'");
                     $album_privacy = explode('|', $info_album['privacy']);
-                    //Проверка естьли запрашиваемый юзер в друзьях у юзера который смотрит стр
-                    if ($user_info['user_id'] != $row['user_id']) $check_friend = CheckFriends($row['user_id']);
+                    //Проверка есть ли запрашиваемый юзер в друзьях у юзера который смотрит стр
+                    if ($user_info['user_id'] != $row['user_id'])
+                        $check_friend = CheckFriends($row['user_id']);
+                    else
+                        $check_friend = null;
                     //Приватность
-                    if ($album_privacy[0] == 1 OR $album_privacy[0] == 2 AND $check_friend OR $user_info['user_id'] == $row['user_id']) {
+                    if ($album_privacy[0] == 1 or $album_privacy[0] == 2 and $check_friend or $user_info['user_id'] == $row['user_id']) {
                         //Если фотография вызвана не со стены
                         if (!$fuser) {
                             $exp_photo_num = count(explode('||', $check_pos));
                             $row_album['photo_num'] = $exp_photo_num - 1;
+                        } else {
+                            $row_album = null;
                         }
+
+
                         //Выводим комментарии если они есть
                         if ($row['comm_num'] > 0) {
                             $tpl->load_template('photo_comment.tpl');
@@ -476,10 +498,11 @@ if ($logged) {
                         //Показываем стрелочки если фотографий больше одной и фотография вызвана не со стены
                         if ($row_album['photo_num'] > 1 && !$fuser) {
                             //Если фотография вызвана из альбом "все фотографии" или вызвана со страницы юзера
-                            if ($row['position'] == $row_album['photo_num']) $next_photo = $position[1];
-                            else $next_photo = $position[($row['position'] + 1) ];
-                            if ($row['position'] == 1) $prev_photo = $position[($row['position'] + $row_album['photo_num'] - 1) ];
-                            else $prev_photo = $position[($row['position'] - 1) ];
+                            if ($row['position'] == $row_album['photo_num'])
+                                $next_photo = $position[1];
+                            else $next_photo = $position[($row['position'] + 1)];
+                            if ($row['position'] == 1) $prev_photo = $position[($row['position'] + $row_album['photo_num'] - 1)];
+                            else $prev_photo = $position[($row['position'] - 1)];
                             $tpl->set('{next-id}', $next_photo);
                             $tpl->set('{prev-id}', $prev_photo);
                         } else {
@@ -493,21 +516,23 @@ if ($logged) {
                             $tpl->set('[/all-comm]', '');
                         }
                         //Приватность комментариев
-                        if ($album_privacy[1] == 1 OR $album_privacy[1] == 2 AND $check_friend OR $user_info['user_id'] == $row['user_id']) {
+                        if ($album_privacy[1] == 1 or $album_privacy[1] == 2 and $check_friend or $user_info['user_id'] == $row['user_id']) {
                             $tpl->set('[add-comm]', '');
                             $tpl->set('[/add-comm]', '');
                         } else $tpl->set_block("'\\[add-comm\\](.*?)\\[/add-comm\\]'si", "");
-                        //Выводим отмеченых людей на фото если они есть
+                        //Выводим отмеченных людей на фото если они есть
                         $sql_mark = $db->super_query("SELECT muser_id, mphoto_name, msettings_pos, mmark_user_id, mapprove FROM `photos_mark` WHERE mphoto_id = '" . $photo_id . "' ORDER by `mdate` ASC", true);
+                        $mark_peoples = $mark_peoples ?? '';//TODO update
+
                         if ($sql_mark) {
                             $cnt_mark = 0;
-                            $mark_peoples.= '<div class="fl_l" id="peopleOnPhotoText' . $photo_id . '" style="margin-right:5px">На этой фотографии:</div>';
+                            $mark_peoples .= '<div class="fl_l" id="peopleOnPhotoText' . $photo_id . '" style="margin-right:5px">На этой фотографии:</div>';
                             foreach ($sql_mark as $row_mark) {
                                 $cnt_mark++;
                                 if ($cnt_mark != 1) $comma = ', ';
                                 else $comma = '';
-                                if ($row_mark['muser_id'] AND $row_mark['mphoto_name'] == '') {
-                                    if ($row['user_id'] == $user_info['user_id'] OR $user_info['user_id'] == $row_mark['muser_id'] OR $user_info['user_id'] == $row_mark['mmark_user_id']) $del_mark_link = '<div class="fl_l"><img src="/templates/Default/images/hide_lef.gif" class="distin_del_user" title="Удалить отметку" onclick="Distinguish.DeletUser(' . $row_mark['muser_id'] . ', ' . $photo_id . ')"/></div>';
+                                if ($row_mark['muser_id'] and $row_mark['mphoto_name'] == '') {
+                                    if ($row['user_id'] == $user_info['user_id'] or $user_info['user_id'] == $row_mark['muser_id'] or $user_info['user_id'] == $row_mark['mmark_user_id']) $del_mark_link = '<div class="fl_l"><img src="/templates/Default/images/hide_lef.gif" class="distin_del_user" title="Удалить отметку" onclick="Distinguish.DeletUser(' . $row_mark['muser_id'] . ', ' . $photo_id . ')"/></div>';
                                     else $del_mark_link = '';
                                     $row_user = $db->super_query("SELECT user_search_pref FROM `users` WHERE user_id = '" . $row_mark['muser_id'] . "'");
                                     if ($row_mark['mapprove'] OR $row['user_id'] == $user_info['user_id'] OR $user_info['user_id'] == $row_mark['mmark_user_id'] OR $row_mark['muser_id'] == $user_info['user_id']) {
@@ -535,8 +560,14 @@ if ($logged) {
                                     $approve_mark = '';
                                     $approve_mark_gram_text = '';
                                     $approve_mark_user_id = '';
+                                    $approve_mark_del_link = '';
                                 }
                             }
+                        } else {
+                            $approve_mark = '';
+                            $approve_mark_gram_text = '';
+                            $approve_mark_user_id = '';
+                            $approve_mark_del_link = '';
                         }
                         $tpl->set('{mark-peoples}', $mark_peoples);
                         if ($approve_mark) {

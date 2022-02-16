@@ -13,15 +13,15 @@ NoAjaxQuery();
 
 if ($logged) {
     $user_id = $user_info['user_id'];
-    $act = $_GET['act'] ?? '';
+    $act = requestFilter('act');
 //    $metatags['title'] = $lang['settings'];
     switch ($act) {
         /** Изменение пароля */
         case "newpass":
             NoAjaxQuery();
-            $_POST['old_pass'] = $_POST['old_pass'];
-            $_POST['new_pass'] = $_POST['new_pass'];
-            $_POST['new_pass2'] = $_POST['new_pass2'];
+//            $_POST['old_pass'] = $_POST['old_pass'];
+//            $_POST['new_pass'] = $_POST['new_pass'];
+//            $_POST['new_pass2'] = $_POST['new_pass2'];
             $old_pass = md5(md5(GetVar($_POST['old_pass'])));
             $new_pass = md5(md5(GetVar($_POST['new_pass'])));
             $new_pass2 = md5(md5(GetVar($_POST['new_pass2'])));
@@ -46,19 +46,20 @@ if ($logged) {
                 } else $errors = 2;
             } else $errors = 1;
             //Проверка фамилии
-            if (isset($user_lastname)) {
+            if (!empty($user_lastname)) {
                 if (strlen($user_lastname) >= 2) {
                     if (!preg_match("/^[a-zA-Zа-яА-Я]+$/iu", $user_lastname)) $errors_lastname = 3;
                 } else $errors_lastname = 2;
             } else $errors_lastname = 1;
-            if (!$errors) {
-                if (!$errors_lastname) {
+
+            if (!isset($errors)) {
+                if (!isset($errors_lastname)) {
                     $user_name = ucfirst($user_name);
                     $user_lastname = ucfirst($user_lastname);
                     $db->query("UPDATE `users` SET user_name = '{$user_name}', user_lastname = '{$user_lastname}', user_search_pref = '{$user_name} {$user_lastname}' WHERE user_id = '{$user_id}'");
                     mozg_clear_cache_file('user_' . $user_id . '/profile_' . $user_id);
                     mozg_clear_cache();
-                } else echo $errors;
+                }
             } else echo $errors;
             die();
             break;
@@ -66,11 +67,11 @@ if ($logged) {
         /** Сохранение настроек приватности */
         case "saveprivacy":
             NoAjaxQuery();
-            $val_msg = intval($_POST['val_msg']);
-            $val_wall1 = intval($_POST['val_wall1']);
-            $val_wall2 = intval($_POST['val_wall2']);
-            $val_wall3 = intval($_POST['val_wall3']);
-            $val_info = intval($_POST['val_info']);
+            $val_msg = intFilter('val_msg');
+            $val_wall1 = intFilter('val_wall1');
+            $val_wall2 = intFilter('val_wall2');
+            $val_wall3 = intFilter('val_wall3');
+            $val_info = intFilter('val_info');
             if ($val_msg <= 0 or $val_msg > 3) $val_msg = 1;
             if ($val_wall1 <= 0 or $val_wall1 > 3) $val_wall1 = 1;
             if ($val_wall2 <= 0 or $val_wall2 > 3) $val_wall2 = 1;
@@ -103,10 +104,10 @@ if ($logged) {
         /** Добавление в черный список */
         case "addblacklist":
             NoAjaxQuery();
-            $bad_user_id = intval($_POST['bad_user_id']);
+            $bad_user_id = intFilter('bad_user_id');
             //Проверяем на существование юзера
             $row = $db->super_query("SELECT COUNT(*) AS cnt FROM `users` WHERE user_id = '{$bad_user_id}'");
-            //Выводим свой блеклист для проверка
+            //Выводим свой блек лист для проверки
             $myRow = $db->super_query("SELECT user_blacklist FROM `users` WHERE user_id = '{$user_id}'");
             $array_blacklist = explode('|', $myRow['user_blacklist']);
             if ($row['cnt'] and !in_array($bad_user_id, $array_blacklist) and $user_id != $bad_user_id) {
@@ -139,7 +140,7 @@ if ($logged) {
         /** Удаление из черного списка */
         case "delblacklist":
             NoAjaxQuery();
-            $bad_user_id = intval($_POST['bad_user_id']);
+            $bad_user_id = intFilter('bad_user_id');
             //Проверяем на существование юзера
             $row = $db->super_query("SELECT COUNT(*) AS cnt FROM `users` WHERE user_id = '{$bad_user_id}'");
             //Выводим свой блеклист для проверка
@@ -197,6 +198,7 @@ if ($logged) {
                 //Удаляем все пред. заявки
                 $db->query("DELETE FROM `restore` WHERE email = '{$email}'");
                 $salt = "abchefghjkmnpqrstuvwxyz0123456789";
+                $rand_lost = '';
                 for ($i = 0; $i < 15; $i++) {
                     $rand_lost .= $salt[rand(0, 33)];
                 }
@@ -261,8 +263,8 @@ HTML;
             $tpl->set('{code-1}', 'no_display');
             $tpl->set('{code-2}', 'no_display');
             $tpl->set('{code-3}', 'no_display');
-            $code1 = (isset($_GET['code1'])) ? strip_data($_GET['code1']) : null;
-            $code2 = (isset($_GET['code2'])) ? strip_data($_GET['code2']) : null;
+            $code1 = strip_data(requestFilter('code1'));
+            $code2 = strip_data(requestFilter('code2'));
             if (strlen($code1) == 32) {
                 $code2 = '';
                 $check_code1 = $db->super_query("SELECT email FROM `restore` WHERE hash = '{$code1}' AND ip = '{$_IP}'");

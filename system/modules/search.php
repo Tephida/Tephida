@@ -21,25 +21,26 @@ if ($logged) {
     $query_string = preg_replace("/&page=[0-9]+/i", '', $_SERVER['QUERY_STRING']);
     $user_id = $user_info['user_id'];
 
-    if (isset($_GET['page']) and $_GET['page'] > 0) $page = intval($_GET['page']); else $page = 1;
+    $page = intFilter('page', 1);
+
     $gcount = 20;
     $limit_page = ($page - 1) * $gcount;
 
     $query = strip_data(urldecode(requestFilter('query')));
-    if (isset($_GET['n']) and $_GET['n'])
+    if (isset($_GET['n']))
         $query = strip_data(urldecode(requestFilter('query')));
     $query = strtr($query, array(' ' => '%')); //Заменяем пробелы на проценты чтоб поиск был точнее
 
-    $type = isset($_GET['type']) ? intval($_GET['type']) : 1;
-    $sex = isset($_GET['sex']) ? intval($_GET['sex']) : 0;
-    $day = isset($_GET['day']) ? intval($_GET['day']) : 0;
-    $month = isset($_GET['month']) ? intval($_GET['month']) : 0;
-    $year = isset($_GET['year']) ? intval($_GET['year']) : 0;
-    $country = isset($_GET['country']) ? intval($_GET['country']) : 0;
-    $city = isset($_GET['city']) ? intval($_GET['city']) : 0;
-    $online = isset($_GET['online']) ? intval($_GET['online']) : 0;
-    $user_photo = isset($_GET['user_photo']) ? intval($_GET['user_photo']) : 0;
-    $sp = isset($_GET['sp']) ? intval($_GET['sp']) : 0;
+    $type = intFilter('type', 1);
+    $sex = intFilter('sex');
+    $day = intFilter('day');
+    $month = intFilter('month');
+    $year = intFilter('year');
+    $country = intFilter('country');
+    $city = intFilter('city');
+    $online = intFilter('online');
+    $user_photo = intFilter('user_photo');
+    $sp = intFilter('sp');
 
     //Задаём параметры сортировки
     $sql_sort = '';
@@ -81,6 +82,9 @@ if ($logged) {
 
     if ($sql_query)
         $sql_ = $db->super_query($sql_query, true);
+    else {
+        $sql_ = null;
+    }
 
     //Считаем кол-во ответов из БД
     if ($sql_count and $sql_)
@@ -198,12 +202,12 @@ if ($logged) {
                 $user_country_city_name = explode('|', $row['user_country_city_name']);
 //                $tpl->set('{country}', $user_country_city_name[0]);
 
-                if (!empty($user_country_city_name[0]) and $user_country_city_name[0])
+                if (!empty($user_country_city_name[0]))
                     $tpl->set('{country}', $user_country_city_name[0]);
                 else
                     $tpl->set('{country}', '');
 
-                if (!empty($user_country_city_name[1]) and $user_country_city_name[1])
+                if (!empty($user_country_city_name[1]))
                     $tpl->set('{city}', ', ' . $user_country_city_name[1]);
                 else
                     $tpl->set('{city}', '');
@@ -216,8 +220,8 @@ if ($logged) {
 
                 OnlineTpl($row['user_last_visit'], $row['user_logged_mobile']);
 
-                if ($row['user_id'] == 7) $tpl->set('{group}', '<font color="#f87d7d">Модератор</font>');
-                else $tpl->set('{group}', '');
+//                if ($row['user_id'] == 7) $tpl->set('{group}', '<font color="#f87d7d">Модератор</font>');
+//                else $tpl->set('{group}', '');
 
                 $tpl->compile('content');
             }
@@ -258,7 +262,7 @@ if ($logged) {
                 $tpl->compile('content');
             }
 
-            //Если критерий поиск "по сообещствам"
+            //Если критерий поиск "по сообществам"
         } elseif ($type == 4) {
             $tpl->load_template('search/result_groups.tpl');
             foreach ($sql_ as $row) {
@@ -276,7 +280,7 @@ if ($logged) {
                 $tpl->compile('content');
             }
 
-            //Если критерий поиск "по аудизаписям"
+            //Если критерий поиск "по аудиозаписям"
         } elseif ($type == 5) {
             $tpl->load_template('search/result_audio.tpl');
             $jid = 0;

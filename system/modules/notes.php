@@ -12,11 +12,12 @@ if (!defined('MOZG'))
 NoAjaxQuery();
 
 if ($logged) {
-    $act = $_GET['act'] ?? '';
+    $act = requestFilter('act');
     $user_id = intval($user_info['user_id']);
     $yesterday_date = time();
 
-    $page = (isset($_GET['page']) and ($_GET['page']) > 0) ? intval($_GET['page']) : 1;
+    $page = intFilter('page', 1);
+
     $gcount = 20;
     $limit_page = ($page - 1) * $gcount;
 
@@ -87,7 +88,7 @@ if ($logged) {
             $text = $parse->BBparse(requestFilter('text'), true);
 
             if ($text && $title) {
-                //Загружаем шаблон вывода полного просомтра заметки
+                //Загружаем шаблон вывода полного просмотра заметки
                 $tpl->load_template('notes/preview.tpl');
                 $tpl->set('{title}', stripslashes(stripslashes($title)));
                 $tpl->set('{full-text}', stripslashes(stripslashes($text)));
@@ -104,7 +105,7 @@ if ($logged) {
 
         //################### Страница редактирования заметки ###################//
         case "edit":
-            $note_id = intval($_GET['note_id']);
+            $note_id = intFilter('note_id');
             $metatags['title'] = $lang['note_edit'];
             $user_speedbar = $lang['note_edit'];
 
@@ -116,7 +117,7 @@ if ($logged) {
                 include ENGINE_DIR . '/classes/parse.php';
                 $parse = new parse();
 
-                //Загруажем head заметок
+                //Загружаем head заметок
                 $tpl->load_template('notes/head.tpl');
                 $tpl->set('{note-id}', $note_id);
                 $tpl->set('[edit]', '');
@@ -146,7 +147,7 @@ if ($logged) {
             include ENGINE_DIR . '/classes/parse.php';
             $parse = new parse();
 
-            $note_id = intval($_POST['note_id']);
+            $note_id = intFilter('note_id');
 
             $title = requestFilter('title');
             $text = $parse->BBparse(requestFilter('text'));
@@ -164,7 +165,7 @@ if ($logged) {
         //################### Удаление заметки ###################//
         case "delet":
             NoAjaxQuery();
-            $note_id = intval($_POST['note_id']);
+            $note_id = intFilter('note_id');
             //Проверка на существование заметки
             $row = $db->super_query("SELECT owner_user_id FROM `notes` WHERE id = '{$note_id}'");
             if ($row['owner_user_id'] == $user_id) {
@@ -182,7 +183,7 @@ if ($logged) {
         //################### Добавления комментария ###################//
         case "addcomment":
             NoAjaxQuery();
-            $note_id = intval($_POST['note_id']);
+            $note_id = intFilter('note_id');
             $textcom = requestFilter('textcom');
 
             //Проверка на существование заметки
@@ -261,7 +262,7 @@ if ($logged) {
         //################### Удаление комментария ###################//
         case "delcomment":
             NoAjaxQuery();
-            $comm_id = intval($_POST['comm_id']);
+            $comm_id = intFilter('comm_id');
             //Проверка на существование коммента и выводим ИД создателя заметки
             $row = $db->super_query("SELECT tb1.note_id, from_user_id, tb2.owner_user_id FROM `notes_comments` tb1, `notes` tb2  WHERE tb1.id = '{$comm_id}' AND tb1.note_id = tb2.id");
             if ($row['from_user_id'] == $user_id || $row['owner_user_id'] == $user_id) {
@@ -278,8 +279,8 @@ if ($logged) {
         //################### Показ всех комментариев ###################//
         case "allcomment":
             NoAjaxQuery();
-            $note_id = intval($_POST['note_id']);
-            $comm_num = intval($_POST['comm_num']);
+            $note_id = intFilter('note_id');
+            $comm_num = intFilter('comm_num');
             if ($comm_num > 10 && $note_id) {
                 $limit = $comm_num - 10;
 
@@ -315,7 +316,7 @@ if ($logged) {
 
         //################### Просмотр полной заметки ###################//
         case "view":
-            $note_id = intval($_GET['note_id']);
+            $note_id = intFilter('note_id');
 
             //SQL Запрос
             $row = $db->super_query("SELECT tb1.title, owner_user_id, full_text, comm_num, date, tb2.user_search_pref FROM `notes` tb1, `users` tb2 WHERE id = '{$note_id}' AND tb1.owner_user_id = tb2.user_id");
@@ -350,7 +351,7 @@ if ($logged) {
                     $tpl->set_block("'\\[all\\](.*?)\\[/all\\]'si", "");
                     $tpl->compile('info');
 
-                    //Загружаем шаблон вывода полного просомтра заметки
+                    //Загружаем шаблон вывода полного просмотра заметки
                     $tpl->load_template('notes/full.tpl');
                     $tpl->set('{note-id}', $note_id);
                     $tpl->set('{title}', stripslashes($row['title']));
@@ -443,7 +444,7 @@ if ($logged) {
 
         default:
 
-            $get_user_id = (isset($_GET['get_user_id'])) ? intval($_GET['get_user_id']) : null;
+            $get_user_id = intFilter('get_user_id');
             if (!$get_user_id)
                 $get_user_id = $user_id;
 

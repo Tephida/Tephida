@@ -13,7 +13,7 @@ NoAjaxQuery();
 
 if ($logged) {
 
-    $act = $_GET['act'] ?? '';
+    $act = requestFilter('act');
     $user_id = $user_info['user_id'];
 
     switch ($act) {
@@ -22,11 +22,11 @@ if ($logged) {
         case "for_wall":
             NoAjaxQuery();
 
-            $rid = intval($_POST['rec_id']);
+            $rid = intFilter('rec_id');
             $comm = requestFilter('comm');
 
             //Проверка на существование записи
-            if ($_POST['g_tell'] == 1) {
+            if (intFilter('g_tell') == 1) {
                 $row = $db->super_query("SELECT add_date, text, public_id, attach, tell_uid, tell_date, public FROM `communities_wall` WHERE fast_comm_id = 0 AND id = '{$rid}'");
                 if ($row['tell_uid'])
                     $row['author_user_id'] = $row['tell_uid'];
@@ -47,7 +47,7 @@ if ($logged) {
                     $myRow = $db->super_query("SELECT COUNT(*) AS cnt FROM `wall` WHERE tell_uid = '{$row['author_user_id']}' AND tell_date = '{$row['add_date']}' AND author_user_id = '{$user_id}'");
                     if ($myRow['cnt'] == false) {
 
-                        //Всталвяем себе на стену
+                        //Вставляем себе на стену
                         $db->query("INSERT INTO `wall` SET author_user_id = '{$user_id}', for_user_id = '{$user_id}', text = '{$row['text']}', add_date = '{$server_time}', fast_comm_id = 0, tell_uid = '{$row['author_user_id']}', tell_date = '{$row['add_date']}', public = '{$row['public']}', attach = '{$row['attach']}', tell_comm = '{$comm}'");
                         $dbid = $db->insert_id();
                         $db->query("UPDATE `users` SET user_wall_num = user_wall_num+1 WHERE user_id = '{$user_id}'");
@@ -69,8 +69,8 @@ if ($logged) {
         case "groups":
             NoAjaxQuery();
 
-            $rid = intval($_POST['rec_id']);
-            $sel_group = intval($_POST['sel_group']);
+            $rid = intFilter('rec_id');
+            $sel_group = intFilter('sel_group');
             $comm = requestFilter('comm');
 
             //Проверка на существование записи
@@ -99,7 +99,7 @@ if ($logged) {
                 $dbid = $db->insert_id();
                 $db->query("UPDATE `communities` SET rec_num = rec_num+1 WHERE id = '{$sel_group}'");
 
-                //Вставляем в ленту новотсей
+                //Вставляем в ленту новостей
                 $db->query("INSERT INTO `news` SET ac_user_id = '{$sel_group}', action_type = 11, action_text = '{$row['text']}', obj_id = '{$dbid}', action_time = '{$server_time}'");
             } else
                 echo 1;
@@ -111,8 +111,8 @@ if ($logged) {
         case "groups_2":
             NoAjaxQuery();
 
-            $rid = intval($_POST['rec_id']);
-            $sel_group = intval($_POST['sel_group']);
+            $rid = intFilter('rec_id');
+            $sel_group = intFilter('sel_group');
             $comm = requestFilter('comm');
 
             //Проверка на существование записи
@@ -141,7 +141,7 @@ if ($logged) {
                 $dbid = $db->insert_id();
                 $db->query("UPDATE `communities` SET rec_num = rec_num+1 WHERE id = '{$sel_group}'");
 
-                //Вставляем в ленту новотсей
+                //Вставляем в ленту новостей
                 $db->query("INSERT INTO `news` SET ac_user_id = '{$sel_group}', action_type = 11, action_text = '{$row['text']}', obj_id = '{$dbid}', action_time = '{$server_time}'");
 
             } else
@@ -154,9 +154,9 @@ if ($logged) {
         case "message":
             NoAjaxQuery();
 
-            $for_user_id = intval($_POST['for_user_id']);
+            $for_user_id = intFilter('for_user_id');
             $tell_comm = requestFilter('comm');
-            $rid = intval($_POST['rec_id']);
+            $rid = intFilter('rec_id');
 
             if ($user_id != $for_user_id) {
 
@@ -173,6 +173,8 @@ if ($logged) {
                     //Проверка естьли запрашиваемый юзер в друзьях у юзера который смотрит стр
                     if ($user_privacy['val_msg'] == 2)
                         $check_friend = CheckFriends($for_user_id);
+                    else
+                        $check_friend = null;
 
                     if (!$CheckBlackList and $user_privacy['val_msg'] == 1 or $user_privacy['val_msg'] == 2 and $check_friend)
                         $xPrivasy = 1;
@@ -238,12 +240,12 @@ if ($logged) {
                             else
                                 $db->query("UPDATE im  SET idate = '" . $server_time . "', msg_num = msg_num+1, all_msg_num = all_msg_num+1 WHERE iuser_id = '" . $for_user_id . "' AND im_user_id = '" . $user_id . "'");
 
-                            //Читисм кеш обновлений
+                            //Чистим кеш обновлений
                             mozg_clear_cache_file('user_' . $for_user_id . '/im');
                             mozg_create_cache('user_' . $for_user_id . '/im_update', '1');
 
                             //Отправка уведомления на E-mail
-                            if ($config['news_mail_8'] == 'yes' and $user_id != $for_user_id) {
+                            if ($config['news_mail_8'] == 'yes') {
                                 $rowUserEmail = $db->super_query("SELECT user_name, user_email FROM `users` WHERE user_id = '" . $for_user_id . "'");
                                 if ($rowUserEmail['user_email']) {
                                     include_once ENGINE_DIR . '/classes/mail.php';
@@ -279,22 +281,17 @@ if ($logged) {
             $sql_fr = $db->super_query("SELECT tb1.friend_id, tb2.user_search_pref FROM `friends` tb1, `users` tb2 WHERE tb1.user_id = '{$user_id}' AND tb1.friend_id = tb2.user_id AND tb1.subscriptions = 0 ORDER by `views` DESC LIMIT 0, 50", true);
 
             $tpl->load_template('repost/send.tpl');
-
+            $groups_list = '';
             if ($sql_) {
-
                 foreach ($sql_ as $row)
-
                     $groups_list .= '<option value="' . $row['id'] . '">' . stripslashes($row['title']) . '</option>';
-
             }
+
             $tpl->set('{groups-list}', $groups_list);
-
+            $friends_list = '';
             if ($sql_fr) {
-
                 foreach ($sql_fr as $row_fr)
-
                     $friends_list .= '<option value="' . $row_fr['friend_id'] . '">' . $row_fr['user_search_pref'] . '</option>';
-
             }
             $tpl->set('{friends-list}', $friends_list);
 

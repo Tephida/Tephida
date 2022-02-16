@@ -12,7 +12,7 @@ if (!defined('MOZG'))
 NoAjaxQuery();
 
 if ($logged) {
-    $act = $_GET['act'] ?? '';
+    $act = requestFilter('act');
     $user_id = $user_info['user_id'];
 
     switch ($act) {
@@ -20,10 +20,10 @@ if ($logged) {
         //################### Удаление комментария ###################//
         case "delcomm":
 
-            $id = intval($_POST['id']);
+            $id = intFilter('id');
             $purl = to_translit(requestFilter('purl'));
 
-            //Выводим данные о комментариии
+            //Выводим данные о комментарии
             $row = $db->super_query("SELECT tb1.forphoto, auser_id, tb2.ouser_id FROM `attach_comm` tb1, `attach` tb2 WHERE tb1.id = '{$id}' AND tb1.forphoto = '{$purl}'");
             $tab_photos = false;
 
@@ -88,7 +88,7 @@ if ($logged) {
             }
 
             //Если фотка есть
-            if (isset($text) and !empty($text) and $row['cnt']) {
+            if (!empty($text) and $row['cnt']) {
 
                 if ($tab_photos) {
 
@@ -120,8 +120,10 @@ if ($logged) {
                 $tpl->set('{author}', $user_info['user_search_pref']);
                 $tpl->set('{online}', $lang['online']);
                 $tpl->set('{date}', langdate('сегодня в H:i', $server_time));
-                if ($user_info['user_photo']) $tpl->set('{ava}', "/uploads/users/{$user_info['user_id']}/50_{$user_info['user_photo']}");
-                else $tpl->set('{ava}', '{theme}/images/no_ava_50.png');
+                if ($user_info['user_photo'])
+                    $tpl->set('{ava}', "/uploads/users/{$user_info['user_id']}/50_{$user_info['user_photo']}");
+                else
+                    $tpl->set('{ava}', '{theme}/images/no_ava_50.png');
                 $tpl->set('[owner]', '');
                 $tpl->set('[/owner]', '');
                 $tpl->compile('content');
@@ -139,21 +141,22 @@ if ($logged) {
 
             //Выводим данные о владельце фото
             $row = $db->super_query("SELECT ouser_id, acomm_num FROM `attach` WHERE photo = '{$foSQLurl}'");
-            $tab_photos = false;
 
-            //Если нету то проверяем в таблице PREFIX_photos
+
+            //Если нет, то проверяем в таблице PREFIX_photos
             if (!$row) {
 
                 $row = $db->super_query("SELECT user_id, comm_num FROM `photos` WHERE photo_name = '{$foSQLurl}'");
                 $row['acomm_num'] = $row['comm_num'];
                 $row['ouser_id'] = $row['user_id'];
                 $tab_photos = true;
-
+            } else {
+                $tab_photos = false;
             }
 
             $limit = 10;
-            $first_id = intval($_POST['first_id']);
-            $page_post = intval($_POST['page']);
+            $first_id = intFilter('first_id');
+            $page_post = intFilter('page');
             if ($page_post <= 0) $page_post = 1;
 
             $start_limit = $row['acomm_num'] - ($page_post * $limit) - 3;
@@ -213,9 +216,8 @@ if ($logged) {
 
             //Выводим данные о владельце фото
             $row = $db->super_query("SELECT tb1.ouser_id, acomm_num, add_date, tb2.user_search_pref, user_country_city_name FROM `attach` tb1, `users` tb2 WHERE tb1.ouser_id = tb2.user_id AND tb1.photo = '{$foSQLurl}'");
-            $tab_photos = false;
 
-            //Если нету то проверяем в таблице PREFIX_photos
+            //Если нет, то проверяем в таблице PREFIX_photos
             if (!$row) {
 
                 $row = $db->super_query("SELECT tb1.user_id, comm_num, date, tb2.user_search_pref, user_country_city_name FROM `photos` tb1, `users` tb2 WHERE tb1.user_id = tb2.user_id AND tb1.photo_name = '{$foSQLurl}'");
@@ -224,6 +226,8 @@ if ($logged) {
                 $row['add_date'] = strtotime($row['date']);
                 $tab_photos = true;
 
+            } else {
+                $tab_photos = false;
             }
 
             if ($row) {

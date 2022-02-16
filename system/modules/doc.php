@@ -10,7 +10,7 @@ if (!defined('MOZG'))
     die('Hacking attempt!');
 
 if ($logged) {
-    $act = $_GET['act'] ?? '';
+    $act = requestFilter('act');
     $user_id = $user_info['user_id'];
 
     switch ($act) {
@@ -21,14 +21,14 @@ if ($logged) {
 
             //Получаем данные о фотографии
             $file_tmp = $_FILES['uploadfile']['tmp_name'];
-            $file_name = $_FILES['uploadfile']['name']; // оригинальное название для оприделения формата
+            $file_name = $_FILES['uploadfile']['name']; // оригинальное название для определения формата
             $file_size = $_FILES['uploadfile']['size']; // размер файла
             $type = end(explode(".", $file_name)); // формат файла
 
-            //Разришенные форматы
+            //Разрешенные форматы
             $allowed_files = array('doc', 'docx', 'xls', 'xlsx', 'ppt', 'pptx', 'rtf', 'pdf', 'png', 'jpg', 'gif', 'psd', 'mp3', 'djvu', 'fb2', 'ps', 'jpeg', 'txt');
 
-            //Проверям если, формат верный то пропускаем
+            //Проверяем если, формат верный то пропускаем
             if (in_array(strtolower($type), $allowed_files)) {
 
                 if ($file_size < 10000000) {
@@ -46,7 +46,7 @@ if ($logged) {
                     //Загружаем сам файл
                     if (move_uploaded_file($file_tmp, $upload_dir . $downl_file_name . $res_type)) {
 
-                        function formatsize($file_size)
+                        function formatsize($file_size): string
                         {
                             if ($file_size >= 1073741824) {
                                 $file_size = round($file_size / 1073741824 * 100) / 100 . " Гб";
@@ -96,7 +96,7 @@ if ($logged) {
         case "del":
             NoAjaxQuery();
 
-            $did = intval($_POST['did']);
+            $did = intFilter('did');
 
             $row = $db->super_query("SELECT duser_id, ddownload_name FROM `doc` WHERE did = '{$did}'");
 
@@ -121,7 +121,7 @@ if ($logged) {
         case "editsave":
             NoAjaxQuery();
 
-            $did = intval($_POST['did']);
+            $did = intFilter('did');
             $name = requestFilter('name', 25000, true);
             $strLn = strlen($name);
             if ($strLn > 50)
@@ -129,7 +129,7 @@ if ($logged) {
 
             $row = $db->super_query("SELECT duser_id FROM `doc` WHERE did = '{$did}'");
 
-            if ($row['duser_id'] == $user_id and isset($name) and !empty($name)) {
+            if ($row['duser_id'] == $user_id and !empty($name)) {
 
                 $db->query("UPDATE `doc`SET dname = '{$name}' WHERE did = '{$did}'");
 
@@ -146,7 +146,7 @@ if ($logged) {
         case "download";
             NoAjaxQuery();
 
-            $did = intval($_GET['did']);
+            $did = intFilter('did');
 
             $row = $db->super_query("SELECT duser_id, ddownload_name, dname FROM `doc` WHERE did = '{$did}'");
 
@@ -183,7 +183,8 @@ if ($logged) {
 
             $sql_limit = 20;
 
-            if ($_POST['page_cnt'] > 0) $page_cnt = intval($_POST['page_cnt']) * $sql_limit;
+            if (isset($_POST['page_cnt']) and $_POST['page_cnt'] > 0)
+                $page_cnt = intval($_POST['page_cnt']) * $sql_limit;
             else $page_cnt = 0;
 
             if ($page_cnt)
@@ -229,15 +230,17 @@ if ($logged) {
 
             break;
 
-        //################### Страница всех загруженных документов для прикрипления BOX ###################//
+        //################### Страница всех загруженных документов для прикрепления BOX ###################//
         default:
 
             NoAjaxQuery();
 
             $sql_limit = 20;
 
-            if ($_POST['page_cnt'] > 0) $page_cnt = intval($_POST['page_cnt']) * $sql_limit;
-            else $page_cnt = 0;
+            if (isset($_POST['page_cnt']) and $_POST['page_cnt'] > 0)
+                $page_cnt = intval($_POST['page_cnt']) * $sql_limit;
+            else
+                $page_cnt = 0;
 
             $sql_ = $db->super_query("SELECT did, dname, ddate, ddownload_name FROM `doc` WHERE duser_id = '{$user_id}' ORDER by `ddate` DESC LIMIT {$page_cnt}, {$sql_limit}", true);
 

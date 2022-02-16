@@ -12,7 +12,7 @@ if (!defined('MOZG'))
 NoAjaxQuery();
 
 if ($logged) {
-    $act = $_GET['act'] ?? '';
+    $act = requestFilter('act');
 
     $metatags['title'] = $lang['editmyprofile'];
 
@@ -32,7 +32,7 @@ if ($logged) {
             createDir($uploaddir . $user_id);
             createDir($uploaddir . $user_id . '/albums');
 
-            //Разришенные форматы
+            //Разрешенные форматы
             $allowed_files = array('jpg', 'jpeg', 'jpe', 'png', 'gif');
 
             //Получаем данные о фотографии
@@ -42,7 +42,7 @@ if ($logged) {
             $image_size = $_FILES['uploadfile']['size']; // размер файла
             $type = end(explode(".", $image_name)); // формат файла
 
-            //Проверям если, формат верный то пропускаем
+            //Проверяем если, формат верный то пропускаем
             if (in_array($type, $allowed_files)) {
                 if ($image_size < 5000000) {
                     $res_type = '.' . $type;
@@ -61,13 +61,13 @@ if ($logged) {
                         $tmb->jpeg_quality(97);
                         $tmb->save($uploaddir . $image_rename . $res_type);
 
-                        //Создание уменьшеной копии 50х50
+                        //Создание уменьшенной копии 50х50
                         $tmb = new thumbnail($uploaddir . $image_rename . $res_type);
                         $tmb->size_auto('50x50');
                         $tmb->jpeg_quality(97);
                         $tmb->save($uploaddir . '50_' . $image_rename . $res_type);
 
-                        //Создание уменьшеной копии 100х100
+                        //Создание уменьшенной копии 100х100
                         $tmb = new thumbnail($uploaddir . $image_rename . $res_type);
                         $tmb->size_auto('100x100');
                         $tmb->jpeg_quality(97);
@@ -145,32 +145,32 @@ if ($logged) {
             die();
             break;
 
-        //Сохранение основых данных
+        //Сохранение основных данных
         case "save_general":
             NoAjaxQuery();
 
-            $post_user_sex = intval($_POST['sex']);
+            $post_user_sex = intFilter('sex');
             if ($post_user_sex == 1 or $post_user_sex == 2)
                 $user_sex = $post_user_sex;
             else
                 $user_sex = false;
 
-            $user_day = intval($_POST['day']);
-            $user_month = intval($_POST['month']);
-            $user_year = intval($_POST['year']);
-            $user_country = intval($_POST['country']);
-            $user_city = intval($_POST['city']);
+            $user_day = intFilter('day');
+            $user_month = intFilter('month');
+            $user_year = intFilter('year');
+            $user_country = intFilter('country');
+            $user_city = intFilter('city');
             $user_birthday = $user_year . '-' . $user_month . '-' . $user_day;
 
             if ($user_sex) {
-                $post_sp = intval($_POST['sp']);
+                $post_sp = intFilter('sp');
                 if ($post_sp >= 1 and $post_sp <= 7)
                     $sp = $post_sp;
                 else
                     $sp = false;
 
                 if ($sp) {
-                    $sp_val = intval($_POST['sp_val']);
+                    $sp_val = intFilter('sp_val');
                     $user_sp = $sp . '|' . $sp_val;
                 }
             }
@@ -366,6 +366,9 @@ if ($logged) {
 
             $xfieldsdata = xfieldsdataload($row['xfields']);
 
+            $output = '';
+            $for_js_list = '';
+
             foreach ($xfields as $name => $value) {
 
                 $fieldvalue = $xfieldsdata[$value[0]];
@@ -388,7 +391,8 @@ if ($logged) {
                     $output .= '<select class="inpst" id="' . $value[0] . '">';
                     $output .= '<option value="">- Не выбрано -</option>';
 
-                    foreach (explode("\r\n", $value[3]) as $index => $value) {
+                    $variable = explode("\r\n", $value[3]);
+                    foreach ($variable as $index => $value) {
 
                         $value = str_replace("'", "&#039;", $value);
                         $output .= "<option value=\"$index\"" . ($fieldvalue == $value ? " selected" : "") . ">$value</option>\r\n";
@@ -443,12 +447,12 @@ if ($logged) {
 
             $row = $db->super_query("SELECT user_photo FROM `users` WHERE user_id = '{$user_info['user_id']}'");
 
-            $i_left = intval($_POST['i_left']);
-            $i_top = intval($_POST['i_top']);
-            $i_width = intval($_POST['i_width']);
-            $i_height = intval($_POST['i_height']);
+            $i_left = intFilter('i_left');
+            $i_top = intFilter('i_top');
+            $i_width = intFilter('i_width');
+            $i_height = intFilter('i_height');
 
-            if ($row['user_photo'] and $i_width >= 100 and $i_height >= 100 and $i_left >= 0 and $i_height >= 0) {
+            if ($row['user_photo'] and $i_width >= 100 and $i_height >= 100 and $i_left >= 0) {
 
                 include_once ENGINE_DIR . '/classes/images.php';
 
@@ -483,7 +487,7 @@ if ($logged) {
 
             //Получаем данные о файле
             $image_tmp = $_FILES['uploadfile']['tmp_name'];
-            $image_name = to_translit($_FILES['uploadfile']['name']); // оригинальное название для оприделения формата
+            $image_name = to_translit($_FILES['uploadfile']['name']); // оригинальное название для определения формата
             $image_rename = substr(md5($server_time + rand(1, 100000)), 0, 20); // имя файла
             $image_size = $_FILES['uploadfile']['size']; // размер файла
             $type = end(explode(".", $image_name)); // формат файла
@@ -493,10 +497,10 @@ if ($logged) {
             //Проверка размера
             if ($image_size <= $max_size) {
 
-                //Разришенные форматы
+                //Разрешенные форматы
                 $allowed_files = explode(', ', 'jpg, jpeg, jpe, png, gif');
 
-                //Проверям если, формат верный то пропускаем
+                //Проверяем если, формат верный то пропускаем
                 if (in_array(strtolower($type), $allowed_files)) {
 
                     $res_type = strtolower('.' . $type);
@@ -527,7 +531,7 @@ if ($logged) {
                         $imgData = getimagesize($rImg);
                         $rImgsData = round($imgData[1] / ($imgData[0] / 800));
 
-                        //Обновдяем обложку в базе
+                        //Обновляем обложку в базе
                         $pos = round(($rImgsData / 2) - 100);
 
                         if ($rImgsData <= 230) {
@@ -556,19 +560,13 @@ if ($logged) {
 
         //################### Сохранение новой позиции обложки ###################//
         case "savecoverpos":
-
             NoAjaxQuery();
-
-            $pos = intval($_POST['pos']);
-            if ($pos < 0) $pos = 0;
-
+            $pos = intFilter('pos');
             $db->query("UPDATE `users` SET user_cover_pos = '{$pos}' WHERE user_id = '{$user_info['user_id']}'");
 
             //Чистим кеш
             mozg_clear_cache_file("user_{$user_info['user_id']}/profile_{$user_info['user_id']}");
-
             exit();
-
             break;
 
         //################### Удаление обложки ###################//
@@ -576,13 +574,11 @@ if ($logged) {
 
             NoAjaxQuery();
 
-            //Выводим и удаляем пред. обложку
+            //Выводим и удаляем пред. Обложку
             $row = $db->super_query("SELECT user_cover FROM `users` WHERE user_id = '{$user_info['user_id']}'");
             if ($row) {
-
                 $upDir = ROOT_DIR . "/uploads/users/{$user_info['user_id']}/";
                 @unlink($upDir . $row['user_cover']);
-
             }
 
             $db->query("UPDATE `users` SET user_cover_pos = '', user_cover = '' WHERE user_id = '{$user_info['user_id']}'");
@@ -617,6 +613,7 @@ if ($logged) {
 
             //################## Загружаем Страны ##################//
             $sql_country = $db->super_query("SELECT * FROM `country` ORDER by `name` ASC", true);
+            $all_country = '';
             foreach ($sql_country as $row_country)
                 $all_country .= '<option value="' . $row_country['id'] . '">' . stripslashes($row_country['name']) . '</option>';
 
@@ -624,6 +621,7 @@ if ($logged) {
 
             //################## Загружаем Города ##################//
             $sql_city = $db->super_query("SELECT id, name FROM `city` WHERE id_country = '{$row['user_country']}' ORDER by `name` ASC", true);
+            $all_city = '';
             foreach ($sql_city as $row2)
                 $all_city .= '<option value="' . $row2['id'] . '">' . stripslashes($row2['name']) . '</option>';
 

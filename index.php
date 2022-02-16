@@ -26,7 +26,7 @@ $user_info = false;
 include ENGINE_DIR . '/init.php';
 //Если юзер перешел по реф ссылке, то добавляем ид реферала в сессию
 if (isset($_GET['reg']))
-    $_SESSION['ref_id'] = intval($_GET['reg']);
+    $_SESSION['ref_id'] = intFilter('reg');
 
 if (isset($user_info['user_id'])){
     //Загружаем кол-во новых новостей
@@ -95,10 +95,10 @@ if (isset($user_info['user_id'])){
 }
 
 //Если включен AJAX, то загружаем стр.
-if (!empty($_POST['ajax']) AND $_POST['ajax'] == 'yes') {
+if (requestFilter('ajax') == 'yes') {
     //Если есть POST Запрос и значение AJAX, а $ajax не равняется "yes", то не пропускаем
     if ($_SERVER['REQUEST_METHOD'] == 'POST' and $ajax != 'yes') die('Неизвестная ошибка');
-    if (isset($spBar) AND $spBar)
+    if (isset($spBar) and $spBar)
         $ajaxSpBar = "$('#speedbar').show().html('{$speedbar}')";
     else
         $ajaxSpBar = "$('#speedbar').hide()";
@@ -146,13 +146,14 @@ if ($logged) {
     $user_friends_demands = $user_info['user_friends_demands'];
     if ($user_friends_demands) {
         $tpl->set('{demands}', $demands);
+        $requests_link = $requests_link ?? '';
         $tpl->set('{requests-link}', $requests_link);
     } else {
         $tpl->set('{demands}', '');
         $tpl->set('{requests-link}', '');
     }
     //Новости
-    if ($CacheNews) {
+    if (isset($CacheNews) and $CacheNews) {
         $tpl->set('{new-news}', $new_news);
         $tpl->set('{news-link}', $news_link);
     } else {

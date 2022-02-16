@@ -9,16 +9,19 @@
 if (!defined('MOZG'))
     die('Hacking attempt!');
 
-$vid = intval($_POST['vid']);
-$close_link = $_POST['close_link'];
+$vid = intFilter('vid');
+$close_link = requestFilter('close_link');
 
 //Выводи данные о видео если оно есть
 $row = $db->super_query("SELECT tb1.video, title, add_date, descr, owner_user_id, views, comm_num, privacy, public_id, tb2.user_search_pref FROM `videos` tb1, `users` tb2 WHERE tb1.id = '{$vid}' AND tb1.owner_user_id = tb2.user_id");
 
 if ($row) {
-    //Проверка естьли запрашиваемый юзер в друзьях у юзера который смотрит стр
+    //Проверка есть ли запрашиваемый юзер в друзьях у юзера который смотрит стр
     if ($user_id != $get_user_id)
         $check_friend = CheckFriends($row['owner_user_id']);
+    else {
+        $check_friend = null;
+    }
 
     //Blacklist
     $CheckBlackList = CheckBlackList($row['owner_user_id']);
@@ -37,9 +40,11 @@ if ($row) {
 
                 $infoGroup = $db->super_query("SELECT admin FROM `communities` WHERE id = '{$row['public_id']}'");
 
-                if (strpos($infoGroup['admin'], "u{$user_id}|") !== false) $public_admin = true;
+                if (str_contains($infoGroup['admin'], "u{$user_id}|")) $public_admin = true;
                 else $public_admin = false;
 
+            } else {
+                $public_admin = false;
             }
 
             if ($row['comm_num'] > 3)
@@ -76,7 +81,10 @@ if ($row) {
         $tpl->load_template('videos/full.tpl');
         $tpl->set('{vid}', $vid);
         $tpl->set('{video}', $row['video']);
-        if ($row['views']) $tpl->set('{views}', $row['views'] . ' ' . gram_record($row['views'], 'video_views') . '<br /><br />'); else $tpl->set('{views}', '');
+        if ($row['views'])
+            $tpl->set('{views}', $row['views'] . ' ' . gram_record($row['views'], 'video_views') . '<br /><br />');
+        else
+            $tpl->set('{views}', '');
         $tpl->set('{title}', stripslashes($row['title']));
         $tpl->set('{descr}', stripslashes($row['descr']));
         $tpl->set('{author}', $row['user_search_pref']);

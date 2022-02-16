@@ -12,10 +12,11 @@ if (!defined('MOZG'))
 NoAjaxQuery();
 
 if ($logged) {
-    $act = $_GET['act'] ?? '';
+    $act = requestFilter('act');
     $user_id = $user_info['user_id'];
 
-    if (isset($_GET['page']) and $_GET['page'] > 0) $page = intval($_GET['page']); else $page = 1;
+    $page = intFilter('page', 1);
+
     $gcount = 70;
     $limit_page = ($page - 1) * $gcount;
 
@@ -23,15 +24,15 @@ if ($logged) {
 
     switch ($act) {
 
-        //################### Добвление юзера в закладки ###################//
+        //################### Добавление юзера в закладки ###################//
         case "add":
             NoAjaxQuery();
-            $fave_id = intval($_POST['fave_id']);
+            $fave_id = intFilter('fave_id');
             //Проверяем на факт существования юзера которого добавляем в закладки
             $row = $db->super_query("SELECT `user_id` FROM `users` WHERE user_id = '{$fave_id}'");
             if ($row and $user_id != $fave_id) {
 
-                //Проверям на факт существование этого юзера в закладках, если нету то пропускаем
+                //Проверяем на факт существование этого юзера в закладках, если нет то пропускаем
                 $db->query("SELECT `user_id` FROM `fave` WHERE user_id = '{$user_id}' AND fave_id = '{$fave_id}'");
                 if (!$db->num_rows()) {
                     $db->query("INSERT INTO `fave` SET user_id = '{$user_id}', fave_id = '{$fave_id}', date = NOW()");
@@ -47,9 +48,9 @@ if ($logged) {
         //################### Удаление юзера из закладок ###################//
         case "delet":
             NoAjaxQuery();
-            $fave_id = intval($_POST['fave_id']);
+            $fave_id = intFilter('fave_id');
 
-            //Проверям на факт существование этого юзера в закладках, если есть то пропускаем
+            //Проверяем на факт существование этого юзера в закладках, если есть то пропускаем
             $row = $db->super_query("SELECT `user_id` FROM `fave` WHERE user_id = '{$user_id}' AND fave_id = '{$fave_id}'");
             if ($row) {
                 $db->query("DELETE FROM `fave` WHERE user_id = '{$user_id}' AND fave_id = '{$fave_id}'");
@@ -68,7 +69,7 @@ if ($logged) {
             //Выводим кол-во людей в закладках
             $user = $db->super_query("SELECT user_fave_num FROM `users` WHERE user_id = '{$user_id}'");
 
-            //Если кто-то есть в заклаках то выводим
+            //Если кто-то есть в закладках то выводим
             if ($user['user_fave_num']) {
 
                 $user_speedbar = '<span id="fave_num">' . $user['user_fave_num'] . '</span> ' . gram_record($user['user_fave_num'], 'fave');
