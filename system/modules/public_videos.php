@@ -171,7 +171,7 @@ if (Registry::get('logged')) {
             $query = strip_data(requestFilter('query'));
             $query = strtr($query, array(' ' => '%')); //Замеянем пробелы на проценты чтоб тоиск был точнее
 
-            $adres = strip_tags(requestFilter('adres');
+            $adres = strip_tags(requestFilter('adres'));
 
             $row_count = $db->super_query("SELECT COUNT(*) AS cnt FROM `videos` WHERE title LIKE '%{$query}%' AND public_id = '0'");
 
