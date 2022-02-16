@@ -1135,7 +1135,8 @@ if (isset($_GET['act']) AND $_GET['act'] == 'change_fullver') {
     header('Location: /');
 }
 if (check_smartphone()) {
-    if ($_SESSION['mobile'] != 2) $config['temp'] = "mobile";
+    if ($_SESSION['mobile'] != 2)
+        $config['temp'] = "mobile";
     $check_smartphone = true;
 }
 if (isset($_SESSION['mobile']) AND $_SESSION['mobile'] == 1) {
