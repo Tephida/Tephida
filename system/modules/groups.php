@@ -1418,7 +1418,7 @@ if (Registry::get('logged')) {
             if (!$page_cnt) {
 
                 $tpl->load_template('groups/invitebox.tpl');
-                $tpl->set('{friends}', $tpl->result['friends']);
+                $tpl->set('{friends}', $tpl->result['friends'] ?? '');
                 $tpl->set('{id}', $pub_id);
 
                 if ($numFr == $limit_friends) {
@@ -1434,7 +1434,7 @@ if (Registry::get('logged')) {
 
             } else {
 
-                $tpl->result['content'] = $tpl->result['friends'];
+                $tpl->result['content'] = $tpl->result['friends'] ?? '';
 
             }
 
@@ -1705,7 +1705,10 @@ if (Registry::get('logged')) {
                     $tpl->compile('content');
                 }
 
-                if ($act == 'admin') $admn_act = 'act=admin&';
+                if ($act == 'admin')
+                    $admn_act = 'act=admin&';
+                else
+                    $admn_act = '';
 
                 navigation($gcount, $owner['user_public_num'], 'groups?' . $admn_act . 'page=');
 
