@@ -14,11 +14,11 @@ if (Registry::get('logged')) {
             $db->query("DELETE FROM `news` WHERE obj_id = '" . $row['user_wall_id'] . "'");
         }
         $db->query("UPDATE `users` SET user_delet = 1, user_photo = '', user_wall_id = '' " . $update_wall . " WHERE user_id = '" . $user_id . "'");
-        @unlink($uploaddir . $row['user_photo']);
-        @unlink($uploaddir . '50_' . $row['user_photo']);
-        @unlink($uploaddir . '100_' . $row['user_photo']);
-        @unlink($uploaddir . 'o_' . $row['user_photo']);
-        @unlink($uploaddir . '130_' . $row['user_photo']);
+        Filesystem::delete($uploaddir . $row['user_photo']);
+        Filesystem::delete($uploaddir . '50_' . $row['user_photo']);
+        Filesystem::delete($uploaddir . '100_' . $row['user_photo']);
+        Filesystem::delete($uploaddir . 'o_' . $row['user_photo']);
+        Filesystem::delete($uploaddir . '130_' . $row['user_photo']);
     } else
         $db->query("UPDATE `users` SET user_delet = 1, user_photo = '' WHERE user_id = '" . $user_id . "'");
     mozg_clear_cache_file('user_' . $user_id . '/profile_' . $user_id);

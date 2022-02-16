@@ -38,7 +38,7 @@ class Filesystem
             $files = glob($file . '*', GLOB_MARK);
             foreach ($files as $file_) {
                 if (is_dir($file_)) {
-                    deleteFile($file_);
+                    self::delete($file_);
                 } else {
                     unlink($file_);
                 }
@@ -54,5 +54,20 @@ class Filesystem
         } else {
             return false;
         }
+    }
+
+    /**
+     * Ceck file or dir
+     * @param string $file
+     * @return bool
+     */
+    public static function check(string $file): bool
+    {
+        if (is_file($file))
+            return true;
+        elseif (is_dir($file))
+            return true;
+        else
+            return false;
     }
 }

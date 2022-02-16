@@ -233,7 +233,7 @@ if (Registry::get('logged')) {
                     //Удаляем фотку
                     $exp_photo = explode('/', $row['photo']);
                     $photo_name = end($exp_photo);
-                    @unlink(ROOT_DIR . '/uploads/videos/' . $row['owner_user_id'] . '/' . $photo_name);
+                    Filesystem::delete(ROOT_DIR . '/uploads/videos/' . $row['owner_user_id'] . '/' . $photo_name);
 
                     //Чистим кеш
                     mozg_mass_clear_cache_file("user_{$row['owner_user_id']}/page_videos_user|user_{$row['owner_user_id']}/page_videos_user_friends|user_{$row['owner_user_id']}/page_videos_user_all|user_{$row['owner_user_id']}/profile_{$row['owner_user_id']}|user_{$row['owner_user_id']}/videos_num_all|user_{$row['owner_user_id']}/videos_num_friends|wall/video{$vid}");

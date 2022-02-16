@@ -104,7 +104,7 @@ if (Registry::get('logged')) {
 
             if ($row['duser_id'] == $user_id) {
 
-                @unlink(ROOT_DIR . "/uploads/doc/{$user_id}/" . $row['ddownload_name']);
+                Filesystem::delete(ROOT_DIR . "/uploads/doc/{$user_id}/" . $row['ddownload_name']);
 
                 $db->query("DELETE FROM `doc` WHERE did = '{$did}'");
 

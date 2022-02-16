@@ -59,7 +59,7 @@ if ($_GET['action'] == 'obj') {
                     $attach_arr2 = explode('|/uploads/attach/' . $row['author_user_id'] . '/', $attach_arr[1]);
                     $attach_arr3 = explode('||', $attach_arr2[1]);
                     if ($attach_arr3[0])
-                        @unlink(ROOT_DIR . '/uploads/attach/' . $row['author_user_id'] . '/' . $attach_arr3[0]);
+                        Filesystem::delete(ROOT_DIR . '/uploads/attach/' . $row['author_user_id'] . '/' . $attach_arr3[0]);
                 }
 
                 $action_type = 1;
@@ -101,7 +101,7 @@ if ($_GET['action'] == 'obj') {
             //Удаляем фотку
             $exp_photo = explode('/', $row['photo']);
             $photo_name = end($exp_photo);
-            @unlink(ROOT_DIR . '/uploads/videos/' . $row['owner_user_id'] . '/' . $photo_name);
+            Filesystem::delete(ROOT_DIR . '/uploads/videos/' . $row['owner_user_id'] . '/' . $photo_name);
 
             //Чистим кеш
             mozg_mass_clear_cache_file("user_{$row['owner_user_id']}/page_videos_user|user_{$row['owner_user_id']}/page_videos_user_friends|user_{$row['owner_user_id']}/page_videos_user_all|user_{$row['owner_user_id']}/profile_{$row['owner_user_id']}|user_{$row['owner_user_id']}/videos_num_all|user_{$row['owner_user_id']}/videos_num_friends");
@@ -118,8 +118,8 @@ if ($_GET['action'] == 'obj') {
             $del_dir = ROOT_DIR . '/uploads/users/' . $row['user_id'] . '/albums/' . $row['album_id'] . '/';
 
             //Удаление фотки с сервера
-            @unlink($del_dir . 'c_' . $row['photo_name']);
-            @unlink($del_dir . $row['photo_name']);
+            Filesystem::delete($del_dir . 'c_' . $row['photo_name']);
+            Filesystem::delete($del_dir . $row['photo_name']);
 
             //Удаление фотки из БД
             $db->query("DELETE FROM `photos` WHERE id = '{$rid}'");

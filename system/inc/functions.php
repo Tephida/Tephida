@@ -263,5 +263,5 @@ function formatsize($file_size){
 	return $file_size;
 }
 function system_mozg_clear_cache_file($prefix) {
-	@unlink(ENGINE_DIR.'/cache/system/'.$prefix.'.php');
+    Filesystem::delete(ENGINE_DIR . '/cache/system/' . $prefix . '.php');
 }

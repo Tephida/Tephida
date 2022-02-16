@@ -498,8 +498,8 @@ HTML;
 HTML;
         die();
     } elseif ($act == 'remove_installer') {
-        deleteFile('./install.php');
-        deleteFile('./system/mysql_tables.php');
+        Filesystem::delete('./install.php');
+        Filesystem::delete('./system/mysql_tables.php');
         header('Location: /');
     } else {
         echo <<<HTML
@@ -525,25 +525,25 @@ HTML;
 
     if ($act == 'clean') {
 
-        deleteFile('./uploads/room/');
-        deleteFile('./uploads/records/');
-        deleteFile('./uploads/attach/');
-        deleteFile('./uploads/audio_tmp/');
-        deleteFile('./uploads/blog/');
-        deleteFile('./uploads/groups/');
-        deleteFile('./uploads/users/');
-        deleteFile('./uploads/videos/');
-        deleteFile('./uploads/audio/');
-        deleteFile('./uploads/doc/');
-        deleteFile('./uploads/apps/');
-        deleteFile('./system/cache/groups/');
-        deleteFile('./system/cache/groups_forum/');
-        deleteFile('./system/cache/groups_mark/');
-        deleteFile('./system/cache/photos_mark/');
-        deleteFile('./system/cache/votes/');
-        deleteFile('./system/cache/wall/');
+        Filesystem::delete('./uploads/room/');
+        Filesystem::delete('./uploads/records/');
+        Filesystem::delete('./uploads/attach/');
+        Filesystem::delete('./uploads/audio_tmp/');
+        Filesystem::delete('./uploads/blog/');
+        Filesystem::delete('./uploads/groups/');
+        Filesystem::delete('./uploads/users/');
+        Filesystem::delete('./uploads/videos/');
+        Filesystem::delete('./uploads/audio/');
+        Filesystem::delete('./uploads/doc/');
+        Filesystem::delete('./uploads/apps/');
+        Filesystem::delete('./system/cache/groups/');
+        Filesystem::delete('./system/cache/groups_forum/');
+        Filesystem::delete('./system/cache/groups_mark/');
+        Filesystem::delete('./system/cache/photos_mark/');
+        Filesystem::delete('./system/cache/votes/');
+        Filesystem::delete('./system/cache/wall/');
 
-        deleteFile(ROOT_DIR . '/adminpanel.php');
+        Filesystem::delete(ROOT_DIR . '/adminpanel.php');
 
         include ENGINE_DIR . '/classes/mysql.php';
         include ENGINE_DIR . '/data/db.php';
@@ -618,8 +618,8 @@ HTML;
         foreach ($table_Chema as $query)
             $db->query($query);
 
-        deleteFile(ENGINE_DIR . '/data/config.php');
-        deleteFile(ENGINE_DIR . '/data/db.php');
+        Filesystem::delete(ENGINE_DIR . '/data/config.php');
+        Filesystem::delete(ENGINE_DIR . '/data/db.php');
 
         echo <<<HTML
 Добро пожаловать в мастер установки Vii Engine. 

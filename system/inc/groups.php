@@ -27,7 +27,7 @@ if ($_GET['act'] == 'edit') {
                     $comments = 0;
 
                 if ($_POST['del_photo']) {
-                    @unlink(ROOT_DIR . '/uploads/groups/' . $id . '/' . $row['photo']);
+                    Filesystem::delete(ROOT_DIR . '/uploads/groups/' . $id . '/' . $row['photo']);
                     $sql_line_del = ", photo = ''";
                 }
 

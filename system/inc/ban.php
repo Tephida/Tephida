@@ -29,7 +29,7 @@ if (isset($_POST['save'])) {
             msgbox('Ошибка', 'Этот IP уже добавлен под фильтр', '?mod=ban');
         } else {
             $db->query("INSERT INTO `banned` SET descr = '" . $descr . "', date = '" . $this_time . "', always = '" . $always . "', ip = '" . $ip . "'");
-            @unlink(ENGINE_DIR . '/cache/system/banned.php');
+            Filesystem::delete(ENGINE_DIR . '/cache/system/banned.php');
             header("Location: ?mod=ban");
         }
     } else
@@ -41,7 +41,7 @@ if (isset($_POST['save'])) {
     if ($_GET['act'] == 'unban') {
         $id = intval($_GET['id']);
         $db->query("DELETE FROM `banned` WHERE id = '" . $id . "'");
-        @unlink(ENGINE_DIR . '/cache/system/banned.php');
+        Filesystem::delete(ENGINE_DIR . '/cache/system/banned.php');
         header("Location: ?mod=ban");
     }
 

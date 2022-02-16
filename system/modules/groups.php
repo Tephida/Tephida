@@ -149,9 +149,9 @@ if (Registry::get('logged')) {
                             $tmb->save($upload_dir . '50_' . $image_rename . $res_type);
 
                             if ($row['photo']) {
-                                @unlink($upload_dir . $row['photo']);
-                                @unlink($upload_dir . '50_' . $row['photo']);
-                                @unlink($upload_dir . '100_' . $row['photo']);
+                                Filesystem::delete($upload_dir . $row['photo']);
+                                Filesystem::delete($upload_dir . '50_' . $row['photo']);
+                                Filesystem::delete($upload_dir . '100_' . $row['photo']);
                             }
 
                             //Вставляем фотографию
@@ -182,9 +182,9 @@ if (Registry::get('logged')) {
             $row = $db->super_query("SELECT photo, admin FROM `communities` WHERE id = '{$id}'");
             if (stripos($row['admin'], "u{$user_id}|") !== false) {
                 $upload_dir = ROOT_DIR . "/uploads/groups/{$id}/";
-                @unlink($upload_dir . $row['photo']);
-                @unlink($upload_dir . '50_' . $row['photo']);
-                @unlink($upload_dir . '100_' . $row['photo']);
+                Filesystem::delete($upload_dir . $row['photo']);
+                Filesystem::delete($upload_dir . '50_' . $row['photo']);
+                Filesystem::delete($upload_dir . '100_' . $row['photo']);
                 $db->query("UPDATE `communities` SET photo = '' WHERE id = '{$id}'");
 
                 mozg_clear_cache_folder('groups');
@@ -773,7 +773,7 @@ if (Registry::get('logged')) {
                         $attach_arr2 = explode('|/uploads/attach/' . $user_id . '/', $attach_arr[1]);
                         $attach_arr3 = explode('||', $attach_arr2[1]);
                         if ($attach_arr3[0])
-                            @unlink(ROOT_DIR . '/uploads/attach/' . $user_id . '/' . $attach_arr3[0]);
+                            Filesystem::delete(ROOT_DIR . '/uploads/attach/' . $user_id . '/' . $attach_arr3[0]);
                     }
 
                     $db->query("DELETE FROM `communities_wall` WHERE id = '{$rec_id}'");
@@ -1260,7 +1260,7 @@ if (Registry::get('logged')) {
                             $row = $db->super_query("SELECT cover FROM `communities` WHERE id = '{$public_id}'");
                             if ($row) {
 
-                                @unlink($upDir . $row['cover']);
+                                Filesystem::delete($upDir . $row['cover']);
 
                             }
 
@@ -1327,7 +1327,7 @@ if (Registry::get('logged')) {
                 if ($row) {
 
                     $upDir = ROOT_DIR . "/uploads/groups/{$public_id}/";
-                    @unlink($upDir . $row['cover']);
+                    Filesystem::delete($upDir . $row['cover']);
 
                 }
 

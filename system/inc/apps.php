@@ -64,7 +64,7 @@ if ($_GET['act'] == 'upload') {
                     $db->query("UPDATE `games` SET poster = '{$image_rename}{$res_type}' WHERE id = '{$id}'");
                     $db->query("UPDATE `games_files` SET file = '{$image_rename}{$res_type}' WHERE game_id = '{$id}' AND type = 'poster'");
 
-                    @unlink($upDir . $rowCheck['poster']);
+                    Filesystem::delete($upDir . $rowCheck['poster']);
 
                     echo $id . '/' . $image_rename . $res_type;
 
@@ -77,7 +77,7 @@ if ($_GET['act'] == 'upload') {
 
                         foreach ($sql_ as $row) {
 
-                            @unlink($upDir . $row['file']);
+                            Filesystem::delete($upDir . $row['file']);
 
                         }
 
@@ -150,7 +150,7 @@ if ($_GET['act'] == 'upload_swf') {
                     $db->query("UPDATE `games` SET flash = '{$image_rename}{$res_type}' WHERE id = '{$id}'");
                     $db->query("UPDATE `games_files` SET file = '{$image_rename}{$res_type}' WHERE game_id = '{$id}' AND type = 'swf'");
 
-                    @unlink($upDir . $rowCheck['flash']);
+                    Filesystem::delete($upDir . $rowCheck['flash']);
 
                 } else {
 
@@ -161,7 +161,7 @@ if ($_GET['act'] == 'upload_swf') {
 
                         foreach ($sql_ as $row) {
 
-                            @unlink($upDir . $row['file']);
+                            Filesystem::delete($upDir . $row['file']);
 
                         }
 
@@ -274,8 +274,8 @@ if ($_GET['act'] == 'upload_scrin') {
 
                             foreach ($sql_ as $row) {
 
-                                @unlink($upDir . $row['file']);
-                                @unlink($upDir . 'm' . $row['file']);
+                                Filesystem::delete($upDir . $row['file']);
+                                Filesystem::delete($upDir . 'm' . $row['file']);
 
                             }
 
@@ -319,8 +319,8 @@ if ($_GET['act'] == 'del') {
         else
             $upDir = ROOT_DIR . '/uploads/apps/temp/' . $user_info['user_id'] . '/';
 
-        @unlink($upDir . $row['file']);
-        @unlink($upDir . 'm' . $row['file']);
+        Filesystem::delete($upDir . $row['file']);
+        Filesystem::delete($upDir . 'm' . $row['file']);
 
         $db->query("DELETE FROM `games_files` WHERE file = '{$file}'");
 
@@ -376,15 +376,15 @@ if (isset($_POST['send'])) {
                 if ($row['type'] == 'scrin') {
 
                     @copy($upDir . 'm' . $row['file'], $gameDir . 'm' . $row['file']);
-                    @unlink($upDir . 'm' . $row['file']);
+                    Filesystem::delete($upDir . 'm' . $row['file']);
 
-                    @copy($upDir . $row['file'], $gameDir . $row['file']);
-                    @unlink($upDir . $row['file']);
+                    Filesystem::delete($upDir . $row['file'], $gameDir . $row['file']);
+                    Filesystem::delete($upDir . $row['file']);
 
                 } else {
 
-                    @copy($upDir . $row['file'], $gameDir . $row['file']);
-                    @unlink($upDir . $row['file']);
+                    Filesystem::delete($upDir . $row['file'], $gameDir . $row['file']);
+                    Filesystem::delete($upDir . $row['file']);
 
                 }
 
@@ -421,10 +421,10 @@ if ($_GET['act'] == 'del_game') {
 
         foreach ($sql_ as $row_f) {
 
-            @unlink(ROOT_DIR . '/uploads/apps/' . $id . '/' . $row_f['file']);
+            Filesystem::delete(ROOT_DIR . '/uploads/apps/' . $id . '/' . $row_f['file']);
 
             if ($row_f['type'] == 'scrin')
-                @unlink(ROOT_DIR . '/uploads/apps/' . $id . '/m' . $row_f['file']);
+                Filesystem::delete(ROOT_DIR . '/uploads/apps/' . $id . '/m' . $row_f['file']);
 
         }
 

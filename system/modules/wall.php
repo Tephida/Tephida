@@ -338,13 +338,13 @@ if (Registry::get('logged')) {
                     //удаляем из ленты новостей
                     $db->query("DELETE FROM `news` WHERE obj_id = '{$rid}' AND action_type = 6");
 
-                    //Удаляем фотку из прикрипленой ссылке, если она есть
+                    //Удаляем фотку из прикрепленной ссылке, если она есть
                     if (stripos($row['attach'], 'link|') !== false) {
                         $attach_arr = explode('link|', $row['attach']);
                         $attach_arr2 = explode('|/uploads/attach/' . $user_id . '/', $attach_arr[1]);
                         $attach_arr3 = explode('||', $attach_arr2[1]);
                         if ($attach_arr3[0])
-                            @unlink(ROOT_DIR . '/uploads/attach/' . $user_id . '/' . $attach_arr3[0]);
+                            Filesystem::delete(ROOT_DIR . '/uploads/attach/' . $user_id . '/' . $attach_arr3[0]);
                     }
 
                     $action_type = 1;

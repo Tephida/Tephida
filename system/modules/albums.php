@@ -222,8 +222,8 @@ if (Registry::get('logged')) {
                 $del_dir = ROOT_DIR . '/uploads/users/' . $user_id . '/albums/' . $row['album_id'] . '/';
 
                 //Удаление фотки с сервера
-                unlink($del_dir . 'c_' . $row['photo_name']);
-                unlink($del_dir . $row['photo_name']);
+                Filesystem::delete($del_dir . 'c_' . $row['photo_name']);
+                Filesystem::delete($del_dir . $row['photo_name']);
 
                 //Удаление фотки из БД
                 $db->query("DELETE FROM `photos` WHERE id = '{$id}'");
@@ -579,7 +579,7 @@ HTML;
                     //Удаляем фотки из папки на сервере
                     $fdir = opendir(ROOT_DIR . '/uploads/users/' . $user_id . '/albums/' . $aid);
                     while ($file = readdir($fdir))
-                        @unlink(ROOT_DIR . '/uploads/users/' . $user_id . '/albums/' . $aid . '/' . $file);
+                        Filesystem::delete(ROOT_DIR . '/uploads/users/' . $user_id . '/albums/' . $aid . '/' . $file);
 
                     @rmdir(ROOT_DIR . '/uploads/users/' . $user_id . '/albums/' . $aid);
                 }

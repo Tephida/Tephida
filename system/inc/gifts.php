@@ -56,8 +56,8 @@ if ($_GET['act'] == 'del') {
     $row = $db->super_query("SELECT img FROM `gifts_list` WHERE gid = '" . $id . "'");
     if ($row) {
         $db->query("DELETE FROM `gifts_list` WHERE gid = '" . $id . "'");
-        @unlink(ROOT_DIR . "/uploads/gifts/" . $row['img'] . '.jpg');
-        @unlink(ROOT_DIR . "/uploads/gifts/" . $row['img'] . '.png');
+        Filesystem::delete(ROOT_DIR . "/uploads/gifts/" . $row['img'] . '.jpg');
+        Filesystem::delete(ROOT_DIR . "/uploads/gifts/" . $row['img'] . '.png');
         header('Location: ?mod=gifts');
     }
 }

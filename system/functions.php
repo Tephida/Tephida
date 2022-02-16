@@ -324,7 +324,7 @@ function mozg_clear_cache(): void
     while ($file = readdir($fdir))
         if ($file != '.' and $file != '..' and $file != '.htaccess' and $file != 'system') {
             if (is_file(ENGINE_DIR . '/cache/' . $file))
-                unlink(ENGINE_DIR . '/cache/' . $file);
+                Filesystem::delete(ENGINE_DIR . '/cache/' . $file);
         }
 }
 function mozg_clear_cache_folder($folder): void
@@ -332,13 +332,13 @@ function mozg_clear_cache_folder($folder): void
     $fdir = opendir(ENGINE_DIR . '/cache/' . $folder);
     while ($file = readdir($fdir)) {
         if (is_file(ENGINE_DIR . '/cache/' . $folder . '/' . $file))
-            unlink(ENGINE_DIR . '/cache/' . $folder . '/' . $file);
+            Filesystem::delete(ENGINE_DIR . '/cache/' . $folder . '/' . $file);
     }
 }
 function mozg_clear_cache_file($prefix): bool
 {
     if (is_file(ENGINE_DIR . '/cache/' . $prefix . '.tmp'))
-        return unlink(ENGINE_DIR . '/cache/' . $prefix . '.tmp');
+        return Filesystem::delete(ENGINE_DIR . '/cache/' . $prefix . '.tmp');
     else
         return false;
 }
@@ -347,7 +347,7 @@ function mozg_mass_clear_cache_file($prefix): void
     $arr_prefix = explode('|', $prefix);
     foreach ($arr_prefix as $file)
         if (is_file(ENGINE_DIR . '/cache/' . $file . '.tmp'))
-            unlink(ENGINE_DIR . '/cache/' . $file . '.tmp');
+            Filesystem::delete(ENGINE_DIR . '/cache/' . $file . '.tmp');
 
 }
 
@@ -1257,33 +1257,6 @@ function AntiSpamLogInsert(string $act, bool|string $text = false): void
         
     } elseif ($act == 'groups') {
         $db->query("INSERT INTO `antispam` SET act = '6', user_id = '{$user_info['user_id']}', date = '{$antiDate}'");
-    }
-}
-
-function deleteFile(string $file): bool
-{
-    if (is_dir($file)) {
-        if (!str_ends_with($file, '/')) {
-            $file .= '/';
-        }
-        $files = glob($file . '*', GLOB_MARK);
-        foreach ($files as $file_) {
-            if (is_dir($file_)) {
-                deleteFile($file_);
-            } else {
-                unlink($file_);
-            }
-        }
-        if (is_dir($file)) {
-            rmdir($file);
-            return true;
-        } else
-            return false;
-    } elseif (is_file($file)) {
-        unlink($file);
-        return true;
-    } else {
-        return false;
     }
 }
 

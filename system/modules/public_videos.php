@@ -79,7 +79,7 @@ if (Registry::get('logged')) {
                 $upload_dir = ROOT_DIR . '/uploads/videos/' . $row['owner_user_id'];
 
                 $expPho = end(explode('/', $row['photo']));
-                @unlink($upload_dir . '/' . $expPho);
+                Filesystem::delete($upload_dir . '/' . $expPho);
 
                 $db->query("DELETE FROM `videos` WHERE id = '{$id}'");
 

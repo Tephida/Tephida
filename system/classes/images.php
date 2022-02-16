@@ -31,13 +31,13 @@ class thumbnail
             $this->img['src'] = imagecreatefromgif($img_file);
         } else {
             echo "Not Supported File! Thumbnails can only be made from .jpg, gif and .png images! ";
-            unlink($img_file);
+            Filesystem::delete($img_file);
             exit();
         }
 
         if (!$this->img['src']) {
             echo "Not Supported File! Thumbnails can only be made from .jpg, gif and .png images!";
-            unlink($img_file);
+            Filesystem::delete($img_file);
             exit();
         }
 
