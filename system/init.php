@@ -8,8 +8,12 @@
  */
 if (!defined('MOZG')) die('Hacking attempt!');
 include ENGINE_DIR . '/functions.php';
-$config = settings_get();
-//include ENGINE_DIR . '/data/config.php';
+
+try {
+    $config = settings_get();
+} catch (Exception $e) {
+    throw new InvalidArgumentException("Invalid config. Please reinstall VII Engine");
+}
 
 if (!isset($config['home_url']))
     die("Vii Engine not installed. Please run install.php");
