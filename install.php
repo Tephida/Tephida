@@ -317,8 +317,8 @@ const MOZG = true;
 define('ROOT_DIR', dirname (__FILE__));
 const ENGINE_DIR = ROOT_DIR . '/system';
 const ADMIN_DIR = ROOT_DIR . '/system/inc';
-
-include ENGINE_DIR.'/data/config.php';
+include ADMIN_DIR.'/functions.php';
+\$config = settings_get();
 
 \$admin_index = \$config['admin_index'];
 
@@ -326,7 +326,6 @@ include ENGINE_DIR.'/data/config.php';
 
 include ENGINE_DIR.'/classes/mysql.php';
 include ENGINE_DIR.'/data/db.php';
-include ADMIN_DIR.'/functions.php';
 include ADMIN_DIR.'/login.php';
 
 \$db->close();
