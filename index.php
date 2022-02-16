@@ -20,9 +20,10 @@ define("ROOT_DIR", dirname(__FILE__));
 const ENGINE_DIR = ROOT_DIR . '/system';
 header('Content-type: text/html; charset=utf-8');
 //AJAX
-$ajax = !empty($_POST['ajax']) ? $_POST['ajax'] : null;
+$ajax = $_POST['ajax'] ?? null;
 $logged = false;
 $user_info = false;
+include_once ENGINE_DIR . '/classes/Registry.php';
 include ENGINE_DIR . '/init.php';
 //Если юзер перешел по реф ссылке, то добавляем ид реферала в сессию
 if (isset($_GET['reg']))

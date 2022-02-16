@@ -10,10 +10,12 @@ if (!defined('MOZG'))
     die('Hacking attempt!');
 
 if ($logged) {
+    $db = Registry::get('db');
     $act = requestFilter('act');
     $user_id = $user_info['user_id'];
     $limit_select = 10;
     $limit_page = 0;
+    $server_time = Registry::get('server_time');
 
     switch ($act) {
 

@@ -21,7 +21,7 @@ class wall
     function query($query)
     {
         global $db;
-
+        $db = Registry::get('db');
         $this->query = $db->super_query($query, true);
     }
 
@@ -41,8 +41,8 @@ class wall
 
     function select()
     {
-        global $tpl, $db, $config, $user_id, $id, $for_user_id, $lang, $user_privacy, $check_friend, $server_time, $user_info;
-
+        global $tpl, $db, $config, $user_id, $id, $for_user_id, $user_privacy, $check_friend, $user_info;
+        $db = Registry::get('db');
         $this->template;
         foreach ($this->query as $row_wall) {
             $tpl->set('{rec-id}', $row_wall['id']);
@@ -291,9 +291,9 @@ class wall
                 else
                     $rowUserTell = $db->super_query("SELECT user_search_pref, user_photo FROM `users` WHERE user_id = '{$row_wall['tell_uid']}'");
 
-                if (date('Y-m-d', $row_wall['tell_date']) == date('Y-m-d', $server_time))
+                if (date('Y-m-d', $row_wall['tell_date']) == date('Y-m-d', Registry::get('server_time')))
                     $dateTell = langdate('сегодня в H:i', $row_wall['tell_date']);
-                elseif (date('Y-m-d', $row_wall['tell_date']) == date('Y-m-d', ($server_time - 84600)))
+                elseif (date('Y-m-d', $row_wall['tell_date']) == date('Y-m-d', (Registry::get('server_time') - 84600)))
                     $dateTell = langdate('вчера в H:i', $row_wall['tell_date']);
                 else
                     $dateTell = langdate('j F Y в H:i', $row_wall['tell_date']);
@@ -509,7 +509,7 @@ HTML;
     function comm_query($query)
     {
         global $db;
-
+        $db = Registry::get('db');
         $this->comm_query = $db->super_query($query, true);
     }
 
@@ -530,7 +530,7 @@ HTML;
     function comm_select()
     {
         global $tpl, $db, $config, $user_id, $id, $for_user_id, $fast_comm_id, $record_fasts_num;
-
+        $db = Registry::get('db');
         if ($this->comm_query) {
             $this->comm_template;
 

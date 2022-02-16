@@ -11,6 +11,8 @@
 
 $logged = $logged ?? null;
 if ($logged == null) {
+    $db = Registry::get('db');
+    $server_time = Registry::get('server_time');
 //    NoAjaxQuery();
     //Код безопасности
     $session_sec_code = $_SESSION['sec_code'] ?? null;

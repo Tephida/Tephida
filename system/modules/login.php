@@ -11,6 +11,7 @@ $_IP = $_SERVER['REMOTE_ADDR'];
 $_BROWSER = $_SERVER['HTTP_USER_AGENT'];
 //Если делаем выход
 $act = requestFilter('act');
+$db = Registry::get('db');
 
 if ($act == 'logout') {
     set_cookie("user_id", "", 0);

@@ -14,6 +14,8 @@ NoAjaxQuery();
 if ($logged) {
     $act = requestFilter('act');
     $user_id = $user_info['user_id'];
+    $server_time = Registry::get('server_time');
+    $db = Registry::get('db');
     switch ($act) {
 
         //################### Отмечаем человека на фото ###################//

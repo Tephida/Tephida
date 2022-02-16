@@ -15,8 +15,9 @@ if ($ajax == 'yes')
 if ($logged) {
     $act = requestFilter('act');
     $user_id = $user_info['user_id'];
-
+    $server_time = Registry::get('server_time');
     $metatags['title'] = $lang['audio'];
+    $db = Registry::get('db');
 
     switch ($act) {
 

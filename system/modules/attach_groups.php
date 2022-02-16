@@ -13,9 +13,9 @@ NoAjaxQuery();
 
 if ($logged) {
     $public_id = intFilter('public_id');
-
+    $server_time = Registry::get('server_time');
+    $db = Registry::get('db');
     $rowPublic = $db->super_query("SELECT admin FROM `communities` WHERE id = '{$public_id}'");
-
     if (stripos($rowPublic['admin'], "u{$user_info['user_id']}|") !== false) {
         //Если нет папки альбома, то создаём её
         $album_dir = ROOT_DIR . "/uploads/groups/{$public_id}/photos/";

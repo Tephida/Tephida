@@ -52,6 +52,7 @@ function intFilter(string $source, int $default = 0): int
 function informationText($array): string
 {
     global $db;
+    $db = Registry::get('db');
     $array = json_decode($array, 1);
     $row = $db->super_query("SELECT user_search_pref FROM  users WHERE user_id = '" . ($array['type'] == 1 ? $array['oid2'] : $array['oid']) . "'");
     if ($array['type'] == 5)
@@ -885,16 +886,16 @@ HTML;
 function user_age($user_year, $user_month, $user_day) {
     global $server_time;
     if ($user_year) {
-        $current_year = date('Y', $server_time);
-        $current_month = date('n', $server_time);
-        $current_day = date('j', $server_time);
+        $current_year = date('Y', Registry::get('server_time'));
+        $current_month = date('n', Registry::get('server_time'));
+        $current_day = date('j', Registry::get('server_time'));
         $current_str = strtotime($current_year . '-' . $current_month . '-' . $current_day);
         $current_user = strtotime($current_year . '-' . $user_month . '-' . $user_day);
         if ($current_str >= $current_user)
             $user_age = $current_year - $user_year;
         else
             $user_age = $current_year - $user_year - 1;
-        if ($user_month AND $user_month AND $user_day)
+        if ($user_month and $user_month and $user_day)
             return $user_age . ' ' . gram_record($user_age, 'user_age');
         else
             return false;
@@ -903,24 +904,30 @@ function user_age($user_year, $user_month, $user_day) {
 
 /**
  * @param $date
- * @param $func
- * @param $full
+ * @param bool $func
+ * @param bool $full
  * @return void
  */
-function megaDate($date, $func = false, $full = false) {
+function megaDate($date, bool $func = false, bool $full = false)
+{
     global $tpl, $server_time;
     $date_comm = $date;
-    if (date('Y-m-d', $date_comm) == date('Y-m-d', $server_time)) return $tpl->set('{date}', langdate('сегодня в H:i', $date_comm));
-    elseif (date('Y-m-d', $date_comm) == date('Y-m-d', ($server_time - 84600))) return $tpl->set('{date}', langdate('вчера в H:i', $date_comm));
-    else if ($func == 'no_year') return $tpl->set('{date}', langdate('j M в H:i', $date_comm));
-    else if ($full) return $tpl->set('{date}', langdate('j F Y в H:i', $date_comm));
-    else return $tpl->set('{date}', langdate('j M Y в H:i', $date_comm));
+    if (date('Y-m-d', $date_comm) == date('Y-m-d', Registry::get('server_time')))
+        return $tpl->set('{date}', langdate('сегодня в H:i', $date_comm));
+    elseif (date('Y-m-d', $date_comm) == date('Y-m-d', (Registry::get('server_time') - 84600)))
+        return $tpl->set('{date}', langdate('вчера в H:i', $date_comm));
+    else if ($func == 'no_year')
+        return $tpl->set('{date}', langdate('j M в H:i', $date_comm));
+    else if ($full)
+        return $tpl->set('{date}', langdate('j F Y в H:i', $date_comm));
+    else
+        return $tpl->set('{date}', langdate('j M Y в H:i', $date_comm));
 }
 function megaDateNoTpl($date, $func = false, $full = false) {
     global $server_time;
-    if (date('Y-m-d', $date) == date('Y-m-d', $server_time))
+    if (date('Y-m-d', $date) == date('Y-m-d', Registry::get('server_time')))
         return $date = langdate('сегодня в H:i', $date);
-    elseif (date('Y-m-d', $date) == date('Y-m-d', ($server_time - 84600)))
+    elseif (date('Y-m-d', $date) == date('Y-m-d', (Registry::get('server_time') - 84600)))
         return $date = langdate('вчера в H:i', $date);
     else if ($func == 'no_year')
         return $date = langdate('j M в H:i', $date);
@@ -947,6 +954,7 @@ function AjaxTpl() {
 }
 function GenerateAlbumPhotosPosition($uid, $aid = false) {
     global $db;
+    $db = Registry::get('db');
     //Выводим все фотографии из альбома и обновляем их позицию только для просмотра альбома
     if ($uid AND $aid) {
         $sql_ = $db->super_query("SELECT id FROM `photos` WHERE album_id = '{$aid}' ORDER by `position` ASC", true);
@@ -1116,8 +1124,10 @@ if (check_smartphone()) {
 if (isset($_SESSION['mobile']) AND $_SESSION['mobile'] == 1) {
     $config['temp'] = "mobile";
 }
-function AntiSpam($act, $text = false) {
-    global $db, $user_info, $server_time;
+function AntiSpam($act, $text = false)
+{
+    global $db, $user_info;
+    $db = Registry::get('db');
     if ($text) $text = md5($text);
     /* Типы
     1 - Друзья
@@ -1127,7 +1137,7 @@ function AntiSpam($act, $text = false) {
     5 - Комментарии к записям (стены групп/людей)
     */
     //Антиспам дата
-    $antiDate = date('Y-m-d', $server_time);
+    $antiDate = date('Y-m-d', Registry::get('server_time'));
     $antiDate = strtotime($antiDate);
     //Лимиты на день
     $max_frieds = 40; #макс. заявок в друзья
@@ -1199,11 +1209,12 @@ function AntiSpam($act, $text = false) {
  */
 function AntiSpamLogInsert(string $act, bool|string $text = false): void
 {
-    global $db, $user_info, $server_time;
+    global $db, $user_info;
+    $db = Registry::get('db');
     if ($text)
         $text = md5($text);
     //Антиспам дата
-    $antiDate = date('Y-m-d', $server_time);
+    $antiDate = date('Y-m-d', Registry::get('server_time'));
     $antiDate = strtotime($antiDate);
     //Если антиспам на друзей
     if ($act == 'friends') {

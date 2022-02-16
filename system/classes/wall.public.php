@@ -17,7 +17,7 @@ class wall
     function query($query)
     {
         global $db;
-
+        $db = Registry::get('db');
         $this->query = $db->super_query($query, true);
     }
 
@@ -38,7 +38,7 @@ class wall
     function select($public_admin, $server_time)
     {
         global $tpl, $db, $user_info, $row, $config;
-
+        $db = Registry::get('db');
         $user_id = $user_info['user_id'];
 
         $this->template;

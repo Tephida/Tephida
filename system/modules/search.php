@@ -14,7 +14,7 @@ NoAjaxQuery();
 
 if ($logged) {
     $metatags['title'] = $lang['search'];
-
+    $db = Registry::get('db');
     $mobile_speedbar = 'Поиск';
 
     $_SERVER['QUERY_STRING'] = strip_tags($_SERVER['QUERY_STRING']);

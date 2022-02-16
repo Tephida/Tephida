@@ -14,6 +14,8 @@ NoAjaxQuery();
 if ($logged) {
     $user_id = $user_info['user_id'];
     $limit_news = 20;
+    $server_time = Registry::get('server_time');
+    $db = Registry::get('db');
 
     //################### Вывод новостей ###################//
 //			$type = $_GET['type']; #тип сортировки

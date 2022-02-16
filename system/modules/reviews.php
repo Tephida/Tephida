@@ -9,9 +9,11 @@
 if (!defined('MOZG'))
     die('Hacking attempt!');
 
-    NoAjaxQuery();
+NoAjaxQuery();
 
 $act = requestFilter('act');
+$server_time = Registry::get('server_time');
+$db = Registry::get('db');
 
 switch ($act) {
 

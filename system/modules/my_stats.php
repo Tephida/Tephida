@@ -12,7 +12,8 @@ if (!defined('MOZG'))
 NoAjaxQuery();
 
 if ($logged) {
-
+    $db = Registry::get('db');
+    $server_time = Registry::get('server_time');
     $month = intFilter('m');
     if ($month and $month <= 0 or $month > 12) $month = 1;
 

@@ -14,8 +14,9 @@ NoAjaxQuery();
 if ($logged) {
     $act = requestFilter('act');
     $user_id = $user_info['user_id'];
-
+    $server_time = Registry::get('server_time');
     $user_speedbar = $lang['blog_descr'];
+    $db = Registry::get('db');
 
     switch ($act) {
 

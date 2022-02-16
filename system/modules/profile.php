@@ -12,11 +12,12 @@ if (!defined('MOZG'))
 NoAjaxQuery();
 
 $user_id = $user_info['user_id'] ?? null;
+$db = Registry::get('db');
 
 if ($logged) {
     $id = intFilter('id');
     $cache_folder = 'user_' . $id;
-
+    $server_time = Registry::get('server_time');
     //Читаем кеш
     $row = unserialize(mozg_cache($cache_folder . '/profile_' . $id));
 

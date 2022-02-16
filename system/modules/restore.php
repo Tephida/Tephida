@@ -13,8 +13,10 @@ if ($ajax == 'yes')
     NoAjaxQuery();
 
 if (!$logged) {
+    $db = Registry::get('db');
     $act = requestFilter('act');
     $metatags['title'] = $lang['restore_title'];
+    $server_time = Registry::get('server_time');
 
     switch ($act) {
 

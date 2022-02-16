@@ -12,7 +12,7 @@ if (!defined('MOZG'))
 //Если добавляем
 if (isset($_POST['save'])) {
     $ban_date = intFilter('days');
-    $this_time = $ban_date ? $server_time + ($ban_date * 60 * 60 * 24) : 0;
+    $this_time = $ban_date ? Registry::get('server_time') + ($ban_date * 60 * 60 * 24) : 0;
     if ($this_time)
         $always = 1;
     else

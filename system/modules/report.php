@@ -12,6 +12,8 @@ if (!defined('MOZG'))
 NoAjaxQuery();
 
 if ($logged) {
+    $db = Registry::get('db');
+    $server_time = Registry::get('server_time');
     $act = requestFilter('act');
     $mid = intFilter('id');
     $type_report = intFilter('type_report');

@@ -19,8 +19,8 @@ function CheckCanGzip(): int|string
 
 function GzipOut(){
 	global $Timer, $db, $tpl, $_DOCUMENT_DATE, $user_info;
-	
-	$debug = 0;
+    $db = Registry::get('db');
+    $debug = 0;
 
 	if($debug)
 		$s = "!-- Время выполнения скрипта ".$Timer->stop()." секунд --!<br />

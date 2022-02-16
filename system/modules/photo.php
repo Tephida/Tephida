@@ -10,9 +10,12 @@ if (!defined('MOZG')) die('Hacking attempt!');
 if ($logged) {
     $act = requestFilter('act');
     $user_id = $user_info['user_id'];
+    $server_time = Registry::get('server_time');
+    $db = Registry::get('db');
+
     switch ($act) {
-            //################### Добавления комментария ###################//
-            
+        //################### Добавления комментария ###################//
+
         case "addcomm":
             NoAjaxQuery();
             $pid = intFilter('pid');

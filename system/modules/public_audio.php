@@ -10,9 +10,10 @@ if (!defined('MOZG'))
     die('Hacking attempt!');
 
 if ($logged) {
-
+    $db = Registry::get('db');
     $act = requestFilter('act');
     $user_id = $user_info['user_id'];
+    $server_time = Registry::get('server_time');
 
     switch ($act) {
 

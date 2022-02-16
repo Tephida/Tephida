@@ -12,9 +12,12 @@ if (!defined('MOZG'))
 NoAjaxQuery();
 
 if ($logged) {
+    $db = Registry::get('db');
     $user_id = $user_info['user_id'];
     $act = requestFilter('act');
 //    $metatags['title'] = $lang['settings'];
+    $server_time = Registry::get('server_time');
+
     switch ($act) {
         /** Изменение пароля */
         case "newpass":

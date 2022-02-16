@@ -14,8 +14,8 @@ $jsonResponse = array();
 if ($logged) {
     $act = requestFilter('act');
     $user_id = $user_info['user_id'];
-
-    $server_time = $server_time ?? time();
+    $db = Registry::get('db');
+    $server_time = Registry::get('server_time');
 
     switch ($act) {
         case 'exclude':

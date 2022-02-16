@@ -12,8 +12,9 @@ if (!defined('MOZG'))
 NoAjaxQuery();
 
 if ($logged) {
+    $server_time = Registry::get('server_time');
     $user_id = $user_info['user_id'];
-
+    $db = Registry::get('db');
     //Если нет папки альбома, то создаём её
     $album_dir = ROOT_DIR . "/uploads/attach/{$user_id}/";
     createDir($album_dir);

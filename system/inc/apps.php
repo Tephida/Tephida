@@ -15,7 +15,7 @@ if ($_GET['act'] == 'upload') {
     //Получаем данные о файле
     $image_tmp = $_FILES['uploadfile']['tmp_name'];
     $image_name = to_translit($_FILES['uploadfile']['name']); // оригинальное название для оприделения формата
-    $image_rename = substr(md5($server_time + rand(1, 100000)), 0, 20); // имя файла
+    $image_rename = substr(md5(Registry::get('server_time') + rand(1, 100000)), 0, 20); // имя файла
     $image_size = $_FILES['uploadfile']['size']; // размер файла
     $type = end(explode(".", $image_name)); // формат файла
 
@@ -113,7 +113,7 @@ if ($_GET['act'] == 'upload_swf') {
     //Получаем данные о файле
     $image_tmp = $_FILES['uploadfile']['tmp_name'];
     $image_name = to_translit($_FILES['uploadfile']['name']); // оригинальное название для оприделения формата
-    $image_rename = substr(md5($server_time + rand(1, 100000)), 0, 20); // имя файла
+    $image_rename = substr(md5(Registry::get('server_time') + rand(1, 100000)), 0, 20); // имя файла
     $image_size = $_FILES['uploadfile']['size']; // размер файла
     $type = end(explode(".", $image_name)); // формат файла
 
@@ -195,7 +195,7 @@ if ($_GET['act'] == 'upload_scrin') {
     //Получаем данные о файле
     $image_tmp = $_FILES['uploadfile']['tmp_name'];
     $image_name = to_translit($_FILES['uploadfile']['name']); // оригинальное название для оприделения формата
-    $image_rename = substr(md5($server_time + rand(1, 100000)), 0, 20); // имя файла
+    $image_rename = substr(md5(Registry::get('server_time') + rand(1, 100000)), 0, 20); // имя файла
     $image_size = $_FILES['uploadfile']['size']; // размер файла
     $type = end(explode(".", $image_name)); // формат файла
 
@@ -341,7 +341,7 @@ if (isset($_POST['send'])) {
     //Читаем хеш
     $app_hash = $_SESSION['apps_hash'];
 
-    if (isset($title) and !empty($title)) {
+    if (!empty($title)) {
 
         //Выводим файлы
         $sql_ = $db->super_query("SELECT file, type FROM `games_files` WHERE hash = '{$app_hash}' AND user_id = '{$user_info['user_id']}'", true);
@@ -358,7 +358,8 @@ if (isset($_POST['send'])) {
 
             }
 
-            //Всталвяем игру в базу
+            //Вставляем игру в базу
+            $server_time = Registry::get('server_time');
             $db->query("INSERT INTO `games` SET title = '{$title}', descr = '{$descr}', poster = '{$poster}', flash = '{$swf}', date = '{$server_time}', width = '{$width}', height = '{$height}'");
             $id = $db->insert_id();
 
@@ -650,6 +651,7 @@ HTML;
 }
 
 //Устанавливаем в сессию временный хеш
+$server_time = Registry::get('server_time');
 $apps_hash = md5($server_time + rand(0, $server_time));
 $_SESSION['apps_hash'] = $apps_hash;
 

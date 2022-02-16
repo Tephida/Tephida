@@ -13,8 +13,9 @@ NoAjaxQuery();
 
 if ($logged) {
     $act = requestFilter('act');
-
+    $server_time = Registry::get('server_time');
     $metatags['title'] = $lang['editmyprofile'];
+    $db = Registry::get('db');
 
     switch ($act) {
 

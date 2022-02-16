@@ -12,7 +12,7 @@ if (!defined('MOZG'))
 NoAjaxQuery();
 
 if ($logged) {
-
+    $db = Registry::get('db');
     $user_id = $user_info['user_id'];
     $text = requestFilter('text', 25000, true);
     $public_id = intFilter('public_id');

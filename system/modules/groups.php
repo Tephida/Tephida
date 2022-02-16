@@ -14,9 +14,9 @@ NoAjaxQuery();
 if ($logged) {
     $act = requestFilter('act');
     $user_id = $user_info['user_id'];
-
+    $server_time = Registry::get('server_time');
     $page = intFilter('page', 1);
-
+    $db = Registry::get('db');
     $gcount = 20;
     $limit_page = ($page - 1) * $gcount;
 

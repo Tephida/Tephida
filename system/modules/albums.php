@@ -13,7 +13,8 @@ NoAjaxQuery();
 
 if ($logged) {
     $act = requestFilter('act');
-
+    $server_time = Registry::get('server_time');
+    $db = Registry::get('db');
     switch ($act) {
 
         //################### Создание альбома ###################//

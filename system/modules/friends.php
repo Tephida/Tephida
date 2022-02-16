@@ -15,9 +15,9 @@ NoAjaxQuery();
 if ($logged) {
     $act = requestFilter('act');
     $metatags['title'] = $lang['friends'];
-
+    $server_time = Registry::get('server_time');
     $page = intFilter('page', 1);
-
+    $db = Registry::get('db');
     $gcount = 20;
     $limit_page = ($page - 1) * $gcount;
 
