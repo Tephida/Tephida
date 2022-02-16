@@ -11,6 +11,7 @@ if(!defined('MOZG'))
 
 include __DIR__.'/../classes/templates.php';
 $tpl = new mozg_template;
+$config['temp'] = $config['temp'] ?? 'Default';
 $tpl->dir = ROOT_DIR . '/templates/' . $config['temp'];
 define('TEMPLATE_DIR', $tpl->dir);
 $_DOCUMENT_DATE = false;
@@ -103,19 +104,19 @@ function echoheader($box_width = false){
 	if(!$box_width) $box_width = 600;
 	
 	echo <<<HTML
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="ru" lang="ru">
+<!DOCTYPE html>
+<html lang="ru">
 <head>
 <title>Vii Engine - Панель управления</title>
 <meta http-equiv="content-type" content="text/html; charset=utf-8" />
 </head>
 <body>
 <style type="text/css" media="all">
-html,body{font-size:11px;background: url("/system/inc/images/bg.png") repeat-x;font-family:Tahoma;line-height:17px;}
+html,body{font-size:11px;background: linear-gradient(#0d789c, #c8eeb1,white, white) repeat-x;font-family:Tahoma;line-height:17px;}
 a{color:#4274a5;text-decoration:underline}
 a:hover{color:#4274a5;text-decoration:none}
 .box{margin:auto;width:{$box_width}px;background:#fff;box-shadow:0px 1px 4px 1px #cfcfcf;-moz-box-shadow:0px 1px 4px 1px #cfcfcf;-webkit-box-shadow:0px 1px 4px 1px #cfcfcf;-khtml-box-shadow:0px 1px 4px 1px #cfcfcf;padding:10px;border-radius:5px;-moz-border-radius:5px;-webkit-border-radius:5px;-khtml-border-radius:5px;margin-bottom:5px}
-.head{background:url("/system/inc/images/head.png") repeat-x;height:49px;border-top-left-radius:5px;-moz-top-left-border-radius:5px;-webkit-top-left-border-radius:5px;-khtml-top-left-border-radius:5px;margin:-10px;border-top-right-radius:5px;-moz-top-right-border-radius:5px;-webkit-top-right-border-radius:5px;-khtml-top-right-border-radius:5px;margin:-10px;margin-bottom:5px}
+.head{background: linear-gradient(#1993b0, #1993b0,#3db9c2) repeat-x;height:49px;border-top-left-radius:5px;-moz-top-left-border-radius:5px;-webkit-top-left-border-radius:5px;-khtml-top-left-border-radius:5px;margin:-10px;border-top-right-radius:5px;-moz-top-right-border-radius:5px;-webkit-top-right-border-radius:5px;-khtml-top-right-border-radius:5px;margin:-10px;margin-bottom:5px}
 .logo{background:url("/system/inc/images/logo.png") no-repeat;width:133px;height:48px;margin-left:5px}
 .h1{font-size:13px;font-weight:bold;color:#4274a5;margin-top:5px;margin-bottom:5px;padding-bottom:2px;border-bottom:1px solid #e5edf5;padding-left:2px}
 .clr{clear:both}
@@ -161,19 +162,30 @@ function echohtmlstart($title){
 <div class="h1" style="margin-top:10px">{$title}</div>
 HTML;
 }
-function echohtmlend(){
+function echohtmlend()
+{
     global $admin_link;
 
+    $admin_link = $admin_link ?? '';
     if (Registry::get('logged')) {
         $stat_lnk = "<a href=\"{$admin_link}?mod=stats\" style=\"margin-right:10px\">статистика</a>";
         $exit_lnk = "<a href=\"{$admin_link}?act=logout\">выйти</a>";
+    } else {
+        $stat_lnk = null;
+        $exit_lnk = null;
     }
 
     echo <<<HTML
 <div class="clr"></div>
 </div>
 <div class="clr"></div>
-<div class="foot"><div style="margin-bottom:-10px"><a href="{$admin_link}" style="margin-right:10px">главная</a>{$stat_lnk}<a href="/" style="margin-right:10px" target="_blank">просмотр сайта</a>{$exit_lnk}</div><br />Vii Engine<br />Copyright 2014 © <a href="http://niceweb.in.ua/" target="_blank" style="color:#999">NiceWeb</a> Group. All rights reserved.</div>
+<div class="foot"><div style="margin-bottom:-10px">
+<a href="{$admin_link}" style="margin-right:10px">главная</a>
+{$stat_lnk}
+<a href="/" style="margin-right:10px" target="_blank">просмотр сайта</a>
+{$exit_lnk}
+</div>
+<br />Vii Engine<br /></div>
 </body>
 </html>
 HTML;
@@ -263,5 +275,5 @@ function formatsize($file_size){
 	return $file_size;
 }
 function system_mozg_clear_cache_file($prefix) {
-	@unlink(ENGINE_DIR.'/cache/system/'.$prefix.'.php');
+    Filesystem::delete(ENGINE_DIR . '/cache/system/' . $prefix . '.php');
 }

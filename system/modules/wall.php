@@ -98,12 +98,12 @@ if (Registry::get('logged')) {
                                             $upload_dir = ROOT_DIR . '/uploads/attach/' . $user_id;
 
                                             //Если нет папки юзера, то создаём её
-                                            createDir($upload_dir);
+                                            Filesystem::createDir($upload_dir);
 
                                             //Подключаем класс для фотографий
                                             include ENGINE_DIR . '/classes/images.php';
 
-                                            if (@copy($rImgUrl, $upload_dir . '/' . $image_name . '.' . $img_format)) {
+                                            if (Filesystem::copy($rImgUrl, $upload_dir . '/' . $image_name . '.' . $img_format)) {
                                                 $tmb = new thumbnail($upload_dir . '/' . $image_name . '.' . $img_format);
                                                 $tmb->size_auto('100x80');
                                                 $tmb->jpeg_quality(100);
@@ -338,13 +338,13 @@ if (Registry::get('logged')) {
                     //удаляем из ленты новостей
                     $db->query("DELETE FROM `news` WHERE obj_id = '{$rid}' AND action_type = 6");
 
-                    //Удаляем фотку из прикрипленой ссылке, если она есть
+                    //Удаляем фотку из прикрепленной ссылке, если она есть
                     if (stripos($row['attach'], 'link|') !== false) {
                         $attach_arr = explode('link|', $row['attach']);
                         $attach_arr2 = explode('|/uploads/attach/' . $user_id . '/', $attach_arr[1]);
                         $attach_arr3 = explode('||', $attach_arr2[1]);
                         if ($attach_arr3[0])
-                            @unlink(ROOT_DIR . '/uploads/attach/' . $user_id . '/' . $attach_arr3[0]);
+                            Filesystem::delete(ROOT_DIR . '/uploads/attach/' . $user_id . '/' . $attach_arr3[0]);
                     }
 
                     $action_type = 1;
@@ -626,10 +626,10 @@ if (Registry::get('logged')) {
         //################### Парсер информации о ссылке ###################//
         case "parse_link":
             $lnk = 'https://' . str_replace('https://', '', requestFilter('lnk'));
-            $check_url = @get_headers(stripslashes($lnk));
+            $check_url = get_headers(stripslashes($lnk));
 
             if (strpos($check_url[0], '200')) {
-                $open_lnk = @file_get_contents($lnk);
+                $open_lnk = file_get_contents($lnk);
 
 //                if (stripos(strtolower($open_lnk), 'charset=utf-8') or stripos(strtolower($check_url[2]), 'charset=utf-8')){
 //                }else
@@ -734,7 +734,7 @@ if (Registry::get('logged')) {
             //################### Показ последних 10 записей ###################//
 
             //Если вызвана страница стены, не со страницы юзера
-            if (!$id) {
+            if (!isset($id)) {
                 $rid = intFilter('rid');
 
                 $id = intFilter('uid');

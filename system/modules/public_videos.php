@@ -38,11 +38,11 @@ if (Registry::get('logged')) {
                 $upload_dir = ROOT_DIR . '/uploads/videos/' . $user_id;
 
                 //Если нет папки юзера, то создаём её
-                createDir($upload_dir);
+                Filesystem::createDir($upload_dir);
 
                 $img_name_arr = end(explode(".", $row['photo']));
                 $expPhoto = substr(md5(time() . md5($row['photo'])), 0, 15) . '.' . $img_name_arr;
-                @copy($row['photo'], ROOT_DIR . "/uploads/videos/{$user_id}/{$expPhoto}");
+                Filesystem::copy($row['photo'], ROOT_DIR . "/uploads/videos/{$user_id}/{$expPhoto}");
 
                 $newPhoto = "{$config['home_url']}uploads/videos/{$user_id}/{$expPhoto}";
 
@@ -79,7 +79,7 @@ if (Registry::get('logged')) {
                 $upload_dir = ROOT_DIR . '/uploads/videos/' . $row['owner_user_id'];
 
                 $expPho = end(explode('/', $row['photo']));
-                @unlink($upload_dir . '/' . $expPho);
+                Filesystem::delete($upload_dir . '/' . $expPho);
 
                 $db->query("DELETE FROM `videos` WHERE id = '{$id}'");
 
@@ -171,7 +171,7 @@ if (Registry::get('logged')) {
             $query = strip_data(requestFilter('query'));
             $query = strtr($query, array(' ' => '%')); //Замеянем пробелы на проценты чтоб тоиск был точнее
 
-            $adres = strip_tags(requestFilter('adres');
+            $adres = strip_tags(requestFilter('adres'));
 
             $row_count = $db->super_query("SELECT COUNT(*) AS cnt FROM `videos` WHERE title LIKE '%{$query}%' AND public_id = '0'");
 

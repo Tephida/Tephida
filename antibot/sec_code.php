@@ -8,8 +8,6 @@
  */
 @session_start();
 
-@error_reporting(E_ALL ^ E_WARNING ^ E_NOTICE);
-
 function clean_url(string $url)
 {
     $url = str_replace("http://", "", strtolower($url));

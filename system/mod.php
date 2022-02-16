@@ -8,7 +8,7 @@
  */
 if (!defined('MOZG')) die('Hacking attempt!');
 
-$go = htmlspecialchars(strip_tags(stripslashes(trim(urldecode($_GET['go']))))) ?? "main";
+$go = isset($_GET['go']) ? htmlspecialchars(strip_tags(stripslashes(trim(urldecode($_GET['go']))))) : "main";
 
 $mozg_module = $go;
 check_xss();

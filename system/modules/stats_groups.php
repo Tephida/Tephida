@@ -27,7 +27,7 @@ if (Registry::get('logged')) {
             $month = intFilter('m');
             if ($month and $month <= 0 or $month > 12) $month = 2;
 
-            $year = intFilter('y'];
+            $year = intFilter('y');
             if ($year and $year < 2013 or $year > 2020) $year = 2013;
 
             //Выводим админа сообщества

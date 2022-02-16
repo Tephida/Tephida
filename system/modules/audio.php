@@ -33,14 +33,14 @@ if (Registry::get('logged')) {
                     //Узнаем исполнителя и название песни по id3
                     $ranTmp = rand(0, 100500);
 
-                    $fp = @fopen(stripslashes($lnk), "rb");
-                    $fd = @fopen(ROOT_DIR . '/uploads/audio_tmp/' . $ranTmp . '.mp3', "w");
+                    $fp = fopen(stripslashes($lnk), "rb");
+                    $fd = fopen(ROOT_DIR . '/uploads/audio_tmp/' . $ranTmp . '.mp3', "w");
                     if ($fp and $fd) {
                         $st = fread($fp, 4096);
                         fwrite($fd, $st);
                     }
-                    @fclose($fp);
-                    @fclose($fd);
+                    fclose($fp);
+                    fclose($fd);
 
                     include ENGINE_DIR . "/classes/id3v2.php";
                     $id3v2 = new Id3v2;
@@ -61,7 +61,7 @@ if (Registry::get('logged')) {
                     $db->query("INSERT INTO `audio` SET auser_id = '" . $user_id . "', url = '" . $lnk . "', artist = '" . $artist . "', name = '" . $name . "',  adate = '" . $server_time . "'");
                     $db->query("UPDATE `users` SET user_audio = user_audio+1 WHERE user_id = '" . $user_id . "'");
 
-                    @unlink(ROOT_DIR . '/uploads/audio_tmp/' . $ranTmp . '.mp3');
+                    Filesystem::delete(ROOT_DIR . '/uploads/audio_tmp/' . $ranTmp . '.mp3');
                     mozg_mass_clear_cache_file('user_' . $user_id . '/audios_profile|user_' . $user_id . '/profile_' . $user_id);
                 } else
                     echo 2;
@@ -106,7 +106,7 @@ if (Registry::get('logged')) {
                 $checkMusSite2 = explode('https://', $config['home_url']);
                 $expMusO2 = explode('/', $checkMusSite2[1]);
                 if ($expMusO[0] == $expMusO2[0])
-                    @unlink(ROOT_DIR . '/uploads/audio/' . $user_id . '/' . $audioName);
+                    Filesystem::delete(ROOT_DIR . '/uploads/audio/' . $user_id . '/' . $audioName);
 
                 $db->query("DELETE FROM `audio` WHERE aid = '" . $aid . "'");
                 $db->query("UPDATE `users` SET user_audio = user_audio-1 WHERE user_id = '" . $user_id . "'");
@@ -205,7 +205,7 @@ if (Registry::get('logged')) {
 
             if ($type == 'mp3' and $config['audio_mod_add'] == 'yes' and $file_size < 10000000) {
                 $audio_dir = ROOT_DIR . '/uploads/audio/' . $user_id . '/';
-                createDir($audio_dir);
+                Filesystem::createDir($audio_dir);
 
                 $res_type = '.' . $type;
                 if (move_uploaded_file($file_tmp, $audio_dir . $file_rename . $res_type)) {

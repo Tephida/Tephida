@@ -36,7 +36,7 @@ function GzipOut()
 		$s .="\n!-- Затрачено оперативной памяти ".round(memory_get_peak_usage()/(1024*1024),2)." MB --!<br />";
 
 	if($_DOCUMENT_DATE){
-		@header ("Last-Modified: " . date('r', $_DOCUMENT_DATE) ." GMT");
+		header("Last-Modified: " . date('r', $_DOCUMENT_DATE) . " GMT");
 	}
 
     $ENCODING = CheckCanGzip(); 

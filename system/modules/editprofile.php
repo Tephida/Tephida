@@ -30,8 +30,8 @@ if (Registry::get('logged')) {
             $uploaddir = ROOT_DIR . '/uploads/users/';
 
             //Если нет папок юзера, то создаём её
-            createDir($uploaddir . $user_id);
-            createDir($uploaddir . $user_id . '/albums');
+            Filesystem::createDir($uploaddir . $user_id);
+            Filesystem::createDir($uploaddir . $user_id . '/albums');
 
             //Разрешенные форматы
             $allowed_files = array('jpg', 'jpeg', 'jpe', 'png', 'gif');
@@ -125,11 +125,11 @@ if (Registry::get('logged')) {
 
                 $db->query("UPDATE `users` SET user_photo = '', user_wall_id = '' {$update_wall} WHERE user_id = '{$user_id}'");
 
-                @unlink($uploaddir . $row['user_photo']);
-                @unlink($uploaddir . '50_' . $row['user_photo']);
-                @unlink($uploaddir . '100_' . $row['user_photo']);
-                @unlink($uploaddir . 'o_' . $row['user_photo']);
-                @unlink($uploaddir . '130_' . $row['user_photo']);
+                Filesystem::delete($uploaddir . $row['user_photo']);
+                Filesystem::delete($uploaddir . '50_' . $row['user_photo']);
+                Filesystem::delete($uploaddir . '100_' . $row['user_photo']);
+                Filesystem::delete($uploaddir . 'o_' . $row['user_photo']);
+                Filesystem::delete($uploaddir . '130_' . $row['user_photo']);
 
                 mozg_clear_cache_file('user_' . $user_id . '/profile_' . $user_id);
                 mozg_clear_cache();
@@ -525,7 +525,7 @@ if (Registry::get('logged')) {
                         $row = $db->super_query("SELECT user_cover FROM `users` WHERE user_id = '{$user_info['user_id']}'");
                         if ($row) {
 
-                            @unlink($upDir . $row['user_cover']);
+                            Filesystem::delete($upDir . $row['user_cover']);
 
                         }
 
@@ -579,7 +579,7 @@ if (Registry::get('logged')) {
             $row = $db->super_query("SELECT user_cover FROM `users` WHERE user_id = '{$user_info['user_id']}'");
             if ($row) {
                 $upDir = ROOT_DIR . "/uploads/users/{$user_info['user_id']}/";
-                @unlink($upDir . $row['user_cover']);
+                Filesystem::delete($upDir . $row['user_cover']);
             }
 
             $db->query("UPDATE `users` SET user_cover_pos = '', user_cover = '' WHERE user_id = '{$user_info['user_id']}'");

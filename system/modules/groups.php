@@ -38,8 +38,8 @@ if (Registry::get('logged')) {
                 $db->query("INSERT INTO `friends` SET friend_id = '{$cid}', user_id = '{$user_id}', friends_date = NOW(), subscriptions = 2");
                 $db->query("UPDATE `users` SET user_public_num = user_public_num+1 WHERE user_id = '{$user_id}'");
 
-                createDir(ROOT_DIR . '/uploads/groups/' . $cid . '/');
-                createDir(ROOT_DIR . '/uploads/groups/' . $cid . '/photos/');
+                Filesystem::createDir(ROOT_DIR . '/uploads/groups/' . $cid . '/');
+                Filesystem::createDir(ROOT_DIR . '/uploads/groups/' . $cid . '/photos/');
                 mozg_mass_clear_cache_file("user_{$user_id}/profile_{$user_id}|groups/{$user_id}");
 
                 echo $cid;
@@ -149,9 +149,9 @@ if (Registry::get('logged')) {
                             $tmb->save($upload_dir . '50_' . $image_rename . $res_type);
 
                             if ($row['photo']) {
-                                @unlink($upload_dir . $row['photo']);
-                                @unlink($upload_dir . '50_' . $row['photo']);
-                                @unlink($upload_dir . '100_' . $row['photo']);
+                                Filesystem::delete($upload_dir . $row['photo']);
+                                Filesystem::delete($upload_dir . '50_' . $row['photo']);
+                                Filesystem::delete($upload_dir . '100_' . $row['photo']);
                             }
 
                             //Вставляем фотографию
@@ -182,9 +182,9 @@ if (Registry::get('logged')) {
             $row = $db->super_query("SELECT photo, admin FROM `communities` WHERE id = '{$id}'");
             if (stripos($row['admin'], "u{$user_id}|") !== false) {
                 $upload_dir = ROOT_DIR . "/uploads/groups/{$id}/";
-                @unlink($upload_dir . $row['photo']);
-                @unlink($upload_dir . '50_' . $row['photo']);
-                @unlink($upload_dir . '100_' . $row['photo']);
+                Filesystem::delete($upload_dir . $row['photo']);
+                Filesystem::delete($upload_dir . '50_' . $row['photo']);
+                Filesystem::delete($upload_dir . '100_' . $row['photo']);
                 $db->query("UPDATE `communities` SET photo = '' WHERE id = '{$id}'");
 
                 mozg_clear_cache_folder('groups');
@@ -516,12 +516,12 @@ if (Registry::get('logged')) {
 
                                 //Директория загрузки фото
                                 $upload_dir = ROOT_DIR . '/uploads/attach/' . $user_id;
-                                createDir($upload_dir);
+                                Filesystem::createDir($upload_dir);
 
                                 //Подключаем класс для фотографий
                                 include ENGINE_DIR . '/classes/images.php';
 
-                                if (@copy($rImgUrl, $upload_dir . '/' . $image_name . '.' . $img_format)) {
+                                if (Filesystem::copy($rImgUrl, $upload_dir . '/' . $image_name . '.' . $img_format)) {
                                     $tmb = new thumbnail($upload_dir . '/' . $image_name . '.' . $img_format);
                                     $tmb->size_auto('100x80');
                                     $tmb->jpeg_quality(100);
@@ -773,7 +773,7 @@ if (Registry::get('logged')) {
                         $attach_arr2 = explode('|/uploads/attach/' . $user_id . '/', $attach_arr[1]);
                         $attach_arr3 = explode('||', $attach_arr2[1]);
                         if ($attach_arr3[0])
-                            @unlink(ROOT_DIR . '/uploads/attach/' . $user_id . '/' . $attach_arr3[0]);
+                            Filesystem::delete(ROOT_DIR . '/uploads/attach/' . $user_id . '/' . $attach_arr3[0]);
                     }
 
                     $db->query("DELETE FROM `communities_wall` WHERE id = '{$rec_id}'");
@@ -1260,7 +1260,7 @@ if (Registry::get('logged')) {
                             $row = $db->super_query("SELECT cover FROM `communities` WHERE id = '{$public_id}'");
                             if ($row) {
 
-                                @unlink($upDir . $row['cover']);
+                                Filesystem::delete($upDir . $row['cover']);
 
                             }
 
@@ -1327,7 +1327,7 @@ if (Registry::get('logged')) {
                 if ($row) {
 
                     $upDir = ROOT_DIR . "/uploads/groups/{$public_id}/";
-                    @unlink($upDir . $row['cover']);
+                    Filesystem::delete($upDir . $row['cover']);
 
                 }
 
@@ -1418,7 +1418,7 @@ if (Registry::get('logged')) {
             if (!$page_cnt) {
 
                 $tpl->load_template('groups/invitebox.tpl');
-                $tpl->set('{friends}', $tpl->result['friends']);
+                $tpl->set('{friends}', $tpl->result['friends'] ?? '');
                 $tpl->set('{id}', $pub_id);
 
                 if ($numFr == $limit_friends) {
@@ -1434,7 +1434,7 @@ if (Registry::get('logged')) {
 
             } else {
 
-                $tpl->result['content'] = $tpl->result['friends'];
+                $tpl->result['content'] = $tpl->result['friends'] ?? '';
 
             }
 
@@ -1705,7 +1705,10 @@ if (Registry::get('logged')) {
                     $tpl->compile('content');
                 }
 
-                if ($act == 'admin') $admn_act = 'act=admin&';
+                if ($act == 'admin')
+                    $admn_act = 'act=admin&';
+                else
+                    $admn_act = '';
 
                 navigation($gcount, $owner['user_public_num'], 'groups?' . $admn_act . 'page=');
 

@@ -74,7 +74,7 @@ if (Registry::get('logged')) {
                     $upload_dir = ROOT_DIR . '/uploads/videos/' . $user_id;
 
                     //Если нет папки юзера, то создаём её
-                    createDir($upload_dir);
+                    Filesystem::createDir($upload_dir);
 
                     //Подключаем класс для фотографий
                     include ENGINE_DIR . '/classes/images.php';
@@ -233,7 +233,7 @@ if (Registry::get('logged')) {
                     //Удаляем фотку
                     $exp_photo = explode('/', $row['photo']);
                     $photo_name = end($exp_photo);
-                    @unlink(ROOT_DIR . '/uploads/videos/' . $row['owner_user_id'] . '/' . $photo_name);
+                    Filesystem::delete(ROOT_DIR . '/uploads/videos/' . $row['owner_user_id'] . '/' . $photo_name);
 
                     //Чистим кеш
                     mozg_mass_clear_cache_file("user_{$row['owner_user_id']}/page_videos_user|user_{$row['owner_user_id']}/page_videos_user_friends|user_{$row['owner_user_id']}/page_videos_user_all|user_{$row['owner_user_id']}/profile_{$row['owner_user_id']}|user_{$row['owner_user_id']}/videos_num_all|user_{$row['owner_user_id']}/videos_num_friends|wall/video{$vid}");
@@ -680,10 +680,10 @@ if (Registry::get('logged')) {
                 $upload_dir = ROOT_DIR . '/uploads/videos/' . $user_id;
 
                 //Если нет папки юзера, то создаём её
-                createDir($upload_dir);
+                Filesystem::createDir($upload_dir);
 
                 $expPhoto = end(explode('/', $row['photo']));
-                @copy($row['photo'], ROOT_DIR . "/uploads/videos/{$user_id}/{$expPhoto}");
+                Filesystem::copy($row['photo'], ROOT_DIR . "/uploads/videos/{$user_id}/{$expPhoto}");
                 $newPhoto = "{$config['home_url']}uploads/videos/{$user_id}/{$expPhoto}";
                 $db->query("INSERT INTO `videos` SET owner_user_id = '{$user_id}', video = '{$row['video']}', photo = '{$newPhoto}', title = '{$row['title']}', descr = '{$row['descr']}', add_date = NOW(), privacy = 1");
                 $dbid = $db->insert_id();

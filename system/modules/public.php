@@ -51,10 +51,10 @@ if (Registry::get('logged')) {
     } else
         $row = $db->super_query("SELECT id, title, descr, traf, ulist, photo, date, admin, feedback, comments, real_admin, rec_num, del, ban, adres, audio_num, forum_num, discussion, status_text, web, videos_num, cover, cover_pos FROM `communities` WHERE " . $sql_where);
 
-    if ($row['del'] == 1) {
+    if (isset($row['del']) and $row['del'] == 1) {
         $user_speedbar = 'Страница удалена';
         msgbox('', '<br /><br />Сообщество удалено администрацией.<br /><br /><br />', 'info_2');
-    } elseif ($row['ban'] == 1) {
+    } elseif (isset($row['ban']) and $row['ban'] == 1) {
         $user_speedbar = 'Страница заблокирована';
         msgbox('', '<br /><br />Сообщество заблокировано администрацией.<br /><br /><br />', 'info_2');
     } elseif ($row) {

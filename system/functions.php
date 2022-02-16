@@ -322,22 +322,33 @@ function mozg_clear_cache(): void
     $folder = '';
     $fdir = opendir(ENGINE_DIR . '/cache/' . $folder);
     while ($file = readdir($fdir))
-        if ($file != '.' and $file != '..' and $file != '.htaccess' and $file != 'system')
-            @unlink(ENGINE_DIR . '/cache/' . $file);
+        if ($file != '.' and $file != '..' and $file != '.htaccess' and $file != 'system') {
+            if (is_file(ENGINE_DIR . '/cache/' . $file))
+                Filesystem::delete(ENGINE_DIR . '/cache/' . $file);
+        }
 }
 function mozg_clear_cache_folder($folder): void
 {
     $fdir = opendir(ENGINE_DIR . '/cache/' . $folder);
-    while ($file = readdir($fdir)) @unlink(ENGINE_DIR . '/cache/' . $folder . '/' . $file);
+    while ($file = readdir($fdir)) {
+        if (is_file(ENGINE_DIR . '/cache/' . $folder . '/' . $file))
+            Filesystem::delete(ENGINE_DIR . '/cache/' . $folder . '/' . $file);
+    }
 }
 function mozg_clear_cache_file($prefix): bool
 {
-    return unlink(ENGINE_DIR . '/cache/' . $prefix . '.tmp');
+    if (is_file(ENGINE_DIR . '/cache/' . $prefix . '.tmp'))
+        return Filesystem::delete(ENGINE_DIR . '/cache/' . $prefix . '.tmp');
+    else
+        return false;
 }
 function mozg_mass_clear_cache_file($prefix): void
 {
     $arr_prefix = explode('|', $prefix);
-    foreach ($arr_prefix as $file) @unlink(ENGINE_DIR . '/cache/' . $file . '.tmp');
+    foreach ($arr_prefix as $file)
+        if (is_file(ENGINE_DIR . '/cache/' . $file . '.tmp'))
+            Filesystem::delete(ENGINE_DIR . '/cache/' . $file . '.tmp');
+
 }
 
 /**
@@ -349,7 +360,7 @@ function mozg_create_folder_cache($prefix): void
 //        @mkdir(ROOT_DIR . '/system/cache/' . $prefix, 0777);
 //        @chmod(ROOT_DIR . '/system/cache/' . $prefix, 0777);
 //    }
-    createDir(ROOT_DIR . '/system/cache/' . $prefix);
+    Filesystem::createDir(ROOT_DIR . '/system/cache/' . $prefix);
 }
 function mozg_create_cache($prefix, $cache_text): false|int
 {
@@ -1124,7 +1135,8 @@ if (isset($_GET['act']) AND $_GET['act'] == 'change_fullver') {
     header('Location: /');
 }
 if (check_smartphone()) {
-    if ($_SESSION['mobile'] != 2) $config['temp'] = "mobile";
+    if ($_SESSION['mobile'] != 2)
+        $config['temp'] = "mobile";
     $check_smartphone = true;
 }
 if (isset($_SESSION['mobile']) AND $_SESSION['mobile'] == 1) {
@@ -1245,16 +1257,6 @@ function AntiSpamLogInsert(string $act, bool|string $text = false): void
         
     } elseif ($act == 'groups') {
         $db->query("INSERT INTO `antispam` SET act = '6', user_id = '{$user_info['user_id']}', date = '{$antiDate}'");
-    }
-}
-
-/**
- * @throws Exception
- */
-function createDir(string $dir, int $mode = 0777): void
-{
-    if (!is_dir($dir) && !mkdir($dir, $mode, true) && !is_dir($dir)) { // @ - dir may already exist
-        throw new Exception("Unable to create directory '$dir' with mode " );
     }
 }
 

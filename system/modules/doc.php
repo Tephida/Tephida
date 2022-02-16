@@ -41,7 +41,7 @@ if (Registry::get('logged')) {
                     $upload_dir = ROOT_DIR . "/uploads/doc/{$user_id}/";
 
                     //Если нет папки юзера, то создаём её
-                    createDir($upload_dir);
+                    Filesystem::createDir($upload_dir);
 
                     $downl_file_name = substr(md5($file_name . rand(0, 1000) . $server_time), 0, 25);
 
@@ -104,7 +104,7 @@ if (Registry::get('logged')) {
 
             if ($row['duser_id'] == $user_id) {
 
-                @unlink(ROOT_DIR . "/uploads/doc/{$user_id}/" . $row['ddownload_name']);
+                Filesystem::delete(ROOT_DIR . "/uploads/doc/{$user_id}/" . $row['ddownload_name']);
 
                 $db->query("DELETE FROM `doc` WHERE did = '{$did}'");
 

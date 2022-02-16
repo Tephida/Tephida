@@ -50,16 +50,16 @@ switch ($act) {
 
                             $db->query("UPDATE `users` SET user_delet = 1, user_photo = '',  user_active = 1, user_wall_id = '' " . $update_wall . " WHERE user_id = '" . $user_id . "'");
 
-                            @unlink($uploaddir . $row['user_photo']);
-                            @unlink($uploaddir . '50_' . $row['user_photo']);
-                            @unlink($uploaddir . '100_' . $row['user_photo']);
-                            @unlink($uploaddir . 'o_' . $row['user_photo']);
-                            @unlink($uploaddir . '130_' . $row['user_photo']);
+                            Filesystem::delete($uploaddir . $row['user_photo']);
+                            Filesystem::delete($uploaddir . '50_' . $row['user_photo']);
+                            Filesystem::delete($uploaddir . '100_' . $row['user_photo']);
+                            Filesystem::delete($uploaddir . 'o_' . $row['user_photo']);
+                            Filesystem::delete($uploaddir . '130_' . $row['user_photo']);
                         } else
                             $db->query("UPDATE `users` SET user_delet = 1,  user_active = 1, user_photo = '' WHERE user_id = '" . $user_id . "'");
 
                         mozg_clear_cache_file('user_' . $user_id . '/profile_' . $user_id);
-                    } //Воостановление пользователей
+                    } //Восстановление пользователей
                     else if ($mass_type == 7) {
                         $db->query("UPDATE `users` SET user_delet = 0 WHERE user_id = '" . $user_id . "'");
                         mozg_clear_cache_file('user_' . $user_id . '/profile_' . $user_id);
@@ -305,7 +305,7 @@ switch ($act) {
                         if ($row) {
                             $db->query("UPDATE `communities` SET del = '1', photo = '' WHERE id = '" . $id . "'");
                             if ($row['photo'])
-                                @unlink(ROOT_DIR . '/uploads/groups/' . $row['real_admin'] . '/' . $row['photo']);
+                                Filesystem::delete(ROOT_DIR . '/uploads/groups/' . $row['real_admin'] . '/' . $row['photo']);
                         }
                     }
                     msgbox('Информация', 'Выбранные сообщества успешно удалены', '?mod=groups');
@@ -319,7 +319,7 @@ switch ($act) {
                         if ($row) {
                             $db->query("UPDATE `communities` SET ban = '1', photo = '' WHERE id = '" . $id . "'");
                             if ($row['photo'])
-                                @unlink(ROOT_DIR . '/uploads/groups/' . $row['real_admin'] . '/' . $row['photo']);
+                                Filesystem::delete(ROOT_DIR . '/uploads/groups/' . $row['real_admin'] . '/' . $row['photo']);
                         }
                     }
                     msgbox('Информация', 'Выбранные сообщества успешно заблокированы', '?mod=groups');
@@ -414,7 +414,7 @@ switch ($act) {
                             //Удаляем фотку
                             $exp_photo = explode('/', $row['photo']);
                             $photo_name = end($exp_photo);
-                            @unlink(ROOT_DIR . '/uploads/videos/' . $row['owner_user_id'] . '/' . $photo_name);
+                            Filesystem::delete(ROOT_DIR . '/uploads/videos/' . $row['owner_user_id'] . '/' . $photo_name);
 
                             //Чистим кеш
                             mozg_mass_clear_cache_file("user_{$row['owner_user_id']}/page_videos_user|user_{$row['owner_user_id']}/page_videos_user_friends|user_{$row['owner_user_id']}/page_videos_user_all|user_{$row['owner_user_id']}/profile_{$row['owner_user_id']}|user_{$row['owner_user_id']}/videos_num_all|user_{$row['owner_user_id']}/videos_num_friends");
@@ -501,9 +501,9 @@ switch ($act) {
                             //Удаляем фотки из папки на сервере
                             $fdir = opendir(ROOT_DIR . '/uploads/users/' . $row['user_id'] . '/albums/' . $aid);
                             while ($file = readdir($fdir))
-                                @unlink(ROOT_DIR . '/uploads/users/' . $row['user_id'] . '/albums/' . $aid . '/' . $file);
+                                Filesystem::delete(ROOT_DIR . '/uploads/users/' . $row['user_id'] . '/albums/' . $aid . '/' . $file);
 
-                            @rmdir(ROOT_DIR . '/uploads/users/' . $row['user_id'] . '/albums/' . $aid);
+                            Filesystem::delete(ROOT_DIR . '/uploads/users/' . $row['user_id'] . '/albums/' . $aid);
                         }
 
                         //Обновлям кол-во альбом в юзера

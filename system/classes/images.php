@@ -31,18 +31,18 @@ class thumbnail
             $this->img['src'] = imagecreatefromgif($img_file);
         } else {
             echo "Not Supported File! Thumbnails can only be made from .jpg, gif and .png images! ";
-            unlink($img_file);
+            Filesystem::delete($img_file);
             exit();
         }
 
         if (!$this->img['src']) {
             echo "Not Supported File! Thumbnails can only be made from .jpg, gif and .png images!";
-            unlink($img_file);
+            Filesystem::delete($img_file);
             exit();
         }
 
-        $this->img['lebar'] = @imagesx($this->img['src']);
-        $this->img['tinggi'] = @imagesy($this->img['src']);
+        $this->img['lebar'] = imagesx($this->img['src']);
+        $this->img['tinggi'] = imagesy($this->img['src']);
         $this->img['lebar_thumb'] = $this->img['lebar'];
         $this->img['tinggi_thumb'] = $this->img['tinggi'];
         //default quality jpeg
@@ -198,7 +198,7 @@ class thumbnail
             imagesavealpha($this->img['des'], true);
         }
 
-        @imagecopyresampled($this->img['des'], $this->img['src'], 0, 0, 0, 0, $this->img['lebar_thumb'], $this->img['tinggi_thumb'], $this->img['lebar'], $this->img['tinggi']);
+        imagecopyresampled($this->img['des'], $this->img['src'], 0, 0, 0, 0, $this->img['lebar_thumb'], $this->img['tinggi_thumb'], $this->img['lebar'], $this->img['tinggi']);
 
         $this->img['src'] = $this->img['des'];
         return 1;

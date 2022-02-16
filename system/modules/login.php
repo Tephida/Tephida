@@ -18,8 +18,8 @@ if ($act == 'logout') {
     set_cookie("password", "", 0);
     set_cookie("hid", "", 0);
     unset($_SESSION['user_id']);
-    @session_destroy();
-    @session_unset();
+    session_destroy();
+    session_unset();
     $logged = false;
     Registry::set('logged', false);
     $user_info = array();
