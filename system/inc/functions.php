@@ -164,11 +164,6 @@ HTML;
 }
 function echohtmlend()
 {
-    echo <<<HTML
-<div style="color: red">fdhbdfbdf</div>
-
-HTML;
-
     global $admin_link;
 
     $admin_link = $admin_link ?? '';
