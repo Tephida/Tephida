@@ -98,7 +98,7 @@ if (Registry::get('logged')) {
 
         //################### Загрузка 110 друзей из списка ###################//
         case "load_friends":
-            $photo_id = intFilter(['photo_id');
+            $photo_id = intFilter('photo_id');
             $all_limit = 110;
             if (requestFilter('page') == 2)
                 $limit = $all_limit . ", " . ($all_limit * 2);

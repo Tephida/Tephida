@@ -50,7 +50,7 @@ if (Registry::get('logged')) {
             NoAjaxQuery();
             $for_user_id = intFilter('for_user_id');
             $gift = intFilter('gift');
-            $privacy = intFilter('privacy']);
+            $privacy = intFilter('privacy');
             if ($privacy < 0 or $privacy > 3)
                 $privacy = 1;
             $msg = requestFilter('msg');
@@ -130,7 +130,7 @@ if (Registry::get('logged')) {
         //################### Удаление подарка ###################//
         case "del":
             NoAjaxQuery();
-            $gid = intFilter('gid']);
+            $gid = intFilter('gid');
             $row = $db->super_query("SELECT uid FROM `gifts` WHERE gid = '{$gid}'");
             if ($user_id == $row['uid']) {
                 $db->query("DELETE FROM `gifts` WHERE gid = '{$gid}'");
