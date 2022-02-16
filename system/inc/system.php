@@ -18,8 +18,8 @@ if(isset($_POST['saveconf'])){
 	$find[] = "'\n'";
 	$replace[] = "";
 	
-	$handler = fopen(ENGINE_DIR.'/data/config.php', "w");
-	fwrite($handler, "<?php \n\n//System Configurations\n\n\$config = array (\n\n");
+	$handler = fopen(ENGINE_DIR . '/data/config.php', "w");
+    fwrite($handler, "<?php \n\n//System Configurations\n\nreturn array (\n\n");
 
 	foreach($saves as $name => $value ) {
 	
