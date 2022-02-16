@@ -620,13 +620,19 @@ if (Registry::get('logged')) {
                     if ($sql_) {
                         $tpl->load_template('friends/friend.tpl');
                         foreach ($sql_ as $row) {
-                            $user_country_city_name = explode('|', $row['user_country_city_name']);
-                            $tpl->set('{country}', $user_country_city_name[0]);
-
-                            if ($user_country_city_name[1])
-                                $tpl->set('{city}', ', ' . $user_country_city_name[1]);
-                            else
+                            if ($row['user_country_city_name'] == '' || $row['user_country_city_name'] == '|') {
+                                $tpl->set('{country}', '');
                                 $tpl->set('{city}', '');
+                            } else {
+                                $user_country_city_name = explode('|', $row['user_country_city_name']);
+                                $tpl->set('{country}', $user_country_city_name[0]);
+
+                                if ($user_country_city_name[1])
+                                    $tpl->set('{city}', ', ' . $user_country_city_name[1]);
+                                else
+                                    $tpl->set('{city}', '');
+                            }
+
 
                             $tpl->set('{user-id}', $row['friend_id']);
                             $tpl->set('{name}', $row['user_search_pref']);
@@ -653,9 +659,13 @@ if (Registry::get('logged')) {
                             OnlineTpl($row['user_last_visit'], $row['user_logged_mobile']);
 
                             //Возраст юзера
-                            $user_birthday = explode('-', $row['user_birthday']);
-                            $tpl->set('{age}', user_age($user_birthday[0], $user_birthday[1], $user_birthday[2]));
-
+                            if ($row['user_birthday'] == '0-0-0') {
+                                $tpl->set('{age}', '');
+                            } else {
+                                $user_birthday = explode('-', $row['user_birthday']);
+                                $tpl->set('{age}', user_age($user_birthday[0], $user_birthday[1], $user_birthday[2]));
+                            }
+                            
                             if ($get_user_id == $user_info['user_id']) {
                                 $tpl->set('[owner]', '');
                                 $tpl->set('[/owner]', '');
