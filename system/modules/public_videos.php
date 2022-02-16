@@ -38,7 +38,7 @@ if (Registry::get('logged')) {
                 $upload_dir = ROOT_DIR . '/uploads/videos/' . $user_id;
 
                 //Если нет папки юзера, то создаём её
-                createDir($upload_dir);
+                Filesystem::createDir($upload_dir);
 
                 $img_name_arr = end(explode(".", $row['photo']));
                 $expPhoto = substr(md5(time() . md5($row['photo'])), 0, 15) . '.' . $img_name_arr;

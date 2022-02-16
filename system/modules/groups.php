@@ -38,8 +38,8 @@ if (Registry::get('logged')) {
                 $db->query("INSERT INTO `friends` SET friend_id = '{$cid}', user_id = '{$user_id}', friends_date = NOW(), subscriptions = 2");
                 $db->query("UPDATE `users` SET user_public_num = user_public_num+1 WHERE user_id = '{$user_id}'");
 
-                createDir(ROOT_DIR . '/uploads/groups/' . $cid . '/');
-                createDir(ROOT_DIR . '/uploads/groups/' . $cid . '/photos/');
+                Filesystem::createDir(ROOT_DIR . '/uploads/groups/' . $cid . '/');
+                Filesystem::createDir(ROOT_DIR . '/uploads/groups/' . $cid . '/photos/');
                 mozg_mass_clear_cache_file("user_{$user_id}/profile_{$user_id}|groups/{$user_id}");
 
                 echo $cid;
@@ -516,7 +516,7 @@ if (Registry::get('logged')) {
 
                                 //Директория загрузки фото
                                 $upload_dir = ROOT_DIR . '/uploads/attach/' . $user_id;
-                                createDir($upload_dir);
+                                Filesystem::createDir($upload_dir);
 
                                 //Подключаем класс для фотографий
                                 include ENGINE_DIR . '/classes/images.php';

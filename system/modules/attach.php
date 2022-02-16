@@ -17,7 +17,7 @@ if (Registry::get('logged')) {
     $db = Registry::get('db');
     //Если нет папки альбома, то создаём её
     $album_dir = ROOT_DIR . "/uploads/attach/{$user_id}/";
-    createDir($album_dir);
+    Filesystem::createDir($album_dir);
 
     //Разрешенные форматы
     $allowed_files = array('jpg', 'jpeg', 'jpe', 'png', 'gif');

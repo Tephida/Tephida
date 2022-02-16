@@ -112,8 +112,8 @@ if (Registry::get('logged') == false) {
                 //Директория юзеров
                 $upload_dir = ROOT_DIR . '/uploads/users/';
 
-                createDir($upload_dir . $id);
-                createDir($upload_dir . $id . '/albums');
+                Filesystem::createDir($upload_dir . $id);
+                Filesystem::createDir($upload_dir . $id . '/albums');
 
                 //Если юзер регистрировался по ссылке, то начисляем юзеру 10 убм
                 $ref_id = $_SESSION['ref_id'] ?? null;

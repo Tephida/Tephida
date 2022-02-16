@@ -1,0 +1,1 @@
+<div class="msg_none">{error}</div>

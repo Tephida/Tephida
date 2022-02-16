@@ -76,7 +76,7 @@ if (Registry::get('logged')) {
                 if ($row) {
                     $uploaddir = ROOT_DIR . '/uploads/room/' . $room_id . '/';
                     try {
-                        createDir($uploaddir);
+                        Filesystem::createDir($uploaddir);
                     } catch (Exception $e) {
                     }
 

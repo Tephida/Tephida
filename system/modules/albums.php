@@ -108,10 +108,10 @@ if (Registry::get('logged')) {
 
                     //Если нет папок юзера, то создаём их
                     try {
-                        createDir($uploaddir . $user_id);
-                        createDir($uploaddir . $user_id . '/albums');
+                        Filesystem::createDir($uploaddir . $user_id);
+                        Filesystem::createDir($uploaddir . $user_id . '/albums');
                         //Если нет папки альбома, то создаём её
-                        createDir(ROOT_DIR . '/uploads/users/' . $user_id . '/albums/' . $aid . '/');
+                        Filesystem::createDir(ROOT_DIR . '/uploads/users/' . $user_id . '/albums/' . $aid . '/');
                     } catch (Exception $e) {
                         //
                     }

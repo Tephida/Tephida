@@ -30,8 +30,8 @@ if (Registry::get('logged')) {
             $uploaddir = ROOT_DIR . '/uploads/users/';
 
             //Если нет папок юзера, то создаём её
-            createDir($uploaddir . $user_id);
-            createDir($uploaddir . $user_id . '/albums');
+            Filesystem::createDir($uploaddir . $user_id);
+            Filesystem::createDir($uploaddir . $user_id . '/albums');
 
             //Разрешенные форматы
             $allowed_files = array('jpg', 'jpeg', 'jpe', 'png', 'gif');

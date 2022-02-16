@@ -11,6 +11,7 @@ const MOZG = true;
 define('ROOT_DIR', dirname(__FILE__));
 const ENGINE_DIR = ROOT_DIR . '/system';
 
+include './system/classes/Filesystem.php';
 include './system/functions.php';
 
 echo <<<HTML
@@ -78,29 +79,29 @@ if (!file_exists(ENGINE_DIR . '/data/config.php') or !file_exists(ENGINE_DIR . '
         );
 
         try {
-            createDir('./uploads/room/');
-            createDir('./uploads/records/');
-            createDir('./uploads/attach/');
-            createDir('./uploads/audio_tmp/');
-            createDir('./uploads/blog/');
-            createDir('./uploads/groups/');
-            createDir('./uploads/users/');
-            createDir('./uploads/videos/');
-            createDir('./uploads/audio/');
-            createDir('./uploads/doc/');
-            createDir('./uploads/apps/');
+            Filesystem::createDir('./uploads/room/');
+            Filesystem::createDir('./uploads/records/');
+            Filesystem::createDir('./uploads/attach/');
+            Filesystem::createDir('./uploads/audio_tmp/');
+            Filesystem::createDir('./uploads/blog/');
+            Filesystem::createDir('./uploads/groups/');
+            Filesystem::createDir('./uploads/users/');
+            Filesystem::createDir('./uploads/videos/');
+            Filesystem::createDir('./uploads/audio/');
+            Filesystem::createDir('./uploads/doc/');
+            Filesystem::createDir('./uploads/apps/');
 
-            createDir('./system/cache/');
-            createDir('./system/cache/groups/');
-            createDir('./system/cache/groups_forum/');
-            createDir('./system/cache/groups_mark/');
-            createDir('./system/cache/photos_mark/');
-            createDir('./system/cache/votes/');
-            createDir('./system/cache/wall/');
+            Filesystem::createDir('./system/cache/');
+            Filesystem::createDir('./system/cache/groups/');
+            Filesystem::createDir('./system/cache/groups_forum/');
+            Filesystem::createDir('./system/cache/groups_mark/');
+            Filesystem::createDir('./system/cache/photos_mark/');
+            Filesystem::createDir('./system/cache/votes/');
+            Filesystem::createDir('./system/cache/wall/');
 
-            createDir('./system/data/');
+            Filesystem::createDir('./system/data/');
 
-            createDir('./backup/');
+            Filesystem::createDir('./backup/');
 
         } catch (Exception $e) {
             echo '<div class="h2">Не удалось создать директории</div>';
@@ -317,6 +318,7 @@ const MOZG = true;
 define('ROOT_DIR', dirname (__FILE__));
 const ENGINE_DIR = ROOT_DIR . '/system';
 const ADMIN_DIR = ROOT_DIR . '/system/inc';
+include ENGINE_DIR . '/classes/Filesystem.php';
 include ADMIN_DIR.'/functions.php';
 \$config = settings_get();
 

@@ -43,7 +43,7 @@ if ($_GET['act'] == 'upload') {
                 $upDir = ROOT_DIR . '/uploads/apps/temp/' . $user_info['user_id'] . '/';
 
             //Если нет папок, то создаём их
-            createDir($upDir);
+            Filesystem::createDir($upDir);
 
             $rImg = $upDir . $image_rename . $res_type;
 
@@ -138,7 +138,7 @@ if ($_GET['act'] == 'upload_swf') {
                 $upDir = ROOT_DIR . '/uploads/apps/temp/' . $user_info['user_id'] . '/';
 
             //Если нет папок, то создаём их
-            createDir($upDir);
+            Filesystem::createDir($upDir);
 
             $rImg = $upDir . $image_rename . $res_type;
 
@@ -223,7 +223,7 @@ if ($_GET['act'] == 'upload_scrin') {
                 $upDir = ROOT_DIR . '/uploads/apps/temp/' . $user_info['user_id'] . '/';
 
             //Если нет папок, то создаём их
-            createDir($upDir);
+            Filesystem::createDir($upDir);
 
             $rImg = $upDir . $image_rename . $res_type;
 
@@ -365,7 +365,7 @@ if (isset($_POST['send'])) {
 
             //Создаем папку игры в uploads
             $gameDir = ROOT_DIR . '/uploads/apps/' . $id . '/';
-            createDir($gameDir);
+            Filesystem::createDir($gameDir);
 
             //Временна директория
             $upDir = ROOT_DIR . '/uploads/apps/temp/' . $user_info['user_id'] . '/';

@@ -360,7 +360,7 @@ function mozg_create_folder_cache($prefix): void
 //        @mkdir(ROOT_DIR . '/system/cache/' . $prefix, 0777);
 //        @chmod(ROOT_DIR . '/system/cache/' . $prefix, 0777);
 //    }
-    createDir(ROOT_DIR . '/system/cache/' . $prefix);
+    Filesystem::createDir(ROOT_DIR . '/system/cache/' . $prefix);
 }
 function mozg_create_cache($prefix, $cache_text): false|int
 {
@@ -1257,16 +1257,6 @@ function AntiSpamLogInsert(string $act, bool|string $text = false): void
         
     } elseif ($act == 'groups') {
         $db->query("INSERT INTO `antispam` SET act = '6', user_id = '{$user_info['user_id']}', date = '{$antiDate}'");
-    }
-}
-
-/**
- * @throws Exception
- */
-function createDir(string $dir, int $mode = 0777): void
-{
-    if (!is_dir($dir) && !mkdir($dir, $mode, true) && !is_dir($dir)) { // @ - dir may already exist
-        throw new InvalidArgumentException("Unable to create directory '$dir' with mode ");
     }
 }
 

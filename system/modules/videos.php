@@ -74,7 +74,7 @@ if (Registry::get('logged')) {
                     $upload_dir = ROOT_DIR . '/uploads/videos/' . $user_id;
 
                     //Если нет папки юзера, то создаём её
-                    createDir($upload_dir);
+                    Filesystem::createDir($upload_dir);
 
                     //Подключаем класс для фотографий
                     include ENGINE_DIR . '/classes/images.php';
@@ -680,7 +680,7 @@ if (Registry::get('logged')) {
                 $upload_dir = ROOT_DIR . '/uploads/videos/' . $user_id;
 
                 //Если нет папки юзера, то создаём её
-                createDir($upload_dir);
+                Filesystem::createDir($upload_dir);
 
                 $expPhoto = end(explode('/', $row['photo']));
                 @copy($row['photo'], ROOT_DIR . "/uploads/videos/{$user_id}/{$expPhoto}");

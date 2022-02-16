@@ -205,7 +205,7 @@ if (Registry::get('logged')) {
 
             if ($type == 'mp3' and $config['audio_mod_add'] == 'yes' and $file_size < 10000000) {
                 $audio_dir = ROOT_DIR . '/uploads/audio/' . $user_id . '/';
-                createDir($audio_dir);
+                Filesystem::createDir($audio_dir);
 
                 $res_type = '.' . $type;
                 if (move_uploaded_file($file_tmp, $audio_dir . $file_rename . $res_type)) {
