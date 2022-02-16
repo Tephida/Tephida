@@ -498,10 +498,19 @@ if (Registry::get('logged')) {
                         $tpl->set('{comm_num}', ($row['comm_num'] - 3) . ' ' . gram_record(($row['comm_num'] - 3), 'comments'));
                         $tpl->set('{num}', $row['comm_num']);
                         $tpl->set('{author}', $row['user_search_pref']);
-                        $author_info = explode('|', $row['user_country_city_name']);
-                        if ($author_info[0]) $tpl->set('{author-info}', $author_info[0]);
-                        else $tpl->set('{author-info}', '');
-                        if ($author_info[1]) $tpl->set('{author-info}', $author_info[0] . ', ' . $author_info[1] . '<br />');
+
+                        if ($row['user_country_city_name'] == '' || $row['user_country_city_name'] = ' |') {
+                            $tpl->set('{author-info}', '');
+                        } else {
+                            $author_info = explode('|', $row['user_country_city_name']);
+                            if ($author_info[0])
+                                $tpl->set('{author-info}', $author_info[0]);
+                            else
+                                $tpl->set('{author-info}', '');
+                            if ($author_info[1])
+                                $tpl->set('{author-info}', $author_info[0] . ', ' . $author_info[1] . '<br />');
+                        }
+
                         $date_str = megaDate(strtotime($row['date']), 1, 1);
                         $tpl->set('{date}', $date_str);
                         if ($uid == $user_info['user_id']) {
@@ -513,7 +522,7 @@ if (Registry::get('logged')) {
                             $tpl->set('[/not-owner]', '');
                             $tpl->set_block("'\\[owner\\](.*?)\\[/owner\\]'si", "");
                         }
-                        $tpl->set('{comments}', $tpl->result['comments']);
+                        $tpl->set('{comments}', $tpl->result['comments'] ?? '');
                         //Показываем стрелочки если фотографий больше одной и фотография вызвана не со стены
                         if ($row_album['photo_num'] > 1 && !$fuser) {
                             //Если фотография вызвана из альбом "все фотографии" или вызвана со страницы юзера
