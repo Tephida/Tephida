@@ -6,17 +6,19 @@
  *   file that was distributed with this source code.
  *
  */
-if(!defined('MOZG'))
-	die('Hacking attempt!');
+if (!defined('MOZG'))
+    die('Hacking attempt!');
+
+$config = settings_get();
 
 //Если сохраняем
-if(isset($_POST['saveconf'])){
-	$saves = $_POST['save'];
+if (isset($_POST['saveconf'])) {
+    $saves = $_POST['save'];
 
-	$find[] = "'\r'";
-	$replace[] = "";
-	$find[] = "'\n'";
-	$replace[] = "";
+    $find[] = "'\r'";
+    $replace[] = "";
+    $find[] = "'\n'";
+    $replace[] = "";
 	
 	$handler = fopen(ENGINE_DIR . '/data/config.php', "w");
     fwrite($handler, "<?php \n\n//System Configurations\n\nreturn array (\n\n");
@@ -51,204 +53,144 @@ if(isset($_POST['saveconf'])){
     msgbox('', 'Настройки системы были успешно сохранены!', 'info');
     echo $tpl->result['info'];
 } else {
-	echoheader();
-	echohtmlstart('Общие настройки');
 
-	//Чтение всех шаблон в папке "templates"
-	$root = './templates/';
-	$root_dir = scandir($root);
+
+    $tpl = initAdminTpl();
+
+    $tpl->load_template('settings/main.tpl');
+//    $tpl->set('{modules}', $tpl->result['modules']);
+    $tpl->set('{config_home}', $config['home']);
+    $tpl->set('{config_charset}', $config['charset']);
+    $tpl->set('{config_home_url}', $config['home_url']);
+
+
+    //Чтение всех шаблон в папке "templates"
+    $root = './templates/';
+    $root_dir = scandir($root);
     $for_select = '';
-	foreach($root_dir as $templates){
-		if($templates != '.' AND $templates != '..' AND $templates != '.htaccess')
-			$for_select .= str_replace('value="'.$config['temp'].'"', 'value="'.$config['temp'].'" selected', '<option value="'.$templates.'">'.$templates.'</option>');
-	}
-	
-	//Чтение всех языков
+    foreach ($root_dir as $templates) {
+        if ($templates != '.' and $templates != '..' and $templates != '.htaccess')
+            $for_select .= str_replace('value="' . $config['temp'] . '"', 'value="' . $config['temp'] . '" selected', '<option value="' . $templates . '">' . $templates . '</option>');
+    }
+
+    $tpl->set('{for_select}', $for_select);
+
+    $tpl->set('{config_online_time}', $config['online_time']);
+
+    //Чтение всех языков
     $root_dir2 = scandir('./lang/');
     $for_select_lang = '';
-	foreach($root_dir2 as $lang){
-		if($lang != '.' AND $lang != '..' AND $lang != '.htaccess')
-			$for_select_lang .= str_replace('value="'.$config['lang'].'"', 'value="'.$config['lang'].'" selected', '<option value="'.$lang.'">'.$lang.'</option>');
-	}
-	
-	//GZIP
-	$for_select_gzip = installationSelected($config['gzip'], '<option value="yes">Да</option><option value="no">Нет</option>');
-	
-	//GZIP JS
-	$for_select_gzip_js = installationSelected($config['gzip_js'], '<option value="yes">Да</option><option value="no">Нет</option>');
-	
-	//Offline
-	$for_select_offline = installationSelected($config['offline'], '<option value="yes">Да</option><option value="no">Нет</option>');
-	
-	$config['offline_msg'] = stripslashes($config['offline_msg']);
-	
-	echo <<<HTML
-<style type="text/css" media="all">
-.inpu{width:300px;}
-textarea{width:300px;height:100px;}
-</style>
+    foreach ($root_dir2 as $lang) {
+        if ($lang != '.' and $lang != '..' and $lang != '.htaccess')
+            $for_select_lang .= str_replace('value="' . $config['lang'] . '"', 'value="' . $config['lang'] . '" selected', '<option value="' . $lang . '">' . $lang . '</option>');
+    }
 
-<form method="POST" action="">
+    $tpl->set('{for_select_lang}', $for_select_lang);
 
-<div class="fllogall">Название сайта:</div><input type="text" name="save[home]" class="inpu" value="{$config['home']}" /><div class="mgcler"></div>
+    //GZIP
+    $for_select_gzip = installationSelected($config['gzip'], '<option value="yes">Да</option><option value="no">Нет</option>');
 
-<div class="fllogall">Используемая кодировка на сайте:</div><input type="text" name="save[charset]" class="inpu" value="{$config['charset']}" /><div class="mgcler"></div>
+    $tpl->set('{for_select_gzip}', $for_select_gzip);
 
-<div class="fllogall">Адрес сайта:</div><input type="text" name="save[home_url]" class="inpu" value="{$config['home_url']}" /><div class="mgcler"></div>
+    //GZIP JS
+    $for_select_gzip_js = installationSelected($config['gzip_js'], '<option value="yes">Да</option><option value="no">Нет</option>');
 
-<div class="fllogall">Шаблон сайта по умолчанию:</div><select name="save[temp]" class="inpu" style="width:auto">{$for_select}</select><div class="mgcler"></div>
+    $tpl->set('{for_select_gzip_js}', $for_select_gzip_js);
 
-<div class="fllogall">Время онлайна людей в секундах:</div><input type="text" name="save[online_time]" class="inpu" value="{$config['online_time']}" /><div class="mgcler"></div>
+    //Offline
+    $for_select_offline = installationSelected($config['offline'], '<option value="yes">Да</option><option value="no">Нет</option>');
 
-<div class="fllogall">Используемый язык:</div><select name="save[lang]" class="inpu" style="width:auto">{$for_select_lang}</select><div class="mgcler"></div>
+    $tpl->set('{for_select_offline}', $for_select_offline);
 
-<div class="fllogall">Включить Gzip сжатие HTML страниц:</div><select name="save[gzip]" class="inpu" style="width:auto">{$for_select_gzip}</select><div class="mgcler"></div>
+    $config['offline_msg'] = stripslashes($config['offline_msg']);
 
-<div class="fllogall">Включить Gzip сжатие JS файлов:</div><select name="save[gzip_js]" class="inpu" style="width:auto">{$for_select_gzip_js}</select><div class="mgcler"></div>
+    $tpl->set('{config_offline_msg}', $config['offline_msg']);
 
-<div class="fllogall">Выключить сайт:</div><select name="save[offline]" class="inpu" style="width:auto">{$for_select_offline}</select><div class="mgcler"></div>
+    $tpl->set('{config_lang_list}', $config['lang_list']);
+    $tpl->set('{config_bonus_rate}', $config['bonus_rate']);
+    $tpl->set('{config_cost_balance}', $config['cost_balance']);
 
-<div class="fllogall">Причина отключения сайта:</div><textarea class="inpu" name="save[offline_msg]">{$config['offline_msg']}</textarea>
 
-<div class="fllogall">Список используемых языков (название папок): <br /><br />пример: <b>Русский | Russian</b></div><textarea class="inpu" name="save[lang_list]">{$config['lang_list']}</textarea>
+    //Video mod
+//	echohtmlstart('<a name="video"></a>Настройки видео');
 
-<div class="fllogall">Бонусный рейтинг за подарок (цена подарка):</div><input type="text" name="save[bonus_rate]" class="inpu" value="{$config['bonus_rate']}" /><div class="mgcler"></div>
+    $for_select_video_mod = installationSelected($config['video_mod'], '<option value="yes">Да</option><option value="no">Нет</option>');
+    $for_select_video_mod_comm = installationSelected($config['video_mod_comm'], '<option value="yes">Да</option><option value="no">Нет</option>');
+    $for_select_video_mod_add = installationSelected($config['video_mod_add'], '<option value="yes">Да</option><option value="no">Нет</option>');
+    $for_select_video_mod_add_my = installationSelected($config['video_mod_add_my'], '<option value="yes">Да</option><option value="no">Нет</option>');
+    $for_select_video_mod_privat = installationSelected($config['video_mod_privat'], '<option value="yes">Да</option><option value="no">Нет</option>');
+    $for_select_video_mod_del = installationSelected($config['video_mod_del'], '<option value="yes">Да</option><option value="no">Нет</option>');
+    $for_select_video_mod_search = installationSelected($config['video_mod_search'], '<option value="yes">Да</option><option value="no">Нет</option>');
 
-<div class="fllogall">Стоимость 1 голоса:</div><input type="text" name="save[cost_balance]" class="inpu" value="{$config['cost_balance']}" /><div class="mgcler"></div>
-HTML;
+    $tpl->set('{for_select_video_mod}', $for_select_video_mod);
+    $tpl->set('{for_select_video_mod_comm}', $for_select_video_mod_comm);
+    $tpl->set('{for_select_video_mod_add}', $for_select_video_mod_add);
+    $tpl->set('{for_select_video_mod_add_my}', $for_select_video_mod_add_my);
+    $tpl->set('{for_select_video_mod_privat}', $for_select_video_mod_privat);
+    $tpl->set('{for_select_video_mod_del}', $for_select_video_mod_del);
+    $tpl->set('{for_select_video_mod_search}', $for_select_video_mod_search);
 
-	//Video mod
-	echohtmlstart('<a name="video"></a>Настройки видео');
+    //Audio mod
+    $for_select_audio_mod = installationSelected($config['audio_mod'], '<option value="yes">Да</option><option value="no">Нет</option>');
+    $for_select_audio_mod_add = installationSelected($config['audio_mod_add'], '<option value="yes">Да</option><option value="no">Нет</option>');
+    $for_select_audio_mod_add_my = installationSelected($config['audio_mod_add_my'], '<option value="yes">Да</option><option value="no">Нет</option>');
+    $for_select_audio_mod_search = installationSelected($config['audio_mod_search'], '<option value="yes">Да</option><option value="no">Нет</option>');
 
-	$for_select_video_mod = installationSelected($config['video_mod'], '<option value="yes">Да</option><option value="no">Нет</option>');
-	$for_select_video_mod_comm = installationSelected($config['video_mod_comm'], '<option value="yes">Да</option><option value="no">Нет</option>');
-	$for_select_video_mod_add = installationSelected($config['video_mod_add'], '<option value="yes">Да</option><option value="no">Нет</option>');
-	$for_select_video_mod_add_my = installationSelected($config['video_mod_add_my'], '<option value="yes">Да</option><option value="no">Нет</option>');
-	$for_select_video_mod_privat = installationSelected($config['video_mod_privat'], '<option value="yes">Да</option><option value="no">Нет</option>');
-	$for_select_video_mod_del = installationSelected($config['video_mod_del'], '<option value="yes">Да</option><option value="no">Нет</option>');
-	$for_select_video_mod_search = installationSelected($config['video_mod_search'], '<option value="yes">Да</option><option value="no">Нет</option>');
-	
-	echo <<<HTML
-<div class="fllogall">Выключить модуль:</div><select name="save[video_mod]" class="inpu" style="width:auto">{$for_select_video_mod}</select><div class="mgcler"></div>
-		
-<div class="fllogall">Разрешить комментирование видео:</div><select name="save[video_mod_comm]" class="inpu" style="width:auto">{$for_select_video_mod_comm}</select><div class="mgcler"></div>
-		
-<div class="fllogall">Разрешить добавление видео:</div><select name="save[video_mod_add]" class="inpu" style="width:auto">{$for_select_video_mod_add}</select><div class="mgcler"></div>
-		
-<div class="fllogall">Включить функцию "Добавить в Мои Видеозаписи":</div><select name="save[video_mod_add_my]" class="inpu" style="width:auto">{$for_select_video_mod_add_my}</select><div class="mgcler"></div>
+    $tpl->set('{for_select_audio_mod}', $for_select_audio_mod);
+    $tpl->set('{for_select_audio_mod_add}', $for_select_audio_mod_add);
+    $tpl->set('{for_select_audio_mod_add_my}', $for_select_audio_mod_add_my);
+    $tpl->set('{for_select_audio_mod_search}', $for_select_audio_mod_search);
 
-<div class="fllogall">Разрешить поиск по видео:</div><select name="save[video_mod_search]" class="inpu" style="width:auto">{$for_select_video_mod_search}</select>
-HTML;
+    //Photo mod
+    $for_select_album_mod = installationSelected($config['album_mod'], '<option value="yes">Да</option><option value="no">Нет</option>');
+    $for_select_albums_drag = installationSelected($config['albums_drag'], '<option value="yes">Да</option><option value="no">Нет</option>');
+    $for_select_photos_drag = installationSelected($config['photos_drag'], '<option value="yes">Да</option><option value="no">Нет</option>');
+    $for_select_photos_comm = installationSelected($config['photos_comm'], '<option value="yes">Да</option><option value="no">Нет</option>');
+    $for_select_photos_load = installationSelected($config['photos_load'], '<option value="yes">Да</option><option value="no">Нет</option>');
 
-	//Audio mod
-	echohtmlstart('<a name="audio"></a>Настройки аудио');
+    $tpl->set('{config_max_albums}', $config['max_albums']);
+    $tpl->set('{config_max_album_photos}', $config['max_album_photos']);
+    $tpl->set('{config_max_photo_size}', $config['max_photo_size']);
+    $tpl->set('{config_photo_format}', $config['photo_format']);
 
-	$for_select_audio_mod = installationSelected($config['audio_mod'], '<option value="yes">Да</option><option value="no">Нет</option>');
-	$for_select_audio_mod_add = installationSelected($config['audio_mod_add'], '<option value="yes">Да</option><option value="no">Нет</option>');
-	$for_select_audio_mod_add_my = installationSelected($config['audio_mod_add_my'], '<option value="yes">Да</option><option value="no">Нет</option>');
-	$for_select_audio_mod_search = installationSelected($config['audio_mod_search'], '<option value="yes">Да</option><option value="no">Нет</option>');
+    $tpl->set('{config_rate_price}', $config['rate_price']);
+    $tpl->set('{for_select_album_mod}', $for_select_album_mod);
+    $tpl->set('{for_select_albums_drag}', $for_select_albums_drag);
+    $tpl->set('{for_select_photos_drag}', $for_select_photos_drag);
+    $tpl->set('{for_select_photos_comm}', $for_select_photos_comm);
+    $tpl->set('{for_select_photos_load}', $for_select_photos_load);
+    $tpl->set('{config_rate_price}', $config['rate_price']);
 
-	echo <<<HTML
-<div class="fllogall">Выключить модуль:</div><select name="save[audio_mod]" class="inpu" style="width:auto">{$for_select_audio_mod}</select><div class="mgcler"></div>
+    //E-mail
+    $for_select_mail_metod = installationSelected($config['mail_metod'], '<option value="php">PHP Mail()</option><option value="smtp">SMTP</option>');
 
-<div class="fllogall">Разрешить добавление музыки:</div><select name="save[audio_mod_add]" class="inpu" style="width:auto">{$for_select_audio_mod_add}</select><div class="mgcler"></div>
+    $tpl->set('{for_select_mail_metod}', $for_select_mail_metod);
 
-<div class="fllogall">Разрешить поиск по музыке:</div><select name="save[audio_mod_search]" class="inpu" style="width:auto">{$for_select_audio_mod_search}</select>
-HTML;
+    $tpl->set('{config_admin_mail}', $config['admin_mail']);
+    $tpl->set('{config_smtp_host}', $config['smtp_host']);
+    $tpl->set('{config_smtp_port}', $config['smtp_port']);
+    $tpl->set('{config_smtp_user}', $config['smtp_user']);
+    $tpl->set('{config_smtp_pass}', $config['smtp_pass']);
 
-	//Photo mod
-	echohtmlstart('<a name="photos"></a>Настройки фото');
-	
-	$for_select_album_mod = installationSelected($config['album_mod'], '<option value="yes">Да</option><option value="no">Нет</option>');
-	$for_select_albums_drag = installationSelected($config['albums_drag'], '<option value="yes">Да</option><option value="no">Нет</option>');
-	$for_select_photos_drag = installationSelected($config['photos_drag'], '<option value="yes">Да</option><option value="no">Нет</option>');
-	$for_select_photos_comm = installationSelected($config['photos_comm'], '<option value="yes">Да</option><option value="no">Нет</option>');
-	$for_select_photos_load = installationSelected($config['photos_load'], '<option value="yes">Да</option><option value="no">Нет</option>');
+    //Настройки E-mail оповещаний
+    $for_select_news_mail_1 = installationSelected($config['news_mail_1'], '<option value="yes">Да</option><option value="no">Нет</option>');
+    $for_select_news_mail_2 = installationSelected($config['news_mail_2'], '<option value="yes">Да</option><option value="no">Нет</option>');
+    $for_select_news_mail_3 = installationSelected($config['news_mail_3'], '<option value="yes">Да</option><option value="no">Нет</option>');
+    $for_select_news_mail_4 = installationSelected($config['news_mail_4'], '<option value="yes">Да</option><option value="no">Нет</option>');
+    $for_select_news_mail_5 = installationSelected($config['news_mail_5'], '<option value="yes">Да</option><option value="no">Нет</option>');
+    $for_select_news_mail_6 = installationSelected($config['news_mail_6'], '<option value="yes">Да</option><option value="no">Нет</option>');
+    $for_select_news_mail_7 = installationSelected($config['news_mail_7'], '<option value="yes">Да</option><option value="no">Нет</option>');
+    $for_select_news_mail_8 = installationSelected($config['news_mail_8'], '<option value="yes">Да</option><option value="no">Нет</option>');
 
-	echo <<<HTML
-<div class="fllogall">Выключить модуль "Альбомы":</div><select name="save[album_mod]" class="inpu" style="width:auto">{$for_select_album_mod}</select><div class="mgcler"></div>
+    $tpl->set('{for_select_news_mail_1}', $for_select_news_mail_1);
+    $tpl->set('{for_select_news_mail_2}', $for_select_news_mail_2);
+    $tpl->set('{for_select_news_mail_3}', $for_select_news_mail_3);
+    $tpl->set('{for_select_news_mail_4}', $for_select_news_mail_4);
+    $tpl->set('{for_select_news_mail_5}', $for_select_news_mail_5);
+    $tpl->set('{for_select_news_mail_6}', $for_select_news_mail_6);
+    $tpl->set('{for_select_news_mail_7}', $for_select_news_mail_7);
+    $tpl->set('{for_select_news_mail_8}', $for_select_news_mail_8);
 
-<div class="fllogall">Максимальное количество альбомов:</div><input type="text" name="save[max_albums]" class="inpu" value="{$config['max_albums']}" /><div class="mgcler"></div>
-
-<div class="fllogall">Максимальное количество фото в один альбом:</div><input type="text" name="save[max_album_photos]" class="inpu" value="{$config['max_album_photos']}" /><div class="mgcler"></div>
-
-<div class="fllogall">Максимальный размер загужаемой фотографии (кб):</div><input type="text" name="save[max_photo_size]" class="inpu" value="{$config['max_photo_size']}" /><div class="mgcler"></div>
-
-<div class="fllogall">Расширение фотографий, допустимых к загрузке:<br /><small>Например: <b>jpg, jpeg, png</b></small></div><input type="text" name="save[photo_format]" class="inpu" value="{$config['photo_format']}" /><div class="mgcler"></div>
-
-<div class="fllogall">Разрешить менять порядок альбомов:</div><select name="save[albums_drag]" class="inpu" style="width:auto">{$for_select_albums_drag}</select><div class="mgcler"></div>
-
-<div class="fllogall">Разрешить менять порядок фотографий:</div><select name="save[photos_drag]" class="inpu" style="width:auto">{$for_select_photos_drag}</select><div class="mgcler"></div>
-
-<div class="fllogall">Стоимость оценки <b>5+</b>:</div><input type="text" name="save[rate_price]" class="inpu" value="{$config['rate_price']}" /><div class="mgcler"></div>
-HTML;
-
-	//E-mail
-	echohtmlstart('Настройки E-Mail');
-	
-	$for_select_mail_metod = installationSelected($config['mail_metod'], '<option value="php">PHP Mail()</option><option value="smtp">SMTP</option>');
-		
-	echo <<<HTML
-<div class="fllogall">E-Mail адрес администратора:</div><input type="text" name="save[admin_mail]" class="inpu" value="{$config['admin_mail']}" /><div class="mgcler"></div>
-
-<div class="fllogall">Метод отправки почты:</div><select name="save[mail_metod]" class="inpu" style="width:auto">{$for_select_mail_metod}</select><div class="mgcler"></div>
-
-<div class="fllogall">SMTP хост:</div><input type="text" name="save[smtp_host]" class="inpu" value="{$config['smtp_host']}" /><div class="mgcler"></div>
-
-<div class="fllogall">SMTP порт:</div><input type="text" name="save[smtp_port]" class="inpu" value="{$config['smtp_port']}" /><div class="mgcler"></div>
-
-<div class="fllogall">SMTP Имя Пользователя:</div><input type="text" name="save[smtp_user]" class="inpu" value="{$config['smtp_user']}" /><div class="mgcler"></div>
-
-<div class="fllogall">SMTP Пароль:</div><input type="text" name="save[smtp_pass]" class="inpu" value="{$config['smtp_pass']}" /><div class="mgcler"></div>
-HTML;
-
-	//Настройки E-mail оповещаний
-	echohtmlstart('Настройки E-Mail оповещаний');
-	
-	$for_select_news_mail_1 = installationSelected($config['news_mail_1'], '<option value="yes">Да</option><option value="no">Нет</option>');
-	$for_select_news_mail_2 = installationSelected($config['news_mail_2'], '<option value="yes">Да</option><option value="no">Нет</option>');
-	$for_select_news_mail_3 = installationSelected($config['news_mail_3'], '<option value="yes">Да</option><option value="no">Нет</option>');
-	$for_select_news_mail_4 = installationSelected($config['news_mail_4'], '<option value="yes">Да</option><option value="no">Нет</option>');
-	$for_select_news_mail_5 = installationSelected($config['news_mail_5'], '<option value="yes">Да</option><option value="no">Нет</option>');
-	$for_select_news_mail_6 = installationSelected($config['news_mail_6'], '<option value="yes">Да</option><option value="no">Нет</option>');
-	$for_select_news_mail_7 = installationSelected($config['news_mail_7'], '<option value="yes">Да</option><option value="no">Нет</option>');
-	$for_select_news_mail_8 = installationSelected($config['news_mail_8'], '<option value="yes">Да</option><option value="no">Нет</option>');
-
-	echo <<<HTML
-
-<div class="fllogall">Включить уведомление при новой заявки в друзья:</div><select name="save[news_mail_1]" class="inpu" style="width:auto">{$for_select_news_mail_1}</select><div class="mgcler"></div>
-
-<div class="fllogall">Включить уведомление при ответе на запись:</div><select name="save[news_mail_2]" class="inpu" style="width:auto">{$for_select_news_mail_2}</select><div class="mgcler"></div>
-
-<div class="fllogall">Включить уведомление при комментировании видео:</div><select name="save[news_mail_3]" class="inpu" style="width:auto">{$for_select_news_mail_3}</select><div class="mgcler"></div>
-
-<div class="fllogall">Включить уведомление при комментировании фото:</div><select name="save[news_mail_4]" class="inpu" style="width:auto">{$for_select_news_mail_4}</select><div class="mgcler"></div>
-
-<div class="fllogall">Включить уведомление при комментировании заметки:</div><select name="save[news_mail_5]" class="inpu" style="width:auto">{$for_select_news_mail_5}</select><div class="mgcler"></div>
-
-<div class="fllogall">Включить уведомление при новом подарке:</div><select name="save[news_mail_6]" class="inpu" style="width:auto">{$for_select_news_mail_6}</select><div class="mgcler"></div>
-
-<div class="fllogall">Включить уведомление при новой записи на стене:</div><select name="save[news_mail_7]" class="inpu" style="width:auto">{$for_select_news_mail_7}</select><div class="mgcler"></div>
-
-<div class="fllogall">Включить уведомление при новом персональном сообщении:</div><select name="save[news_mail_8]" class="inpu" style="width:auto">{$for_select_news_mail_8}</select><div class="mgcler"></div>
-HTML;
-
-	//Настройки пополнения через SMS
-	echohtmlstart('Настройки пополнения через SMS (smsbill.ru)');
-	
-	echo <<<HTML
-<div class="fllogall">Кодовое слово:</div><input type="text" name="save[code_word]" class="inpu" value="{$config['code_word']}" /><div class="mgcler"></div>
-
-<div class="fllogall">Короткий номер для оплаты:</div><input type="text" name="save[sms_number]" class="inpu" value="{$config['sms_number']}" /><div class="mgcler"></div>
-HTML;
-
-	echo <<<HTML
-
-<div class="fllogall">&nbsp;</div><input type="submit" value="Сохранить" name="saveconf" class="inp" style="margin-top:0px" />
-
-</form>
-HTML;
-
-	htmlclear();
-	echohtmlend();
+    $tpl->compile('content');
+    compileAdmin($tpl);
 }

@@ -226,7 +226,7 @@ if (Registry::get('logged')) {
                 else
                     $tpl->set('{ava}', '{theme}/images/no_ava_50.png');
 
-                $tpl->set('{answers}', $tpl->result['answers']);
+                $tpl->set('{answers}', $tpl->result['answers'] ?? '');
                 $tpl->compile('content');
             } else {
                 $speedbar = $lang['error'];

@@ -19,7 +19,7 @@ if (Registry::get('logged')) {
     if ($month and $month <= 0 or $month > 12) $month = 1;
 
     $year = intFilter('y');
-    if ($year and $year < 2013 or $year > 2020) $year = 2013;
+    if ($year and $year < 2022 or $year > 2030) $year = 2022;
 
     if ($month and $year) {
 
@@ -114,7 +114,16 @@ if (Registry::get('logged')) {
     $tpl->set('{uid}', $user_info['user_id']);
 
     $tpl->set('{months}', installationSelected($month, '<option value="1">Январь</option><option value="2">Февраль</option><option value="3">Март</option><option value="4">Апрель</option><option value="5">Май</option><option value="6">Июнь</option><option value="7">Июль</option><option value="8">Август</option><option value="9">Сентябрь</option><option value="10">Октябрь</option><option value="11">Ноябрь</option><option value="12">Декабрь</option>'));
-    $tpl->set('{year}', installationSelected($year, '<option value="2013">2013</option><option value="2014">2014</option><option value="2015">2015</option><option value="2016">2016</option><option value="2017">2017</option><option value="2018">2018</option><option value="2019">2019</option><option value="2020">2020</option>'));
+    $tpl->set('{year}', installationSelected($year, '
+<option value="2013">2022</option>
+<option value="2014">2023</option>
+<option value="2015">2024</option>
+<option value="2016">2025</option>
+<option value="2017">2026</option>
+<option value="2018">2027</option>
+<option value="2019">2028</option>
+<option value="2019">2029</option>
+<option value="2020">2030</option>'));
 
     $tpl->compile('content');
 

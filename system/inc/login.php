@@ -23,6 +23,7 @@ if (isset($_GET['act']) and $_GET['act'] == 'logout') {
     @session_destroy();
     @session_unset();
     $logged = false;
+    Registry::set('logged', false);
     $user_info = array();
     header("Location: {$admin_link}");
     die();
@@ -31,6 +32,7 @@ if (isset($_GET['act']) and $_GET['act'] == 'logout') {
 //Если есть данные сесии
 if (isset($_SESSION['user_id']) > 0) {
     $logged = true;
+    Registry::set('logged', true);
     $logged_user_id = intval($_SESSION['user_id']);
     $user_info = $db->super_query("SELECT user_id, user_email, user_group, user_password FROM `users` WHERE user_id = '" . $logged_user_id . "'");
 
@@ -51,13 +53,16 @@ if (isset($_SESSION['user_id']) > 0) {
         $db->query("UPDATE `log` SET browser = '" . $_BROWSER . "', ip = '" . $_IP . "' WHERE uid = '" . $user_info['user_id'] . "'");
 
         $logged = true;
+        Registry::set('logged', true);
     } else {
         $user_info = array();
         $logged = false;
+        Registry::set('logged', false);
     }
 } else {
     $user_info = array();
     $logged = false;
+    Registry::set('logged', false);
 }
 
 //Если данные поступили через пост и пользователь не авторизован

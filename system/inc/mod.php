@@ -79,11 +79,7 @@ switch ($mod) {
     case "groups":
         include 'groups.php';
         break;
-    //Шаблоны сайта
 
-    case "tpl":
-        include 'tpl.php';
-        break;
     //Шаблоны сообщений
 
     case "mail_tpl":
@@ -120,6 +116,10 @@ switch ($mod) {
 
     case "stats":
         include 'stats.php';
+        break;
+
+    case "webstats":
+        include 'webstats.php';
         break;
     //Видео
 
