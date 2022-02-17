@@ -12,6 +12,7 @@ if (!defined('MOZG'))
 if (Registry::get('logged')) {
 
     $act = requestFilter('act');
+    $user_info = $user_info ?? Registry::get('user_info');
     $user_id = $user_info['user_id'];
     $server_time = Registry::get('server_time');
     $db = Registry::get('db');
@@ -32,6 +33,7 @@ if (Registry::get('logged')) {
         //################## Сохранение отредактированной фотки ##################//
         default:
 
+            $config = settings_get();
             //Разрешенные форматы
             $allowed_files = explode(', ', $config['photo_format']);
 

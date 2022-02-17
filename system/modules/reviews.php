@@ -14,6 +14,7 @@ NoAjaxQuery();
 $act = requestFilter('act');
 $server_time = Registry::get('server_time');
 $db = Registry::get('db');
+$user_info = $user_info ?? Registry::get('user_info');
 
 switch ($act) {
 
@@ -78,8 +79,8 @@ switch ($act) {
                 $tpl->set('{name}', $row['user_search_pref']);
                 $tpl->set('{user_id}', $row['user_id']);
                 $tpl->set('{text}', stripslashes($row['text']));
-                megaDate($row['date']);
-
+                $date_str = megaDate($row['date']);
+                $tpl->set('{date}', $date_str);
                 if ($row['user_photo'])
                     $tpl->set('{ava}', '/uploads/users/' . $row['user_id'] . '/50_' . $row['user_photo']);
                 else

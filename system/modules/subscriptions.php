@@ -14,6 +14,7 @@ NoAjaxQuery();
 if (Registry::get('logged')) {
     $db = Registry::get('db');
     $act = requestFilter('act');
+    $user_info = $user_info ?? Registry::get('user_info');
     $user_id = $user_info['user_id'];
     $server_time = Registry::get('server_time');
 
@@ -94,6 +95,7 @@ if (Registry::get('logged')) {
                 $tpl->compile('content');
 
                 $tpl->load_template('profile_friends.tpl');
+                $config = settings_get();
                 foreach ($sql_ as $row) {
                     if ($row['user_photo'])
                         $tpl->set('{ava}', $config['home_url'] . 'uploads/users/' . $row['friend_id'] . '/50_' . $row['user_photo']);

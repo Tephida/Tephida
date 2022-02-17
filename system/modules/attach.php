@@ -13,6 +13,7 @@ NoAjaxQuery();
 
 if (Registry::get('logged')) {
     $server_time = Registry::get('server_time');
+    $user_info = $user_info ?? Registry::get('user_info');
     $user_id = $user_info['user_id'];
     $db = Registry::get('db');
     //Если нет папки альбома, то создаём её
@@ -53,7 +54,7 @@ if (Registry::get('logged')) {
                 //Вставляем фотографию
                 $db->query("INSERT INTO `attach` SET photo = '{$image_rename}{$res_type}', ouser_id = '{$user_id}', add_date = '{$server_time}'");
                 $ins_id = $db->insert_id();
-
+                $config = settings_get();
                 $img_url = $config['home_url'] . 'uploads/attach/' . $user_id . '/c_' . $image_rename . $res_type;
 
                 //Результат для ответа

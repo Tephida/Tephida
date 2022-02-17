@@ -13,6 +13,7 @@ NoAjaxQuery();
 
 if (Registry::get('logged')) {
     $act = requestFilter('act');
+    $user_info = $user_info ?? Registry::get('user_info');
     $user_id = $user_info['user_id'];
     $server_time = Registry::get('server_time');
     $db = Registry::get('db');
@@ -126,7 +127,7 @@ if (Registry::get('logged')) {
                 $friend = null;
                 $added_script = null;
             }
-
+            $config = settings_get();
             echo <<<HTML
 <script type="text/javascript" src="/templates/{$config['temp']}/js/fave.filter.js"></script>
 <script type="text/javascript">

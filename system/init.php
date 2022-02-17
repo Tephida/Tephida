@@ -7,7 +7,7 @@
  *
  */
 if (!defined('MOZG')) die('Hacking attempt!');
-include ENGINE_DIR . '/classes/Filesystem.php';
+
 include ENGINE_DIR . '/functions.php';
 
 try {
@@ -77,7 +77,7 @@ define('TEMPLATE_DIR', $tpl->dir);
 $_DOCUMENT_DATE = false;
 Registry::set('server_time', time());
 
-include ENGINE_DIR . '/modules/login.php';
+include ENGINE_DIR . '/login.php';
 
 if ($config['offline'] == "yes") include ENGINE_DIR . '/modules/offline.php';
 

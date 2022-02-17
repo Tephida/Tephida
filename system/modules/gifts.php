@@ -13,6 +13,7 @@ NoAjaxQuery();
 
 if (Registry::get('logged')) {
     $act = requestFilter('act');
+    $user_info = $user_info ?? Registry::get('user_info');
     $user_id = $user_info['user_id'];
     $server_time = Registry::get('server_time');
     $db = Registry::get('db');
@@ -25,7 +26,7 @@ if (Registry::get('logged')) {
             $for_user_id = intFilter('user_id');
 
             $sql_ = $db->super_query("SELECT gid, img, price FROM `gifts_list` ORDER by `gid` DESC", true);
-
+            $config = settings_get();
             foreach ($sql_ as $gift) {
 
                 if ($config['temp'] == 'mobile')
@@ -95,7 +96,7 @@ if (Registry::get('logged')) {
                     }
 
                     mozg_mass_clear_cache_file("user_{$for_user_id}/profile_{$for_user_id}|user_{$for_user_id}/gifts");
-
+                    $config = settings_get();
                     //Если цена подарка выше бонусного, то начисляем цену подарка на рейтинг
                     if ($gifts['price'] > $config['bonus_rate']) {
 
@@ -209,7 +210,8 @@ if (Registry::get('logged')) {
                         $tpl->set('[/link]', '');
                     }
                     $tpl->set('{gift}', $row['gift']);
-                    megaDate($row['gdate'], 1, 1);
+                    $date_str = megaDate($row['gdate'], 1, 1);
+                    $tpl->set('{date}', $date_str);
                     $tpl->set('[privacy]', '');
                     $tpl->set('[/privacy]', '');
                     if ($row['privacy'] == 3 and $user_id == $uid) {

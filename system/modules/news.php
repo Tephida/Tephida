@@ -12,6 +12,7 @@ if (!defined('MOZG'))
 NoAjaxQuery();
 
 if (Registry::get('logged')) {
+    $user_info = $user_info ?? Registry::get('user_info');
     $user_id = $user_info['user_id'];
     $limit_news = 20;
     $server_time = Registry::get('server_time');
@@ -144,7 +145,7 @@ if (Registry::get('logged')) {
             }
 
             //Выводим данные о том кто инсцинировал действие
-            if ($row['user_sex'] == 2) {
+            if (!empty($row['user_sex']) and $row['user_sex'] == 2) {
                 $sex_text = 'добавила';
                 $sex_text_2 = 'ответила';
                 $sex_text_3 = 'оценила';
@@ -158,7 +159,7 @@ if (Registry::get('logged')) {
 
             $tpl->set('{author}', $row['user_search_pref']);
             $tpl->set('{author-id}', $row['ac_user_id']);
-            OnlineTpl($row['user_last_visit'], $row['user_logged_mobile']);
+            OnlineTpl(($row['user_last_visit'] ?? time()), ($row['user_logged_mobile'] ?? false));
 
             if ($row['action_type'] != 11)
                 if ($row['user_photo'])
@@ -172,7 +173,8 @@ if (Registry::get('logged')) {
                     $tpl->set('{ava}', '{theme}/images/no_ava_50.png');
 
             //Выводим данные о действии
-            megaDate($row['action_time'], 1, 1);
+            $date_str = megaDate($row['action_time'], 1, 1);
+            $tpl->set('{date}', $date_str);
             $tpl->set('{comment}', stripslashes($row['action_text']));
             $tpl->set('{news-id}', $row['ac_id']);
 
@@ -1325,7 +1327,8 @@ HTML;
                             $row_comments['text'] = preg_replace('`(http(?:s)?://\w+[^\s\[\]\<]+)`i', '<a href="/away.php?url=$1" target="_blank">$1</a>', $row_comments['text']);
 
                             $tpl->set('{text}', stripslashes($row_comments['text']));
-                            megaDate($row_comments['add_date']);
+                            $date_str = megaDate($row_comments['add_date']);
+                            $tpl->set('{date}', $date_str);
                             if ($user_id == $row_comments['author_user_id']) {
                                 $tpl->set('[owner]', '');
                                 $tpl->set('[/owner]', '');
@@ -1749,7 +1752,8 @@ HTML;
                             $row_comments['text'] = preg_replace('`(http(?:s)?://\w+[^\s\[\]\<]+)`i', '<a href="/away.php?url=$1" target="_blank">$1</a>', $row_comments['text']);
 
                             $tpl->set('{text}', stripslashes($row_comments['text']));
-                            megaDate($row_comments['add_date']);
+                            $date_str = megaDate($row_comments['add_date']);
+                            $tpl->set('{date}', $date_str);
                             if ($user_id == $row_comments['public_id']) {
                                 $tpl->set('[owner]', '');
                                 $tpl->set('[/owner]', '');

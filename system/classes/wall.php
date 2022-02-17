@@ -12,11 +12,11 @@ class wall
 {
 
     public array|bool|null $query = false;
-    public $template = false;
-    public $compile = false;
-    public $comm_query = false;
-    public $comm_template = false;
-    public $comm_compile = false;
+    public false|string $template = false;
+    public false|string $compile = false;
+    public array|bool|null $comm_query = false;
+    public false|string $comm_template = false;
+    public false|string $comm_compile = false;
 
     function query($query)
     {
@@ -42,7 +42,7 @@ class wall
     {
         global $tpl, $config, $user_id, $id, $for_user_id, $user_privacy, $check_friend, $user_info;
         $db = Registry::get('db');
-        $this->template;
+//        $this->template;
         foreach ($this->query as $row_wall) {
             $tpl->set('{rec-id}', $row_wall['id']);
 
@@ -81,17 +81,13 @@ class wall
 
                         if ($attach_type[1] == 'attach' and file_exists(ROOT_DIR . "/uploads/attach/{$attauthor_user_id}/c_{$attach_type[2]}")) {
 
+                            $rodImHeigh = $rodImHeigh ?? null;
+
                             if ($cnt_attach == 1)
-
                                 $attach_result .= "<div class=\"profile_wall_attach_photo cursor_pointer page_num{$row_wall['id']}\" onClick=\"groups.wall_photo_view('{$row_wall['id']}', '{$attauthor_user_id}', '{$attach_type[1]}', '{$cnt_attach}', 'photo_u')\"><img id=\"photo_wall_{$row_wall['id']}_{$cnt_attach}\" src=\"/uploads/attach/{$attauthor_user_id}/{$attach_type[2]}\" align=\"left\" /></div>";
-
                             else
-
                                 $attach_result .= "<img id=\"photo_wall_{$row_wall['id']}_{$cnt_attach}\" src=\"/uploads/attach/{$attauthor_user_id}/c_{$attach_type[2]}\" style=\"margin-top:3px;margin-right:3px\" align=\"left\" onClick=\"groups.wall_photo_view('{$row_wall['id']}', '', '{$attach_type[1]}', '{$cnt_attach}')\" class=\"cursor_pointer page_num{$row_wall['id']}\" height=\"{$rodImHeigh}\" />";
-
-
                             $cnt_attach++;
-
 
                         } elseif (file_exists(ROOT_DIR . "/uploads/users/{$attauthor_user_id}/albums/{$attach_type[2]}/c_{$attach_type[1]}")) {
 
@@ -239,11 +235,12 @@ class wall
 
                                 } else {
 
-                                    $num = $answer[$ai]['cnt'];
+                                    $num = $answer[$ai]['cnt'] ?? 0;
 
-                                    if (!$num) $num = 0;
-                                    if ($max != 0) $proc = (100 * $num) / $max;
-                                    else $proc = 0;
+                                    if ($max != 0)
+                                        $proc = (100 * $num) / $max;
+                                    else
+                                        $proc = 0;
                                     $proc = round($proc, 2);
 
                                     $attach_result .= "<div class=\"wall_vote_oneanswe cursor_default\">
@@ -271,6 +268,9 @@ class wall
                         $attach_result .= '';
 
                 }
+
+                $resLinkTitle = $resLinkTitle ?? '';
+                $resLinkUrl = $resLinkUrl ?? '';
 
                 if ($resLinkTitle and $row_wall['text'] == $resLinkUrl or !$row_wall['text'])
                     $row_wall['text'] = $resLinkTitle . $attach_result;
@@ -328,7 +328,9 @@ HTML;
             $tpl->set('{name}', $row_wall['user_search_pref']);
             $tpl->set('{user-id}', $row_wall['author_user_id']);
             OnlineTpl($row_wall['user_last_visit'], $row_wall['user_logged_mobile']);
-            megaDate($row_wall['add_date']);
+            $date_str = megaDate(intval($row_wall['add_date']));
+
+            $tpl->set('{date}', $date_str);
 
             if ($row_wall['user_photo'])
                 $tpl->set('{ava}', '/uploads/users/' . $row_wall['author_user_id'] . '/50_' . $row_wall['user_photo']);
@@ -460,7 +462,10 @@ HTML;
                         $row_comments['text'] = preg_replace('`(http(?:s)?://\w+[^\s\[\]\<]+)`i', '<a href="/away.php?url=$1" target="_blank">$1</a>', $row_comments['text']);
 
                         $tpl->set('{text}', stripslashes($row_comments['text']));
-                        megaDate($row_comments['add_date']);
+                        $date_str = megaDate(intval($row_comments['add_date']));
+
+                        $tpl->set('{date}', $date_str);
+
                         if ($user_id == $row_comments['author_user_id'] || $user_id == $id) {
                             $tpl->set('[owner]', '');
                             $tpl->set('[/owner]', '');
@@ -575,7 +580,9 @@ HTML;
 
                 $tpl->set('{text}', stripslashes($row_comments['text']));
 
-                megaDate($row_comments['add_date']);
+                $date_str = megaDate(intval($row_comments['add_date']));
+
+                $tpl->set('{date}', $date_str);
 
                 if (!$id)
                     $id = $for_user_id;

@@ -15,6 +15,7 @@ NoAjaxQuery();
 if (Registry::get('logged')) {
     $act = requestFilter('act');
     $metatags['title'] = $lang['friends'];
+    $user_info = $user_info ?? Registry::get('user_info');
     $server_time = Registry::get('server_time');
     $page = intFilter('page', 1);
     $db = Registry::get('db');
@@ -62,7 +63,7 @@ if (Registry::get('logged')) {
                             mozg_create_cache("user_{$for_user_id}/updates", 1);
 
                         }
-
+                        $config = settings_get();
                         //Отправка уведомления на E-mail
                         if ($config['news_mail_1'] == 'yes') {
                             $rowUserEmail = $db->super_query("SELECT user_name, user_email FROM `users` WHERE user_id = '" . $for_user_id . "'");
@@ -259,6 +260,7 @@ if (Registry::get('logged')) {
                     $tpl->set('{user-id}', $row['from_user_id']);
                     $tpl->set('{name}', $row['user_search_pref']);
 
+                    $config = settings_get();
                     // FOR MOBILE VERSION 1.0
                     if ($config['temp'] == 'mobile') {
 
@@ -279,7 +281,7 @@ if (Registry::get('logged')) {
 
                     //Возраст юзера
                     $user_birthday = explode('-', $row['user_birthday']);
-                    $tpl->set('{age}', user_age($user_birthday[0], $user_birthday[1], $user_birthday[2]));
+                    $tpl->set('{age}', user_age($user_birthday[0], $user_birthday[1], $user_birthday[2]) ?? '');
 
                     $tpl->compile('content');
                 }
@@ -368,6 +370,7 @@ if (Registry::get('logged')) {
                         $tpl->set('{user-id}', $row['user_id']);
                         $tpl->set('{name}', $row['user_search_pref']);
 
+                        $config = settings_get();
                         if ($row['user_photo'])
                             $tpl->set('{ava}', $config['home_url'] . 'uploads/users/' . $row['user_id'] . '/100_' . $row['user_photo']);
                         else
@@ -432,6 +435,7 @@ if (Registry::get('logged')) {
                         $tpl->set('{user-id}', $row['friend_id']);
                         $tpl->set('{name}', $row['user_search_pref']);
 
+                        $config = settings_get();
                         if ($row['user_photo'])
                             $tpl->set('{ava}', $config['home_url'] . 'uploads/users/' . $row['friend_id'] . '/50_' . $row['user_photo']);
                         else
@@ -511,6 +515,9 @@ if (Registry::get('logged')) {
                             $tpl->set('{user-id}', $row['friend_id']);
                             $tpl->set('{name}', $row['user_search_pref']);
 
+                            $config = settings_get();
+                            $avaPREFver = $avaPREFver ?? '';
+                            $noAvaPrf = $noAvaPrf ?? '';
                             if ($row['user_photo'])
                                 $tpl->set('{ava}', $config['home_url'] . 'uploads/users/' . $row['friend_id'] . '/' . $avaPREFver . $row['user_photo']);
                             else
@@ -613,17 +620,24 @@ if (Registry::get('logged')) {
                     if ($sql_) {
                         $tpl->load_template('friends/friend.tpl');
                         foreach ($sql_ as $row) {
-                            $user_country_city_name = explode('|', $row['user_country_city_name']);
-                            $tpl->set('{country}', $user_country_city_name[0]);
-
-                            if ($user_country_city_name[1])
-                                $tpl->set('{city}', ', ' . $user_country_city_name[1]);
-                            else
+                            if ($row['user_country_city_name'] == '' || $row['user_country_city_name'] == '|') {
+                                $tpl->set('{country}', '');
                                 $tpl->set('{city}', '');
+                            } else {
+                                $user_country_city_name = explode('|', $row['user_country_city_name']);
+                                $tpl->set('{country}', $user_country_city_name[0]);
+
+                                if ($user_country_city_name[1])
+                                    $tpl->set('{city}', ', ' . $user_country_city_name[1]);
+                                else
+                                    $tpl->set('{city}', '');
+                            }
+
 
                             $tpl->set('{user-id}', $row['friend_id']);
                             $tpl->set('{name}', $row['user_search_pref']);
 
+                            $config = settings_get();
                             // FOR MOBILE VERSION 1.0
                             if ($config['temp'] == 'mobile') {
 
@@ -645,9 +659,13 @@ if (Registry::get('logged')) {
                             OnlineTpl($row['user_last_visit'], $row['user_logged_mobile']);
 
                             //Возраст юзера
-                            $user_birthday = explode('-', $row['user_birthday']);
-                            $tpl->set('{age}', user_age($user_birthday[0], $user_birthday[1], $user_birthday[2]));
-
+                            if ($row['user_birthday'] == '0-0-0') {
+                                $tpl->set('{age}', '');
+                            } else {
+                                $user_birthday = explode('-', $row['user_birthday']);
+                                $tpl->set('{age}', user_age($user_birthday[0], $user_birthday[1], $user_birthday[2]));
+                            }
+                            
                             if ($get_user_id == $user_info['user_id']) {
                                 $tpl->set('[owner]', '');
                                 $tpl->set('[/owner]', '');

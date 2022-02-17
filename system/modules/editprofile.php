@@ -16,6 +16,7 @@ if (Registry::get('logged')) {
     $server_time = Registry::get('server_time');
     $metatags['title'] = $lang['editmyprofile'];
     $db = Registry::get('db');
+    $user_info = $user_info ?? Registry::get('user_info');
 
     switch ($act) {
 
@@ -93,7 +94,7 @@ if (Registry::get('logged')) {
 
                         //Обновляем имя фотки в бд
                         $db->query("UPDATE `users` SET user_photo = '{$image_rename}{$res_type}', user_wall_id = '{$dbid}' WHERE user_id = '{$user_id}'");
-
+                        $config = settings_get();
                         echo $config['home_url'] . 'uploads/users/' . $user_id . '/' . $image_rename . $res_type;
 
                         mozg_clear_cache_file('user_' . $user_id . '/profile_' . $user_id);

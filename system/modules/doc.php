@@ -11,6 +11,7 @@ if (!defined('MOZG'))
 
 if (Registry::get('logged')) {
     $act = requestFilter('act');
+    $user_info = $user_info ?? Registry::get('user_info');
     $user_id = $user_info['user_id'];
     $server_time = Registry::get('server_time');
     $db = Registry::get('db');
@@ -211,8 +212,8 @@ if (Registry::get('logged')) {
                 $tpl->set('{format}', end(explode('.', $row['ddownload_name'])));
                 $tpl->set('{did}', $row['did']);
                 $tpl->set('{size}', $row['dsize']);
-                megaDate($row['ddate']);
-
+                $date_str = megaDate($row['ddate']);
+                $tpl->set('{date}', $date_str);
                 $tpl->compile('content');
             }
 
@@ -260,8 +261,8 @@ if (Registry::get('logged')) {
                 $tpl->set('{name}', stripslashes($row['dname']));
                 $tpl->set('{format}', end(explode('.', $row['ddownload_name'])));
                 $tpl->set('{did}', $row['did']);
-                megaDate($row['ddate']);
-
+                $date_str = megaDate($row['ddate']);
+                $tpl->set('{date}', $date_str);
                 $tpl->compile('content');
             }
 

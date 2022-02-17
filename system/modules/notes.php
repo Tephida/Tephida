@@ -13,6 +13,7 @@ NoAjaxQuery();
 
 if (Registry::get('logged')) {
     $act = requestFilter('act');
+    $user_info = $user_info ?? Registry::get('user_info');
     $user_id = intval($user_info['user_id']);
     $yesterday_date = Registry::get('server_time');
     $server_time = Registry::get('server_time');
@@ -200,6 +201,7 @@ if (Registry::get('logged')) {
 
                     $tpl->load_template('notes/comment.tpl');
                     $tpl->set('{author}', $user_info['user_search_pref']);
+                    $config = settings_get();
                     if ($user_info['user_photo'])
                         $tpl->set('{ava}', $config['home_url'] . 'uploads/users/' . $user_id . '/50_' . $user_info['user_photo']);
                     else
@@ -288,6 +290,7 @@ if (Registry::get('logged')) {
                 $sql_ = $db->super_query("SELECT tb1.id, from_user_id, text, date, tb2.user_search_pref, user_photo, user_last_visit, user_logged_mobile tb3.owner_user_id FROM `notes_comments` tb1, `users` tb2, `notes` tb3 WHERE tb1.note_id = '{$note_id}' AND tb1.from_user_id = tb2.user_id AND tb1.note_id = tb3.id ORDER by `add_date` ASC LIMIT 0, {$limit}", true);
 
                 $tpl->load_template('notes/comment.tpl');
+                $config = settings_get();
                 foreach ($sql_ as $row_comm) {
                     if ($row_comm['user_photo'])
                         $tpl->set('{ava}', $config['home_url'] . 'uploads/users/' . $row_comm['from_user_id'] . '/50_' . $row_comm['user_photo']);
@@ -296,8 +299,8 @@ if (Registry::get('logged')) {
 
                     OnlineTpl($row_comm['user_last_visit'], $row_comm['user_logged_mobile']);
 
-                    megaDate(strtotime($row_comm['date']));
-
+                    $date_str = megaDate(strtotime($row_comm['date']));
+                    $tpl->set('{date}', $date_str);
                     if ($row_comm['from_user_id'] == $user_id || $row_comm['owner_user_id'] == $user_id) {
                         $tpl->set('[owner]', '');
                         $tpl->set('[/owner]', '');
@@ -403,6 +406,7 @@ if (Registry::get('logged')) {
                         $sql_ = $db->super_query("SELECT tb1.id, from_user_id, text, add_date, tb2.user_search_pref, user_photo, user_last_visit, user_logged_mobile FROM `notes_comments` tb1, `users` tb2 WHERE tb1.note_id = '{$note_id}' AND tb1.from_user_id = tb2.user_id ORDER by `add_date` ASC LIMIT {$start_limit}, {$row['comm_num']}", true);
 
                         $tpl->load_template('notes/comment.tpl');
+                        $config = settings_get();
                         foreach ($sql_ as $row_comm) {
                             if ($row_comm['user_photo'])
                                 $tpl->set('{ava}', $config['home_url'] . 'uploads/users/' . $row_comm['from_user_id'] . '/50_' . $row_comm['user_photo']);
@@ -411,8 +415,8 @@ if (Registry::get('logged')) {
 
                             OnlineTpl($row_comm['user_last_visit'], $row_comm['user_logged_mobile']);
 
-                            megaDate(strtotime($row_comm['add_date']));
-
+                            $date_str = megaDate(strtotime($row_comm['add_date']));
+                            $tpl->set('{date}', $date_str);
                             if ($row_comm['from_user_id'] == $user_id || $row['owner_user_id'] == $user_id) {
                                 $tpl->set('[owner]', '');
                                 $tpl->set('[/owner]', '');
@@ -491,6 +495,7 @@ if (Registry::get('logged')) {
                     //Выводим
                     if ($sql_) {
                         $tpl->load_template('notes/short.tpl');
+                        $config = settings_get();
                         foreach ($sql_ as $row) {
                             if ($owner['user_photo'])
                                 $tpl->set('{ava}', $config['home_url'] . 'uploads/users/' . $get_user_id . '/50_' . $owner['user_photo']);

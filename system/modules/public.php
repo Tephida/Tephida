@@ -13,6 +13,7 @@ NoAjaxQuery();
 
 if (Registry::get('logged')) {
     $db = Registry::get('db');
+    $user_info = $user_info ?? Registry::get('user_info');
     $user_id = $user_info['user_id'];
     $pid = intFilter('pid');
     $mobile_speedbar = 'Сообщество';
@@ -197,8 +198,8 @@ if (Registry::get('logged')) {
         $tpl->set('{users}', $users);
 
         $tpl->set('{id}', $row['id']);
-        megaDate(strtotime($row['date']), 1, 1);
-
+        $date_str = megaDate(strtotime($row['date']), 1, 1);
+        $tpl->set('{date}', $date_str);
         //Комментарии включены
         if ($row['comments'])
             $tpl->set('{settings-comments}', 'comments');
@@ -319,7 +320,7 @@ if (Registry::get('logged')) {
 
                 $msg_num = $row_forum['msg_num'] . ' ' . gram_record($row_forum['msg_num'], 'msg');
 
-                $last_date = megaDateNoTpl($row_forum['lastdate']);
+                $last_date = megaDate($row_forum['lastdate']);
 
                 $thems .= "<div class=\"forum_bg\"><div class=\"forum_title cursor_pointer\" onClick=\"Page.Go('/forum{$row['id']}?act=view&id={$row_forum['fid']}'); return false\">{$row_forum['title']}</div><div class=\"forum_bottom\">{$msg_num}. Последнее от <a href=\"/u{$row_forum['lastuser_id']}\" onClick=\"Page.Go(this.href); return false\">{$row_last_user['user_search_pref']}</a>, {$last_date}</div></div>";
 
@@ -366,7 +367,7 @@ if (Registry::get('logged')) {
             foreach ($sql_videos as $row_video) {
 
                 $row_video['title'] = stripslashes($row_video['title']);
-                $date_video = megaDateNoTpl(strtotime($row_video['add_date']));
+                $date_video = megaDate(strtotime($row_video['add_date']));
                 $comm_num = $row_video['comm_num'] . ' ' . gram_record($row_video['comm_num'], 'comments');
 
                 $videos .= "

@@ -10,9 +10,9 @@
 class wall
 {
 
-    public $query = false;
-    public $template = false;
-    public $compile = false;
+    public array|bool|null $query = false;
+    public false|string $template = false;
+    public false|string $compile = false;
 
     function query($query)
     {
@@ -40,7 +40,7 @@ class wall
         $db = Registry::get('db');
         $user_id = $user_info['user_id'];
 
-        $this->template;
+//        $this->template;
 
         foreach ($this->query as $row_wall) {
             $tpl->set('{rec-id}', $row_wall['id']);
@@ -245,11 +245,12 @@ class wall
 
                                 } else {
 
-                                    $num = $answer[$ai]['cnt'];
+                                    $num = $answer[$ai]['cnt'] ?? 0;
 
-                                    if (!$num) $num = 0;
-                                    if ($max != 0) $proc = (100 * $num) / $max;
-                                    else $proc = 0;
+                                    if ($max != 0)
+                                        $proc = (100 * $num) / $max;
+                                    else
+                                        $proc = 0;
                                     $proc = round($proc, 2);
 
                                     $attach_result .= "<div class=\"wall_vote_oneanswe cursor_default\">
@@ -277,6 +278,9 @@ class wall
                         $attach_result .= '';
 
                 }
+                
+                $resLinkTitle = $resLinkTitle ?? '';
+                $resLinkUrl = $resLinkUrl ?? '';
 
                 if ($resLinkTitle and $row_wall['text'] == $resLinkUrl or !$row_wall['text'])
                     $row_wall['text'] = $resLinkTitle . $attach_result;
@@ -336,7 +340,9 @@ HTML;
             if ($row_wall['adres']) $tpl->set('{adres-id}', $row_wall['adres']);
             else $tpl->set('{adres-id}', 'public' . $row_wall['public_id']);
 
-            megaDate($row_wall['add_date']);
+            $date_str = megaDate(intval($row_wall['add_date']));
+
+            $tpl->set('{date}', $date_str);
 
             if ($row_wall['photo'])
                 $tpl->set('{ava}', '/uploads/groups/' . $row_wall['public_id'] . '/50_' . $row_wall['photo']);
@@ -452,7 +458,10 @@ HTML;
                         $row_comments['text'] = preg_replace('`(http(?:s)?://\w+[^\s\[\]\<]+)`i', '<a href="/away.php?url=$1" target="_blank">$1</a>', $row_comments['text']);
 
                         $tpl->set('{text}', stripslashes($row_comments['text']));
-                        megaDate($row_comments['add_date']);
+                        $date_str = megaDate(intval($row_comments['add_date']));
+
+                        $tpl->set('{date}', $date_str);
+
                         if ($public_admin or $user_id == $row_comments['public_id']) {
                             $tpl->set('[owner]', '');
                             $tpl->set('[/owner]', '');

@@ -12,6 +12,7 @@ if (!defined('MOZG'))
 NoAjaxQuery();
 
 if (Registry::get('logged')) {
+    $user_info = $user_info ?? Registry::get('user_info');
     $user_id = $user_info['user_id'];
     $db = Registry::get('db');
     $metatags['title'] = 'Гости';
@@ -40,8 +41,8 @@ if (Registry::get('logged')) {
             else
                 $tpl->set('{color}', '');
 
-            megaDate($row['gdate']);
-
+            $date_str = megaDate($row['gdate']);
+            $tpl->set('{date}', $date_str);
             if ($row['user_photo'])
                 $tpl->set('{ava}', "/uploads/users/{$row['guid']}/100_{$row['user_photo']}");
             else
@@ -50,7 +51,7 @@ if (Registry::get('logged')) {
             $tpl->compile('content');
 
         }
-
+        $config = settings_get();
         navigation($gcount, $num['cnt'], $config['home_url'] . '?go=guests&page=');
 
         //Убираем новых гостей

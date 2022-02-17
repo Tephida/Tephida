@@ -9,6 +9,7 @@
 if (!defined('MOZG')) die('Hacking attempt!');
 if (Registry::get('logged')) {
     $act = requestFilter('act');
+    $user_info = $user_info ?? Registry::get('user_info');
     $user_id = $user_info['user_id'];
     $server_time = Registry::get('server_time');
     $db = Registry::get('db');
@@ -258,7 +259,8 @@ if (Registry::get('logged')) {
                             else $tpl->set('{poster}', "/uploads/no_app.gif");
                             if ($row_acti['user_photo']) $tpl->set('{ava}', "/uploads/users/{$row_acti['user_id']}/50_{$row_acti['user_photo']}");
                             else $tpl->set('{ava}', "{theme}/images/no_ava_50.png");
-                            megaDate($row_acti['date']);
+                            $date_str = megaDate($row_acti['date']);
+                            $tpl->set('{date}', $date_str);
                             if ($row_acti['user_sex'] == 2) {
                                 $sXtxt = 'запустила';
                                 $sXtxt2 = 'установила';

@@ -9,12 +9,12 @@
 if (!defined('MOZG'))
     die('Hacking attempt!');
 
-if ($ajax == 'yes')
     NoAjaxQuery();
 
 if (Registry::get('logged') == false) {
     $db = Registry::get('db');
     $act = requestFilter('act');
+    $user_info = $user_info ?? Registry::get('user_info');
     $metatags['title'] = $lang['restore_title'];
     $server_time = Registry::get('server_time');
 
@@ -59,6 +59,7 @@ if (Registry::get('logged') == false) {
 
                 //Отправляем письмо на почту для восстановления
                 include_once ENGINE_DIR . '/classes/mail.php';
+                $config = settings_get();
                 $mail = new vii_mail($config);
                 $message = <<<HTML
 Здравствуйте, {$check['user_name']}.

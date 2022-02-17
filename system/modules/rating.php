@@ -13,6 +13,7 @@ NoAjaxQuery();
 
 if (Registry::get('logged')) {
     $db = Registry::get('db');
+    $user_info = $user_info ?? Registry::get('user_info');
     $user_id = $user_info['user_id'];
     $act = requestFilter('act');
     $server_time = Registry::get('server_time');
@@ -45,8 +46,8 @@ if (Registry::get('logged')) {
                     $tpl->set('{user-id}', $row['user_id']);
                     $tpl->set('{name}', $row['user_search_pref']);
                     $tpl->set('{rate}', $row['addnum']);
-                    megaDate($row['date']);
-
+                    $date_str = megaDate($row['date']);
+                    $tpl->set('{date}', $date_str);
                     $tpl->compile('users');
 
                 }

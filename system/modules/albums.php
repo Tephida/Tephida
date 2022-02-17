@@ -15,6 +15,7 @@ if (Registry::get('logged')) {
     $act = requestFilter('act');
     $server_time = Registry::get('server_time');
     $db = Registry::get('db');
+    $user_info = $user_info ?? Registry::get('user_info');
     switch ($act) {
 
         //################### Создание альбома ###################//
@@ -35,9 +36,10 @@ if (Registry::get('logged')) {
 
                 //Выводи кол-во альбомов у юзера
                 $row = $db->super_query("SELECT user_albums_num FROM `users` WHERE user_id = '{$user_info['user_id']}'");
-
+                $config = settings_get();
                 if ($row['user_albums_num'] < $config['max_albums']) {
                     //hash
+                    $_IP = $_IP ?? null;
                     $hash = md5(md5($server_time) . $name . $descr . md5($user_info['user_id']) . md5($user_info['user_email']) . $_IP);
                     $date_create = date('Y-m-d H:i:s', $server_time);
 
@@ -97,7 +99,7 @@ if (Registry::get('logged')) {
             //Проверка на существование альбома и то что загружает владелец альбома
             $row = $db->super_query("SELECT aid, photo_num, cover FROM `albums` WHERE aid = '{$aid}' AND user_id = '{$user_id}'");
             if ($row) {
-
+                $config = settings_get();
                 //Проверка на кол-во фоток в альбоме
                 if ($row['photo_num'] < $config['max_album_photos']) {
 
@@ -317,7 +319,7 @@ if (Registry::get('logged')) {
             NoAjaxQuery();
             $array = requestFilter('album');
             $count = 1;
-
+            $config = settings_get();
             //Если есть данные о массиве
             if ($array and $config['albums_drag'] == 'yes') {
                 //Выводим массивом и обновляем порядок
@@ -338,7 +340,7 @@ if (Registry::get('logged')) {
             NoAjaxQuery();
             $array = requestFilter('photo');
             $count = 1;
-
+            $config = settings_get();
             //Если есть данные о массиве
             if ($array and $config['photos_drag'] == 'yes') {
                 //Выводим массивом и обновляем порядок
@@ -441,6 +443,7 @@ if (Registry::get('logged')) {
 
                     //Выводим массивом фотографии
                     $tpl->load_template('albums_editcover_photo.tpl');
+                    $config = settings_get();
                     foreach ($sql_ as $row) {
                         $tpl->set('{photo}', $config['home_url'] . 'uploads/users/' . $user_id . '/albums/' . $id . '/c_' . $row['photo_name']);
                         $tpl->set('{id}', $row['id']);
@@ -723,6 +726,7 @@ HTML;
                         $tpl->set('{hash}', $row_comm['hash']);
                         $tpl->set('{author}', $row_comm['user_search_pref']);
 
+                        $config = settings_get();
                         //Выводим данные о фотографии
                         $tpl->set('{photo}', $config['home_url'] . 'uploads/users/' . $uid . '/albums/' . $row_comm['album_id'] . '/c_' . $row_comm['photo_name']);
                         $tpl->set('{pid}', $row_comm['pid']);
@@ -742,8 +746,8 @@ HTML;
                             $tpl->set('{ava}', '{theme}/images/no_ava_50.png');
 
                         OnlineTpl($row_comm['user_last_visit'], $row_comm['user_logged_mobile']);
-                        megaDate(strtotime($row_comm['date']));
-
+                        $date_str = megaDate(strtotime($row_comm['date']));
+                        $tpl->set('{date}', $date_str);
                         if ($row_comm['user_id'] == $user_info['user_id'] or $user_info['user_id'] == $uid) {
                             $tpl->set('[owner]', '');
                             $tpl->set('[/owner]', '');
@@ -800,6 +804,7 @@ HTML;
                 $tpl->set_block("'\\[comments\\](.*?)\\[/comments\\]'si", "");
                 $tpl->set_block("'\\[albums-comments\\](.*?)\\[/albums-comments\\]'si", "");
 
+                $config = settings_get();
                 if ($config['photos_drag'] == 'no')
                     $tpl->set_block("'\\[admin-drag\\](.*?)\\[/admin-drag\\]'si", "");
                 else {
@@ -897,7 +902,7 @@ HTML;
 
                     if ($sql_photos) {
                         $tpl->load_template('album_photo.tpl');
-
+                        $config = settings_get();
                         foreach ($sql_photos as $row) {
                             $tpl->set('{photo}', $config['home_url'] . 'uploads/users/' . $row_album['user_id'] . '/albums/' . $aid . '/c_' . $row['photo_name']);
                             $tpl->set('{id}', $row['id']);
@@ -964,6 +969,7 @@ HTML;
                     $tpl->set('{photo}', '/uploads/users/' . $row['user_id'] . '/albums/' . $row['album_id'] . '/c_' . $row['photo_name']);
                     $tpl->compile('content');
                 }
+                $config = settings_get();
                 $rowCount = $db->super_query("SELECT COUNT(*) AS cnt FROM `photos_mark` WHERE mapprove = 0 AND muser_id = '" . $user_info['user_id'] . "'");
                 navigation($gcount, $rowCount['cnt'], $config['home_url'] . 'albums/newphotos/');
             } else
@@ -1031,8 +1037,9 @@ HTML;
                                 $tpl->set('{photo-num}', $row['photo_num'] . ' ' . gram_record($row['photo_num'], 'photos'));
                                 $tpl->set('{comm-num}', $row['comm_num'] . ' ' . gram_record($row['comm_num'], 'comments'));
 
-                                megaDate(strtotime($row['adate']), 1, 1);
-
+                                $date_str = megaDate(strtotime($row['adate']), 1, 1);
+                                $tpl->set('{date}', $date_str);
+                                $config = settings_get();
                                 if ($row['cover'])
                                     $tpl->set('{cover}', $config['home_url'] . 'uploads/users/' . $uid . '/albums/' . $row['aid'] . '/c_' . $row['cover']);
                                 else

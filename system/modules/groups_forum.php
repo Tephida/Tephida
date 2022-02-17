@@ -11,6 +11,7 @@ if (!defined('MOZG'))
 
 if (Registry::get('logged')) {
     $act = requestFilter('act');
+    $user_info = $user_info ?? Registry::get('user_info');
     $user_id = $user_info['user_id'];
     $server_time = Registry::get('server_time');
     $db = Registry::get('db');
@@ -198,7 +199,8 @@ if (Registry::get('logged')) {
                     $tpl->set('{text}', stripslashes($row_comm['msg']));
                     $tpl->set('{user-id}', $row_comm['muser_id']);
                     $tpl->set('{mid}', $row_comm['mid']);
-                    megaDate($row_comm['mdate']);
+                    $date_str = megaDate($row_comm['mdate']);
+                    $tpl->set('{date}', $date_str);
                     OnlineTpl($row_comm['user_last_visit'], $row_comm['user_logged_mobile']);
 
 
@@ -516,7 +518,8 @@ if (Registry::get('logged')) {
                         $tpl->set('{text}', stripslashes($row_comm['msg']));
                         $tpl->set('{mid}', $row_comm['mid']);
                         $tpl->set('{user-id}', $row_comm['muser_id']);
-                        megaDate($row_comm['mdate']);
+                        $date_str = megaDate($row_comm['mdate']);
+                        $tpl->set('{date}', $date_str);
                         OnlineTpl($row_comm['user_last_visit'], $row_comm['user_logged_mobile']);
 
                         if ($row_comm['user_photo'])
@@ -583,6 +586,7 @@ if (Registry::get('logged')) {
 
                             if ($attach_type[1] == 'attach' and file_exists(ROOT_DIR . "/uploads/attach/{$attauthor_user_id}/c_{$attach_type[2]}")) {
 
+                                $rodImHeigh = $rodImHeigh ?? '';
                                 $attach_result .= "<img id=\"photo_wall_{$row['fid']}_{$cnt_attach}\" src=\"/uploads/attach/{$attauthor_user_id}/c_{$attach_type[2]}\" style=\"margin-top:3px;margin-right:3px\" align=\"left\" onClick=\"groups.wall_photo_view('{$row['fid']}', '', '{$attach_type[1]}', '{$cnt_attach}')\" class=\"cursor_pointer page_num{$row['fid']}\" height=\"{$rodImHeigh}\" />";
 
 
@@ -591,6 +595,7 @@ if (Registry::get('logged')) {
 
                             } elseif (file_exists(ROOT_DIR . "/uploads/users/{$attauthor_user_id}/albums/{$attach_type[2]}/c_{$attach_type[1]}")) {
 
+                                $row_wall['tell_uid'] = $row_wall['tell_uid'] ?? '';;
                                 $attach_result .= "<img id=\"photo_wall_{$row['fid']}_{$cnt_attach}\" src=\"/uploads/users/{$attauthor_user_id}/albums/{$attach_type[2]}/c_{$attach_type[1]}\" style=\"margin-top:3px;margin-right:3px\" align=\"left\" onClick=\"groups.wall_photo_view('{$row['fid']}', '{$row_wall['tell_uid']}', '{$attach_type[1]}', '{$cnt_attach}')\" class=\"cursor_pointer page_num{$row['fid']}\" />";
 
                                 $cnt_attach++;
@@ -650,7 +655,8 @@ if (Registry::get('logged')) {
                 $tpl->set('{my-uid}', $user_id);
                 $tpl->set('{msg-num}', $row['msg_num']);
                 OnlineTpl($row['user_last_visit'], $row['user_logged_mobile']);
-                megaDate($row['fdate']);
+                $date_str = megaDate($row['fdate']);
+                $tpl->set('{date}', $date_str);
                 if ($row['user_photo'])
                     $tpl->set('{ava}', "/uploads/users/{$row['fuser_id']}/50_{$row['user_photo']}");
                 else
@@ -838,8 +844,8 @@ if (Registry::get('logged')) {
                         else if ($row['fixed']) $tpl->set('{status}', 'тема закреплена');
                         else $tpl->set('{status}', '');
 
-                        megaDate($row['lastdate']);
-
+                        $date_str = megaDate($row['lastdate']);
+                        $tpl->set('{date}', $date_str);
                         $tpl->compile('content');
 
                     }

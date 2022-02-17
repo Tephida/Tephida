@@ -34,6 +34,11 @@ $mysql_size = formatsize($mysql_size);
 $cache_size = formatsize(Filesystem::dirSize("uploads"));
 
 echo <<<HTML
+<div class="buttonsprofileSec">
+<a href="/adminpanel.php?mod=webstats">
+<div><b>Статистика пользователей</b></div>
+</a>
+</div>
 
 <div class="fllogall">Размер базы данных MySQL:</div>
  <div style="margin-bottom:10px">{$mysql_size}&nbsp;</div>

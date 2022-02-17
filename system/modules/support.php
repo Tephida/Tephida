@@ -14,6 +14,7 @@ NoAjaxQuery();
 if (Registry::get('logged')) {
     $db = Registry::get('db');
     $act = requestFilter('act');
+    $user_info = $user_info ?? Registry::get('user_info');
     $server_time = Registry::get('server_time');
 //	$act = $_GET['act'];
     $user_id = $user_info['user_id'];
@@ -48,7 +49,8 @@ if (Registry::get('logged')) {
                 $tpl->set('{title}', stripslashes($title));
                 $tpl->set('{question}', stripslashes($question));
                 $tpl->set('{qid}', $dbid);
-                megaDate($server_time);
+                $date_str = megaDate($server_time);
+                $tpl->set('{date}', $date_str);
                 $tpl->set('{status}', 'Вопрос ожидает обработки.');
                 $tpl->set('{name}', $row['user_search_pref']);
                 $tpl->set('{uid}', $user_id);
@@ -145,7 +147,8 @@ if (Registry::get('logged')) {
 
                 $tpl->set('{uid}', $user_id);
                 $tpl->set('{answer}', stripslashes($answer));
-                megaDate($server_time);
+                $date_str = megaDate($server_time);
+                $tpl->set('{date}', $date_str);
                 $tpl->compile('content');
                 AjaxTpl();
             }
@@ -194,7 +197,8 @@ if (Registry::get('logged')) {
                     $tpl->set('{id}', $row_answer['id']);
                     $tpl->set('{uid}', $user_id);
                     $tpl->set('{answer}', stripslashes($row_answer['answer']));
-                    megaDate($row_answer['adate']);
+                    $date_str = megaDate($row_answer['adate']);
+                    $tpl->set('{date}', $date_str);
                     $tpl->compile('answers');
                 }
 
@@ -202,7 +206,8 @@ if (Registry::get('logged')) {
                 $tpl->set('{title}', stripslashes($row['title']));
                 $tpl->set('{question}', stripslashes($row['question']));
                 $tpl->set('{qid}', $qid);
-                megaDate($row['sdate']);
+                $date_str = megaDate($row['sdate']);
+                $tpl->set('{date}', $date_str);
 
                 if ($row['sfor_user_id'] == $row['suser_id'])
                     $tpl->set('{status}', 'Вопрос ожидает обработки.');
@@ -221,7 +226,7 @@ if (Registry::get('logged')) {
                 else
                     $tpl->set('{ava}', '{theme}/images/no_ava_50.png');
 
-                $tpl->set('{answers}', $tpl->result['answers']);
+                $tpl->set('{answers}', $tpl->result['answers'] ?? '');
                 $tpl->compile('content');
             } else {
                 $speedbar = $lang['error'];
@@ -264,7 +269,8 @@ if (Registry::get('logged')) {
                 $tpl->load_template('support/question.tpl');
                 foreach ($sql_ as $row) {
                     $tpl->set('{title}', stripslashes($row['title']));
-                    megaDate($row['sdate']);
+                    $date_str = megaDate($row['sdate']);
+                    $tpl->set('{date}', $date_str);
                     if ($row['sfor_user_id'] == $row['suser_id'] or $user_info['user_group'] == 4) {
                         if ($row['sfor_user_id'] == $row['suser_id'])
                             $tpl->set('{status}', 'Вопрос ожидает обработки.');

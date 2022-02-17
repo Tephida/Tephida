@@ -53,14 +53,15 @@
 		} else {
 			response = response.split('|||');
 			$('<span id="photo_' + response[0] + '"></span>').appendTo('#photos').html('<div class="hralbum" style="margin:0px;background:#efefef;"></div><div id="cover_' + response[0] + '" class="covers" style="padding-bottom:10px;padding-top:10px;padding-left:10px;"><a href="/photo' + response[2] + '_' + response[0] + '_sec=loaded" onClick="Photo.Show(this.href); return false"><div class="albums_cover"><span id="count_img"><img src="' + response[1] + '" alt="" /></span></div></a><div style="float:left;"><div class="albums_name" style="color:#888;padding-bottom:5px;"><b>' + lang_albums_add_photo + '</b></div><textarea class="inpst" id="descr_' + response[0] + '" style="width:406px;height:73px;"></textarea><div class="clear"></div></div><div class="menuleft l_pppho"><a href="/" onClick="SetNewCover(\'' + response[0] + '\'); return false;" id="cover_link_' + response[0] + '" class="cover_links"><img class="icon editphoto_ic" src="/templates/Default/images/spacer.gif" alt="" /><div>' + lang_albums_set_cover + '</div></a><a href="/" onClick="AlbumDeletePhoto(\'' + response[0] + '\'); return false;"><img class="icon del_photo_ic" src="/templates/Default/images/spacer.gif" alt="" /><div>' + lang_albums_del_photo + '</div></a><a href="/" onClick="PhotoSaveDescr(\'' + response[0] + '\'); return false;"><img class="icon save_ic" src="/templates/Default/images/spacer.gif" alt="" /><div>' + lang_albums_save_descr + '</div></a></div><div class="clear"></div></div>');
-			count_img = $('#count_img img').size();
-			if (count_img == 1) $('#l_text').show();
+			// count_img = $('#count_img img').size();
+			// if (count_img == 1)
+			// 	$('#l_text').show();
 			$('body, html').animate({
 				scrollTop: 99999
 			}, 250);
 		}
 	}
-	
+
 	function uploadComplete(file) {
 		UploadedFiles++;
 		if (UploadedFiles == cnt) {

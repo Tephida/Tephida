@@ -8,7 +8,7 @@
  */
 if(!defined('MOZG'))
 	die("Hacking attempt!");
-
+$user_info = $user_info ?? Registry::get('user_info');
 if($user_info['user_group'] != '1'){
 	$tpl->load_template('profile_baned.tpl');
 	if($user_info['user_ban_date'])
@@ -16,6 +16,7 @@ if($user_info['user_group'] != '1'){
 	else
 		$tpl->set('{date}', 'Неограниченно');
 	$tpl->compile('main');
+    $config = settings_get();
 	echo str_replace('{theme}', '/templates/'.$config['temp'], $tpl->result['main']);
 	die();
 }

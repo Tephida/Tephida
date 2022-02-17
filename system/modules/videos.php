@@ -15,6 +15,7 @@ NoAjaxQuery();
 if (Registry::get('logged')) {
     $db = Registry::get('db');
     $act = requestFilter('act');
+    $user_info = $user_info ?? Registry::get('user_info');
     $user_id = $user_info['user_id'];
     $limit_vieos = 20;
     $server_time = Registry::get('server_time');
@@ -33,7 +34,7 @@ if (Registry::get('logged')) {
         //################### Добавление видео в БД ###################//
         case "send":
             NoAjaxQuery();
-
+            $config = settings_get();
             if ($config['video_mod_add'] == 'yes') {
                 $good_video_lnk = requestFilter('good_video_lnk');
                 $title = requestFilter('title', 25000, true);
@@ -295,6 +296,7 @@ if (Registry::get('logged')) {
         //################### Добавления комментария в базу ###################//
         case "addcomment":
             NoAjaxQuery();
+            $config = settings_get();
             if ($config['video_mod_comm'] == 'yes') {
                 $vid = intFilter('vid');
                 $comment = requestFilter('comment');
@@ -468,8 +470,8 @@ if (Registry::get('logged')) {
                     $tpl->set('{comment}', stripslashes($row_comm['text']));
                     $tpl->set('{id}', $row_comm['id']);
                     OnlineTpl($row_comm['user_last_visit'], $row_comm['user_logged_mobile']);
-                    megaDate(strtotime($row_comm['add_date']));
-
+                    $date_str = megaDate(strtotime($row_comm['add_date']));
+                    $tpl->set('{date}', $date_str);
                     if ($row_comm['author_user_id'] == $user_id or $owner_id == $user_id or $public_admin) {
 
                         $tpl->set('[owner]', '');
@@ -478,7 +480,7 @@ if (Registry::get('logged')) {
                     } else
 
                         $tpl->set_block("'\\[owner\\](.*?)\\[/owner\\]'si", "");
-
+                    $config = settings_get();
                     if ($row_comm['user_photo'])
                         $tpl->set('{ava}', $config['home_url'] . 'uploads/users/' . $row_comm['author_user_id'] . '/50_' . $row_comm['user_photo']);
                     else
@@ -655,7 +657,8 @@ if (Registry::get('logged')) {
                             else
                                 $tpl->set('{descr}', '');
                             $tpl->set('{comm}', $row['comm_num'] . ' ' . gram_record($row['comm_num'], 'comments'));
-                            megaDate(strtotime($row['add_date']));
+                            $date_str = megaDate(strtotime($row['add_date']));
+                            $tpl->set('{date}', $date_str);
                             if ($get_user_id == $user_id) {
                                 $tpl->set('[owner]', '');
                                 $tpl->set('[/owner]', '');
@@ -675,6 +678,7 @@ if (Registry::get('logged')) {
             NoAjaxQuery();
             $vid = intFilter('vid');
             $row = $db->super_query("SELECT video, photo, title, descr FROM `videos` WHERE id = '{$vid}'");
+            $config = settings_get();
             if ($row and $config['video_mod_add_my'] == 'yes') {
                 //Директория загрузки фото
                 $upload_dir = ROOT_DIR . '/uploads/videos/' . $user_id;
@@ -760,7 +764,7 @@ if (Registry::get('logged')) {
                             $tpl->set('[/not-owner]', '');
                             $tpl->set_block("'\\[owner\\](.*?)\\[/owner\\]'si", "");
                         }
-
+                        $config = settings_get();
                         if ($config['video_mod_add'] == 'yes') {
                             $tpl->set('[admin-video-add]', '');
                             $tpl->set('[/admin-video-add]', '');
@@ -782,7 +786,8 @@ if (Registry::get('logged')) {
                                 else
                                     $tpl->set('{descr}', '');
                                 $tpl->set('{comm}', $row['comm_num'] . ' ' . gram_record($row['comm_num'], 'comments'));
-                                megaDate(strtotime($row['add_date']));
+                                $date_str = megaDate(strtotime($row['add_date']));
+                                $tpl->set('{date}', $date_str);
                                 if ($get_user_id == $user_id) {
                                     $tpl->set('[owner]', '');
                                     $tpl->set('[/owner]', '');

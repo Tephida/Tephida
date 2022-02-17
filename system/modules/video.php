@@ -12,6 +12,7 @@ if (!defined('MOZG'))
 $vid = intFilter('vid');
 $close_link = requestFilter('close_link');
 $db = Registry::get('db');
+$user_info = $user_info ?? Registry::get('user_info');
 //Выводи данные о видео если оно есть
 $row = $db->super_query("SELECT tb1.video, title, add_date, descr, owner_user_id, views, comm_num, privacy, public_id, tb2.user_search_pref FROM `videos` tb1, `users` tb2 WHERE tb1.id = '{$vid}' AND tb1.owner_user_id = tb2.user_id");
 
@@ -33,6 +34,7 @@ if ($row) {
         $privacy = false;
 
     if ($privacy) {
+        $config = settings_get();
         //Выводим комментарии если они есть
         if ($row['comm_num'] and $config['video_mod_comm'] == 'yes') {
 
@@ -62,8 +64,8 @@ if ($row) {
                 $tpl->set('{author}', $row_comm['user_search_pref']);
                 $tpl->set('{comment}', stripslashes($row_comm['text']));
                 $tpl->set('{id}', $row_comm['id']);
-                megaDate(strtotime($row_comm['add_date']));
-
+                $date_str = megaDate(strtotime($row_comm['add_date']));
+                $tpl->set('{date}', $date_str);
                 if ($row_comm['author_user_id'] == $user_id || $row['owner_user_id'] == $user_id || $public_admin) {
                     $tpl->set('[owner]', '');
                     $tpl->set('[/owner]', '');
@@ -93,8 +95,8 @@ if ($row) {
         $tpl->set('{comm-num}', $row['comm_num']);
         $tpl->set('{owner-id}', $row['owner_user_id']);
         $tpl->set('{close-link}', $close_link);
-        megaDate(strtotime($row['add_date']));
-
+        $date_str = megaDate(strtotime($row['add_date']));
+        $tpl->set('{date}', $date_str);
         if ($row['owner_user_id'] == $user_id) {
             $tpl->set('[owner]', '');
             $tpl->set('[/owner]', '');

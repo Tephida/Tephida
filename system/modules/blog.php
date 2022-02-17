@@ -13,6 +13,7 @@ NoAjaxQuery();
 
 if (Registry::get('logged')) {
     $act = requestFilter('act');
+    $user_info = $user_info ?? Registry::get('user_info');
     $user_id = $user_info['user_id'];
     $server_time = Registry::get('server_time');
     $user_speedbar = $lang['blog_descr'];
@@ -147,7 +148,7 @@ if (Registry::get('logged')) {
                             $tmb->size_auto('570', 1);
                             $tmb->jpeg_quality('100');
                             $tmb->save($album_dir . $image_rename . $res_type);
-
+                            $config = settings_get();
                             $img_url = $config['home_url'] . 'uploads/blog/' . $image_rename . $res_type;
 
                             //Результат для ответа
@@ -176,7 +177,8 @@ if (Registry::get('logged')) {
                 $row = $db->super_query("SELECT id, title, story, date FROM `blog` ORDER by `date` DESC");
 
             $tpl->load_template('blog/story.tpl');
-            megaDate($row['date'], 1, 1);
+            $date_str = megaDate($row['date'], 1, 1);
+            $tpl->set('{date}', $date_str);
             $tpl->set('{story}', stripslashes($row['story']));
             $tpl->set('{title}', stripslashes($row['title']));
             $tpl->set('{id}', $row['id']);

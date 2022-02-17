@@ -35,8 +35,12 @@ if (isset($_SESSION['user_id']) > 0) {
     //Если есть данные о сессии, но нет инфы о юзере, то выкидываем его
     if (!$user_info['user_id'])
         header('Location: /index.php?act=logout');
+
+    Registry::set('user_info', $user_info);
+
     //Если юзер нажимает "Главная", и он зашел не с моб версии. То скидываем на его стр.
     $host_site = $_SERVER['QUERY_STRING'];
+    $config = settings_get();
     if (!$host_site and $config['temp'] != 'mobile')
         header('Location: /u' . $user_info['user_id']);
     //Если есть данные о COOKIE, то проверяем
@@ -44,7 +48,7 @@ if (isset($_SESSION['user_id']) > 0) {
 } elseif (isset($_COOKIE['user_id']) > 0 AND $_COOKIE['password'] AND $_COOKIE['hid']) {
     $cookie_user_id = intval($_COOKIE['user_id']);
     $user_info = $db->super_query("SELECT user_id, user_email, user_group, user_password, user_hid, user_friends_demands, user_pm_num, user_support, user_lastupdate, user_photo, user_msg_type, user_delet, user_ban_date, user_new_mark_photos, user_search_pref, user_status, user_last_visit, invties_pub_num FROM `users` WHERE user_id = '" . $cookie_user_id . "'");
-    //Если пароль и HID совпадает то пропускаем
+    //Если пароль и HID совпадает, то пропускаем
     if ($user_info['user_password'] == $_COOKIE['password'] AND $user_info['user_hid'] == $_COOKIE['password'] . md5(md5($_IP))) {
         $_SESSION['user_id'] = $user_info['user_id'];
         //Вставляем лог в бд
@@ -53,6 +57,7 @@ if (isset($_SESSION['user_id']) > 0) {
         $db->query("DELETE FROM `updates` WHERE for_user_id = '{$user_info['user_id']}'");
         $logged = true;
         Registry::set('logged', true);
+        Registry::set('user_info', $user_info);
     } else {
         $user_info = array();
         $logged = false;
@@ -60,6 +65,7 @@ if (isset($_SESSION['user_id']) > 0) {
     }
     //Если юзер нажимает "Главная" и он зашел не с моб версии, то скидываем на его стр.
     $host_site = $_SERVER['QUERY_STRING'];
+    $config = settings_get();
     if ($logged AND !$host_site AND $config['temp'] != 'mobile')
         header('Location: /u' . $user_info['user_id']);
 } else {

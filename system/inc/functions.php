@@ -9,12 +9,7 @@
 if(!defined('MOZG'))
 	die('Hacking attempt!');
 
-include __DIR__.'/../classes/templates.php';
-$tpl = new mozg_template;
-$config['temp'] = $config['temp'] ?? 'Default';
-$tpl->dir = ROOT_DIR . '/templates/' . $config['temp'];
-define('TEMPLATE_DIR', $tpl->dir);
-$_DOCUMENT_DATE = false;
+
 
 include __DIR__ .'/../functions.php';
 /*function GetVar($v) {
@@ -94,16 +89,21 @@ define('DOMAIN', $domain_cookie);
 			return '<div class="nav">'.$pages.'</div>';
 }*/
 function echoheader($box_width = false){
-	global $config, $logged, $admin_link, $user_info;
-	
-	if($logged AND $user_info['user_group'] == 1)
-		$exit_link = '<a href="'.$admin_link.'?act=logout">Выход</a>';
-	else
-		$exit_link = '';
-	
-	if(!$box_width) $box_width = 600;
-	
-	echo <<<HTML
+    global $config, $logged, $admin_link, $user_info;
+
+    if ($logged and $user_info['user_group'] == 1)
+        $exit_link = '<a href="' . $admin_link . '?act=logout">Выход</a>';
+    else
+        $exit_link = '';
+
+    if (!$box_width)
+        $box_width = 600;
+
+    $act = requestFilter('mod');
+    if ($act == 'webstats')
+        $box_width = 800;
+
+    echo <<<HTML
 <!DOCTYPE html>
 <html lang="ru">
 <head>
@@ -267,13 +267,66 @@ function formatsize($file_size){
 		$file_size = round($file_size / 1073741824 * 100 ) / 100 ." Gb";
 	} elseif($file_size >= 1048576){
 		$file_size = round($file_size / 1048576 * 100 ) / 100 ." Mb";
-	} elseif($file_size >= 1024){
-		$file_size = round($file_size / 1024 * 100 ) / 100 ." Kb";
-	} else {
-		$file_size = $file_size." b";
-	}
-	return $file_size;
+    } elseif ($file_size >= 1024) {
+        $file_size = round($file_size / 1024 * 100) / 100 . " Kb";
+    } else {
+        $file_size = $file_size . " b";
+    }
+    return $file_size;
 }
-function system_mozg_clear_cache_file($prefix) {
+
+function system_mozg_clear_cache_file($prefix)
+{
     Filesystem::delete(ENGINE_DIR . '/cache/system/' . $prefix . '.php');
+}
+
+function compileAdmin($tpl): int
+{
+    $tpl->load_template('main.tpl');
+    $config = settings_get();
+    $admin_link = $config['home_url'] . $config['admin_index'];
+    if (Registry::get('logged')) {
+        $stat_lnk = "<a href=\"{$admin_link}?mod=stats\" onclick=\"Page.Go(this.href); return false;\" style=\"margin-right:10px\">статистика</a>";
+        $exit_lnk = "<a href=\"{$admin_link}?act=logout\" onclick=\"Page.Go(this.href); return false;\">выйти</a>";
+    } else {
+        $stat_lnk = '';
+        $exit_lnk = '';
+    }
+
+    $box_width = 600;
+
+    $act = requestFilter('mod');
+    if ($act == 'webstats')
+        $box_width = 800;
+
+    $tpl->set('{admin_link}', $admin_link);
+    $tpl->set('{box_width}', $box_width);
+    $tpl->set('{stat_lnk}', $stat_lnk);
+    $tpl->set('{exit_lnk}', $exit_lnk);
+    $tpl->set('{content}', $tpl->result['content']);
+    $tpl->compile('main');
+    if (requestFilter('ajax') == 'yes') {
+
+        $metatags['title'] = $metatags['title'] ?? 'Панель управления';
+        $result_ajax = <<<HTML
+<script type="text/javascript">
+document.title = '{$metatags['title']}';
+</script>
+{$tpl->result['info']}{$tpl->result['content']}
+HTML;
+        echo $result_ajax;
+        return 1;
+    } else {
+        return print($tpl->result['main']);
+    }
+}
+
+function initAdminTpl(): mozg_template
+{
+    include ENGINE_DIR . '/classes/templates.php';
+    $tpl = new mozg_template;
+    $tpl->dir = ADMIN_DIR . '/tpl/';
+//    define('TEMPLATE_DIR', $tpl->dir);
+//    $_DOCUMENT_DATE = false;
+    return $tpl;
 }

@@ -15,6 +15,7 @@ if (Registry::get('logged')) {
     $db = Registry::get('db');
     $server_time = Registry::get('server_time');
     $act = requestFilter('act');
+    $user_info = $user_info ?? Registry::get('user_info');
 
     switch ($act) {
 

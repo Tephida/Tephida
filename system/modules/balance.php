@@ -13,6 +13,7 @@ NoAjaxQuery();
 
 if (Registry::get('logged')) {
     $act = requestFilter('act');
+    $user_info = $user_info ?? Registry::get('user_info');
     $user_id = $user_info['user_id'];
     $metatags['title'] = $lang['balance'];
     $mobile_speedbar = $lang['balance'];
@@ -79,7 +80,7 @@ if (Registry::get('logged')) {
             $tpl->set('{rub}', $owner['balance_rub']);
             $tpl->set('{text-rub}', declOfNum($owner['balance_rub'], array('рубль', 'рубля', 'рублей')));
             $tpl->set('{user-id}', $user_info['user_id']);
-
+            $config = settings_get();
             $tpl->set('{sms_number}', $config['sms_number']);
 
             $tpl->compile('content');
@@ -104,6 +105,7 @@ if (Registry::get('logged')) {
 
             $tpl->set('{balance}', $owner['user_balance']);
             $tpl->set('{rub}', $owner['balance_rub']);
+            $config = settings_get();
             $tpl->set('{cost}', $config['cost_balance']);
 
             $tpl->compile('content');
@@ -121,7 +123,7 @@ if (Registry::get('logged')) {
 
             $num = intFilter('num');
             if ($num <= 0) $num = 0;
-
+            $config = settings_get();
             $resCost = $num * $config['cost_balance'];
 
             //Выводим тек. баланс юзера (руб.)

@@ -13,6 +13,7 @@ NoAjaxQuery();
 
 if (Registry::get('logged')) {
     $db = Registry::get('db');
+    $user_info = $user_info ?? Registry::get('user_info');
     $user_id = $user_info['user_id'];
     $act = requestFilter('act');
 //    $metatags['title'] = $lang['settings'];
@@ -188,6 +189,7 @@ if (Registry::get('logged')) {
         case "change_mail":
             //Отправляем письмо на обе почты
             include_once ENGINE_DIR . '/classes/mail.php';
+            $config = settings_get();
             $mail = new vii_mail($config);
             $email = requestFilter('email', 25000, true);
             //Проверка E-mail

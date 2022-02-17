@@ -9,6 +9,7 @@
 if (!defined('MOZG')) die('Hacking attempt!');
 if (Registry::get('logged')) {
     $act = requestFilter('act');
+    $user_info = $user_info ?? Registry::get('user_info');
     $user_id = $user_info['user_id'];
     $server_time = Registry::get('server_time');
     $db = Registry::get('db');
@@ -180,9 +181,10 @@ if (Registry::get('logged')) {
                     if ($row_comm['user_photo']) $tpl->set('{ava}', $config['home_url'] . 'uploads/users/' . $row_comm['user_id'] . '/50_' . $row_comm['user_photo']);
                     else $tpl->set('{ava}', '{theme}/images/no_ava_50.png');
                     OnlineTpl($row_comm['user_last_visit'], $row_comm['user_logged_mobile']);
-                    megaDate(strtotime($row_comm['date']));
+                    $date_str = megaDate(strtotime($row_comm['date']));
+                    $tpl->set('{date}', $date_str);
                     $row_photo = $db->super_query("SELECT user_id FROM `photos` WHERE id = '{$row_comm['pid']}'");
-                    if ($row_comm['user_id'] == $user_info['user_id'] OR $row_photo['user_id'] == $user_info['user_id']) {
+                    if ($row_comm['user_id'] == $user_info['user_id'] or $row_photo['user_id'] == $user_info['user_id']) {
                         $tpl->set('[owner]', '');
                         $tpl->set('[/owner]', '');
                     } else $tpl->set_block("'\\[owner\\](.*?)\\[/owner\\]'si", "");
@@ -313,16 +315,23 @@ if (Registry::get('logged')) {
                         $tpl->set('{name}', $row['user_search_pref']);
                         $tpl->set('{user-id}', $row['user_id']);
                         $tpl->set('{user-id}', $row['user_id']);
-                        if ($row['rating'] == 1) $tpl->set('{rate}', '<div class="rating rating3" style="background:url(\'{theme}/images/rating3.png\')">' . $row['rating'] . '</div>');
-                        else if ($row['rating'] == 6) $tpl->set('{rate}', '<div class="rating rating3"  style="background:url(\'{theme}/images/rating2.png\')">5+</div>');
-                        else $tpl->set('{rate}', '<div class="rating rating3">' . $row['rating'] . '</div>');
-                        if ($row['user_photo']) $tpl->set('{ava}', "/uploads/users/{$row['user_id']}/50_{$row['user_photo']}");
-                        else $tpl->set('{ava}', "{theme}/images/no_ava_50.png");
-                        megaDate($row['date']);
+                        if ($row['rating'] == 1)
+                            $tpl->set('{rate}', '<div class="rating rating3" style="background:url(\'{theme}/images/rating3.png\')">' . $row['rating'] . '</div>');
+                        else if ($row['rating'] == 6)
+                            $tpl->set('{rate}', '<div class="rating rating3"  style="background:url(\'{theme}/images/rating2.png\')">5+</div>');
+                        else
+                            $tpl->set('{rate}', '<div class="rating rating3">' . $row['rating'] . '</div>');
+                        if ($row['user_photo'])
+                            $tpl->set('{ava}', "/uploads/users/{$row['user_id']}/50_{$row['user_photo']}");
+                        else
+                            $tpl->set('{ava}', "{theme}/images/no_ava_50.png");
+                        $date_str = megaDate($row['date']);
+                        $tpl->set('{date}', $date_str);
                         $tpl->compile('rates_users');
                     }
                 } else {
-                    if (!$lid) $tpl->result['rates_users'] = '<div class="info_center"><br /><br />Пока что никто не оценил Вашу фотографию.<br /><br /><br /></div>';
+                    if (!$lid)
+                        $tpl->result['rates_users'] = '<div class="info_center"><br /><br />Пока что никто не оценил Вашу фотографию.<br /><br /><br /></div>';
                 }
                 //Загружаем шаблон вывода
                 if (!$lid) {
@@ -423,8 +432,9 @@ if (Registry::get('logged')) {
                                 if ($row_comm['user_photo']) $tpl->set('{ava}', $config['home_url'] . 'uploads/users/' . $row_comm['user_id'] . '/50_' . $row_comm['user_photo']);
                                 else $tpl->set('{ava}', '{theme}/images/no_ava_50.png');
                                 OnlineTpl($row_comm['user_last_visit'], $row_comm['user_logged_mobile']);
-                                megaDate(strtotime($row_comm['date']));
-                                if ($row_comm['user_id'] == $user_info['user_id'] OR $row['user_id'] == $user_info['user_id']) {
+                                $date_str = megaDate(strtotime($row_comm['date']));
+                                $tpl->set('{date}', $date_str);
+                                if ($row_comm['user_id'] == $user_info['user_id'] or $row['user_id'] == $user_info['user_id']) {
                                     $tpl->set('[owner]', '');
                                     $tpl->set('[/owner]', '');
                                 } else $tpl->set_block("'\\[owner\\](.*?)\\[/owner\\]'si", "");
@@ -488,11 +498,21 @@ if (Registry::get('logged')) {
                         $tpl->set('{comm_num}', ($row['comm_num'] - 3) . ' ' . gram_record(($row['comm_num'] - 3), 'comments'));
                         $tpl->set('{num}', $row['comm_num']);
                         $tpl->set('{author}', $row['user_search_pref']);
-                        $author_info = explode('|', $row['user_country_city_name']);
-                        if ($author_info[0]) $tpl->set('{author-info}', $author_info[0]);
-                        else $tpl->set('{author-info}', '');
-                        if ($author_info[1]) $tpl->set('{author-info}', $author_info[0] . ', ' . $author_info[1] . '<br />');
-                        megaDate(strtotime($row['date']), 1, 1);
+
+                        if ($row['user_country_city_name'] == '' || $row['user_country_city_name'] = ' |') {
+                            $tpl->set('{author-info}', '');
+                        } else {
+                            $author_info = explode('|', $row['user_country_city_name']);
+                            if ($author_info[0])
+                                $tpl->set('{author-info}', $author_info[0]);
+                            else
+                                $tpl->set('{author-info}', '');
+                            if ($author_info[1])
+                                $tpl->set('{author-info}', $author_info[0] . ', ' . $author_info[1] . '<br />');
+                        }
+
+                        $date_str = megaDate(strtotime($row['date']), 1, 1);
+                        $tpl->set('{date}', $date_str);
                         if ($uid == $user_info['user_id']) {
                             $tpl->set('[owner]', '');
                             $tpl->set('[/owner]', '');
@@ -502,7 +522,7 @@ if (Registry::get('logged')) {
                             $tpl->set('[/not-owner]', '');
                             $tpl->set_block("'\\[owner\\](.*?)\\[/owner\\]'si", "");
                         }
-                        $tpl->set('{comments}', $tpl->result['comments']);
+                        $tpl->set('{comments}', $tpl->result['comments'] ?? '');
                         //Показываем стрелочки если фотографий больше одной и фотография вызвана не со стены
                         if ($row_album['photo_num'] > 1 && !$fuser) {
                             //Если фотография вызвана из альбом "все фотографии" или вызвана со страницы юзера

@@ -9,11 +9,11 @@
 if (!defined('MOZG'))
     die('Hacking attempt!');
 
-if ($ajax == 'yes')
     NoAjaxQuery();
 
 if (Registry::get('logged')) {
     $act = requestFilter('act');
+    $user_info = $user_info ?? Registry::get('user_info');
     $user_id = $user_info['user_id'];
     $server_time = Registry::get('server_time');
     $metatags['title'] = $lang['audio'];
@@ -26,7 +26,7 @@ if (Registry::get('logged')) {
             NoAjaxQuery();
             $lnk = requestFilter('lnk');
             $format = strtolower(end(explode('.', $lnk)));
-
+            $config = settings_get();
             if ($format == 'mp3' and !empty($lnk) and $config['audio_mod_add'] == 'yes') {
                 $check_url = @get_headers(stripslashes($lnk));
                 if (strpos($check_url[0], '200')) {
@@ -98,7 +98,7 @@ if (Registry::get('logged')) {
             $aid = intFilter('aid');
 
             $check = $db->super_query("SELECT auser_id, url FROM `audio` WHERE aid = '" . $aid . "'");
-
+            $config = settings_get();
             if ($check['auser_id'] == $user_id) {
                 $audioName = end(explode('/', $check['url']));
                 $checkMusSite = explode('http://', $check['url']);
@@ -158,6 +158,7 @@ if (Registry::get('logged')) {
 
                 $tpl->load_template('audio/track_box.tpl');
                 $jid = 0;
+                $get_user_id = $get_user_id ?? 0;
                 foreach ($sql_ as $row) {
                     $jid++;
                     $tpl->set('{jid}', $jid);
@@ -165,6 +166,7 @@ if (Registry::get('logged')) {
                     $tpl->set('{url}', $row['url']);
                     $tpl->set('{artist}', stripslashes($row['artist']));
                     $tpl->set('{name}', stripslashes($row['name']));
+
                     if ($get_user_id == $user_id) {
                         $tpl->set('[owner]', '');
                         $tpl->set('[/owner]', '');
@@ -198,11 +200,12 @@ if (Registry::get('logged')) {
 
             //Получаем данные о файле
             $file_tmp = $_FILES['uploadfile']['tmp_name'];
-            $file_name = to_translit($_FILES['uploadfile']['name']); // оригинальное название для оприделения формата
+            $file_name = to_translit($_FILES['uploadfile']['name']); // оригинальное название для определения формата
             $file_rename = substr(md5($server_time + rand(1, 100000)), 0, 15); // имя
             $file_size = $_FILES['uploadfile']['size']; // размер файла
-            $type = strtolower(end(explode(".", $file_name))); // формат файла
-
+            $array = explode(".", $file_name);
+            $type = strtolower(end($array)); // формат файла
+            $config = settings_get();
             if ($type == 'mp3' and $config['audio_mod_add'] == 'yes' and $file_size < 10000000) {
                 $audio_dir = ROOT_DIR . '/uploads/audio/' . $user_id . '/';
                 Filesystem::createDir($audio_dir);

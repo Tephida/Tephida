@@ -12,6 +12,7 @@ if (!defined('MOZG'))
 if (Registry::get('logged')) {
     $db = Registry::get('db');
     $act = requestFilter('act');
+    $user_info = $user_info ?? Registry::get('user_info');
     $user_id = $user_info['user_id'];
     $server_time = Registry::get('server_time');
 
@@ -43,7 +44,7 @@ if (Registry::get('logged')) {
                 $img_name_arr = end(explode(".", $row['photo']));
                 $expPhoto = substr(md5(time() . md5($row['photo'])), 0, 15) . '.' . $img_name_arr;
                 Filesystem::copy($row['photo'], ROOT_DIR . "/uploads/videos/{$user_id}/{$expPhoto}");
-
+                $config = settings_get();
                 $newPhoto = "{$config['home_url']}uploads/videos/{$user_id}/{$expPhoto}";
 
                 $db->query("INSERT INTO `videos` SET public_id = '{$pid}', owner_user_id = '{$user_id}', video = '{$row['video']}', photo = '{$newPhoto}', title = '{$row['title']}', descr = '{$row['descr']}', add_date = NOW(), privacy = '1'");
@@ -205,8 +206,8 @@ if (Registry::get('logged')) {
                         $tpl->set('{descr}', '');
 
                     $tpl->set('{comm}', $row['comm_num'] . ' ' . gram_record($row['comm_num'], 'comments'));
-                    megaDate(strtotime($row['add_date']));
-
+                    $date_str = megaDate(strtotime($row['add_date']));
+                    $tpl->set('{date}', $date_str);
                     //Права админа
                     if ($public_admin) {
 
@@ -287,8 +288,8 @@ if (Registry::get('logged')) {
                             $tpl->set('{descr}', '');
 
                         $tpl->set('{comm}', $row['comm_num'] . ' ' . gram_record($row['comm_num'], 'comments'));
-                        megaDate(strtotime($row['add_date']));
-
+                        $date_str = megaDate(strtotime($row['add_date']));
+                        $tpl->set('{date}', $date_str);
                         //Права админа
                         if ($public_admin) {
 
