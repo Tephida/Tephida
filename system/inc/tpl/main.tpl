@@ -3,6 +3,9 @@
 <head>
     <title>Vii Engine - Панель управления</title>
     <meta http-equiv="content-type" content="text/html; charset=utf-8"/>
+    <script type="text/javascript" src="/templates/Default/js/jquery.lib.js"></script>
+    <script type="text/javascript" src="/templates/Default/js/Russian/lang.js"></script>
+    <script type="text/javascript" src="/templates/Default/js/main.js"></script>
 </head>
 <body>
 <style media="all">
@@ -16,7 +19,7 @@
             <div class="logo"></div>
         </a>
     </div>
-    {content}
+    <div id="page">{content}</div>
     <div class="clr"></div>
 </div>
 <div class="clr"></div>

@@ -305,7 +305,20 @@ function compileAdmin($tpl): int
     $tpl->set('{exit_lnk}', $exit_lnk);
     $tpl->set('{content}', $tpl->result['content']);
     $tpl->compile('main');
-    return print($tpl->result['main']);
+    if (requestFilter('ajax') == 'yes') {
+
+        $metatags['title'] = $metatags['title'] ?? 'Панель управления';
+        $result_ajax = <<<HTML
+<script type="text/javascript">
+document.title = '{$metatags['title']}';
+</script>
+{$tpl->result['info']}{$tpl->result['content']}
+HTML;
+        echo $result_ajax;
+        return 1;
+    } else {
+        return print($tpl->result['main']);
+    }
 }
 
 function initAdminTpl(): mozg_template
