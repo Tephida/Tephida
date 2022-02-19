@@ -857,8 +857,10 @@ function gramatikName($source): string
  * FIXME
  * @return void
  */
-function Hacking() {
-    global $ajax, $lang;
+function Hacking()
+{
+    global $lang;
+    $ajax = checkAjax();
     if ($ajax) {
         NoAjaxQuery();
         echo <<<HTML
@@ -873,6 +875,10 @@ HTML;
         return header('Location: /index.php?go=none');
 }
 
+function checkAjax(): bool
+{
+    return (!empty($_POST['ajax']) and $_POST['ajax'] == 'yes') ? true : false;
+}
 
 /**
  * @param $user_year
