@@ -85,7 +85,7 @@ if (Registry::get('logged')) {
 
         //Если страница вызвана через "к предыдущим записям"
         if ($page_cnt) {
-            AjaxTpl();
+            AjaxTpl($tpl);
             exit;
         }
 
@@ -480,15 +480,17 @@ if (Registry::get('logged')) {
 
         $tpl->compile('content');
 
-
+        compile($tpl);
     } else {
         $user_speedbar = $lang['no_infooo'];
         msgbox('', $lang['no_upage'], 'info');
+        compile($tpl);
     }
 
-    $tpl->clear();
+//    $tpl->clear();
 //    $db->free();
 } else {
     $user_speedbar = $lang['no_infooo'];
     msgbox('', $lang['not_logged'], 'info');
+    compile($tpl);
 }

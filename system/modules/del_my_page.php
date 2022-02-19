@@ -20,7 +20,8 @@ if (Registry::get('logged')) {
         Filesystem::delete($uploaddir . '100_' . $row['user_photo']);
         Filesystem::delete($uploaddir . 'o_' . $row['user_photo']);
         Filesystem::delete($uploaddir . '130_' . $row['user_photo']);
-    } else
+    } else {
         $db->query("UPDATE `users` SET user_delet = 1, user_photo = '' WHERE user_id = '" . $user_id . "'");
+    }
     mozg_clear_cache_file('user_' . $user_id . '/profile_' . $user_id);
 }

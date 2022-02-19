@@ -31,9 +31,6 @@ switch ($act) {
             $db->query("INSERT INTO `reviews` SET user_id = '{$user_info['user_id']}', text = '{$text}', date = '{$server_time}', approve = 1");
 
         }
-
-        exit();
-
         break;
 
     //################### Вывод всех отзывов ###################//
@@ -103,14 +100,10 @@ switch ($act) {
 
         //Если вызваны пред.
         if ($page_cnt) {
-
-            AjaxTpl();
-
-            exit();
-
+            AjaxTpl($tpl);
         }
-
+        compile($tpl);
 }
 
-$tpl->clear();
-$db->free();
+//$tpl->clear();
+//$db->free();

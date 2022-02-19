@@ -48,6 +48,4 @@ $tpl->set('{langs}', $langs);
 
 $tpl->compile('content');
 
-AjaxTpl();
-
-exit();
+AjaxTpl($tpl);

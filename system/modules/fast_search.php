@@ -106,5 +106,3 @@ HTML;
     }
 } else
     echo 'no_log';
-
-die();

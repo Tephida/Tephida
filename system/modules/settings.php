@@ -35,7 +35,7 @@ if (Registry::get('logged')) {
                 if ($new_pass == $new_pass2) $db->query("UPDATE `users` SET user_password = '{$new_pass2}' WHERE user_id = '{$user_id}'");
                 else echo '2';
             } else echo '1';
-            die();
+
             break;
 
         /** Изменение имени */
@@ -65,7 +65,7 @@ if (Registry::get('logged')) {
                     mozg_clear_cache();
                 }
             } else echo $errors;
-            die();
+
             break;
 
         /** Сохранение настроек приватности */
@@ -84,7 +84,7 @@ if (Registry::get('logged')) {
             $user_privacy = "val_msg|{$val_msg}||val_wall1|{$val_wall1}||val_wall2|{$val_wall2}||val_wall3|{$val_wall3}||val_info|{$val_info}||";
             $db->query("UPDATE `users` SET user_privacy = '{$user_privacy}' WHERE user_id = '{$user_id}'");
             mozg_clear_cache_file('user_' . $user_id . '/profile_' . $user_id);
-            die();
+
             break;
 
         /** Приватность настройки */
@@ -103,6 +103,8 @@ if (Registry::get('logged')) {
             $tpl->set('{val_info}', $row['val_info']);
             $tpl->set('{val_info_text}', strtr($row['val_info'], array('1' => 'Все пользователи', '2' => 'Только друзья', '3' => 'Только я')));
             $tpl->compile('info');
+
+            compile($tpl);
             break;
 
         /** Добавление в черный список */
@@ -138,7 +140,7 @@ if (Registry::get('logged')) {
                 $openMyList = mozg_cache("user_{$user_id}/blacklist");
                 mozg_create_cache("user_{$user_id}/blacklist", $openMyList . "|{$bad_user_id}|");
             }
-            die();
+
             break;
 
         /** Удаление из черного списка */
@@ -156,7 +158,7 @@ if (Registry::get('logged')) {
                 $openMyList = mozg_cache("user_{$user_id}/blacklist");
                 mozg_create_cache("user_{$user_id}/blacklist", str_replace("|{$bad_user_id}|", "", $openMyList));
             }
-            die();
+
             break;
 
         /** Черный список */
@@ -183,6 +185,8 @@ if (Registry::get('logged')) {
                     }
                 }
             } else msgbox('', $lang['settings_nobaduser'], 'info_2');
+
+            compile($tpl);
             break;
 
         /** Смена e-mail */
@@ -251,7 +255,7 @@ HTML;
                 $db->query("INSERT INTO `restore` SET email = '{$email}', hash = '{$hash}', ip = '{$_IP}'");
             } else
                 echo '1';
-            die();
+
             break;
 
         /** Общие настройки */
@@ -306,10 +310,13 @@ HTML;
             $epx1 = explode('@', $row['user_email']);
             $tpl->set('{email}', $substre . '*******@' . $epx1[1]);
             $tpl->compile('info');
+
+            compile($tpl);
     }
-    $tpl->clear();
-    $db->free();
+//    $tpl->clear();
+//    $db->free();
 } else {
     $user_speedbar = $lang['no_infooo'];
     msgbox('', $lang['not_logged'], 'info');
+    compile($tpl);
 }

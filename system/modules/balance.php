@@ -28,6 +28,8 @@ if (Registry::get('logged')) {
             $tpl->set('{uid}', $user_id);
             $tpl->set('{site}', $_SERVER['HTTP_HOST']);
             $tpl->compile('content');
+
+            compile($tpl);
             break;
 
         //################### Страница приглашённых друзей ###################//
@@ -63,6 +65,8 @@ if (Registry::get('logged')) {
                 }
             } else
                 msgbox('', '<br /><br />Вы еще никого не приглашали.<br /><br /><br />', 'info_2');
+
+            compile($tpl);
             break;
 
         //################### Страница оплаты ###################//
@@ -85,10 +89,7 @@ if (Registry::get('logged')) {
 
             $tpl->compile('content');
 
-            AjaxTpl();
-
-            exit();
-
+            AjaxTpl($tpl);
             break;
 
         //################### Страница покупки голосов ###################//
@@ -110,10 +111,7 @@ if (Registry::get('logged')) {
 
             $tpl->compile('content');
 
-            AjaxTpl();
-
-            exit();
-
+            AjaxTpl($tpl);
             break;
 
         //################### Завершение покупки голосов ###################//
@@ -135,9 +133,6 @@ if (Registry::get('logged')) {
 
             } else
                 echo '1';
-
-            exit();
-
             break;
 
         default:
@@ -153,10 +148,13 @@ if (Registry::get('logged')) {
             $tpl->set('{text-rub}', declOfNum($owner['balance_rub'], array('рубль', 'рубля', 'рублей')));
 
             $tpl->compile('content');
+
+            compile($tpl);
     }
-    $tpl->clear();
-    $db->free();
+//    $tpl->clear();
+//    $db->free();
 } else {
     $user_speedbar = $lang['no_infooo'];
     msgbox('', $lang['not_logged'], 'info');
+    compile($tpl);
 }

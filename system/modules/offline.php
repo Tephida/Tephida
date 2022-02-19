@@ -16,5 +16,4 @@ if($user_info['user_group'] != '1'){
 	$tpl->set('{reason}', nl2br($config['offline_msg']));
 	$tpl->compile('main');
 	echo $tpl->result['main'];
-	die();
 }

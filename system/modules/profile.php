@@ -35,33 +35,29 @@ if (Registry::get('logged')) {
     } else
         $row_online = $db->super_query("SELECT user_last_visit, user_logged_mobile FROM `users` WHERE user_id = '{$id}'");
 
-
     //Если есть такой юзер, то продолжаем выполнение скрипта
     if ($row) {
         $mobile_speedbar = $row['user_search_pref'];
         $user_speedbar = $row['user_search_pref'];
         $metatags['title'] = $row['user_search_pref'];
 
-        //Если удалена
+
         if ($row['user_delet'] > 0) {
             $tpl->load_template("profile_delete_all.tpl");
             $user_name_lastname_exp = explode(' ', $row['user_search_pref']);
             $tpl->set('{name}', $user_name_lastname_exp[0]);
             $tpl->set('{lastname}', $user_name_lastname_exp[1]);
             $tpl->compile('content');
-            //Если заблокирована
+
         } elseif ($row['user_ban_date'] >= $server_time or $row['user_ban_date'] == '0') {
             $tpl->load_template("profile_baned_all.tpl");
             $user_name_lastname_exp = explode(' ', $row['user_search_pref']);
             $tpl->set('{name}', $user_name_lastname_exp[0]);
             $tpl->set('{lastname}', $user_name_lastname_exp[1]);
             $tpl->compile('content');
-            //Если все хорошо, то выводим дальше
+
         } else {
             $CheckBlackList = CheckBlackList($id);
-
-//            var_dump($row['user_privacy']);
-//            exit();
 
             $user_privacy = xfieldsdataload($row['user_privacy']);
 
@@ -962,17 +958,18 @@ if (Registry::get('logged')) {
                 }
 
             }
-
-
         }
+
     } else {
         $user_speedbar = $lang['no_infooo'];
         msgbox('', $lang['no_upage'], 'info');
-    }
 
-    $tpl->clear();
+    }
+    compile($tpl);
+//    $tpl->clear();
 //	$db->free();
 } else {
     $user_speedbar = 'Информация';
     msgbox('', $lang['not_logged'], 'info');
+//    compile($tpl);
 }

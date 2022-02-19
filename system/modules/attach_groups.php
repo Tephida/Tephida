@@ -69,4 +69,3 @@ if (Registry::get('logged')) {
 } else
     echo 'no_log';
 
-die();

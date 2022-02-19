@@ -43,7 +43,6 @@ if (Registry::get('logged')) {
             } else
                 echo 'no_user';
 
-            die();
             break;
 
         //################### Удаление юзера из закладок ###################//
@@ -59,7 +58,6 @@ if (Registry::get('logged')) {
             } else
                 echo 'yes_user';
 
-            die();
             break;
 
         default:
@@ -103,10 +101,13 @@ if (Registry::get('logged')) {
                 $user_speedbar = $lang['no_infooo'];
                 msgbox('', $lang['no_fave'], 'info_2');
             }
+
+            compile($tpl);
     }
-    $tpl->clear();
-    $db->free();
+//    $tpl->clear();
+//    $db->free();
 } else {
     $user_speedbar = $lang['no_infooo'];
     msgbox('', $lang['not_logged'], 'info');
+    compile($tpl);
 }

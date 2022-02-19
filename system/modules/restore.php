@@ -9,12 +9,12 @@
 if (!defined('MOZG'))
     die('Hacking attempt!');
 
-    NoAjaxQuery();
+//    NoAjaxQuery();
 
 if (Registry::get('logged') == false) {
     $db = Registry::get('db');
     $act = requestFilter('act');
-    $user_info = $user_info ?? Registry::get('user_info');
+//    $user_info = $user_info ?? Registry::get('user_info');
     $metatags['title'] = $lang['restore_title'];
     $server_time = Registry::get('server_time');
 
@@ -35,7 +35,6 @@ if (Registry::get('logged') == false) {
             } else
                 echo 'no_user';
 
-            die();
             break;
 
         //################### Отправка данных на почту на восстановления ###################//
@@ -73,7 +72,7 @@ if (Registry::get('logged') == false) {
 HTML;
                 $mail->send($email, $lang['lost_subj'], $message);
             }
-            die();
+
             break;
 
         //################### Страница смены пароля ###################//
@@ -95,9 +94,11 @@ HTML;
                 $db->query("UPDATE `restore` SET hash = '{$newhash}' WHERE email = '{$row['email']}'");
 
                 $tpl->compile('content');
+                compile($tpl);
             } else {
                 $speedbar = $lang['no_infooo'];
                 msgbox('', $lang['restore_badlink'], 'info');
+                compile($tpl);
             }
             break;
 
@@ -119,16 +120,19 @@ HTML;
                     $db->query("DELETE FROM `restore` WHERE email = '{$row['email']}'");
                 }
             }
-            die();
+
             break;
 
         default:
             $tpl->load_template('restore/main.tpl');
             $tpl->compile('content');
+            compile($tpl);
     }
-    $tpl->clear();
-    $db->free();
+//    $tpl->clear();
+//    $db->free();
 } else {
     $user_speedbar = $lang['no_infooo'];
     msgbox('', $lang['not_logged'], 'info');
+
+    compile($tpl);
 }

@@ -109,11 +109,9 @@ if (Registry::get('logged')) {
                 }
                 box_navigation($gcount, $subscr_num, $for_user_id, 'subscriptions.all', $subscr_num);
             }
-            AjaxTpl();
+            AjaxTpl($tpl);
     }
-    $tpl->clear();
-    $db->free();
+//    $tpl->clear();
+//    $db->free();
 } else
     echo 'no_log';
-
-die();

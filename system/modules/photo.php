@@ -34,7 +34,6 @@ if (Registry::get('logged')) {
                 $check_friend = null;
             }
 
-
             //ЧС
             $CheckBlackList = CheckBlackList($check_photo['user_id']);
             //Проверка на существование фотки и приватность
@@ -91,8 +90,9 @@ if (Registry::get('logged')) {
                 }
                 //Чистим кеш кол-во комментов
                 mozg_mass_clear_cache_file("user_{$check_photo['user_id']}/albums_{$check_photo['user_id']}_comm|user_{$check_photo['user_id']}/albums_{$check_photo['user_id']}_comm_all|user_{$check_photo['user_id']}/albums_{$check_photo['user_id']}_comm_friends");
-                AjaxTpl();
-            } else echo 'err_privacy';
+                AjaxTpl($tpl);
+            } else
+                echo 'err_privacy';
             break;
             //################### Удаление комментария ###################//
             
@@ -108,7 +108,7 @@ if (Registry::get('logged')) {
                 //Чистим кеш кол-во комментов
                 mozg_mass_clear_cache_file("user_{$check_comment['owner_id']}/albums_{$check_comment['owner_id']}_comm|user_{$check_comment['owner_id']}/albums_{$check_comment['owner_id']}_comm_all|user_{$check_comment['owner_id']}/albums_{$check_comment['owner_id']}_comm_friends");
             }
-            die();
+
             break;
             //################### Помещение фотографии на свою страницу ###################//
             
@@ -160,7 +160,7 @@ if (Registry::get('logged')) {
                 mozg_clear_cache_file("user_{$user_id}/profile_{$user_id}");
                 mozg_clear_cache();
             }
-            die();
+
             break;
             //################### Показ всех комментариев ###################//
             
@@ -190,7 +190,7 @@ if (Registry::get('logged')) {
                     } else $tpl->set_block("'\\[owner\\](.*?)\\[/owner\\]'si", "");
                     $tpl->compile('content');
                 }
-                AjaxTpl();
+                AjaxTpl($tpl);
             }
             break;
             //################### Просмотр ПРОСТОЙ фотографии не из альбома ###################//
@@ -210,7 +210,7 @@ if (Registry::get('logged')) {
                 else $tpl->set('{photo}', "/uploads/users/{$uid}/o_{$photo_name}");
                 $tpl->set('{close-link}', requestFilter('close_link'));
                 $tpl->compile('content');
-                AjaxTpl();
+                AjaxTpl($tpl);
             } else echo 'no_photo';
             break;
             //################### Поворот фотографии ###################//
@@ -294,7 +294,7 @@ if (Registry::get('logged')) {
                     mozg_create_cache("user_{$row['user_id']}/new_news", ($cntCacheNews + 1));
                 }
             }
-            exit();
+            break;
 
         //################### Просмотр оценок ###################//
         case "view_rating":
@@ -346,9 +346,9 @@ if (Registry::get('logged')) {
                 } else {
                     $tpl->result['content'] = $tpl->result['rates_users'];
                 }
-                AjaxTpl();
+                AjaxTpl($tpl);
             }
-            exit();
+
             break;
             //################### Удаление оценки ###################//
             
@@ -366,7 +366,7 @@ if (Registry::get('logged')) {
                 //Обновляем данные у фото
                 $db->query("UPDATE `photos` SET rating_num = rating_num-{$row['rating']}, rating_all = rating_all-1 {$rating_max} WHERE id = '{$row['photo_id']}'");
             }
-            exit();
+
             break;
         default:
             //################### Просмотр фотографии ###################//
@@ -625,13 +625,15 @@ if (Registry::get('logged')) {
                         if ($rate > 5) $rate = '5+';
                         $tpl->set('{rate}', $rate);
                         $tpl->compile('content');
-                        AjaxTpl();
+                        AjaxTpl($tpl);
                         if ($config['gzip'] == 'yes') GzipOut();
                     } else echo 'err_privacy';
-                } else echo 'no_photo';
-            } else echo 'err_privacy';
-        }
-        $tpl->clear();
-        $db->free();
-    } else echo 'no_photo';
-    die();
+                } else
+                    echo 'no_photo';
+            } else
+                echo 'err_privacy';
+    }
+//        $tpl->clear();
+//        $db->free();
+} else
+    echo 'no_photo';

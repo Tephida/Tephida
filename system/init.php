@@ -63,13 +63,16 @@ foreach ($expLangList as $expLangData) {
     if ($cil == $useLang and $expLangName[0]) {
         $rMyLang = $expLangName[0];
         $checkLang = $expLangName[1];
+        Registry::set('rMyLang', $rMyLang);
+        Registry::set('checkLang', $checkLang);
     }
 }
 if (!isset($checkLang)) {
     $rMyLang = 'Русский';
     $checkLang = 'Russian';
 }
-include ROOT_DIR . '/lang/' . $checkLang . '/site.lng';
+$lang = require ROOT_DIR . '/lang/' . $checkLang . '/site.php';
+$langdate = require ROOT_DIR . '/lang/' . $checkLang . '/date.php';
 
 $tpl = new mozg_template;
 $tpl->dir = ROOT_DIR . '/templates/' . $config['temp'];

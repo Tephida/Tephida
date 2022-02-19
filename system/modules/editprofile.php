@@ -106,7 +106,6 @@ if (Registry::get('logged')) {
             } else
                 echo 'bad_format';
 
-            die();
             break;
 
         //Удаление фотографии
@@ -135,7 +134,6 @@ if (Registry::get('logged')) {
                 mozg_clear_cache_file('user_' . $user_id . '/profile_' . $user_id);
                 mozg_clear_cache();
             }
-            die();
             break;
 
         //Страница загрузки главной фотографии
@@ -143,8 +141,7 @@ if (Registry::get('logged')) {
             NoAjaxQuery();
             $tpl->load_template('load_photo.tpl');
             $tpl->compile('content');
-            AjaxTpl();
-            die();
+            AjaxTpl($tpl);
             break;
 
         //Сохранение основных данных
@@ -195,7 +192,6 @@ if (Registry::get('logged')) {
 
             echo 'ok';
 
-            die();
             break;
 
         //Сохранение контактов
@@ -224,7 +220,7 @@ if (Registry::get('logged')) {
 
             echo 'ok';
 
-            die();
+            break;
 
         //Сохранение интересов
         case "save_interests":
@@ -253,9 +249,10 @@ if (Registry::get('logged')) {
 
             echo 'ok';
 
-            die();
+            break;
 
         //Сохранение доп.полей
+        //@deprecated fixme
         case "save_xfields":
 
             $xfields = profileload();
@@ -309,7 +306,6 @@ if (Registry::get('logged')) {
 
             mozg_clear_cache_file('user_' . $user_info['user_id'] . '/profile_' . $user_info['user_id']);
 
-            exit;
             break;
 
         //Страница Редактирование контактов
@@ -332,6 +328,8 @@ if (Registry::get('logged')) {
             $tpl->set('[/contact]', '');
             $tpl->compile('content');
             $tpl->clear();
+
+            compile($tpl);
             break;
 
         //Страница Редактирование интересов
@@ -355,9 +353,12 @@ if (Registry::get('logged')) {
             $tpl->set('[/interests]', '');
             $tpl->compile('content');
             $tpl->clear();
+
+            compile($tpl);
             break;
 
         //Страница Редактирование доп.полей
+        //@deprecated fixme
         case "all":
             $user_speedbar = $lang['editmyprofile'] . ' &raquo; Другое';
             $tpl->load_template('editprofile.tpl');
@@ -421,6 +422,8 @@ if (Registry::get('logged')) {
             $tpl->set('[/xfields]', '');
             $tpl->compile('content');
             $tpl->clear();
+
+            compile($tpl);
             break;
 
         //Страница миниатюры
@@ -435,12 +438,10 @@ if (Registry::get('logged')) {
                 $tpl->set('{ava}', $row['user_photo']);
                 $tpl->compile('content');
 
-                AjaxTpl();
+                AjaxTpl($tpl);
 
             } else
                 echo '1';
-
-            exit();
 
             break;
 
@@ -478,7 +479,6 @@ if (Registry::get('logged')) {
             } else
                 echo 'err';
 
-            exit();
 
             break;
 
@@ -556,8 +556,6 @@ if (Registry::get('logged')) {
             } else
                 echo 1;
 
-            exit();
-
             break;
 
         //################### Сохранение новой позиции обложки ###################//
@@ -568,7 +566,7 @@ if (Registry::get('logged')) {
 
             //Чистим кеш
             mozg_clear_cache_file("user_{$user_info['user_id']}/profile_{$user_info['user_id']}");
-            exit();
+
             break;
 
         //################### Удаление обложки ###################//
@@ -587,8 +585,6 @@ if (Registry::get('logged')) {
 
             //Чистим кеш
             mozg_clear_cache_file("user_{$user_info['user_id']}/profile_{$user_info['user_id']}");
-
-            exit();
 
             break;
 
@@ -690,9 +686,12 @@ if (Registry::get('logged')) {
             $tpl->set('[/general]', '');
             $tpl->compile('content');
             $tpl->clear();
+
+            compile($tpl);
     }
 
 } else {
     $user_speedbar = 'Информация';
     msgbox('', $lang['not_logged'], 'info');
+    compile($tpl);
 }

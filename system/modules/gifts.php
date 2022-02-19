@@ -43,7 +43,6 @@ if (Registry::get('logged')) {
 
             echo "<style>#box_bottom_left_text{padding-top:6px;float:left}</style><script>$('#box_bottom_left_text').html('У Вас <b>{$row['user_balance']} голос.</b>&nbsp;');</script><div class=\"clr\"></div>";
 
-            die();
             break;
 
         //################### Отправка подарка в БД ###################//
@@ -125,7 +124,7 @@ if (Registry::get('logged')) {
                 } else
                     echo '1';
             }
-            die();
+
             break;
 
         //################### Удаление подарка ###################//
@@ -138,7 +137,7 @@ if (Registry::get('logged')) {
                 $db->query("UPDATE `users` SET user_gifts = user_gifts-1 WHERE user_id = '{$user_id}'");
                 mozg_mass_clear_cache_file("user_{$user_id}/profile_{$user_id}|user_{$user_id}/gifts");
             }
-            die();
+
             break;
 
         default:
@@ -242,10 +241,13 @@ if (Registry::get('logged')) {
                 if ($sql_where and !$sql_)
                     msgbox('', '<br /><br />Новых подарков еще нет.<br /><br /><br />', 'info_2');
             }
+
+            compile($tpl);
     }
-    $tpl->clear();
-    $db->free();
+//    $tpl->clear();
+//    $db->free();
 } else {
     $user_speedbar = $lang['no_infooo'];
     msgbox('', $lang['not_logged'], 'info');
+    compile($tpl);
 }

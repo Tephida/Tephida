@@ -304,12 +304,17 @@ if (Registry::get('logged')) {
             msgbox('', $lang['search_none'], 'info_2');
 
         navigation($gcount, $count['cnt'], '/index.php?' . $query_string . '&page=');
-    } else
-        msgbox('', '', 'info_search');
 
-    $tpl->clear();
-    $db->free();
+        compile($tpl);
+    } else {
+        msgbox('', '', 'info_search');
+        compile($tpl);
+    }
+
+//    $tpl->clear();
+//    $db->free();
 } else {
     $user_speedbar = $lang['no_infooo'];
     msgbox('', $lang['not_logged'], 'info');
+    compile($tpl);
 }

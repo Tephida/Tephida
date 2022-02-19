@@ -1828,13 +1828,16 @@ HTML;
 //    echo 'ttt';
     //Если вызваны предыдущие новости
     if (isset($_POST['page_cnt']) and $_POST['page_cnt']) {
-        AjaxTpl();
-        die();
+        AjaxTpl($tpl);
+
     }
 
-    $tpl->clear();
-    $db->free();
+    compile($tpl);
+
+//    $tpl->clear();
+//    $db->free();
 } else {
     $user_speedbar = $lang['no_infooo'];
     msgbox('', $lang['not_logged'], 'info');
+    compile($tpl);
 }

@@ -28,6 +28,8 @@ if (Registry::get('logged')) {
                 $tpl->compile('content');
             } else
                 Hacking();
+
+            compile($tpl);
             break;
 
         //################### Добавление новости в БД ###################//
@@ -51,7 +53,7 @@ if (Registry::get('logged')) {
                 if (!empty($title) and !empty($text))
                     $db->query("INSERT INTO `blog` SET title = '{$title}', story = '{$text}', date = '{$server_time}'");
             }
-            die();
+
             break;
 
         //################### Удаление новости в БД ###################//
@@ -61,7 +63,6 @@ if (Registry::get('logged')) {
                 $id = intFilter('id');
                 $db->query("DELETE FROM `blog` WHERE id = '{$id}'");
             }
-            die();
             break;
 
         //################### Страница редактирования ###################//
@@ -90,6 +91,8 @@ if (Registry::get('logged')) {
                     Hacking();
             } else
                 Hacking();
+
+            compile($tpl);
             break;
 
         //################### Сохранение отредактированых ###################//
@@ -114,7 +117,7 @@ if (Registry::get('logged')) {
                 if (!empty($title) and !empty($text))
                     $db->query("UPDATE `blog` SET title = '{$title}', story = '{$text}' WHERE id = '{$id}'");
             }
-            die();
+
             break;
 
         //################### Загрузка фотографии ###################//
@@ -160,7 +163,7 @@ if (Registry::get('logged')) {
                 } else
                     echo 'bad_format';
             }
-            die();
+
             break;
 
         default:
@@ -200,9 +203,10 @@ if (Registry::get('logged')) {
             $tpl->set('{last-news}', $lastNews);
 
             $tpl->compile('content');
+            compile($tpl);
     }
-    $tpl->clear();
-    $db->free();
+//    $tpl->clear();
+//    $db->free();
 } else {
 //	$user_speedbar = $lang['no_infooo'];
 
@@ -212,6 +216,6 @@ if (Registry::get('logged')) {
     $tpl->compile('content');
     $tpl->clear();
     $db->free();
-
+    compile($tpl);
 //	msgbox('', $lang['not_logged'], 'info');
 }

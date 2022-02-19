@@ -66,6 +66,7 @@ if (Registry::get('logged')) {
 
             }
 
+            compile($tpl);
             break;
 
         //################### Добавления комментария ###################//
@@ -130,10 +131,11 @@ if (Registry::get('logged')) {
                 $tpl->set('[/owner]', '');
                 $tpl->compile('content');
 
-                AjaxTpl();
+                AjaxTpl($tpl);
 
             }
 
+            compile($tpl);
             break;
 
         //################### Показ пред.комментариев ###################//
@@ -205,7 +207,7 @@ if (Registry::get('logged')) {
 
             }
 
-            AjaxTpl();
+            AjaxTpl($tpl);
 
             break;
 
@@ -314,7 +316,7 @@ if (Registry::get('logged')) {
                 $tpl->set('{comments}', $tpl->result['comments']);
                 $tpl->compile('content');
 
-                AjaxTpl();
+                AjaxTpl($tpl);
 
             }
     }
@@ -324,4 +326,3 @@ if (Registry::get('logged')) {
 
 }
 
-exit();

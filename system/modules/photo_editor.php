@@ -26,7 +26,7 @@ if (Registry::get('logged')) {
             $tpl->set('{photo}', requestFilter('image'));
             $tpl->compile('content');
 
-            AjaxTpl();
+            AjaxTpl($tpl);
 
             break;
 
@@ -70,7 +70,7 @@ if (Registry::get('logged')) {
                     $tpl->set('{photo}', "/uploads/users/{$user_id}/albums/{$row['album_id']}/{$row['photo_name']}?{$server_time}");
                     $tpl->compile('content');
 
-                    AjaxTpl();
+                    AjaxTpl($tpl);
 
                 }
 
@@ -81,4 +81,3 @@ if (Registry::get('logged')) {
 
 }
 
-exit();

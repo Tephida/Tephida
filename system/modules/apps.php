@@ -64,7 +64,7 @@ if (Registry::get('logged')) {
                 $tpl->set_block("'\\[yes-game](.*?)\\[/yes-game]'si", "");
             }
             $tpl->compile('content');
-            AjaxTpl();
+            AjaxTpl($tpl);
             exit();
             break;
             //################### Запуск приложением ###################//
@@ -151,7 +151,7 @@ if (Registry::get('logged')) {
                         $tpl->compile('content');
                     }
                 } else if (!$lastid) $tpl->result['content'] = '<div class="info_center" style="padding-top:125px;padding-bottom:125px">По запросу <b>' . $query_games . '</b> не найдено ни одной игры.</div>';
-                AjaxTpl();
+                AjaxTpl($tpl);
             }
             exit();
             break;
@@ -308,7 +308,7 @@ if (Registry::get('logged')) {
                     $tpl->result['content'] = $tpl->result['my_games'] . '||' . $tpl->result['activity'];
                 else
                     $tpl->result['content'] = $tpl->result['pop_games'] . '||' . $tpl->result['new_games'];
-                AjaxTpl();
+                AjaxTpl($tpl);
                 exit();
             }
         }

@@ -47,7 +47,6 @@ if (Registry::get('logged')) {
             } else
                 echo 'no_title';
 
-            die();
             break;
 
         //################### Выход из сообщества ###################//
@@ -87,7 +86,7 @@ if (Registry::get('logged')) {
 
                 mozg_mass_clear_cache_file("user_{$user_id}/profile_{$user_id}|groups/{$user_id}");
             }
-            die();
+
             break;
 
         //################### Страница загрузки главного фото сообщества ###################//
@@ -96,11 +95,10 @@ if (Registry::get('logged')) {
             $tpl->load_template('groups/load_photo.tpl');
             $tpl->set('{id}', intFilter('id'));
             $tpl->compile('content');
-            AjaxTpl();
-            die();
+            AjaxTpl($tpl);
             break;
 
-        //################### Загрузка и изминение главного фото сообщества ###################//
+        //################### Загрузка и изменение главного фото сообщества ###################//
         case "loadphoto":
             NoAjaxQuery();
 
@@ -171,7 +169,7 @@ if (Registry::get('logged')) {
                 } else
                     echo 'bad_format';
             }
-            die();
+
             break;
 
         //################### Удаление фото сообщества ###################//
@@ -192,7 +190,7 @@ if (Registry::get('logged')) {
                 mozg_clear_cache_file("wall/group{$id}");
 
             }
-            die();
+
             break;
 
         //################### Вступление в сообщество ###################//
@@ -256,7 +254,7 @@ if (Registry::get('logged')) {
                 //Чистим кеш
                 mozg_mass_clear_cache_file("user_{$user_id}/profile_{$user_id}|groups/{$user_id}");
             }
-            die();
+
             break;
 
         //################### Страница добавления контактов ###################//
@@ -265,8 +263,8 @@ if (Registry::get('logged')) {
             $tpl->load_template('groups/addfeedback_pg.tpl');
             $tpl->set('{id}', intFilter('id'));
             $tpl->compile('content');
-            AjaxTpl();
-            die();
+            AjaxTpl($tpl);
+
             break;
 
         //################### Добавления контакт в БД ###################//
@@ -293,7 +291,6 @@ if (Registry::get('logged')) {
             } else
                 echo 1;
 
-            die();
             break;
 
         //################### Удаление контакта из БД ###################//
@@ -313,7 +310,6 @@ if (Registry::get('logged')) {
                 $db->query("DELETE FROM `communities_feedback` WHERE fuser_id = '{$uid}' AND cid = '{$id}'");
             }
 
-            die();
             break;
 
         //################### Выводим фотографию юзера при указании ИД страницы ###################//
@@ -322,7 +318,7 @@ if (Registry::get('logged')) {
             $id = intFilter('id');
             $row = $db->super_query("SELECT user_photo, user_search_pref FROM `users` WHERE user_id = '{$id}'");
             if ($row) echo $row['user_search_pref'] . "|" . $row['user_photo'];
-            die();
+
             break;
 
         //################### Сохранение отредактированных данных контакт в БД ###################//
@@ -348,7 +344,6 @@ if (Registry::get('logged')) {
             } else
                 echo 1;
 
-            die();
             break;
 
         //################### Все контакты (БОКС) ###################//
@@ -379,14 +374,13 @@ if (Registry::get('logged')) {
                         $tpl->set_block("'\\[admin\\](.*?)\\[/admin\\]'si", "");
                     $tpl->compile('content');
                 }
-                AjaxTpl();
+                AjaxTpl($tpl);
             } else
                 echo '<div align="center" style="padding-top:10px;color:#777;font-size:13px;">Список контактов пуст.</div>';
 
             if (stripos($owner['admin'], "u{$user_id}|") !== false)
                 echo "<style>#box_bottom_left_text{padding-top:6px;float:left}</style><script>$('#box_bottom_left_text').html('<a href=\"/\" onClick=\"groups.addcontact({$id}); return false\">Добавить контакт</a>');</script>";
 
-            die();
             break;
 
         //################### Сохранение отредактированных данных группы ###################//
@@ -434,7 +428,6 @@ if (Registry::get('logged')) {
                 mozg_clear_cache_file("wall/group{$id}");
             }
 
-            die();
             break;
 
         //################### Выводим информацию о пользователе которого будем делать админом ###################//
@@ -451,7 +444,6 @@ if (Registry::get('logged')) {
             } else
                 echo "<div style=\"padding:15px\"><div class=\"err_red\">Пользователь с таким адресом страницы не подписан на эту страницу.</div></div><script>$('#box_but').hide()</script>";
 
-            die();
             break;
 
         //################### Запись нового админа в БД ###################//
@@ -464,7 +456,7 @@ if (Registry::get('logged')) {
                 $admin = $row['admin'] . "u{$new_admin_id}|";
                 $db->query("UPDATE `communities` SET admin = '{$admin}' WHERE id = '{$id}'");
             }
-            die();
+
             break;
 
         //################### Удаление админа из БД ###################//
@@ -477,7 +469,7 @@ if (Registry::get('logged')) {
                 $admin = str_replace("u{$uid}|", '', $row['admin']);
                 $db->query("UPDATE `communities` SET admin = '{$admin}' WHERE id = '{$id}'");
             }
-            die();
+
             break;
 
         //################### Добавление записи на стену ###################//
@@ -492,7 +484,7 @@ if (Registry::get('logged')) {
             if (stripos($row['admin'], "u{$user_id}|") === false)
                 die();
 
-            if (isset($wall_text) and !empty($wall_text) or isset($attach_files) and !empty($attach_files) and $row['del'] == 0 and $row['ban'] == 0) {
+            if (!empty($wall_text) or !empty($attach_files) and $row['del'] == 0 and $row['ban'] == 0) {
 
                 //Оприделение изображения к ссылке
                 if (stripos($attach_files, 'link|') !== false) {
@@ -588,9 +580,9 @@ if (Registry::get('logged')) {
                 $wall->template('groups/record.tpl');
                 $wall->compile('content');
                 $wall->select($public_admin, $server_time);
-                AjaxTpl();
+                AjaxTpl($tpl);
             }
-            die();
+
             break;
 
         //################### Добавление комментария к записи ###################//
@@ -737,9 +729,9 @@ if (Registry::get('logged')) {
                 $tpl->set_block("'\\[all-comm\\](.*?)\\[/all-comm\\]'si", "");
                 $tpl->compile('content');
 
-                AjaxTpl();
+                AjaxTpl($tpl);
             }
-            die();
+
             break;
 
         //################### Удаление записи ###################//
@@ -782,7 +774,7 @@ if (Registry::get('logged')) {
                 }
 
             }
-            die();
+
             break;
 
         //################### Показ всех комментариев к записи ###################//
@@ -858,9 +850,9 @@ if (Registry::get('logged')) {
                 $tpl->set_block("'\\[all-comm\\](.*?)\\[/all-comm\\]'si", "");
                 $tpl->compile('content');
 
-                AjaxTpl();
+                AjaxTpl($tpl);
             }
-            die();
+
             break;
 
         //################### Страница загрузки фото в сообщество ###################//
@@ -903,9 +895,9 @@ if (Registry::get('logged')) {
                 $tpl->set_block("'\\[top\\](.*?)\\[/top\\]'si", "");
                 $tpl->compile('content');
 
-                AjaxTpl();
+                AjaxTpl($tpl);
             }
-            die();
+
             break;
 
         //################### Выводим инфу о видео при прикреплении видео на стену ###################//
@@ -919,7 +911,6 @@ if (Registry::get('logged')) {
             } else
                 echo '1';
 
-            die();
             break;
 
         //################### Ставим мне нравится ###################//
@@ -932,7 +923,7 @@ if (Registry::get('logged')) {
                 $db->query("UPDATE `communities_wall` SET likes_num = likes_num+1, likes_users = '{$likes_users}' WHERE id = '" . $rec_id . "'");
                 $db->query("INSERT INTO `communities_wall_like` SET rec_id = '" . $rec_id . "', user_id = '" . $user_id . "', date = '" . $server_time . "'");
             }
-            die();
+
             break;
 
         //################### Убераем мне нравится ###################//
@@ -945,7 +936,7 @@ if (Registry::get('logged')) {
                 $db->query("UPDATE `communities_wall` SET likes_num = likes_num-1, likes_users = '{$likes_users}' WHERE id = '" . $rec_id . "'");
                 $db->query("DELETE FROM `communities_wall_like` WHERE rec_id = '" . $rec_id . "' AND user_id = '" . $user_id . "'");
             }
-            die();
+
             break;
 
         //################### Выводим последних 7 юзеров кто поставил "Мне нравится" ###################//
@@ -960,7 +951,6 @@ if (Registry::get('logged')) {
                     echo '<a href="/u' . $row['user_id'] . '" id="Xlike_user' . $row['user_id'] . '_' . $rec_id . '" onClick="Page.Go(this.href); return false"><img src="' . $ava . '" width="32" /></a>';
                 }
             }
-            die();
             break;
 
         //################### Выводим всех юзеров которые поставили "мне нравится" ###################//
@@ -1004,10 +994,10 @@ if (Registry::get('logged')) {
                     }
                     box_navigation($gcount, $liked_num, $rid, 'groups.wall_all_liked_users', $liked_num);
 
-                    AjaxTpl();
+                    AjaxTpl($tpl);
                 }
             }
-            die();
+
             break;
 
         //################### Рассказать друзьям "Мне нравится" ###################//
@@ -1045,7 +1035,6 @@ if (Registry::get('logged')) {
             } else
                 echo 1;
 
-            die();
             break;
 
         //################### Показ всех подписок ###################//
@@ -1086,9 +1075,8 @@ if (Registry::get('logged')) {
 
             }
 
-            AjaxTpl();
+            AjaxTpl($tpl);
 
-            die();
             break;
 
         //################### Показ всех сообщества юзера на которые он подписан (BOX) ###################//
@@ -1124,8 +1112,8 @@ if (Registry::get('logged')) {
                 }
                 box_navigation($gcount, $subscr_num, $for_user_id, 'groups.all_groups_user', $subscr_num);
             }
-            AjaxTpl();
-            die();
+            AjaxTpl($tpl);
+
             break;
 
         //################### Одна запись со стены ###################//
@@ -1162,6 +1150,7 @@ if (Registry::get('logged')) {
             } else
                 msgbox('', '<br /><br />Запись не найдена.<br /><br /><br />', 'info_2');
 
+            compile($tpl);
             break;
 
         //################### Закрипление записи ###################//
@@ -1187,8 +1176,6 @@ if (Registry::get('logged')) {
 
             }
 
-            exit();
-
             break;
 
         //################### Убираем фиксацию ###################//
@@ -1208,7 +1195,6 @@ if (Registry::get('logged')) {
                 //Убираем фиксацию записи
                 $db->query("UPDATE `communities_wall` SET fixed = '0' WHERE id = '{$rec_id}'");
             }
-            exit();
 
             break;
 
@@ -1292,8 +1278,6 @@ if (Registry::get('logged')) {
 
             }
 
-            exit();
-
             break;
 
         //################### Сохранение новой позиции обложки ###################//
@@ -1310,7 +1294,7 @@ if (Registry::get('logged')) {
                 $pos = intFilter('pos');
                 $db->query("UPDATE `communities` SET cover_pos = '{$pos}' WHERE id = '{$public_id}'");
             }
-            exit();
+
             break;
 
         //################### Удаление обложки ###################//
@@ -1337,8 +1321,6 @@ if (Registry::get('logged')) {
                 $db->query("UPDATE `communities` SET cover_pos = '', cover = '' WHERE id = '{$public_id}'");
 
             }
-
-            exit();
 
             break;
 
@@ -1441,9 +1423,7 @@ if (Registry::get('logged')) {
 
             }
 
-            AjaxTpl();
-
-            exit();
+            AjaxTpl($tpl);
 
             break;
 
@@ -1521,8 +1501,6 @@ if (Registry::get('logged')) {
 
             } else
                 echo 1;
-
-            exit();
 
             break;
 
@@ -1619,13 +1597,10 @@ if (Registry::get('logged')) {
 
             //Если подгружаем
             if ($page_cnt) {
-
-                AjaxTpl();
-
-                exit();
-
+                AjaxTpl($tpl);
             }
 
+            compile($tpl);
             break;
 
         //################### Отклонение приглашения ###################//
@@ -1647,8 +1622,6 @@ if (Registry::get('logged')) {
                 $db->query("UPDATE `users` SET invties_pub_num = invties_pub_num - 1 WHERE user_id = '{$user_id}'");
 
             }
-
-            exit();
 
             break;
 
@@ -1716,10 +1689,12 @@ if (Registry::get('logged')) {
                 navigation($gcount, $owner['user_public_num'], 'groups?' . $admn_act . 'page=');
 
             }
+            compile($tpl);
     }
-    $tpl->clear();
-    $db->free();
+//    $tpl->clear();
+//    $db->free();
 } else {
     $user_speedbar = $lang['no_infooo'];
     msgbox('', $lang['not_logged'], 'info');
+    compile($tpl);
 }

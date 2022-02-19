@@ -68,7 +68,7 @@ if (Registry::get('logged')) {
             } else
                 $jsonResponse['error'] = 'Ошибка доступа';
             echo json_encode($jsonResponse);
-            die();
+            break;
 
         case 'uploadRoomAvatar':
             $room_id = intFilter('room_id');
@@ -135,7 +135,7 @@ if (Registry::get('logged')) {
             } else
                 $jsonResponse['error'] = 'Ошибка доступа';
             echo json_encode($jsonResponse);
-            die();
+            break;
 
         case 'viewRoomBox':
             $room_id = intFilter('room_id');
@@ -168,9 +168,9 @@ if (Registry::get('logged')) {
                 $tpl->set('{nameAttr}', $row['owner'] == $user_id ? '' : 'disabled');
                 $tpl->set('{avatar}', $row['photo'] ? $row['photo'] : '{theme}/images/no_ava_50.png');
                 $tpl->compile('content');
-                AjaxTpl();
+                AjaxTpl($tpl);
             }
-            die();
+            break;
 
         case 'saveRoomName':
             $room_id = intFilter('room_id');
@@ -214,9 +214,8 @@ if (Registry::get('logged')) {
                     $jsonResponse['error'] = 'Введите название';
             } else
                 $jsonResponse['error'] = 'Ошибка доступа';
-            echo
-            json_encode($jsonResponse);
-            die();
+            echo json_encode($jsonResponse);
+            break;
 
         case 'createRoomBox':
             $tpl->result['friends'] = '';
@@ -235,8 +234,8 @@ if (Registry::get('logged')) {
             $tpl->load_template('im/createRoom.tpl');
             $tpl->set('{friends}', $tpl->result['friends']);
             $tpl->compile('content');
-            AjaxTpl();
-            die();
+            AjaxTpl($tpl);
+            break;
 
         case 'inviteToRoomBox':
             $room_id = intFilter('room_id');
@@ -257,8 +256,8 @@ if (Registry::get('logged')) {
             $tpl->set('{id}', $room_id);
             $tpl->set('{friends}', $tpl->result['friends']);
             $tpl->compile('content');
-            AjaxTpl();
-            die();
+            AjaxTpl($tpl);
+            break;
 
         case 'createRoom':
             $title = requestFilter('title');
@@ -320,9 +319,8 @@ if (Registry::get('logged')) {
 
             } else
                 $jsonResponse['error'] = 'Введите название';
-            echo
-            json_encode($jsonResponse);
-            die();
+            echo json_encode($jsonResponse);
+            break;
 
         case 'inviteToRoom':
             $room_id = intFilter('room_id');
@@ -380,7 +378,7 @@ if (Registry::get('logged')) {
             } else
                 $jsonResponse['error'] = 'Выберите друзей';
             echo json_encode($jsonResponse);
-            die();
+            break;
 
         case 'exitFromRoom':
             $room_id = intFilter('room_id');
@@ -425,7 +423,7 @@ if (Registry::get('logged')) {
             } else
                 $jsonResponse['error'] = 'Ошибка доступа';
             echo json_encode($jsonResponse);
-            die();
+            break;
 
         case "send":
             NoAjaxQuery();
@@ -552,14 +550,14 @@ if (Registry::get('logged')) {
                         $tpl->set('{new}', 'im_class_new');
                         $tpl->set('{date}', langdate('H:i:s', $server_time));
                         $tpl->compile('content');
-                        AjaxTpl();
+                        AjaxTpl($tpl);
                     } else
                         echo 'err_privacy';
                 } else
                     echo 'no_user';
             } else
                 echo 'max_strlen';
-            die();
+            break;
 
         case "read":
             NoAjaxQuery();
@@ -577,7 +575,7 @@ if (Registry::get('logged')) {
                 $db->query("UPDATE `im` SET msg_num = msg_num-1 WHERE iuser_id = '" . $user_id . "' and im_user_id = '" . $im_user_id . "' AND room_id = '" . $check['room_id'] . "'");
                 mozg_clear_cache_file('user_' . $check['history_user_id'] . '/im');
             }
-            die();
+            break;
 
         case "typograf":
             NoAjaxQuery();
@@ -587,7 +585,7 @@ if (Registry::get('logged')) {
                 if (intFilter('stop') == 1) mozg_create_cache("user_{$for_user_id}/typograf{$user_id}", "");
                 else mozg_create_cache("user_{$for_user_id}/typograf{$user_id}", 1);
             }
-            exit();
+            break;
 
         case "update":
             NoAjaxQuery();
@@ -819,9 +817,9 @@ HTML;
                     $tpl->set('{text}', stripslashes($row['text']));
                     $tpl->compile('content');
                 }
-                AjaxTpl();
+                AjaxTpl($tpl);
             }
-            die();
+            break;
 
         case "history":
             NoAjaxQuery();
@@ -1109,8 +1107,8 @@ HTML;
                 } else $tpl->set_block("'\\[room\\](.*?)\\[/room\\]'si", "");
                 $tpl->compile('content');
             }
-            AjaxTpl();
-            die();
+            AjaxTpl($tpl);
+            break;
 
         case "upDialogs":
             NoAjaxQuery();
@@ -1135,7 +1133,8 @@ HTML;
 				' . $res . '
 				</script>';
             }
-            die();
+            break;
+
         case 'del':
             $room_id = intFilter('room_id');
             $im_user_id = intFilter('im_user_id');
@@ -1169,7 +1168,7 @@ HTML;
                     $db->query("UPDATE `users` SET user_pm_num = user_pm_num-{$row['msg_num']} WHERE user_id = '{$user_id}'");
                 $db->query("DELETE FROM `im` WHERE id = '{$row['id']}'");
             }
-            exit;
+            break;
 
         case 'delet':
             NoAjaxQuery();
@@ -1194,7 +1193,7 @@ HTML;
                     mozg_clear_cache_file('user_' . $row['history_user_id'] . '/im');
                 }
             }
-            die();
+            break;
 
         default:
             $metatags['title'] = 'Диалоги';
@@ -1224,10 +1223,12 @@ HTML;
             $tpl->set_block("'\\[outbox\\](.*?)\\[/outbox\\]'si", "");
             $tpl->set_block("'\\[review\\](.*?)\\[/review\\]'si", "");
             $tpl->compile('info');
+            compile($tpl);
     }
-    $tpl->clear();
-    $db->free();
+//    $tpl->clear();
+//    $db->free();
 } else {
     $user_speedbar = $lang['no_infooo'];
     msgbox('', $lang['not_logged'], 'info');
+    compile($tpl);
 }
