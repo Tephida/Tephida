@@ -21,8 +21,6 @@ const ENGINE_DIR = ROOT_DIR . '/system';
 header('Content-type: text/html; charset=utf-8');
 //AJAX
 $ajax = $_POST['ajax'] ?? null;
-$logged = false;
-$user_info = false;
 include_once ENGINE_DIR . '/classes/Registry.php';
 include_once ENGINE_DIR . '/classes/Filesystem.php';
 include_once ENGINE_DIR . '/init.php';
