@@ -27,25 +27,106 @@ blockquote{padding:10px;background:#f5f5f5;border-left:10px solid #4274a4;margin
 .headm_ic_fave{background:url("../images/transp.png") no-repeat -123px 0px;width:24px;height:22px}
 .headm_ic_news{background:url("../images/transp.png") no-repeat -146px 0px;width:24px;height:22px}
 .headm_ic_notes{background:url("../images/transp.png") no-repeat -170px 0px;width:23px;height:22px}
-.headm_ic_se{background:url("../images/transp.png") no-repeat 0px -23px;width:25px;height:22px}
-.headm_ic_settings{background:url("../images/transp.png") no-repeat -25px -25px;width:25px;height:22px}
-.headm_ic_support{background:url("../images/transp.png") no-repeat -50px -25px;width:27px;height:22px}
-.headm_ic_logout{background:url("../images/transp.png") no-repeat -77px -25px;width:27px;height:22px}
-.headm_ic_ubm{background:url("../images/transp.png") no-repeat -132px -27px;width:27px;height:22px}
-.headm_ic_groups{background:url("../images/transp.png") no-repeat -105px -27px;width:27px;height:22px}
-.headm_ic_music{background:url("../images/transp.png") no-repeat -162px -27px;width:25px;height:22px}
-.headm_newac{position:absolute;background:#404244;min-width:10px;height:12px;padding:3px;padding-top:2px;border-radius:10px;margin-left:23px;margin-top:-3px}
-.headm_ic_games{background:url("../images/csa.png") no-repeat -2px;width:27px;height:22px}
+.headm_ic_se {
+    background: url("../images/transp.png") no-repeat 0px -23px;
+    width: 25px;
+    height: 22px
+}
+
+.headm_ic_settings {
+    background: url("../images/transp.png") no-repeat -25px -25px;
+    width: 25px;
+    height: 22px
+}
+
+.headm_ic_support {
+    background: url("../images/transp.png") no-repeat -50px -25px;
+    width: 27px;
+    height: 22px
+}
+
+.headm_ic_logout {
+    background: url("../images/transp.png") no-repeat -77px -25px;
+    width: 27px;
+    height: 22px
+}
+
+.headm_ic_ubm {
+    background: url("../images/transp.png") no-repeat -132px -27px;
+    width: 27px;
+    height: 22px
+}
+
+.headm_ic_groups {
+    background: url("../images/transp.png") no-repeat -105px -27px;
+    width: 27px;
+    height: 22px
+}
+
+.headm_ic_music {
+    background: url("../images/transp.png") no-repeat -162px -27px;
+    width: 25px;
+    height: 22px
+}
+
+.headm_newac {
+    position: absolute;
+    background: #404244;
+    min-width: 10px;
+    height: 12px;
+    padding: 3px;
+    padding-top: 2px;
+    border-radius: 10px;
+    margin-left: 23px;
+    margin-top: -3px
+}
+
+.headm_ic_games {
+    background: url("../images/csa.png") no-repeat -2px;
+    width: 27px;
+    height: 22px
+}
+
+.btn_headmenu {
+    font-size: 1.3em;
+    padding: 13px;
+}
 
 /* LEFT PANEL AND CONTENT */
-.leftpanel{float:left;width:150px}
-.content{float:left;width:648px;word-wrap:break-word}
-.padcont{padding:15px;padding-top:10px;background:#fff}
-.padcont_and{padding:10px}
-.shadow{box-shadow:0px 3px 11px #aaa;-moz-box-shadow:0px 3px 11px #aaa;-webkit-box-shadow:0px 3px 11px #aaa}
+.leftpanel {
+    float: left;
+    width: 150px
+}
+
+.content {
+    float: left;
+    width: 648px;
+    word-wrap: break-word
+}
+
+.padcont {
+    padding: 15px;
+    padding-top: 10px;
+    background: #fff
+}
+
+.padcont_and {
+    padding: 10px
+}
+
+.shadow {
+    box-shadow: 0px 3px 11px #aaa;
+    -moz-box-shadow: 0px 3px 11px #aaa;
+    -webkit-box-shadow: 0px 3px 11px #aaa
+}
 
 /* BORDER RADIUS */
-.button_div, .button_div_gray, .activetab a div, .activetab a, .buttonsprofile a:hover{border-radius:2px; -moz-border-radius:2px; -webkit-border-radius:2px; -khtml-border-radius: 2px}
+.button_div, .button_div_gray, .activetab a div, .activetab a, .buttonsprofile a:hover {
+    border-radius: 2px;
+    -moz-border-radius: 2px;
+    -webkit-border-radius: 2px;
+    -khtml-border-radius: 2px
+}
 
 /* LOGIN PANEL */
 .flLg{color:#fff;padding:5px;padding-left:2px;text-shadow:0px 1px 0px #777}
@@ -1202,3 +1283,4 @@ border-top-right-radius:5px;border-bottom-right-radius:5px;-moz-border-top-right
 .lang_selected{background:#f5f5f5;color:#777;cursor:default}
 .lang_selected:hover{background:#f5f5f5}
 .yAxis .tickLabel:first-child, .yAxis .tickLabel:last-child {display: none}
+

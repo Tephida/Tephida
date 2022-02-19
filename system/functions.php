@@ -1651,17 +1651,10 @@ function compileNoAjax($tpl, $params): int
     }
 //BUILD JS
     $checkLang = Registry::get('checkLang');
-    if (Registry::get('logged')) {
-        $tpl->set('{js}', '<script type="text/javascript" src="{theme}/js/jquery.lib.js"></script>
+    $tpl->set('{js}', '<script type="text/javascript" src="{theme}/js/jquery.lib.js"></script>
 <script type="text/javascript" src="{theme}/js/' . $checkLang . '/lang.js"></script>
 <script type="text/javascript" src="{theme}/js/main.js"></script>
 <script type="text/javascript" src="{theme}/js/profile.js"></script>');
-    } else {
-        $tpl->set('{js}', '<script type="text/javascript" src="{theme}/js/jquery.lib.js"></script>
-<script type="text/javascript" src="{theme}/js/' . $checkLang . '/lang.js"></script>
-<script type="text/javascript" src="{theme}/js/main.js"></script>
-<script type="text/javascript" src="{theme}/js/profile.js"></script>');
-    }
 
 // FOR MOBILE VERSION 1.0
     if (isset($user_info['user_photo']) and $user_info['user_photo']) {

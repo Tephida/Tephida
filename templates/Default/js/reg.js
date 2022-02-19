@@ -75,30 +75,37 @@ var reg = {
 		var year = $("#year").val();
 		var country = $("#country").val();
 		var city = $("#select_city").val();
-		$.post('/index.php?go=register', {
-				name: name,
-				lastname: lastname,
-				email: email,
-				sex: sex,
-				day: day,
-				month: month,
-				year: year,
-				country: country,
-				city: city,
-				password_first: new_pass,
+		$.post('/index.php?go=register&act=send', {
+			name: name,
+			lastname: lastname,
+			email: email,
+			sex: sex,
+			day: day,
+			month: month,
+			year: year,
+			country: country,
+			city: city,
+			password_first: new_pass,
 				password_second: new_pass2,
 				sec_code: sec_code
 			}, function(d){
 			var exp = d.split('|');
-			if(exp[0] == 'ok'){
-				window.location = '/u'+exp[1]+'after';
-			} else if(exp[0] == 'err_mail'){
+			if (exp[0] == 'ok') {
+				window.location = '/u' + exp[1] + 'after';
+			} else if (exp[0] == 'err_mail') {
 				$('#err2').show().html('Пользователь с таким E-Mail адресом уже зарегистрирован.');
 				Box.Close('sec_code');
 			} else {
 				Box.Info('boxerr', 'Ошибка', 'Неизвестная ошибка', 300);
 				Box.Close('sec_code');
 			}
+		});
+	},
+	box: function () {
+		$('.js_titleRemove').remove();
+		viiBox.start();
+		$.post('/index.php?go=register&act=login', function (d) {
+			viiBox.win('login_box', d);
 		});
 	}
 }
