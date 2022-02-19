@@ -132,7 +132,7 @@ if (Registry::get('logged')) {
 
                 $tpl->load_template('forum/msg.tpl');
 
-                $msg = preg_replace('`(http(?:s)?://\w+[^\s\[\]\<]+)`i', '<a href="/away.php?url=$1" target="_blank">$1</a>', $msg);
+                $msg = preg_replace('`(http(?:s)?://\w+[^\s\[\]\<]+)`i', '<a href="/index.php?go=away&url=$1" target="_blank">$1</a>', $msg);
 
                 $tpl->set('{text}', stripslashes($msg));
                 $tpl->set('{name}', $user_info['user_search_pref']);
@@ -194,7 +194,7 @@ if (Registry::get('logged')) {
 
                     $tpl->set('{name}', $row_comm['user_search_pref']);
 
-                    $row_comm['msg'] = preg_replace('`(http(?:s)?://\w+[^\s\[\]\<]+)`i', '<a href="/away.php?url=$1" target="_blank">$1</a>', $row_comm['msg']);
+                    $row_comm['msg'] = preg_replace('`(http(?:s)?://\w+[^\s\[\]\<]+)`i', '<a href="/index.php?go=away&url=$1" target="_blank">$1</a>', $row_comm['msg']);
 
                     $tpl->set('{text}', stripslashes($row_comm['msg']));
                     $tpl->set('{user-id}', $row_comm['muser_id']);
@@ -513,7 +513,7 @@ if (Registry::get('logged')) {
 
                         $tpl->set('{name}', $row_comm['user_search_pref']);
 
-                        $row_comm['msg'] = preg_replace('`(http(?:s)?://\w+[^\s\[\]\<]+)`i', '<a href="/away.php?url=$1" target="_blank">$1</a>', $row_comm['msg']);
+                        $row_comm['msg'] = preg_replace('`(http(?:s)?://\w+[^\s\[\]\<]+)`i', '<a href="/index.php?go=away&url=$1" target="_blank">$1</a>', $row_comm['msg']);
 
                         $tpl->set('{text}', stripslashes($row_comm['msg']));
                         $tpl->set('{mid}', $row_comm['mid']);
@@ -642,11 +642,11 @@ if (Registry::get('logged')) {
                     }
 
                     if ($attach_result or $attach_result_smiles)
-                        $row['text'] = preg_replace('`(http(?:s)?://\w+[^\s\[\]\<]+)`i', '<a href="/away.php?url=$1" target="_blank">$1</a>', $row['text']) . '<span id="attach">' . $attach_result_smiles . '<div class="clear"></div>' . $attach_result . '</span>';
+                        $row['text'] = preg_replace('`(http(?:s)?://\w+[^\s\[\]\<]+)`i', '<a href="/index.php?go=away&url=$1" target="_blank">$1</a>', $row['text']) . '<span id="attach">' . $attach_result_smiles . '<div class="clear"></div>' . $attach_result . '</span>';
                     else
-                        $row['text'] = preg_replace('`(http(?:s)?://\w+[^\s\[\]\<]+)`i', '<a href="/away.php?url=$1" target="_blank">$1</a>', $row['text']);
+                        $row['text'] = preg_replace('`(http(?:s)?://\w+[^\s\[\]\<]+)`i', '<a href="/index.php?go=away&url=$1" target="_blank">$1</a>', $row['text']);
                 } else
-                    $row['text'] = preg_replace('`(http(?:s)?://\w+[^\s\[\]\<]+)`i', '<a href="/away.php?url=$1" target="_blank">$1</a>', $row['text']);
+                    $row['text'] = preg_replace('`(http(?:s)?://\w+[^\s\[\]\<]+)`i', '<a href="/index.php?go=away&url=$1" target="_blank">$1</a>', $row['text']);
 
                 $tpl->set('{text}', stripslashes($row['text']));
 
