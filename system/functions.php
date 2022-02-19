@@ -1362,9 +1362,10 @@ function _e_json(array $value): int
  *
  *
  * @param $tpl
+ * @param array $params
  * @return int
  */
-function compile($tpl, $params = array()): int
+function compile($tpl, array $params = array()): int
 {
     $config = settings_get();
 
@@ -1523,7 +1524,7 @@ HTML;
     $tpl->global_clear();
 //        $db->close();
     if ($config['gzip'] == 'yes')
-        GzipOut();
+        (new Gzip(false))->GzipOut();
 
     return print('');
 }
@@ -1680,7 +1681,6 @@ function compileNoAjax($tpl, $params): int
     $tpl->global_clear();
 //    $db->close();
     if ($config['gzip'] == 'yes')
-        GzipOut();
-
+        (new Gzip(false))->GzipOut();
     return print('');
 }

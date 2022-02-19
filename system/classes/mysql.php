@@ -77,6 +77,7 @@ class db
 
             }
         }
+        $this->query_num++;
         return $this->query_id;
     }
 
@@ -144,7 +145,7 @@ class db
 
     public function super_query(string $query, bool $multi = false, $show_error = true): array|bool|null
     {
-
+        $this->query_num++;
         $this->query($query, $show_error);
         if (!$multi) {
 

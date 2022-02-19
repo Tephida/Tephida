@@ -23,5 +23,7 @@ include_once ENGINE_DIR . '/classes/Registry.php';
 include_once ENGINE_DIR . '/classes/Filesystem.php';
 include_once ENGINE_DIR . '/classes/templates.php';
 include_once ENGINE_DIR . '/classes/mysql.php';
+include_once ENGINE_DIR . '/classes/Gzip.php';
+
 /** Initialize */
 include_once ENGINE_DIR . '/init.php';
