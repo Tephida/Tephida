@@ -299,6 +299,12 @@ switch ($go) {
         include ENGINE_DIR . '/modules/lang.php';
         break;
 
+    /** Редирект */
+    case "away":
+        $url = requestFilter('url');
+        header("Location: {$url}");
+        break;
+
     /** Статистика страницы пользователя */
     case "my_stats":
         include ENGINE_DIR . '/modules/my_stats.php';
