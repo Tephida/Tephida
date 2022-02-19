@@ -1342,3 +1342,11 @@ function _e_json(array $value): int
     header('Content-Type: application/json');
     return print(json_encode($value, JSON_THROW_ON_ERROR));
 }
+
+function compile(): int
+{
+
+
+    die();
+    return print('');
+}

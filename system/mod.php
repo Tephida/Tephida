@@ -314,8 +314,7 @@ switch ($go) {
         if ($go != 'main')
             msgbox('', $lang['no_str_bar'], 'info');
 }
-if (empty($metatags['title']))
-    $metatags['title'] = $config['home'];
+    $metatags['title'] = (empty($metatags['title'])) ? $config['home'] : $metatags['title'];
 $speedbar = $user_speedbar ?? $lang['welcome'];
 $headers = '<title>' . $metatags['title'] . '</title>
 <meta name="generator" content="VII ENGINE" />

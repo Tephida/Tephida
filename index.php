@@ -27,8 +27,9 @@ include_once ENGINE_DIR . '/classes/Registry.php';
 include ENGINE_DIR . '/classes/Filesystem.php';
 include ENGINE_DIR . '/init.php';
 //Если юзер перешел по реф ссылке, то добавляем ид реферала в сессию
-if (isset($_GET['reg']))
+if (isset($_GET['reg'])) {
     $_SESSION['ref_id'] = intFilter('reg');
+}
 
 if (isset($user_info['user_id'])){
     //Загружаем кол-во новых новостей
@@ -80,7 +81,7 @@ if (isset($user_info['user_id'])){
         $new_groups_lnk = '/groups';
     }
 
-}else{
+} else {
     $user_pm_num = '';
     $new_news = '';
     $new_ubm = '';
@@ -137,8 +138,9 @@ HTML;
     die();
 }
 //Если обращение к модулю регистрации или главной и юзер не авторизован, то показываем регистрацию
-if ($go == 'register' or $go == 'main' and Registry::get('logged') == false)
+if ($go == 'register' or $go == 'main' and Registry::get('logged') == false) {
     include ENGINE_DIR . '/modules/register_main.php';
+}
 
 $tpl->load_template('main.tpl');
 //Если юзер авторизован
@@ -237,39 +239,44 @@ if ($config['temp'] == 'mobile') {
         $tpl->set('{new-actions}', "");
 }
 $tpl->set('{content}', $tpl->result['content']);
-if (isset($spBar) AND $spBar)
+if (isset($spBar) and $spBar) {
     $tpl->set_block("'\\[speedbar\\](.*?)\\[/speedbar\\]'si", "");
-else {
+} else {
     $tpl->set('[speedbar]', '');
     $tpl->set('[/speedbar]', '');
 }
 //BUILD JS
-if (Registry::get('logged'))
+if (Registry::get('logged')) {
     $tpl->set('{js}', '<script type="text/javascript" src="{theme}/js/jquery.lib.js"></script>
 <script type="text/javascript" src="{theme}/js/' . $checkLang . '/lang.js"></script>
 <script type="text/javascript" src="{theme}/js/main.js"></script>
 <script type="text/javascript" src="{theme}/js/profile.js"></script>');
-else
+} else {
     $tpl->set('{js}', '<script type="text/javascript" src="{theme}/js/jquery.lib.js"></script>
 <script type="text/javascript" src="{theme}/js/' . $checkLang . '/lang.js"></script>
 <script type="text/javascript" src="{theme}/js/main.js"></script>');
+}
+
 
 // FOR MOBILE VERSION 1.0
-if (isset($user_info['user_photo']) AND $user_info['user_photo']){
+if (isset($user_info['user_photo']) and $user_info['user_photo']) {
     $tpl->set('{my-ava}', "/uploads/users/{$user_info['user_id']}/50_{$user_info['user_photo']}");
-}else
+} else {
     $tpl->set('{my-ava}', "{theme}/images/no_ava_50.png");
+}
 
-if (isset($user_info['user_search_pref'])){
+if (isset($user_info['user_search_pref'])) {
     $tpl->set('{my-name}', $user_info['user_search_pref']);
-}else{
+} else {
     $tpl->set('{my-name}', '');
 }
 
-if (isset($check_smartphone))
+if (isset($check_smartphone)) {
     $tpl->set('{mobile-link}', '<a href="/index.php?act=change_mobile">мобильная версия</a>');
-else
+} else {
     $tpl->set('{mobile-link}', '');
+}
+
 $tpl->set('{lang}', $rMyLang);
 $tpl->compile('main');
 echo str_replace('{theme}', '/templates/' . $config['temp'], $tpl->result['main']);

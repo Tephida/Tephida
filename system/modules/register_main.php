@@ -20,3 +20,5 @@ foreach ($sql_country as $row_country)
 $tpl->set('{country}', $all_country);
 
 $tpl->compile('content');
+
+compile();
