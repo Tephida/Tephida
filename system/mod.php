@@ -49,6 +49,7 @@ switch ($go) {
         else {
             $user_speedbar = 'Информация';
             msgbox('', 'Сервис отключен.', 'info');
+            compile($tpl);
         }
         break;
 
@@ -93,6 +94,7 @@ switch ($go) {
         else {
             $user_speedbar = 'Информация';
             msgbox('', 'Сервис отключен.', 'info');
+            compile($tpl);
         }
         break;
 
@@ -178,6 +180,7 @@ switch ($go) {
             $spBar = true;
             $user_speedbar = 'Информация';
             msgbox('', 'Сервис отключен.', 'info');
+            compile($tpl);
         }
         break;
 
@@ -262,18 +265,6 @@ switch ($go) {
         include ENGINE_DIR . '/modules/photo_editor.php';
         break;
 
-    /** Игры */
-    case "apps":
-        $app_mod = false;
-        if ($app_mod == true) {
-            include ENGINE_DIR . '/modules/apps.php';
-        } else {
-            $user_speedbar = 'Информация';
-            msgbox('', 'Сервис отключен.', 'info');
-        }
-
-        break;
-
     /** Отзывы */
     case "reviews":
         include ENGINE_DIR . '/modules/reviews.php';
@@ -311,9 +302,7 @@ switch ($go) {
         break;
 
     default:
-
-        echo 'ttt (mod)';
-        exit();
         $spBar = true;
         msgbox('', $lang['no_str_bar'], 'info');
+        compile($tpl);
 }
