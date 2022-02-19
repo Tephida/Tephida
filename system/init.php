@@ -18,7 +18,7 @@ try {
 }
 
 include ENGINE_DIR . '/classes/mysql.php';
-include ENGINE_DIR . '/data/db.php';
+$db = require_once ENGINE_DIR . '/data/db.php';
 Registry::set('db', $db);
 include ENGINE_DIR . '/classes/templates.php';
 if ($config['gzip'] == 'yes')

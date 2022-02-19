@@ -6,15 +6,15 @@
  *   file that was distributed with this source code.
  *
  */
-if (version_compare(PHP_VERSION, '8.0.0') < 0){
+if (version_compare(PHP_VERSION, '8.0.0') < 0) {
     echo '<div style="color: red">Error 500</div>';
 }
 if (isset($_POST["PHPSESSID"])) {
     session_id($_POST["PHPSESSID"]);
 }
-@session_start();
-@ob_start();
-@ob_implicit_flush(0);
+session_start();
+ob_start();
+ob_implicit_flush(0);
 const MOZG = true;
 define("ROOT_DIR", dirname(__FILE__));
 const ENGINE_DIR = ROOT_DIR . '/system';

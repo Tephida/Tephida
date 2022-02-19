@@ -293,7 +293,7 @@ const DBPASS = "{$_POST['mysql_pass']}";
 
 const COLLATE = "utf8";
 
-\$db = new db;
+return = new db;
 
 HTML;
             $con_file = fopen("system/data/db.php", "w+") or die("Извините, но невозможно создать файл <b>.system/data/db.php</b>.<br />Проверьте правильность проставленного CHMOD!");
