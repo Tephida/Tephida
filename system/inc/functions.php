@@ -283,7 +283,7 @@ function system_mozg_clear_cache_file($prefix)
 function compileAdmin($tpl): int
 {
     $tpl->load_template('main.tpl');
-    $config = settings_get();
+    $config = settings_load();
     $admin_link = $config['home_url'] . $config['admin_index'];
     if (Registry::get('logged')) {
         $stat_lnk = "<a href=\"{$admin_link}?mod=stats\" onclick=\"Page.Go(this.href); return false;\" style=\"margin-right:10px\">статистика</a>";

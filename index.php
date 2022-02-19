@@ -7,7 +7,7 @@
  *
  */
 if (version_compare(PHP_VERSION, '8.0.0') < 0) {
-    echo '<div style="color: red">Error 500</div>';
+    throw new InvalidArgumentException("Please change php version");
 }
 if (isset($_POST["PHPSESSID"])) {
     session_id($_POST["PHPSESSID"]);
@@ -18,10 +18,10 @@ ob_implicit_flush(0);
 const MOZG = true;
 define("ROOT_DIR", dirname(__FILE__));
 const ENGINE_DIR = ROOT_DIR . '/system';
-header('Content-type: text/html; charset=utf-8');
 include_once ENGINE_DIR . '/functions.php';
 include_once ENGINE_DIR . '/classes/Registry.php';
 include_once ENGINE_DIR . '/classes/Filesystem.php';
 include_once ENGINE_DIR . '/classes/templates.php';
 include_once ENGINE_DIR . '/classes/mysql.php';
+/** Initialize */
 include_once ENGINE_DIR . '/init.php';

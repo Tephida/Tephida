@@ -9,7 +9,7 @@
 if (!defined('MOZG'))
     die('Hacking attempt!');
 
-$config = settings_get();
+$config = settings_load();
 
 $act = requestFilter('act');
 

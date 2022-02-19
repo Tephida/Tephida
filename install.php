@@ -321,14 +321,13 @@ const ADMIN_DIR = ROOT_DIR . '/system/inc';
 include ENGINE_DIR . '/classes/Registry.php';
 include ENGINE_DIR . '/classes/Filesystem.php';
 include ADMIN_DIR.'/functions.php';
-\$config = settings_get();
+\$config = settings_load();
 
 \$admin_index = \$config['admin_index'];
 
 \$admin_link = \$config['home_url'].\$admin_index;
 
 include ENGINE_DIR.'/classes/mysql.php';
-include ENGINE_DIR.'/data/db.php';
 include ADMIN_DIR.'/login.php';
 
 \$db->close();

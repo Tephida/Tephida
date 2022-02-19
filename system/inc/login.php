@@ -11,6 +11,9 @@ if (!defined('MOZG'))
 
 header('Content-type: text/html; charset=utf-8');
 
+$db = require_once ENGINE_DIR . '/data/db.php';
+Registry::set('db', $db);
+
 $_IP = $_SERVER['REMOTE_ADDR'];
 $_BROWSER = $_SERVER['HTTP_USER_AGENT'];
 

@@ -1518,6 +1518,7 @@ $('#new_groups_lnk').attr('href', '{$params['new_groups_lnk']}');
 </script>
 {$tpl->result['info']}{$tpl->result['content']}
 HTML;
+    header('Content-type: text/html; charset=utf-8');
     echo str_replace('{theme}', '/templates/' . $config['temp'], $result_ajax);
     $tpl->global_clear();
 //        $db->close();
@@ -1674,6 +1675,7 @@ function compileNoAjax($tpl, $params): int
     $rMyLang = Registry::get('rMyLang');
     $tpl->set('{lang}', $rMyLang);
     $tpl->compile('main');
+    header('Content-type: text/html; charset=utf-8');
     echo str_replace('{theme}', '/templates/' . $config['temp'], $tpl->result['main']);
     $tpl->global_clear();
 //    $db->close();

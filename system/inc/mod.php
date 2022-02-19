@@ -7,7 +7,8 @@
  *
  */
 if (!defined('MOZG')) die('Hacking attempt!');
-$mod = htmlspecialchars(strip_tags(stripslashes(trim(urldecode($_GET['mod'])))));
+//$mod = htmlspecialchars(strip_tags(stripslashes(trim(urldecode($_GET['mod']))))) ?? 'main';
+$mod = isset($_GET['mod']) ? htmlspecialchars(strip_tags(stripslashes(trim(urldecode($_GET['mod']))))) : "main";
 check_xss();
 // Локализация для даты
 $langdate = array(

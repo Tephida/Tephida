@@ -131,7 +131,7 @@ $modules = array(
 );
 
 $tpl->load_template('modules.tpl');
-$config = settings_get();
+$config = settings_load();
 $admin_link = $config['home_url'] . $config['admin_index'];
 
 foreach ($modules as $key => $module) {
