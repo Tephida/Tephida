@@ -21,8 +21,7 @@ if ($country_id) {
     foreach ($sql_ as $row2)
         echo '<option value="' . $row2['id'] . '">' . stripslashes($row2['name']) . '</option>';
 }
-?>
-    <script type="text/javascript">$('#load_mini').hide();</script>
-<?php
-die();
-?>
+
+echo <<<HTML
+<script type="text/javascript">$('#load_mini').hide();</script>
+HTML;

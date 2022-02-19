@@ -16,6 +16,7 @@ if (Registry::get('logged')) {
     $server_time = Registry::get('server_time');
     $db = Registry::get('db');
     $user_info = $user_info ?? Registry::get('user_info');
+    $params = array();
     switch ($act) {
 
         //################### Создание альбома ###################//
@@ -57,7 +58,6 @@ if (Registry::get('logged')) {
             } else
                 echo 'no_name';
 
-            die();
             break;
 
         //################### Страница создания альбома ###################//
@@ -65,8 +65,7 @@ if (Registry::get('logged')) {
             NoAjaxQuery();
             $tpl->load_template('albums_create.tpl');
             $tpl->compile('content');
-            AjaxTpl();
-            die();
+            AjaxTpl($tpl);
             break;
 
         //################### Страница добавление фотографий в альбом ###################//
@@ -77,7 +76,7 @@ if (Registry::get('logged')) {
             //Проверка на существование альбома
             $row = $db->super_query("SELECT name, aid FROM `albums` WHERE aid = '{$aid}' AND user_id = '{$user_id}'");
             if ($row) {
-                $metatags['title'] = $lang['add_photo'];
+                $params['metatags']['title'] = $lang['add_photo'];
                 $user_speedbar = $lang['add_photo_2'];
                 $tpl->load_template('albums_addphotos.tpl');
                 $tpl->set('{aid}', $aid);
@@ -85,6 +84,8 @@ if (Registry::get('logged')) {
                 $tpl->set('{user-id}', $user_id);
                 $tpl->set('{PHPSESSID}', $_COOKIE['PHPSESSID']);
                 $tpl->compile('content');
+
+                compile($tpl, $params);
             } else
                 Hacking();
             break;
@@ -206,7 +207,6 @@ if (Registry::get('logged')) {
             } else
                 echo 'hacking';
 
-            die();
             break;
 
         //################### Удаление фотографии из альбома ###################//
@@ -264,7 +264,6 @@ if (Registry::get('logged')) {
                 $db->query("DELETE FROM `photos_rating` WHERE photo_id = '" . $id . "'");
             }
 
-            die();
             break;
 
         //################### Установка новой обложки для альбома ###################//
@@ -282,7 +281,6 @@ if (Registry::get('logged')) {
                 mozg_mass_clear_cache_file("user_{$user_info['user_id']}/albums|user_{$user_info['user_id']}/albums_all|user_{$user_info['user_id']}/albums_friends");
             }
 
-            die();
             break;
 
         //################### Сохранение описания к фотографии ###################//
@@ -300,7 +298,6 @@ if (Registry::get('logged')) {
                 //Ответ скрипта
                 echo requestFilter('descr');
             }
-            die();
             break;
 
         //################### Страница редактирование фотографии ###################//
@@ -311,7 +308,7 @@ if (Registry::get('logged')) {
             $row = $db->super_query("SELECT descr FROM `photos` WHERE id = '{$id}' AND user_id = '{$user_id}'");
             if ($row)
                 echo requestFilter('descr');
-            die();
+
             break;
 
         //################### Сохранение сортировки альбомов ###################//
@@ -332,7 +329,6 @@ if (Registry::get('logged')) {
                 //Чистим кеш
                 mozg_mass_clear_cache_file("user_{$user_info['user_id']}/albums|user_{$user_info['user_id']}/albums_all|user_{$user_info['user_id']}/albums_friends");
             }
-            die();
             break;
 
         //################### Сохранение сортировки фотографий ###################//
@@ -356,7 +352,6 @@ if (Registry::get('logged')) {
                     mozg_create_cache('user_' . $user_info['user_id'] . '/position_photos_album_' . $row['album_id'], $photo_info);
                 }
             }
-            die();
             break;
 
         //################### Страница редактирование альбома ###################//
@@ -376,9 +371,8 @@ if (Registry::get('logged')) {
                 $tpl->set('{privacy-comment}', $album_privacy[1]);
                 $tpl->set('{privacy-comment-text}', strtr($album_privacy[1], array('1' => 'Все пользователи', '2' => 'Только друзья', '3' => 'Только я')));
                 $tpl->compile('content');
-                AjaxTpl();
+                AjaxTpl($tpl);
             }
-            die();
             break;
 
         //################### Сохранение настроек альбома ###################//
@@ -408,7 +402,6 @@ if (Registry::get('logged')) {
                 } else
                     echo 'no_name';
             }
-            die();
             break;
 
         //################### Страница изменения обложки ###################//
@@ -458,13 +451,12 @@ if (Registry::get('logged')) {
                     $tpl->set_block("'\\[top\\](.*?)\\[/top\\]'si", "");
                     $tpl->compile('content');
 
-                    AjaxTpl();
+                    AjaxTpl($tpl);
                 } else
                     echo $lang['no_photo_alnumx'];
             } else
                 Hacking();
 
-            die();
             break;
 
         //################### Страница всех фотографий юзера, для прикрепления своей фотки кому-то на стену ###################//
@@ -517,7 +509,7 @@ if (Registry::get('logged')) {
                 $tpl->set_block("'\\[top\\](.*?)\\[/top\\]'si", "");
                 $tpl->compile('content');
 
-                AjaxTpl();
+                AjaxTpl($tpl);
             } else {
                 if ($notes)
                     $scrpt_insert = "response[1] = response[1].replace('/c_', '/');wysiwyg.boxPhoto(response[1], 0, 0);";
@@ -554,7 +546,6 @@ HTML;
                 echo $lang['no_photo_alnumx'] . '<br /><br /><div class="button_div_gray fl_l" style="margin-left:205px"><button id="upload">Загрузить новую фотографию</button></div>';
             }
 
-            die();
             break;
 
         //################### Удаление альбома ###################//
@@ -597,7 +588,6 @@ HTML;
                 mozg_mass_clear_cache_file("user_{$user_id}/albums|user_{$user_id}/albums_all|user_{$user_id}/albums_friends|user_{$user_id}/albums_cnt_friends|user_{$user_id}/albums_cnt_all");
             }
 
-            die();
             break;
 
         //################### Просмотр всех комментариев к альбому ###################//
@@ -679,10 +669,10 @@ HTML;
                 //Если вызвана страница всех комментов
                 if ($uid and !$aid) {
                     $user_speedbar = $lang['comm_form_album_all'];
-                    $metatags['title'] = $lang['comm_form_album_all'];
+                    $params['metatags']['title'] = $lang['comm_form_album_all'];
                 } else {
                     $user_speedbar = $lang['comm_form_album'];
-                    $metatags['title'] = $lang['comm_form_album'];
+                    $params['metatags']['title'] = $lang['comm_form_album'];
                 }
 
                 //Загружаем HEADER альбома
@@ -773,10 +763,12 @@ HTML;
                     $user_speedbar = $row_album['all_comm_num'] . ' ' . gram_record($row_album['all_comm_num'], 'comments');
                 } else
                     msgbox('', $lang['no_comments'], 'info_2');
+
             } else {
                 $user_speedbar = $lang['title_albums'];
                 msgbox('', $lang['no_notes'], 'info');
             }
+            compile($tpl, $params);
             break;
 
         //################### Страница изменения порядка фотографий ###################//
@@ -789,7 +781,7 @@ HTML;
             if ($check_album) {
                 $sql_ = $db->super_query("SELECT id, photo_name FROM `photos` WHERE album_id = '{$aid}' AND user_id = '{$user_id}' ORDER by `position` ASC", true);
 
-                $metatags['title'] = $lang['editphotos'];
+                $params['metatags']['title'] = $lang['editphotos'];
                 $user_speedbar = $lang['editphotos'];
 
                 $tpl->load_template('albums_top.tpl');
@@ -828,10 +820,13 @@ HTML;
                 } else
                     msgbox('', $lang['no_photos'], 'info_2');
 
+                compile($tpl, $params);
+
             } else {
                 $metatags['title'] = $lang['hacking'];
                 $user_speedbar = $lang['no_infooo'];
                 msgbox('', $lang['hacking'], 'info_2');
+                compile($tpl);
             }
             break;
 
@@ -897,7 +892,7 @@ HTML;
                     $tpl->compile('info');
 
                     //Мета теги и формирование спидбара
-                    $metatags['title'] = stripslashes($row_album['name']) . ' | ' . $row_album['photo_num'] . ' ' . gram_record($row_album['photo_num'], 'photos');
+                    $params['metatags']['title'] = stripslashes($row_album['name']) . ' | ' . $row_album['photo_num'] . ' ' . gram_record($row_album['photo_num'], 'photos');
                     $user_speedbar = '<span id="photo_num">' . $row_album['photo_num'] . '</span> ' . gram_record($row_album['photo_num'], 'photos');
 
                     if ($sql_photos) {
@@ -931,6 +926,8 @@ HTML;
                     //Если нет, то вызываем функцию генерации
                     if (!$check_pos)
                         GenerateAlbumPhotosPosition($row_album['user_id'], $aid);
+
+                    compile($tpl, $params);
                 } else {
                     $user_speedbar = $lang['error'];
                     msgbox('', $lang['no_notes'], 'info');
@@ -939,6 +936,8 @@ HTML;
                 $user_speedbar = $lang['title_albums'];
                 msgbox('', $lang['no_notes'], 'info');
             }
+
+            compile($tpl);
             break;
 
         //################### Страница с новыми фотографиями ###################//
@@ -946,7 +945,7 @@ HTML;
             $rowMy = $db->super_query("SELECT user_new_mark_photos FROM `users` WHERE user_id = '" . $user_info['user_id'] . "'");
 
             //Формирование тайтла браузера и спидбара
-            $metatags['title'] = 'Новые фотографии со мной';
+            $params['metatags']['title'] = 'Новые фотографии со мной';
             $user_speedbar = 'Новые фотографии со мной';
 
             //Загрузка верхушки
@@ -974,6 +973,8 @@ HTML;
                 navigation($gcount, $rowCount['cnt'], $config['home_url'] . 'albums/newphotos/');
             } else
                 msgbox('', '<br /><br /><br />Отметок не найдено.<br /><br /><br />', 'info_2');
+
+            compile($tpl, $params);
             break;
 
         default:
@@ -992,7 +993,7 @@ HTML;
                 if (!$CheckBlackList) {
                     $author_info = explode(' ', $row_owner['user_search_pref']);
 
-                    $metatags['title'] = $lang['title_albums'] . ' ' . gramatikName($author_info[0]) . ' ' . gramatikName($author_info[1]);
+                    $params['metatags']['title'] = $lang['title_albums'] . ' ' . gramatikName($author_info[0]) . ' ' . gramatikName($author_info[1]);
                     $user_speedbar = $lang['title_albums'];
 
                     //Выводи данные об альбоме
@@ -1118,16 +1119,22 @@ HTML;
                         }
                         $tpl->compile('content');
                     }
+
+                    compile($tpl, $params);
                 } else {
                     $user_speedbar = $lang['error'];
                     msgbox('', $lang['no_notes'], 'info');
+                    compile($tpl);
                 }
             } else
                 Hacking();
+
+
     }
     $tpl->clear();
 //	$db->free($sql_);
 } else {
     $user_speedbar = $lang['no_infooo'];
     msgbox('', $lang['not_logged'], 'info');
+    compile($tpl);
 }

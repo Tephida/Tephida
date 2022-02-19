@@ -19,8 +19,7 @@ RewriteEngine On
 	RewriteRule ^editmypage(/?)+$ index.php?go=editprofile [L]
 	RewriteRule ^editmypage/contact(/?)+$ index.php?go=editprofile&act=contact [L]
 	RewriteRule ^editmypage/interests(/?)+$ index.php?go=editprofile&act=interests [L]
-	RewriteRule ^editmypage/all(/?)+$ index.php?go=editprofile&act=all [L]
-	
+
 # Альбомы
 	RewriteRule ^albums/([0-9]+)(/?)+$ index.php?go=albums&uid=$1 [L]
 	RewriteRule ^albums/add/([0-9]+)(/?)+$ index.php?go=albums&act=add&aid=$1 [L]

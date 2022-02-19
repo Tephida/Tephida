@@ -31,6 +31,8 @@ if (Registry::get('logged')) {
             $tpl->load_template('support/new.tpl');
             $tpl->set('{uid}', $user_id);
             $tpl->compile('content');
+
+            compile($tpl);
             break;
 
         //################### Отправка нового вопроса  ###################//
@@ -40,7 +42,7 @@ if (Registry::get('logged')) {
             $question = requestFilter('question');
             $limitTime = $server_time - 3600;
             $rowLast = $db->super_query("SELECT COUNT(*) AS cnt FROM `support` WHERE сdate > '{$limitTime}'");
-            if (!$rowLast['cnt'] and isset($title) and !empty($title) and isset($question) and !empty($question) and $user_info['user_group'] != 4) {
+            if (!$rowLast['cnt'] and !empty($title) and !empty($question) and $user_info['user_group'] != 4) {
                 $question = preg_replace('`(http(?:s)?://\w+[^\s\[\]\<]+)`i', '<!--link:$1--><a href="$1" target="_blank">$1</a><!--/link-->', $question);
                 $db->query("INSERT INTO `support` SET title = '{$title}', question = '{$question}', suser_id = '{$user_id}', sfor_user_id = '{$user_id}', sdate = '{$server_time}', сdate = '{$server_time}'");
                 $dbid = $db->insert_id();
@@ -60,12 +62,11 @@ if (Registry::get('logged')) {
                     $tpl->set('{ava}', '{theme}/images/no_ava_50.png');
                 $tpl->set('{answers}', '');
                 $tpl->compile('content');
-                AjaxTpl();
+                AjaxTpl($tpl);
                 echo 'r|x' . $dbid;
             } else
                 echo 'limit';
 
-            die();
             break;
 
         //################### Удаление вопроса  ###################//
@@ -77,7 +78,7 @@ if (Registry::get('logged')) {
                 $db->query("DELETE FROM `support` WHERE id = '{$qid}'");
                 $db->query("DELETE FROM `support_answers` WHERE qid = '{$qid}'");
             }
-            die();
+
             break;
 
         //################### Удаление Ответа  ###################//
@@ -100,7 +101,7 @@ if (Registry::get('logged')) {
                 if ($row['cnt'])
                     $db->query("UPDATE `support` SET sfor_user_id = 0 WHERE id = '{$qid}'");
             }
-            die();
+
             break;
 
         //################### Отправка ответа ###################//
@@ -150,9 +151,9 @@ if (Registry::get('logged')) {
                 $date_str = megaDate($server_time);
                 $tpl->set('{date}', $date_str);
                 $tpl->compile('content');
-                AjaxTpl();
+                AjaxTpl($tpl);
             }
-            die();
+
             break;
 
         //################### Просмотр вопроса ###################//
@@ -232,6 +233,7 @@ if (Registry::get('logged')) {
                 $speedbar = $lang['error'];
                 msgbox('', $lang['support_no_quest'], 'info');
             }
+            compile($tpl);
             break;
 
         //################### Просмотр всех вопросов ###################//
@@ -292,15 +294,20 @@ if (Registry::get('logged')) {
                     $tpl->compile('content');
                 }
                 navigation($gcount, $count['cnt'], '/support?page=');
+
+                compile($tpl);
             } else
                 if ($user_info['user_group'] == 4)
                     msgbox('', $lang['support_no_quest3'], 'info_2');
                 else
                     msgbox('', $lang['support_no_quest2'], 'info_2');
+
+            compile($tpl);
     }
-    $tpl->clear();
-    $db->free();
+//    $tpl->clear();
+//    $db->free();
 } else {
     $user_speedbar = $lang['no_infooo'];
     msgbox('', $lang['not_logged'], 'info');
+    compile($tpl);
 }

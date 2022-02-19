@@ -64,7 +64,7 @@ if (Registry::get('logged')) {
                 } else
                     echo 1;
             }
-            die();
+
             break;
 
         //################## Если выбрано "Подписчики сообщества" ##################//
@@ -106,7 +106,6 @@ if (Registry::get('logged')) {
             } else
                 echo 1;
 
-            die();
             break;
 
         //################## Если выбрано "Подписчики сообщества" из СООБЩЕСТВ ##################//
@@ -149,7 +148,6 @@ if (Registry::get('logged')) {
             } else
                 echo 1;
 
-            die();
             break;
 
         //################### Если выбрано " Отправить личным сообщением" ###################//
@@ -270,7 +268,6 @@ if (Registry::get('logged')) {
             } else
                 echo 'max_strlen';
 
-            die();
             break;
 
         //################## Страница отправки ##################//
@@ -309,13 +306,10 @@ if (Registry::get('logged')) {
 
             $tpl->compile('content');
 
-            AjaxTpl();
-
+            AjaxTpl($tpl);
     }
 
-    $tpl->clear();
-    $db->free();
+//    $tpl->clear();
+//    $db->free();
 
 }
-
-die();

@@ -70,7 +70,7 @@ class mozg_template
 
     public function check_module(string $aviable, array|string $block, bool $action = true): array|string
     {
-        global $mozg_module;
+        $mozg_module = Registry::get('go');
         $aviable = explode('|', $aviable);
         $block = str_replace('\"', '"', $block);
         if ($action) {

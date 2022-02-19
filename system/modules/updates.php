@@ -43,5 +43,3 @@ if (Registry::get('logged')) {
     }
 
 }
-
-die();

@@ -299,7 +299,7 @@ if (Registry::get('logged')) {
                                 $wall->comm_select();
                             }
 
-                            AjaxTpl();
+                            AjaxTpl($tpl);
 
                         } else
                             echo 'err_privacy';
@@ -308,7 +308,6 @@ if (Registry::get('logged')) {
                 }
             }
 
-            die();
             break;
 
         //################### Удаление записи со стены ###################//
@@ -366,7 +365,6 @@ if (Registry::get('logged')) {
                 $db->query("DELETE FROM `news` WHERE obj_id = '{$rid}' AND action_time = '{$row['add_date']}' AND action_type = {$action_type}");
             }
 
-            die();
             break;
 
         //################### Ставим "Мне нравится" ###################//
@@ -417,7 +415,6 @@ if (Registry::get('logged')) {
                 }
             }
 
-            die();
             break;
 
         //################### Удаляем "Мне нравится" ###################//
@@ -444,7 +441,6 @@ if (Registry::get('logged')) {
                 }
             }
 
-            die();
             break;
 
         //################### Выводим первых 7 юзеров которые поставили "мне нравится" ###################//
@@ -459,7 +455,7 @@ if (Registry::get('logged')) {
                     echo '<a href="/u' . $row['user_id'] . '" id="Xlike_user' . $row['user_id'] . '_' . $rid . '" onClick="Page.Go(this.href); return false"><img src="' . $ava . '" width="32" /></a>';
                 }
             }
-            die();
+
             break;
 
         //################### Выводим всех юзеров которые поставили "мне нравится" ###################//
@@ -502,10 +498,10 @@ if (Registry::get('logged')) {
                     }
                     box_navigation($gcount, $liked_num, $rid, 'wall.all_liked_users', $liked_num);
 
-                    AjaxTpl();
+                    AjaxTpl($tpl);
                 }
             }
-            die();
+
             break;
 
         //################### Показ всех комментариев к записи ###################//
@@ -542,12 +538,12 @@ if (Registry::get('logged')) {
                         $wall->comm_compile('content');
                         $wall->comm_select();
 
-                        AjaxTpl();
+                        AjaxTpl($tpl);
                     } else
                         echo 'err_privacy';
                 }
             }
-            die();
+
             break;
 
         //################### Показ предыдущих записей ###################//
@@ -583,10 +579,10 @@ if (Registry::get('logged')) {
                     $wall->template('wall/record.tpl');
                     $wall->compile('content');
                     $wall->select();
-                    AjaxTpl();
+                    AjaxTpl($tpl);
                 }
             }
-            die();
+
             break;
 
         //################### Рассказать друзьям "Мне нравится" ###################//
@@ -622,7 +618,7 @@ if (Registry::get('logged')) {
                 } else
                     echo 1;
             }
-            die();
+            break;
 
         //################### Парсер информации о ссылке ###################//
         case "parse_link":
@@ -728,7 +724,8 @@ if (Registry::get('logged')) {
 
             } else
                 echo 1;
-            die();
+
+            break;
 
         default:
 
@@ -797,6 +794,7 @@ if (Registry::get('logged')) {
 
                         if ($cnt_rec['cnt'] < 1)
                             msgbox('', $lang['wall_no_rec'], 'info_2');
+
                     } else {
                         $user_speedbar = $lang['error'];
                         msgbox('', $lang['no_notes'], 'info');
@@ -857,7 +855,7 @@ if (Registry::get('logged')) {
                 }
             }
     }
-    $tpl->clear();
-    $db->free();
+//    $tpl->clear();
+//    $db->free();
 } else
     echo 'no_log';

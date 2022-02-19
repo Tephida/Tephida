@@ -10,7 +10,8 @@ if (!defined('MOZG')) die('Hacking attempt!');
 
 $go = isset($_GET['go']) ? htmlspecialchars(strip_tags(stripslashes(trim(urldecode($_GET['go']))))) : "main";
 
-$mozg_module = $go;
+Registry::set('go', $go);
+
 check_xss();
 //FOR MOBILE VERSION 1.0
 $config = $config ?? settings_get();
@@ -18,6 +19,7 @@ $lang['online'] = $config['temp'] == 'mobile' ? '<img src="{theme}/images/monlin
 
 switch ($go) {
     /** Регистрация */
+    case "main":
     case "register":
         include ENGINE_DIR . '/modules/register.php';
         break;
@@ -47,6 +49,7 @@ switch ($go) {
         else {
             $user_speedbar = 'Информация';
             msgbox('', 'Сервис отключен.', 'info');
+            compile($tpl);
         }
         break;
 
@@ -91,6 +94,7 @@ switch ($go) {
         else {
             $user_speedbar = 'Информация';
             msgbox('', 'Сервис отключен.', 'info');
+            compile($tpl);
         }
         break;
 
@@ -176,6 +180,7 @@ switch ($go) {
             $spBar = true;
             $user_speedbar = 'Информация';
             msgbox('', 'Сервис отключен.', 'info');
+            compile($tpl);
         }
         break;
 
@@ -192,7 +197,6 @@ switch ($go) {
     /** Скрываем блок Дни рожденья друзей */
     case "happy_friends_block_hide":
         $_SESSION['happy_friends_block_hide'] = 1;
-        die();
         break;
 
     /** Скрываем блок Дни рожденья друзей */
@@ -248,7 +252,6 @@ switch ($go) {
     /** Удаление страницы */
     case "del_my_page":
         include ENGINE_DIR . '/modules/del_my_page.php';
-        die();
         break;
 
     /** Гости */
@@ -260,18 +263,6 @@ switch ($go) {
     /** Фоторедактор */
     case "photo_editor":
         include ENGINE_DIR . '/modules/photo_editor.php';
-        break;
-
-    /** Игры */
-    case "apps":
-        $app_mod = false;
-        if ($app_mod == true) {
-            include ENGINE_DIR . '/modules/apps.php';
-        } else {
-            $user_speedbar = 'Информация';
-            msgbox('', 'Сервис отключен.', 'info');
-        }
-
         break;
 
     /** Отзывы */
@@ -299,18 +290,19 @@ switch ($go) {
         include ENGINE_DIR . '/modules/lang.php';
         break;
 
+    /** Редирект */
+    case "away":
+        $url = requestFilter('url');
+        header("Location: {$url}");
+        break;
+
     /** Статистика страницы пользователя */
     case "my_stats":
         include ENGINE_DIR . '/modules/my_stats.php';
         break;
+
     default:
         $spBar = true;
-        if ($go != 'main')
-            msgbox('', $lang['no_str_bar'], 'info');
+        msgbox('', $lang['no_str_bar'], 'info');
+        compile($tpl);
 }
-if (empty($metatags['title']))
-    $metatags['title'] = $config['home'];
-$speedbar = $user_speedbar ?? $lang['welcome'];
-$headers = '<title>' . $metatags['title'] . '</title>
-<meta name="generator" content="VII ENGINE" />
-<meta http-equiv="content-type" content="text/html; charset=utf-8" />';

@@ -161,14 +161,15 @@ if (Registry::get('logged')) {
 
                 msgbox('', 'Ошибка доступа!', 'info');
 
+            compile($tpl);
     }
 
-    $tpl->clear();
-    $db->free();
+//    $tpl->clear();
+//    $db->free();
 
 } else {
 
     $user_speedbar = $lang['no_infooo'];
     msgbox('', $lang['not_logged'], 'info');
-
+    compile($tpl);
 }

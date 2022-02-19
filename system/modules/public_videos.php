@@ -55,8 +55,6 @@ if (Registry::get('logged')) {
 
             }
 
-            die();
-
             break;
 
         //################### Удаление видео ###################//
@@ -90,8 +88,6 @@ if (Registry::get('logged')) {
 
             }
 
-            die();
-
             break;
 
         //################### Окно редактирования видео ###################//
@@ -116,11 +112,9 @@ if (Registry::get('logged')) {
                 $tpl->set('{descr}', myBrRn(stripslashes($row['descr'])));
                 $tpl->compile('content');
 
-                AjaxTpl();
+                AjaxTpl($tpl);
 
             }
-
-            die();
 
             break;
 
@@ -151,8 +145,6 @@ if (Registry::get('logged')) {
                 mozg_clear_cache_file("groups/video{$pid}");
 
             }
-
-            die();
 
             break;
 
@@ -238,9 +230,7 @@ if (Registry::get('logged')) {
                 }
             }
 
-            AjaxTpl();
-
-            die();
+            AjaxTpl($tpl);
 
             break;
 
@@ -349,20 +339,19 @@ if (Registry::get('logged')) {
             }
 
             if ($page_cnt) {
-
-                AjaxTpl();
-                die();
+                AjaxTpl($tpl);
 
             }
 
+            compile($tpl);
     }
 
-    $tpl->clear();
-    $db->free();
+//    $tpl->clear();
+//    $db->free();
 
 } else {
 
     $user_speedbar = 'Информация';
     msgbox('', $lang['not_logged'], 'info');
-
+    compile($tpl);
 }

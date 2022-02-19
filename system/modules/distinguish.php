@@ -145,5 +145,3 @@ HTML;
     $db->free();
 } else
     echo 'no_log';
-
-die();

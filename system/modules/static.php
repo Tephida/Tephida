@@ -23,12 +23,16 @@ if (Registry::get('logged')) {
         $tpl->set('{title}', stripslashes($row['title']));
         $tpl->set('{text}', stripslashes($row['text']));
         $tpl->compile('content');
-    } else
+        compile($tpl);
+    } else {
         msgbox('', 'Страница не найдена.', 'info_2');
+        compile($tpl);
+    }
 
-    $tpl->clear();
-    $db->free();
+//    $tpl->clear();
+//    $db->free();
 } else {
     $user_speedbar = $lang['no_infooo'];
     msgbox('', $lang['not_logged'], 'info');
+    compile($tpl);
 }

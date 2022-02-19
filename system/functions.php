@@ -456,9 +456,9 @@ function profileload() {
  */
 function NoAjaxQuery() : void
 {
-    if(!empty($_POST['ajax']) AND $_POST['ajax'] == 'yes')
-        if (clean_url($_SERVER['HTTP_REFERER']) != clean_url($_SERVER['HTTP_HOST']) AND $_SERVER['REQUEST_METHOD'] != 'POST')
-            header('Location: /index.php?go=none');
+    if (!empty($_POST['ajax']) and $_POST['ajax'] == 'yes')
+        if (clean_url($_SERVER['HTTP_REFERER']) != clean_url($_SERVER['HTTP_HOST']) and $_SERVER['REQUEST_METHOD'] != 'POST')
+            header('Location: /index.php?go=none');//fixme
 }
 
 /**
@@ -854,10 +854,13 @@ function gramatikName($source): string
 }
 
 /**
+ * FIXME
  * @return void
  */
-function Hacking() {
-    global $ajax, $lang;
+function Hacking()
+{
+    global $lang;
+    $ajax = checkAjax();
     if ($ajax) {
         NoAjaxQuery();
         echo <<<HTML
@@ -872,6 +875,10 @@ HTML;
         return header('Location: /index.php?go=none');
 }
 
+function checkAjax(): bool
+{
+    return (!empty($_POST['ajax']) and $_POST['ajax'] == 'yes') ? true : false;
+}
 
 /**
  * @param $user_year
@@ -931,14 +938,18 @@ function OnlineTpl($time, $mobile = false) {
     else
         return $tpl->set('{online}', '');
 }
-function AjaxTpl() {
-    global $tpl, $config;
+
+function AjaxTpl($tpl)
+{
+    $config = settings_get();
     echo str_replace('{theme}', '/templates/' . $config['temp'], $tpl->result['info'] . $tpl->result['content']);
 }
-function GenerateAlbumPhotosPosition($uid, $aid = false) {
+
+function GenerateAlbumPhotosPosition($uid, $aid = false)
+{
     $db = Registry::get('db');
     //Выводим все фотографии из альбома и обновляем их позицию только для просмотра альбома
-    if ($uid AND $aid) {
+    if ($uid and $aid) {
         $sql_ = $db->super_query("SELECT id FROM `photos` WHERE album_id = '{$aid}' ORDER by `position` ASC", true);
         $count = 1;
         $photo_info = '';
@@ -1326,12 +1337,16 @@ function set_cookie($name, $value, $expires)
 
 function settings_get(): array
 {
+    return Registry::get('config');
+}
+
+function settings_load(): array
+{
     if (file_exists(ENGINE_DIR . '/data/config.php')) {
         return require ENGINE_DIR . '/data/config.php';
     } else {
         die("Vii Engine not installed. Please run install.php");
     }
-
 }
 
 /**
@@ -1341,4 +1356,331 @@ function _e_json(array $value): int
 {
     header('Content-Type: application/json');
     return print(json_encode($value, JSON_THROW_ON_ERROR));
+}
+
+/**
+ *
+ *
+ * @param $tpl
+ * @return int
+ */
+function compile($tpl, $params = array()): int
+{
+    $config = settings_get();
+
+    $metatags['title'] = $params['metatags']['title'] ?? $config['home'];
+    $checkLang = Registry::get('checkLang') ?? 'Russian';
+    $lang = require ROOT_DIR . '/lang/' . $checkLang . '/site.php';
+    $params['speedbar'] = $user_speedbar ?? $lang['welcome'];
+    $params['headers'] = '<title>' . $metatags['title'] . '</title>
+    <meta name="generator" content="VII ENGINE" />
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />';
+
+
+    $user_info = Registry::get('user_info');
+    //Если юзер перешел по реферальной ссылке, то добавляем ид реферала в сессию
+    if (isset($_GET['reg'])) {
+        $_SESSION['ref_id'] = intFilter('reg');
+    }
+
+    if (isset($user_info['user_id'])) {
+        //Загружаем кол-во новых новостей
+        $CacheNews = mozg_cache('user_' . $user_info['user_id'] . '/new_news');
+        if ($CacheNews) {
+            $params['new_news'] = "<div class=\"headm_newac\" style=\"margin-left:18px\">{$CacheNews}</div>";
+            $params['news_link'] = '/notifications';
+        } else {
+            $params['new_news'] = '';
+            $params['news_link'] = '';
+        }
+//Загружаем кол-во новых подарков
+        $CacheGift = mozg_cache("user_{$user_info['user_id']}/new_gift");
+        if ($CacheGift) {
+            $params['new_ubm'] = "<div class=\"headm_newac\" style=\"margin-left:20px\">{$CacheGift}</div>";
+            $params['gifts_link'] = "/gifts{$user_info['user_id']}?new=1";
+        } else {
+            $params['new_ubm'] = '';
+            $params['gifts_link'] = '/balance';
+        }
+//Новые сообщения
+        $user_pm_num = $user_info['user_pm_num'];
+        if ($user_pm_num) {
+            $params['user_pm_num'] = "<div class=\"headm_newac\" style=\"margin-left:37px\">{$user_pm_num}</div>";
+        } else $params['user_pm_num'] = '';
+//Новые друзья
+        $user_friends_demands = $user_info['user_friends_demands'];
+        if ($user_friends_demands) {
+            $params['demands'] = "<div class=\"headm_newac\">{$user_friends_demands}</div>";
+            $params['requests_link'] = '/requests';
+        } else {
+            $params['demands'] = '';
+            $params['requests_link'] = '';
+        }
+//ТП
+        $user_support = $user_info['user_support'];
+        if ($user_support) {
+            $params['support'] = "<div class=\"headm_newac\" style=\"margin-left:26px\">{$user_support}</div>";
+        } else {
+            $params['support'] = '';
+        }
+//Отметки на фото
+        if ($user_info['user_new_mark_photos']) {
+            $params['new_photos_link'] = 'newphotos';
+            $params['new_photos'] = "<div class=\"headm_newac\" style=\"margin-left:22px\">" . $user_info['user_new_mark_photos'] . "</div>";
+        } else {
+            $params['new_photos'] = '';
+            $params['new_photos_link'] = $user_info['user_id'];
+        }
+//Приглашения в сообщества
+        if ($user_info['invties_pub_num']) {
+            $params['new_groups'] = "<div class=\"headm_newac\" style=\"margin-left:26px\">" . $user_info['invties_pub_num'] . "</div>";
+            $params['new_groups_lnk'] = '/groups?act=invites';
+        } else {
+            $params['new_groups'] = '';
+            $params['new_groups_lnk'] = '/groups';
+        }
+
+    } else {
+        $params['user_pm_num'] = '';
+        $params['new_news'] = '';
+        $params['new_ubm'] = '';
+        $params['gifts_link'] = '/balance';
+        $params['support'] = '';
+        $params['news_link'] = '';
+        $params['demands'] = '';
+        $params['new_photos'] = '';
+        $params['new_photos_link'] = 0;
+        $params['requests_link'] = '/requests';
+        $params['new_groups_lnk'] = '/groups';
+        $params['new_groups'] = '';
+
+    }
+
+    //Если включен AJAX, то загружаем стр.
+    if (requestFilter('ajax') == 'yes') {
+        return compileAjax($tpl, $params);
+    } else {
+        return compileNoAjax($tpl, $params);
+    }
+
+
+//    $go = Registry::get('go');
+
+//Если обращение к модулю регистрации или главной и юзер не авторизован, то показываем регистрацию
+//if ($go == 'register' or $go == 'main' and Registry::get('logged') == false) {
+//    include ENGINE_DIR . '/modules/register_main.php';
+//}
+
+
+}
+
+/**
+ * @param $tpl
+ * @param $params
+ * @return int
+ */
+function compileAjax($tpl, $params): int
+{
+    $config = settings_get();
+    //Если есть POST Запрос и значение AJAX, а $ajax не равняется "yes", то не пропускаем
+    //FIXME
+//    if ($_SERVER['REQUEST_METHOD'] == 'POST')
+//        die('Неизвестная ошибка');
+
+    $speedbar = $speedbar ?? null;
+    $metatags = $params['metatags'] ?? null;
+
+    $metatags['title'] = $metatags['title'] ?? null;
+
+    if (isset($spBar) and $spBar)
+        $ajaxSpBar = "$('#speedbar').show().html('{$speedbar}')";
+    else
+        $ajaxSpBar = "$('#speedbar').hide()";
+
+    $params['requests_link'] = $requests_link ?? '';
+
+    $result_ajax = <<<HTML
+<script type="text/javascript">
+document.title = '{$metatags['title']}';
+{$ajaxSpBar};
+document.getElementById('new_msg').innerHTML = '{$params['user_pm_num']}';
+document.getElementById('new_news').innerHTML = '{$params['new_news']}';
+document.getElementById('new_ubm').innerHTML = '{$params['new_ubm']}';
+document.getElementById('ubm_link').setAttribute('href', '{$params['gifts_link']}');
+document.getElementById('new_support').innerHTML = '{$params['support']}';
+document.getElementById('news_link').setAttribute('href', '/news{$params['news_link']}');
+document.getElementById('new_requests').innerHTML = '{$params['demands']}';
+document.getElementById('new_photos').innerHTML = '{$params['new_photos']}';
+document.getElementById('requests_link_new_photos').setAttribute('href', '/albums/{$params['new_photos_link']}');
+document.getElementById('requests_link').setAttribute('href', '/friends{$params['requests_link']}');
+$('#new_groups').html('{$params['new_groups']}');
+$('#new_groups_lnk').attr('href', '{$params['new_groups_lnk']}');
+</script>
+{$tpl->result['info']}{$tpl->result['content']}
+HTML;
+    header('Content-type: text/html; charset=utf-8');
+    echo str_replace('{theme}', '/templates/' . $config['temp'], $result_ajax);
+    $tpl->global_clear();
+//        $db->close();
+    if ($config['gzip'] == 'yes')
+        GzipOut();
+
+    return print('');
+}
+
+/**
+ * @param $tpl
+ * @param $params
+ * @return int
+ */
+function compileNoAjax($tpl, $params): int
+{
+    $tpl->load_template('main.tpl');
+//Если юзер авторизован
+    if (Registry::get('logged')) {
+        $user_info = Registry::get('user_info');
+        $tpl->set_block("'\\[not-logged\\](.*?)\\[/not-logged\\]'si", "");
+        $tpl->set('[logged]', '');
+        $tpl->set('[/logged]', '');
+        $tpl->set('{my-page-link}', '/u' . $user_info['user_id']);
+        $tpl->set('{my-id}', $user_info['user_id']);
+        //Заявки в друзья
+        $user_friends_demands = $user_info['user_friends_demands'];
+        if ($user_friends_demands) {
+            $tpl->set('{demands}', $params['demands']);
+            $requests_link = $requests_link ?? '';
+            $tpl->set('{requests-link}', $requests_link);
+        } else {
+            $tpl->set('{demands}', '');
+            $tpl->set('{requests-link}', '');
+        }
+        //Новости
+        if (isset($CacheNews) and $CacheNews) {
+            $tpl->set('{new-news}', $params['new_news']);
+            $tpl->set('{news-link}', $params['news_link']);
+        } else {
+            $tpl->set('{new-news}', '');
+            $tpl->set('{news-link}', '');
+        }
+        //Сообщения
+        if (!empty($params['user_pm_num']))
+            $tpl->set('{msg}', $params['user_pm_num']);
+        else
+            $tpl->set('{msg}', '');
+
+        $user_support = $user_support ?? null;
+        //Поддержка
+        if ($user_support)
+            $tpl->set('{new-support}', $params['support']);
+        else
+            $tpl->set('{new-support}', '');
+        //Отметки на фото
+        if ($user_info['user_new_mark_photos']) {
+            $tpl->set('{my-id}', 'newphotos');
+            $tpl->set('{new_photos}', $params['new_photos']);
+        } else
+            $tpl->set('{new_photos}', '');
+        //UBM
+
+        $CacheGift = $CacheGift ?? null;
+        if ($CacheGift) {
+            $tpl->set('{new-ubm}', $params['new_ubm']);
+        } else {
+            $tpl->set('{new-ubm}', '');
+        }
+        $tpl->set('{ubm-link}', $params['gifts_link']);
+
+        //Приглашения в сообщества
+        if ($user_info['invties_pub_num']) {
+            $tpl->set('{new_groups}', $params['new_groups']);
+        } else {
+            $tpl->set('{new_groups}', '');
+        }
+        $tpl->set('{groups-link}', $params['new_groups_lnk']);
+    } else {
+        $tpl->set_block("'\\[logged\\](.*?)\\[/logged\\]'si", "");
+        $tpl->set('[not-logged]', '');
+        $tpl->set('[/not-logged]', '');
+        $tpl->set('{my-page-link}', '');
+    }
+
+    $mobile_speedbar = $mobile_speedbar ?? '';
+    $headers = $headers ?? '';
+    $speedbar = $speedbar ?? '';
+
+    $tpl->set('{header}', $headers);
+    $tpl->set('{speedbar}', $speedbar);
+
+    $tpl->set('{mobile-speedbar}', $mobile_speedbar);
+    $tpl->set('{info}', $tpl->result['info'] ?? '');
+// FOR MOBILE VERSION 1.0
+    $config = settings_get();
+    if ($config['temp'] == 'mobile') {
+        $tpl->result['content'] = str_replace('onClick="Page.Go(this.href); return false"', '', $tpl->result['content']);
+        if ($user_info['user_status'])
+            $tpl->set('{status-mobile}', '<span style="font-size:11px;color:#000">' . $user_info['user_status'] . '</span>');
+        else
+            $tpl->set('{status-mobile}', '<span style="font-size:11px;color:#999">установить статус</span>');
+
+        $user_friends_demands = $user_friends_demands ?? null;
+        $user_support = $user_support ?? null;
+        $CacheNews = $CacheNews ?? null;
+        $CacheGift = $CacheGift ?? null;
+
+        $new_actions = $user_friends_demands + $user_support + $CacheNews + $CacheGift + $user_info['user_pm_num'];
+        if ($new_actions)
+            $tpl->set('{new-actions}', "<div class=\"headm_newac\" style=\"margin-top:5px;margin-left:30px\">+{$new_actions}</div>");
+        else
+            $tpl->set('{new-actions}', "");
+    }
+    $tpl->set('{content}', $tpl->result['content']);
+    if (isset($spBar) and $spBar) {
+        $tpl->set_block("'\\[speedbar\\](.*?)\\[/speedbar\\]'si", "");
+    } else {
+        $tpl->set('[speedbar]', '');
+        $tpl->set('[/speedbar]', '');
+    }
+//BUILD JS
+    $checkLang = Registry::get('checkLang');
+    if (Registry::get('logged')) {
+        $tpl->set('{js}', '<script type="text/javascript" src="{theme}/js/jquery.lib.js"></script>
+<script type="text/javascript" src="{theme}/js/' . $checkLang . '/lang.js"></script>
+<script type="text/javascript" src="{theme}/js/main.js"></script>
+<script type="text/javascript" src="{theme}/js/profile.js"></script>');
+    } else {
+        $tpl->set('{js}', '<script type="text/javascript" src="{theme}/js/jquery.lib.js"></script>
+<script type="text/javascript" src="{theme}/js/' . $checkLang . '/lang.js"></script>
+<script type="text/javascript" src="{theme}/js/main.js"></script>');
+    }
+
+// FOR MOBILE VERSION 1.0
+    if (isset($user_info['user_photo']) and $user_info['user_photo']) {
+        $tpl->set('{my-ava}', "/uploads/users/{$user_info['user_id']}/50_{$user_info['user_photo']}");
+    } else {
+        $tpl->set('{my-ava}', "{theme}/images/no_ava_50.png");
+    }
+
+    if (isset($user_info['user_search_pref'])) {
+        $tpl->set('{my-name}', $user_info['user_search_pref']);
+    } else {
+        $tpl->set('{my-name}', '');
+    }
+
+    if (isset($check_smartphone)) {
+        $tpl->set('{mobile-link}', '<a href="/index.php?act=change_mobile">мобильная версия</a>');
+    } else {
+        $tpl->set('{mobile-link}', '');
+    }
+
+    $rMyLang = Registry::get('rMyLang');
+    $tpl->set('{lang}', $rMyLang);
+    $tpl->compile('main');
+    header('Content-type: text/html; charset=utf-8');
+    echo str_replace('{theme}', '/templates/' . $config['temp'], $tpl->result['main']);
+    $tpl->global_clear();
+//    $db->close();
+    if ($config['gzip'] == 'yes')
+        GzipOut();
+
+    return print('');
 }

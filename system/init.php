@@ -8,20 +8,18 @@
  */
 if (!defined('MOZG')) die('Hacking attempt!');
 
-include ENGINE_DIR . '/functions.php';
 
 try {
-    $config = settings_get();
+    $config = settings_load();
+    Registry::set('config', $config);
 } catch (Exception $e) {
-    throw new InvalidArgumentException("Invalid config. Please reinstall VII Engine");
+    throw new InvalidArgumentException("Invalid config. Please run install.php");
 }
 
-if (!isset($config['home_url']))
-    die("Vii Engine not installed. Please run install.php");
-include ENGINE_DIR . '/classes/mysql.php';
-include ENGINE_DIR . '/data/db.php';
+
+$db = require_once ENGINE_DIR . '/data/db.php';
 Registry::set('db', $db);
-include ENGINE_DIR . '/classes/templates.php';
+
 if ($config['gzip'] == 'yes')
     include ENGINE_DIR . '/modules/gzip.php';
 //FUNC. COOKIES
@@ -63,13 +61,16 @@ foreach ($expLangList as $expLangData) {
     if ($cil == $useLang and $expLangName[0]) {
         $rMyLang = $expLangName[0];
         $checkLang = $expLangName[1];
+        Registry::set('rMyLang', $rMyLang);
+        Registry::set('checkLang', $checkLang);
     }
 }
 if (!isset($checkLang)) {
     $rMyLang = 'Русский';
     $checkLang = 'Russian';
 }
-include ROOT_DIR . '/lang/' . $checkLang . '/site.lng';
+$lang = require ROOT_DIR . '/lang/' . $checkLang . '/site.php';
+$langdate = require ROOT_DIR . '/lang/' . $checkLang . '/date.php';
 
 $tpl = new mozg_template;
 $tpl->dir = ROOT_DIR . '/templates/' . $config['temp'];

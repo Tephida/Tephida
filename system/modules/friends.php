@@ -22,6 +22,7 @@ if (Registry::get('logged')) {
     $gcount = 20;
     $limit_page = ($page - 1) * $gcount;
 
+    $params = array();
     switch ($act) {
 
         //################### Отправка заявки в друзья ###################//
@@ -84,7 +85,6 @@ if (Registry::get('logged')) {
             } else
                 echo 'yes_demand';
 
-            die();
             break;
 
         //################### Принятие заявки на дружбу ###################//
@@ -164,7 +164,6 @@ if (Registry::get('logged')) {
             } else
                 echo 'no_request';
 
-            die();
             break;
 
         //################### Отклонение заявки на дружбу ###################//
@@ -185,7 +184,6 @@ if (Registry::get('logged')) {
             } else
                 echo 'no_request';
 
-            die();
             break;
 
         //################### Удаления друга из списка друзей ###################//
@@ -222,7 +220,6 @@ if (Registry::get('logged')) {
             } else
                 echo 'no_friend';
 
-            die();
             break;
 
         //################### Страница заявок в друзья ###################//
@@ -290,6 +287,7 @@ if (Registry::get('logged')) {
             } else
                 msgbox('', $lang['no_requests'], 'info_2');
 
+            compile($tpl);
             break;
 
         //################### Просмотр всех онлайн друзей ###################//
@@ -404,6 +402,8 @@ if (Registry::get('logged')) {
                 $user_speedbar = $lang['error'];
                 msgbox('', $lang['no_notes'], 'info');
             }
+
+            compile($tpl);
             break;
 
         //################### Загрузка друзей в окне для выбора СП ###################//
@@ -449,9 +449,8 @@ if (Registry::get('logged')) {
             } else
                 msgbox('', '<div class="clear" style="margin-top:140px"></div>' . $lang['no_requests'], 'info_2');
 
-            AjaxTpl();
+            AjaxTpl($tpl);
 
-            die();
             break;
 
         //################### Общие друзья ###################//
@@ -690,10 +689,13 @@ if (Registry::get('logged')) {
                 $user_speedbar = $lang['error'];
                 msgbox('', $lang['no_notes'], 'info');
             }
+
+            compile($tpl, $params);
     }
-    $db->free();
-    $tpl->clear();
+//    $db->free();
+//    $tpl->clear();
 } else {
     $user_speedbar = 'Информация';
     msgbox('', $lang['not_logged'], 'info');
+    compile($tpl);
 }

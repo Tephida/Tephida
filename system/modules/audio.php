@@ -68,7 +68,6 @@ if (Registry::get('logged')) {
             } else
                 echo 1;
 
-            die();
             break;
 
         //################### Сохранение отредактированных данных ###################//
@@ -89,7 +88,7 @@ if (Registry::get('logged')) {
                 $db->query("UPDATE `audio` SET artist = '{$artist}', name = '{$name}' WHERE aid = '" . $aid . "'");
                 mozg_clear_cache_file('user_' . $user_id . '/audios_profile');
             }
-            die();
+
             break;
 
         //################### Удаление песни из БД ###################//
@@ -112,7 +111,7 @@ if (Registry::get('logged')) {
                 $db->query("UPDATE `users` SET user_audio = user_audio-1 WHERE user_id = '" . $user_id . "'");
                 mozg_mass_clear_cache_file('user_' . $user_id . '/audios_profile|user_' . $user_id . '/profile_' . $user_id);
             }
-            die();
+
             break;
 
         //################### Добавление песни к себе в список ###################//
@@ -130,7 +129,8 @@ if (Registry::get('logged')) {
                 $db->query("UPDATE `users` SET user_audio = user_audio+1 WHERE user_id = '" . $user_id . "'");
                 mozg_mass_clear_cache_file('user_' . $user_id . '/audios_profile|user_' . $user_id . '/profile_' . $user_id);
             }
-            die();
+
+            break;
 
         //################### Вывод всех аудио (BOX) ###################//
         case "allMyAudiosBox":
@@ -187,11 +187,10 @@ if (Registry::get('logged')) {
                 $tpl->set_block("'\\[top\\](.*?)\\[/top\\]'si", "");
                 $tpl->compile('content');
 
-                AjaxTpl();
+                AjaxTpl($tpl);
             } else
                 echo $lang['audio_box_none'];
 
-            die();
             break;
 
         //################### Загрузка с компьютера ###################//
@@ -240,7 +239,6 @@ if (Registry::get('logged')) {
             } else
                 echo 1;
 
-            die();
             break;
 
         default:
@@ -253,10 +251,12 @@ if (Registry::get('logged')) {
             $tpl->set('{user-id}', $uid);
             $tpl->compile('content');
 
+            compile($tpl);
     }
-    $tpl->clear();
-    $db->free();
+//    $tpl->clear();
+//    $db->free();
 } else {
     $user_speedbar = $lang['no_infooo'];
     msgbox('', $lang['not_logged'], 'info');
+    compile($tpl);
 }

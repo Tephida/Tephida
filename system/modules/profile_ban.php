@@ -18,5 +18,5 @@ if($user_info['user_group'] != '1'){
 	$tpl->compile('main');
     $config = settings_get();
 	echo str_replace('{theme}', '/templates/'.$config['temp'], $tpl->result['main']);
-	die();
+
 }

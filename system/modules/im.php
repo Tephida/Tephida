@@ -68,7 +68,7 @@ if (Registry::get('logged')) {
             } else
                 $jsonResponse['error'] = 'Ошибка доступа';
             echo json_encode($jsonResponse);
-            die();
+            break;
 
         case 'uploadRoomAvatar':
             $room_id = intFilter('room_id');
@@ -135,7 +135,7 @@ if (Registry::get('logged')) {
             } else
                 $jsonResponse['error'] = 'Ошибка доступа';
             echo json_encode($jsonResponse);
-            die();
+            break;
 
         case 'viewRoomBox':
             $room_id = intFilter('room_id');
@@ -168,9 +168,9 @@ if (Registry::get('logged')) {
                 $tpl->set('{nameAttr}', $row['owner'] == $user_id ? '' : 'disabled');
                 $tpl->set('{avatar}', $row['photo'] ? $row['photo'] : '{theme}/images/no_ava_50.png');
                 $tpl->compile('content');
-                AjaxTpl();
+                AjaxTpl($tpl);
             }
-            die();
+            break;
 
         case 'saveRoomName':
             $room_id = intFilter('room_id');
@@ -214,9 +214,8 @@ if (Registry::get('logged')) {
                     $jsonResponse['error'] = 'Введите название';
             } else
                 $jsonResponse['error'] = 'Ошибка доступа';
-            echo
-            json_encode($jsonResponse);
-            die();
+            echo json_encode($jsonResponse);
+            break;
 
         case 'createRoomBox':
             $tpl->result['friends'] = '';
@@ -235,8 +234,8 @@ if (Registry::get('logged')) {
             $tpl->load_template('im/createRoom.tpl');
             $tpl->set('{friends}', $tpl->result['friends']);
             $tpl->compile('content');
-            AjaxTpl();
-            die();
+            AjaxTpl($tpl);
+            break;
 
         case 'inviteToRoomBox':
             $room_id = intFilter('room_id');
@@ -257,8 +256,8 @@ if (Registry::get('logged')) {
             $tpl->set('{id}', $room_id);
             $tpl->set('{friends}', $tpl->result['friends']);
             $tpl->compile('content');
-            AjaxTpl();
-            die();
+            AjaxTpl($tpl);
+            break;
 
         case 'createRoom':
             $title = requestFilter('title');
@@ -320,9 +319,8 @@ if (Registry::get('logged')) {
 
             } else
                 $jsonResponse['error'] = 'Введите название';
-            echo
-            json_encode($jsonResponse);
-            die();
+            echo json_encode($jsonResponse);
+            break;
 
         case 'inviteToRoom':
             $room_id = intFilter('room_id');
@@ -380,7 +378,7 @@ if (Registry::get('logged')) {
             } else
                 $jsonResponse['error'] = 'Выберите друзей';
             echo json_encode($jsonResponse);
-            die();
+            break;
 
         case 'exitFromRoom':
             $room_id = intFilter('room_id');
@@ -425,7 +423,7 @@ if (Registry::get('logged')) {
             } else
                 $jsonResponse['error'] = 'Ошибка доступа';
             echo json_encode($jsonResponse);
-            die();
+            break;
 
         case "send":
             NoAjaxQuery();
@@ -541,9 +539,9 @@ if (Registry::get('logged')) {
                                 } else $attach_result .= '';
                             }
                             if ($attach_result)
-                                $msg = '<div style="width:442px;overflow:hidden">' . preg_replace('`(http(?:s)?://\w+[^\s\[\]\<]+)`i', '<a href="/away.php?url=$1" target="_blank">$1</a>', $msg) . $attach_result . '</div><div class="clear"></div>';
+                                $msg = '<div style="width:442px;overflow:hidden">' . preg_replace('`(http(?:s)?://\w+[^\s\[\]\<]+)`i', '<a href="/index.php?go=away&url=$1" target="_blank">$1</a>', $msg) . $attach_result . '</div><div class="clear"></div>';
                         } else
-                            $msg = preg_replace('`(http(?:s)?://\w+[^\s\[\]\<]+)`i', '<a href="/away.php?url=$1" target="_blank">$1</a>', $msg) . $attach_result;
+                            $msg = preg_replace('`(http(?:s)?://\w+[^\s\[\]\<]+)`i', '<a href="/index.php?go=away&url=$1" target="_blank">$1</a>', $msg) . $attach_result;
                         $tpl->set('[noInformation]', '');
                         $tpl->set('[/noInformation]', '');
                         $tpl->set('{style}', '');
@@ -552,14 +550,14 @@ if (Registry::get('logged')) {
                         $tpl->set('{new}', 'im_class_new');
                         $tpl->set('{date}', langdate('H:i:s', $server_time));
                         $tpl->compile('content');
-                        AjaxTpl();
+                        AjaxTpl($tpl);
                     } else
                         echo 'err_privacy';
                 } else
                     echo 'no_user';
             } else
                 echo 'max_strlen';
-            die();
+            break;
 
         case "read":
             NoAjaxQuery();
@@ -577,7 +575,7 @@ if (Registry::get('logged')) {
                 $db->query("UPDATE `im` SET msg_num = msg_num-1 WHERE iuser_id = '" . $user_id . "' and im_user_id = '" . $im_user_id . "' AND room_id = '" . $check['room_id'] . "'");
                 mozg_clear_cache_file('user_' . $check['history_user_id'] . '/im');
             }
-            die();
+            break;
 
         case "typograf":
             NoAjaxQuery();
@@ -587,7 +585,7 @@ if (Registry::get('logged')) {
                 if (intFilter('stop') == 1) mozg_create_cache("user_{$for_user_id}/typograf{$user_id}", "");
                 else mozg_create_cache("user_{$for_user_id}/typograf{$user_id}", 1);
             }
-            exit();
+            break;
 
         case "update":
             NoAjaxQuery();
@@ -694,11 +692,11 @@ if (Registry::get('logged')) {
                                 if (!$attach_type[3])
                                     $attach_type[3] = '';
                                 if ($no_img and $attach_type[2]) {
-                                    $attach_result .= '<div style="margin-top:2px" class="clear"><div class="attach_link_block_ic fl_l" style="margin-top:4px;margin-left:0px"></div><div class="attach_link_block_te"><div class="fl_l">Ссылка: <a href="/away.php?url=' . $attach_type[1] . '" target="_blank">' . $rdomain_url_name . '</a></div></div><div class="clear"></div><div class="wall_show_block_link" style="border:0px"><a href="/away.php?url=' . $attach_type[1] . '" target="_blank"><div style="width:108px;height:80px;float:left;text-align:center"><img src="' . $attach_type[4] . '" /></div></a><div class="attatch_link_title"><a href="/away.php?url=' . $attach_type[1] . '" target="_blank">' . $str_title . '</a></div><div style="max-height:50px;overflow:hidden">' . $attach_type[3] . '</div></div></div>';
+                                    $attach_result .= '<div style="margin-top:2px" class="clear"><div class="attach_link_block_ic fl_l" style="margin-top:4px;margin-left:0px"></div><div class="attach_link_block_te"><div class="fl_l">Ссылка: <a href="/index.php?go=away&url=' . $attach_type[1] . '" target="_blank">' . $rdomain_url_name . '</a></div></div><div class="clear"></div><div class="wall_show_block_link" style="border:0px"><a href="/index.php?go=away&url=' . $attach_type[1] . '" target="_blank"><div style="width:108px;height:80px;float:left;text-align:center"><img src="' . $attach_type[4] . '" /></div></a><div class="attatch_link_title"><a href="/index.php?go=away&url=' . $attach_type[1] . '" target="_blank">' . $str_title . '</a></div><div style="max-height:50px;overflow:hidden">' . $attach_type[3] . '</div></div></div>';
                                     $resLinkTitle = $attach_type[2];
                                     $resLinkUrl = $attach_type[1];
                                 } else if ($attach_type[1] and $attach_type[2]) {
-                                    $attach_result .= '<div style="margin-top:2px" class="clear"><div class="attach_link_block_ic fl_l" style="margin-top:4px;margin-left:0px"></div><div class="attach_link_block_te"><div class="fl_l">Ссылка: <a href="/away.php?url=' . $attach_type[1] . '" target="_blank">' . $rdomain_url_name . '</a></div></div></div><div class="clear"></div>';
+                                    $attach_result .= '<div style="margin-top:2px" class="clear"><div class="attach_link_block_ic fl_l" style="margin-top:4px;margin-left:0px"></div><div class="attach_link_block_te"><div class="fl_l">Ссылка: <a href="/index.php?go=away&url=' . $attach_type[1] . '" target="_blank">' . $rdomain_url_name . '</a></div></div></div><div class="clear"></div>';
                                     $resLinkTitle = $attach_type[2];
                                     $resLinkUrl = $attach_type[1];
                                 }
@@ -765,11 +763,11 @@ if (Registry::get('logged')) {
                         if ($resLinkTitle and $row['text'] == $resLinkUrl or !$row['text'])
                             $row['text'] = $resLinkTitle . '<div class="clear"></div>' . $attach_result;
                         else if ($attach_result)
-                            $row['text'] = preg_replace('`(http(?:s)?://\w+[^\s\[\]\<]+)`i', '<a href="/away.php?url=$1" target="_blank">$1</a>', $row['text']) . $attach_result;
+                            $row['text'] = preg_replace('`(http(?:s)?://\w+[^\s\[\]\<]+)`i', '<a href="/index.php?go=away&url=$1" target="_blank">$1</a>', $row['text']) . $attach_result;
                         else
-                            $row['text'] = preg_replace('`(http(?:s)?://\w+[^\s\[\]\<]+)`i', '<a href="/away.php?url=$1" target="_blank">$1</a>', $row['text']);
+                            $row['text'] = preg_replace('`(http(?:s)?://\w+[^\s\[\]\<]+)`i', '<a href="/index.php?go=away&url=$1" target="_blank">$1</a>', $row['text']);
                     } else
-                        $row['text'] = preg_replace('`(http(?:s)?://\w+[^\s\[\]\<]+)`i', '<a href="/away.php?url=$1" target="_blank">$1</a>', $row['text']);
+                        $row['text'] = preg_replace('`(http(?:s)?://\w+[^\s\[\]\<]+)`i', '<a href="/index.php?go=away&url=$1" target="_blank">$1</a>', $row['text']);
 
                     $resLinkTitle = '';
 
@@ -819,9 +817,9 @@ HTML;
                     $tpl->set('{text}', stripslashes($row['text']));
                     $tpl->compile('content');
                 }
-                AjaxTpl();
+                AjaxTpl($tpl);
             }
-            die();
+            break;
 
         case "history":
             NoAjaxQuery();
@@ -956,11 +954,11 @@ HTML;
                                 } else $no_img = true;
                                 if (!$attach_type[3]) $attach_type[3] = '';
                                 if ($no_img and $attach_type[2]) {
-                                    $attach_result .= '<div style="margin-top:2px" class="clear"><div class="attach_link_block_ic fl_l" style="margin-top:4px;margin-left:0px"></div><div class="attach_link_block_te"><div class="fl_l">Ссылка: <a href="/away.php?url=' . $attach_type[1] . '" target="_blank">' . $rdomain_url_name . '</a></div></div><div class="clear"></div><div class="wall_show_block_link" style="border:0px"><a href="/away.php?url=' . $attach_type[1] . '" target="_blank"><div style="width:108px;height:80px;float:left;text-align:center"><img src="' . $attach_type[4] . '" /></div></a><div class="attatch_link_title"><a href="/away.php?url=' . $attach_type[1] . '" target="_blank">' . $str_title . '</a></div><div style="max-height:50px;overflow:hidden">' . $attach_type[3] . '</div></div></div>';
+                                    $attach_result .= '<div style="margin-top:2px" class="clear"><div class="attach_link_block_ic fl_l" style="margin-top:4px;margin-left:0px"></div><div class="attach_link_block_te"><div class="fl_l">Ссылка: <a href="/index.php?go=away&url=' . $attach_type[1] . '" target="_blank">' . $rdomain_url_name . '</a></div></div><div class="clear"></div><div class="wall_show_block_link" style="border:0px"><a href="/index.php?go=away&url=' . $attach_type[1] . '" target="_blank"><div style="width:108px;height:80px;float:left;text-align:center"><img src="' . $attach_type[4] . '" /></div></a><div class="attatch_link_title"><a href="/index.php?go=away&url=' . $attach_type[1] . '" target="_blank">' . $str_title . '</a></div><div style="max-height:50px;overflow:hidden">' . $attach_type[3] . '</div></div></div>';
                                     $resLinkTitle = $attach_type[2];
                                     $resLinkUrl = $attach_type[1];
                                 } else if ($attach_type[1] and $attach_type[2]) {
-                                    $attach_result .= '<div style="margin-top:2px" class="clear"><div class="attach_link_block_ic fl_l" style="margin-top:4px;margin-left:0px"></div><div class="attach_link_block_te"><div class="fl_l">Ссылка: <a href="/away.php?url=' . $attach_type[1] . '" target="_blank">' . $rdomain_url_name . '</a></div></div></div><div class="clear"></div>';
+                                    $attach_result .= '<div style="margin-top:2px" class="clear"><div class="attach_link_block_ic fl_l" style="margin-top:4px;margin-left:0px"></div><div class="attach_link_block_te"><div class="fl_l">Ссылка: <a href="/index.php?go=away&url=' . $attach_type[1] . '" target="_blank">' . $rdomain_url_name . '</a></div></div></div><div class="clear"></div>';
                                     $resLinkTitle = $attach_type[2];
                                     $resLinkUrl = $attach_type[1];
                                 }
@@ -1022,11 +1020,11 @@ HTML;
                         if ($resLinkTitle and $row['text'] == $resLinkUrl or !$row['text'])
                             $row['text'] = $resLinkTitle . '<div class="clear"></div>' . $attach_result;
                         else if ($attach_result)
-                            $row['text'] = preg_replace('`(http(?:s)?://\w+[^\s\[\]\<]+)`i', '<a href="/away.php?url=$1" target="_blank">$1</a>', $row['text']) . $attach_result;
+                            $row['text'] = preg_replace('`(http(?:s)?://\w+[^\s\[\]\<]+)`i', '<a href="/index.php?go=away&url=$1" target="_blank">$1</a>', $row['text']) . $attach_result;
                         else
-                            $row['text'] = preg_replace('`(http(?:s)?://\w+[^\s\[\]\<]+)`i', '<a href="/away.php?url=$1" target="_blank">$1</a>', $row['text']);
+                            $row['text'] = preg_replace('`(http(?:s)?://\w+[^\s\[\]\<]+)`i', '<a href="/index.php?go=away&url=$1" target="_blank">$1</a>', $row['text']);
                     } else
-                        $row['text'] = preg_replace('`(http(?:s)?://\w+[^\s\[\]\<]+)`i', '<a href="/away.php?url=$1" target="_blank">$1</a>', $row['text']);
+                        $row['text'] = preg_replace('`(http(?:s)?://\w+[^\s\[\]\<]+)`i', '<a href="/index.php?go=away&url=$1" target="_blank">$1</a>', $row['text']);
 
                     $resLinkTitle = '';
 
@@ -1109,8 +1107,8 @@ HTML;
                 } else $tpl->set_block("'\\[room\\](.*?)\\[/room\\]'si", "");
                 $tpl->compile('content');
             }
-            AjaxTpl();
-            die();
+            AjaxTpl($tpl);
+            break;
 
         case "upDialogs":
             NoAjaxQuery();
@@ -1135,7 +1133,8 @@ HTML;
 				' . $res . '
 				</script>';
             }
-            die();
+            break;
+
         case 'del':
             $room_id = intFilter('room_id');
             $im_user_id = intFilter('im_user_id');
@@ -1169,7 +1168,7 @@ HTML;
                     $db->query("UPDATE `users` SET user_pm_num = user_pm_num-{$row['msg_num']} WHERE user_id = '{$user_id}'");
                 $db->query("DELETE FROM `im` WHERE id = '{$row['id']}'");
             }
-            exit;
+            break;
 
         case 'delet':
             NoAjaxQuery();
@@ -1194,7 +1193,7 @@ HTML;
                     mozg_clear_cache_file('user_' . $row['history_user_id'] . '/im');
                 }
             }
-            die();
+            break;
 
         default:
             $metatags['title'] = 'Диалоги';
@@ -1224,10 +1223,12 @@ HTML;
             $tpl->set_block("'\\[outbox\\](.*?)\\[/outbox\\]'si", "");
             $tpl->set_block("'\\[review\\](.*?)\\[/review\\]'si", "");
             $tpl->compile('info');
+            compile($tpl);
     }
-    $tpl->clear();
-    $db->free();
+//    $tpl->clear();
+//    $db->free();
 } else {
     $user_speedbar = $lang['no_infooo'];
     msgbox('', $lang['not_logged'], 'info');
+    compile($tpl);
 }

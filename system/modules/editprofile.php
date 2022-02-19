@@ -106,7 +106,6 @@ if (Registry::get('logged')) {
             } else
                 echo 'bad_format';
 
-            die();
             break;
 
         //Удаление фотографии
@@ -135,7 +134,6 @@ if (Registry::get('logged')) {
                 mozg_clear_cache_file('user_' . $user_id . '/profile_' . $user_id);
                 mozg_clear_cache();
             }
-            die();
             break;
 
         //Страница загрузки главной фотографии
@@ -143,8 +141,7 @@ if (Registry::get('logged')) {
             NoAjaxQuery();
             $tpl->load_template('load_photo.tpl');
             $tpl->compile('content');
-            AjaxTpl();
-            die();
+            AjaxTpl($tpl);
             break;
 
         //Сохранение основных данных
@@ -195,7 +192,6 @@ if (Registry::get('logged')) {
 
             echo 'ok';
 
-            die();
             break;
 
         //Сохранение контактов
@@ -224,7 +220,7 @@ if (Registry::get('logged')) {
 
             echo 'ok';
 
-            die();
+            break;
 
         //Сохранение интересов
         case "save_interests":
@@ -253,63 +249,6 @@ if (Registry::get('logged')) {
 
             echo 'ok';
 
-            die();
-
-        //Сохранение доп.полей
-        case "save_xfields":
-
-            $xfields = profileload();
-
-            $postedxfields = requestFilter('xfields');
-
-            $newpostedxfields = array();
-
-            $xfieldsdata = xfieldsdataload($xfieldsid);
-
-            foreach ($xfields as $name => $value) {
-
-                $newpostedxfields[$value[0]] = $postedxfields[$value[0]];
-
-                if ($value[2] == "select") {
-                    $options = explode("\r\n", $value[3]);
-
-                    $newpostedxfields[$value[0]] = $options[$postedxfields[$value[0]]] . '|1';
-                }
-
-            }
-
-            $postedxfields = $newpostedxfields;
-
-            foreach ($postedxfields as $xfielddataname => $xfielddatavalue) {
-
-                if (!$xfielddatavalue) {
-                    continue;
-                }
-
-                $expxfielddatavalue = explode('|', $xfielddatavalue);
-
-                if ($expxfielddatavalue[1])
-                    $xfielddatavalue = str_replace('|1', '', textFilter($xfielddatavalue));
-                else
-                    $xfielddatavalue = textFilter($xfielddatavalue);
-
-                if (isset($xfielddatavalue) and !empty($xfielddatavalue)) {
-                    $xfielddataname = str_replace("|", "&#124;", $xfielddataname);
-                    $xfielddatavalue = str_replace("|", "&#124;", $xfielddatavalue);
-                    $filecontents[] = "$xfielddataname|$xfielddatavalue";
-                }
-            }
-
-            if (isset($filecontents))
-                $filecontents = implode("||", $filecontents);
-            else
-                $filecontents = '';
-
-            $db->query("UPDATE `users` SET xfields = '{$filecontents}' WHERE user_id = '{$user_info['user_id']}'");
-
-            mozg_clear_cache_file('user_' . $user_info['user_id'] . '/profile_' . $user_info['user_id']);
-
-            exit;
             break;
 
         //Страница Редактирование контактов
@@ -332,6 +271,8 @@ if (Registry::get('logged')) {
             $tpl->set('[/contact]', '');
             $tpl->compile('content');
             $tpl->clear();
+
+            compile($tpl);
             break;
 
         //Страница Редактирование интересов
@@ -355,72 +296,8 @@ if (Registry::get('logged')) {
             $tpl->set('[/interests]', '');
             $tpl->compile('content');
             $tpl->clear();
-            break;
 
-        //Страница Редактирование доп.полей
-        case "all":
-            $user_speedbar = $lang['editmyprofile'] . ' &raquo; Другое';
-            $tpl->load_template('editprofile.tpl');
-
-            $xfields = profileload();
-
-            $row = $db->super_query("SELECT xfields FROM `users` WHERE user_id = '" . $user_info['user_id'] . "'");
-
-            $xfieldsdata = xfieldsdataload($row['xfields']);
-
-            $output = '';
-            $for_js_list = '';
-
-            foreach ($xfields as $name => $value) {
-
-                $fieldvalue = $xfieldsdata[$value[0]];
-                $fieldvalue = stripslashes($fieldvalue);
-
-                $output .= "<div class=\"texta\">{$value[1]}:</div>";
-
-                $for_js_list .= "'xfields[{$value[0]}]': $('#{$value[0]}').val(), ";
-
-                if ($value[2] == "textarea") {
-
-                    $output .= '<textarea id="' . $value[0] . '" class="inpst" style="width:300px;height:50px;">' . myBrRn($fieldvalue) . '</textarea>';
-
-                } elseif ($value[2] == "text") {
-
-                    $output .= '<input type="text" id="' . $value[0] . '" class="inpst" maxlength="100" value="' . $fieldvalue . '" style="width:300px;" />';
-
-                } elseif ($value[2] == "select") {
-
-                    $output .= '<select class="inpst" id="' . $value[0] . '">';
-                    $output .= '<option value="">- Не выбрано -</option>';
-
-                    $variable = explode("\r\n", $value[3]);
-                    foreach ($variable as $index => $value) {
-
-                        $value = str_replace("'", "&#039;", $value);
-                        $output .= "<option value=\"$index\"" . ($fieldvalue == $value ? " selected" : "") . ">$value</option>\r\n";
-
-                    }
-
-                    $output .= '</select>';
-
-                }
-
-                $output .= '<div class="mgclr"></div>';
-
-            }
-
-            $for_js_list = substr($for_js_list, 0, (strlen($for_js_list) - 2));
-
-            $tpl->set('{xfields}', $output);
-            $tpl->set('{for-js-list}', $for_js_list);
-
-            $tpl->set_block("'\\[contact\\](.*?)\\[/contact\\]'si", "");
-            $tpl->set_block("'\\[general\\](.*?)\\[/general\\]'si", "");
-            $tpl->set_block("'\\[interests\\](.*?)\\[/interests\\]'si", "");
-            $tpl->set('[xfields]', '');
-            $tpl->set('[/xfields]', '');
-            $tpl->compile('content');
-            $tpl->clear();
+            compile($tpl);
             break;
 
         //Страница миниатюры
@@ -435,12 +312,10 @@ if (Registry::get('logged')) {
                 $tpl->set('{ava}', $row['user_photo']);
                 $tpl->compile('content');
 
-                AjaxTpl();
+                AjaxTpl($tpl);
 
             } else
                 echo '1';
-
-            exit();
 
             break;
 
@@ -478,7 +353,6 @@ if (Registry::get('logged')) {
             } else
                 echo 'err';
 
-            exit();
 
             break;
 
@@ -556,8 +430,6 @@ if (Registry::get('logged')) {
             } else
                 echo 1;
 
-            exit();
-
             break;
 
         //################### Сохранение новой позиции обложки ###################//
@@ -568,7 +440,7 @@ if (Registry::get('logged')) {
 
             //Чистим кеш
             mozg_clear_cache_file("user_{$user_info['user_id']}/profile_{$user_info['user_id']}");
-            exit();
+
             break;
 
         //################### Удаление обложки ###################//
@@ -587,8 +459,6 @@ if (Registry::get('logged')) {
 
             //Чистим кеш
             mozg_clear_cache_file("user_{$user_info['user_id']}/profile_{$user_info['user_id']}");
-
-            exit();
 
             break;
 
@@ -690,9 +560,12 @@ if (Registry::get('logged')) {
             $tpl->set('[/general]', '');
             $tpl->compile('content');
             $tpl->clear();
+
+            compile($tpl);
     }
 
 } else {
     $user_speedbar = 'Информация';
     msgbox('', $lang['not_logged'], 'info');
+    compile($tpl);
 }

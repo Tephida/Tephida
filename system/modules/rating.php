@@ -74,7 +74,7 @@ if (Registry::get('logged')) {
             } else
                 $tpl->result['content'] = $tpl->result['users'];
 
-            AjaxTpl();
+            AjaxTpl($tpl);
 
             break;
 
@@ -132,13 +132,9 @@ if (Registry::get('logged')) {
 
             $tpl->compile('content');
 
-            AjaxTpl();
-
+            AjaxTpl($tpl);
     }
-
 }
 
-$tpl->clear();
-$db->free();
-
-exit();
+//$tpl->clear();
+//$db->free();

@@ -28,5 +28,3 @@ if (Registry::get('logged')) {
             $db->query("INSERT INTO `report` SET act = '" . $act . "', type = '" . $type_report . "', text = '" . $text_report . "', mid = '" . $mid . "', date = '" . $server_time . "', ruser_id = '" . $user_info['user_id'] . "'");
     }
 }
-
-die();

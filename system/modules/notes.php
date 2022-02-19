@@ -42,6 +42,8 @@ if (Registry::get('logged')) {
             //Загружаем сам шаблон добавления
             $tpl->load_template('notes/add.tpl');
             $tpl->compile('content');
+
+            compile($tpl);
             break;
 
         //################### Добавление заметки в БД ###################//
@@ -75,7 +77,6 @@ if (Registry::get('logged')) {
                 mozg_clear_cache_file('user_' . $user_id . '/notes_user_' . $user_id);
             }
 
-            die();
             break;
 
         //################### Предварительный просмотр заметки ###################//
@@ -99,10 +100,9 @@ if (Registry::get('logged')) {
                 $tpl->set('{date}', langdate('j F Y в H:i', time()));
                 $tpl->set('{comm-num}', $lang['note_no_comments']);
                 $tpl->compile('content');
-                AjaxTpl();
+                AjaxTpl($tpl);
             }
 
-            die();
             break;
 
         //################### Страница редактирования заметки ###################//
@@ -135,9 +135,11 @@ if (Registry::get('logged')) {
                 $tpl->set('{title}', stripslashes($row['title']));
                 $tpl->set('{text}', $parse->BBdecode(stripslashes(myBrRn($row['full_text']))));
                 $tpl->compile('content');
+                compile($tpl);
             } else {
                 $user_speedbar = $lang['error'];
                 msgbox('', $lang['no_notes'], 'info');
+                compile($tpl);
             }
             break;
 
@@ -161,7 +163,6 @@ if (Registry::get('logged')) {
                     $db->query("UPDATE `notes` SET title = '{$title}', full_text = '{$text}' WHERE id = '{$note_id}'");
             }
 
-            die();
             break;
 
         //################### Удаление заметки ###################//
@@ -179,7 +180,7 @@ if (Registry::get('logged')) {
                 mozg_clear_cache_file('user_' . $user_id . '/profile_' . $user_id);
                 mozg_clear_cache_file('user_' . $user_id . '/notes_user_' . $user_id);
             }
-            die();
+
             break;
 
         //################### Добавления комментария ###################//
@@ -256,10 +257,10 @@ if (Registry::get('logged')) {
                     //Чистим кеш владельцу заметки и заметок на его стр
                     mozg_clear_cache_file('user_' . $check['owner_user_id'] . '/notes_user_' . $check['owner_user_id']);
 
-                    AjaxTpl();
+                    AjaxTpl($tpl);
                 }
             }
-            die();
+
             break;
 
         //################### Удаление комментария ###################//
@@ -276,7 +277,7 @@ if (Registry::get('logged')) {
                 //Чистим кеш владельцу заметки и заметок на его стр
                 mozg_clear_cache_file('user_' . $row['owner_user_id'] . '/notes_user_' . $row['owner_user_id']);
             }
-            die();
+
             break;
 
         //################### Показ всех комментариев ###################//
@@ -313,9 +314,9 @@ if (Registry::get('logged')) {
                     $tpl->set('{comment}', stripslashes($row_comm['text']));
                     $tpl->compile('content');
                 }
-                AjaxTpl();
+                AjaxTpl($tpl);
             }
-            die();
+
             break;
 
         //################### Просмотр полной заметки ###################//
@@ -436,14 +437,17 @@ if (Registry::get('logged')) {
                     $tpl->set('{note-id}', $note_id);
                     $tpl->compile('content');
 
+                    compile($tpl);
                 } else {
                     $user_speedbar = $lang['error'];
                     $metatags['title'] = $lang['error'];
                     msgbox('', $lang['no_notes'], 'info');
+                    compile($tpl);
                 }
             } else {
                 $user_speedbar = $lang['error'];
                 msgbox('', $lang['no_notes'], 'info');
+                compile($tpl);
             }
             break;
 
@@ -530,25 +534,32 @@ if (Registry::get('logged')) {
                             $tpl->compile('content');
                         }
                         navigation($gcount, $owner['user_notes_num'], $config['home_url'] . 'notes/' . $get_user_id . '/page/');
-                    } else
+
+                        compile($tpl);
+                    } else {
                         if ($get_user_id == $user_id)
                             msgbox('', $lang['note_no_user'], 'info_2');
                         else
                             msgbox('', $lang['note_no'], 'info_2');
 
+                        compile($tpl);
+                    }
                 } else {
                     $user_speedbar = $lang['error'];
                     $metatags['title'] = $lang['error'];
                     msgbox('', $lang['no_notes'], 'info');
+                    compile($tpl);
                 }
             } else {
                 $user_speedbar = $lang['error'];
                 msgbox('', $lang['no_notes'], 'info');
+                compile($tpl);
             }
     }
-    $tpl->clear();
-    $db->free();
+//    $tpl->clear();
+//    $db->free();
 } else {
     $user_speedbar = $lang['no_infooo'];
     msgbox('', $lang['not_logged'], 'info');
+    compile($tpl);
 }

@@ -90,9 +90,6 @@ if (Registry::get('logged')) {
                     echo 1;
 
             }
-
-            exit;
-
             break;
 
         //################### Удаление документа ###################//
@@ -117,7 +114,6 @@ if (Registry::get('logged')) {
 
             }
 
-            exit;
             break;
 
         //################### Сохранение отред.данных ###################//
@@ -141,7 +137,6 @@ if (Registry::get('logged')) {
 
             }
 
-            exit;
             break;
 
 
@@ -174,9 +169,8 @@ if (Registry::get('logged')) {
                 }
 
             } else
-                header("Location: /index.php");
+                header("Location: /");
 
-            exit;
             break;
 
         //################### Страница всех загруженных документов ###################//
@@ -218,10 +212,7 @@ if (Registry::get('logged')) {
             }
 
             if ($page_cnt) {
-
-                AjaxTpl();
-                exit;
-
+                AjaxTpl($tpl);
             }
 
             if ($rowUser['user_doc_num'] > 20) {
@@ -231,6 +222,7 @@ if (Registry::get('logged')) {
 
             }
 
+            compile($tpl);
             break;
 
         //################### Страница всех загруженных документов для прикрепления BOX ###################//
@@ -271,9 +263,8 @@ if (Registry::get('logged')) {
                 $tpl->compile('content');
             }
 
-            AjaxTpl();
+            AjaxTpl($tpl);
 
-            exit;
     }
 
     $tpl->clear();

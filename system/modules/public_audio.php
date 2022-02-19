@@ -43,8 +43,6 @@ if (Registry::get('logged')) {
 
             }
 
-            exit;
-
             break;
 
         //################### Сохранение отредактированных данных ###################//
@@ -74,8 +72,6 @@ if (Registry::get('logged')) {
                 mozg_clear_cache_file("groups/audio{$pid}");
             }
 
-            exit;
-
             break;
 
         //################### Удаление песни из БД ###################//
@@ -100,8 +96,6 @@ if (Registry::get('logged')) {
                 mozg_clear_cache_file("groups/audio{$pid}");
 
             }
-
-            exit;
 
             break;
 
@@ -178,9 +172,7 @@ if (Registry::get('logged')) {
                 }
             }
 
-            AjaxTpl();
-
-            exit;
+            AjaxTpl($tpl);
 
             break;
 
@@ -268,16 +260,17 @@ if (Registry::get('logged')) {
             }
 
             if ($page_cnt) {
-                AjaxTpl();
-                exit;
+                AjaxTpl($tpl);
             }
 
+            compile($tpl);
     }
 
-    $tpl->clear();
-    $db->free();
+//    $tpl->clear();
+//    $db->free();
 
 } else {
     $user_speedbar = 'Информация';
     msgbox('', $lang['not_logged'], 'info');
+    compile($tpl);
 }

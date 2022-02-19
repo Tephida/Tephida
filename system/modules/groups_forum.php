@@ -44,7 +44,6 @@ if (Registry::get('logged')) {
 
             }
 
-            exit();
             break;
 
         //################### Страница создания новой темы ###################//
@@ -63,6 +62,7 @@ if (Registry::get('logged')) {
             } else
                 msgbox('', '<br /><br />Ошибка доступа.<br /><br /><br />', 'info_2');
 
+            compile($tpl);
             break;
 
         //################### Добавления сообщения к теме ###################//
@@ -132,7 +132,7 @@ if (Registry::get('logged')) {
 
                 $tpl->load_template('forum/msg.tpl');
 
-                $msg = preg_replace('`(http(?:s)?://\w+[^\s\[\]\<]+)`i', '<a href="/away.php?url=$1" target="_blank">$1</a>', $msg);
+                $msg = preg_replace('`(http(?:s)?://\w+[^\s\[\]\<]+)`i', '<a href="/index.php?go=away&url=$1" target="_blank">$1</a>', $msg);
 
                 $tpl->set('{text}', stripslashes($msg));
                 $tpl->set('{name}', $user_info['user_search_pref']);
@@ -151,11 +151,10 @@ if (Registry::get('logged')) {
 
                 $tpl->compile('content');
 
-                AjaxTpl();
+                AjaxTpl($tpl);
 
             }
 
-            exit();
             break;
 
         //################### Показах предыдущих сообщений ###################//
@@ -194,7 +193,7 @@ if (Registry::get('logged')) {
 
                     $tpl->set('{name}', $row_comm['user_search_pref']);
 
-                    $row_comm['msg'] = preg_replace('`(http(?:s)?://\w+[^\s\[\]\<]+)`i', '<a href="/away.php?url=$1" target="_blank">$1</a>', $row_comm['msg']);
+                    $row_comm['msg'] = preg_replace('`(http(?:s)?://\w+[^\s\[\]\<]+)`i', '<a href="/index.php?go=away&url=$1" target="_blank">$1</a>', $row_comm['msg']);
 
                     $tpl->set('{text}', stripslashes($row_comm['msg']));
                     $tpl->set('{user-id}', $row_comm['muser_id']);
@@ -235,9 +234,8 @@ if (Registry::get('logged')) {
 
             }
 
-            AjaxTpl();
+            AjaxTpl($tpl);
 
-            exit();
             break;
 
         //################### Сохранение отред. данных темы ###################//
@@ -263,7 +261,6 @@ if (Registry::get('logged')) {
 
             }
 
-            exit();
             break;
 
         //################### Сохранение отред. названия ###################//
@@ -289,7 +286,6 @@ if (Registry::get('logged')) {
 
             }
 
-            exit();
             break;
 
         //################### Фиксирование темы . закрепление ###################//
@@ -317,7 +313,6 @@ if (Registry::get('logged')) {
 
             }
 
-            exit();
             break;
 
         //################### Открытие - закрытие тему ###################//
@@ -343,7 +338,6 @@ if (Registry::get('logged')) {
 
             }
 
-            exit();
             break;
 
         //################### Удаление темы ###################//
@@ -373,7 +367,6 @@ if (Registry::get('logged')) {
 
             }
 
-            exit();
             break;
 
         //################### Уадаление опроса ###################//
@@ -400,7 +393,6 @@ if (Registry::get('logged')) {
 
             }
 
-            exit();
             break;
 
         //################### Уадаление сообщения ###################//
@@ -430,7 +422,6 @@ if (Registry::get('logged')) {
 
             }
 
-            exit();
             break;
 
         //################### Прикрепление опроса ###################//
@@ -475,7 +466,7 @@ if (Registry::get('logged')) {
                     $db->query("UPDATE `communities_forum` SET vote = '{$db->insert_id()}' WHERE fid = '{$fid}'");
                 }
             }
-            exit();
+
             break;
 
         //################### Просмотр темы ###################//
@@ -513,7 +504,7 @@ if (Registry::get('logged')) {
 
                         $tpl->set('{name}', $row_comm['user_search_pref']);
 
-                        $row_comm['msg'] = preg_replace('`(http(?:s)?://\w+[^\s\[\]\<]+)`i', '<a href="/away.php?url=$1" target="_blank">$1</a>', $row_comm['msg']);
+                        $row_comm['msg'] = preg_replace('`(http(?:s)?://\w+[^\s\[\]\<]+)`i', '<a href="/index.php?go=away&url=$1" target="_blank">$1</a>', $row_comm['msg']);
 
                         $tpl->set('{text}', stripslashes($row_comm['msg']));
                         $tpl->set('{mid}', $row_comm['mid']);
@@ -642,11 +633,11 @@ if (Registry::get('logged')) {
                     }
 
                     if ($attach_result or $attach_result_smiles)
-                        $row['text'] = preg_replace('`(http(?:s)?://\w+[^\s\[\]\<]+)`i', '<a href="/away.php?url=$1" target="_blank">$1</a>', $row['text']) . '<span id="attach">' . $attach_result_smiles . '<div class="clear"></div>' . $attach_result . '</span>';
+                        $row['text'] = preg_replace('`(http(?:s)?://\w+[^\s\[\]\<]+)`i', '<a href="/index.php?go=away&url=$1" target="_blank">$1</a>', $row['text']) . '<span id="attach">' . $attach_result_smiles . '<div class="clear"></div>' . $attach_result . '</span>';
                     else
-                        $row['text'] = preg_replace('`(http(?:s)?://\w+[^\s\[\]\<]+)`i', '<a href="/away.php?url=$1" target="_blank">$1</a>', $row['text']);
+                        $row['text'] = preg_replace('`(http(?:s)?://\w+[^\s\[\]\<]+)`i', '<a href="/index.php?go=away&url=$1" target="_blank">$1</a>', $row['text']);
                 } else
-                    $row['text'] = preg_replace('`(http(?:s)?://\w+[^\s\[\]\<]+)`i', '<a href="/away.php?url=$1" target="_blank">$1</a>', $row['text']);
+                    $row['text'] = preg_replace('`(http(?:s)?://\w+[^\s\[\]\<]+)`i', '<a href="/index.php?go=away&url=$1" target="_blank">$1</a>', $row['text']);
 
                 $tpl->set('{text}', stripslashes($row['text']));
 
@@ -778,6 +769,7 @@ if (Registry::get('logged')) {
             } else
                 msgbox('', '<br /><br />Тема не найдена.<br /><br /><br />', 'info_2');
 
+            compile($tpl);
             break;
 
         //################### Вывод всех обсуждений в сообществе ###################//
@@ -866,7 +858,7 @@ if (Registry::get('logged')) {
                 //Если вызвана Forum.Page()
                 if (isset($_POST['a'])) {
 
-                    AjaxTpl();
+                    AjaxTpl($tpl);
                     exit();
 
                 }
@@ -875,12 +867,15 @@ if (Registry::get('logged')) {
                 if (!isset($_POST['a']))
                     msgbox('', '<br /><br />Ошибка доступа.<br /><br /><br />', 'info_2');
 
+            compile($tpl);
+
     }
 
-    $tpl->clear();
-    $db->free();
+//    $tpl->clear();
+//    $db->free();
 
 } else {
     $user_speedbar = $lang['no_infooo'];
     msgbox('', $lang['not_logged'], 'info');
+    compile($tpl);
 }
