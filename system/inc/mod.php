@@ -38,145 +38,140 @@ switch ($mod) {
     //Настройки системы
 
     case "system":
-        include 'system.php';
+        include ADMIN_DIR . '/modules/system.php';
         break;
     //Управление БД
 
     case "db":
-        include 'db.php';
+        include ADMIN_DIR . '/modules/db.php';
         break;
     //dumper
 
     case "dumper":
-        include 'dumper.php';
+        include ADMIN_DIR . '/modules/dumper.php';
         break;
     //Личные настройки
 
     case "mysettings":
-        include 'mysettings.php';
+        include ADMIN_DIR . '/modules/mysettings.php';
         break;
     //Пользователи
 
     case "users":
-        include 'users.php';
+        include ADMIN_DIR . '/modules/users.php';
         break;
     //Массовые действия
 
     case "massaction":
-        include 'massaction.php';
+        include ADMIN_DIR . '/modules/massaction.php';
         break;
     //Заметки
 
     case "notes":
-        include 'notes.php';
+        include ADMIN_DIR . '/modules/notes.php';
         break;
     //Подарки
 
     case "gifts":
-        include 'gifts.php';
+        include ADMIN_DIR . '/modules/gifts.php';
         break;
     //Сообщества
 
     case "groups":
-        include 'groups.php';
+        include ADMIN_DIR . '/modules/groups.php';
         break;
 
     //Шаблоны сообщений
 
     case "mail_tpl":
-        include 'mail_tpl.php';
+        include ADMIN_DIR . '/modules/mail_tpl.php';
         break;
     //Рассылка сообщений
 
     case "mail":
-        include 'mail.php';
+        include ADMIN_DIR . '/modules/mail.php';
         break;
     //Фильтр по: IP, E-Mail
 
     case "ban":
-        include 'ban.php';
+        include ADMIN_DIR . '/modules/ban.php';
         break;
     //Поиск и Замена
 
     case "search":
-        include 'search.php';
+        include ADMIN_DIR . '/modules/search.php';
         break;
     //Статические страницы
 
     case "static":
-        include 'static.php';
+        include ADMIN_DIR . '/modules/static.php';
         break;
     //Антивирус
 
     //Логи посещений
 
     case "logs":
-        include 'logs.php';
+        include ADMIN_DIR . '/modules/logs.php';
         break;
     //Статистика
 
     case "stats":
-        include 'stats.php';
+        include ADMIN_DIR . '/modules/stats.php';
         break;
 
     case "webstats":
-        include 'webstats.php';
+        include ADMIN_DIR . '/modules/webstats.php';
         break;
     //Видео
 
     case "videos":
-        include 'videos.php';
+        include ADMIN_DIR . '/modules/videos.php';
         break;
     //Музыка
 
     case "musics":
-        include 'musics.php';
+        include ADMIN_DIR . '/modules/musics.php';
         break;
     //Альбомы
 
     case "albums":
-        include 'albums.php';
+        include ADMIN_DIR . '/modules/albums.php';
         break;
     //Страны
 
     case "country":
-        include 'country.php';
+        include ADMIN_DIR . '/modules/country.php';
         break;
     //Города
 
     case "city":
-        include 'city.php';
+        include ADMIN_DIR . '/modules/city.php';
         break;
     //Список жалоб
 
     case "report":
-        include 'report.php';
+        include ADMIN_DIR . '/modules/report.php';
         break;
-    //Доп. поля профилей
 
-    case "xfields":
-        include 'xfields.php';
-        break;
     //Фильтр слов
-
     case "wordfilter":
-        include 'wordfilter.php';
+        include ADMIN_DIR . '/modules/wordfilter.php';
         break;
     //Игры
 
     case "apps":
-        include 'apps.php';
+        include ADMIN_DIR . '/modules/apps.php';
         break;
     //Отзывы
 
     case "reviews":
-        include 'reviews.php';
+        include ADMIN_DIR . '/modules/reviews.php';
         break;
     //Отчеты по SMS
 
     case "sms":
-        include 'sms.php';
+        include ADMIN_DIR . '/modules/sms.php';
         break;
     default:
-        include 'main.php';
+        include ADMIN_DIR . '/modules/main.php';
 }
