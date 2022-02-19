@@ -1500,10 +1500,8 @@ function compileAjax($tpl, $params): int
 
     $params['requests_link'] = $requests_link ?? '';
 
-    $result_ajax = <<<HTML
-<script type="text/javascript">
-document.title = '{$metatags['title']}';
-{$ajaxSpBar};
+    if (Registry::get('logged')) {
+        $notify = <<<HTML
 document.getElementById('new_msg').innerHTML = '{$params['user_pm_num']}';
 document.getElementById('new_news').innerHTML = '{$params['new_news']}';
 document.getElementById('new_ubm').innerHTML = '{$params['new_ubm']}';
@@ -1514,6 +1512,16 @@ document.getElementById('new_requests').innerHTML = '{$params['demands']}';
 document.getElementById('new_photos').innerHTML = '{$params['new_photos']}';
 document.getElementById('requests_link_new_photos').setAttribute('href', '/albums/{$params['new_photos_link']}');
 document.getElementById('requests_link').setAttribute('href', '/friends{$params['requests_link']}');
+HTML;
+
+    } else
+        $notify = '';
+
+    $result_ajax = <<<HTML
+<script type="text/javascript">
+document.title = '{$metatags['title']}';
+{$ajaxSpBar};
+{$notify}
 $('#new_groups').html('{$params['new_groups']}');
 $('#new_groups_lnk').attr('href', '{$params['new_groups_lnk']}');
 </script>
@@ -1651,7 +1659,8 @@ function compileNoAjax($tpl, $params): int
     } else {
         $tpl->set('{js}', '<script type="text/javascript" src="{theme}/js/jquery.lib.js"></script>
 <script type="text/javascript" src="{theme}/js/' . $checkLang . '/lang.js"></script>
-<script type="text/javascript" src="{theme}/js/main.js"></script>');
+<script type="text/javascript" src="{theme}/js/main.js"></script>
+<script type="text/javascript" src="{theme}/js/profile.js"></script>');
     }
 
 // FOR MOBILE VERSION 1.0
