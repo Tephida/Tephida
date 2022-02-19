@@ -150,6 +150,7 @@ switch ($act) {
         }
 
         break;
+
     case "login":
         $tpl->load_template('login.tpl');
 

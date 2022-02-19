@@ -1463,16 +1463,6 @@ function compile($tpl, array $params = array()): int
     } else {
         return compileNoAjax($tpl, $params);
     }
-
-
-//    $go = Registry::get('go');
-
-//Если обращение к модулю регистрации или главной и юзер не авторизован, то показываем регистрацию
-//if ($go == 'register' or $go == 'main' and Registry::get('logged') == false) {
-//    include ENGINE_DIR . '/modules/register_main.php';
-//}
-
-
 }
 
 /**
