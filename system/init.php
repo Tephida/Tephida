@@ -11,13 +11,12 @@ if (!defined('MOZG')) die('Hacking attempt!');
 include ENGINE_DIR . '/functions.php';
 
 try {
-    $config = settings_get();
+    $config = settings_load();
+    Registry::set('config', $config);
 } catch (Exception $e) {
-    throw new InvalidArgumentException("Invalid config. Please reinstall VII Engine");
+    throw new InvalidArgumentException("Invalid config. Please run install.php");
 }
 
-if (!isset($config['home_url']))
-    die("Vii Engine not installed. Please run install.php");
 include ENGINE_DIR . '/classes/mysql.php';
 include ENGINE_DIR . '/data/db.php';
 Registry::set('db', $db);

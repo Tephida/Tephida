@@ -24,5 +24,5 @@ $ajax = $_POST['ajax'] ?? null;
 $logged = false;
 $user_info = false;
 include_once ENGINE_DIR . '/classes/Registry.php';
-include ENGINE_DIR . '/classes/Filesystem.php';
-include ENGINE_DIR . '/init.php';
+include_once ENGINE_DIR . '/classes/Filesystem.php';
+include_once ENGINE_DIR . '/init.php';

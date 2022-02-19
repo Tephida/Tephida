@@ -1331,12 +1331,16 @@ function set_cookie($name, $value, $expires)
 
 function settings_get(): array
 {
+    return Registry::get('config');
+}
+
+function settings_load(): array
+{
     if (file_exists(ENGINE_DIR . '/data/config.php')) {
         return require ENGINE_DIR . '/data/config.php';
     } else {
         die("Vii Engine not installed. Please run install.php");
     }
-
 }
 
 /**
