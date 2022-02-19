@@ -8,7 +8,6 @@
  */
 if (!defined('MOZG')) die('Hacking attempt!');
 
-include ENGINE_DIR . '/functions.php';
 
 try {
     $config = settings_load();
@@ -17,10 +16,10 @@ try {
     throw new InvalidArgumentException("Invalid config. Please run install.php");
 }
 
-include ENGINE_DIR . '/classes/mysql.php';
+
 $db = require_once ENGINE_DIR . '/data/db.php';
 Registry::set('db', $db);
-include ENGINE_DIR . '/classes/templates.php';
+
 if ($config['gzip'] == 'yes')
     include ENGINE_DIR . '/modules/gzip.php';
 //FUNC. COOKIES
