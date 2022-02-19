@@ -857,5 +857,5 @@ if (Registry::get('logged')) {
     }
 //    $tpl->clear();
 //    $db->free();
-} else
-    echo 'no_log';
+}
+//    echo 'no_log';

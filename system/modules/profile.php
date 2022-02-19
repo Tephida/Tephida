@@ -56,7 +56,10 @@ $id = intFilter('id');
             $tpl->compile('content');
 
         } else {
-            $CheckBlackList = CheckBlackList($id);
+            if (Registry::get('logged'))
+                $CheckBlackList = CheckBlackList($id);
+            else
+                $CheckBlackList = false;
 
             $user_privacy = xfieldsdataload($row['user_privacy']);
 
@@ -84,7 +87,7 @@ $id = intFilter('id');
             }
 
             //################### Друзья на сайте ###################//
-            if ($user_id != $id)
+            if (Registry::get('logged') and $user_id != $id)
                 //Проверка естьли запрашиваемый юзер в друзьях у юзера который смотрит стр
                 $check_friend = CheckFriends($row['user_id']);
             else
@@ -232,7 +235,7 @@ $id = intFilter('id');
                 include ENGINE_DIR . '/modules/wall.php';
 
             //Общие друзья
-            if ($row['user_friends_num'] and $id != $user_info['user_id']) {
+            if (Registry::get('logged') and $row['user_friends_num'] and $id != $user_info['user_id']) {
 
                 $count_common = $db->super_query("SELECT COUNT(*) AS cnt FROM `friends` tb1 INNER JOIN `friends` tb2 ON tb1.friend_id = tb2.user_id WHERE tb1.user_id = '{$user_info['user_id']}' AND tb2.friend_id = '{$id}' AND tb1.subscriptions = 0 AND tb2.subscriptions = 0");
 
@@ -422,15 +425,22 @@ $id = intFilter('id');
             }
 
             //Показ скрытых текста только для владельца страницы
-            if ($user_info['user_id'] == $row['user_id']) {
-                $tpl->set('[owner]', '');
-                $tpl->set('[/owner]', '');
-                $tpl->set_block("'\\[not-owner\\](.*?)\\[/not-owner\\]'si", "");
+            if (Registry::get('logged')) {
+                if ($user_info['user_id'] == $row['user_id']) {
+                    $tpl->set('[owner]', '');
+                    $tpl->set('[/owner]', '');
+                    $tpl->set_block("'\\[not-owner\\](.*?)\\[/not-owner\\]'si", "");
+                } else {
+                    $tpl->set('[not-owner]', '');
+                    $tpl->set('[/not-owner]', '');
+                    $tpl->set_block("'\\[owner\\](.*?)\\[/owner\\]'si", "");
+                }
             } else {
                 $tpl->set('[not-owner]', '');
                 $tpl->set('[/not-owner]', '');
                 $tpl->set_block("'\\[owner\\](.*?)\\[/owner\\]'si", "");
             }
+
 
             // FOR MOBILE VERSION 1.0
             if ($config['temp'] == 'mobile') {
@@ -513,11 +523,17 @@ $id = intFilter('id');
                 }
 
                 //Проверка есть ли запрашиваемый юзер в закладках у юзера который смотрит стр
-                $check_fave = $db->super_query("SELECT user_id FROM `fave` WHERE user_id = '{$user_info['user_id']}' AND fave_id = '{$id}'");
-                if ($check_fave) {
-                    $tpl->set('[yes-fave]', '');
-                    $tpl->set('[/yes-fave]', '');
-                    $tpl->set_block("'\\[no-fave\\](.*?)\\[/no-fave\\]'si", "");
+                if (Registry::get('logged')) {
+                    $check_fave = $db->super_query("SELECT user_id FROM `fave` WHERE user_id = '{$user_info['user_id']}' AND fave_id = '{$id}'");
+                    if ($check_fave) {
+                        $tpl->set('[yes-fave]', '');
+                        $tpl->set('[/yes-fave]', '');
+                        $tpl->set_block("'\\[no-fave\\](.*?)\\[/no-fave\\]'si", "");
+                    } else {
+                        $tpl->set('[no-fave]', '');
+                        $tpl->set('[/no-fave]', '');
+                        $tpl->set_block("'\\[yes-fave\\](.*?)\\[/yes-fave\\]'si", "");
+                    }
                 } else {
                     $tpl->set('[no-fave]', '');
                     $tpl->set('[/no-fave]', '');
@@ -525,19 +541,29 @@ $id = intFilter('id');
                 }
 
                 //Проверка есть ли запрашиваемый юзер в подписках у юзера который смотрит стр
-                $check_subscr = $db->super_query("SELECT user_id FROM `friends` WHERE user_id = '{$user_info['user_id']}' AND friend_id = '{$id}' AND subscriptions = 1");
-                if ($check_subscr) {
-                    $tpl->set('[yes-subscription]', '');
-                    $tpl->set('[/yes-subscription]', '');
-                    $tpl->set_block("'\\[no-subscription\\](.*?)\\[/no-subscription\\]'si", "");
+                if (Registry::get('logged')) {
+                    $check_subscr = $db->super_query("SELECT user_id FROM `friends` WHERE user_id = '{$user_info['user_id']}' AND friend_id = '{$id}' AND subscriptions = 1");
+                    if ($check_subscr) {
+                        $tpl->set('[yes-subscription]', '');
+                        $tpl->set('[/yes-subscription]', '');
+                        $tpl->set_block("'\\[no-subscription\\](.*?)\\[/no-subscription\\]'si", "");
+                    } else {
+                        $tpl->set('[no-subscription]', '');
+                        $tpl->set('[/no-subscription]', '');
+                        $tpl->set_block("'\\[yes-subscription\\](.*?)\\[/yes-subscription\\]'si", "");
+                    }
                 } else {
                     $tpl->set('[no-subscription]', '');
                     $tpl->set('[/no-subscription]', '');
                     $tpl->set_block("'\\[yes-subscription\\](.*?)\\[/yes-subscription\\]'si", "");
                 }
 
+
                 //Проверка есть ли запрашиваемый юзер в черном списке
-                $MyCheckBlackList = MyCheckBlackList($id);
+                if (Registry::get('logged'))
+                    $MyCheckBlackList = MyCheckBlackList($id);
+                else
+                    $MyCheckBlackList = false;
                 if ($MyCheckBlackList) {
                     $tpl->set('[yes-blacklist]', '');
                     $tpl->set('[/yes-blacklist]', '');
@@ -910,7 +936,7 @@ $id = intFilter('id');
             $tpl->compile('content');
 
             //Гости
-            if ($id != $user_info['user_id']) {
+            if (Registry::get('logged') and $id != $user_info['user_id']) {
 
                 $checkGuest = $db->super_query("SELECT COUNT(*) AS cnt FROM `guests` WHERE ouid = '{$id}' AND guid = '{$user_id}'");
 
@@ -929,7 +955,7 @@ $id = intFilter('id');
                 $db->query("UPDATE LOW_PRIORITY `friends` SET views = views+1 WHERE user_id = '{$user_info['user_id']}' AND friend_id = '{$id}' AND subscriptions = 0");
 
             //Вставляем в статистику
-            if ($user_info['user_id'] != $id) {
+            if (Registry::get('logged') and $user_info['user_id'] != $id) {
 
                 $stat_date = date('Ymd', $server_time);
                 $stat_x_date = date('Ym', $server_time);
