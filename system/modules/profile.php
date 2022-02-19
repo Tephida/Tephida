@@ -971,5 +971,5 @@ if (Registry::get('logged')) {
 } else {
     $user_speedbar = 'Информация';
     msgbox('', $lang['not_logged'], 'info');
-//    compile($tpl);
+    compile($tpl);
 }
