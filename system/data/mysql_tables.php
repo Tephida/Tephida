@@ -3539,8 +3539,6 @@ $table_Chema[] = "CREATE TABLE IF NOT EXISTS `communities` (
   `status_text` varchar(255) NOT NULL,
   `web` varchar(255) NOT NULL,
   `videos_num` int(11) NOT NULL,
-  `cover` varchar(25) NOT NULL,
-  `cover_pos` varchar(4) NOT NULL,
   PRIMARY KEY (`id`),
   KEY `del` (`del`),
   KEY `ban` (`ban`),

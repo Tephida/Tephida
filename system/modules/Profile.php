@@ -29,7 +29,7 @@ class Profile extends Module
 
         //Проверяем на наличие кеша, если нет, то выводим из БД и создаём его
         if (!$row) {
-            $row = $db->super_query("SELECT user_id, user_real, user_search_pref, user_country_city_name, user_birthday, user_xfields, user_xfields_all, user_city, user_country, user_photo, user_friends_num, user_notes_num, user_subscriptions_num, user_wall_num, user_albums_num, user_last_visit, user_videos_num, user_status, user_privacy, user_sp, user_sex, user_gifts, user_public_num, user_audio, user_delet, user_ban_date, xfields, user_logged_mobile , user_cover, user_cover_pos, user_rating FROM `users` WHERE user_id = '{$id}'");
+            $row = $db->super_query("SELECT user_id, user_real, user_search_pref, user_country_city_name, user_birthday, user_xfields, user_xfields_all, user_city, user_country, user_photo, user_friends_num, user_notes_num, user_subscriptions_num, user_wall_num, user_albums_num, user_last_visit, user_videos_num, user_status, user_privacy, user_sp, user_sex, user_gifts, user_public_num, user_audio, user_delet, user_ban_date, xfields, user_logged_mobile, user_rating FROM `users` WHERE user_id = '{$id}'");
             if ($row) {
                 mozg_create_folder_cache($cache_folder);
                 mozg_create_cache($cache_folder . '/profile_' . $id, serialize($row));
