@@ -17,7 +17,7 @@ class Profile extends Module
         $tpl = $this->tpl;
         $user_id = $user_info['user_id'] ?? null;
         $db = Registry::get('db');
-
+        $config = settings_get();
         $online_time = Registry::get('server_time') - $config['online_time'];
 
         $id = intFilter('id');

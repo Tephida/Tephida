@@ -312,7 +312,7 @@ if (Registry::get('logged')) {
             break;
 
         //################### Сохранение сортировки альбомов ###################//
-        case "save_pos_albums";
+        case "save_pos_albums":
             NoAjaxQuery();
             $array = requestFilter('album');
             $count = 1;
@@ -329,10 +329,11 @@ if (Registry::get('logged')) {
                 //Чистим кеш
                 mozg_mass_clear_cache_file("user_{$user_info['user_id']}/albums|user_{$user_info['user_id']}/albums_all|user_{$user_info['user_id']}/albums_friends");
             }
+
             break;
 
         //################### Сохранение сортировки фотографий ###################//
-        case "save_pos_photos";
+        case "save_pos_photos":
             NoAjaxQuery();
             $array = requestFilter('photo');
             $count = 1;
@@ -355,7 +356,7 @@ if (Registry::get('logged')) {
             break;
 
         //################### Страница редактирование альбома ###################//
-        case "edit_page";
+        case "edit_page":
             NoAjaxQuery();
             $user_id = $user_info['user_id'];
             $id = intFilter('id');
@@ -405,7 +406,7 @@ if (Registry::get('logged')) {
             break;
 
         //################### Страница изменения обложки ###################//
-        case "edit_cover";
+        case "edit_cover":
             NoAjaxQuery();
 
             $user_id = $user_info['user_id'];
@@ -460,7 +461,7 @@ if (Registry::get('logged')) {
             break;
 
         //################### Страница всех фотографий юзера, для прикрепления своей фотки кому-то на стену ###################//
-        case "all_photos_box";
+        case "all_photos_box":
             NoAjaxQuery();
             $user_id = $user_info['user_id'];
             $notes = intFilter('notes');
@@ -844,7 +845,7 @@ HTML;
             //Выводим данные о фотках
             $sql_photos = $db->super_query("SELECT id, photo_name FROM `photos` WHERE album_id = '{$aid}' ORDER by `position` ASC LIMIT {$limit_page}, {$gcount}", true);
 
-            //Выводим данные о альбоме
+            //Выводим данные об альбоме
             $row_album = $db->super_query("SELECT user_id, name, photo_num, privacy FROM `albums` WHERE aid = '{$aid}'");
 
             //ЧС
@@ -931,13 +932,13 @@ HTML;
                 } else {
                     $user_speedbar = $lang['error'];
                     msgbox('', $lang['no_notes'], 'info');
+                    compile($tpl);
                 }
             } else {
                 $user_speedbar = $lang['title_albums'];
                 msgbox('', $lang['no_notes'], 'info');
+                compile($tpl);
             }
-
-            compile($tpl);
             break;
 
         //################### Страница с новыми фотографиями ###################//
