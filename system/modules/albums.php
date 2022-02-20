@@ -750,9 +750,9 @@ HTML;
 
                     if ($uid and !$aid)
                         if ($user_id == $uid)
-                            $row_album = $db->super_query("SELECT SUM(comm_num) AS all_comm_num FROM `albums` WHERE user_id = '{$uid}'", false);
+                            $row_album = $db->super_query("SELECT SUM(comm_num) AS all_comm_num FROM `albums` WHERE user_id = '{$uid}'");
                         else
-                            $row_album = $db->super_query("SELECT COUNT(*) AS all_comm_num FROM `photos_comments` tb1, `albums` tb3 WHERE tb1.owner_id = '{$uid}' {$privacy_sql}", false);
+                            $row_album = $db->super_query("SELECT COUNT(*) AS all_comm_num FROM `photos_comments` tb1, `albums` tb3 WHERE tb1.owner_id = '{$uid}' {$privacy_sql}");
                     else
                         $row_album = $db->super_query("SELECT comm_num AS all_comm_num FROM `albums` WHERE aid = '{$aid}'");
 
@@ -780,6 +780,7 @@ HTML;
             $check_album = $db->super_query("SELECT name FROM `albums` WHERE aid = '{$aid}' AND user_id = '{$user_id}'");
 
             if ($check_album) {
+                /** fixme limit */
                 $sql_ = $db->super_query("SELECT id, photo_name FROM `photos` WHERE album_id = '{$aid}' AND user_id = '{$user_id}' ORDER by `position` ASC", true);
 
                 $params['metatags']['title'] = $lang['editphotos'];
@@ -998,6 +999,7 @@ HTML;
                     $user_speedbar = $lang['title_albums'];
 
                     //Выводи данные об альбоме
+                    /** fixme limit */
                     $sql_ = $db->super_query("SELECT aid, name, adate, photo_num, descr, comm_num, cover, ahash, privacy FROM `albums` WHERE user_id = '{$uid}' ORDER by `position` ASC", true);
 
                     //Если есть альбомы то выводи их

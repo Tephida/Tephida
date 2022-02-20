@@ -51,6 +51,7 @@ if (Registry::get('logged')) {
     }
 
     //Составляем массив для вывода за этот месяц
+    /** fixme limit */
     $sql_ = $db->super_query("SELECT users, views, date FROM `users_stats` WHERE user_id = '{$user_info['user_id']}' AND date_x = '{$stat_date}' ORDER by `date` ASC", true);
 
     if ($sql_) {

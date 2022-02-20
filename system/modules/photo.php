@@ -549,6 +549,7 @@ if (Registry::get('logged')) {
                             $tpl->set('[/add-comm]', '');
                         } else $tpl->set_block("'\\[add-comm\\](.*?)\\[/add-comm\\]'si", "");
                         //Выводим отмеченных людей на фото если они есть
+                        /** fixme limit */
                         $sql_mark = $db->super_query("SELECT muser_id, mphoto_name, msettings_pos, mmark_user_id, mapprove FROM `photos_mark` WHERE mphoto_id = '" . $photo_id . "' ORDER by `mdate` ASC", true);
                         $mark_peoples = $mark_peoples ?? '';//TODO update
 

@@ -859,7 +859,7 @@ if (Registry::get('logged')) {
 
                     //Если страницу смотрит другой юзер, то считаем кол-во видео
                     if ($user_id != $get_user_id) {
-                        $video_cnt = $db->super_query("SELECT COUNT(*) AS cnt FROM `videos` WHERE owner_user_id = '{$get_user_id}' {$sql_privacy} AND public_id = '0'", false, "user_{$get_user_id}/videos_num{$cache_pref}");
+                        $video_cnt = $db->super_query("SELECT COUNT(*) AS cnt FROM `videos` WHERE owner_user_id = '{$get_user_id}' {$sql_privacy} AND public_id = '0'");
                         $owner['user_videos_num'] = $video_cnt['cnt'];
                     }
 

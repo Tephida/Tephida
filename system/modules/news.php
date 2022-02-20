@@ -423,6 +423,7 @@ if (Registry::get('logged')) {
                                     $arr_answe_list = explode('|', stripslashes($row_vote['answers']));
                                     $max = $row_vote['answer_num'];
 
+                                    /** fixme limit */
                                     $sql_answer = $db->super_query("SELECT answer, COUNT(*) AS cnt FROM `votes_result` WHERE vote_id = '{$vote_id}' GROUP BY answer", true);
                                     $answer = array();
                                     foreach ($sql_answer as $row_answer) {
@@ -727,6 +728,7 @@ HTML;
                                     $arr_answe_list = explode('|', stripslashes($row_vote['answers']));
                                     $max = $row_vote['answer_num'];
 
+                                    /** fixme limit */
                                     $sql_answer = $db->super_query("SELECT answer, COUNT(*) AS cnt FROM `votes_result` WHERE vote_id = '{$vote_id}' GROUP BY answer", true);
                                     $answer = array();
                                     foreach ($sql_answer as $row_answer) {
