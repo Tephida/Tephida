@@ -164,17 +164,18 @@
 				Vii Engine &copy; 2022 <a class="cursor_pointer" onClick="trsn.box()" onMouseOver="myhtml.title('1', 'Выбор используемого языка на сайте', 'langTitle', 1)" id="langTitle1">{lang}</a>
 				<div class="fl_r">
 					<a href="/?act=change_mobile">мобильная версия</a>
-					<a href="/?go=search&online=1" onClick="Page.Go(this.href); return false">люди</a>
-					<a href="/?go=search&type=2" onClick="Page.Go(this.href); return false">видео</a>
-					<a href="/?go=search&type=5" onClick="Page.Go(this.href); return false">музыка</a>
+					<a href="/index.php?go=search&online=1" onClick="Page.Go(this.href); return false">люди</a>
+					<a href="/index.php?go=search&type=2" onClick="Page.Go(this.href); return false">видео</a>
+					<a href="/index.php?go=search&type=5" onClick="Page.Go(this.href); return false">музыка</a>
 					<a href="/support?act=new" onClick="Page.Go(this.href); return false">помощь</a>
 					<a href="/reviews" onClick="Page.Go(this.href); return false">отзывы</a>
 					<a href="/blog" onClick="Page.Go(this.href); return false">блог</a>
 				</div>
 			</div>
+			</div>
 		</div>
-		</div>
-		[logged]<script type="text/javascript" src="{theme}/js/push.js"></script>
+		[logged]
+		<script type="text/javascript" src="{theme}/js/push.js"></script>
 		<div class="no_display">
 			<audio id="beep-three" controls preload="auto">
 				<source src="{theme}/images/soundact.ogg"></source>

@@ -8,7 +8,7 @@ declare(strict_types=1);
  *
  */
 
-class mozg_template
+class Templates
 {
     public string|false $dir = '.';
     public string|null $template = null;

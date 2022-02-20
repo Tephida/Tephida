@@ -21,7 +21,7 @@ const ENGINE_DIR = ROOT_DIR . '/system';
 include_once ENGINE_DIR . '/functions.php';
 include_once ENGINE_DIR . '/classes/Registry.php';
 include_once ENGINE_DIR . '/classes/Filesystem.php';
-include_once ENGINE_DIR . '/classes/templates.php';
+include_once ENGINE_DIR . '/classes/Templates.php';
 include_once ENGINE_DIR . '/classes/mysql.php';
 include_once ENGINE_DIR . '/classes/Gzip.php';
 

@@ -72,7 +72,7 @@ if (!isset($checkLang)) {
 $lang = require ROOT_DIR . '/lang/' . $checkLang . '/site.php';
 $langdate = require ROOT_DIR . '/lang/' . $checkLang . '/date.php';
 
-$tpl = new mozg_template;
+$tpl = new Templates();
 $tpl->dir = ROOT_DIR . '/templates/' . $config['temp'];
 define('TEMPLATE_DIR', $tpl->dir);
 $_DOCUMENT_DATE = false;

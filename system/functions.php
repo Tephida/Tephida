@@ -210,7 +210,7 @@ function navigation($gc, $num, $type) {
     if (ceil($resif) == $page) $pages.= '';
     else $pages.= '<a href="' . $type . ($page + 1) . '" onClick="Page.Go(this.href); return false">&raquo;</a>';
     if ($pages_count <= 1) $pages = '';
-    $tpl_2 = new mozg_template();
+    $tpl_2 = new Templates();
     $tpl_2->dir = TEMPLATE_DIR;
     $tpl_2->load_template('nav.tpl');
     $tpl_2->set('{pages}', $pages);
@@ -259,7 +259,7 @@ function box_navigation($gc, $num, $id, $function, $act) {
     if (ceil($resif) == $page) $pages.= '';
     else $pages.= '<a href="/" onClick="' . $function . '(' . $id . ', ' . ($page + 1) . ', ' . $act . '); return false">&raquo;</a>';
     if ($pages_count <= 1) $pages = '';
-    $tpl_2 = new mozg_template();
+    $tpl_2 = new Template();
     $tpl_2->dir = TEMPLATE_DIR;
     $tpl_2->load_template('nav.tpl');
     $tpl_2->set('{pages}', $pages);
@@ -277,7 +277,7 @@ function box_navigation($gc, $num, $id, $function, $act) {
  */
 function msgbox($title, $text, $tpl_name) {
     global $tpl;
-    $tpl_2 = new mozg_template();
+    $tpl_2 = new Templates();
     $tpl_2->dir = TEMPLATE_DIR;
     $tpl_2->load_template($tpl_name . '.tpl');
     $tpl_2->set('{error}', $text);

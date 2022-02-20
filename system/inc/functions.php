@@ -321,10 +321,10 @@ HTML;
     }
 }
 
-function initAdminTpl(): mozg_template
+function initAdminTpl(): Templates
 {
-    include ENGINE_DIR . '/classes/templates.php';
-    $tpl = new mozg_template;
+    include ENGINE_DIR . '/classes/Templates.php';
+    $tpl = new Templates();
     $tpl->dir = ADMIN_DIR . '/tpl/';
 //    define('TEMPLATE_DIR', $tpl->dir);
 //    $_DOCUMENT_DATE = false;

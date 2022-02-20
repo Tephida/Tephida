@@ -9,11 +9,11 @@
 
 class Module
 {
-    public mozg_template $tpl;
+    public Templates $tpl;
 
     function __construct()
     {
-        $this->tpl = new mozg_template;
+        $this->tpl = new Templates();
         $config = settings_get();
         $this->tpl->dir = ROOT_DIR . '/templates/' . $config['temp'];
     }
