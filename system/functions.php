@@ -208,7 +208,7 @@ function navigation($gc, $num, $type) {
     }
     $resif = $cnt / $gcount;
     if (ceil($resif) == $page) $pages.= '';
-    else $pages.= '<a href="' . $type . ($page + 1) . '" onClick="Page.Go(this.href); return false">&raquo;</a>';
+    else $pages .= '<a href="' . $type . ($page + 1) . '" onClick="Page.Go(this.href); return false">&raquo;</a>';
     if ($pages_count <= 1) $pages = '';
     $tpl_2 = new Templates();
     $tpl_2->dir = TEMPLATE_DIR;
@@ -216,7 +216,59 @@ function navigation($gc, $num, $type) {
     $tpl_2->set('{pages}', $pages);
     $tpl_2->compile('content');
     $tpl_2->clear();
-    $tpl->result['content'].= $tpl_2->result['content'];
+    $tpl->result['content'] .= $tpl_2->result['content'];
+}
+
+/**
+ * @param $gc
+ * @param $num
+ * @param $type
+ * @return string
+ */
+function navigationNew($gc, $num, $type): string
+{
+    $page = intFilter('page', 1);
+    $gcount = $gc;
+    $cnt = $num;
+    $items_count = $cnt;
+    $items_per_page = $gcount;
+    $page_refers_per_page = 5;
+    $pages = '';
+    $pages_count = (($items_count % $items_per_page != 0)) ? floor($items_count / $items_per_page) + 1 : floor($items_count / $items_per_page);
+    $start_page = ($page - $page_refers_per_page <= 0) ? 1 : $page - $page_refers_per_page + 1;
+    $page_refers_per_page_count = (($page - $page_refers_per_page < 0) ? $page : $page_refers_per_page) + (($page + $page_refers_per_page > $pages_count) ? ($pages_count - $page) : $page_refers_per_page - 1);
+    if ($page > 1) $pages .= '<a href="' . $type . ($page - 1) . '" onClick="Page.Go(this.href); return false">&laquo;</a>';
+    else $pages .= '';
+    if ($start_page > 1) {
+        $pages .= '<a href="' . $type . '1" onClick="Page.Go(this.href); return false">1</a>';
+        $pages .= '<a href="' . $type . ($start_page - 1) . '" onClick="Page.Go(this.href); return false">...</a>';
+    }
+    for ($index = -1; ++$index <= $page_refers_per_page_count - 1;) {
+        if ($index + $start_page == $page) $pages .= '<span>' . ($start_page + $index) . '</span>';
+        else $pages .= '<a href="' . $type . ($start_page + $index) . '" onClick="Page.Go(this.href); return false">' . ($start_page + $index) . '</a>';
+    }
+    if ($page + $page_refers_per_page <= $pages_count) {
+        $pages .= '<a href="' . $type . ($start_page + $page_refers_per_page_count) . '" onClick="Page.Go(this.href); return false">...</a>';
+        $pages .= '<a href="' . $type . $pages_count . '" onClick="Page.Go(this.href); return false">' . $pages_count . '</a>';
+    }
+    $resif = $cnt / $gcount;
+    if (ceil($resif) == $page) $pages .= '';
+    else $pages .= '<a href="' . $type . ($page + 1) . '" onClick="Page.Go(this.href); return false">&raquo;</a>';
+    if ($pages_count <= 1) $pages = '';
+//    $tpl_2 = new Templates();
+//    $tpl_2->dir = TEMPLATE_DIR;
+//    $tpl_2->load_template('nav.tpl');
+//    $tpl_2->set('{pages}', $pages);
+//    $tpl_2->compile('content');
+//    $tpl_2->clear();
+
+//    $tpl->result['content'].= $tpl_2->result['content'];
+
+    return <<<HTML
+<div class="nav" id="nav">{$pages}</div>
+HTML;
+
+
 }
 
 /**
@@ -274,6 +326,7 @@ function box_navigation($gc, $num, $id, $function, $act) {
  * @param $tpl_name
  * @return void
  * @throws ErrorException
+ * @deprecated
  */
 function msgbox($title, $text, $tpl_name) {
     global $tpl;

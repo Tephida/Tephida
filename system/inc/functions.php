@@ -296,7 +296,7 @@ function compileAdmin($tpl): int
     $box_width = 600;
 
     $act = requestFilter('mod');
-    if ($act == 'webstats')
+    if ($act == 'webstats' || $act == 'users')
         $box_width = 800;
 
     $tpl->set('{admin_link}', $admin_link);
@@ -323,10 +323,9 @@ HTML;
 
 function initAdminTpl(): Templates
 {
-    include ENGINE_DIR . '/classes/Templates.php';
     $tpl = new Templates();
     $tpl->dir = ADMIN_DIR . '/tpl/';
-//    define('TEMPLATE_DIR', $tpl->dir);
+    define('TEMPLATE_DIR', $tpl->dir);
 //    $_DOCUMENT_DATE = false;
     return $tpl;
 }

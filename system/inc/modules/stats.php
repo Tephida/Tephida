@@ -9,8 +9,8 @@
 if (!defined('MOZG'))
     die('Hacking attempt!');
 
-echoheader();
-echohtmlstart('Общая статистика сайта');
+//echoheader();
+//echohtmlstart('Общая статистика сайта');
 
 $users = $db->super_query("SELECT COUNT(*) AS cnt FROM `users`");
 $albums = $db->super_query("SELECT COUNT(*) AS cnt FROM `albums`");
@@ -33,57 +33,18 @@ $mysql_size = formatsize($mysql_size);
 
 $cache_size = formatsize(Filesystem::dirSize("uploads"));
 
-echo <<<HTML
-<div class="buttonsprofileSec">
-<a href="/adminpanel.php?mod=webstats">
-<div><b>Статистика пользователей</b></div>
-</a>
-</div>
-
-<div class="fllogall">Размер базы данных MySQL:</div>
- <div style="margin-bottom:10px">{$mysql_size}&nbsp;</div>
-<div class="mgcler"></div>
-
-<div class="fllogall">Размер папки /uploads/:</div>
- <div style="margin-bottom:10px">{$cache_size}&nbsp;</div>
-<div class="mgcler"></div>
-
-<div class="fllogall">Зарегистрировано пользователей:</div>
- <div style="margin-bottom:10px">{$users['cnt']}&nbsp;</div>
-<div class="mgcler"></div>
-
-<div class="fllogall">Количество созданных альбомов:</div>
- <div style="margin-bottom:10px">{$albums['cnt']}&nbsp;</div>
-<div class="mgcler"></div>
-
-<div class="fllogall">Количество прикрепленных фото:</div>
- <div style="margin-bottom:10px">{$attach['cnt']}&nbsp;</div>
-<div class="mgcler"></div>
-
-<div class="fllogall">Количество аудиозаписей:</div>
- <div style="margin-bottom:10px">{$audio['cnt']}&nbsp;</div>
-<div class="mgcler"></div>
-
-<div class="fllogall">Количество сообществ:</div>
- <div style="margin-bottom:10px">{$groups['cnt']}&nbsp;</div>
-<div class="mgcler"></div>
-
-<div class="fllogall">Количество записей на стенах сообществ:</div>
- <div style="margin-bottom:10px">{$groups_wall['cnt']}&nbsp;</div>
-<div class="mgcler"></div>
-
-<div class="fllogall">Количество приглашеных пользователей:</div>
- <div style="margin-bottom:10px">{$invites['cnt']}&nbsp;</div>
-<div class="mgcler"></div>
-
-<div class="fllogall">Количество заметок:</div>
- <div style="margin-bottom:10px">{$notes['cnt']}&nbsp;</div>
-<div class="mgcler"></div>
-
-<div class="fllogall">Количество видеозаписей:</div>
- <div style="margin-bottom:10px">{$videos['cnt']}&nbsp;</div>
-<div class="mgcler"></div>
-
-HTML;
-
-echohtmlend();
+$tpl = initAdminTpl();
+$tpl->load_template('stats/main.tpl');
+$tpl->set('{cache_size}', $cache_size);
+$tpl->set('{mysql_size}', $mysql_size);
+$tpl->set('{users_cnt}', $users['cnt']);
+$tpl->set('{albums_cnt}', $albums['cnt']);
+$tpl->set('{attach_cnt}', $attach['cnt']);
+$tpl->set('{audio_cnt}', $audio['cnt']);
+$tpl->set('{groups_cnt}', $groups['cnt']);
+$tpl->set('{groups_wall_cnt}', $groups_wall['cnt']);
+$tpl->set('{invites_cnt}', $invites['cnt']);
+$tpl->set('{notes_cnt}', $notes['cnt']);
+$tpl->set('{videos_cnt}', $users['cnt']);
+$tpl->compile('content');
+compileAdmin($tpl);

@@ -318,6 +318,7 @@ const ENGINE_DIR = ROOT_DIR . '/system';
 const ADMIN_DIR = ROOT_DIR . '/system/inc';
 include ENGINE_DIR . '/classes/Registry.php';
 include ENGINE_DIR . '/classes/Filesystem.php';
+include_once ENGINE_DIR . '/classes/Templates.php';
 include ADMIN_DIR.'/functions.php';
 \$config = settings_load();
 
