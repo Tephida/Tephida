@@ -1494,6 +1494,7 @@ HTML;
     } else
         $notify = '';
 
+    $tpl->result['info'] = $tpl->result['info'] ?? '';
     $result_ajax = <<<HTML
 <script type="text/javascript">
 document.title = '{$metatags['title']}';
