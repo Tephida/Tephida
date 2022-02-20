@@ -116,4 +116,41 @@ if (Registry::get('logged')) {
 
 //Время онлайн
 $online_time = Registry::get('server_time') - $config['online_time'];
-include ENGINE_DIR . '/mod.php';
+
+try {
+    include ENGINE_DIR . '/classes/Module.php';
+    include ENGINE_DIR . '/modules/Register.php';
+    include ENGINE_DIR . '/modules/Profile.php';
+    include ENGINE_DIR . '/classes/Routing.php';
+
+    $router = Router::fromGlobals();
+//        $this->get('path.base');
+    $params = [];
+    $routers = array(
+        '/' => 'Register@main',
+        '/u:num' => 'Profile@main',
+        '/u:numafter' => 'Profile@main',
+    );
+    $router->add($routers);
+    try {
+        if ($router->isFound()) {
+            $router->executeHandler($router::getRequestHandler(), $params);
+        } else {
+            $go = isset($_GET['go']) ? htmlspecialchars(strip_tags(stripslashes(trim(urldecode($_GET['go']))))) : "main";
+            $action = requestFilter('act');
+            $class = ucfirst($go);
+            if (!class_exists($class) or $action == '' or $class == 'Wall') {
+                include ENGINE_DIR . '/mod.php';
+            } else {
+                $controller = new $class();
+                $params['params'] = '';
+                $params = [$params];
+                return call_user_func_array([$controller, $action], $params);
+            }
+        }
+    } catch (Exception) {
+        include ENGINE_DIR . '/mod.php';
+    }
+} catch (Exception $e) {
+    include ENGINE_DIR . '/mod.php';
+}

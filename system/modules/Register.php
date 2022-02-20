@@ -6,11 +6,11 @@
  *   file that was distributed with this source code.
  *
  */
-//if (!defined('MOZG')) die('Hacking attempt!');
-NoAjaxQuery();
-$act = requestFilter('act');
-switch ($act) {
-    case "send":
+
+class Register extends Module
+{
+    public function send()
+    {
         if (requestFilter('ajax') == 'yes') {
             if (Registry::get('logged') == false) {
                 $db = Registry::get('db');
@@ -143,22 +143,26 @@ switch ($act) {
                 } else
                     echo 'no_code';
             } else
-                echo 'err';
+                echo 'err|gged';
 
         } else {
-            echo 'err';
+            echo 'err|ajax';
         }
+    }
 
-        break;
-
-    case "login":
+    public function login()
+    {
+        $tpl = $this->tpl;
         $tpl->load_template('login.tpl');
 
         $tpl->compile('content');
 
         AjaxTpl($tpl);
-        break;
-    default:
+    }
+
+    public function main()
+    {
+        $tpl = $this->tpl;
         $tpl->load_template('reg.tpl');
         $db = Registry::get('db');
 //################## Загружаем Страны ##################//
@@ -170,7 +174,6 @@ switch ($act) {
         $tpl->set('{country}', $all_country);
 
         $tpl->compile('content');
-//    echo 'ttt';
         compile($tpl);
+    }
 }
-

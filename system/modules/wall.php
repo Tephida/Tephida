@@ -18,10 +18,13 @@ if (Registry::get('logged')) {
     $limit_page = 0;
     $server_time = Registry::get('server_time');
 
+    include ENGINE_DIR . '/classes/wall.php';
+
     switch ($act) {
 
         //################### Добавление новой записи на стену ###################//
         case "send":
+            $wall = new wall($tpl);
 //			NoAjaxQuery();
             $wall_text = requestFilter('wall_text');
             $attach_files = requestFilter('attach_files', 25000, true);
@@ -241,10 +244,6 @@ if (Registry::get('logged')) {
                             else
                                 $db->query("UPDATE `users` SET user_wall_num = user_wall_num+1 WHERE user_id = '{$for_user_id}'");
 
-                            //Подгружаем и объявляем класс для стены
-                            include ENGINE_DIR . '/classes/wall.php';
-                            $wall = new wall();
-
                             //Если добавлена просто запись, то сразу обновляем все записи на стене
                             AntiSpamLogInsert('wall');
                             if (!$fast_comm_id) {
@@ -253,7 +252,7 @@ if (Registry::get('logged')) {
                                     $wall->query("SELECT tb1.id, author_user_id, text, add_date, fasts_num, likes_num, likes_users, type, tell_uid, tell_date, public, attach, tell_comm, tb2.user_photo, user_search_pref, user_last_visit, user_logged_mobile FROM `wall` tb1, `users` tb2 WHERE for_user_id = '{$for_user_id}' AND tb1.author_user_id = tb2.user_id AND tb1.fast_comm_id = '0' ORDER by `add_date` DESC LIMIT 0, {$limit_select}");
                                     $wall->template('wall/record.tpl');
                                     $wall->compile('content');
-                                    $wall->select();
+                                    $wall->select($config, $id, $for_user_id, $user_privacy, $check_friend, $user_info);
                                 }
 
                                 mozg_clear_cache_file('user_' . $for_user_id . '/profile_' . $for_user_id);
@@ -507,12 +506,10 @@ if (Registry::get('logged')) {
         //################### Показ всех комментариев к записи ###################//
         case "all_comm":
             NoAjaxQuery();
+            $wall = new wall($tpl);
             $fast_comm_id = intFilter('fast_comm_id');
             $for_user_id = intFilter('for_user_id');
             if ($fast_comm_id and $for_user_id) {
-                //Подгружаем и объявляем класс для стены
-                include ENGINE_DIR . '/classes/wall.php';
-                $wall = new wall();
 
                 //Проверка на существование получателя
                 $row = $db->super_query("SELECT user_privacy FROM `users` WHERE user_id = '{$for_user_id}'");
@@ -549,6 +546,7 @@ if (Registry::get('logged')) {
         //################### Показ предыдущих записей ###################//
         case "page":
             NoAjaxQuery();
+            $wall = new wall($tpl);
             $last_id = intFilter('last_id');
             $for_user_id = intFilter('for_user_id');
 
@@ -556,8 +554,6 @@ if (Registry::get('logged')) {
             $CheckBlackList = CheckBlackList($for_user_id);
 
             if (!$CheckBlackList and $for_user_id and $last_id) {
-                include ENGINE_DIR . '/classes/wall.php';
-                $wall = new wall();
 
                 //Проверка на существование получателя
                 $row = $db->super_query("SELECT user_privacy FROM `users` WHERE user_id = '{$for_user_id}'");
@@ -578,7 +574,7 @@ if (Registry::get('logged')) {
 
                     $wall->template('wall/record.tpl');
                     $wall->compile('content');
-                    $wall->select();
+                    $wall->select($config, $id, $for_user_id, $user_privacy, $check_friend, $user_info);
                     AjaxTpl($tpl);
                 }
             }
@@ -728,7 +724,7 @@ if (Registry::get('logged')) {
             break;
 
         default:
-
+            $wall = new wall($tpl);
             //################### Показ последних 10 записей ###################//
 
             //Если вызвана страница стены, не со страницы юзера
@@ -757,6 +753,8 @@ if (Registry::get('logged')) {
                         //Проверка естьли запрашиваемый юзер в друзьях у юзера который смотрит стр
                         if ($user_id != $id)
                             $check_friend = CheckFriends($id);
+                        else
+                            $check_friend = false;
 
                         if ($user_privacy['val_wall1'] == 1 or $user_privacy['val_wall1'] == 2 and $check_friend or $user_id == $id)
                             $cnt_rec['cnt'] = $row_user['user_wall_num'];
@@ -809,8 +807,7 @@ if (Registry::get('logged')) {
             $wallAuthorId = $wallAuthorId ?? null;
 
             if (!$CheckBlackList) {
-                include ENGINE_DIR . '/classes/wall.php';
-                $wall = new wall();
+
 
                 $where_sql = $where_sql ?? null;
 
@@ -833,10 +830,12 @@ if (Registry::get('logged')) {
                     $rid = $rid ?? null;
                     $walluid = $walluid ?? null;
 
+                    $for_user_id = $for_user_id ?? null;
+
                     if ($rid or $walluid) {
                         $wall->template('wall/one_record.tpl');
                         $wall->compile('content');
-                        $wall->select();
+                        $wall->select($config, $id, $for_user_id, $user_privacy, $check_friend, $user_info);
 
                         //FIXME
                         $cnt_rec = $cnt_rec ?? null;
@@ -850,7 +849,7 @@ if (Registry::get('logged')) {
                     } else {
                         $wall->template('wall/record.tpl');
                         $wall->compile('wall');
-                        $wall->select();
+                        $wall->select($config, $id, $for_user_id, $user_privacy, $check_friend, $user_info);
                     }
                 }
             }

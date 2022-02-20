@@ -303,23 +303,6 @@ function check_smartphone(): bool
     return false;
 }
 
-/**
- * @param $prefix
- * @param $cache_text
- * @return void
- */
-function creat_system_cache($prefix, $cache_text): void
-{
-    $filename = ENGINE_DIR . '/cache/system/' . $prefix . '.php';
-    $fp = @fopen($filename, 'wb+');
-    fwrite($fp, $cache_text);
-    fclose($fp);
-    @chmod($filename, 0666);
-}
-function system_cache($prefix): false|string
-{
-    return file_get_contents(ENGINE_DIR . '/cache/system/' . $prefix . '.php');
-}
 function mozg_clear_cache(): void
 {
     $folder = '';
@@ -1472,6 +1455,10 @@ function compile($tpl, array $params = array()): int
  */
 function compileAjax($tpl, $params): int
 {
+    if (!isset($tpl->result['content'])) {
+        $tpl->result['content'] = '';
+//        throw new ErrorException(0,1, null, null);
+    }
     $config = settings_get();
     //Если есть POST Запрос и значение AJAX, а $ajax не равняется "yes", то не пропускаем
     //FIXME
@@ -1534,6 +1521,10 @@ HTML;
  */
 function compileNoAjax($tpl, $params): int
 {
+    if (!isset($tpl->result['content'])) {
+        $tpl->result['content'] = '';
+//        throw new ErrorException(0,1, null, null);
+    }
     $tpl->load_template('main.tpl');
 //Если юзер авторизован
     if (Registry::get('logged')) {
@@ -1633,6 +1624,7 @@ function compileNoAjax($tpl, $params): int
             $tpl->set('{new-actions}', "");
     }
     $tpl->set('{content}', $tpl->result['content']);
+
     if (isset($spBar) and $spBar) {
         $tpl->set_block("'\\[speedbar\\](.*?)\\[/speedbar\\]'si", "");
     } else {

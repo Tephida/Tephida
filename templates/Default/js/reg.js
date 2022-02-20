@@ -76,16 +76,17 @@ var reg = {
 		var country = $("#country").val();
 		var city = $("#select_city").val();
 		$.post('/index.php?go=register&act=send', {
-			name: name,
-			lastname: lastname,
-			email: email,
-			sex: sex,
-			day: day,
-			month: month,
-			year: year,
-			country: country,
-			city: city,
-			password_first: new_pass,
+            ajax: 'yes',
+            name: name,
+            lastname: lastname,
+            email: email,
+            sex: sex,
+            day: day,
+            month: month,
+            year: year,
+            country: country,
+            city: city,
+            password_first: new_pass,
 				password_second: new_pass2,
 				sec_code: sec_code
 			}, function(d){
