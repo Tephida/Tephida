@@ -1143,9 +1143,28 @@ border-radius:3px;
 .apps_fast_del img{width:11px;height:11px;opacity:0.2;border-radius:0px;-moz-border-radius:0px;-webkit-border-radius:0px}
 
 /* COVER */
-.cover_profile_bg{width:800px;height:230px;margin-left:-15px;margin-top:-12px;background:url("../images/covers.png") no-repeat;margin-bottom:10px}
-.cover_newava{margin-top:-165px;position:relative;z-index:2;min-height:100px}
-.cover_newava img{box-shadow:0 1px 3px rgba(0, 0, 0, 0.28);-moz-box-shadow:0 1px 3px rgba(0, 0, 0, 0.28);-webkit-box-shadow:0 1px 3px rgba(0, 0, 0, 0.28);border:3px solid #fff;margin-left:-3px}
+.cover_profile_bg {
+    width: 800px;
+    height: 230px;
+    margin-left: -15px;
+    margin-top: -12px;
+    background: url("../images/covers.png") no-repeat;
+    margin-bottom: 10px
+}
+
+.cover_newava {
+    position: relative;
+    z-index: 2;
+    min-height: 100px
+}
+
+.cover_newava img {
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.28);
+    -moz-box-shadow: 0 1px 3px rgba(0, 0, 0, 0.28);
+    -webkit-box-shadow: 0 1px 3px rgba(0, 0, 0, 0.28);
+    border: 3px solid #fff;
+    margin-left: -3px
+}
 .cover_addut, .cover_addut_edit{background:rgba(0, 0, 0, 0.600);float:right;padding:7px 13px 7px 13px;text-shadow:0px 1px 1px rgba(0, 0, 0, 0.506);border-radius:5px;-moz-border-radius:5px;-webkit-border-radius:5px;color:#fff;cursor:pointer;font-size:12px;margin:8px;margin-left:0px;opacity:0.7}
 .cover_addut:hover, .cover_addut_edit:hover{opacity:1}
 .cover_buts_pos{float:right;text-align:right;width:570px;height:230px}

@@ -4182,8 +4182,6 @@ $table_Chema[] = "CREATE TABLE IF NOT EXISTS `users` (
   `user_doc_num` mediumint(8) NOT NULL,
   `user_logged_mobile` tinyint(1) NOT NULL,
   `guests` mediumint(8) NOT NULL,
-  `user_cover` varchar(25) NOT NULL,
-  `user_cover_pos` varchar(4) NOT NULL,
   `balance_rub` double NOT NULL,
   `user_rating` mediumint(8) NOT NULL,
   `invties_pub_num` smallint(6) NOT NULL,

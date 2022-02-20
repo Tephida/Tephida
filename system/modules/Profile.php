@@ -8,7 +8,11 @@
  */
 class Profile extends Module
 {
-    function main()
+    /**
+     * @return void
+     * @throws ErrorException
+     */
+    function main(): void
     {
         $tpl = $this->tpl;
         $user_id = $user_info['user_id'] ?? null;
@@ -860,10 +864,7 @@ class Profile extends Module
 
                 }
 
-//            if ($id == 7) $tpl->set('{group}', '<font color="#f87d7d">Модератор</font>');
-//            else $tpl->set('{group}', '');
-
-                //Обложка
+                //Фотография профиля
                 if ($row['user_photo']) {
 
                     $avaImgIsinfo = getimagesize(ROOT_DIR . "/uploads/users/{$row['user_id']}/{$row['user_photo']}");
@@ -883,54 +884,19 @@ class Profile extends Module
                 } else
                     $tpl->set('{cover-param-7}', "");
 
-                if ($row['user_cover']) {
-
-                    $imgIsinfo = getimagesize(ROOT_DIR . "/uploads/users/{$id}/{$row['user_cover']}");
-
-                    $tpl->set('{cover}', "/uploads/users/{$id}/{$row['user_cover']}");
-                    $tpl->set('{cover-height}', $imgIsinfo[1]);
-                    $tpl->set('{cover-param}', '');
-                    $tpl->set('{cover-param-2}', 'no_display');
-                    $tpl->set('{cover-param-3}', 'style="position:absolute;z-index:2;display:block;margin-left:397px"');
-                    $tpl->set('{cover-param-4}', 'style="cursor:default"');
-                    $tpl->set('{cover-param-5}', 'style="top:-' . $row['user_cover_pos'] . 'px;position:relative"');
-                    $tpl->set('{cover-pos}', $row['user_cover_pos']);
-
-                    $tpl->set('[cover]', '');
-                    $tpl->set('[/cover]', '');
-
-                } else {
-
-                    $tpl->set('{cover}', "");
-                    $tpl->set('{cover-param}', 'no_display');
-                    $tpl->set('{cover-param-2}', '');
-                    $tpl->set('{cover-param-3}', '');
-                    $tpl->set('{cover-param-4}', '');
-                    $tpl->set('{cover-param-5}', '');
-                    $tpl->set('{cover-pos}', '');
-                    $tpl->set_block("'\\[cover\\](.*?)\\[/cover\\]'si", "");
-
-                }
-
                 //Rating
                 if ($row['user_rating'] > 1000) {
-
                     $tpl->set('{rating-class-left}', 'profile_rate_1000_left');
                     $tpl->set('{rating-class-right}', 'profile_rate_1000_right');
                     $tpl->set('{rating-class-head}', 'profile_rate_1000_head');
-
                 } elseif ($row['user_rating'] > 500) {
-
                     $tpl->set('{rating-class-left}', 'profile_rate_500_left');
                     $tpl->set('{rating-class-right}', 'profile_rate_500_right');
                     $tpl->set('{rating-class-head}', 'profile_rate_500_head');
-
                 } else {
-
                     $tpl->set('{rating-class-left}', '');
                     $tpl->set('{rating-class-right}', '');
                     $tpl->set('{rating-class-head}', '');
-
                 }
 
                 if (!$row['user_rating']) $row['user_rating'] = 0;
