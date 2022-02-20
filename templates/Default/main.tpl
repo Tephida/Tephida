@@ -49,12 +49,6 @@
 							Закладки
 						</div>
 					</a>
-					<a href="/apps" onClick="Page.Go(this.href); return false;">
-						<div class="headm_posic"><img src="/templates/Default/images/spacer.gif" class="headm_ic_games"
-													  alt="spacer"/><br/>
-							Игры
-						</div>
-					</a>
 					<a href="/videos" onClick="Page.Go(this.href); return false;">
 						<div class="headm_posic"><img src="{theme}/images/spacer.gif" class="headm_ic_videos"
 													  alt="spacer"/><br/>
