@@ -159,9 +159,6 @@ switch ($mod) {
         break;
     //Игры
 
-    case "apps":
-        include ADMIN_DIR . '/modules/apps.php';
-        break;
     //Отзывы
 
     case "reviews":

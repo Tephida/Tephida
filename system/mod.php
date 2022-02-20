@@ -254,12 +254,6 @@ switch ($go) {
         include ENGINE_DIR . '/modules/del_my_page.php';
         break;
 
-    /** Гости */
-    case "guests":
-        $spBar = true;
-        include ENGINE_DIR . '/modules/guests.php';
-        break;
-
     /** Фоторедактор */
     case "photo_editor":
         include ENGINE_DIR . '/modules/photo_editor.php';

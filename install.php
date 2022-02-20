@@ -73,7 +73,6 @@ if (!file_exists(ENGINE_DIR . '/data/config.php') or !file_exists(ENGINE_DIR . '
             './uploads/videos/',
             './uploads/audio/',
             './uploads/doc/',
-            './uploads/apps/',
             './templates/',
             './templates/Default/',
         );
@@ -89,7 +88,6 @@ if (!file_exists(ENGINE_DIR . '/data/config.php') or !file_exists(ENGINE_DIR . '
             Filesystem::createDir('./uploads/videos/');
             Filesystem::createDir('./uploads/audio/');
             Filesystem::createDir('./uploads/doc/');
-            Filesystem::createDir('./uploads/apps/');
 
             Filesystem::createDir('./system/cache/');
             Filesystem::createDir('./system/cache/groups/');
@@ -535,7 +533,6 @@ HTML;
         Filesystem::delete('./uploads/videos/');
         Filesystem::delete('./uploads/audio/');
         Filesystem::delete('./uploads/doc/');
-        Filesystem::delete('./uploads/apps/');
         Filesystem::delete('./system/cache/groups/');
         Filesystem::delete('./system/cache/groups_forum/');
         Filesystem::delete('./system/cache/groups_mark/');
@@ -554,9 +551,6 @@ HTML;
         $table_Chema[] = "DROP TABLE IF EXISTS `albums`";
         $table_Chema[] = "DROP TABLE IF EXISTS `attach`";
         $table_Chema[] = "DROP TABLE IF EXISTS `antispam`";
-        $table_Chema[] = "DROP TABLE IF EXISTS `apps`";
-        $table_Chema[] = "DROP TABLE IF EXISTS `apps_transactions`";
-        $table_Chema[] = "DROP TABLE IF EXISTS `apps_users`";
         $table_Chema[] = "DROP TABLE IF EXISTS `attach`";
         $table_Chema[] = "DROP TABLE IF EXISTS `attach_comm`";
         $table_Chema[] = "DROP TABLE IF EXISTS `audio`";
@@ -578,13 +572,8 @@ HTML;
         $table_Chema[] = "DROP TABLE IF EXISTS `fave`";
         $table_Chema[] = "DROP TABLE IF EXISTS `friends`";
         $table_Chema[] = "DROP TABLE IF EXISTS `friends_demands`";
-        $table_Chema[] = "DROP TABLE IF EXISTS `games`";
-        $table_Chema[] = "DROP TABLE IF EXISTS `games_activity`";
-        $table_Chema[] = "DROP TABLE IF EXISTS `games_files`";
-        $table_Chema[] = "DROP TABLE IF EXISTS `games_users`";
         $table_Chema[] = "DROP TABLE IF EXISTS `gifts`";
         $table_Chema[] = "DROP TABLE IF EXISTS `gifts_list`";
-        $table_Chema[] = "DROP TABLE IF EXISTS `guests`";
         $table_Chema[] = "DROP TABLE IF EXISTS `im`";
         $table_Chema[] = "DROP TABLE IF EXISTS `invites`";
         $table_Chema[] = "DROP TABLE IF EXISTS `log`";

@@ -113,11 +113,6 @@ $modules = array(
 //        'link' => 'city',
 //        'icon' => 'city',
 //    ),
-//    'Игры' => array(
-//        'description' => 'Добавление, удаление и редактирование игр на сайте',
-//        'link' => 'apps',
-//        'icon' => 'apps',
-//    ),
 //    'Отзывы' => array(
 //        'description' => $new_reviews . 'Модерация и удаление отзывов.',
 //        'link' => 'reviews',

@@ -37,12 +37,6 @@
 							Фото
 						</div>
 					</a>
-					<a href="/index.php?go=guests" onClick="Page.Go(this.href); return false;">
-						<div class="headm_posic">
-							<img src="{theme}/images/spacer.gif" class="headm_ic_support" alt="spacer"/><br/>
-							Гости
-						</div>
-					</a>
 					<a href="/fave" onClick="Page.Go(this.href); return false;">
 						<div class="headm_posic"><img src="{theme}/images/spacer.gif" class="headm_ic_fave"
 													  alt="spacer"/><br/>

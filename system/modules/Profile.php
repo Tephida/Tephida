@@ -904,21 +904,6 @@ class Profile extends Module
 
                 $tpl->compile('content');
 
-                //Гости
-                if (Registry::get('logged') and $id != $user_info['user_id']) {
-
-                    $checkGuest = $db->super_query("SELECT COUNT(*) AS cnt FROM `guests` WHERE ouid = '{$id}' AND guid = '{$user_id}'");
-
-                    if ($checkGuest['cnt']) {
-                        $db->query("UPDATE `guests` SET gdate = '{$server_time}', new = '1' WHERE ouid = '{$id}' AND guid = '{$user_id}'");
-                    } else {
-                        $db->query("INSERT INTO `guests` SET gdate = '{$server_time}', ouid = '{$id}', guid = '{$user_id}', new = '1'");
-                    }
-
-                    $db->query("UPDATE `users` SET guests = guests + 1 WHERE user_id = '{$id}'");
-
-                }
-//
                 //Обновляем кол-во посещений на страницу, если юзер есть у меня в друзьях
                 if (isset($check_friend) and $check_friend)
                     $db->query("UPDATE LOW_PRIORITY `friends` SET views = views+1 WHERE user_id = '{$user_info['user_id']}' AND friend_id = '{$id}' AND subscriptions = 0");
