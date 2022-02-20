@@ -1521,50 +1521,48 @@ function compileAjax($tpl, $params): int
     $speedbar = $speedbar ?? null;
     $metatags = $params['metatags'] ?? null;
 
-    $metatags['title'] = $metatags['title'] ?? null;
+    $metatags['title'] = $metatags['title'] ?? $config['home'];
 
-    if (isset($spBar) and $spBar)
-        $ajaxSpBar = "$('#speedbar').show().html('{$speedbar}')";
-    else
-        $ajaxSpBar = "$('#speedbar').hide()";
+//    if (isset($spBar) and $spBar)
+//        $ajaxSpBar = "$('#speedbar').show().html('{$speedbar}')";
+//    else
+//        $ajaxSpBar = "$('#speedbar').hide()";
 
     $params['requests_link'] = $requests_link ?? '';
-
-    if (Registry::get('logged')) {
-        $notify = <<<HTML
-document.getElementById('new_msg').innerHTML = '{$params['user_pm_num']}';
-document.getElementById('new_news').innerHTML = '{$params['new_news']}';
-document.getElementById('new_ubm').innerHTML = '{$params['new_ubm']}';
-document.getElementById('ubm_link').setAttribute('href', '{$params['gifts_link']}');
-document.getElementById('new_support').innerHTML = '{$params['support']}';
-document.getElementById('news_link').setAttribute('href', '/news{$params['news_link']}');
-document.getElementById('new_requests').innerHTML = '{$params['demands']}';
-document.getElementById('new_photos').innerHTML = '{$params['new_photos']}';
-document.getElementById('requests_link_new_photos').setAttribute('href', '/albums/{$params['new_photos_link']}');
-document.getElementById('requests_link').setAttribute('href', '/friends{$params['requests_link']}');
-HTML;
-
-    } else
-        $notify = '';
-
     $tpl->result['info'] = $tpl->result['info'] ?? '';
-    $result_ajax = <<<HTML
-<script type="text/javascript">
-document.title = '{$metatags['title']}';
-{$ajaxSpBar};
-{$notify}
-$('#new_groups').html('{$params['new_groups']}');
-$('#new_groups_lnk').attr('href', '{$params['new_groups_lnk']}');
-</script>
-{$tpl->result['info']}{$tpl->result['content']}
-HTML;
-    header('Content-type: text/html; charset=utf-8');
-    echo str_replace('{theme}', '/templates/' . $config['temp'], $result_ajax);
+    if (Registry::get('logged')) {
+        $result_ajax = array(
+            'title' => $metatags['title'],
+            'user_pm_num' => $params['user_pm_num'],
+            'new_news' => $params['new_news'],
+            'new_ubm' => $params['new_ubm'],
+            'gifts_link' => $params['gifts_link'],
+            'support' => $params['support'],
+            'news_link' => $params['news_link'],
+            'demands' => $params['demands'],
+            'new_photos' => $params['new_photos'],
+            'new_photos_link' => $params['new_photos_link'],
+            'requests_link' => $params['requests_link'],
+            'new_groups' => $params['new_groups'],
+            'new_groups_lnk' => $params['new_groups_lnk'],
+            'sbar' => $spBar ? $speedbar : '',
+            'content' => $tpl->result['info'] . $tpl->result['content']
+        );
+
+    } else {
+        $result_ajax = array(
+            'title' => $metatags['title'],
+            'sbar' => $spBar ? $speedbar : '',
+            'content' => $tpl->result['info'] . $tpl->result['content']
+        );
+    }
+    $res = str_replace('{theme}', '/templates/' . $config['temp'], $result_ajax);
+
+    _e_json($res);
     $tpl->global_clear();
 //        $db->close();
     if ($config['gzip'] == 'yes')
         (new Gzip(false))->GzipOut();
-
     return print('');
 }
 
