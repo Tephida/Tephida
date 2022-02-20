@@ -259,7 +259,7 @@ function box_navigation($gc, $num, $id, $function, $act) {
     if (ceil($resif) == $page) $pages.= '';
     else $pages.= '<a href="/" onClick="' . $function . '(' . $id . ', ' . ($page + 1) . ', ' . $act . '); return false">&raquo;</a>';
     if ($pages_count <= 1) $pages = '';
-    $tpl_2 = new Template();
+    $tpl_2 = new Templates();
     $tpl_2->dir = TEMPLATE_DIR;
     $tpl_2->load_template('nav.tpl');
     $tpl_2->set('{pages}', $pages);
