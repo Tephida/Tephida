@@ -24,7 +24,7 @@ if (Registry::get('logged')) {
         case "view":
             NoAjaxQuery();
             $for_user_id = intFilter('user_id');
-
+            /** fixme limit */
             $sql_ = $db->super_query("SELECT gid, img, price FROM `gifts_list` ORDER by `gid` DESC", true);
             $config = settings_get();
             foreach ($sql_ as $gift) {

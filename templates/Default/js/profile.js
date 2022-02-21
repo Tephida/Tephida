@@ -1011,7 +1011,7 @@ var gSearch = {
 			else all_queryeis_user_photo = '';
 			res_sort_query = all_queryeis_sex + all_queryeis_day + all_queryeis_month + all_queryeis_year + all_queryeis_country + all_queryeis_city + all_queryeis_online + all_queryeis_user_photo;
 		} else res_sort_query = '';
-		lnk = '/?go=search&query=' + encodeURIComponent(query) + '&type=' + type + res_sort_query;
+		lnk = '/index.php?go=search&query=' + encodeURIComponent(query) + '&type=' + type + res_sort_query;
 		Page.Loading('start');
 		$.post(lnk, {
 			ajax: 'yes'

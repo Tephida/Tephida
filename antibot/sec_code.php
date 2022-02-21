@@ -6,7 +6,7 @@
  *   file that was distributed with this source code.
  *
  */
-@session_start();
+session_start();
 
 function clean_url(string $url)
 {

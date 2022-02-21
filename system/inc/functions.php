@@ -280,6 +280,9 @@ function system_mozg_clear_cache_file($prefix)
     Filesystem::delete(ENGINE_DIR . '/cache/system/' . $prefix . '.php');
 }
 
+/**
+ * @throws JsonException
+ */
 function compileAdmin($tpl): int
 {
     $tpl->load_template('main.tpl');
@@ -296,7 +299,7 @@ function compileAdmin($tpl): int
     $box_width = 600;
 
     $act = requestFilter('mod');
-    if ($act == 'webstats')
+    if ($act == 'webstats' || $act == 'users')
         $box_width = 800;
 
     $tpl->set('{admin_link}', $admin_link);
@@ -308,25 +311,31 @@ function compileAdmin($tpl): int
     if (requestFilter('ajax') == 'yes') {
 
         $metatags['title'] = $metatags['title'] ?? 'Панель управления';
-        $result_ajax = <<<HTML
-<script type="text/javascript">
-document.title = '{$metatags['title']}';
-</script>
-{$tpl->result['info']}{$tpl->result['content']}
-HTML;
-        echo $result_ajax;
+
+        $result_ajax = array(
+            'title' => $metatags['title'],
+            'content' => $tpl->result['info'] . $tpl->result['content']
+        );
+
+//        $result_ajax = <<<HTML
+//<script type="text/javascript">
+//document.title = '{$metatags['title']}';
+//</script>
+//{$tpl->result['info']}{$tpl->result['content']}
+//HTML;
+        _e_json($result_ajax);
+//        echo $result_ajax;
         return 1;
     } else {
         return print($tpl->result['main']);
     }
 }
 
-function initAdminTpl(): mozg_template
+function initAdminTpl(): Templates
 {
-    include ENGINE_DIR . '/classes/templates.php';
-    $tpl = new mozg_template;
+    $tpl = new Templates();
     $tpl->dir = ADMIN_DIR . '/tpl/';
-//    define('TEMPLATE_DIR', $tpl->dir);
+    define('TEMPLATE_DIR', $tpl->dir);
 //    $_DOCUMENT_DATE = false;
     return $tpl;
 }

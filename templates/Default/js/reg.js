@@ -75,30 +75,39 @@ var reg = {
 		var year = $("#year").val();
 		var country = $("#country").val();
 		var city = $("#select_city").val();
-		$.post('/index.php?go=register', {
-				name: name,
-				lastname: lastname,
-				email: email,
-				sex: sex,
-				day: day,
-				month: month,
-				year: year,
-				country: country,
-				city: city,
-				password_first: new_pass,
-				password_second: new_pass2,
-				sec_code: sec_code
-			}, function(d){
-			var exp = d.split('|');
-			if(exp[0] == 'ok'){
-				window.location = '/u'+exp[1]+'after';
-			} else if(exp[0] == 'err_mail'){
-				$('#err2').show().html('Пользователь с таким E-Mail адресом уже зарегистрирован.');
-				Box.Close('sec_code');
-			} else {
-				Box.Info('boxerr', 'Ошибка', 'Неизвестная ошибка', 300);
-				Box.Close('sec_code');
+		$.post('/index.php?go=register&act=send', {
+            ajax: 'yes',
+            name: name,
+            lastname: lastname,
+			email: email,
+			sex: sex,
+			day: day,
+			month: month,
+			year: year,
+			country: country,
+			city: city,
+			password_first: new_pass,
+			password_second: new_pass2,
+			sec_code: sec_code
+		}, function (data) {
+			if (data.status == 1) {
+				window.location = '/u' + data.user_id + 'after';
+			} else if (data.status == 4) {
+				addAllErr('Пользователь с таким E-Mail адресом уже зарегистрирован.');
+			} else if (data.status == 9) {
+				addAllErr('Неправильно введены данные.');
+			} else if (data.status == 24) {
+				addAllErr('Ошибка доступа.');
+			} else if (data.status == 24) {
+				addAllErr('Неизвестная ошибка.');
 			}
+		});
+	},
+	box: function () {
+		$('.js_titleRemove').remove();
+		viiBox.start();
+		$.post('/index.php?go=register&act=login', function (d) {
+			viiBox.win('login_box', d);
 		});
 	}
 }
@@ -176,8 +185,7 @@ function checkCode(){
 		} else {
 			updateCode();
 			$('#code_loading').html('<input type="text" id="val_sec_code" class="inpst" maxlength="6" style="margin-top:10px;width:110px" />');
-			$('#val_sec_code').val('');
-			$('#val_sec_code').focus();
+			$('#val_sec_code').val('').focus();
 		}
 	});
 }

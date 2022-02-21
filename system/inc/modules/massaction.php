@@ -26,6 +26,7 @@ switch ($act) {
         $ban_date = intval($_POST['ban_date']);
         if ($massaction_users) {
             if ($mass_type <= 19 and $mass_type >= 1) {
+                $inputUlist = '';
                 foreach ($massaction_users as $user_id) {
                     $user_id = intval($user_id);
 
@@ -59,21 +60,25 @@ switch ($act) {
                             $db->query("UPDATE `users` SET user_delet = 1,  user_active = 1, user_photo = '' WHERE user_id = '" . $user_id . "'");
 
                         mozg_clear_cache_file('user_' . $user_id . '/profile_' . $user_id);
-                    } //Восстановление пользователей
+                    }
                     else if ($mass_type == 7) {
+                        //Восстановление пользователей
                         $db->query("UPDATE `users` SET user_delet = 0 WHERE user_id = '" . $user_id . "'");
                         mozg_clear_cache_file('user_' . $user_id . '/profile_' . $user_id);
-                    } //Блокировка пользователей
+                    }
                     else if ($mass_type == 8) {
+                        //Блокировка пользователей
                         $this_time = $ban_date ? Registry::get('server_time') + ($ban_date * 60 * 60 * 24) : 0;
                         $db->query("UPDATE `users` SET user_ban = 1, user_active = 1, user_ban_date = '" . $this_time . "' WHERE user_id = '" . $user_id . "'");
                         mozg_clear_cache_file('user_' . $user_id . '/profile_' . $user_id);
-                    } //Разблокировка пользователей
+                    }
                     else if ($mass_type == 9) {
+                        //Разблокировка пользователей
                         $db->query("UPDATE `users` SET user_ban = 0, user_ban_date = '' WHERE user_id = '" . $user_id . "'");
                         mozg_clear_cache_file('user_' . $user_id . '/profile_' . $user_id);
-                    } //Удаление отправленных сообщений юзерам
+                    }
                     else if ($mass_type == 3) {
+                        //Удаление отправленных сообщений юзерам
                         $sql_msg = $db->super_query("SELECT SQL_CALC_FOUND_ROWS from_user_id FROM `messages` WHERE folder = 'outbox' AND for_user_id = '" . $user_id . "' GROUP by `from_user_id`", true);
                         foreach ($sql_msg as $row_msg) {
                             $count = $db->super_query("SELECT COUNT(*) AS cnt FROM `messages` WHERE for_user_id = '" . $row_msg['from_user_id'] . "' AND pm_read = 'no' AND from_user_id = '" . $user_id . "' AND folder = 'inbox'");
@@ -92,8 +97,9 @@ switch ($act) {
 
                         $db->query("DELETE FROM `messages` WHERE history_user_id = '" . $user_id . "'");
 
-                    } //Удаление оставленных комментариев к фото
+                    }
                     else if ($mass_type == 4) {
+                        //Удаление оставленных комментариев к фото
                         $sql_pc = $db->super_query("SELECT SQL_CALC_FOUND_ROWS pid, album_id FROM `photos_comments` WHERE user_id = '" . $user_id . "' GROUP by `pid`", true);
                         foreach ($sql_pc as $row_pc) {
                             $count = $db->super_query("SELECT COUNT(*) AS cnt FROM `photos_comments` WHERE user_id = '" . $user_id . "' AND pid = '" . $row_pc['pid'] . "'");
@@ -105,8 +111,9 @@ switch ($act) {
 
                         $db->query("DELETE FROM `photos_comments` WHERE user_id = '" . $user_id . "'");
 
-                    } //Удаление оставленных комментариев к видео
+                    }
                     else if ($mass_type == 5) {
+                        //Удаление оставленных комментариев к видео
                         $sql_pc = $db->super_query("SELECT SQL_CALC_FOUND_ROWS video_id FROM `videos_comments` WHERE author_user_id = '" . $user_id . "' GROUP by `video_id`", true);
                         foreach ($sql_pc as $row_pc) {
                             $count = $db->super_query("SELECT COUNT(*) AS cnt FROM `videos_comments` WHERE author_user_id = '" . $user_id . "' AND video_id = '" . $row_pc['video_id'] . "'");
@@ -121,8 +128,9 @@ switch ($act) {
 
                         $db->query("DELETE FROM `videos_comments` WHERE author_user_id = '" . $user_id . "'");
 
-                    } //Удаление оставленных комментариев к заметкам
+                    }
                     else if ($mass_type == 11) {
+                        //Удаление оставленных комментариев к заметкам
                         $sql_pc = $db->super_query("SELECT SQL_CALC_FOUND_ROWS note_id FROM `notes_comments` WHERE from_user_id = '" . $user_id . "' GROUP by `note_id`", true);
                         foreach ($sql_pc as $row_pc) {
                             $count = $db->super_query("SELECT COUNT(*) AS cnt FROM `notes_comments` WHERE from_user_id = '" . $user_id . "' AND note_id = '" . $row_pc['note_id'] . "'");
@@ -137,8 +145,9 @@ switch ($act) {
 
                         $db->query("DELETE FROM `notes_comments` WHERE from_user_id = '" . $user_id . "'");
 
-                    } //Удаление оставленных записей на стенах
+                    }
                     else if ($mass_type == 6) {
+                        //Удаление оставленных записей на стенах
                         $sql_pc = $db->super_query("SELECT SQL_CALC_FOUND_ROWS for_user_id FROM `wall` WHERE author_user_id = '" . $user_id . "' AND for_user_id != '" . $user_id . "' AND fast_comm_id = '0' GROUP by `for_user_id`", 1);
                         foreach ($sql_pc as $row_pc) {
                             $count = $db->super_query("SELECT COUNT(*) AS cnt FROM `wall` WHERE author_user_id = '" . $user_id . "' AND for_user_id = '" . $row_pc['for_user_id'] . "' AND fast_comm_id = '0'");
@@ -152,10 +161,9 @@ switch ($act) {
                         $db->query("DELETE FROM `wall` WHERE author_user_id = '" . $user_id . "' AND for_user_id != '" . $user_id . "' AND fast_comm_id = '0'");
 
                     } //Начисление голосов
-                    else if ($mass_type == 14)
+                    else if ($mass_type == 14) {
                         $db->query("UPDATE `users` SET user_balance = user_balance+" . intval($_POST['voices']) . " WHERE user_id = '" . $user_id . "'");
-
-                    //Отчисление голосов
+                    } //Отчисление голосов
                     else if ($mass_type == 15)
                         $db->query("UPDATE `users` SET user_balance = user_balance-" . intval($_POST['voices']) . " WHERE user_id = '" . $user_id . "'");
 

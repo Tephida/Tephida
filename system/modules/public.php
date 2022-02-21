@@ -50,7 +50,7 @@ if (Registry::get('logged')) {
         $row = $db->super_query("SELECT admin FROM `communities` WHERE id = '{$pid}'");
         $row['id'] = $pid;
     } else
-        $row = $db->super_query("SELECT id, title, descr, traf, ulist, photo, date, admin, feedback, comments, real_admin, rec_num, del, ban, adres, audio_num, forum_num, discussion, status_text, web, videos_num, cover, cover_pos FROM `communities` WHERE " . $sql_where);
+        $row = $db->super_query("SELECT id, title, descr, traf, ulist, photo, date, admin, feedback, comments, real_admin, rec_num, del, ban, adres, audio_num, forum_num, discussion, status_text, web, videos_num FROM `communities` WHERE " . $sql_where);
 
     if (isset($row['del']) and $row['del'] == 1) {
         $user_speedbar = 'Страница удалена';
@@ -420,36 +420,7 @@ if (Registry::get('logged')) {
 
         } else
             $tpl->set('{cover-param-7}', "");
-
-        if ($row['cover']) {
-
-            $imgIsinfo = getimagesize(ROOT_DIR . "/uploads/groups/{$row['id']}/{$row['cover']}");
-
-            $tpl->set('{cover}', "/uploads/groups/{$row['id']}/{$row['cover']}");
-            $tpl->set('{cover-height}', $imgIsinfo[1]);
-            $tpl->set('{cover-param}', '');
-            $tpl->set('{cover-param-2}', 'no_display');
-            $tpl->set('{cover-param-3}', 'style="position:absolute;z-index:2;display:block;margin-left:397px"');
-            $tpl->set('{cover-param-4}', 'style="cursor:default"');
-            $tpl->set('{cover-param-5}', 'style="top:-' . $row['cover_pos'] . 'px;position:relative"');
-            $tpl->set('{cover-pos}', $row['cover_pos']);
-
-            $tpl->set('[cover]', '');
-            $tpl->set('[/cover]', '');
-
-        } else {
-
-            $tpl->set('{cover}', "");
-            $tpl->set('{cover-param}', 'no_display');
-            $tpl->set('{cover-param-2}', '');
-            $tpl->set('{cover-param-3}', '');
-            $tpl->set('{cover-param-4}', '');
-            $tpl->set('{cover-param-5}', '');
-            $tpl->set('{cover-pos}', '');
-            $tpl->set_block("'\\[cover\\](.*?)\\[/cover\\]'si", "");
-
-        }
-
+        
         //Записываем в статистику "Уникальные посетители"
         $stat_date = date('Y-m-d', $server_time);
         $stat_x_date = date('Y-m', $server_time);

@@ -183,10 +183,11 @@ if (Registry::get('logged')) {
 
             $expFriensList = explode('||', $row['action_text']);
             $action_cnt = 0;
-
+            $comment = $comment ?? '';
             //Если видео
             if ($row['action_type'] == 2) {
                 if ($expFriensList) {
+
                     foreach ($expFriensList as $ac_id) {
                         $row_action = explode('|', $ac_id);
                         if (file_exists(ROOT_DIR . $row_action[1])) {
@@ -196,7 +197,6 @@ if (Registry::get('logged')) {
                     }
                     $tpl->set('{action-type}', $action_cnt . ' ' . gram_record($action_cnt, 'videos') . ', ');
                     $tpl->set('{comment}', $comment);
-                    $comment = '';
                 }
                 //Если фотография
             } else if ($row['action_type'] == 3) {
@@ -423,6 +423,7 @@ if (Registry::get('logged')) {
                                     $arr_answe_list = explode('|', stripslashes($row_vote['answers']));
                                     $max = $row_vote['answer_num'];
 
+                                    /** fixme limit */
                                     $sql_answer = $db->super_query("SELECT answer, COUNT(*) AS cnt FROM `votes_result` WHERE vote_id = '{$vote_id}' GROUP BY answer", true);
                                     $answer = array();
                                     foreach ($sql_answer as $row_answer) {
@@ -727,6 +728,7 @@ HTML;
                                     $arr_answe_list = explode('|', stripslashes($row_vote['answers']));
                                     $max = $row_vote['answer_num'];
 
+                                    /** fixme limit */
                                     $sql_answer = $db->super_query("SELECT answer, COUNT(*) AS cnt FROM `votes_result` WHERE vote_id = '{$vote_id}' GROUP BY answer", true);
                                     $answer = array();
                                     foreach ($sql_answer as $row_answer) {
@@ -1760,6 +1762,8 @@ HTML;
                             } else
                                 $tpl->set_block("'\\[owner\\](.*?)\\[/owner\\]'si", "");
 
+                            if (empty($row_comments['author_user_id']))
+                                $row_comments['author_user_id'] = null;
                             if ($user_id == $row_comments['author_user_id'])
 
                                 $tpl->set_block("'\\[not-owner\\](.*?)\\[/not-owner\\]'si", "");

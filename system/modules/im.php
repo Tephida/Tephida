@@ -29,6 +29,7 @@ if (Registry::get('logged')) {
                         $row2 = $db->super_query("SELECT id FROM room_users WHERE room_id = '{$room_id}' and oid2 = '{$id}' and type = 0");
                         if ($row2) {
                             $attach_files = '';
+                            /** fixme limit */
                             $sql = $db->super_query("SELECT oid2 FROM room_users WHERE room_id = '{$room_id}' and type = 0", true);
                             if ($sql) {
                                 $msg = json_encode(array('type' => 5, 'oid' => $user_id, 'oid2' => $id));
@@ -95,6 +96,7 @@ if (Registry::get('logged')) {
                                 $url = $config['home_url'] . 'uploads/room/' . $room_id . '/' . $image_rename . $res_type;
                                 $db->query("UPDATE `room` SET photo = '{$url}' WHERE id = '" . $room_id . "'");
                                 $attach_files = '';
+                                /** fixme limit */
                                 $sql = $db->super_query("SELECT oid2 FROM room_users WHERE room_id = '{$room_id}' and type = 0", true);
                                 if ($sql) {
                                     $msg = json_encode(array('type' => 4, 'oid' => $user_id));
@@ -142,6 +144,7 @@ if (Registry::get('logged')) {
             $row = $db->super_query("SELECT id, title, owner, photo FROM room WHERE id = '{$room_id}'");
             if ($row) {
                 $tpl->result['users'] = '';
+                /** fixme limit */
                 $sql = $db->super_query("SELECT tb1.id, tb2.user_id, tb2.user_search_pref, tb2.user_photo FROM room_users tb1, users tb2 WHERE tb1.room_id = '{$room_id}' and tb1.type = 0 and tb1.oid2 = tb2.user_id", true);
                 if ($sql) {
                     $tpl->load_template('im/viewRoomItem.tpl');
@@ -181,6 +184,7 @@ if (Registry::get('logged')) {
                     if ($room_id) {
                         $db->query("UPDATE `room` SET title = '{$title}' WHERE id = '" . $room_id . "'");
                         $attach_files = '';
+                        /** fixme limit */
                         $sql = $db->super_query("SELECT oid2 FROM room_users WHERE room_id = '{$room_id}' and type = 0", true);
                         if ($sql) {
                             $msg = json_encode(array('type' => 3, 'oid' => $user_id));
@@ -219,6 +223,7 @@ if (Registry::get('logged')) {
 
         case 'createRoomBox':
             $tpl->result['friends'] = '';
+            /** fixme limit */
             $sql = $db->super_query("SELECT tb1.friend_id, tb2.user_photo, tb2.user_search_pref FROM friends tb1, users tb2 WHERE tb1.user_id = '{$user_id}' AND tb1.friend_id = tb2.user_id AND tb1.subscriptions = 0 ORDER by friends_date DESC", true);
             if ($sql) {
                 $tpl->load_template('im/createRoomItem.tpl');
@@ -240,6 +245,7 @@ if (Registry::get('logged')) {
         case 'inviteToRoomBox':
             $room_id = intFilter('room_id');
             $tpl->result['friends'] = '';
+            /** fixme limit */
             $sql = $db->super_query("SELECT tb1.friend_id, tb2.user_photo, tb2.user_search_pref FROM friends tb1, users tb2 WHERE tb1.user_id = '{$user_id}' AND tb1.friend_id = tb2.user_id AND tb1.subscriptions = 0 AND tb1.friend_id NOT IN (SELECT oid2 FROM room_users WHERE room_id = '{$room_id}' and type != 2) ORDER by friends_date DESC", true);
             if ($sql) {
                 $tpl->load_template('im/createRoomItem.tpl');
@@ -341,6 +347,7 @@ if (Registry::get('logged')) {
                             foreach ($user_ids as $k2 => $v2) {
                                 $db->query("INSERT INTO room_users SET room_id = '{$room_id}', oid = '{$user_id}', oid2 = '{$v2}', type = 0, date = '{$server_time}'");
                                 $attach_files = '';
+                                /** fixme limit */
                                 $sql = $db->super_query("SELECT oid2 FROM room_users WHERE room_id = '{$room_id}' and type = 0", true);
                                 if ($sql) {
                                     $msg = json_encode(array('type' => 1, 'oid' => $user_id, 'oid2' => $v2));
@@ -388,6 +395,7 @@ if (Registry::get('logged')) {
                     $row2 = $db->super_query("SELECT id FROM room_users WHERE oid2 = '{$user_id}' and room_id = '{$room_id}' and type = 0");
                     if ($row2) {
                         $attach_files = '';
+                        /** fixme limit */
                         $sql = $db->super_query("SELECT oid2 FROM room_users WHERE room_id = '{$room_id}' and type = 0", true);
                         if ($sql) {
                             $msg = json_encode(array('type' => 2, 'oid' => $user_id));
@@ -465,6 +473,7 @@ if (Registry::get('logged')) {
                             $user_ids[] = $for_user_id;
                             $user_ids[] = $user_id;
                         } else {
+                            /** fixme limit */
                             $sqlUsers = $db->super_query("SELECT oid2 FROM `room_users` WHERE room_id = '" . $room_id . "' and type = 0", true);
                             foreach ($sqlUsers as $rowUser)
                                 $user_ids[] = $rowUser['oid2'];
@@ -718,6 +727,7 @@ if (Registry::get('logged')) {
                                         $row['text'] = $row_vote['title'];
                                     $arr_answe_list = explode('|', stripslashes($row_vote['answers']));
                                     $max = $row_vote['answer_num'];
+                                    /** fixme limit */
                                     $sql_answer = $db->super_query("SELECT answer, COUNT(*) AS cnt FROM `votes_result` WHERE vote_id = '{$vote_id}' GROUP BY answer", true);
                                     $answer = array();
                                     foreach ($sql_answer as $row_answer) {
@@ -833,6 +843,7 @@ HTML;
                 mozg_create_cache("user_{$for_user_id}/typograf{$user_id}", "");
             $limit_msg = 20;
             if ($need_read) {
+                /** fixme limit */
                 $sql = $db->super_query("SELECT id, history_user_id, read_ids, user_ids, room_id FROM `messages` WHERE " . ($room_id ? "room_id = '{$room_id}'" : "room_id = 0 and find_in_set('{$for_user_id}', user_ids)") . " and find_in_set('{$user_id}', user_ids) AND not find_in_set('{$user_id}', del_ids) AND not find_in_set('{$user_id}', read_ids) and history_user_id != '{$user_id}'", true);
                 if ($sql) {
                     foreach ($sql as $row) {
@@ -980,6 +991,7 @@ HTML;
                                         $row['text'] = $row_vote['title'];
                                     $arr_answe_list = explode('|', stripslashes($row_vote['answers']));
                                     $max = $row_vote['answer_num'];
+                                    /** fixme limit */
                                     $sql_answer = $db->super_query("SELECT answer, COUNT(*) AS cnt FROM `votes_result` WHERE vote_id = '{$vote_id}' GROUP BY answer", true);
                                     $answer = array();
                                     foreach ($sql_answer as $row_answer) {

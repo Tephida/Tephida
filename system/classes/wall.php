@@ -11,6 +11,7 @@ declare(strict_types=1);
 class wall
 {
 
+    public $tpl;
     public array|bool|null $query = false;
     public false|string $template = false;
     public false|string $compile = false;
@@ -18,7 +19,12 @@ class wall
     public false|string $comm_template = false;
     public false|string $comm_compile = false;
 
-    function query($query)
+    function __construct($tpl)
+    {
+        $this->tpl = $tpl;
+    }
+
+    function query($query): void
     {
         $db = Registry::get('db');
         $this->query = $db->super_query($query, true);
@@ -29,18 +35,24 @@ class wall
      */
     function template($template)
     {
-        global $tpl;
-        $this->template = $tpl->load_template($template);
+        $this->template = $this->tpl->load_template($template);
     }
 
     function compile($compile)
     {
-        $this->compile = $compile;
+        return $this->compile = $compile;
     }
 
-    function select()
+    function select($config, $id, $for_user_id, $user_privacy, $check_friend, $user_info)
     {
-        global $tpl, $config, $user_id, $id, $for_user_id, $user_privacy, $check_friend, $user_info;
+        //FIXME variables
+//        $user_info = $user_info ?? Registry::get('user_info');
+        $user_id = $user_info['user_id'];
+//        $user_privacy = $user_privacy ?? Registry::get('user_privacy');
+//        $config = settings_get();
+
+        $tpl = $this->tpl;
+
         $db = Registry::get('db');
 //        $this->template;
         foreach ($this->query as $row_wall) {

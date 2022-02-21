@@ -91,35 +91,45 @@ var Page = {
 	Go: function(h) {
 		hh = (location.href).replace('https://' + location.host + '/', '');
 		if (hh == 'my_stats' || ((hh).substring(0, 5)) == 'stats') {
-			window.location.href = h;
-			return false;
-		}
-		history.pushState({
-			link: h
-		}, null, h);
-		$('.js_titleRemove, .vii_box').remove();
-		clearInterval(vii_interval);
-		clearInterval(vii_interval_im);
-		Page.Loading('start');
-		$('#page').load(h, {
-			ajax: 'yes'
-		}, function(data) {
-			Page.Loading('stop');
-			$('html, body').scrollTop(0);
-			//$('.ladybug_ant').imgAreaSelect({remove: true});
-			//Чистим стили AuroResizeWall
-			$('#addStyleClass').remove();
-			//Удаляем кеш фоток, видео, модальных окон
-			$('.photo_view, .box_pos, .box_info, .video_view').remove();
-			//Возвращаем scroll
-			$('html, body').css('overflow-y', 'auto');
-			//Возвращаем дизайн плеера
-			if ($('.staticPlbg').length) {
-				$('.staticPlbg').css('margin-top', '-500px');
-				player.reestablish();
-			}
-		}).css('min-height', '0px');
-	},
+            window.location.href = h;
+            return false;
+        }
+        history.pushState({
+            link: h
+        }, null, h);
+        $('.js_titleRemove, .vii_box').remove();
+        clearInterval(vii_interval);
+        clearInterval(vii_interval_im);
+        Page.Loading('start');
+        $.post(h, {ajax: 'yes'}, function (res) {
+            // data = JSON.parse(res);
+            data = res;
+            $('#page').html(data.content).css('min-height', '0px');
+            Page.Loading('stop');
+            $('html, body').scrollTop(0).css('overflow-y', 'auto');
+            // $('.ladybug_ant').imgAreaSelect({remove: true});
+            $('#addStyleClass').remove();
+            $('.photo_view, .box_pos, .box_info, .video_view').remove();
+            document.title = data.title;
+            $('#new_msg').html(data.user_pm_num);
+            $('#new_news').html(data.new_news);
+            $('#new_ubm').html(data.new_ubm);
+            $('#ubm_link').attr('href', data.gifts_link);
+            $('#new_support').html(data.support);
+            $('#news_link').attr('href', '/news' + data.news_link);
+            $('#new_requests').html(data.demands);
+            $('#new_guests').html(data.guests);
+            $('#new_photos').html(data.new_photos);
+            $('#requests_link_new_photos').attr('href', '/albums/' + data.new_photos_link);
+            $('#requests_link').attr('href', '/friends' + data.requests_link);
+            $('#new_groups').html(data.new_groups);
+            $('#new_groups_lnk').attr('href', data.new_groups_lnk);
+        });
+        if ($('.staticPlbg').length) {
+            $('.staticPlbg').css('margin-top', '-500px');
+            player.reestablish();
+        }
+    },
 	Prev: function(h) {
 		clearInterval(vii_interval);
 		clearInterval(vii_interval_im);

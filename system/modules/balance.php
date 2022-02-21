@@ -36,6 +36,7 @@ if (Registry::get('logged')) {
         case "invited":
             $tpl->load_template('balance/invited.tpl');
             $tpl->compile('info');
+            /** fixme limit */
             $sql_ = $db->super_query("SELECT tb1.ruid, tb2.user_name, user_search_pref, user_birthday, user_last_visit, user_photo, user_logged_mobile FROM `invites` tb1, `users` tb2 WHERE tb1.uid = '{$user_id}' AND tb1.ruid = tb2.user_id", true);
             if ($sql_) {
                 $tpl->load_template('balance/invitedUser.tpl');

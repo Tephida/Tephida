@@ -12,7 +12,6 @@ if (!defined('MOZG')) {
 
 NoAjaxQuery();
 
-if (Registry::get('logged')) {
     $user_info = $user_info ?? Registry::get('user_info');
     $metatags['title'] = $lang['search'];
     $db = Registry::get('db');
@@ -313,8 +312,3 @@ if (Registry::get('logged')) {
 
 //    $tpl->clear();
 //    $db->free();
-} else {
-    $user_speedbar = $lang['no_infooo'];
-    msgbox('', $lang['not_logged'], 'info');
-    compile($tpl);
-}

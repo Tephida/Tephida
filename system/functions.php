@@ -208,15 +208,67 @@ function navigation($gc, $num, $type) {
     }
     $resif = $cnt / $gcount;
     if (ceil($resif) == $page) $pages.= '';
-    else $pages.= '<a href="' . $type . ($page + 1) . '" onClick="Page.Go(this.href); return false">&raquo;</a>';
+    else $pages .= '<a href="' . $type . ($page + 1) . '" onClick="Page.Go(this.href); return false">&raquo;</a>';
     if ($pages_count <= 1) $pages = '';
-    $tpl_2 = new mozg_template();
+    $tpl_2 = new Templates();
     $tpl_2->dir = TEMPLATE_DIR;
     $tpl_2->load_template('nav.tpl');
     $tpl_2->set('{pages}', $pages);
     $tpl_2->compile('content');
     $tpl_2->clear();
-    $tpl->result['content'].= $tpl_2->result['content'];
+    $tpl->result['content'] .= $tpl_2->result['content'];
+}
+
+/**
+ * @param $gc
+ * @param $num
+ * @param $type
+ * @return string
+ */
+function navigationNew($gc, $num, $type): string
+{
+    $page = intFilter('page', 1);
+    $gcount = $gc;
+    $cnt = $num;
+    $items_count = $cnt;
+    $items_per_page = $gcount;
+    $page_refers_per_page = 5;
+    $pages = '';
+    $pages_count = (($items_count % $items_per_page != 0)) ? floor($items_count / $items_per_page) + 1 : floor($items_count / $items_per_page);
+    $start_page = ($page - $page_refers_per_page <= 0) ? 1 : $page - $page_refers_per_page + 1;
+    $page_refers_per_page_count = (($page - $page_refers_per_page < 0) ? $page : $page_refers_per_page) + (($page + $page_refers_per_page > $pages_count) ? ($pages_count - $page) : $page_refers_per_page - 1);
+    if ($page > 1) $pages .= '<a href="' . $type . ($page - 1) . '" onClick="Page.Go(this.href); return false">&laquo;</a>';
+    else $pages .= '';
+    if ($start_page > 1) {
+        $pages .= '<a href="' . $type . '1" onClick="Page.Go(this.href); return false">1</a>';
+        $pages .= '<a href="' . $type . ($start_page - 1) . '" onClick="Page.Go(this.href); return false">...</a>';
+    }
+    for ($index = -1; ++$index <= $page_refers_per_page_count - 1;) {
+        if ($index + $start_page == $page) $pages .= '<span>' . ($start_page + $index) . '</span>';
+        else $pages .= '<a href="' . $type . ($start_page + $index) . '" onClick="Page.Go(this.href); return false">' . ($start_page + $index) . '</a>';
+    }
+    if ($page + $page_refers_per_page <= $pages_count) {
+        $pages .= '<a href="' . $type . ($start_page + $page_refers_per_page_count) . '" onClick="Page.Go(this.href); return false">...</a>';
+        $pages .= '<a href="' . $type . $pages_count . '" onClick="Page.Go(this.href); return false">' . $pages_count . '</a>';
+    }
+    $resif = $cnt / $gcount;
+    if (ceil($resif) == $page) $pages .= '';
+    else $pages .= '<a href="' . $type . ($page + 1) . '" onClick="Page.Go(this.href); return false">&raquo;</a>';
+    if ($pages_count <= 1) $pages = '';
+//    $tpl_2 = new Templates();
+//    $tpl_2->dir = TEMPLATE_DIR;
+//    $tpl_2->load_template('nav.tpl');
+//    $tpl_2->set('{pages}', $pages);
+//    $tpl_2->compile('content');
+//    $tpl_2->clear();
+
+//    $tpl->result['content'].= $tpl_2->result['content'];
+
+    return <<<HTML
+<div class="nav" id="nav">{$pages}</div>
+HTML;
+
+
 }
 
 /**
@@ -259,7 +311,7 @@ function box_navigation($gc, $num, $id, $function, $act) {
     if (ceil($resif) == $page) $pages.= '';
     else $pages.= '<a href="/" onClick="' . $function . '(' . $id . ', ' . ($page + 1) . ', ' . $act . '); return false">&raquo;</a>';
     if ($pages_count <= 1) $pages = '';
-    $tpl_2 = new mozg_template();
+    $tpl_2 = new Templates();
     $tpl_2->dir = TEMPLATE_DIR;
     $tpl_2->load_template('nav.tpl');
     $tpl_2->set('{pages}', $pages);
@@ -274,10 +326,11 @@ function box_navigation($gc, $num, $id, $function, $act) {
  * @param $tpl_name
  * @return void
  * @throws ErrorException
+ * @deprecated
  */
 function msgbox($title, $text, $tpl_name) {
     global $tpl;
-    $tpl_2 = new mozg_template();
+    $tpl_2 = new Templates();
     $tpl_2->dir = TEMPLATE_DIR;
     $tpl_2->load_template($tpl_name . '.tpl');
     $tpl_2->set('{error}', $text);
@@ -303,23 +356,6 @@ function check_smartphone(): bool
     return false;
 }
 
-/**
- * @param $prefix
- * @param $cache_text
- * @return void
- */
-function creat_system_cache($prefix, $cache_text): void
-{
-    $filename = ENGINE_DIR . '/cache/system/' . $prefix . '.php';
-    $fp = @fopen($filename, 'wb+');
-    fwrite($fp, $cache_text);
-    fclose($fp);
-    @chmod($filename, 0666);
-}
-function system_cache($prefix): false|string
-{
-    return file_get_contents(ENGINE_DIR . '/cache/system/' . $prefix . '.php');
-}
 function mozg_clear_cache(): void
 {
     $folder = '';
@@ -458,7 +494,7 @@ function NoAjaxQuery() : void
 {
     if (!empty($_POST['ajax']) and $_POST['ajax'] == 'yes')
         if (clean_url($_SERVER['HTTP_REFERER']) != clean_url($_SERVER['HTTP_HOST']) and $_SERVER['REQUEST_METHOD'] != 'POST')
-            header('Location: /index.php?go=none');//fixme
+            header('Location: /index.php?go=none');
 }
 
 /**
@@ -1362,9 +1398,10 @@ function _e_json(array $value): int
  *
  *
  * @param $tpl
+ * @param array $params
  * @return int
  */
-function compile($tpl, $params = array()): int
+function compile($tpl, array $params = array()): int
 {
     $config = settings_get();
 
@@ -1462,16 +1499,6 @@ function compile($tpl, $params = array()): int
     } else {
         return compileNoAjax($tpl, $params);
     }
-
-
-//    $go = Registry::get('go');
-
-//Если обращение к модулю регистрации или главной и юзер не авторизован, то показываем регистрацию
-//if ($go == 'register' or $go == 'main' and Registry::get('logged') == false) {
-//    include ENGINE_DIR . '/modules/register_main.php';
-//}
-
-
 }
 
 /**
@@ -1481,6 +1508,10 @@ function compile($tpl, $params = array()): int
  */
 function compileAjax($tpl, $params): int
 {
+    if (!isset($tpl->result['content'])) {
+        $tpl->result['content'] = '';
+//        throw new ErrorException(0,1, null, null);
+    }
     $config = settings_get();
     //Если есть POST Запрос и значение AJAX, а $ajax не равняется "yes", то не пропускаем
     //FIXME
@@ -1490,41 +1521,48 @@ function compileAjax($tpl, $params): int
     $speedbar = $speedbar ?? null;
     $metatags = $params['metatags'] ?? null;
 
-    $metatags['title'] = $metatags['title'] ?? null;
+    $metatags['title'] = $metatags['title'] ?? $config['home'];
 
-    if (isset($spBar) and $spBar)
-        $ajaxSpBar = "$('#speedbar').show().html('{$speedbar}')";
-    else
-        $ajaxSpBar = "$('#speedbar').hide()";
+//    if (isset($spBar) and $spBar)
+//        $ajaxSpBar = "$('#speedbar').show().html('{$speedbar}')";
+//    else
+//        $ajaxSpBar = "$('#speedbar').hide()";
 
     $params['requests_link'] = $requests_link ?? '';
+    $tpl->result['info'] = $tpl->result['info'] ?? '';
+    if (Registry::get('logged')) {
+        $result_ajax = array(
+            'title' => $metatags['title'],
+            'user_pm_num' => $params['user_pm_num'],
+            'new_news' => $params['new_news'],
+            'new_ubm' => $params['new_ubm'],
+            'gifts_link' => $params['gifts_link'],
+            'support' => $params['support'],
+            'news_link' => $params['news_link'],
+            'demands' => $params['demands'],
+            'new_photos' => $params['new_photos'],
+            'new_photos_link' => $params['new_photos_link'],
+            'requests_link' => $params['requests_link'],
+            'new_groups' => $params['new_groups'],
+            'new_groups_lnk' => $params['new_groups_lnk'],
+            'sbar' => $spBar ? $speedbar : '',
+            'content' => $tpl->result['info'] . $tpl->result['content']
+        );
 
-    $result_ajax = <<<HTML
-<script type="text/javascript">
-document.title = '{$metatags['title']}';
-{$ajaxSpBar};
-document.getElementById('new_msg').innerHTML = '{$params['user_pm_num']}';
-document.getElementById('new_news').innerHTML = '{$params['new_news']}';
-document.getElementById('new_ubm').innerHTML = '{$params['new_ubm']}';
-document.getElementById('ubm_link').setAttribute('href', '{$params['gifts_link']}');
-document.getElementById('new_support').innerHTML = '{$params['support']}';
-document.getElementById('news_link').setAttribute('href', '/news{$params['news_link']}');
-document.getElementById('new_requests').innerHTML = '{$params['demands']}';
-document.getElementById('new_photos').innerHTML = '{$params['new_photos']}';
-document.getElementById('requests_link_new_photos').setAttribute('href', '/albums/{$params['new_photos_link']}');
-document.getElementById('requests_link').setAttribute('href', '/friends{$params['requests_link']}');
-$('#new_groups').html('{$params['new_groups']}');
-$('#new_groups_lnk').attr('href', '{$params['new_groups_lnk']}');
-</script>
-{$tpl->result['info']}{$tpl->result['content']}
-HTML;
-    header('Content-type: text/html; charset=utf-8');
-    echo str_replace('{theme}', '/templates/' . $config['temp'], $result_ajax);
+    } else {
+        $result_ajax = array(
+            'title' => $metatags['title'],
+            'sbar' => $spBar ? $speedbar : '',
+            'content' => $tpl->result['info'] . $tpl->result['content']
+        );
+    }
+    $res = str_replace('{theme}', '/templates/' . $config['temp'], $result_ajax);
+
+    _e_json($res);
     $tpl->global_clear();
 //        $db->close();
     if ($config['gzip'] == 'yes')
-        GzipOut();
-
+        (new Gzip(false))->GzipOut();
     return print('');
 }
 
@@ -1535,6 +1573,10 @@ HTML;
  */
 function compileNoAjax($tpl, $params): int
 {
+    if (!isset($tpl->result['content'])) {
+        $tpl->result['content'] = '';
+//        throw new ErrorException(0,1, null, null);
+    }
     $tpl->load_template('main.tpl');
 //Если юзер авторизован
     if (Registry::get('logged')) {
@@ -1634,6 +1676,7 @@ function compileNoAjax($tpl, $params): int
             $tpl->set('{new-actions}', "");
     }
     $tpl->set('{content}', $tpl->result['content']);
+
     if (isset($spBar) and $spBar) {
         $tpl->set_block("'\\[speedbar\\](.*?)\\[/speedbar\\]'si", "");
     } else {
@@ -1642,16 +1685,10 @@ function compileNoAjax($tpl, $params): int
     }
 //BUILD JS
     $checkLang = Registry::get('checkLang');
-    if (Registry::get('logged')) {
-        $tpl->set('{js}', '<script type="text/javascript" src="{theme}/js/jquery.lib.js"></script>
+    $tpl->set('{js}', '<script type="text/javascript" src="{theme}/js/jquery.lib.js"></script>
 <script type="text/javascript" src="{theme}/js/' . $checkLang . '/lang.js"></script>
 <script type="text/javascript" src="{theme}/js/main.js"></script>
 <script type="text/javascript" src="{theme}/js/profile.js"></script>');
-    } else {
-        $tpl->set('{js}', '<script type="text/javascript" src="{theme}/js/jquery.lib.js"></script>
-<script type="text/javascript" src="{theme}/js/' . $checkLang . '/lang.js"></script>
-<script type="text/javascript" src="{theme}/js/main.js"></script>');
-    }
 
 // FOR MOBILE VERSION 1.0
     if (isset($user_info['user_photo']) and $user_info['user_photo']) {
@@ -1680,7 +1717,6 @@ function compileNoAjax($tpl, $params): int
     $tpl->global_clear();
 //    $db->close();
     if ($config['gzip'] == 'yes')
-        GzipOut();
-
+        (new Gzip(false))->GzipOut();
     return print('');
 }

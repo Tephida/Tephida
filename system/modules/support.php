@@ -296,13 +296,14 @@ if (Registry::get('logged')) {
                 navigation($gcount, $count['cnt'], '/support?page=');
 
                 compile($tpl);
-            } else
+            } else {
                 if ($user_info['user_group'] == 4)
                     msgbox('', $lang['support_no_quest3'], 'info_2');
                 else
                     msgbox('', $lang['support_no_quest2'], 'info_2');
 
-            compile($tpl);
+                compile($tpl);
+            }
     }
 //    $tpl->clear();
 //    $db->free();

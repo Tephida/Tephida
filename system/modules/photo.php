@@ -549,6 +549,7 @@ if (Registry::get('logged')) {
                             $tpl->set('[/add-comm]', '');
                         } else $tpl->set_block("'\\[add-comm\\](.*?)\\[/add-comm\\]'si", "");
                         //Выводим отмеченных людей на фото если они есть
+                        /** fixme limit */
                         $sql_mark = $db->super_query("SELECT muser_id, mphoto_name, msettings_pos, mmark_user_id, mapprove FROM `photos_mark` WHERE mphoto_id = '" . $photo_id . "' ORDER by `mdate` ASC", true);
                         $mark_peoples = $mark_peoples ?? '';//TODO update
 
@@ -608,7 +609,7 @@ if (Registry::get('logged')) {
                         } else $tpl->set_block("'\\[mark-block\\](.*?)\\[/mark-block\\]'si", "");
                         //Проверка ставил человек на это фото уже оценку или нет
                         $check = $db->super_query("SELECT rating FROM `photos_rating` WHERE user_id = '{$user_info['user_id']}' AND photo_id = '{$photo_id}'");
-                        if ($check['rating']) {
+                        if (!empty($check['rating'])) {
                             $tpl->set('{rate-check}', 'no_display');
                             $tpl->set('{rate-check-2}', '');
                             if ($check['rating'] == 1) $tpl->set('{ok-rate}', '<div class="rating rating3" style="background:url(\'{theme}/images/rating3.png\')">' . $check['rating'] . '</div>');
@@ -626,7 +627,8 @@ if (Registry::get('logged')) {
                         $tpl->set('{rate}', $rate);
                         $tpl->compile('content');
                         AjaxTpl($tpl);
-                        if ($config['gzip'] == 'yes') GzipOut();
+                        if ($config['gzip'] == 'yes')
+                            (new Gzip(false))->GzipOut();
                     } else echo 'err_privacy';
                 } else
                     echo 'no_photo';

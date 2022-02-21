@@ -66,46 +66,6 @@ $table_Chema[] = "CREATE TABLE IF NOT EXISTS `antispam` (
   KEY `act` (`act`,`user_id`,`date`),
   KEY `act_2` (`act`,`user_id`,`date`,`txt`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;";
-$table_Chema[] = "CREATE TABLE IF NOT EXISTS `apps` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `url` varchar(255) NOT NULL,
-  `flash` varchar(255) NOT NULL DEFAULT '',
-  `title` varchar(255) NOT NULL,
-  `desc` varchar(255) NOT NULL,
-  `img` varchar(255) NOT NULL,
-  `secret` varchar(255) NOT NULL,
-  `balance` int(10) NOT NULL DEFAULT '0',
-  `cols` int(11) NOT NULL DEFAULT '0',
-  `width` int(5) NOT NULL DEFAULT '696',
-  `height` int(5) NOT NULL DEFAULT '800',
-  `status` int(2) NOT NULL DEFAULT '-1',
-  `type` int(11) NOT NULL,
-  `admins` varchar(255) NOT NULL DEFAULT '|0|',
-  `admins_num` int(11) NOT NULL DEFAULT '1',
-  `user_id` int(10) NOT NULL,
-  `app` int(11) NOT NULL,
-  `url_embed` text NOT NULL,
-  `api_embed` text NOT NULL,
-  `iframe` text NOT NULL,
-  `tb1.game_id` int(11) NOT NULL,
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;";
-$table_Chema[] = "CREATE TABLE IF NOT EXISTS `apps_transactions` (
-  `id` int(11) NOT NULL,
-  `application_id` int(11) NOT NULL,
-  `votes` int(11) NOT NULL,
-  `from` int(11) NOT NULL,
-  `whom` int(11) NOT NULL,
-  `date` int(11) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;";
-$table_Chema[] = "CREATE TABLE IF NOT EXISTS `apps_users` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `user_id` int(11) NOT NULL,
-  `application_id` int(11) NOT NULL,
-  `balance` int(10) NOT NULL DEFAULT '0',
-  `date` int(11) NOT NULL,
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;";
 $table_Chema[] = "CREATE TABLE IF NOT EXISTS `attach` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `photo` varchar(255) NOT NULL,
@@ -3539,8 +3499,6 @@ $table_Chema[] = "CREATE TABLE IF NOT EXISTS `communities` (
   `status_text` varchar(255) NOT NULL,
   `web` varchar(255) NOT NULL,
   `videos_num` int(11) NOT NULL,
-  `cover` varchar(25) NOT NULL,
-  `cover_pos` varchar(4) NOT NULL,
   PRIMARY KEY (`id`),
   KEY `del` (`del`),
   KEY `ban` (`ban`),
@@ -3715,49 +3673,6 @@ $table_Chema[] = "CREATE TABLE IF NOT EXISTS `friends_demands` (
   `demand_date` datetime NOT NULL,
   KEY `for_fast_select1` (`for_user_id`,`from_user_id`,`demand_date`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;";
-$table_Chema[] = "CREATE TABLE IF NOT EXISTS `games` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `poster` varchar(25) NOT NULL,
-  `title` varchar(200) NOT NULL,
-  `descr` text NOT NULL,
-  `flash` varchar(255) NOT NULL,
-  `traf` int(11) NOT NULL,
-  `date` varchar(10) NOT NULL,
-  `width` smallint(6) NOT NULL,
-  `height` smallint(6) NOT NULL,
-  PRIMARY KEY (`id`),
-  FULLTEXT KEY `title` (`title`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=2 ;";
-$table_Chema[] = "CREATE TABLE IF NOT EXISTS `games_activity` (
-  `user_id` int(11) NOT NULL,
-  `action` tinyint(2) NOT NULL,
-  `date` varchar(10) NOT NULL,
-  `game_id` int(11) NOT NULL,
-  KEY `for_select` (`user_id`,`game_id`),
-  KEY `game_id` (`game_id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=2 ;";
-$table_Chema[] = "CREATE TABLE IF NOT EXISTS `games_files` (
-  `game_id` int(11) NOT NULL,
-  `user_id` int(11) NOT NULL,
-  `file` varchar(25) NOT NULL,
-  `hash` varchar(32) NOT NULL,
-  `type` varchar(20) NOT NULL,
-  KEY `hash` (`hash`,`type`),
-  KEY `for_select_3` (`hash`,`user_id`),
-  KEY `game_id` (`game_id`),
-  KEY `for_select_4` (`game_id`,`type`),
-  KEY `user_id` (`user_id`,`type`,`game_id`),
-  KEY `for_select` (`hash`,`user_id`,`type`,`game_id`),
-  KEY `file` (`file`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;";
-$table_Chema[] = "CREATE TABLE IF NOT EXISTS `games_users` (
-  `user_id` int(11) NOT NULL,
-  `game_id` int(11) NOT NULL,
-  `setdate` varchar(10) NOT NULL,
-  `lastdate` varchar(10) NOT NULL,
-  KEY `for_select` (`user_id`,`game_id`),
-  KEY `game_id` (`game_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;";
 $table_Chema[] = "CREATE TABLE IF NOT EXISTS `gifts` (
   `gid` int(11) unsigned NOT NULL AUTO_INCREMENT,
   `uid` int(11) unsigned NOT NULL,
@@ -3855,17 +3770,6 @@ $table_Chema[] = "INSERT INTO `gifts_list` (`gid`, `img`, `price`) VALUES
 (79, '500', 25),
 (80, '501', 30),
 (82, '502', 20);";
-$table_Chema[] = "CREATE TABLE IF NOT EXISTS `guests` (
-  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
-  `ouid` int(11) NOT NULL,
-  `guid` int(11) NOT NULL,
-  `gdate` varchar(10) NOT NULL,
-  `new` tinyint(1) NOT NULL,
-  PRIMARY KEY (`id`),
-  KEY `ouid` (`ouid`),
-  KEY `guid` (`guid`),
-  KEY `new` (`new`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1;";
 $table_Chema[] = "CREATE TABLE IF NOT EXISTS `im` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
   `iuser_id` int(11) unsigned NOT NULL,
@@ -4181,9 +4085,6 @@ $table_Chema[] = "CREATE TABLE IF NOT EXISTS `users` (
   `user_new_mark_photos` mediumint(8) NOT NULL,
   `user_doc_num` mediumint(8) NOT NULL,
   `user_logged_mobile` tinyint(1) NOT NULL,
-  `guests` mediumint(8) NOT NULL,
-  `user_cover` varchar(25) NOT NULL,
-  `user_cover_pos` varchar(4) NOT NULL,
   `balance_rub` double NOT NULL,
   `user_rating` mediumint(8) NOT NULL,
   `invties_pub_num` smallint(6) NOT NULL,

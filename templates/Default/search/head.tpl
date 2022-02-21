@@ -15,29 +15,45 @@ $(document).ready(function(){
 });
 </script>
 <div class="search_form_tab">
-<input type="text" value="{query}" class="fave_input" id="query_full" 
-	onBlur="if(this.value==''){this.value='Начните вводить любое слово или имя';this.style.color = '#c1cad0';}" 
-	onFocus="if(this.value=='Начните вводить любое слово или имя'){this.value='';this.style.color = '#000'}" 
-	onKeyPress="if(event.keyCode == 13)gSearch.go();" 
-	style="width:670px;margin:0px;color:#000" 
-maxlength="65" />
-<div class="button_div fl_r"><button onClick="gSearch.go(); return false">Поиск</button></div>
-<div class="buttonsprofile albumsbuttonsprofile buttonsprofileSecond" style="margin-top:10px;height:22px">
- <div class="{activetab-1}"><a href="/?{query-people}" onClick="Page.Go(this.href); return false;"><div><b>Люди</b></div></a></div>
- <div class="{activetab-4}"><a href="/?go=search{query-groups}" onClick="Page.Go(this.href); return false;"><div><b>Сообщества</b></div></a></div>
- <div class="{activetab-5}"><a href="/?go=search{query-audios}" onClick="Page.Go(this.href); return false;"><div><b>Аудиозаписи</b></div></a></div>
- <div class="{activetab-2}"><a href="/?go=search{query-videos}" onClick="Page.Go(this.href); return false;"><div><b>Видеозаписи</b></div></a></div>
- <div class="{activetab-3}"><a href="/?go=search{query-notes}" onClick="Page.Go(this.href); return false;"><div><b>Заметки</b></div></a></div>
-</div>
-<input type="hidden" value="{type}" id="se_type_full" />
+ <input type="text" value="{query}" class="fave_input" id="query_full"
+        onBlur="if(this.value==''){this.value='Начните вводить любое слово или имя';this.style.color = '#c1cad0';}"
+        onFocus="if(this.value=='Начните вводить любое слово или имя'){this.value='';this.style.color = '#000'}"
+        onKeyPress="if(event.keyCode == 13)gSearch.go();"
+        style="width:670px;margin:0px;color:#000"
+        maxlength="65"/>
+ <div class="button_div fl_r">
+  <button onClick="gSearch.go(); return false">Поиск</button>
+ </div>
+ <div class="buttonsprofile albumsbuttonsprofile buttonsprofileSecond" style="margin-top:10px;height:22px">
+  <div class="{activetab-1}"><a href="/index.php?{query-people}" onClick="Page.Go(this.href); return false;">
+    <div><b>Люди</b></div>
+   </a></div>
+  <div class="{activetab-4}"><a href="/index.php?go=search{query-groups}" onClick="Page.Go(this.href); return false;">
+    <div><b>Сообщества</b></div>
+   </a></div>
+  <div class="{activetab-5}"><a href="/index.php?go=search{query-audios}" onClick="Page.Go(this.href); return false;">
+    <div><b>Аудиозаписи</b></div>
+   </a></div>
+  <div class="{activetab-2}"><a href="/index.php?go=search{query-videos}" onClick="Page.Go(this.href); return false;">
+    <div><b>Видеозаписи</b></div>
+   </a></div>
+  <div class="{activetab-3}"><a href="/index.php?go=search{query-notes}" onClick="Page.Go(this.href); return false;">
+    <div><b>Заметки</b></div>
+   </a></div>
+ </div>
+ <input type="hidden" value="{type}" id="se_type_full"/>
 </div>
 
-[search-tab]<div class="search_sotrt_tab">
-   
+[search-tab]
+<div class="search_sotrt_tab">
+
  <b>Основное</b>
  <div class="search_clear"></div>
-   
- <div class="padstylej"><select name="country" id="country" class="inpst search_sel" onChange="Profile.LoadCity(this.value); gSearch.go();"><option value="0">Любая страна</option>{country}</select><img src="{theme}/images/loading_mini.gif" alt="" class="load_mini" id="load_mini" /></div>
+
+ <div class="padstylej"><select name="country" id="country" class="inpst search_sel"
+                                onChange="Profile.LoadCity(this.value); gSearch.go();">
+   <option value="0">Любая страна</option>{country}</select><img src="{theme}/images/loading_mini.gif" alt=""
+                                                                 class="load_mini" id="load_mini"/></div>
  <div class="search_clear"></div>
 
  <div class="padstylej"><select name="city" id="select_city" class="inpst search_sel" onChange="gSearch.go();"><option value="0">Любой город</option>{city}</select></div>
