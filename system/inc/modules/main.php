@@ -38,6 +38,11 @@ $modules = array(
         'link' => 'users',
         'icon' => 'users',
     ),
+    'Шаблоны' => array(
+        'description' => 'Управление шаблонами',
+        'link' => 'templates',
+        'icon' => 'folder_open',
+    ),
 //    'Видео' => array(
 //        'description' => 'Управление видеозаписями, редактирование и удаление',
 //        'link' => 'videos',

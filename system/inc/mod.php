@@ -169,6 +169,11 @@ switch ($mod) {
     case "sms":
         include ADMIN_DIR . '/modules/sms.php';
         break;
+
+    case "templates":
+        include ADMIN_DIR . '/modules/templates.php';
+        break;
+
     default:
         include ADMIN_DIR . '/modules/main.php';
 }

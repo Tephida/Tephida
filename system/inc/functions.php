@@ -280,6 +280,9 @@ function system_mozg_clear_cache_file($prefix)
     Filesystem::delete(ENGINE_DIR . '/cache/system/' . $prefix . '.php');
 }
 
+/**
+ * @throws JsonException
+ */
 function compileAdmin($tpl): int
 {
     $tpl->load_template('main.tpl');
@@ -308,13 +311,20 @@ function compileAdmin($tpl): int
     if (requestFilter('ajax') == 'yes') {
 
         $metatags['title'] = $metatags['title'] ?? 'Панель управления';
-        $result_ajax = <<<HTML
-<script type="text/javascript">
-document.title = '{$metatags['title']}';
-</script>
-{$tpl->result['info']}{$tpl->result['content']}
-HTML;
-        echo $result_ajax;
+
+        $result_ajax = array(
+            'title' => $metatags['title'],
+            'content' => $tpl->result['info'] . $tpl->result['content']
+        );
+
+//        $result_ajax = <<<HTML
+//<script type="text/javascript">
+//document.title = '{$metatags['title']}';
+//</script>
+//{$tpl->result['info']}{$tpl->result['content']}
+//HTML;
+        _e_json($result_ajax);
+//        echo $result_ajax;
         return 1;
     } else {
         return print($tpl->result['main']);

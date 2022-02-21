@@ -44,6 +44,7 @@ class Templates
             throw new ErrorException("Невозможно загрузить шаблон: " . $tpl_name, 0, 0, 'null', 0);
         }
         $this->template = file_get_contents($this->dir . DIRECTORY_SEPARATOR . $tpl_name);
+
         if (str_contains($this->template, "[aviable=")) {
             $this->template = preg_replace_callback("#\\[aviable=(.+?)\\](.*?)\\[/aviable\\]#is", function ($matches) {
                 return $this->check_module($matches[1], $matches[2]);
@@ -64,6 +65,13 @@ class Templates
                 return $this->check_group($matches[1], $matches[2]);
             }, $this->template);
         }
+
+        if (str_contains($this->template, "[group=")) {
+            $this->template = preg_replace_callback("#\\[group=(.+?)\\](.*?)\\[/group\\]#is", function () {
+                return $this->set_block("'\\[groups\\](.*?)\\[/groups\\]'si", "");
+            }, $this->template);
+        }
+
         $this->copy_template = $this->template;
         return $this->template;
     }
@@ -87,7 +95,7 @@ class Templates
 
     public function check_group(string $groups, array|string $block, bool $action = true): array|string
     {
-        global $user_info;
+        $user_info = Registry::get('user_info');
         $groups = explode(',', $groups);
         if ($action) {
             if (!in_array($user_info['user_group'], $groups))
@@ -150,6 +158,10 @@ class Templates
         $this->copy_template = preg_replace_callback("#\\{translate=(.+?)\\}#is", function ($matches) {
             return $this->load_lang($match);
         }, $this->copy_template);
+
+        if (str_contains($this->copy_template, "{*")) {
+            $this->copy_template = preg_replace("'\\{\\*(.*?)\\*\\}'si", '', $this->copy_template);
+        }
 
         $this->copy_template = str_replace(array("_&#123;_", "_&#91;_"), array("{", "["), $this->copy_template);
 

@@ -4,4 +4,4 @@
         height: 60px;
     }
 </style>
-{modules}
+{tpl}

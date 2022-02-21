@@ -494,7 +494,7 @@ function NoAjaxQuery() : void
 {
     if (!empty($_POST['ajax']) and $_POST['ajax'] == 'yes')
         if (clean_url($_SERVER['HTTP_REFERER']) != clean_url($_SERVER['HTTP_HOST']) and $_SERVER['REQUEST_METHOD'] != 'POST')
-            header('Location: /index.php?go=none');//fixme
+            header('Location: /index.php?go=none');
 }
 
 /**
