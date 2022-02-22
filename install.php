@@ -444,7 +444,7 @@ HTML;
             fclose($con_file);
             @chmod("system/data/config.php", 0666);
             include ENGINE_DIR . '/classes/mysql.php';
-            include ENGINE_DIR . '/data/db.php';
+            $db = require_once ENGINE_DIR . '/data/db.php';
 
             $_POST['name'] = strip_tags($_POST['name']);
             $_POST['lastname'] = strip_tags($_POST['lastname']);
@@ -544,7 +544,7 @@ HTML;
         Filesystem::delete(ROOT_DIR . '/adminpanel.php');
 
         include ENGINE_DIR . '/classes/mysql.php';
-        include ENGINE_DIR . '/data/db.php';
+        $db = require_once ENGINE_DIR . '/data/db.php';
 
         $table_Chema = array();
         $table_Chema[] = "DROP TABLE IF EXISTS `room`";
