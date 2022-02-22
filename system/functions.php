@@ -1158,7 +1158,8 @@ function AntiSpam($act, $text = false)
 {
     $user_info = Registry::get('user_info');
     $db = Registry::get('db');
-    if ($text) $text = md5($text);
+    if ($text)
+        $text = md5($text);
     /* Типы
     1 - Друзья
     2 - Сообщения не друзьям
@@ -1170,12 +1171,12 @@ function AntiSpam($act, $text = false)
     $antiDate = date('Y-m-d', Registry::get('server_time'));
     $antiDate = strtotime($antiDate);
     //Лимиты на день
-    $max_frieds = 40; #макс. заявок в друзья
-    $max_msg = 40; #макс. сообщений не друзьям
-    $max_wall = 500; #макс. записей на стену
-    $max_identical = 100; #макс. одинаковых текстовых данных
-    $max_comm = 2000; #макс. комментариев к записям на стенах людей и сообществ
-    $max_groups = 5; #макс. сообществ за день
+    $max_frieds = 40; #максимум заявок в друзья
+    $max_msg = 40; #максимум сообщений не друзьям
+    $max_wall = 500; #максимум записей на стену
+    $max_identical = 100; #максимум одинаковых текстовых данных
+    $max_comm = 2000; #максимум комментариев к записям на стенах людей и сообществ
+    $max_groups = 5; #максимум сообществ за день
     //Если антиспам на друзей
     if ($act == 'friends') {
         //Проверяем в таблице
@@ -1184,8 +1185,7 @@ function AntiSpam($act, $text = false)
         if ($check['cnt'] >= $max_frieds) {
             die('antispam_err');
         }
-    }
-    //Если антиспам на сообщения
+    } //Если антиспам на сообщения
     elseif ($act == 'messages') {
         //Проверяем в таблице
         $check = $db->super_query("SELECT COUNT(*) AS cnt FROM `antispam` WHERE act = '2' AND user_id = '{$user_info['user_id']}' AND date = '{$antiDate}'");

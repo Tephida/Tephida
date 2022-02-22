@@ -38,7 +38,7 @@ if (Registry::get('logged')) {
             else
                 AntiSpam('comments');
 
-            //Проверка на наличии юзера которум отправляется запись
+            //Проверка на наличие юзера, которому отправляется запись
             $check = $db->super_query("SELECT user_privacy, user_last_visit FROM `users` WHERE user_id = '{$for_user_id}'");
 
             if ($check) {
@@ -247,11 +247,12 @@ if (Registry::get('logged')) {
                             //Если добавлена просто запись, то сразу обновляем все записи на стене
                             AntiSpamLogInsert('wall');
                             if (!$fast_comm_id) {
-
+                                $config = settings_get();
                                 if ($xPrivasyX) {
                                     $wall->query("SELECT tb1.id, author_user_id, text, add_date, fasts_num, likes_num, likes_users, type, tell_uid, tell_date, public, attach, tell_comm, tb2.user_photo, user_search_pref, user_last_visit, user_logged_mobile FROM `wall` tb1, `users` tb2 WHERE for_user_id = '{$for_user_id}' AND tb1.author_user_id = tb2.user_id AND tb1.fast_comm_id = '0' ORDER by `add_date` DESC LIMIT 0, {$limit_select}");
                                     $wall->template('wall/record.tpl');
                                     $wall->compile('content');
+
                                     $wall->select($config, $id, $for_user_id, $user_privacy, $check_friend, $user_info);
                                 }
 
@@ -322,7 +323,7 @@ if (Registry::get('logged')) {
 
                 //Если удаляется НЕ комментарий к записи
                 if (!$row['fast_comm_id']) {
-                    //удаляем комменты к записиы
+                    //удаляем комменты к записи
                     $db->query("DELETE FROM `wall` WHERE fast_comm_id = '{$rid}'");
 
                     //удаляем "мне нравится"
@@ -448,6 +449,7 @@ if (Registry::get('logged')) {
             $rid = intFilter('rid');
             $sql_ = $db->super_query("SELECT tb1.user_id, tb2.user_photo FROM `wall_like` tb1, `users` tb2 WHERE tb1.user_id = tb2.user_id AND tb1.rec_id = '{$rid}' ORDER by `date` DESC LIMIT 0, 7", true);
             if ($sql_) {
+                $config = settings_get();
                 foreach ($sql_ as $row) {
                     if ($row['user_photo']) $ava = '/uploads/users/' . $row['user_id'] . '/50_' . $row['user_photo'];
                     else $ava = '/templates/' . $config['temp'] . '/images/no_ava_50.png';
@@ -484,6 +486,7 @@ if (Registry::get('logged')) {
                     $tpl->result['content'] = str_replace('Всего', '', $tpl->result['content']);
 
                     $tpl->load_template('profile_friends.tpl');
+                    $config = settings_get();
                     foreach ($sql_ as $row) {
                         if ($row['user_photo'])
                             $tpl->set('{ava}', $config['home_url'] . 'uploads/users/' . $row['user_id'] . '/50_' . $row['user_photo']);
@@ -574,6 +577,7 @@ if (Registry::get('logged')) {
 
                     $wall->template('wall/record.tpl');
                     $wall->compile('content');
+                    $config = settings_get();
                     $wall->select($config, $id, $for_user_id, $user_privacy, $check_friend, $user_info);
                     AjaxTpl($tpl);
                 }
@@ -835,6 +839,7 @@ if (Registry::get('logged')) {
                     if ($rid or $walluid) {
                         $wall->template('wall/one_record.tpl');
                         $wall->compile('content');
+                        $config = settings_get();
                         $wall->select($config, $id, $for_user_id, $user_privacy, $check_friend, $user_info);
 
                         //FIXME
@@ -849,6 +854,7 @@ if (Registry::get('logged')) {
                     } else {
                         $wall->template('wall/record.tpl');
                         $wall->compile('wall');
+                        $config = settings_get();
                         $wall->select($config, $id, $for_user_id, $user_privacy, $check_friend, $user_info);
                     }
                 }

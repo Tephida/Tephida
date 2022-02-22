@@ -288,6 +288,9 @@ if (Registry::get('logged')) {
             NoAjaxQuery();
             $vid = intFilter('vid');
             $close_link = requestFilter('close_link');
+
+            $get_user_id = intFilter('user_id');
+
             $db = Registry::get('db');
             $user_info = $user_info ?? Registry::get('user_info');
 //Выводи данные о видео если оно есть
@@ -368,7 +371,7 @@ if (Registry::get('logged')) {
                     $tpl->set('{descr}', stripslashes($row['descr']));
                     $tpl->set('{author}', $row['user_search_pref']);
                     $tpl->set('{uid}', $row['owner_user_id']);
-                    $tpl->set('{comments}', $tpl->result['comments']);
+                    $tpl->set('{comments}', $tpl->result['comments'] ?? '');
                     $tpl->set('{comm-num}', $row['comm_num']);
                     $tpl->set('{owner-id}', $row['owner_user_id']);
                     $tpl->set('{close-link}', $close_link);
