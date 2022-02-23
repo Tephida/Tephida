@@ -17,7 +17,6 @@ However, if you are not using Homestead, you will need to make sure your server 
 <div class="content-list" markdown="1" style="display: flex;flex-direction: column">
 
 - PHP ^8.0
-- JSON PHP Extension
 - ICONV PHP Extension
 - GD PHP extension
 - MySQLI PHP Extension
