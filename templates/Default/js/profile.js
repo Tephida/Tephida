@@ -1020,7 +1020,7 @@ var gSearch = {
 			history.pushState({
 				link: lnk
 			}, null, lnk);
-			$('#page').html(data);
+			$('#page').html(data.content);
 			//Прокручиваем страницу в самый верх
 			$('html, body').scrollTop(0);
 			//Удаляем кеш фоток и видео

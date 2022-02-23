@@ -637,10 +637,10 @@ class Profile extends Module
 
                 //Если человек пришел после реги, то открываем ему окно загрузи фотографии
                 if (intFilter('after')) {
-                    $tpl->set('[after-reg]', '');
-                    $tpl->set('[/after-reg]', '');
+                    $tpl->set('[after_reg]', '');
+                    $tpl->set('[/after_reg]', '');
                 } else
-                    $tpl->set_block("'\\[after-reg\\](.*?)\\[/after-reg\\]'si", "");
+                    $tpl->set_block("'\\[after_reg\\](.*?)\\[/after_reg\\]'si", "");
 
                 //Стена
                 $tpl->set('{records}', $tpl->result['wall'] ?? '');

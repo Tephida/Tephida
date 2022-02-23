@@ -1513,8 +1513,8 @@ function compileAjax($tpl, $params): int
 //        die('Неизвестная ошибка');
 
     $speedbar = $speedbar ?? null;
-    $metatags = $params['metatags'] ?? null;
     $spBar = $spBar ?? null;
+    $metatags = $params['metatags'] ?? null;
 
     $metatags['title'] = $metatags['title'] ?? $config['home'];
 

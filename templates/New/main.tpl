@@ -212,7 +212,7 @@
 <script type="text/javascript" src="{theme}/js/push.js"></script>
 <div class="no_display">
     <audio id="beep-three" controls preload="auto">
-        <source src="{theme}/images/soundact.ogg"></source>
+        <source src="{theme}/images/soundact.ogg">
     </audio>
 </div>
 <div id="updates"></div>

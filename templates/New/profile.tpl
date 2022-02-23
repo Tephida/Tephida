@@ -1,6 +1,6 @@
-<script type="text/javascript">[after - reg]
+<script type="text/javascript"> [after_reg]
     Profile.LoadPhoto();
-    [/after-reg]
+    [/after_reg]
     var startResizeCss = false;
     var user_id = '{user-id}';
     $(document).ready(function () {
@@ -271,9 +271,6 @@
         <div class="profile_rate_text">Рейтинг</div>
         [owner]
         <a class="cursor_pointer" onClick="doLoad.data(1); rating.view()">
-            [/owner]
-            <div class="profile_rate_100_left {rating-class-left}"></div>
-            [owner]
         </a>
         [/owner]
         <div class="profile_rate_add" onClick="doLoad.data(1); rating.addbox('{user-id}')"
@@ -282,7 +279,6 @@
         [owner]
         <a class="cursor_pointer" onClick="doLoad.data(1); rating.view()" style="text-decoration:none">
             [/owner]
-            <div class="profile_rate_100_right {rating-class-right}"></div>
             <div class="profile_rate_100_head {rating-class-head}" id="profile_rate_num">{rating}</div>
             [owner]
         </a>
