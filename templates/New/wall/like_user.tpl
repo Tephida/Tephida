@@ -1,1 +1,0 @@
-<a href="/u{user-id}" onClick="Page.Go(this.href); return false"><img src="{ava}" alt="" title="{name}"/></a>
