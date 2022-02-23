@@ -533,7 +533,7 @@ if (Registry::get('logged')) {
 
                             $tpl->compile('content');
                         }
-                        navigation($gcount, $owner['user_notes_num'], $config['home_url'] . 'notes/' . $get_user_id . '/page/');
+                        navigationNew($gcount, $owner['user_notes_num'], $config['home_url'] . 'notes/' . $get_user_id . '/page/');
 
                         compile($tpl);
                     } else {

@@ -76,7 +76,6 @@ function onBodyResize() {
     var mw = ($('html, body').width() - 800) / 2;
     $('.autowr').css('padding-left', mw + 'px').css('padding-right', mw + 'px');
 }
-
 var Page = {
     Loading: function (f) {
         var top_pad = $(window).height() / 2 - 50;
@@ -102,24 +101,34 @@ var Page = {
         clearInterval(vii_interval);
         clearInterval(vii_interval_im);
         Page.Loading('start');
-        $('#page').load(h, {
-            ajax: 'yes'
-        }, function (data) {
+        $.post(h, {ajax: 'yes'}, function (res) {
+            // data = JSON.parse(res);
+            data = res;
+            $('#page').html(data.content).css('min-height', '0px');
             Page.Loading('stop');
-            $('html, body').scrollTop(0);
-            //$('.ladybug_ant').imgAreaSelect({remove: true});
-            //Чистим стили AuroResizeWall
+            $('html, body').scrollTop(0).css('overflow-y', 'auto');
+            // $('.ladybug_ant').imgAreaSelect({remove: true});
             $('#addStyleClass').remove();
-            //Удаляем кеш фоток, видео, модальных окон
             $('.photo_view, .box_pos, .box_info, .video_view').remove();
-            //Возвращаем scroll
-            $('html, body').css('overflow-y', 'auto');
-            //Возвращаем дизайн плеера
-            if ($('.staticPlbg').length) {
-                $('.staticPlbg').css('margin-top', '-500px');
-                player.reestablish();
-            }
-        }).css('min-height', '0px');
+            document.title = data.title;
+            $('#new_msg').html(data.user_pm_num);
+            $('#new_news').html(data.new_news);
+            $('#new_ubm').html(data.new_ubm);
+            $('#ubm_link').attr('href', data.gifts_link);
+            $('#new_support').html(data.support);
+            $('#news_link').attr('href', '/news' + data.news_link);
+            $('#new_requests').html(data.demands);
+            $('#new_guests').html(data.guests);
+            $('#new_photos').html(data.new_photos);
+            $('#requests_link_new_photos').attr('href', '/albums/' + data.new_photos_link);
+            $('#requests_link').attr('href', '/friends' + data.requests_link);
+            $('#new_groups').html(data.new_groups);
+            $('#new_groups_lnk').attr('href', data.new_groups_lnk);
+        });
+        if ($('.staticPlbg').length) {
+            $('.staticPlbg').css('margin-top', '-500px');
+            player.reestablish();
+        }
     },
     Prev: function (h) {
         clearInterval(vii_interval);
@@ -432,7 +441,6 @@ function langNumric(id, num, text1, text2, text3, text4, text5) {
     else var gram_num_record = '';
     $('#' + id).html(gram_num_record);
 }
-
 //LANG
 var trsn = {
     box: function () {

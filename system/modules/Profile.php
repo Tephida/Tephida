@@ -301,12 +301,14 @@ class Profile extends Module
                 if ($row_online['user_last_visit'] >= $online_time) {
                     $tpl->set('{online}', $lang['online'] . $mobile_icon);
                 } else {
-                    if (date('Y-m-d', intval($row_online['user_last_visit'])) == date('Y-m-d', $server_time))
-                        $dateTell = langdate('сегодня в H:i', $row_online['user_last_visit']);
-                    elseif (date('Y-m-d', intval($row_online['user_last_visit'])) == date('Y-m-d', ($server_time - 84600)))
-                        $dateTell = langdate('вчера в H:i', $row_online['user_last_visit']);
-                    else
-                        $dateTell = langdate('j F Y в H:i', $row_online['user_last_visit']);
+//                    if (date('Y-m-d', intval($row_online['user_last_visit'])) == date('Y-m-d', $server_time))
+//                        $dateTell = langdate('сегодня в H:i', $row_online['user_last_visit']);
+//                    elseif (date('Y-m-d', intval($row_online['user_last_visit'])) == date('Y-m-d', ($server_time - 84600)))
+//                        $dateTell = langdate('вчера в H:i', $row_online['user_last_visit']);
+//                    else
+//                        $dateTell = langdate('j F Y в H:i', $row_online['user_last_visit']);
+
+                    $dateTell = megaDate(intval($row_online['user_last_visit']));
 
                     if ($row['user_sex'] == 2)
                         $tpl->set('{online}', 'последний раз была ' . $dateTell . $mobile_icon);
@@ -635,10 +637,10 @@ class Profile extends Module
 
                 //Если человек пришел после реги, то открываем ему окно загрузи фотографии
                 if (intFilter('after')) {
-                    $tpl->set('[after-reg]', '');
-                    $tpl->set('[/after-reg]', '');
+                    $tpl->set('[after_reg]', '');
+                    $tpl->set('[/after_reg]', '');
                 } else
-                    $tpl->set_block("'\\[after-reg\\](.*?)\\[/after-reg\\]'si", "");
+                    $tpl->set_block("'\\[after_reg\\](.*?)\\[/after_reg\\]'si", "");
 
                 //Стена
                 $tpl->set('{records}', $tpl->result['wall'] ?? '');

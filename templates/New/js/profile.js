@@ -976,7 +976,8 @@ var gSearch = {
     go: function () {
         var query = $('#query').val();
         var type = $('#se_type').val();
-        if (query == 'Поиск' || !query) var query = $('#fast_search_txt').text();
+        if (query == 'Поиск' || !query)
+            var query = $('#fast_search_txt').text();
         //Если открыта страница поиска
         if (CheckRequestSearch(location.href)) {
             query = $('#query_full').val();
@@ -991,7 +992,7 @@ var gSearch = {
             user_photo = $('#user_photo').val();
         }
         if (query == 'Поиск' || query == 'Начните вводить любое слово или имя') {
-            query = '';
+            query = ' ';
         }
         //if(query != 0 && query != 'Поиск' && query != 'Начните вводить любое слово или имя'){
         if (CheckRequestSearch(location.href) && type == 1) {
@@ -1013,7 +1014,7 @@ var gSearch = {
             else all_queryeis_user_photo = '';
             res_sort_query = all_queryeis_sex + all_queryeis_day + all_queryeis_month + all_queryeis_year + all_queryeis_country + all_queryeis_city + all_queryeis_online + all_queryeis_user_photo;
         } else res_sort_query = '';
-        lnk = '/?go=search&query=' + encodeURIComponent(query) + '&type=' + type + res_sort_query;
+        lnk = '/index.php?go=search&query=' + encodeURIComponent(query) + '&type=' + type + res_sort_query;
         Page.Loading('start');
         $.post(lnk, {
             ajax: 'yes'
@@ -1022,7 +1023,7 @@ var gSearch = {
             history.pushState({
                 link: lnk
             }, null, lnk);
-            $('#page').html(data);
+            $('#page').html(data.content);
             //Прокручиваем страницу в самый верх
             $('html, body').scrollTop(0);
             //Удаляем кеш фоток и видео

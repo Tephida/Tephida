@@ -39,22 +39,10 @@
                     Фото
                 </div>
             </a>
-            <a href="/index.php?go=guests" onClick="Page.Go(this.href); return false;">
-                <div class="headm_posic">
-                    <img src="{theme}/images/spacer.gif" class="headm_ic_support" alt="spacer"/><br/>
-                    Гости
-                </div>
-            </a>
             <a href="/fave" onClick="Page.Go(this.href); return false;">
                 <div class="headm_posic"><img src="{theme}/images/spacer.gif" class="headm_ic_fave"
                                               alt="spacer"/><br/>
                     Закладки
-                </div>
-            </a>
-            <a href="/apps" onClick="Page.Go(this.href); return false;">
-                <div class="headm_posic"><img src="/templates/Default/images/spacer.gif" class="headm_ic_games"
-                                              alt="spacer"/><br/>
-                    Игры
                 </div>
             </a>
             <a href="/videos" onClick="Page.Go(this.href); return false;">
@@ -194,7 +182,7 @@
         </form>
     </div>
     [/not-logged]
-    <div class="content" [logged]style="width:800px;" [
+    <div class="content" [logged] style="width:800px;" [
     /logged]>
     <div class="shadow">
         <div class="speedbar no_display" id="">{speedbar}</div>
@@ -224,7 +212,7 @@
 <script type="text/javascript" src="{theme}/js/push.js"></script>
 <div class="no_display">
     <audio id="beep-three" controls preload="auto">
-        <source src="{theme}/images/soundact.ogg"></source>
+        <source src="{theme}/images/soundact.ogg">
     </audio>
 </div>
 <div id="updates"></div>

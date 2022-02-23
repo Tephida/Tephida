@@ -1,7 +1,7 @@
 <script type="text/javascript">
     $(document).ready(function () {
-        music.jPlayerInc();
-        [search - tab]
+        // music.jPlayerInc();
+        [search_tab]
         $('#page').css('min-height', '444px');
         $(window).scroll(function () {
             if ($(window).scrollTop() > 103)
@@ -9,7 +9,7 @@
             else
                 $('.search_sotrt_tab').css('position', 'absolute').css('margin-top', '39px');
         });
-        [/search-tab]
+        [/search_tab]
             myhtml.checked(['{checked-online}', '{checked-user-photo}']);
         var query = $('#query_full').val();
         if (query == 'Начните вводить любое слово или имя')
@@ -27,26 +27,30 @@
         <button onClick="gSearch.go(); return false">Поиск</button>
     </div>
     <div class="buttonsprofile albumsbuttonsprofile buttonsprofileSecond" style="margin-top:10px;height:22px">
-        <div class="{activetab-1}"><a href="/?{query-people}" onClick="Page.Go(this.href); return false;">
+        <div class="{activetab-1}"><a href="/index.php?{query-people}" onClick="Page.Go(this.href); return false;">
                 <div><b>Люди</b></div>
             </a></div>
-        <div class="{activetab-4}"><a href="/?go=search{query-groups}" onClick="Page.Go(this.href); return false;">
+        <div class="{activetab-4}"><a href="/index.php?go=search{query-groups}"
+                                      onClick="Page.Go(this.href); return false;">
                 <div><b>Сообщества</b></div>
             </a></div>
-        <div class="{activetab-5}"><a href="/?go=search{query-audios}" onClick="Page.Go(this.href); return false;">
+        <div class="{activetab-5}"><a href="/index.php?go=search{query-audios}"
+                                      onClick="Page.Go(this.href); return false;">
                 <div><b>Аудиозаписи</b></div>
             </a></div>
-        <div class="{activetab-2}"><a href="/?go=search{query-videos}" onClick="Page.Go(this.href); return false;">
+        <div class="{activetab-2}"><a href="/index.php?go=search{query-videos}"
+                                      onClick="Page.Go(this.href); return false;">
                 <div><b>Видеозаписи</b></div>
             </a></div>
-        <div class="{activetab-3}"><a href="/?go=search{query-notes}" onClick="Page.Go(this.href); return false;">
+        <div class="{activetab-3}"><a href="/index.php?go=search{query-notes}"
+                                      onClick="Page.Go(this.href); return false;">
                 <div><b>Заметки</b></div>
             </a></div>
     </div>
     <input type="hidden" value="{type}" id="se_type_full"/>
 </div>
 
-[search-tab]
+[search_tab]
 <div class="search_sotrt_tab">
 
     <b>Основное</b>
@@ -90,7 +94,7 @@
             <option value="0">Любой год</option>{year}</select></div>
     <div class="search_clear"></div>
 
-</div>[/search-tab]
+</div>[/search_tab]
 
 <div class="clear"></div>
 [yes]

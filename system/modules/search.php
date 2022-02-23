@@ -40,26 +40,27 @@ NoAjaxQuery();
     $city = intFilter('city');
     $online = intFilter('online');
     $user_photo = intFilter('user_photo');
-    $sp = intFilter('sp');
+$sp = intFilter('sp');
 
-    //Задаём параметры сортировки
-    $sql_sort = '';
-    if ($sex) $sql_sort .= "AND user_sex = '{$sex}'";
-    if ($day) $sql_sort .= "AND user_day = '{$day}'";
-    if ($month) $sql_sort .= "AND user_month = '{$month}'";
-    if ($year) $sql_sort .= "AND user_year = '{$year}'";
-    if ($country) $sql_sort .= "AND user_country = '{$country}'";
-    if ($city) $sql_sort .= "AND user_city = '{$city}'";
-    if ($online) $sql_sort .= "AND user_last_visit >= '{$online_time}'";
-    if ($user_photo) $sql_sort .= "AND user_photo != ''";
-    if ($sp) $sql_sort .= "AND SUBSTRING(user_sp, 1, 1) regexp '[[:<:]]({$sp})[[:>:]]'";
-    if ($query or $sql_sort)
-        $where_sql_gen = "WHERE user_search_pref LIKE '%{$query}%' AND user_delet = '0' AND user_ban = '0'";
-    else {
-        $where_sql_gen = "WHERE user_delet = '0' AND user_ban = '0'";
-    }
-    $config = settings_get();
-    //Делаем SQL Запрос в БД на вывод данных
+//Задаём параметры сортировки
+$sql_sort = '';
+if ($sex) $sql_sort .= "AND user_sex = '{$sex}'";
+if ($day) $sql_sort .= "AND user_day = '{$day}'";
+if ($month) $sql_sort .= "AND user_month = '{$month}'";
+if ($year) $sql_sort .= "AND user_year = '{$year}'";
+if ($country) $sql_sort .= "AND user_country = '{$country}'";
+if ($city) $sql_sort .= "AND user_city = '{$city}'";
+$online_time = $online_time ?? time();//FIXME
+if ($online) $sql_sort .= "AND user_last_visit >= '{$online_time}'";
+if ($user_photo) $sql_sort .= "AND user_photo != ''";
+if ($sp) $sql_sort .= "AND SUBSTRING(user_sp, 1, 1) regexp '[[:<:]]({$sp})[[:>:]]'";
+if ($query or $sql_sort)
+    $where_sql_gen = "WHERE user_search_pref LIKE '%{$query}%' AND user_delet = '0' AND user_ban = '0'";
+else {
+    $where_sql_gen = "WHERE user_delet = '0' AND user_ban = '0'";
+}
+$config = settings_get();
+//Делаем SQL Запрос в БД на вывод данных
     if ($type == 1) { //Если критерий поиск "по людям"
         $sql_query = "SELECT user_id, user_search_pref, user_photo, user_birthday, user_country_city_name, user_last_visit, user_logged_mobile FROM `users` {$where_sql_gen} {$sql_sort} ORDER by `user_rating` DESC LIMIT {$limit_page}, {$gcount}";
         $sql_count = "SELECT COUNT(*) AS cnt FROM `users` {$where_sql_gen} {$sql_sort}";
@@ -154,10 +155,10 @@ NoAjaxQuery();
         $tpl->set_block("'\\[yes\\](.*?)\\[/yes\\]'si", "");
 
     if ($type == 1) {
-        $tpl->set('[search-tab]', '');
-        $tpl->set('[/search-tab]', '');
+        $tpl->set('[search_tab]', '');
+        $tpl->set('[/search_tab]', '');
     } else
-        $tpl->set_block("'\\[search-tab\\](.*?)\\[/search-tab\\]'si", "");
+        $tpl->set_block("'\\[search_tab\\](.*?)\\[/search_tab\\]'si", "");
 
     //################## Загружаем Страны ##################//
     $sql_country = $db->super_query("SELECT * FROM `country` ORDER by `name` ASC", true);

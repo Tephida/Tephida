@@ -107,14 +107,14 @@ class Templates
         return str_replace('\"', '"', $block);
     }
 
-    public function _clear()
+    public function _clear(): void
     {
         $this->data = array();
         $this->block_data = array();
         $this->copy_template = $this->template;
     }
 
-    public function clear()
+    public function clear(): void
     {
         $this->data = array();
         $this->block_data = array();
@@ -122,7 +122,7 @@ class Templates
         $this->template = null;
     }
 
-    public function global_clear()
+    public function global_clear(): void
     {
         $this->data = array();
         $this->block_data = array();

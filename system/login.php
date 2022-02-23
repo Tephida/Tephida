@@ -76,7 +76,7 @@ if (isset($_SESSION['user_id']) > 0) {
 if (isset($_POST['log_in']) AND !$logged) {
     //Приготавливаем данные
     $email = requestFilter('email');
-    $password = md5(md5(GetVar($_POST['password'])));
+    $password = md5(md5(stripslashes($_POST['password'])));
     //Проверяем правильность e-mail
     if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
         msgbox('', $lang['not_loggin'] . '<br /><a href="/restore" onClick="Page.Go(this.href); return false">Забыли пароль?</a>', 'info_red');

@@ -1,14 +1,16 @@
 <script type="text/javascript">
-$(document).ready(function(){
-	music.jPlayerInc();
-	[search-tab]$('#page').css('min-height', '444px');
-	$(window).scroll(function(){
-		if($(window).scrollTop() > 103)
-			$('.search_sotrt_tab').css('position', 'fixed').css('margin-top', '-80px');
-		else
-			$('.search_sotrt_tab').css('position', 'absolute').css('margin-top', '39px');
-	});[/search-tab]
-	myhtml.checked(['{checked-online}', '{checked-user-photo}']);	
+ $(document).ready(function () {
+  music.jPlayerInc();
+  [search_tab]
+  $('#page').css('min-height', '444px');
+  $(window).scroll(function () {
+   if ($(window).scrollTop() > 103)
+    $('.search_sotrt_tab').css('position', 'fixed').css('margin-top', '-80px');
+   else
+    $('.search_sotrt_tab').css('position', 'absolute').css('margin-top', '39px');
+  });
+  [/search_tab]
+   myhtml.checked(['{checked-online}', '{checked-user-photo}']);
 	var query = $('#query_full').val();
 	if(query == 'Начните вводить любое слово или имя')
 		$('#query_full').css('color', '#c1cad0');
@@ -44,7 +46,7 @@ $(document).ready(function(){
  <input type="hidden" value="{type}" id="se_type_full"/>
 </div>
 
-[search-tab]
+[search_tab]
 <div class="search_sotrt_tab">
 
  <b>Основное</b>
@@ -78,13 +80,16 @@ $(document).ready(function(){
  <select name="month" class="inpst search_sel" id="month" onChange="gSearch.go();"><option value="0">Любой месяц</option>{month}</select>
  <div class="search_clear"></div>
   
- <select name="year" class="inpst search_sel" id="year" onChange="gSearch.go();"><option value="0">Любой год</option>{year}</select></div>
+ <select name="year" class="inpst search_sel" id="year" onChange="gSearch.go();"><option value="0">Любой год</option>{year}
+ </select></div>
  <div class="search_clear"></div>
-  
-</div>[/search-tab]
+
+</div>[/search_tab]
 
 <div class="clear"></div>
-[yes]<div class="margin_top_10"></div><div class="search_result_title">Найдено {count}</div>[/yes]
+[yes]
+<div class="margin_top_10"></div>
+<div class="search_result_title">Найдено {count}</div>[/yes]
 <div id="jquery_jplayer"></div>
 <input type="hidden" id="teck_id" value="0" />
 <input type="hidden" id="typePlay" value="standart" />

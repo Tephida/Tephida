@@ -1,7 +1,7 @@
 html, body {
-    margin: 0px;
-    padding: 0px;
-    background: linear-gradient(#0d789c, #c8eeb1, white, white) repeat-x;
+    margin: 0;
+    padding: 0;
+    background: linear-gradient(180deg, #0d789c, #c8eeb1, white, white) repeat-x;
     font-size: 11px;
     font-family: tahoma, arial, verdana, sans-serif, Lucida Sans;
     overflow-x: hidden
@@ -16,8 +16,8 @@ input, textarea, select {
 a {
     text-decoration: none;
     color: #21578b;
-    margin: 0px;
-    padding: 0px
+    margin: 0;
+    padding: 0
 }
 
 a:hover {
@@ -26,19 +26,19 @@ a:hover {
 }
 
 img {
-    border: 0px
+    border: 0
 }
 
 ul, p {
-    padding: 0px;
-    margin: 0px
+    padding: 0;
+    margin: 0
 }
 
 blockquote {
     padding: 10px;
     background: #f5f5f5;
     border-left: 10px solid #4274a4;
-    margin: 0px
+    margin: 0
 }
 
 /* LOGO AND WRAP */
@@ -48,12 +48,12 @@ blockquote {
 }
 
 .head {
-    background: linear-gradient(#1993b0, #1993b0, #3db9c2) repeat-x;
+    background: linear-gradient(0deg, #1993b0, #1993b0, #3db9c2) repeat-x;
     height: 44px;
     position: fixed;
-    right: 0px;
-    left: 0px;
-    top: 0px;
+    right: 0;
+    left: 0;
+    top: 0;
     z-index: 100
 }
 
@@ -76,7 +76,7 @@ blockquote {
     width: 75px;
     text-indent: -9999px;
     height: 44px;
-    margin-left: 0px
+    margin-left: 0
 }
 
 .udinsMy:hover {
@@ -115,49 +115,49 @@ blockquote {
 }
 
 .headm_ic_friend {
-    background: url("../images/transp.png") no-repeat -24px 0px;
+    background: url("../images/transp.png") no-repeat -24px 0;
     width: 24px;
     height: 22px
 }
 
 .headm_ic_mess {
-    background: url("../images/transp.png") no-repeat -48px 0px;
+    background: url("../images/transp.png") no-repeat -48px 0;
     width: 26px;
     height: 22px
 }
 
 .headm_ic_photo {
-    background: url("../images/transp.png") no-repeat -74px 0px;
+    background: url("../images/transp.png") no-repeat -74px 0;
     width: 28px;
     height: 22px
 }
 
 .headm_ic_videos {
-    background: url("../images/transp.png") no-repeat -102px 0px;
+    background: url("../images/transp.png") no-repeat -102px 0;
     width: 21px;
     height: 22px
 }
 
 .headm_ic_fave {
-    background: url("../images/transp.png") no-repeat -123px 0px;
+    background: url("../images/transp.png") no-repeat -123px 0;
     width: 24px;
     height: 22px
 }
 
 .headm_ic_news {
-    background: url("../images/transp.png") no-repeat -146px 0px;
+    background: url("../images/transp.png") no-repeat -146px 0;
     width: 24px;
     height: 22px
 }
 
 .headm_ic_notes {
-    background: url("../images/transp.png") no-repeat -170px 0px;
+    background: url("../images/transp.png") no-repeat -170px 0;
     width: 23px;
     height: 22px
 }
 
 .headm_ic_se {
-    background: url("../images/transp.png") no-repeat 0px -23px;
+    background: url("../images/transp.png") no-repeat 0 -23px;
     width: 25px;
     height: 22px
 }
@@ -203,17 +203,10 @@ blockquote {
     background: #404244;
     min-width: 10px;
     height: 12px;
-    padding: 3px;
-    padding-top: 2px;
+    padding: 2px 3px 3px;
     border-radius: 10px;
     margin-left: 23px;
     margin-top: -3px
-}
-
-.headm_ic_games {
-    background: url("../images/csa.png") no-repeat -2px;
-    width: 27px;
-    height: 22px
 }
 
 /* LEFT PANEL AND CONTENT */
@@ -229,8 +222,7 @@ blockquote {
 }
 
 .padcont {
-    padding: 15px;
-    padding-top: 10px;
+    padding: 10px 15px 15px;
     background: #fff
 }
 
@@ -239,36 +231,26 @@ blockquote {
 }
 
 .shadow {
-    box-shadow: 0px 3px 11px #aaa;
-    -moz-box-shadow: 0px 3px 11px #aaa;
-    -webkit-box-shadow: 0px 3px 11px #aaa
+    box-shadow: 0 3px 11px #aaa;
 }
 
 /* BORDER RADIUS */
 .button_div, .button_div_gray, .activetab a div, .activetab a, .buttonsprofile a:hover {
     border-radius: 2px;
-    -moz-border-radius: 2px;
-    -webkit-border-radius: 2px;
-    -khtml-border-radius: 2px
 }
 
 /* LOGIN PANEL */
 .flLg {
     color: #fff;
-    padding: 5px;
-    padding-left: 2px;
-    text-shadow: 0px 1px 0px #777
+    padding: 5px 5px 5px 2px;
+    text-shadow: 0 1px 0 #777
 }
 
 .inplog {
     border: 1px solid #d4dfe6;
     padding: 4px;
     width: 130px;
-    box-shadow: inset 0px 1px 3px 0px #e1e1e1;
-    -moz-box-shadow: inset 0px 1px 3px 0px #e1e1e1;
-    -webkit-box-shadow: inset 0px 1px 3px 0px #e1e1e1;
-    -moz-border-radius: 3px;
-    -webkit-border-radius: 3px;
+    box-shadow: inset 0 1px 3px 0 #e1e1e1;
     border-radius: 3px;
     resize: none
 }
@@ -303,33 +285,25 @@ blockquote {
     border: 1px solid #717b0e;
     display: block;
     border-radius: 3px;
-    -moz-border-radius: 3px;
-    -webkit-border-radius: 3px
 }
 
 .button_div button {
-    background: -webkit-linear-gradient(top, #b7c42d, #8d991b);
-    background: -moz-linear-gradient(top, #b7c42d, #8d991b);
-    background: -ms-linear-gradient(top, #b7c42d, #8d991b);
-    background: -o-linear-gradient(top, #b7c42d, #8d991b);
-    background: linear-gradient(top, #b7c42d, #8d991b);
+    background: linear-gradient(45deg, #b7c42d, #8d991b);
     color: #fff;
     font-size: 11px;
     font-family: Tahoma, Verdana, Arial, sans-serif, Lucida Sans;
-    text-shadow: 0px 1px 0px #767f18;
-    border: 0px;
+    text-shadow: 0 1px 0 #767f18;
+    border: 0;
     border-top: 1px solid #cdd483;
     padding: 4px 15px 4px 15px;
     cursor: pointer;
-    margin: 0px;
+    margin: 0;
     font-weight: bold;
     border-radius: 2px;
-    -moz-border-radius: 2px;
-    -webkit-border-radius: 2px
 }
 
 .button_div button:hover {
-    background: -webkit-linear-gradient(top, #c6d059, #a3ae36);
+    background: linear-gradient(45deg, #c6d059, #a3ae36);
 }
 
 .button_div button:active {
@@ -339,16 +313,10 @@ blockquote {
     outline: none
 }
 
-.button_div button::-moz-focus-inner {
-    border: 0px
-}
-
 .button_div_gray {
     border: 1px solid #b4b4b4;
     display: block;
     border-radius: 3px;
-    -moz-border-radius: 3px;
-    -webkit-border-radius: 3px
 }
 
 .button_div_gray button {
@@ -356,16 +324,14 @@ blockquote {
     color: #555;
     font-size: 11px;
     font-family: Tahoma, Verdana, Arial, sans-serif, Lucida Sans;
-    text-shadow: 0px 1px 0px #fff;
-    border: 0px;
+    text-shadow: 0 1px 0 #fff;
+    border: 0;
     border-top: 1px solid #fff;
     padding: 4px 15px 4px 15px;
     cursor: pointer;
-    margin: 0px;
+    margin: 0;
     font-weight: bold;
     border-radius: 2px;
-    -moz-border-radius: 2px;
-    -webkit-border-radius: 2px
 }
 
 .button_div_gray button:hover {
@@ -380,7 +346,7 @@ blockquote {
 }
 
 .button_div_gray button::-moz-focus-inner {
-    border: 0px
+    border: 0
 }
 
 .button_div_nostl {
@@ -392,10 +358,10 @@ blockquote {
     color: #21578b;
     font-size: 11px;
     font-family: Tahoma, Verdana, Arial, sans-serif, Lucida Sans;
-    border: 0px;
+    border: 0;
     padding: 5px 15px 5px 15px;
     cursor: pointer;
-    margin: 0px
+    margin: 0
 }
 
 .button_div_nostl button:hover {
@@ -459,7 +425,7 @@ h1 {
     font-weight: normal;
     width: 370px;
     margin-top: 10px;
-    margin-bottom: 0px;
+    margin-bottom: 0;
     margin-left: 20px
 }
 
@@ -472,7 +438,7 @@ h1 {
 .speedbar {
     background: #f6f6f6;
     padding: 10px;
-    border-bottom: 0px solid #e4e7eb;
+    border-bottom: 0 solid #e4e7eb;
     font-weight: bold;
     color: #222
 }
@@ -495,12 +461,12 @@ h1 {
 .listing {
     list-style: square;
     color: #d20000;
-    margin: 0px;
+    margin: 0;
     padding-left: 10px
 }
 
 ul.listing li {
-    padding: 1px 0px
+    padding: 1px 0
 }
 
 ul.listing li span {
@@ -510,12 +476,10 @@ ul.listing li span {
 .privacy_err {
     background: #ffb4a3;
     position: fixed;
-    left: 0px;
-    top: 0px;
+    left: 0;
+    top: 0;
     padding: 7px;
     border-bottom-right-radius: 7px;
-    -moz-border-bottom-right-radius: 7px;
-    -webkit-border-bottom-right-radius: 7px;
     margin-top: 48px;
     z-index: 100
 }
@@ -538,8 +502,6 @@ ul.listing li span {
     border-bottom: 1px solid #fff;
     cursor: pointer;
     border-radius: 3px;
-    -moz-border-radius: 3px;
-    -webkit-border-radius: 3px
 }
 
 .menuleft a:hover {
@@ -611,9 +573,8 @@ ul.listing li span {
 .fieldset {
     background: url("../images/hr.png") repeat-x;
     font-weight: bold;
-    padding: 5px;
     color: #5d8ebe;
-    padding-left: 0px;
+    padding: 5px 5px 5px 0;
     margin-top: 5px
 }
 
@@ -651,7 +612,6 @@ ul.listing li span {
     margin-left: 11px;
     margin-bottom: 10px;
     max-height: 81px;
-    overflow: hidden
 }
 
 .onefriend img {
@@ -715,9 +675,7 @@ ul.listing li span {
 
 .set_status_bg {
     background: #f5f5f5;
-    box-shadow: 0px 1px 1px 1px #e9e9e9;
-    -moz-box-shadow: 0px 1px 1px 1px #e9e9e9;
-    -webkit-box-shadow: 0px 1px 1px 1px #e9e9e9;
+    box-shadow: 0 1px 1px 1px #e9e9e9;
     border: 1px solid #ced6df;
     padding: 5px;
     position: absolute;
@@ -747,9 +705,7 @@ ul.listing li span {
 
 .status_tell_friends {
     background: #f7f7f7;
-    box-shadow: 0px 1px 1px 1px #e9e9e9;
-    -moz-box-shadow: 0px 1px 1px 1px #e9e9e9;
-    -webkit-box-shadow: 0px 1px 1px 1px #e9e9e9;
+    box-shadow: 0 1px 1px 1px #e9e9e9;
     border: 1px solid #aebdcc;
     height: 14px;
     color: #21578b;
@@ -820,7 +776,7 @@ ul.listing li span {
 }
 
 .activetab a {
-    padding: 0px;
+    padding: 0;
     background: #2b9eb3;
     color: #fff
 }
@@ -830,7 +786,7 @@ ul.listing li span {
 }
 
 .activetab a:hover {
-    padding: 0px;
+    padding: 0;
     background: #2b9eb3;
     color: #fff
 }
@@ -851,7 +807,7 @@ ul.listing li span {
 }
 
 .edit_ic {
-    background: url("../images/icons/index2.png") no-repeat 0px -60px;
+    background: url("../images/icons/index2.png") no-repeat 0 -60px;
     margin-top: 2px
 }
 
@@ -860,56 +816,56 @@ ul.listing li span {
 }
 
 .mail_ic {
-    background: url("../images/icons/index2.png") no-repeat 0px -46px;
+    background: url("../images/icons/index2.png") no-repeat 0 -46px;
     height: 14px;
     margin-top: 2px
 }
 
 .gift_ic {
-    background: url("../images/icons/index2.png") no-repeat 0px -90px;
+    background: url("../images/icons/index2.png") no-repeat 0 -90px;
     height: 14px
 }
 
 .addfr_ic {
-    background: url("../images/icons/index2.png") no-repeat 0px -136px
+    background: url("../images/icons/index2.png") no-repeat 0 -136px
 }
 
 .subs_ic {
-    background: url("../images/icons/index2.png") no-repeat 0px -120px
+    background: url("../images/icons/index2.png") no-repeat 0 -120px
 }
 
 .fav_ic {
-    background: url("../images/icons/index2.png") no-repeat 0px -16px
+    background: url("../images/icons/index2.png") no-repeat 0 -16px
 }
 
 .rate_ic {
-    background: url("../images/icons/index2.png") no-repeat 0px -105px
+    background: url("../images/icons/index2.png") no-repeat 0 -105px
 }
 
 .compla_ic {
-    background: url("../images/icons/index2.png") no-repeat 0px -32px;
+    background: url("../images/icons/index2.png") no-repeat 0 -32px;
     height: 14px;
     margin-top: 2px
 }
 
 .del_photo_ic {
-    background: url("../images/icons/index2.png") no-repeat 0px -153px;
+    background: url("../images/icons/index2.png") no-repeat 0 -153px;
     height: 14px;
     margin-top: 2px
 }
 
 .save_ic {
-    background: url("../images/icons/index2.png") no-repeat 0px -169px;
+    background: url("../images/icons/index2.png") no-repeat 0 -169px;
     height: 16px;
     margin-top: 2px
 }
 
 .del_friends {
-    background: url("../images/icons/index2.png") no-repeat 0px -185px
+    background: url("../images/icons/index2.png") no-repeat 0 -185px
 }
 
 .new_gift {
-    background: url("../images/transp.png") no-repeat 0px -75px
+    background: url("../images/transp.png") no-repeat 0 -75px
 }
 
 .doc_ic {
@@ -960,12 +916,12 @@ ul.listing li span {
 .newmes, .newmesnobg {
     background: #f5f5f5;
     padding: 8px;
-    border-top: 0px
+    border-top: 0
 }
 
 .newmesnobg {
     background: #fff;
-    border-bottom: 0px
+    border-bottom: 0
 }
 
 .ava_mini {
@@ -983,10 +939,7 @@ ul.listing li span {
 }
 
 .wallauthor {
-    padding: 4px;
-    padding-top: 2px;
-    padding-bottom: 0px;
-    padding-left: 0px
+    padding: 2px 4px 0 0;
 }
 
 .wallauthor a {
@@ -1083,7 +1036,7 @@ ul.listing li span {
 
 .wall_upage2 {
     border-top: 1px solid #f1f4f7;
-    border-bottom: 0px
+    border-bottom: 0
 }
 
 .wall_repost_border {
@@ -1135,7 +1088,7 @@ ul.listing li span {
 .wall_rec_autoresize {
     float: left;
     width: 500px;
-    margin-left: 0px
+    margin-left: 0
 }
 
 /* LOADING STYLE */
@@ -1164,10 +1117,10 @@ ul.listing li span {
 /* LOADING */
 #loading {
     position: fixed;
-    top: 0px;
-    bottom: 0px;
-    left: 0px;
-    right: 0px;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
     display: none;
     z-index: 100
 }
@@ -1178,25 +1131,23 @@ ul.listing li span {
     background: #000 url('../images/loading.gif') no-repeat center;
     padding: 20px;
     height: 10px;
-    border-radius: 5px; /*-moz-border-radius: 5px; -webkit-border-radius: 5px;box-shadow: 0px 2px 8px 1px #444; -moz-box-shadow: 0px 2px 8px 1px #444; -webkit-box-shadow: 0px 2px 8px 1px #444;*/
+    border-radius: 5px;
     opacity: 0.6
 }
 
 /* BOX SHADOW */
 .box_bg {
-    box-shadow: 0px 0px 15px 1px #666;
-    -moz-box-shadow: 0px 0px 15px 1px #666;
-    -webkit-box-shadow: 0px 0px 15px 1px #666
+    box-shadow: 0 0 15px 1px #666;
 }
 
 /* BOX */
 .box_pos, .photo_view, .video_view, .swf_loaded {
     display: none;
     position: fixed;
-    left: 0px;
-    top: 0px;
-    right: 0px;
-    bottom: 0px;
+    left: 0;
+    top: 0;
+    right: 0;
+    bottom: 0;
     overflow: auto;
     padding-bottom: 20px;
     background: url("../images/bgb22.png");
@@ -1216,7 +1167,7 @@ ul.listing li span {
 .box_conetnt {
     background: #fff;
     border: 1px solid #858585;
-    border-top: 0px;
+    border-top: 0;
     border-bottom: 1px solid #d7d7d7;
     max-height: 500px
 }
@@ -1225,10 +1176,10 @@ ul.listing li span {
     padding: 10px;
     font-size: 13px;
     font-weight: bold;
-    background: url("../images/head.png") repeat-x;
+    background: linear-gradient(45deg, #1993b0, #1993b0, #3db9c2) repeat-x;
     color: #fff;
     border: 1px solid #4c75a0;
-    text-shadow: 0px 1px 0px #4577a7
+    text-shadow: 0 1px 0 #4577a7
 }
 
 .box_close {
@@ -1248,7 +1199,7 @@ ul.listing li span {
     background: #f0f0f0;
     padding: 7px;
     border: 1px solid #858585;
-    border-top: 0px;
+    border-top: 0;
     height: 25px
 }
 
@@ -1269,27 +1220,22 @@ ul.listing li span {
 
 .box_info {
     position: fixed;
-    top: 0px;
-    left: 0px;
-    right: 0px;
-    bottom: 0px;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
     z-index: 100
 }
 
 .box_info_margin {
     width: 300px;
     color: #fff;
-    margin: auto;
     background: url('../images/bgbi.png');
     padding: 15px;
     border-radius: 5px;
-    -moz-border-radius: 5px;
-    -webkit-border-radius: 5px;
-    box-shadow: 0px 2px 8px 1px #444;
-    -moz-box-shadow: 0px 2px 8px 1px #444;
-    -webkit-box-shadow: 0px 2px 8px 1px #444;
-    margin-top: 250px;
-    text-shadow: 0px 1px 0px #262626;
+    box-shadow: 0 2px 8px 1px #444;
+    margin: 250px auto auto;
+    text-shadow: 0 1px 0 #262626;
     z-index: 100
 }
 
@@ -1303,7 +1249,7 @@ ul.listing li span {
 
 .box_turn_panel {
     position: fixed;
-    bottom: 0px
+    bottom: 0
 }
 
 /* LOAD PHOTO */
@@ -1351,10 +1297,7 @@ ul.listing li span {
 }
 
 .albums_cover_photo {
-    margin-bottom: 12px;
-    margin-left: 12px;
-    margin-right: 0px;
-    margin-top: 13px
+    margin: 13px 0 12px 12px;
 }
 
 .albums_name {
@@ -1407,7 +1350,7 @@ ul.listing li span {
 .l_pppho a {
     padding-top: 6px;
     padding-bottom: 6px;
-    border: 0px
+    border: 0
 }
 
 .l_pppho a:hover {
@@ -1422,7 +1365,6 @@ ul.listing li span {
     padding: 5px;
     text-align: right;
     display: none;
-    width: 63px;
     margin-left: 67px
 }
 
@@ -1434,19 +1376,19 @@ ul.listing li span {
 }
 
 .ic_del {
-    background: url("../images/icons/index2.png") no-repeat 0px -185px
+    background: url("../images/icons/index2.png") no-repeat 0 -185px
 }
 
 .ic_cover {
-    background: url("../images/icons/index2.png") no-repeat 0px -201px
+    background: url("../images/icons/index2.png") no-repeat 0 -201px
 }
 
 .ic_edit {
-    background: url("../images/icons/index2.png") no-repeat 0px -217px
+    background: url("../images/icons/index2.png") no-repeat 0 -217px
 }
 
 .ic_posi {
-    background: url("../images/icons/index2.png") no-repeat 0px -121px
+    background: url("../images/icons/index2.png") no-repeat 0 -121px
 }
 
 .ic_mark {
@@ -1454,8 +1396,7 @@ ul.listing li span {
 }
 
 .tooltip {
-    background: url('../images/like_icons_bl.png') no-repeat;
-    background-position: center 0px;
+    background: url('../images/like_icons_bl.png') no-repeat center 0;
     width: 17px;
     height: 10px;
     margin-top: -1px;
@@ -1534,7 +1475,6 @@ ul.listing li span {
     cursor: pointer;
     opacity: 0.5;
     margin-bottom: -10px;
-    font-family: Comic Sans MS;
     padding-top: 2px
 }
 
@@ -1572,8 +1512,6 @@ ul.listing li span {
     height: 53px;
     margin-top: 10px;
     border-radius: 5px;
-    -moz-border-radius: 5px;
-    -webkit-border-radius: 5px
 }
 
 .rateforowne {
@@ -1597,8 +1535,6 @@ ul.listing li span {
 
 .rate_block a img {
     border-radius: 3px;
-    -moz-border-radius: 3px;
-    -webkit-border-radius: 3px;
     float: left;
     margin-right: 10px
 }
@@ -1643,24 +1579,19 @@ ul.listing li span {
 }
 
 .photo_bg, .video_show_bg {
-    box-shadow: 0px 0px 3px 1px #222;
-    -moz-box-shadow: 0px 0px 3px 1px #222;
-    -webkit-box-shadow: 0px 0px 3px 1px #222
+    box-shadow: 0 0 3px 1px #222;
 }
 
 .photo_bg, .video_show_bg {
     width: 810px;
-    margin: auto;
     background: #fff;
     padding: 15px;
-    margin-top: 17px
+    margin: 17px auto auto;
 }
 
 .photo_bg {
     width: 770px;
-    padding: 20px;
-    padding-top: 15px;
-    padding-bottom: 10px
+    padding: 15px 20px 10px;
 }
 
 .photo_descr {
@@ -1743,13 +1674,13 @@ ul.listing li span {
 .next_link {
     background: url("../images/rightb2.png") no-repeat -10px 0;
     float: right;
-    margin-left: 0px;
+    margin-left: 0;
     margin-right: -15px
 }
 
 .comm_wr, .comm_wr_all {
     border-top: 1px solid #f1f4f7;
-    border-bottom: 0px;
+    border-bottom: 0;
     width: 535px
 }
 
@@ -1928,11 +1859,9 @@ ul.listing li span {
 }
 
 .fave_input {
-    background: #fff url("../images/inp_se.png") no-repeat;
-    background-position: 5px;
+    background: #fff url("../images/inp_se.png") no-repeat 5px;
     border: 1px solid #c6d4dc;
-    padding: 5px;
-    padding-left: 25px;
+    padding: 5px 5px 5px 25px;
     margin-left: 4px;
     color: #c1cad0;
     width: 723px;
@@ -1941,7 +1870,7 @@ ul.listing li span {
 }
 
 .onefaveu td {
-    padding: 0px
+    padding: 0
 }
 
 .fave_del_ic {
@@ -1987,8 +1916,7 @@ ul.listing li span {
 }
 
 .msg_pad {
-    padding: 10px;
-    padding-right: 0px
+    padding: 10px 0 10px 10px;
 }
 
 .msg_left_col {
@@ -2088,14 +2016,12 @@ ul.listing li span {
 
 .msg_none {
     background: #f5f5f5;
-    padding: 10px;
     text-align: center;
     font-size: 13px;
     color: #888;
     margin-top: 10px;
-    margin-top: 0px;
     height: 50px;
-    padding-top: 50px
+    padding: 50px 10px 10px;
 }
 
 .msg_view_histroy {
@@ -2119,9 +2045,8 @@ ul.listing li span {
 }
 
 .msg_onehistory {
-    padding: 5px 0px 5px 0px;
     margin-bottom: 5px;
-    padding-right: 10px
+    padding: 5px 10px 5px 0;
 }
 
 .msg_history_name {
@@ -2169,8 +2094,7 @@ ul.listing li span {
 
 .msg_speedbar {
     color: #5d8ebe;
-    padding: 5px;
-    padding-left: 0px;
+    padding: 5px 5px 5px 0;
     font-weight: bold
 }
 
@@ -2180,16 +2104,16 @@ ul.listing li span {
 }
 
 .msg_new_mes_ic_photo, .msg_new_mes_ic_video, .msg_new_mes_ic_smile, .msg_new_mes_ic_audio, .msg_new_mes_ic_doc {
-    background: url("../images/icons/index2.png") no-repeat 0px -265px;
+    background: url("../images/icons/index2.png") no-repeat 0 -265px;
     padding-left: 19px
 }
 
 .msg_new_mes_ic_video {
-    background: url("../images/icons/index2.png") no-repeat 0px -277px
+    background: url("../images/icons/index2.png") no-repeat 0 -277px
 }
 
 .msg_new_mes_ic_smile {
-    background: url("../images/icons/index2.png") no-repeat 0px -289px
+    background: url("../images/icons/index2.png") no-repeat 0 -289px
 }
 
 .msg_new_mes_ic_audio {
@@ -2270,14 +2194,14 @@ ul.listing li span {
 }
 
 .note_text_full {
-    border-top: 0px;
+    border-top: 0;
     margin-bottom: 10px
 }
 
 .note_wr_comm {
     word-wrap: break-word;
     border-top: 1px solid #f1f4f7;
-    border-bottom: 0px;
+    border-bottom: 0;
     padding-bottom: 10px
 }
 
@@ -2287,9 +2211,8 @@ ul.listing li span {
 
 .note_add_bg {
     background: #f5f5f5;
-    margin: -15px;
     padding: 25px 40px 25px 40px;
-    margin-bottom: -15px
+    margin: -15px;
 }
 
 .note_pos {
@@ -2319,11 +2242,7 @@ ul.listing li span {
     width: 435px;
     background: #fff;
     margin-bottom: 10px;
-    box-shadow: inset 0px 1px 3px 0px #e1e1e1;
-    -moz-box-shadow: inset 0px 1px 3px 0px #e1e1e1;
-    -webkit-box-shadow: inset 0px 1px 3px 0px #e1e1e1;
-    -moz-border-radius: 3px;
-    -webkit-border-radius: 3px;
+    box-shadow: inset 0 1px 3px 0 #e1e1e1;
     border-radius: 3px;
     resize: none
 }
@@ -2398,7 +2317,7 @@ ul.listing li span {
 }
 
 .video_show_bg {
-    padding: 0px
+    padding: 0
 }
 
 .video_show_object {
@@ -2433,8 +2352,7 @@ ul.listing li span {
 
 .video_show_panel {
     background: #fff;
-    padding: 20px;
-    padding-top: 10px
+    padding: 10px 20px 20px;
 }
 
 .video_show_date {
@@ -2503,32 +2421,28 @@ ul.listing li span {
     padding: 10px;
     margin-top: 44px;
     border: 1px solid #b9c7d4;
-    border-top: 0px;
+    border-top: 0;
     margin-left: 178px;
-    box-shadow: 0px 1px 1px 1px #e1e1e1;
-    -moz-box-shadow: 0px 1px 1px 1px #e1e1e1;
-    -webkit-box-shadow: 0px 1px 1px 1px #e1e1e1
+    box-shadow: 0 1px 1px 1px #e1e1e1;
 }
 
 .search_input {
     width: 180px;
     float: left;
-    margin: 0px;
-    border-right: 0px;
-    padding-right: 0px
+    margin: 0;
+    border-right: 0;
+    padding-right: 0
 }
 
 .search_type {
-    background-position: 5px;
     background: url("../images/sel.gif") no-repeat right;
     border: 1px solid #c6d4dc;
-    padding: 5px;
     color: #999;
     float: left;
     width: 100px;
-    border-left: 0px;
+    border-left: 0;
     text-align: right;
-    padding-right: 15px;
+    padding: 5px 15px 5px 5px;
     cursor: pointer
 }
 
@@ -2539,13 +2453,11 @@ ul.listing li span {
 .search_alltype_sel {
     position: absolute;
     background: #fff;
-    box-shadow: 0px 1px 1px 1px #e1e1e1;
-    -moz-box-shadow: 0px 1px 1px 1px #e1e1e1;
-    -webkit-box-shadow: 0px 1px 1px 1px #e1e1e1;
+    box-shadow: 0 1px 1px 1px #e1e1e1;
     border: 1px solid #b9c7d4;
     margin-left: 215px;
     margin-top: 25px;
-    border-top: 0px;
+    border-top: 0;
     z-index: 100
 }
 
@@ -2572,9 +2484,7 @@ ul.listing li span {
 }
 
 .search_result_title {
-    padding: 5px;
-    padding-left: 0px;
-    padding-top: 10px;
+    padding: 10px 5px 5px 0;
     font-weight: bold;
     color: #5081b1
 }
@@ -2621,9 +2531,8 @@ ul.listing li span {
 .search_form_tab {
     color: #21578b;
     background: #f7f7f7;
-    margin: -15px;
     padding: 10px;
-    margin-top: -9px
+    margin: -9px -15px -15px;
 }
 
 .search_videos_res {
@@ -2641,15 +2550,15 @@ ul.listing li span {
 }
 
 .html_checkbox:hover {
-    background: url("../images/checkbox.gif") no-repeat 0px -28px
+    background: url("../images/checkbox.gif") no-repeat 0 -28px
 }
 
 .html_checked {
-    background: url("../images/checkbox.gif") no-repeat 0px -14px
+    background: url("../images/checkbox.gif") no-repeat 0 -14px
 }
 
 .html_checked:hover {
-    background: url("../images/checkbox.gif") no-repeat 0px -42px
+    background: url("../images/checkbox.gif") no-repeat 0 -42px
 }
 
 /* FOR WALL */
@@ -2676,7 +2585,7 @@ ul.listing li span {
 }
 
 .wall_fast_opened_form {
-    margin-top: 0px;
+    margin-top: 0;
     margin-left: 60px;
     margin-bottom: 10px
 }
@@ -2727,7 +2636,7 @@ ul.listing li span {
 .wall_fast_opened_texta {
     height: 33px;
     color: #000;
-    margin: 0px
+    margin: 0
 }
 
 .wall_like, .wall_like_active {
@@ -2744,7 +2653,7 @@ ul.listing li span {
 
 .wall_like_active {
     background: #fff;
-    padding-right: 0px
+    padding-right: 0
 }
 
 .wall_like_active div {
@@ -2774,9 +2683,7 @@ ul.listing li span {
 .wall_liked_block {
     position: absolute;
     margin-left: 380px;
-    box-shadow: 0px 1px 1px 1px #e1e1e1;
-    -moz-box-shadow: 0px 1px 1px 1px #e1e1e1;
-    -webkit-box-shadow: 0px 1px 1px 1px #e1e1e1;
+    box-shadow: 0 1px 1px 1px #e1e1e1;
     width: 175px;
     margin-top: -72px;
     height: 67px
@@ -2786,7 +2693,7 @@ ul.listing li span {
     background: #5687b8;
     color: #fff;
     font-size: 11px;
-    text-shadow: 0px 1px 0px #4577a8;
+    text-shadow: 0 1px 0 #4577a8;
     border: 1px solid #396c9e
 }
 
@@ -2798,10 +2705,9 @@ ul.listing li span {
 
 .wall_liked_users {
     background: #fff;
-    padding: 8px;
     border: 1px solid #aebdcc;
-    border-top: 0px;
-    padding-right: 0px
+    border-top: 0;
+    padding: 8px 0 8px 8px;
 }
 
 .wall_liked_users a img {
@@ -2859,9 +2765,7 @@ ul.listing li span {
     position: absolute;
     width: 100px;
     background: #fff;
-    box-shadow: 0px 1px 1px 1px #e9e9e9;
-    -moz-box-shadow: 0px 1px 1px 1px #e9e9e9;
-    -webkit-box-shadow: 0px 1px 1px 1px #e9e9e9;
+    box-shadow: 0 1px 1px 1px #e9e9e9;
     border: 1px solid #c6d4dc;
     margin-left: 450px;
     margin-top: 33px;
@@ -2952,7 +2856,7 @@ ul.listing li span {
 }
 
 .wall_attach_del:hover {
-    background: url("../images/file_del.png") no-repeat 0px -13px
+    background: url("../images/file_del.png") no-repeat 0 -13px
 }
 
 .wall_onevideo {
@@ -2994,7 +2898,7 @@ ul.listing li span {
 }
 
 .wall_tell {
-    background: url("../images/transp.png") no-repeat 0px -48px;
+    background: url("../images/transp.png") no-repeat 0 -48px;
     width: 11px;
     height: 11px;
     float: right;
@@ -3002,7 +2906,7 @@ ul.listing li span {
 }
 
 .wall_tell:hover {
-    background: url("../images/transp.png") no-repeat 0px -62px;
+    background: url("../images/transp.png") no-repeat 0 -62px;
     width: 11px;
     height: 11px;
     float: right;
@@ -3129,7 +3033,7 @@ ul.listing li span {
 .wysiwyg_bbpanel {
     background: #f0f0f0;
     border: 1px solid #c6d4dc;
-    border-bottom: 0px;
+    border-bottom: 0;
     padding: 5px
 }
 
@@ -3298,9 +3202,7 @@ ul.listing li span {
     background: #fff;
     position: absolute;
     margin-left: 140px;
-    box-shadow: 0px 1px 1px 1px #e1e1e1;
-    -moz-box-shadow: 0px 1px 1px 1px #e1e1e1;
-    -webkit-box-shadow: 0px 1px 1px 1px #e1e1e1;
+    box-shadow: 0 1px 1px 1px #e1e1e1;
     max-width: 520px;
     min-width: 105px;
     margin-top: 10px
@@ -3344,9 +3246,7 @@ ul.listing li span {
     position: absolute;
     background: #fff;
     margin-left: 302px;
-    box-shadow: 0px 1px 1px 1px #e1e1e1;
-    -moz-box-shadow: 0px 1px 1px 1px #e1e1e1;
-    -webkit-box-shadow: 0px 1px 1px 1px #e1e1e1;
+    box-shadow: 0 1px 1px 1px #e1e1e1;
     border: 1px solid #aebdcc;
     color: #21578b;
     margin-top: -13px
@@ -3402,8 +3302,7 @@ ul.listing li span {
 /* SUPPORT */
 .support_bg {
     margin-top: -30px;
-    padding: 40px;
-    padding-left: 100px
+    padding: 40px 40px 40px 100px;
 }
 
 .support_addform {
@@ -3460,13 +3359,10 @@ ul.listing li span {
     position: static;
     width: 150px;
     border-left: 1px solid #e4e7eb;
-    border-top: 0px;
-    margin-top: 0px;
-    margin-left: 0px;
+    border-top: 0;
     padding: 10px;
     color: #555;
-    margin-right: -12px;
-    margin-bottom: -15px
+    margin: 0 -12px -15px 0;
 }
 
 .blogthr {
@@ -3506,7 +3402,7 @@ ul.listing li span {
 .public_title {
     font-weight: bold;
     font-size: 12px;
-    padding-bottom: 0px;
+    padding-bottom: 0;
     color: #5d8ebe
 }
 
@@ -3514,16 +3410,9 @@ ul.listing li span {
     background: #6b9aca;
     color: #fff;
     font-weight: bold;
-    padding: 5px;
-    padding-left: 7px;
+    padding: 5px 5px 5px 7px;
     border-top-left-radius: 5px;
     border-top-right-radius: 5px;
-    -moz-border-top-left-radius: 5px;
-    -moz-border-top-right-radius: 5px;
-    -webkit-border-top-left-radius: 5px;
-    -webkit-border-top-right-radius: 5px;
-    -khtml-border-top-left-radius: 5px;
-    -khtml-border-top-right-radius: 5px;
 }
 
 .public_vlock a {
@@ -3531,22 +3420,15 @@ ul.listing li span {
 }
 
 .public_bg {
-    padding: 9px;
     background: #f5f5f5;
     margin-bottom: 10px;
-    padding-left: 7px;
+    padding: 9px 9px 9px 7px;
     border-bottom-left-radius: 5px;
     border-bottom-right-radius: 5px;
-    -moz-border-bottom-left-radius: 5px;
-    -moz-border-bottom-right-radius: 5px;
-    -webkit-border-bottom-left-radius: 5px;
-    -webkit-border-bottom-right-radius: 5px;
-    -khtml-border-bottom-left-radius: 5px;
-    -khtml-border-bottom-right-radius: 5px;
 }
 
 .oneusers {
-    margin-left: 0px;
+    margin-left: 0;
     margin-right: 16px
 }
 
@@ -3586,7 +3468,6 @@ ul.listing li span {
 .public_minilink a {
     font-size: 11px;
     font-weight: normal;
-    font-size: 10px
 }
 
 #public_editbg_container {
@@ -3658,7 +3539,6 @@ ul.listing li span {
     overflow: hidden;
     margin: 3px;
     height: 60px;
-    overflow: hidden;
     text-align: center;
     border: 1px solid #ddd;
     padding: 5px
@@ -3709,8 +3589,6 @@ ul.listing li span {
 
 .public_wall_like:hover {
     background: #e9eff3;
-    -moz-border-radius: 3px;
-    -webkit-border-radius: 3px;
     border-radius: 3px;
 }
 
@@ -3743,19 +3621,14 @@ ul.listing li span {
     cursor: pointer;
     background: url('../images/mv_bg.png');
     background: rgba(0, 0, 0, 0.7);
-    text-shadow: 0px 1px 0px #262626;
+    text-shadow: 0 1px 0 #262626;
     font-weight: bold;
     font-size: 11px;
-    padding: 8px 9px 8px 9px;
-    padding-right: 0px;
+    padding: 8px 0 8px 9px;
     margin-top: -81px;
     margin-left: 380px;
     height: 52px;
-    -moz-border-radius: 5px;
-    -webkit-border-radius: 5px;
     border-radius: 5px;
-    -moz-box-shadow: 0 1px 3px rgba(0, 0, 0, 0.28);
-    -webkit-box-shadow: 0 1px 3px rgba(0, 0, 0, 0.28);
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.28);
 }
 
@@ -3766,21 +3639,16 @@ ul.listing li span {
 .public_likes_user_block img {
     float: left;
     margin-right: 5px;
-    -moz-box-shadow: 0 1px 1px rgba(0, 0, 0, 0.3);
-    -webkit-box-shadow: 0 1px 1px rgba(0, 0, 0, 0.3);
     box-shadow: 0 1px 1px rgba(0, 0, 0, 0.3);
-    -moz-border-radius: 3px;
-    -webkit-border-radius: 3px;
     border-radius: 3px
 }
 
 .public_like_strelka {
-    background: url('../images/like_icons_bl.png') no-repeat;
     width: 120px;
     height: 9px;
     position: absolute;
     margin-top: -3px;
-    background-position: center 0px
+    background: url('../images/like_icons_bl.png') no-repeat center 0;
 }
 
 .public_wall_likes_hidden {
@@ -3798,17 +3666,13 @@ ul.listing li span {
     color: #fff;
     background: url('../images/mv_bg.png');
     background: rgba(0, 0, 0, 0.7);
-    text-shadow: 0px 1px 0px #262626;
+    text-shadow: 0 1px 0 #262626;
     font-size: 11px;
     padding: 5px 7px 5px 7px;
-    border: 0px;
+    border: 0;
     margin-left: -2px;
     font-weight: bold;
-    -moz-border-radius: 5px;
-    -webkit-border-radius: 5px;
     border-radius: 5px;
-    -moz-box-shadow: 0 1px 3px rgba(0, 0, 0, 0.28);
-    -webkit-box-shadow: 0 1px 3px rgba(0, 0, 0, 0.28);
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.28);
 }
 
@@ -3832,11 +3696,7 @@ ul.listing li span {
 .inpst {
     border: 1px solid #c6d4dc;
     padding: 3px 4px;
-    box-shadow: inset 0px 1px 3px 0px #e1e1e1;
-    -moz-box-shadow: inset 0px 1px 3px 0px #e1e1e1;
-    -webkit-box-shadow: inset 0px 1px 3px 0px #e1e1e1;
-    -moz-border-radius: 3px;
-    -webkit-border-radius: 3px;
+    box-shadow: inset 0 1px 3px 0 #e1e1e1;
     border-radius: 3px;
     resize: none
 }
@@ -3886,7 +3746,7 @@ ul.listing li span {
 }
 
 .no_border {
-    border: 0px
+    border: 0
 }
 
 .border_radius_3 {
@@ -3905,9 +3765,7 @@ ul.listing li span {
 }
 
 .allbar_title {
-    padding: 5px;
-    padding-left: 0px;
-    padding-top: 10px;
+    padding: 10px 5px 5px 0;
     font-weight: bold;
     color: #5081b1;
     border-bottom: 1px solid #e0eaef;
@@ -3930,13 +3788,13 @@ ul.listing li span {
 }
 
 .buttonsprofileSecond a {
-    border: 0px;
+    border: 0;
     padding: 5px 7px 4px 7px
 }
 
 .buttonsprofileSecond a:hover {
     background: #e1e7ed;
-    border: 0px;
+    border: 0;
     padding: 5px 7px 4px 7px
 }
 
@@ -3944,9 +3802,6 @@ ul.listing li span {
     background: #2b9eb3;
     color: #fff;
     border-radius: 2px;
-    -moz-border-radius: 2px;
-    -webkit-border-radius: 2px;
-    -khtml-border-radius: 2px;
     padding: 5px 7px 4px 7px
 }
 
@@ -3997,22 +3852,7 @@ ul.listing li span {
     text-align: center;
     float: left;
     margin-left: 3px;
-    border-top-left-radius: 5px;
-    border-top-right-radius: 5px;
-    -moz-border-top-left-radius: 5px;
-    -moz-border-top-right-radius: 5px;
-    -webkit-border-top-left-radius: 5px;
-    -webkit-border-top-right-radius: 5px;
-    -khtml-border-top-left-radius: 5px;
-    -khtml-border-top-right-radius: 5px;
-    border-bottom-left-radius: 5px;
-    border-bottom-right-radius: 5px;
-    -moz-border-bottom-left-radius: 5px;
-    -moz-border-bottom-right-radius: 5px;
-    -webkit-border-bottom-left-radius: 5px;
-    -webkit-border-bottom-right-radius: 5px;
-    -khtml-border-bottom-left-radius: 5px;
-    -khtml-border-bottom-right-radius: 5px;
+    border-radius: 5px;
     min-height: 118px;
     min-width: 96px;
 }
@@ -4026,23 +3866,13 @@ ul.listing li span {
     background: #6394c3;
     color: #fff;
     padding: 2px;
-    margin: -5px;
     border-bottom-left-radius: 5px;
     border-bottom-right-radius: 5px;
-    -moz-border-bottom-left-radius: 5px;
-    -moz-border-bottom-right-radius: 5px;
-    -webkit-border-bottom-left-radius: 5px;
-    -webkit-border-bottom-right-radius: 5px;
-    -khtml-border-bottom-left-radius: 5px;
-    -khtml-border-bottom-right-radius: 5px;
-    margin-top: 5px;
+    margin: 5px -5px -5px;
 }
 
 .gift_onepage {
-    margin: 5px;
-    margin-left: 10px;
-    margin-top: 10px;
-    margin-bottom: 0px
+    margin: 10px 5px 0 10px;
 }
 
 /* AUDIO */
@@ -4055,23 +3885,20 @@ ul.listing li span {
 }
 
 .audio_onetrack a {
-    c1olor: #5081b1
+    color: #5081b1
 }
 
 .audio_playic, .audio_stopic {
-    background: url("../images/transp.png") no-repeat 0px -92px;
+    background: url("../images/transp.png") no-repeat 0 -92px;
     width: 16px;
     height: 16px;
     margin-right: 7px;
     margin-top: -1px;
     border-radius: 3px;
-    -moz-border-radius: 3px;
-    -webkit-border-radius: 3px;
-    -khtml-border-radius: 3px;
 }
 
 .audio_stopic {
-    background: url("../images/transp.png") no-repeat 0px -108px
+    background: url("../images/transp.png") no-repeat 0 -108px
 }
 
 .audio_addmylistic {
@@ -4129,13 +3956,11 @@ ul.listing li span {
     padding-top: 7px;
     margin-right: 10px;
     border-radius: 5px;
-    -moz-border-radius: 5px;
-    -webkit-border-radius: 5px;
-    -khtml-border-radius: 5px;
+
 }
 
 .player_ic_play {
-    background: url("../images/transp.png") no-repeat 0px -125px;
+    background: url("../images/transp.png") no-repeat 0 -125px;
     width: 23px;
     height: 23px;
     margin-left: 11px
@@ -4149,21 +3974,21 @@ ul.listing li span {
 }
 
 .player_ic_next {
-    background: url("../images/transp.png") no-repeat 0px -147px;
+    background: url("../images/transp.png") no-repeat 0 -147px;
     width: 23px;
     height: 23px;
     margin-left: 11px
 }
 
 .player_ic_prev {
-    background: url("../images/transp.png") no-repeat 0px -171px;
+    background: url("../images/transp.png") no-repeat 0 -171px;
     width: 23px;
     height: 23px;
     margin-left: 8px
 }
 
 .player_del_volume {
-    background: url("../images/transp.png") no-repeat 0px -222px;
+    background: url("../images/transp.png") no-repeat 0 -222px;
     width: 23px;
     height: 23px;
     margin-left: 8px;
@@ -4172,7 +3997,7 @@ ul.listing li span {
 }
 
 .player_max_volume {
-    background: url("../images/transp.png") no-repeat 0px -197px;
+    background: url("../images/transp.png") no-repeat 0 -197px;
     width: 29px;
     height: 23px;
     margin-left: 8px;
@@ -4180,7 +4005,7 @@ ul.listing li span {
 }
 
 .player_refresh {
-    background: url("../images/transp.png") no-repeat 0px -247px;
+    background: url("../images/transp.png") no-repeat 0 -247px;
     width: 29px;
     height: 23px;
     margin-left: 8px;
@@ -4188,7 +4013,7 @@ ul.listing li span {
 }
 
 .player_rand {
-    background: url("../images/transp.png") no-repeat 0px -269px;
+    background: url("../images/transp.png") no-repeat 0 -269px;
     width: 29px;
     height: 23px;
     opacity: 0.4;
@@ -4203,12 +4028,12 @@ ul.listing li span {
 .player_time_text {
     margin-left: 5px;
     color: #b4b4b4;
-    text-shadow: 0px 1px 0px #fff
+    text-shadow: 0 1px 0 #fff
 }
 
 .player_track_name {
     color: #666;
-    text-shadow: 0px 1px 0px #fff
+    text-shadow: 0 1px 0 #fff
 }
 
 /*e8ecf0*/
@@ -4218,28 +4043,21 @@ ul.listing li span {
     background: #eee;
     margin-top: 3px;
     border-radius: 5px;
-    -moz-border-radius: 5px;
-    -webkit-border-radius: 5px;
-    -khtml-border-radius: 5px;
+
 }
 
 .player_mini_mbar {
     height: 5px;
-    margin-left: 20px;
     margin-top: 10px;
     width: 768px;
     margin-bottom: 10px;
-    margin-left: -2px
 }
 
 #player_volume_bar_value, #player_progress_load_bar, #player_progress_play_bar {
     background: #6394c3;
-    width: 0px;
+    width: 0;
     height: 20px;
     border-radius: 5px;
-    -moz-border-radius: 5px;
-    -webkit-border-radius: 5px;
-    -khtml-border-radius: 5px;
 }
 
 #player_progress_load_bar {
@@ -4262,27 +4080,24 @@ ul.listing li span {
 }
 
 .audio_wall_onemus {
-    padding: 0px;
-    margin: 0px;
     height: 30px;
-    padding-top: 7px;
-    margin-bottom: 7px;
-    margin-right: 2px
+    padding: 7px 0 0;
+    margin: 0 2px 7px 0;
 }
 
 .player_mini_mbar_wall {
     width: 500px;
-    margin-bottom: 0px
+    margin-bottom: 0
 }
 
 .player_mini_mbar_wall_all {
     width: 710px;
-    margin-bottom: 0px
+    margin-bottom: 0
 }
 
 .player_mini_mbar_wall_all2 {
     width: 660px;
-    margin-bottom: 0px
+    margin-bottom: 0
 }
 
 #audioForSize {
@@ -4317,9 +4132,8 @@ ul.listing li span {
     padding: 15px;
     float: left;
     width: 210px;
-    margin: -12px;
     color: #555;
-    margin-bottom: -15px;
+    margin: -12px -12px -15px;
     border-right: 1px solid #e4e7eb;
     height: 546px;
     overflow-y: scroll
@@ -4327,10 +4141,8 @@ ul.listing li span {
 
 .im_flblock a {
     float: left;
-    padding: 6px;
     margin-right: 14px;
-    padding-left: 9px;
-    padding-right: 9px
+    padding: 6px 9px;
 }
 
 .im_flblock a:hover {
@@ -4342,9 +4154,7 @@ ul.listing li span {
     background: #88a7c6;
     border: 1px solid #5081b1;
     color: #fff;
-    padding: 5px;
-    padding-left: 9px;
-    padding-right: 9px
+    padding: 5px 9px;
 }
 
 .im_flblock div a:hover {
@@ -4352,14 +4162,10 @@ ul.listing li span {
 }
 
 .im_oneusr {
-    margin-top: 15px;
     color: #506b8c;
-    text-shadow: 0px 1px 0px #ecedef;
+    text-shadow: 0 1px 0 #ecedef;
     padding: 8px;
-    margin-left: -8px;
-    margin-right: -8px;
-    margin-bottom: -2px;
-    margin-top: 7px
+    margin: 15px -8px -2px;
 }
 
 .im_nameu {
@@ -4372,24 +4178,15 @@ ul.listing li span {
     height: 35px;
     float: left;
     margin-right: 10px;
-    border-radius: 3px;
-    -moz-border-radius: 3px;
-    -webkit-border-radius: 3px;
-    -khtml-border-radius: 3px;
+
 }
 
 .im_usactive, .im_oneusr:hover {
     background: #e1e7ed;
     padding: 8px;
-    margin-left: -8px;
-    margin-right: -8px;
-    margin-bottom: -2px;
-    margin-top: 7px;
-    box-shadow: inset 0px 1px 4px 0px #c9cfd6;
+    margin: 7px -8px -2px;
+    box-shadow: inset 0 1px 4px 0 #c9cfd6;
     border-radius: 3px;
-    -moz-border-radius: 3px;
-    -webkit-border-radius: 3px;
-    -khtml-border-radius: 3px;
 }
 
 .im_oneusr:hover {
@@ -4399,35 +4196,26 @@ ul.listing li span {
 
 .im_new {
     background: #e1e7ed;
-    padding: 6px;
     color: #607387;
     font-weight: bold;
-    padding-top: 3px;
-    padding-bottom: 3px;
+    padding: 3px 6px;
     margin-top: 7px;
-    border-radius: 5px;
-    -moz-border-radius: 5px;
-    -webkit-border-radius: 5px;
-    -khtml-border-radius: 5px;
 }
 
 .im_usactive:hover {
     background: #e1e7ed;
-    box-shadow: inset 0px 1px 4px 0px #c9cfd6
+    box-shadow: inset 0 1px 4px 0 #c9cfd6
 }
 
 .im_head {
-    margin-left: 20px;
-    margin-top: -10px;
     min-height: 550px;
     width: 545px;
-    margin-right: -15px;
     padding-top: 7px;
-    margin-bottom: -22px
+    margin: -10px -15px -22px 20px;
 }
 
 .im_msg {
-    border: 0px;
+    border: 0;
     padding-bottom: 5px;
     padding-top: 5px;
     width: 500px;
@@ -4448,7 +4236,7 @@ ul.listing li span {
 
 .im_addform {
     margin-left: -8px;
-    margin-top: 0px;
+    margin-top: 0;
     width: 523px;
     margin-bottom: 7px;
     background: #f5f5f5
@@ -4465,9 +4253,6 @@ ul.listing li span {
 
 .im_ava_mini img, .im_msg_texta {
     border-radius: 3px;
-    -moz-border-radius: 3px;
-    -webkit-border-radius: 3px;
-    -khtml-border-radius: 3px
 }
 
 .im_msg_texta {
@@ -4499,9 +4284,7 @@ ul.listing li span {
     display: none;
     z-index: 105;
     cursor: default;
-    box-shadow: 0px 0px 15px 1px #444;
-    -moz-box-shadow: 0px 0px 15px 1px #444;
-    -webkit-box-shadow: 0px 0px 15px 1px #444
+    box-shadow: 0 0 15px 1px #444;
 }
 
 .distin_inpbg {
@@ -4521,10 +4304,7 @@ ul.listing li span {
     padding: 5px;
     color: #21578b;
     cursor: pointer;
-    margin-top: 0px;
-    margin-bottom: 0px;
-    margin-left: 2px;
-    margin-right: 2px
+    margin: 0 2px;
 }
 
 .distin_friends_list div:hover {
@@ -4541,7 +4321,7 @@ ul.listing li span {
 .distin_del_user {
     opacity: 0.5;
     cursor: pointer;
-    margin-left: 0px
+    margin-left: 0
 }
 
 .distin_del_user:hover {
@@ -4558,7 +4338,7 @@ ul.listing li span {
     background: none;
     color: #21578b;
     width: 543px;
-    margin-left: 0px;
+    margin-left: 0;
     margin-top: 3px;
     margin-bottom: -4px
 }
@@ -4578,8 +4358,6 @@ ul.listing li span {
 .profile_onefriend_happy img {
     width: 90px;
     margin-right: 5px;
-    -moz-border-radius: 3px;
-    -webkit-border-radius: 3px;
     border-radius: 3px
 }
 
@@ -4601,7 +4379,7 @@ ul.listing li span {
     background: none;
     color: #21578b;
     width: 175px;
-    margin-left: 0px
+    margin-left: 0;
 }
 
 /* FAST SEARCH */
@@ -4613,20 +4391,14 @@ ul.listing li span {
     margin-top: 90px;
     margin-left: 176px;
     border-radius: 3px;
-    -moz-border-radius: 3px;
-    -webkit-border-radius: 3px;
-    box-shadow: 0px 0px 6px #999999;
-    -moz-box-shadow: 0px 0px 6px #999999;
-    -webkit-box-shadow: 0px 0px 6px #999999;
+    box-shadow: 0 0 6px #999999;
 }
 
 .fast_search_bg a {
     display: block;
     font-weight: bold;
     line-height: 17px;
-    padding: 5px;
-    padding-left: 8px;
-    padding-right: 8px
+    padding: 5px 8px;
 }
 
 .fast_search_bg ad:hover {
@@ -4637,8 +4409,6 @@ ul.listing li span {
     float: left;
     border-radius: 3px;
     margin-right: 10px;
-    -moz-border-radius: 3px;
-    -webkit-border-radius: 3px
 }
 
 .fast_search_bg span {
@@ -4661,11 +4431,11 @@ ul.listing li span {
 /* INSTANT UPDATES */
 #updates {
     position: fixed;
-    left: 0px;
-    right: 0px;
-    bottom: 0px;
+    left: 0;
+    right: 0;
+    bottom: 0;
     width: 350px;
-    height: 0px;
+    height: 0;
     padding-top: 10px;
     z-index: 100
 }
@@ -4674,7 +4444,7 @@ ul.listing li span {
     margin-bottom: 15px;
     margin-left: 15px;
     position: static;
-    bottom: 0px
+    bottom: 0
 }
 
 .update_box_margin {
@@ -4684,12 +4454,8 @@ ul.listing li span {
     background: url('../images/bgbi.png');
     padding: 10px;
     border-radius: 5px;
-    -moz-border-radius: 5px;
-    -webkit-border-radius: 5px;
-    box-shadow: 0px 2px 8px 1px #444;
-    -moz-box-shadow: 0px 2px 8px 1px #444;
-    -webkit-box-shadow: 0px 2px 8px 1px #444;
-    text-shadow: 0px 1px 0px #262626;
+    box-shadow: 0 2px 8px 1px #444;
+    text-shadow: 0 1px 0 #262626;
     z-index: 100;
     line-height: 15px
 }
@@ -4703,11 +4469,7 @@ ul.listing li span {
     float: left;
     margin-right: 10px;
     margin-bottom: 4px;
-    -moz-box-shadow: 0 1px 1px rgba(0, 0, 0, 0.8);
-    -webkit-box-shadow: 0 1px 1px rgba(0, 0, 0, 0.8);
     box-shadow: 0 1px 1px rgba(0, 0, 0, 0.8);
-    -moz-border-radius: 3px;
-    -webkit-border-radius: 3px;
     border-radius: 3px
 }
 
@@ -4718,7 +4480,7 @@ ul.listing li span {
 .update_inpad a {
     color: #b1daff;
     font-weight: bold;
-    text-shadow: 0px 1px 0px #000;
+    text-shadow: 0 1px 0 #000;
     word-wrap: break-word
 }
 
@@ -4736,11 +4498,7 @@ ul.listing li span {
     background: rgba(0, 0, 0, 0.6);
     padding-left: 6px;
     padding-top: 6px;
-    -moz-border-radius: 5px;
-    -webkit-border-radius: 5px;
     border-radius: 5px;
-    -moz-box-shadow: 0 1px 3px rgba(0, 0, 0, 0.28);
-    -webkit-box-shadow: 0 1px 3px rgba(0, 0, 0, 0.28);
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.28);
 }
 
@@ -4762,11 +4520,8 @@ ul.listing li span {
 /* DOCUMENTS */
 .doc_block {
     border-bottom: 1px solid #eee;
-    padding: 10px;
     margin: 8px;
-    padding-left: 0px;
-    padding-right: 5px;
-    padding-top: 2px
+    padding: 2px 5px 10px 0;
 }
 
 .doc_format_bg {
@@ -4776,8 +4531,6 @@ ul.listing li span {
     padding: 4px 4px 4px 7px;
     width: 41px;
     border-radius: 3px;
-    -moz-border-radius: 3px;
-    -webkit-border-radius: 3px;
 }
 
 .doc_name {
@@ -4805,7 +4558,7 @@ ul.listing li span {
     float: right;
     color: #21578b;
     cursor: pointer;
-    margin-top: 0px
+    margin-top: 0
 }
 
 .doc_sel:hover {
@@ -4922,10 +4675,7 @@ ul.listing li span {
 }
 
 .forum_infos_div {
-    margin-top: 10px;
-    margin-left: 7px;
-    margin-right: 7px;
-    margin-bottom: 0px;
+    margin: 10px 7px 0;
     line-height: 17px
 }
 
@@ -4967,7 +4717,7 @@ ul.listing li span {
 }
 
 .video_inline_vititle {
-    background: url("../images/icons/index2.png") no-repeat 0px -276px;
+    background: url("../images/icons/index2.png") no-repeat 0 -276px;
     float: left;
     width: 16px;
     height: 13px;
@@ -4992,10 +4742,10 @@ ul.listing li span {
 /* MINIATURE */
 .miniature_box {
     position: fixed;
-    left: 0px;
-    top: 0px;
-    right: 0px;
-    bottom: 0px;
+    left: 0;
+    top: 0;
+    right: 0;
+    bottom: 0;
     overflow: auto;
     padding-bottom: 20px;
     background: url("../images/bgb3.png");
@@ -5004,13 +4754,10 @@ ul.listing li span {
 
 .miniature_pos {
     width: 645px;
-    margin: auto;
     background: #fff;
     padding: 20px;
-    margin-top: 100px;
-    box-shadow: 0px 2px 10px rgba(0, 0, 0, 0.345);
-    -moz-box-shadow: 0px 2px 10px rgba(0, 0, 0, 0.345);
-    -webkit-box-shadow: 0px 2px 10px rgba(0, 0, 0, 0.345);
+    margin: 100px auto auto;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.345);
     font-size: 13px
 }
 
@@ -5064,7 +4811,7 @@ ul.listing li span {
     text-align: center;
     padding: 10px;
     margin: 20px -15px -15px -15px;
-    border-top: 1px solid # #E0EAEF
+    border-top: 1px solid #E0EAEF
 }
 
 /* APPS */
@@ -5095,8 +4842,6 @@ ul.listing li span {
     width: 50px;
     margin-right: 10px;
     border-radius: 4px;
-    -moz-border-radius: 4px;
-    -webkit-border-radius: 4px
 }
 
 .apps_gr {
@@ -5113,12 +4858,11 @@ ul.listing li span {
     padding: 5px;
     background: #fff;
     width: 90px;
-    margin: auto;
-    margin-top: -10px
+    margin: -10px auto auto;
 }
 
 .apps_but {
-    margin-left: 0px
+    margin-left: 0
 }
 
 .apps_top {
@@ -5133,8 +4877,6 @@ ul.listing li span {
 .apps_game2 img {
     width: 75px;
     border-radius: 5px;
-    -moz-border-radius: 5px;
-    -webkit-border-radius: 5px;
     line-height: 19px
 }
 
@@ -5161,8 +4903,6 @@ ul.listing li span {
     margin-right: 15px;
     float: left;
     border-radius: 4px;
-    -moz-border-radius: 4px;
-    -webkit-border-radius: 4px
 }
 
 .apps_view_pos a {
@@ -5210,8 +4950,6 @@ ul.listing li span {
 .apps_i_run_box {
     background: url("../images/inline_video_small_play.png") 100% 50% no-repeat rgba(0, 0, 0, 0.600);
     border-radius: 10px;
-    -moz-border-radius: 10px;
-    -webkit-border-radius: 10px;
     color: #fff;
     cursor: pointer;
     font-weight: 700;
@@ -5222,7 +4960,7 @@ ul.listing li span {
     opacity: 0.8;
     padding: 16px 45px 16px 15px;
     position: absolute;
-    text-shadow: 0px 1px 1px rgba(0, 0, 0, 0.506);
+    text-shadow: 0 1px 1px rgba(0, 0, 0, 0.506);
     margin-top: 185px;
     z-index: 10
 }
@@ -5233,8 +4971,6 @@ ul.listing li span {
 
 .apps_main_poster img, .apps_mini_img img {
     border-radius: 3px;
-    -moz-border-radius: 3px;
-    -webkit-border-radius: 3px
 }
 
 .apps_mini_img {
@@ -5250,9 +4986,7 @@ ul.listing li span {
 
 .apps_faslh_pos {
     text-align: center;
-    margin: -12px;
-    margin-bottom: -17px;
-    margin-top: 9px
+    margin: 9px -12px -17px;
 }
 
 .apps_start_traf {
@@ -5279,9 +5013,7 @@ ul.listing li span {
     width: 11px;
     height: 11px;
     opacity: 0.2;
-    border-radius: 0px;
-    -moz-border-radius: 0px;
-    -webkit-border-radius: 0px
+    border-radius: 0;
 }
 
 /* COVER */
@@ -5295,7 +5027,6 @@ ul.listing li span {
 }
 
 .cover_newava {
-    margin-top: -165px;
     position: relative;
     z-index: 2;
     min-height: 100px
@@ -5303,8 +5034,6 @@ ul.listing li span {
 
 .cover_newava img {
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.28);
-    -moz-box-shadow: 0 1px 3px rgba(0, 0, 0, 0.28);
-    -webkit-box-shadow: 0 1px 3px rgba(0, 0, 0, 0.28);
     border: 3px solid #fff;
     margin-left: -3px
 }
@@ -5313,15 +5042,12 @@ ul.listing li span {
     background: rgba(0, 0, 0, 0.600);
     float: right;
     padding: 7px 13px 7px 13px;
-    text-shadow: 0px 1px 1px rgba(0, 0, 0, 0.506);
+    text-shadow: 0 1px 1px rgba(0, 0, 0, 0.506);
     border-radius: 5px;
-    -moz-border-radius: 5px;
-    -webkit-border-radius: 5px;
     color: #fff;
     cursor: pointer;
     font-size: 12px;
-    margin: 8px;
-    margin-left: 0px;
+    margin: 8px 8px 8px 0;
     opacity: 0.7
 }
 
@@ -5369,10 +5095,8 @@ ul.listing li span {
     z-index: 5;
     color: #fff;
     background: rgba(0, 0, 0, 0.600);
-    -moz-box-shadow: 0 1px 3px rgba(0, 0, 0, 0.28);
-    -webkit-box-shadow: 0 1px 3px rgba(0, 0, 0, 0.28);
     padding: 3px 7px 3px 7px;
-    text-shadow: 0px 1px 1px rgba(0, 0, 0, 0.506);
+    text-shadow: 0 1px 1px rgba(0, 0, 0, 0.506);
     border-radius: 3px;
     font-size: 12px;
     margin-left: 320px;
@@ -5383,7 +5107,7 @@ ul.listing li span {
 #les10_ex2 {
     width: 800px;
     position: relative;
-    top: 0px;
+    top: 0;
     z-index: 1
 }
 
@@ -5412,7 +5136,7 @@ ul.listing li span {
 .reviewsBlock {
     margin-top: 13px;
     border-bottom: 1px solid #f5f5f5;
-    padding: 15px 0px 15px 0px;
+    padding: 15px 0 15px 0;
     margin-bottom: -15px
 }
 
@@ -5439,25 +5163,21 @@ ul.listing li span {
 /* STATIC jQ MP3 PL. */
 .staticPlbg {
     position: fixed;
-    top: 0px;
-    bottom: 0px;
-    right: 0px;
-    left: 0px;
-    margin: 20px;
+    top: 0;
+    bottom: 0;
+    right: 0;
+    left: 0;
     width: 475px;
     height: 500px;
     background: #fff;
-    margin-top: 60px;
+    margin: 60px 20px 20px;
     z-index: 5;
-    box-shadow: 0px 0px 6px #9da5ae;
-    -moz-box-shadow: 0px 0px 6px #9da5ae;
-    -webkit-box-shadow: 0px 0px 6px #9da5ae
+    box-shadow: 0 0 6px #9da5ae;
 }
 
 .staticPlbgTitle {
     background: #597ba5;
-    padding: 17px;
-    padding-bottom: 12px;
+    padding: 17px 17px 12px;
     color: #e3e9ea
 }
 
@@ -5477,7 +5197,7 @@ ul.listing li span {
 }
 
 .staticpl_play {
-    background: url("../images/staticmp3.png") no-repeat -28px 0px;
+    background: url("../images/staticmp3.png") no-repeat -28px 0;
     width: 7px;
     height: 12px;
     float: left;
@@ -5488,7 +5208,7 @@ ul.listing li span {
 }
 
 .staticpl_pause {
-    background: url("../images/staticmp3.png") no-repeat -37px 0px;
+    background: url("../images/staticmp3.png") no-repeat -37px 0;
     width: 12px;
     height: 12px;
     float: left;
@@ -5501,7 +5221,7 @@ ul.listing li span {
 }
 
 .staticpl_next {
-    background: url("../images/staticmp3.png") no-repeat -14px 0px;
+    background: url("../images/staticmp3.png") no-repeat -14px 0;
     width: 12px;
     height: 10px;
     float: left;
@@ -5528,8 +5248,6 @@ ul.listing li span {
     background: #9aadc5;
     float: left;
     border-radius: 3px;
-    -moz-border-radius: 3px;
-    -webkit-border-radius: 3px;
     margin-left: 10px;
     margin-top: 6px;
     cursor: pointer
@@ -5540,7 +5258,7 @@ ul.listing li span {
 }
 
 .staticpl_repeat {
-    background: url("../images/staticmp3.png") no-repeat 0px -15px;
+    background: url("../images/staticmp3.png") no-repeat 0 -15px;
     width: 13px;
     height: 11px;
     float: left;
@@ -5562,7 +5280,7 @@ ul.listing li span {
 }
 
 .staticpl_translate {
-    background: url("../images/staticmp3.png") no-repeat -51px 0px;
+    background: url("../images/staticmp3.png") no-repeat -51px 0;
     width: 11px;
     height: 11px;
     float: left;
@@ -5583,7 +5301,7 @@ ul.listing li span {
 }
 
 .staticpl_bottom {
-    border-bottom: 0px;
+    border-bottom: 0;
     border-top: 1px solid #f1f1f1
 }
 
@@ -5605,8 +5323,6 @@ ul.listing li span {
     width: 18px;
     height: 18px;
     border-radius: 3px;
-    -moz-border-radius: 3px;
-    -webkit-border-radius: 3px;
     cursor: pointer;
     float: left;
     margin-right: 8px
@@ -5621,8 +5337,6 @@ ul.listing li span {
     padding: 9px;
     cursor: pointer;
     border-radius: 2px;
-    -moz-border-radius: 2px;
-    -webkit-border-radius: 2px
 }
 
 .staticpl_audio:hover, .staticpl_audio_pre_active {
@@ -5667,8 +5381,6 @@ ul.listing li span {
     height: 4px;
     background: #fff;
     border-radius: 3px;
-    -moz-border-radius: 3px;
-    -webkit-border-radius: 3px
 }
 
 #player_progress_load_bar_2 {
@@ -5714,9 +5426,7 @@ ul.listing li span {
     position: static;
     width: 794px;
     height: 453px;
-    box-shadow: 0px 0px 0px;
-    -moz-box-shadow: 0px 0px 0px;
-    -webkit-box-shadow: 0px 0px 0px
+    box-shadow: 0 0 0;
 }
 
 .staticpl_editic {
@@ -5745,7 +5455,7 @@ ul.listing li span {
     width: 12px;
     height: 12px;
     float: right;
-    background: url("../images/staticmp3.png") no-repeat -83px 0px;
+    background: url("../images/staticmp3.png") no-repeat -83px 0;
     opacity: 0.2;
     cursor: pointer;
     margin-left: 10px;
@@ -5770,19 +5480,19 @@ ul.listing li span {
 }
 
 .staticpl_delic_white {
-    background: url("../images/staticmp3.png") no-repeat -110px 0px
+    background: url("../images/staticmp3.png") no-repeat -110px 0
 }
 
 .staticpl_editic_white {
-    background: url("../images/staticmp3.png") no-repeat -95px 0px
+    background: url("../images/staticmp3.png") no-repeat -95px 0
 }
 
 .staticpl_addmylisy_white {
-    background: url("../images/staticmp3.png") no-repeat -65px 0px
+    background: url("../images/staticmp3.png") no-repeat -65px 0
 }
 
 .staticpl_addmylisok_white {
-    background: url("../images/staticmp3.png") no-repeat -123px 0px
+    background: url("../images/staticmp3.png") no-repeat -123px 0
 }
 
 .staticpl_panel {
@@ -5790,13 +5500,11 @@ ul.listing li span {
 }
 
 .jQpnewloadbut {
-    padding: 5px;
     background: #597ba5;
     float: left;
     margin-top: 5px;
-    padding: 7px;
     margin-left: -1px;
-    padding-bottom: 6px;
+    padding: 5px 5px 6px;
     cursor: pointer
 }
 
@@ -5805,25 +5513,22 @@ ul.listing li span {
 }
 
 .jQpnewloadbut .staticpl_addmylisy_white {
-    margin: 0px
+    margin: 0
 }
 
 /* PAYMENT */
 .payment_title {
     background: #F2F2F2;
-    margin: -20px;
     padding: 16px 5px 16px 25px;
     line-height: 180%;
     font-size: 11px;
-    margin-bottom: 15px
+    margin: -20px -20px 15px;
 }
 
 .payment_title img {
     float: left;
     margin-right: 12px;
-    box-shadow: 0px 1px 2px rgba(0, 0, 0, 0.345);
-    -moz-box-shadow: 0px 1px 2px rgba(0, 0, 0, 0.345);
-    -webkit-box-shadow: 0px 1px 2px rgba(0, 0, 0, 0.345)
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.345);
 }
 
 .payment_title .fl_l {
@@ -5838,8 +5543,7 @@ ul.listing li span {
     color: #36638E;
     font-size: 13px;
     font-weight: 700;
-    margin: 0px 0px 6px;
-    margin-top: 9px
+    margin: 9px 0 6px;
 }
 
 .payment_sel {
@@ -5852,7 +5556,6 @@ ul.listing li span {
     padding: 10px;
     background: #f5f5f5;
     line-height: 17px;
-    background: #F3F5FA;
     margin-top: 12px;
     font-size: 11px
 }
@@ -5885,34 +5588,19 @@ ul.listing li span {
     margin-top: 5px
 }
 
-.profile_rate_100_left, .profile_rate_500_left, .profile_rate_1000_left {
-    margin-left: 1px;
-    background: url("../images/icons/rate100_l.png");
-    float: left;
-    width: 10px;
-    height: 44px
-}
-
-.profile_rate_100_right, .profile_rate_500_right, .profile_rate_1000_right {
-    margin-left: 1px;
-    background: url("../images/icons/rate100_r.png");
-    float: right;
-    width: 10px;
-    height: 44px
-}
-
 .profile_rate_100_head, .profile_rate_100_head, .profile_rate_1000_head {
-    margin-left: 1px;
-    background: url("../images/icons/rate100.png");
     margin-left: 96px;
     margin-right: 27px;
+
     height: 38px;
     font-size: 19pt;
     color: #fff;
     font-weight: bold;
     padding-top: 6px;
     padding-left: 5px;
-    padding-right: 5px
+    padding-right: 5px;
+    background: linear-gradient(45deg, #2d88b8, #2d88b8, #8ac3df);
+    border-radius: 6px;
 }
 
 .profile_rate_add {
@@ -5924,10 +5612,6 @@ ul.listing li span {
     cursor: pointer;
     border-top-right-radius: 5px;
     border-bottom-right-radius: 5px;
-    -moz-border-top-right-radius: 5px;
-    -moz-border-bottom-right-radius: 5px;
-    -webkit-border-top-right-radius: 5px;
-    -webkit-border-bottom-right-radius: 5px
 }
 
 .rating_text {
@@ -5958,14 +5642,6 @@ ul.listing li span {
 
 .profile_rate_500_head {
     background: url("../images/icons/rate500.png")
-}
-
-.profile_rate_1000_left {
-    background: url("../images/icons/rate1000_l.png")
-}
-
-.profile_rate_1000_right {
-    background: url("../images/icons/rate1000_r.png")
 }
 
 .profile_rate_1000_head {
@@ -6003,9 +5679,7 @@ ul.listing li span {
     overflow: hidden;
     cursor: pointer;
     padding: 8px;
-    margin: -8px;
-    margin-right: 10px;
-    margin-bottom: 10px;
+    margin: -8px 10px 10px -8px;
 }
 
 .grIntiveUser img, .grInviteYesed img {
@@ -6052,8 +5726,7 @@ ul.listing li span {
 
 .grIntiveUserActive img {
     border: 1px solid #537698;
-    margin: -1px;
-    margin-right: 10px
+    margin: -1px 10px -1px -1px;
 }
 
 .grIntiveUserActive .grInviteName {
@@ -6061,7 +5734,7 @@ ul.listing li span {
 }
 
 .grIntiveUserActive .grInviteGal {
-    background: url("../images/staticmp3.png") no-repeat -123px 0px;
+    background: url("../images/staticmp3.png") no-repeat -123px 0;
     opacity: 0.6
 }
 
@@ -6075,9 +5748,7 @@ ul.listing li span {
     height: 41px;
     opacity: 0.6;
     padding: 8px;
-    margin: -8px;
-    margin-right: 10px;
-    margin-bottom: 10px
+    margin: -8px 10px 10px -8px;
 }
 
 .grInviteOk {
@@ -6094,8 +5765,6 @@ ul.listing li span {
     float: left;
     margin-right: 10px;
     border-radius: 2px;
-    -moz-border-radius: 2px;
-    -webkit-border-radius: 2px
 }
 
 .grInviteInviterName div {
@@ -6116,12 +5785,7 @@ ul.listing li span {
     border: 1px solid #d3dee8;
     margin-top: -11px;
     background: #ffffff;
-    background: -moz-linear-gradient(top, #ffffff 0%, #f9f9f9 100%);
-    background: -webkit-gradient(linear, left top, left bottom, color-stop(0%, #ffffff), color-stop(100%, #f9f9f9));
-    background: -webkit-linear-gradient(top, #ffffff 0%, #f9f9f9 100%);
-    background: -o-linear-gradient(top, #ffffff 0%, #f9f9f9 100%);
-    background: -ms-linear-gradient(top, #ffffff 0%, #f9f9f9 100%);
-    background: linear-gradient(to bottom, #ffffff 0%, #f9f9f9 100%)
+    background: linear-gradient(45deg, #ffffff 0%, #f9f9f9 100%)
 }
 
 .graph-container > div {
@@ -6146,8 +5810,6 @@ ul.listing li span {
     font-size: 11px;
     font-family: Tahoma;
     border-radius: 3px;
-    -moz-border-radius: 3px;
-    -webkit-border-radius: 3px;
     line-height: 15px;
     z-index: 2;
     margin-top: -6px
@@ -6161,8 +5823,6 @@ ul.listing li span {
     cursor: pointer;
     font-size: 11px;
     border-radius: 3px;
-    -moz-border-radius: 3px;
-    -webkit-border-radius: 3px;
     margin-top: 3px
 }
 
