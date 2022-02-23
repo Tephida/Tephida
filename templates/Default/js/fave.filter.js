@@ -14,15 +14,15 @@ jQuery.uiTableFilter = function (jq, phrase, column, ifHidden) {
     var words = phrase.toLowerCase().split(" ");
 
     var matches = function (elem) {
-            elem.show()
-        }
+        elem.show()
+    }
     var noMatch = function (elem) {
-            elem.hide();
-            new_hidden = true
-        }
+        elem.hide();
+        new_hidden = true
+    }
     var getText = function (elem) {
-            return elem.text()
-        }
+        return elem.text()
+    }
 
     if (column) {
         var index = null;
@@ -48,7 +48,8 @@ jQuery.uiTableFilter = function (jq, phrase, column, ifHidden) {
 
         var words = words[-1];
 
-        matches = function (elem) {;
+        matches = function (elem) {
+            ;
         }
         var elems = jq.find("tbody > tr:visible")
     } else {

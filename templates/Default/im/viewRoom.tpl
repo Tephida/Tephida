@@ -1,6 +1,6 @@
 <div class="miniature_box">
-	<div class="miniature_pos">
-		<div class="miniature_title fl_l">Настройки беседы</div>
+    <div class="miniature_pos">
+        <div class="miniature_title fl_l">Настройки беседы</div>
         <a class="cursor_pointer fl_r" onClick="viiBox.clos('viewRoom', 1)">Закрыть</a>
         <div class="clear"></div>
         <div>

@@ -1,1 +1,0 @@
-<div class="cover_minm_po editphoto_c" id="photo_{id}"><img src="{photo}" alt=""/></div>

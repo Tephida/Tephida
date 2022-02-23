@@ -276,7 +276,6 @@ HTML;
             $_POST['mysql_dbname'] = str_replace('"', '\"', str_replace("$", "\\$", $_POST['mysql_dbname']));
             $_POST['mysql_dbuser'] = str_replace('"', '\"', str_replace("$", "\\$", $_POST['mysql_dbuser']));
             $_POST['mysql_pass'] = str_replace('"', '\"', str_replace("$", "\\$", $_POST['mysql_pass']));
-            $_POST['mysql_prefix'] = str_replace('"', '\"', str_replace("$", "\\$", $_POST['mysql_prefix']));
             //Создаём файл БД
             $dbconfig = <<<HTML
 <?php

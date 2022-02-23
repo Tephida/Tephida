@@ -2,7 +2,8 @@
  *
  * Released under the MIT license by IOLA, December 2007.
  *
- */ (function (b) {
+ */
+(function (b) {
     b.color = {};
     b.color.make = function (d, e, g, f) {
         var c = {};
@@ -33,6 +34,7 @@
             function h(k, j, l) {
                 return j < k ? k : (j > l ? l : j)
             }
+
             c.r = h(0, parseInt(c.r), 255);
             c.g = h(0, parseInt(c.g), 255);
             c.b = h(0, parseInt(c.b), 255);
@@ -328,6 +330,7 @@
                 aD[aC].apply(this, aB)
             }
         }
+
         function F() {
             for (var aB = 0; aB < af.length; ++aB) {
                 var aC = af[aB];
@@ -337,6 +340,7 @@
                 }
             }
         }
+
         function Z(aC) {
             var aB;
             c.extend(true, O, aC);
@@ -409,11 +413,13 @@
             }
             an(ak.processOptions, [O])
         }
+
         function aj(aB) {
             Q = Y(aB);
             ax();
             z()
         }
+
         function Y(aE) {
             var aC = [];
             for (var aB = 0; aB < aE.length; ++aB) {
@@ -430,6 +436,7 @@
             }
             return aC
         }
+
         function aA(aC, aD) {
             var aB = aC[aD + "axis"];
             if (typeof aB == "object") {
@@ -440,11 +447,13 @@
             }
             return aB
         }
+
         function m() {
             return c.grep(p.concat(aw), function (aB) {
                 return aB
             })
         }
+
         function C(aE) {
             var aC = {}, aB, aD;
             for (aB = 0; aB < p.length; ++aB) {
@@ -467,6 +476,7 @@
             }
             return aC
         }
+
         function ar(aF) {
             var aD = {}, aC, aE, aB;
             for (aC = 0; aC < p.length; ++aC) {
@@ -497,6 +507,7 @@
             }
             return aD
         }
+
         function V(aC, aB) {
             if (!aC[aB - 1]) {
                 aC[aB - 1] = {
@@ -507,6 +518,7 @@
             }
             return aC[aB - 1]
         }
+
         function ax() {
             var aG;
             var aM = Q.length,
@@ -573,6 +585,7 @@
                 aN.yaxis = V(aw, aA(aN, "y"))
             }
         }
+
         function z() {
             var aO = Number.POSITIVE_INFINITY,
                 aI = Number.NEGATIVE_INFINITY,
@@ -587,6 +600,7 @@
                     a3.datamax = a1
                 }
             }
+
             c.each(m(), function (a1, a2) {
                 a2.datamin = aO;
                 a2.datamax = aI;
@@ -757,6 +771,7 @@
                 }
             })
         }
+
         function j(aB, aC) {
             var aD = document.createElement("canvas");
             aD.className = aC;
@@ -776,6 +791,7 @@
             aD.getContext("2d").save();
             return aD
         }
+
         function B() {
             G = av.width();
             I = av.height();
@@ -783,6 +799,7 @@
                 throw "Invalid dimensions for plot, width = " + G + ", height = " + I
             }
         }
+
         function g(aC) {
             if (aC.width != G) {
                 aC.width = G
@@ -794,6 +811,7 @@
             aB.restore();
             aB.save()
         }
+
         function X() {
             var aC, aB = av.children("canvas.base"),
                 aD = av.children("canvas.overlay");
@@ -826,6 +844,7 @@
             }
             av.data("plot", aq)
         }
+
         function ah() {
             if (O.grid.hoverable) {
                 y.mousemove(aa);
@@ -836,6 +855,7 @@
             }
             an(ak.bindEvents, [y])
         }
+
         function ag() {
             if (M) {
                 clearTimeout(M)
@@ -845,10 +865,12 @@
             y.unbind("click", R);
             an(ak.shutdown, [y])
         }
+
         function r(aG) {
             function aC(aH) {
                 return aH
             }
+
             var aF, aB, aD = aG.options.transform || aC,
                 aE = aG.options.inverseTransform;
             if (aG.direction == "x") {
@@ -878,6 +900,7 @@
                 }
             }
         }
+
         function L(aD) {
             var aB = aD.options,
                 aF, aJ = aD.ticks || [],
@@ -889,6 +912,7 @@
             function aH(aM, aL) {
                 return c('<div style="position:absolute;top:-10000px;' + aL + 'font-size:smaller"><div class="' + aD.direction + "Axis " + aD.direction + aD.n + 'Axis">' + aM.join("") + "</div></div>").appendTo(av)
             }
+
             if (aD.direction == "x") {
                 if (aK == null) {
                     aK = Math.floor(G / (aJ.length > 0 ? aJ.length : 1))
@@ -937,6 +961,7 @@
             aD.labelWidth = aK;
             aD.labelHeight = aG
         }
+
         function au(aD) {
             var aC = aD.labelWidth,
                 aL = aD.labelHeight,
@@ -1001,6 +1026,7 @@
             aD.box.padding = aJ;
             aD.innermost = aM
         }
+
         function U(aB) {
             if (aB.direction == "x") {
                 aB.box.left = q.left;
@@ -1010,6 +1036,7 @@
                 aB.box.height = w
             }
         }
+
         function t() {
             var aC, aE = m();
             c.each(aE, function (aF, aG) {
@@ -1059,6 +1086,7 @@
             }
             o()
         }
+
         function n(aE) {
             var aF = aE.options,
                 aD = +(aF.min != null ? aF.min : aE.datamin),
@@ -1092,6 +1120,7 @@
             aE.min = aD;
             aE.max = aB
         }
+
         function S(aG) {
             var aM = aG.options;
             var aH;
@@ -1313,7 +1342,8 @@
                     do {
                         aY = aV;
                         aV = a0 + aW * aX.tickSize;
-                        aZ.push(aV);++aW
+                        aZ.push(aV);
+                        ++aW
                     } while (aV < aX.max && aV != aY);
                     return aZ
                 };
@@ -1361,6 +1391,7 @@
                 aG.tickFormatter = aR
             }
         }
+
         function P(aF) {
             var aH = aF.options.ticks,
                 aG = [];
@@ -1402,6 +1433,7 @@
                 }
             }
         }
+
         function ap(aB, aC) {
             if (aB.options.autoscaleMargin && aC.length > 0) {
                 if (aB.options.min == null) {
@@ -1412,6 +1444,7 @@
                 }
             }
         }
+
         function W() {
             H.clearRect(0, 0, G, I);
             var aC = O.grid;
@@ -1430,6 +1463,7 @@
                 ac()
             }
         }
+
         function D(aB, aI) {
             var aE, aH, aG, aD, aF = m();
             for (i = 0; i < aF.length; ++i) {
@@ -1462,6 +1496,7 @@
                 axis: aE
             }
         }
+
         function N() {
             H.save();
             H.translate(q.left, q.top);
@@ -1469,6 +1504,7 @@
             H.fillRect(0, 0, h, w);
             H.restore()
         }
+
         function ac() {
             var aF;
             H.save();
@@ -1608,6 +1644,7 @@
             }
             H.restore()
         }
+
         function k() {
             av.find(".tickLabels").remove();
             var aG = ['<div class="tickLabels" style="font-size:smaller">'];
@@ -1648,20 +1685,21 @@
                     for (var aL in aK) {
                         aB.push(aL + ":" + aK[aL] + "px")
                     }
-					
-					var check_sp = aH.label.split('.0');
-					
-					if(check_sp[1] == '0')
-						aG.push('<div class="tickLabel" style="' + aB.join(";") + ';color:'+O.xaxis.color+'">' + aH.label.replace('.00', '') + " " + $('#tek_month').val() + "</div>")
-					else
-						aG.push('<div class="tickLabel" style="' + aB.join(";") + ';color:'+O.xaxis.color+'">' + aH.label.replace('.0', '') + "</div>")
-					
+
+                    var check_sp = aH.label.split('.0');
+
+                    if (check_sp[1] == '0')
+                        aG.push('<div class="tickLabel" style="' + aB.join(";") + ';color:' + O.xaxis.color + '">' + aH.label.replace('.00', '') + " " + $('#tek_month').val() + "</div>")
+                    else
+                        aG.push('<div class="tickLabel" style="' + aB.join(";") + ';color:' + O.xaxis.color + '">' + aH.label.replace('.0', '') + "</div>")
+
                 }
                 aG.push("</div>")
             }
             aG.push("</div>");
             av.append(aG.join(""))
         }
+
         function d(aB) {
             if (aB.lines.show) {
                 at(aB)
@@ -1673,6 +1711,7 @@
                 ao(aB)
             }
         }
+
         function at(aE) {
             function aD(aP, aQ, aI, aU, aT) {
                 var aV = aP.points,
@@ -1757,6 +1796,7 @@
                 }
                 H.stroke()
             }
+
             function aF(aI, aQ, aP) {
                 var aW = aI.points,
                     aV = aI.pointsize,
@@ -1871,6 +1911,7 @@
                     }
                 }
             }
+
             H.save();
             H.translate(q.left, q.top);
             H.lineJoin = "round";
@@ -1896,6 +1937,7 @@
             }
             H.restore()
         }
+
         function ao(aE) {
             function aH(aN, aM, aU, aK, aS, aT, aQ, aJ) {
                 var aR = aN.points,
@@ -1922,6 +1964,7 @@
                     H.stroke()
                 }
             }
+
             H.save();
             H.translate(q.left, q.top);
             var aG = aE.points.lineWidth,
@@ -1941,6 +1984,7 @@
             aH(aE.datapoints, aB, ae(aE.points, aE.color), 0, false, aE.xaxis, aE.yaxis, aF);
             H.restore()
         }
+
         function E(aN, aM, aV, aI, aQ, aF, aD, aL, aK, aU, aR, aC) {
             var aE, aT, aJ, aP, aG, aB, aO, aH, aS;
             if (aR) {
@@ -2030,6 +2074,7 @@
                 aU.stroke()
             }
         }
+
         function e(aD) {
             function aC(aJ, aI, aL, aG, aK, aN, aM) {
                 var aO = aJ.points,
@@ -2041,17 +2086,19 @@
                     E(aO[aH], aO[aH + 1], aO[aH + 2], aI, aL, aG, aK, aN, aM, H, aD.bars.horizontal, aD.bars.lineWidth)
                 }
             }
+
             H.save();
             H.translate(q.left, q.top);
             H.lineWidth = aD.bars.lineWidth;
             H.strokeStyle = aD.color;
             var aB = aD.bars.align == "left" ? 0 : -aD.bars.barWidth / 2;
             var aE = aD.bars.fill ? function (aF, aG) {
-                    return ae(aD.bars, aD.color, aF, aG)
-                } : null;
+                return ae(aD.bars, aD.color, aF, aG)
+            } : null;
             aC(aD.datapoints, aB, aB + aD.bars.barWidth, 0, aE, aD.xaxis, aD.yaxis);
             H.restore()
         }
+
         function ae(aD, aB, aC, aF) {
             var aE = aD.fill;
             if (!aE) {
@@ -2065,6 +2112,7 @@
             aG.normalize();
             return aG.toString()
         }
+
         function o() {
             av.find(".legend").remove();
             if (!O.legend.show) {
@@ -2140,6 +2188,7 @@
                 }
             }
         }
+
         var ab = [],
             M = null;
 
@@ -2216,6 +2265,7 @@
             }
             return null
         }
+
         function aa(aB) {
             if (O.grid.hoverable) {
                 u("plothover", aB, function (aC) {
@@ -2223,6 +2273,7 @@
                 })
             }
         }
+
         function l(aB) {
             if (O.grid.hoverable) {
                 u("plothover", aB, function (aC) {
@@ -2230,11 +2281,13 @@
                 })
             }
         }
+
         function R(aB) {
             u("plotclick", aB, function (aC) {
                 return aC.clickable != false
             })
         }
+
         function u(aC, aB, aD) {
             var aE = y.offset(),
                 aH = aB.pageX - aE.left - q.left,
@@ -2263,11 +2316,13 @@
             }
             av.trigger(aC, [aJ, aK])
         }
+
         function f() {
             if (!M) {
                 M = setTimeout(s, 30)
             }
         }
+
         function s() {
             M = null;
             A.save();
@@ -2285,6 +2340,7 @@
             A.restore();
             an(ak.drawOverlay, [A])
         }
+
         function x(aD, aB, aF) {
             if (typeof aD == "number") {
                 aD = Q[aD]
@@ -2307,6 +2363,7 @@
                 }
             }
         }
+
         function T(aD, aB) {
             if (aD == null && aB == null) {
                 ab = [];
@@ -2324,6 +2381,7 @@
                 f()
             }
         }
+
         function al(aD, aE) {
             for (var aB = 0; aB < ab.length; ++aB) {
                 var aC = ab[aB];
@@ -2333,6 +2391,7 @@
             }
             return -1
         }
+
         function ay(aE, aD) {
             var aC = aD[0],
                 aI = aD[1],
@@ -2356,6 +2415,7 @@
             A.closePath();
             A.stroke()
         }
+
         function v(aE, aB) {
             A.lineWidth = aE.bars.lineWidth;
             A.strokeStyle = c.color.parse(aE.color).scale("a", 0.5).toString();
@@ -2365,6 +2425,7 @@
                 return aD
             }, aE.xaxis, aE.yaxis, A, aE.bars.horizontal, aE.bars.lineWidth)
         }
+
         function am(aJ, aB, aH, aC) {
             if (typeof aJ == "string") {
                 return aJ
@@ -2388,6 +2449,7 @@
             }
         }
     }
+
     c.plot = function (g, e, d) {
         var f = new b(c(g), e, d, c.plot.plugins);
         return f
