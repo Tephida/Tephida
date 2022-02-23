@@ -10,8 +10,8 @@ if (!defined('MOZG')) die('Hacking attempt!');
 $row = $db->super_query("SELECT user_email, user_name, user_lastname, user_password FROM `users` WHERE user_id = '" . $user_info['user_id'] . "'");
 //Если сохраянем
 if (isset($_POST['save'])) {
-    $old_pass = md5(md5(GetVar($_POST['old_pass'])));
-    $new_pass = md5(md5(GetVar($_POST['new_pass'])));
+    $old_pass = md5(md5(stripslashes($_POST['old_pass'])));
+    $new_pass = md5(md5(stripslashes($_POST['new_pass'])));
     $user_name = requestFilter('name', 25000, true);
     $user_lastname = requestFilter('lastname', 25000, true);
     $user_email = requestFilter('email', 25000, true);

@@ -203,17 +203,10 @@ blockquote {
     background: #404244;
     min-width: 10px;
     height: 12px;
-    padding: 3px;
-    padding-top: 2px;
+    padding: 2px 3px 3px;
     border-radius: 10px;
     margin-left: 23px;
     margin-top: -3px
-}
-
-.headm_ic_games {
-    background: url("../images/csa.png") no-repeat -2px;
-    width: 27px;
-    height: 22px
 }
 
 /* LEFT PANEL AND CONTENT */
@@ -229,8 +222,7 @@ blockquote {
 }
 
 .padcont {
-    padding: 15px;
-    padding-top: 10px;
+    padding: 10px 15px 15px;
     background: #fff
 }
 
@@ -247,16 +239,12 @@ blockquote {
 /* BORDER RADIUS */
 .button_div, .button_div_gray, .activetab a div, .activetab a, .buttonsprofile a:hover {
     border-radius: 2px;
-    -moz-border-radius: 2px;
-    -webkit-border-radius: 2px;
-    -khtml-border-radius: 2px
 }
 
 /* LOGIN PANEL */
 .flLg {
     color: #fff;
-    padding: 5px;
-    padding-left: 2px;
+    padding: 5px 5px 5px 2px;
     text-shadow: 0px 1px 0px #777
 }
 
@@ -514,8 +502,6 @@ ul.listing li span {
     top: 0px;
     padding: 7px;
     border-bottom-right-radius: 7px;
-    -moz-border-bottom-right-radius: 7px;
-    -webkit-border-bottom-right-radius: 7px;
     margin-top: 48px;
     z-index: 100
 }
@@ -651,7 +637,6 @@ ul.listing li span {
     margin-left: 11px;
     margin-bottom: 10px;
     max-height: 81px;
-    overflow: hidden
 }
 
 .onefriend img {
@@ -1225,7 +1210,7 @@ ul.listing li span {
     padding: 10px;
     font-size: 13px;
     font-weight: bold;
-    background: url("../images/head.png") repeat-x;
+    background: linear-gradient(#1993b0, #1993b0, #3db9c2) repeat-x;
     color: #fff;
     border: 1px solid #4c75a0;
     text-shadow: 0px 1px 0px #4577a7
@@ -1422,7 +1407,6 @@ ul.listing li span {
     padding: 5px;
     text-align: right;
     display: none;
-    width: 63px;
     margin-left: 67px
 }
 
@@ -1534,7 +1518,6 @@ ul.listing li span {
     cursor: pointer;
     opacity: 0.5;
     margin-bottom: -10px;
-    font-family: Comic Sans MS;
     padding-top: 2px
 }
 
@@ -1928,11 +1911,9 @@ ul.listing li span {
 }
 
 .fave_input {
-    background: #fff url("../images/inp_se.png") no-repeat;
-    background-position: 5px;
+    background: #fff url("../images/inp_se.png") no-repeat 5px;
     border: 1px solid #c6d4dc;
-    padding: 5px;
-    padding-left: 25px;
+    padding: 5px 5px 5px 25px;
     margin-left: 4px;
     color: #c1cad0;
     width: 723px;
@@ -1987,8 +1968,7 @@ ul.listing li span {
 }
 
 .msg_pad {
-    padding: 10px;
-    padding-right: 0px
+    padding: 10px 0px 10px 10px;
 }
 
 .msg_left_col {
@@ -2088,14 +2068,12 @@ ul.listing li span {
 
 .msg_none {
     background: #f5f5f5;
-    padding: 10px;
     text-align: center;
     font-size: 13px;
     color: #888;
     margin-top: 10px;
-    margin-top: 0px;
     height: 50px;
-    padding-top: 50px
+    padding: 50px 10px 10px;
 }
 
 .msg_view_histroy {
@@ -2119,9 +2097,8 @@ ul.listing li span {
 }
 
 .msg_onehistory {
-    padding: 5px 0px 5px 0px;
     margin-bottom: 5px;
-    padding-right: 10px
+    padding: 5px 10px 5px 0px;
 }
 
 .msg_history_name {
@@ -2169,8 +2146,7 @@ ul.listing li span {
 
 .msg_speedbar {
     color: #5d8ebe;
-    padding: 5px;
-    padding-left: 0px;
+    padding: 5px 5px 5px 0px;
     font-weight: bold
 }
 
@@ -2287,9 +2263,8 @@ ul.listing li span {
 
 .note_add_bg {
     background: #f5f5f5;
-    margin: -15px;
     padding: 25px 40px 25px 40px;
-    margin-bottom: -15px
+    margin: -15px;
 }
 
 .note_pos {
@@ -2320,10 +2295,6 @@ ul.listing li span {
     background: #fff;
     margin-bottom: 10px;
     box-shadow: inset 0px 1px 3px 0px #e1e1e1;
-    -moz-box-shadow: inset 0px 1px 3px 0px #e1e1e1;
-    -webkit-box-shadow: inset 0px 1px 3px 0px #e1e1e1;
-    -moz-border-radius: 3px;
-    -webkit-border-radius: 3px;
     border-radius: 3px;
     resize: none
 }
@@ -2433,8 +2404,7 @@ ul.listing li span {
 
 .video_show_panel {
     background: #fff;
-    padding: 20px;
-    padding-top: 10px
+    padding: 10px 20px 20px;
 }
 
 .video_show_date {
@@ -2519,16 +2489,14 @@ ul.listing li span {
 }
 
 .search_type {
-    background-position: 5px;
     background: url("../images/sel.gif") no-repeat right;
     border: 1px solid #c6d4dc;
-    padding: 5px;
     color: #999;
     float: left;
     width: 100px;
     border-left: 0px;
     text-align: right;
-    padding-right: 15px;
+    padding: 5px 15px 5px 5px;
     cursor: pointer
 }
 
@@ -2572,9 +2540,7 @@ ul.listing li span {
 }
 
 .search_result_title {
-    padding: 5px;
-    padding-left: 0px;
-    padding-top: 10px;
+    padding: 10px 5px 5px 0px;
     font-weight: bold;
     color: #5081b1
 }
@@ -2621,9 +2587,8 @@ ul.listing li span {
 .search_form_tab {
     color: #21578b;
     background: #f7f7f7;
-    margin: -15px;
     padding: 10px;
-    margin-top: -9px
+    margin: -9px -15px -15px;
 }
 
 .search_videos_res {
@@ -2798,10 +2763,9 @@ ul.listing li span {
 
 .wall_liked_users {
     background: #fff;
-    padding: 8px;
     border: 1px solid #aebdcc;
     border-top: 0px;
-    padding-right: 0px
+    padding: 8px 0px 8px 8px;
 }
 
 .wall_liked_users a img {
@@ -3402,8 +3366,7 @@ ul.listing li span {
 /* SUPPORT */
 .support_bg {
     margin-top: -30px;
-    padding: 40px;
-    padding-left: 100px
+    padding: 40px 40px 40px 100px;
 }
 
 .support_addform {
@@ -3461,12 +3424,9 @@ ul.listing li span {
     width: 150px;
     border-left: 1px solid #e4e7eb;
     border-top: 0px;
-    margin-top: 0px;
-    margin-left: 0px;
     padding: 10px;
     color: #555;
-    margin-right: -12px;
-    margin-bottom: -15px
+    margin: 0px -12px -15px 0px;
 }
 
 .blogthr {
@@ -3514,16 +3474,9 @@ ul.listing li span {
     background: #6b9aca;
     color: #fff;
     font-weight: bold;
-    padding: 5px;
-    padding-left: 7px;
+    padding: 5px 5px 5px 7px;
     border-top-left-radius: 5px;
     border-top-right-radius: 5px;
-    -moz-border-top-left-radius: 5px;
-    -moz-border-top-right-radius: 5px;
-    -webkit-border-top-left-radius: 5px;
-    -webkit-border-top-right-radius: 5px;
-    -khtml-border-top-left-radius: 5px;
-    -khtml-border-top-right-radius: 5px;
 }
 
 .public_vlock a {
@@ -3531,18 +3484,11 @@ ul.listing li span {
 }
 
 .public_bg {
-    padding: 9px;
     background: #f5f5f5;
     margin-bottom: 10px;
-    padding-left: 7px;
+    padding: 9px 9px 9px 7px;
     border-bottom-left-radius: 5px;
     border-bottom-right-radius: 5px;
-    -moz-border-bottom-left-radius: 5px;
-    -moz-border-bottom-right-radius: 5px;
-    -webkit-border-bottom-left-radius: 5px;
-    -webkit-border-bottom-right-radius: 5px;
-    -khtml-border-bottom-left-radius: 5px;
-    -khtml-border-bottom-right-radius: 5px;
 }
 
 .oneusers {
@@ -3586,7 +3532,6 @@ ul.listing li span {
 .public_minilink a {
     font-size: 11px;
     font-weight: normal;
-    font-size: 10px
 }
 
 #public_editbg_container {
@@ -3658,7 +3603,6 @@ ul.listing li span {
     overflow: hidden;
     margin: 3px;
     height: 60px;
-    overflow: hidden;
     text-align: center;
     border: 1px solid #ddd;
     padding: 5px
@@ -3746,8 +3690,7 @@ ul.listing li span {
     text-shadow: 0px 1px 0px #262626;
     font-weight: bold;
     font-size: 11px;
-    padding: 8px 9px 8px 9px;
-    padding-right: 0px;
+    padding: 8px 0px 8px 9px;
     margin-top: -81px;
     margin-left: 380px;
     height: 52px;
@@ -3905,9 +3848,7 @@ ul.listing li span {
 }
 
 .allbar_title {
-    padding: 5px;
-    padding-left: 0px;
-    padding-top: 10px;
+    padding: 10px 5px 5px 0px;
     font-weight: bold;
     color: #5081b1;
     border-bottom: 1px solid #e0eaef;
@@ -3944,9 +3885,6 @@ ul.listing li span {
     background: #2b9eb3;
     color: #fff;
     border-radius: 2px;
-    -moz-border-radius: 2px;
-    -webkit-border-radius: 2px;
-    -khtml-border-radius: 2px;
     padding: 5px 7px 4px 7px
 }
 
@@ -3999,20 +3937,9 @@ ul.listing li span {
     margin-left: 3px;
     border-top-left-radius: 5px;
     border-top-right-radius: 5px;
-    -moz-border-top-left-radius: 5px;
-    -moz-border-top-right-radius: 5px;
-    -webkit-border-top-left-radius: 5px;
-    -webkit-border-top-right-radius: 5px;
-    -khtml-border-top-left-radius: 5px;
-    -khtml-border-top-right-radius: 5px;
     border-bottom-left-radius: 5px;
     border-bottom-right-radius: 5px;
-    -moz-border-bottom-left-radius: 5px;
-    -moz-border-bottom-right-radius: 5px;
-    -webkit-border-bottom-left-radius: 5px;
-    -webkit-border-bottom-right-radius: 5px;
-    -khtml-border-bottom-left-radius: 5px;
-    -khtml-border-bottom-right-radius: 5px;
+
     min-height: 118px;
     min-width: 96px;
 }
@@ -4026,23 +3953,13 @@ ul.listing li span {
     background: #6394c3;
     color: #fff;
     padding: 2px;
-    margin: -5px;
     border-bottom-left-radius: 5px;
     border-bottom-right-radius: 5px;
-    -moz-border-bottom-left-radius: 5px;
-    -moz-border-bottom-right-radius: 5px;
-    -webkit-border-bottom-left-radius: 5px;
-    -webkit-border-bottom-right-radius: 5px;
-    -khtml-border-bottom-left-radius: 5px;
-    -khtml-border-bottom-right-radius: 5px;
-    margin-top: 5px;
+    margin: 5px -5px -5px;
 }
 
 .gift_onepage {
-    margin: 5px;
-    margin-left: 10px;
-    margin-top: 10px;
-    margin-bottom: 0px
+    margin: 10px 5px 0px 10px;
 }
 
 /* AUDIO */
@@ -4055,7 +3972,7 @@ ul.listing li span {
 }
 
 .audio_onetrack a {
-    c1olor: #5081b1
+    color: #5081b1
 }
 
 .audio_playic, .audio_stopic {
@@ -4065,9 +3982,6 @@ ul.listing li span {
     margin-right: 7px;
     margin-top: -1px;
     border-radius: 3px;
-    -moz-border-radius: 3px;
-    -webkit-border-radius: 3px;
-    -khtml-border-radius: 3px;
 }
 
 .audio_stopic {
@@ -4129,9 +4043,7 @@ ul.listing li span {
     padding-top: 7px;
     margin-right: 10px;
     border-radius: 5px;
-    -moz-border-radius: 5px;
-    -webkit-border-radius: 5px;
-    -khtml-border-radius: 5px;
+
 }
 
 .player_ic_play {
@@ -4218,18 +4130,14 @@ ul.listing li span {
     background: #eee;
     margin-top: 3px;
     border-radius: 5px;
-    -moz-border-radius: 5px;
-    -webkit-border-radius: 5px;
-    -khtml-border-radius: 5px;
+
 }
 
 .player_mini_mbar {
     height: 5px;
-    margin-left: 20px;
     margin-top: 10px;
     width: 768px;
     margin-bottom: 10px;
-    margin-left: -2px
 }
 
 #player_volume_bar_value, #player_progress_load_bar, #player_progress_play_bar {
@@ -4237,9 +4145,6 @@ ul.listing li span {
     width: 0px;
     height: 20px;
     border-radius: 5px;
-    -moz-border-radius: 5px;
-    -webkit-border-radius: 5px;
-    -khtml-border-radius: 5px;
 }
 
 #player_progress_load_bar {
@@ -4352,14 +4257,10 @@ ul.listing li span {
 }
 
 .im_oneusr {
-    margin-top: 15px;
     color: #506b8c;
     text-shadow: 0px 1px 0px #ecedef;
     padding: 8px;
-    margin-left: -8px;
-    margin-right: -8px;
-    margin-bottom: -2px;
-    margin-top: 7px
+    margin: 15px -8px -2px;
 }
 
 .im_nameu {
@@ -4372,24 +4273,15 @@ ul.listing li span {
     height: 35px;
     float: left;
     margin-right: 10px;
-    border-radius: 3px;
-    -moz-border-radius: 3px;
-    -webkit-border-radius: 3px;
-    -khtml-border-radius: 3px;
+
 }
 
 .im_usactive, .im_oneusr:hover {
     background: #e1e7ed;
     padding: 8px;
-    margin-left: -8px;
-    margin-right: -8px;
-    margin-bottom: -2px;
-    margin-top: 7px;
+    margin: 7px -8px -2px;
     box-shadow: inset 0px 1px 4px 0px #c9cfd6;
     border-radius: 3px;
-    -moz-border-radius: 3px;
-    -webkit-border-radius: 3px;
-    -khtml-border-radius: 3px;
 }
 
 .im_oneusr:hover {
@@ -4399,16 +4291,10 @@ ul.listing li span {
 
 .im_new {
     background: #e1e7ed;
-    padding: 6px;
     color: #607387;
     font-weight: bold;
-    padding-top: 3px;
-    padding-bottom: 3px;
+    padding: 3px 6px;
     margin-top: 7px;
-    border-radius: 5px;
-    -moz-border-radius: 5px;
-    -webkit-border-radius: 5px;
-    -khtml-border-radius: 5px;
 }
 
 .im_usactive:hover {
@@ -4465,9 +4351,6 @@ ul.listing li span {
 
 .im_ava_mini img, .im_msg_texta {
     border-radius: 3px;
-    -moz-border-radius: 3px;
-    -webkit-border-radius: 3px;
-    -khtml-border-radius: 3px
 }
 
 .im_msg_texta {
@@ -4500,8 +4383,6 @@ ul.listing li span {
     z-index: 105;
     cursor: default;
     box-shadow: 0px 0px 15px 1px #444;
-    -moz-box-shadow: 0px 0px 15px 1px #444;
-    -webkit-box-shadow: 0px 0px 15px 1px #444
 }
 
 .distin_inpbg {
@@ -4521,10 +4402,7 @@ ul.listing li span {
     padding: 5px;
     color: #21578b;
     cursor: pointer;
-    margin-top: 0px;
-    margin-bottom: 0px;
-    margin-left: 2px;
-    margin-right: 2px
+    margin: 0px 2px;
 }
 
 .distin_friends_list div:hover {
@@ -4601,7 +4479,7 @@ ul.listing li span {
     background: none;
     color: #21578b;
     width: 175px;
-    margin-left: 0px
+    margin-left: 0;
 }
 
 /* FAST SEARCH */
@@ -4613,20 +4491,14 @@ ul.listing li span {
     margin-top: 90px;
     margin-left: 176px;
     border-radius: 3px;
-    -moz-border-radius: 3px;
-    -webkit-border-radius: 3px;
-    box-shadow: 0px 0px 6px #999999;
-    -moz-box-shadow: 0px 0px 6px #999999;
-    -webkit-box-shadow: 0px 0px 6px #999999;
+    box-shadow: 0 0 6px #999999;
 }
 
 .fast_search_bg a {
     display: block;
     font-weight: bold;
     line-height: 17px;
-    padding: 5px;
-    padding-left: 8px;
-    padding-right: 8px
+    padding: 5px 8px;
 }
 
 .fast_search_bg ad:hover {
@@ -4661,11 +4533,11 @@ ul.listing li span {
 /* INSTANT UPDATES */
 #updates {
     position: fixed;
-    left: 0px;
-    right: 0px;
-    bottom: 0px;
+    left: 0;
+    right: 0;
+    bottom: 0;
     width: 350px;
-    height: 0px;
+    height: 0;
     padding-top: 10px;
     z-index: 100
 }
@@ -4674,7 +4546,7 @@ ul.listing li span {
     margin-bottom: 15px;
     margin-left: 15px;
     position: static;
-    bottom: 0px
+    bottom: 0
 }
 
 .update_box_margin {
@@ -4684,11 +4556,7 @@ ul.listing li span {
     background: url('../images/bgbi.png');
     padding: 10px;
     border-radius: 5px;
-    -moz-border-radius: 5px;
-    -webkit-border-radius: 5px;
     box-shadow: 0px 2px 8px 1px #444;
-    -moz-box-shadow: 0px 2px 8px 1px #444;
-    -webkit-box-shadow: 0px 2px 8px 1px #444;
     text-shadow: 0px 1px 0px #262626;
     z-index: 100;
     line-height: 15px
@@ -4703,11 +4571,7 @@ ul.listing li span {
     float: left;
     margin-right: 10px;
     margin-bottom: 4px;
-    -moz-box-shadow: 0 1px 1px rgba(0, 0, 0, 0.8);
-    -webkit-box-shadow: 0 1px 1px rgba(0, 0, 0, 0.8);
     box-shadow: 0 1px 1px rgba(0, 0, 0, 0.8);
-    -moz-border-radius: 3px;
-    -webkit-border-radius: 3px;
     border-radius: 3px
 }
 
@@ -4736,11 +4600,7 @@ ul.listing li span {
     background: rgba(0, 0, 0, 0.6);
     padding-left: 6px;
     padding-top: 6px;
-    -moz-border-radius: 5px;
-    -webkit-border-radius: 5px;
     border-radius: 5px;
-    -moz-box-shadow: 0 1px 3px rgba(0, 0, 0, 0.28);
-    -webkit-box-shadow: 0 1px 3px rgba(0, 0, 0, 0.28);
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.28);
 }
 
@@ -4762,11 +4622,8 @@ ul.listing li span {
 /* DOCUMENTS */
 .doc_block {
     border-bottom: 1px solid #eee;
-    padding: 10px;
     margin: 8px;
-    padding-left: 0px;
-    padding-right: 5px;
-    padding-top: 2px
+    padding: 2px 5px 10px 0;
 }
 
 .doc_format_bg {
@@ -4805,7 +4662,7 @@ ul.listing li span {
     float: right;
     color: #21578b;
     cursor: pointer;
-    margin-top: 0px
+    margin-top: 0
 }
 
 .doc_sel:hover {
@@ -4922,10 +4779,7 @@ ul.listing li span {
 }
 
 .forum_infos_div {
-    margin-top: 10px;
-    margin-left: 7px;
-    margin-right: 7px;
-    margin-bottom: 0px;
+    margin: 10px 7px 0px;
     line-height: 17px
 }
 
@@ -4992,10 +4846,10 @@ ul.listing li span {
 /* MINIATURE */
 .miniature_box {
     position: fixed;
-    left: 0px;
-    top: 0px;
-    right: 0px;
-    bottom: 0px;
+    left: 0;
+    top: 0;
+    right: 0;
+    bottom: 0;
     overflow: auto;
     padding-bottom: 20px;
     background: url("../images/bgb3.png");
@@ -5004,10 +4858,9 @@ ul.listing li span {
 
 .miniature_pos {
     width: 645px;
-    margin: auto;
     background: #fff;
     padding: 20px;
-    margin-top: 100px;
+    margin: 100px auto auto;
     box-shadow: 0px 2px 10px rgba(0, 0, 0, 0.345);
     -moz-box-shadow: 0px 2px 10px rgba(0, 0, 0, 0.345);
     -webkit-box-shadow: 0px 2px 10px rgba(0, 0, 0, 0.345);
@@ -5064,7 +4917,7 @@ ul.listing li span {
     text-align: center;
     padding: 10px;
     margin: 20px -15px -15px -15px;
-    border-top: 1px solid # #E0EAEF
+    border-top: 1px solid #E0EAEF
 }
 
 /* APPS */
@@ -5113,12 +4966,11 @@ ul.listing li span {
     padding: 5px;
     background: #fff;
     width: 90px;
-    margin: auto;
-    margin-top: -10px
+    margin: -10px auto auto;
 }
 
 .apps_but {
-    margin-left: 0px
+    margin-left: 0
 }
 
 .apps_top {
@@ -5250,9 +5102,7 @@ ul.listing li span {
 
 .apps_faslh_pos {
     text-align: center;
-    margin: -12px;
-    margin-bottom: -17px;
-    margin-top: 9px
+    margin: 9px -12px -17px;
 }
 
 .apps_start_traf {
@@ -5279,9 +5129,9 @@ ul.listing li span {
     width: 11px;
     height: 11px;
     opacity: 0.2;
-    border-radius: 0px;
-    -moz-border-radius: 0px;
-    -webkit-border-radius: 0px
+    border-radius: 0;
+    -moz-border-radius: 0;
+    -webkit-border-radius: 0
 }
 
 /* COVER */
@@ -5295,7 +5145,6 @@ ul.listing li span {
 }
 
 .cover_newava {
-    margin-top: -165px;
     position: relative;
     z-index: 2;
     min-height: 100px
@@ -5320,8 +5169,7 @@ ul.listing li span {
     color: #fff;
     cursor: pointer;
     font-size: 12px;
-    margin: 8px;
-    margin-left: 0px;
+    margin: 8px 8px 8px 0px;
     opacity: 0.7
 }
 
@@ -5383,7 +5231,7 @@ ul.listing li span {
 #les10_ex2 {
     width: 800px;
     position: relative;
-    top: 0px;
+    top: 0;
     z-index: 1
 }
 
@@ -5412,7 +5260,7 @@ ul.listing li span {
 .reviewsBlock {
     margin-top: 13px;
     border-bottom: 1px solid #f5f5f5;
-    padding: 15px 0px 15px 0px;
+    padding: 15px 0 15px 0;
     margin-bottom: -15px
 }
 
@@ -5439,15 +5287,14 @@ ul.listing li span {
 /* STATIC jQ MP3 PL. */
 .staticPlbg {
     position: fixed;
-    top: 0px;
-    bottom: 0px;
-    right: 0px;
-    left: 0px;
-    margin: 20px;
+    top: 0;
+    bottom: 0;
+    right: 0;
+    left: 0;
     width: 475px;
     height: 500px;
     background: #fff;
-    margin-top: 60px;
+    margin: 60px 20px 20px;
     z-index: 5;
     box-shadow: 0px 0px 6px #9da5ae;
     -moz-box-shadow: 0px 0px 6px #9da5ae;
@@ -5456,8 +5303,7 @@ ul.listing li span {
 
 .staticPlbgTitle {
     background: #597ba5;
-    padding: 17px;
-    padding-bottom: 12px;
+    padding: 17px 17px 12px;
     color: #e3e9ea
 }
 
@@ -5790,13 +5636,11 @@ ul.listing li span {
 }
 
 .jQpnewloadbut {
-    padding: 5px;
     background: #597ba5;
     float: left;
     margin-top: 5px;
-    padding: 7px;
     margin-left: -1px;
-    padding-bottom: 6px;
+    padding: 5px 5px 6px;
     cursor: pointer
 }
 
@@ -5805,25 +5649,24 @@ ul.listing li span {
 }
 
 .jQpnewloadbut .staticpl_addmylisy_white {
-    margin: 0px
+    margin: 0
 }
 
 /* PAYMENT */
 .payment_title {
     background: #F2F2F2;
-    margin: -20px;
     padding: 16px 5px 16px 25px;
     line-height: 180%;
     font-size: 11px;
-    margin-bottom: 15px
+    margin: -20px -20px 15px;
 }
 
 .payment_title img {
     float: left;
     margin-right: 12px;
-    box-shadow: 0px 1px 2px rgba(0, 0, 0, 0.345);
-    -moz-box-shadow: 0px 1px 2px rgba(0, 0, 0, 0.345);
-    -webkit-box-shadow: 0px 1px 2px rgba(0, 0, 0, 0.345)
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.345);
+    -moz-box-shadow: 0 1px 2px rgba(0, 0, 0, 0.345);
+    -webkit-box-shadow: 0 1px 2px rgba(0, 0, 0, 0.345)
 }
 
 .payment_title .fl_l {
@@ -5838,8 +5681,7 @@ ul.listing li span {
     color: #36638E;
     font-size: 13px;
     font-weight: 700;
-    margin: 0px 0px 6px;
-    margin-top: 9px
+    margin: 9px 0 6px;
 }
 
 .payment_sel {
@@ -5852,7 +5694,6 @@ ul.listing li span {
     padding: 10px;
     background: #f5f5f5;
     line-height: 17px;
-    background: #F3F5FA;
     margin-top: 12px;
     font-size: 11px
 }
@@ -5904,7 +5745,6 @@ ul.listing li span {
 .profile_rate_100_head, .profile_rate_100_head, .profile_rate_1000_head {
     margin-left: 1px;
     background: url("../images/icons/rate100.png");
-    margin-left: 96px;
     margin-right: 27px;
     height: 38px;
     font-size: 19pt;
@@ -5924,10 +5764,6 @@ ul.listing li span {
     cursor: pointer;
     border-top-right-radius: 5px;
     border-bottom-right-radius: 5px;
-    -moz-border-top-right-radius: 5px;
-    -moz-border-bottom-right-radius: 5px;
-    -webkit-border-top-right-radius: 5px;
-    -webkit-border-bottom-right-radius: 5px
 }
 
 .rating_text {
@@ -6003,9 +5839,7 @@ ul.listing li span {
     overflow: hidden;
     cursor: pointer;
     padding: 8px;
-    margin: -8px;
-    margin-right: 10px;
-    margin-bottom: 10px;
+    margin: -8px 10px 10px -8px;
 }
 
 .grIntiveUser img, .grInviteYesed img {
@@ -6052,8 +5886,7 @@ ul.listing li span {
 
 .grIntiveUserActive img {
     border: 1px solid #537698;
-    margin: -1px;
-    margin-right: 10px
+    margin: -1px 10px -1px -1px;
 }
 
 .grIntiveUserActive .grInviteName {
@@ -6075,9 +5908,7 @@ ul.listing li span {
     height: 41px;
     opacity: 0.6;
     padding: 8px;
-    margin: -8px;
-    margin-right: 10px;
-    margin-bottom: 10px
+    margin: -8px 10px 10px -8px;
 }
 
 .grInviteOk {
@@ -6094,8 +5925,6 @@ ul.listing li span {
     float: left;
     margin-right: 10px;
     border-radius: 2px;
-    -moz-border-radius: 2px;
-    -webkit-border-radius: 2px
 }
 
 .grInviteInviterName div {
@@ -6116,11 +5945,6 @@ ul.listing li span {
     border: 1px solid #d3dee8;
     margin-top: -11px;
     background: #ffffff;
-    background: -moz-linear-gradient(top, #ffffff 0%, #f9f9f9 100%);
-    background: -webkit-gradient(linear, left top, left bottom, color-stop(0%, #ffffff), color-stop(100%, #f9f9f9));
-    background: -webkit-linear-gradient(top, #ffffff 0%, #f9f9f9 100%);
-    background: -o-linear-gradient(top, #ffffff 0%, #f9f9f9 100%);
-    background: -ms-linear-gradient(top, #ffffff 0%, #f9f9f9 100%);
     background: linear-gradient(to bottom, #ffffff 0%, #f9f9f9 100%)
 }
 
@@ -6146,8 +5970,6 @@ ul.listing li span {
     font-size: 11px;
     font-family: Tahoma;
     border-radius: 3px;
-    -moz-border-radius: 3px;
-    -webkit-border-radius: 3px;
     line-height: 15px;
     z-index: 2;
     margin-top: -6px
@@ -6161,8 +5983,6 @@ ul.listing li span {
     cursor: pointer;
     font-size: 11px;
     border-radius: 3px;
-    -moz-border-radius: 3px;
-    -webkit-border-radius: 3px;
     margin-top: 3px
 }
 

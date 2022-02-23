@@ -23,39 +23,6 @@
         $('#wall_text, .fast_form_width').autoResize();
         [owner]
         if ($('.profile_onefriend_happy').length > 4) $('#happyAllLnk').show();
-        ajaxUpload = new AjaxUpload('upload_cover', {
-            action: '/index.php?go=editprofile&act=upload_cover',
-            name: 'uploadfile',
-            onSubmit: function (file, ext) {
-                if (!(ext && /^(jpg|png|jpeg|gif|jpe)$/.test(ext))) {
-                    addAllErr(lang_bad_format, 3300);
-                    return false;
-                }
-                $("#les10_ex2").draggable('destroy');
-                $('.cover_loaddef_bg').css('cursor', 'default');
-                $('.cover_loading').show();
-                $('.cover_newpos, .cover_descring').hide();
-                $('.cover_profile_bg').css('opacity', '0.4');
-            },
-            onComplete: function (file, row) {
-                if (row == 1 || row == 2) addAllErr('Максимальны размер 7 МБ.', 3300);
-                else {
-                    $('.cover_loading').hide();
-                    $('.cover_loaddef_bg, .cover_hidded_but, .cover_loaddef_bg, .cover_descring').show();
-                    $('#upload_cover').text('Изменить фото');
-                    $('.cover_profile_bg').css('opacity', '1');
-                    $('.cover_loaddef_bg').css('cursor', 'move');
-                    $('.cover_newpos').css('position', 'absolute').css('z-index', '2').css('margin-left', '197px').show();
-                    row = row.split('|');
-                    rheihht = row[1];
-                    postop = (parseInt(rheihht / 2) - 100);
-                    if (rheihht <= 230) postop = 0;
-                    $('#les10_ex2').css('height', +rheihht + 'px').css('top', '-' + postop + 'px');
-                    cover.init('/uploads/users/' + row[0], rheihht);
-                    $('.cover_addut_edit').attr('onClick', 'cover.startedit(\'/uploads/users/' + row[0] + '\', ' + rheihht + ')');
-                }
-            }
-        });
         [/owner]
     });
     $(document).click(function (event) {
@@ -68,32 +35,6 @@
 <input type="hidden" id="teck_id" value=""/>
 <input type="hidden" id="teck_prefix" value=""/>
 <input type="hidden" id="typePlay" value="standart"/>
-[owner]
-<div class="cover_loading no_display"><img src="{theme}/images/progress_gray.gif"/></div>
-<div class="cover_profile_bg">
-    <div class="cover_buts_pos">
-        <div class="cover_newpos" {cover-param-3}>
-            <div class="cover_addut cover_hidded_but" onClick="cover.cancel('{cover-pos}')">Отмена</div>
-            <div class="cover_addut cover_hidded_but" onClick="cover.del()">Удалить</div>
-            <div class="cover_addut {cover-param-2}" id="upload_cover">Добавить обложку</div>
-            <div class="cover_addut cover_hidded_but" onClick="cover.save()">Сохранить</div>
-            <div id="cover_addut_edit" class="no_display">
-                <div class="cover_addut_edit {cover-param}" onClick="cover.startedit('{cover}', '{cover-height}')">
-                    Редактировать обложку
-                </div>
-            </div>
-        </div>
-        <div class="cover_loaddef_bg {cover-param}" {cover-param-4}>
-            <div class="cover_descring {cover-param-2}">Обложку можно двигать по высоте</div>
-            <div id="les10_ex2" {cover-param-5}><img src="{cover}" width="800" id="cover_img"/></div>
-            <div id="cover_restart"></div>
-        </div>
-    </div>
-</div>
-[/owner]
-[not-owner][cover]
-<div class="cover_all_user"><img src="{cover}" width="800" id="cover_img" {cover-param-5} /></div>
-[/cover][/not-owner]
 <div class="ava">
     [owner]
     <div class="cover_newava" {cover-param-7}><span id="ava"><img src="{ava}" alt="" title=""

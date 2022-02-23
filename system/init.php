@@ -21,7 +21,7 @@ $db = require_once ENGINE_DIR . '/data/db.php';
 Registry::set('db', $db);
 
 if ($config['gzip'] == 'yes')
-    include ENGINE_DIR . '/modules/gzip.php';
+    include_once ENGINE_DIR . '/modules/gzip.php';
 //FUNC. COOKIES
 $domain_cookie = explode(".", clean_url($_SERVER['HTTP_HOST']));
 $domain_cookie_count = count($domain_cookie);
@@ -69,8 +69,8 @@ if (!isset($checkLang)) {
     $rMyLang = 'Русский';
     $checkLang = 'Russian';
 }
-$lang = require ROOT_DIR . '/lang/' . $checkLang . '/site.php';
-$langdate = require ROOT_DIR . '/lang/' . $checkLang . '/date.php';
+$lang = include_once ROOT_DIR . '/lang/' . $checkLang . '/site.php';
+$langdate = include_once ROOT_DIR . '/lang/' . $checkLang . '/date.php';
 
 $tpl = new Templates();
 $tpl->dir = ROOT_DIR . '/templates/' . $config['temp'];
@@ -78,19 +78,19 @@ define('TEMPLATE_DIR', $tpl->dir);
 $_DOCUMENT_DATE = false;
 Registry::set('server_time', time());
 
-include ENGINE_DIR . '/login.php';
+include_once ENGINE_DIR . '/login.php';
 
 if ($config['offline'] == "yes") include ENGINE_DIR . '/modules/offline.php';
 
 if (isset($user_info['user_delet']) and $user_info['user_delet'] > 0)
-    include ENGINE_DIR . '/modules/profile_delet.php';
+    include_once ENGINE_DIR . '/modules/profile_delet.php';
 $sql_banned = $db->super_query("SELECT * FROM banned", true);
 if (isset($sql_banned))
     $blockip = check_ip($sql_banned);
 else
     $blockip = false;
 if (isset($user_info['user_ban_date']) and $user_info['user_ban_date'] >= Registry::get('server_time') or isset($user_info['user_ban_date']) and $user_info['user_ban_date'] == '0' or $blockip)
-    include ENGINE_DIR . '/modules/profile_ban.php';
+    include_once ENGINE_DIR . '/modules/profile_ban.php';
 //Если юзер авторизован, то обновляем последнюю дату посещения в таблице друзей и на личной стр
 if (Registry::get('logged')) {
     //Начисления 1 убм.
@@ -118,10 +118,10 @@ if (Registry::get('logged')) {
 $online_time = Registry::get('server_time') - $config['online_time'];
 
 try {
-    include ENGINE_DIR . '/classes/Module.php';
-    include ENGINE_DIR . '/modules/Register.php';
-    include ENGINE_DIR . '/modules/Profile.php';
-    include ENGINE_DIR . '/classes/Routing.php';
+    include_once ENGINE_DIR . '/classes/Module.php';
+    include_once ENGINE_DIR . '/modules/Register.php';
+    include_once ENGINE_DIR . '/modules/Profile.php';
+    include_once ENGINE_DIR . '/classes/Routing.php';
 
     $router = Router::fromGlobals();
 //        $this->get('path.base');
@@ -140,7 +140,7 @@ try {
             $action = requestFilter('act');
             $class = ucfirst($go);
             if (!class_exists($class) or $action == '' or $class == 'Wall') {
-                include ENGINE_DIR . '/mod.php';
+                include_once ENGINE_DIR . '/mod.php';
             } else {
                 $controller = new $class();
                 $params['params'] = '';
@@ -149,8 +149,8 @@ try {
             }
         }
     } catch (Exception) {
-        include ENGINE_DIR . '/mod.php';
+        include_once ENGINE_DIR . '/mod.php';
     }
 } catch (Exception $e) {
-    include ENGINE_DIR . '/mod.php';
+    include_once ENGINE_DIR . '/mod.php';
 }

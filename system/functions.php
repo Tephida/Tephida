@@ -135,15 +135,6 @@ function to_translit(string $value, bool $lower = true, bool $part = true): arra
 }
 
 /**
- * @param string $v
- * @return string
- */
-function GetVar(string $v): string
-{
-    return stripslashes($v);
-}
-
-/**
  * @return void
  */
 function check_xss() {
@@ -416,7 +407,10 @@ function mozg_create_cache($prefix, $cache_text): false|int
 function mozg_cache($prefix): false|string
 {
     $filename = ENGINE_DIR . '/cache/' . $prefix . '.tmp';
-    return @file_get_contents($filename);
+    if (file_exists($filename))
+        return file_get_contents($filename);
+    else
+        return false;
 }
 
 /**
@@ -452,7 +446,7 @@ function xfieldsdataload(string $id) : array
 {
     $x_fields_data = explode( "||", $id );
     $end = array_key_last($x_fields_data);
-    if ($x_fields_data[$end] == false)
+    if (!$x_fields_data[$end])
         unset($x_fields_data[$end]);
 
     $data = array();
@@ -913,7 +907,7 @@ HTML;
 
 function checkAjax(): bool
 {
-    return (!empty($_POST['ajax']) and $_POST['ajax'] == 'yes') ? true : false;
+    return !empty($_POST['ajax']) and $_POST['ajax'] == 'yes';
 }
 
 /**
@@ -975,10 +969,10 @@ function OnlineTpl($time, $mobile = false) {
         return $tpl->set('{online}', '');
 }
 
-function AjaxTpl($tpl)
+function AjaxTpl($tpl): int
 {
     $config = settings_get();
-    echo str_replace('{theme}', '/templates/' . $config['temp'], $tpl->result['info'] . $tpl->result['content']);
+    return print(str_replace('{theme}', '/templates/' . $config['temp'], $tpl->result['info'] . $tpl->result['content']));
 }
 
 function GenerateAlbumPhotosPosition($uid, $aid = false)
@@ -1520,6 +1514,7 @@ function compileAjax($tpl, $params): int
 
     $speedbar = $speedbar ?? null;
     $metatags = $params['metatags'] ?? null;
+    $spBar = $spBar ?? null;
 
     $metatags['title'] = $metatags['title'] ?? $config['home'];
 
