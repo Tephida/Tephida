@@ -53,7 +53,9 @@ echo <<<HTML
 </head>
 <body>
 <style media="all">
-body{font-size:11px;font-family:Tahoma;line-height:17px;background: linear-gradient(180deg, #0d789c, #c8eeb1, white, white) repeat-x;}
+body{font-size:11px;
+font-family:Tahoma;
+line-height:17px;background: linear-gradient(180deg, #0d789c, #c8eeb1, white, white) repeat-x;}
 a{color:#4274a5;text-decoration:underline}
 a:hover{color:#4274a5;text-decoration:none}
 .box {margin: auto;width: 800px;
@@ -72,12 +74,12 @@ border-bottom:1px solid #e5edf5;padding-left:2px}
 .fl_r{float:right}
 .inp{padding: 5.5px 10px 5.5px 10px; 
  background: linear-gradient(top, #b7c42d, #8d991b); color: #fff; font-size: 11px; font-family: Tahoma, Verdana, Arial, sans-serif, Lucida Sans; 
- text-shadow: 0px 1px 0px #767f18; border: 0px; border-top: 1px solid #cdd483; cursor: pointer; margin: 10px 0px 0px 0px; 
+ text-shadow: 0 1px 0 #767f18; border: 0; border-top: 1px solid #cdd483; cursor: pointer; margin: 10px 0 0 0; 
  font-weight: bold; border-radius: 2px;
-   box-shadow: inset 0px 1px 3px 0px #d2d2d2;}
+   box-shadow: inset 0 1px 3px 0 #d2d2d2;}
 .inp:hover{background:-webkit-linear-gradient(top, #c6d059, #a3ae36);}
 .inp:active{background:#848f18;position:relative;border-top:1px solid #727c0e;outline:none}
-.inpu{width:200px;box-shadow:inset 0px 1px 3px 0px #d2d2d2;border:1px solid #ccc;padding:4px;border-radius:3px;font-size:11px;
+.inpu{width:200px;box-shadow:inset 0 1px 3px 0 #d2d2d2;border:1px solid #ccc;padding:4px;border-radius:3px;font-size:11px;
 font-family:tahoma;margin-bottom:3px;}
 textarea{width:300px;height:100px;}
 .fllogall{color:#555}
@@ -673,7 +675,6 @@ HTML;
 HTML;
         } else
             main_print();
-
 }
 
 echo <<<HTML
