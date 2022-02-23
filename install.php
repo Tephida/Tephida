@@ -73,7 +73,7 @@ border-bottom:1px solid #e5edf5;padding-left:2px}
 .fl_l{float:left}
 .fl_r{float:right}
 .inp{padding: 5.5px 10px 5.5px 10px; 
- background: linear-gradient(top, #b7c42d, #8d991b); color: #fff; font-size: 11px; font-family: Tahoma, Verdana, Arial, sans-serif, Lucida Sans; 
+ background: linear-gradient(45deg, #b7c42d, #8d991b); color: #fff; font-size: 11px; font-family: Tahoma, Verdana, Arial, sans-serif, Lucida Sans; 
  text-shadow: 0 1px 0 #767f18; border: 0; border-top: 1px solid #cdd483; cursor: pointer; margin: 10px 0 0 0; 
  font-weight: bold; border-radius: 2px;
    box-shadow: inset 0 1px 3px 0 #d2d2d2;}
