@@ -253,30 +253,7 @@ var Profile = {
         $('#moreInfoLnk').attr('onClick', 'Profile.MoreInfo()');
     }
 }
-//VII BOX
-var viiBox = {
-    start: function () {
-        Page.Loading('start');
-    },
-    stop: function () {
-        Page.Loading('stop');
-    },
-    win: function (i, d, o, h) {
-        viiBox.stop();
-        $('html, body').css('overflow-y', 'hidden');
-        $('body').append('<div class="vii_box" id="newbox_miniature' + i + '">' + d + '</div>');
-        $(window).keydown(function (event) {
-            if (event.keyCode == 27) viiBox.clos(i, o, h);
-        });
-    },
-    clos: function (i, o, h) {
-        $('#newbox_miniature' + i).remove();
-        if (o) $('html, body').css('overflow-y', 'auto');
-        if (h) history.pushState({
-            link: h
-        }, null, h);
-    }
-}
+
 //MODAL BOX
 var Box = {
     Page: function (url, data, name, width, title, cancel_text, func_text, func, height, overflow, bg_show, bg_show_bottom, input_focus, cache) {
@@ -305,7 +282,8 @@ var Box = {
             }
         Page.Loading('start');
         $.post(url, data, function (html) {
-            if (!CheckRequestVideo(location.href)) Box.Close(name, cache);
+            if (!CheckRequestVideo(location.href))
+                Box.Close(name, cache);
             Box.Show(name, width, title, html, cancel_text, func_text, func, height, overflow, bg_show, bg_show_bottom, cache);
             Page.Loading('stop');
             if (input_focus) $('#' + input_focus).focus();
@@ -360,7 +338,7 @@ var Box = {
     GeneralClose: function () {
         $('#modal_box').hide();
     },
-    Info: function (bid, title, content, width, tout = 1400) {
+    Info: function (bid, title, content, width = 300, tout = 1400) {
         var top_pad = ($(window).height() - 115) / 2;
         $('body').append('<div id="' + bid + '" class="box_info"><div class="box_info_margin" style="width: ' + width + 'px; margin-top: ' + top_pad + 'px"><b><span>' + title + '</span></b><br /><br />' + content + '</div></div>');
         $(bid).show();
@@ -443,9 +421,8 @@ function langNumric(id, num, text1, text2, text3, text4, text5) {
 var trsn = {
     box: function () {
         $('.js_titleRemove').remove();
-        viiBox.start();
         $.post('/index.php?go=lang', function (d) {
-            viiBox.win('vii_lang_box', d);
+            Box.Show('lang', 400, lang, d, lang_box_canсel);
         });
     }
 }

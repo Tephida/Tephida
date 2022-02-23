@@ -299,6 +299,7 @@ class Profile extends Module
                 else $mobile_icon = '';
 
                 if ($row_online['user_last_visit'] >= $online_time) {
+                    $lang['online'] = $lang['online'] ?? 'online';
                     $tpl->set('{online}', $lang['online'] . $mobile_icon);
                 } else {
 //                    if (date('Y-m-d', intval($row_online['user_last_visit'])) == date('Y-m-d', $server_time))
@@ -308,12 +309,16 @@ class Profile extends Module
 //                    else
 //                        $dateTell = langdate('j F Y в H:i', $row_online['user_last_visit']);
 
-                    $dateTell = megaDate(intval($row_online['user_last_visit']));
+                    if (intval($row_online['user_last_visit']) > 0) {
+                        $dateTell = megaDate(intval($row_online['user_last_visit']));
+                        if ($row['user_sex'] == 2)
+                            $tpl->set('{online}', 'последний раз была ' . $dateTell . $mobile_icon);
+                        else
+                            $tpl->set('{online}', 'последний раз был ' . $dateTell . $mobile_icon);
+                    } else
+                        $tpl->set('{online}', '');//FIXME
 
-                    if ($row['user_sex'] == 2)
-                        $tpl->set('{online}', 'последний раз была ' . $dateTell . $mobile_icon);
-                    else
-                        $tpl->set('{online}', 'последний раз был ' . $dateTell . $mobile_icon);
+
                 }
 
                 if ($row['user_city'] and $row['user_country']) {

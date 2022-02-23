@@ -20,6 +20,7 @@ define("ROOT_DIR", dirname(__FILE__));
 const ENGINE_DIR = ROOT_DIR . '/system';
 include_once ENGINE_DIR . '/functions.php';
 include_once ENGINE_DIR . '/classes/Registry.php';
+include_once ENGINE_DIR . '/classes/AntiSpam.php';
 include_once ENGINE_DIR . '/classes/Filesystem.php';
 include_once ENGINE_DIR . '/classes/Templates.php';
 include_once ENGINE_DIR . '/classes/mysql.php';

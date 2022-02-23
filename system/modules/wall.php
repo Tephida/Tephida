@@ -27,6 +27,7 @@ if (Registry::get('logged')) {
             $wall = new wall($tpl);
 //			NoAjaxQuery();
             $wall_text = requestFilter('wall_text');
+            AntiSpam::check('identical', $wall_text);
             $attach_files = requestFilter('attach_files', 25000, true);
             $for_user_id = intFilter('for_user_id');
             $fast_comm_id = intFilter('rid');
@@ -34,9 +35,9 @@ if (Registry::get('logged')) {
             $str_date = time();
 
             if (!$fast_comm_id)
-                AntiSpam('wall');
+                AntiSpam::check('wall');
             else
-                AntiSpam('comments');
+                AntiSpam::check('comments');
 
             //Проверка на наличие юзера, которому отправляется запись
             $check = $db->super_query("SELECT user_privacy, user_last_visit FROM `users` WHERE user_id = '{$for_user_id}'");
@@ -245,7 +246,9 @@ if (Registry::get('logged')) {
                                 $db->query("UPDATE `users` SET user_wall_num = user_wall_num+1 WHERE user_id = '{$for_user_id}'");
 
                             //Если добавлена просто запись, то сразу обновляем все записи на стене
-                            AntiSpamLogInsert('wall');
+                            AntiSpam::LogInsert('wall');
+                            AntiSpam::LogInsert('identical', $wall_text);
+
                             if (!$fast_comm_id) {
                                 $config = settings_get();
                                 if ($xPrivasyX) {
@@ -276,7 +279,8 @@ if (Registry::get('logged')) {
                                 //Если добавлен комментарий к записи, то просто обновляем нужную часть, то есть только часть комментариев, но не всю стену
                             } else {
 
-                                AntiSpamLogInsert('comments');
+                                AntiSpam::LogInsert('comments');
+                                AntiSpam::LogInsert('identical', $wall_text);
 
                                 //Выводим кол-во комментов к записи
                                 $row = $db->super_query("SELECT fasts_num FROM `wall` WHERE id = '{$fast_comm_id}'");

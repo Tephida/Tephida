@@ -144,11 +144,13 @@ var Photo = {
         });
     },
     allrating: function (i) {
-        viiBox.start();
+        // viiBox.start();
         $.post('/index.php?go=photo&act=view_rating', {
             pid: i
         }, function (d) {
-            viiBox.win('ph', d);
+            // viiBox.win('ph', d);
+            Box.Show('view_rating', 400, 'view_rating', d, lang_box_cancel);
+
         });
     },
     prev_users: function (i) {
@@ -2597,11 +2599,12 @@ var groups = {
         Box.Page('/index.php?go=groups&act=all_groups_user', 'for_user_id=' + for_user_id + '&num=' + num + page, 'all_groups_users_' + for_user_id + page_num, 525, 'Интересные страницы', lang_msg_close, 0, 0, 345, 1, 1, 1, 0, 1);
     },
     inviteBox: function (i) {
-        viiBox.start();
         $.post('/index.php?go=groups&act=invitebox', {
             id: i
         }, function (d) {
-            viiBox.win('inviteBox', d);
+            // viiBox.win('inviteBox', d);
+            Box.Show('invitebox', 400, 'Приглашение в сообщество', d, lang_box_cancel);
+
         });
     },
     inviteSet: function (i) {
@@ -2633,7 +2636,7 @@ var groups = {
         }, function (d) {
             if (d == 1) Box.Info('load_photo_er', 'Информация', 'Вы можете пригласить в сообщество не более 50 друзей в день.', 380, 3000);
             else Box.Info('load_photo_er', 'Информация', 'Приглашения успешно разосланы.', 230, 2600);
-            viiBox.clos('inviteBox', 1);
+            Box.Close('inviteBox');
         });
     },
     inviteFriendsPage: function (i) {
@@ -3735,199 +3738,6 @@ var photoeditor = {
         $('#frameedito' + id).html('<iframe src="https://pixlr.com/express/?s=c&image=' + escape(img) + '&title=photo&target=' + escape('https://' + location.host + '/index.php?go=photo_editor&pid=' + id) + '&exit=' + escape('https://' + location.host + '/index.php?go=photo_editor&act=close&image=' + img) + '" width="770" height="' + height + '" frameborder="0"></iframe>');
     }
 }
-//APPS
-var vii_apps_search_delay = false;
-var vii_apps_search_val = '';
-var apps_preload = true;
-var apps = {
-    gSearch: function () {
-        var a = $('#query_games').val();
-        if (!a) {
-            $('#apps_all').show();
-            $('#apps_search').hide();
-            $('#apps_se_load').fadeOut(100);
-            apps_preload = true;
-        }
-        if (a != 0) {
-            apps_preload = false;
-            $('#apps_se_load').fadeIn('fast');
-            0 == vii_apps_search_val != a && a != 0 < a.length && (clearInterval(vii_apps_search_delay), vii_apps_search_delay = setInterval(function () {
-                apps.xSearch();
-            }, 600));
-        }
-    },
-    xSearch: function () {
-        clearInterval(vii_apps_search_delay);
-        var a = $('#query_games').val();
-        $.post('/index.php?go=apps&act=search', {
-            query_games: a
-        }, function (d) {
-            if (a != 0) {
-                $('#apps_all').hide();
-                $('#apps_search').show();
-                $('#apps_se_load').fadeOut(100);
-                $('#apps_search_res').html(d);
-                $(".apps_last:last").css('border', '0px');
-            } else {
-                $('#apps_all').show();
-                $('#apps_search').hide();
-                $('#apps_se_load').fadeOut(100);
-            }
-        });
-    },
-    xSearchMore: function () {
-        if ($('#apps_text_load_search').text() == 'Показать больше приложений') {
-            textLoad('apps_text_load_search');
-            var lastid = $(".apps_last:last").attr('id');
-            var a = $('#query_games').val();
-            $.post('/index.php?go=apps&act=search', {
-                lastid: lastid,
-                query_games: a
-            }, function (d) {
-                $('#apps_search_pages').append(d);
-                $(".apps_last:last").css('border', '0px');
-                $('#apps_text_load_search').text('Показать больше приложений');
-                if (!d) $('.apps_but3').remove();
-            });
-        }
-    },
-    showMore: function () {
-        if ($('#apps_text_load').text() == 'Показать больше приложений' && apps_preload) {
-            textLoad('apps_text_load');
-            $.post('/index.php?go=apps', {
-                doload: 1,
-                page_cnt: page_cnt_app
-            }, function (d) {
-                page_cnt_app++;
-                row = d.split('||');
-                $('#apps_pop').append(row[0]);
-                $('#apps_new').append(row[1]);
-                $('#apps_text_load').text('Показать больше приложений');
-                if (!row[0] && !row[1]) $('.apps_but2').remove();
-            });
-        }
-    },
-    showMoreOld: function () {
-        if ($('#apps_text_load_old').text() == 'Показать больше приложений') {
-            textLoad('apps_text_load_old');
-            $.post('/index.php?go=apps', {
-                doload: 2,
-                page_cnt_old: page_cnt_app_old
-            }, function (d) {
-                page_cnt_app_old++;
-                row = d.split('||');
-                $('#apps_my_games').append(row[0]);
-                $('#apps_activity').append(row[1]);
-                $('#apps_text_load_old').text('Показать больше приложений');
-                if (!row[0] && !row[1]) $('.apps_but').remove();
-            });
-        }
-    },
-    view: function (a, h, c) {
-        history.pushState({
-            link: h
-        }, null, h);
-        viiBox.start();
-        $.post('/index.php?go=apps&act=view', {
-            id: a
-        }, function (d) {
-            viiBox.win('ap', d, 1, c);
-        });
-    },
-    gallery: function (i) {
-        $('.apps_mini_img img').css('opacity', 0.5);
-        $('#apmpos' + i).css('opacity', 1);
-        if (i == 2) $('.apps_inimgs').animate({
-            'margin-left': '-611'
-        }, 450);
-        else if (i == 3) $('.apps_inimgs').animate({
-            'margin-left': '-1221'
-        }, 450);
-        else if (i == 4) $('.apps_inimgs').animate({
-            'margin-left': '-1832'
-        }, 450);
-        else $('.apps_inimgs').animate({
-                'margin-left': '0'
-            }, 450);
-    },
-    mydel: function (i, t) {
-        if (t) {
-            $('.js_titleRemove').remove();
-            $('#app' + i).html('<div align="center" style="color:#777;height:40px;padding-top:10px">Игра успешно удалена.</div>');
-        } else $('#apps_rdel_txt').html('<div class="fl_r" style="color:#777;margin-top:6px;font-weight:normal">Игра удалена из списках ваших игр</div>');
-        $.post('/index.php?go=apps&act=mydel', {
-            id: i
-        });
-    }
-}
-//COVER
-var cover = {
-    init: function (i, hi) {
-        $('#cover_img').attr('src', i);
-        $("#les10_ex2").draggable({
-            axis: 'y',
-            stop: function () {
-                $('.cover_addut, .cover_descring').show();
-            },
-            drag: function (event, ui) {
-                var d = ui.position.top;
-                $('.cover_addut, .cover_descring').hide();
-                if (d >= 0) {
-                    $("#les10_ex2").remove();
-                    $('#cover_restart').html('<div style="width:800px;height:' + hi + 'px;position:relative;top:0px;z-index:1" id="les10_ex2"><img src="' + i + '" width="800" id="cover_img" /></div>');
-                    $('.cover_addut, .cover_descring').show();
-                    cover.init(i, hi);
-                }
-                h = parseInt('-' + (hi - 230));
-                if (d <= h) {
-                    $("#les10_ex2").remove();
-                    $('#cover_restart').html('<div style="width:800px;height:' + hi + 'px;position:relative;top:' + h + 'px;z-index:1" id="les10_ex2"><img src="' + i + '" width="800" id="cover_img" /></div>');
-                    $('.cover_addut, .cover_descring').show();
-                    cover.init(i, hi);
-                }
-            }
-        });
-    },
-    del: function (public_id) {
-        $('.cover_descring, .cover_addut').hide();
-        $('#upload_cover').show().text('Добавить обложку');
-        $('.cover_newpos').css('margin-left', '430px');
-        $('#cover_img').attr('src', '');
-        $('.cover_loaddef_bg').css('cursor', 'default').hide();
-        $('#cover_restart').html('');
-        $("#les10_ex2").draggable('destroy');
-        if (public_id) $.post('/index.php?go=groups&act=delcover&id=' + public_id);
-        else $.post('/index.php?go=editprofile&act=delcover');
-    },
-    save: function (public_id) {
-        cover.cancel();
-        t = $("#les10_ex2").attr('style').split('top:');
-        s = t[1].split('px');
-        s[0] = s[0].replace('-', '');
-        if (public_id) $.post('/index.php?go=groups&act=savecoverpos&id=' + public_id, {
-            pos: s[0]
-        });
-        else $.post('/index.php?go=editprofile&act=savecoverpos', {
-            pos: s[0]
-        });
-    },
-    cancel: function (t) {
-        $('.cover_descring, .cover_addut').hide();
-        $('.cover_addut_edit').show();
-        $('.cover_newpos').css('margin-left', '397px');
-        $('.cover_loaddef_bg').css('cursor', 'default');
-        $("#les10_ex2").draggable('destroy');
-        if (t) $("#les10_ex2").css('top', '-' + t + 'px');
-    },
-    startedit: function (i, h, public_id) {
-        $('#upload_cover').show().text('Изменить фото');
-        $('.cover_descring, .cover_addut').show();
-        $('.cover_newpos').css('margin-left', '197px');
-        $('.cover_addut_edit').hide();
-        $('.cover_loaddef_bg').css('cursor', 'move');
-        cover.init(i, h);
-    }
-}
 //REVIEWS
 var reviews = {
     send: function () {
@@ -3949,32 +3759,35 @@ var imRoom = {
     createBox: function (el) {
         var el = $(el);
         el.attr('disabled', true);
-        viiBox.start();
+        // viiBox.start();
         $.post('/index.php?go=im&act=createRoomBox', function (d) {
             el.removeAttr('disabled');
-            viiBox.win('createRoom', d);
+            // viiBox.win('createRoom', d);
+            Box.Show('createRoom', 400, 'Создание беседы', d, lang_box_cancel, 'Создать беседу', imRoom.create(this));
         });
     },
     inviteBox: function (el, room_id) {
         var el = $(el);
         el.attr('disabled', true);
-        viiBox.start();
+        // viiBox.start();
         $.post('/index.php?go=im&act=inviteToRoomBox', {
             room_id: room_id.substr(1)
         }, function (d) {
             el.removeAttr('disabled');
-            viiBox.win('inviteToRoom', d);
+            // viiBox.win('inviteToRoom', d);
+            Box.Show('inviteToRoom', 400, inviteToRoom, d, lang_box_canсel);
         });
     },
     viewRoom: function (el, room_id) {
         var el = $(el);
         el.attr('disabled', true);
-        viiBox.start();
+        // viiBox.start();
         $.post('/index.php?go=im&act=viewRoomBox', {
             room_id: room_id.substr(1)
         }, function (d) {
             el.removeAttr('disabled');
-            viiBox.win('viewRoom', d);
+            // viiBox.win('viewRoom', d);
+            Box.Show('viewRoom', 400, viewRoom, d, lang_box_canсel);
         });
     },
     saveName: function (el, room_id) {
@@ -4055,7 +3868,7 @@ var imRoom = {
                     el.removeAttr('disabled');
                     var d = $.parseJSON(d);
                     if (d.response) {
-                        viiBox.clos('createRoom', 1);
+                        Box.Close('createRoom');
                         Page.Go('/messages#c' + d.response);
                     } else if (d.error)
                         addAllErr(d.error);
@@ -4079,7 +3892,7 @@ var imRoom = {
                 el.removeAttr('disabled');
                 var d = $.parseJSON(d);
                 if (d.response) {
-                    viiBox.clos('inviteToRoom', 1);
+                    Box.Close('inviteToRoom');
                     Page.Go('/messages#c' + d.response);
                 } else if (d.error) alert(d.error);
             });

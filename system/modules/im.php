@@ -435,7 +435,7 @@ if (Registry::get('logged')) {
 
         case "send":
             NoAjaxQuery();
-            AntiSpam('messages');
+            AntiSpam::check('messages');
             $room_id = intFilter('room_id');
             $for_user_id = intFilter('for_user_id');
             if ($room_id) $for_user_id = 0;
@@ -444,7 +444,7 @@ if (Registry::get('logged')) {
             $my_name = requestFilter('my_name');
             $attach_files = requestFilter('attach_files');
             $attach_files = str_replace('vote|', 'hack|', $attach_files);
-            AntiSpam('identical', $msg . $attach_files);
+            AntiSpam::check('identical', $msg . $attach_files);
             if (!empty($msg) or !empty($attach_files)) {
                 if (!$room_id)
                     $row = $db->super_query("SELECT user_privacy FROM `users` WHERE user_id = '" . $for_user_id . "'");
@@ -465,9 +465,9 @@ if (Registry::get('logged')) {
                     } else
                         $xPrivasy = 1;
                     if ($xPrivasy and $user_id != $for_user_id) {
-                        AntiSpamLogInsert('identical', $msg . $attach_files);
+                        AntiSpam::LogInsert('identical', $msg . $attach_files);
                         if (!$room_id && !CheckFriends($for_user_id))
-                            AntiSpamLogInsert('messages');
+                            AntiSpam::LogInsert('messages');
                         $user_ids = array();
                         if (!$room_id) {
                             $user_ids[] = $for_user_id;
