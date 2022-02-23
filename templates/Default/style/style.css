@@ -1655,7 +1655,7 @@ ul.listing li span {
 }
 
 .prev_link, .next_link {
-    background: url("../images/leftb2.png") no-repeat;
+    background-color: #000000;
     width: 20px;
     float: left;
     height: 140px;
@@ -1672,7 +1672,7 @@ ul.listing li span {
 }
 
 .next_link {
-    background: url("../images/rightb2.png") no-repeat -10px 0;
+    background-color: #000000;
     float: right;
     margin-left: 0;
     margin-right: -15px
@@ -2860,7 +2860,7 @@ ul.listing li span {
 }
 
 .wall_onevideo {
-    background-position: absolute;
+    position: absolute;
     margin-right: 10px;
     margin-top: 5px;
     width: 140px
@@ -2988,7 +2988,7 @@ ul.listing li span {
     margin-right: 10px;
     max-height: 80px;
     max-width: 100px;
-    background-color: #f0f0f0 transparent
+    background-color: #f0f0f0;
 }
 
 .wall_tell_all {
@@ -3296,7 +3296,6 @@ ul.listing li span {
     background-color: #000;
     filter: alpha(opacity=60);
     opacity: 0.6;
-    position: none
 }
 
 /* SUPPORT */
@@ -5596,9 +5595,7 @@ ul.listing li span {
     font-size: 19pt;
     color: #fff;
     font-weight: bold;
-    padding-top: 6px;
-    padding-left: 5px;
-    padding-right: 5px;
+    padding: 5px;
     background: linear-gradient(45deg, #2d88b8, #2d88b8, #8ac3df);
     border-radius: 6px;
 }
