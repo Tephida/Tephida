@@ -1,0 +1,23 @@
+{
+  "name": "semyon492/vii",
+  "description": "VII Engine",
+  "minimum-stability": "stable",
+  "license": "MIT",
+  "authors": [
+    {
+      "name": "semyon492"
+    }
+  ],
+  "require": {
+    "php": "^8.0",
+    "ext-mysqli": "*",
+    "ext-zlib": "*",
+    "ext-gd": "*",
+    "ext-iconv": "*"
+  },
+  "autoload": {
+    "psr-4": {
+      "Mozg\\": "system/"
+    }
+  }
+}
