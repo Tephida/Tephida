@@ -27,60 +27,43 @@ class AntiSpam
         'groups' => 6,
     );
 
+    public static function limit(string $act): int
+    {
+        if ($act == 'friends')
+            return self::$max_friends;
+        elseif ($act == 'messages')
+            return self::$max_msg;
+        elseif ($act == 'wall')
+            return self::$max_wall;
+        elseif ($act == 'identical')
+            return self::$max_identical;
+        elseif ($act == 'comments')
+            return self::$max_comm;
+        elseif ($act == 'groups')
+            return self::$max_groups;
+        else
+            return 0;
+    }
+
     public static function check(string $act, $text = false): void
     {
         $user_info = Registry::get('user_info');
         $db = Registry::get('db');
         if ($text)
             $text = md5($text);
+
         //спам дата
         $antiDate = date('Y-m-d', time());
         $antiDate = strtotime($antiDate);
 
-        if ($act == 'friends') {
-            //Проверяем в таблице
-            $check = $db->super_query("SELECT COUNT(*) AS cnt FROM `antispam` WHERE act = '1' AND user_id = '{$user_info['user_id']}' AND date = '{$antiDate}'");
-            //Если кол-во, логов больше, то ставим блок
-            if ($check['cnt'] >= self::$max_friends) {
-                die('antispam_err');
-            }
-        } elseif ($act == 'messages') {
-            //Проверяем в таблице
-            $check = $db->super_query("SELECT COUNT(*) AS cnt FROM `antispam` WHERE act = '2' AND user_id = '{$user_info['user_id']}' AND date = '{$antiDate}'");
-            //Если кол-во, логов больше, то ставим блок
-            if ($check['cnt'] >= self::$max_msg) {
-                die('antispam_err');
-            }
-        } elseif ($act == 'wall') {
-            //Проверяем в таблице
-            $check = $db->super_query("SELECT COUNT(*) AS cnt FROM `antispam` WHERE act = '3' AND user_id = '{$user_info['user_id']}' AND date = '{$antiDate}'");
-            //Если кол-во, логов больше, то ставим блок
-            if ($check['cnt'] >= self::$max_wall) {
-                die('antispam_err');
-            }
-        } elseif ($act == 'identical') {
-            //Если спам на одинаковые тестовые данные
-            //Проверяем в таблице
-            $check = $db->super_query("SELECT COUNT(*) AS cnt FROM `antispam` WHERE act = '4' AND user_id = '{$user_info['user_id']}' AND date = '{$antiDate}' AND txt = '{$text}'");
-            //Если кол-во, логов больше, то ставим блок
-            if ($check['cnt'] >= self::$max_identical) {
-                die('antispam_err');
-            }
-        } elseif ($act == 'comments') {
-            //Проверяем в таблице
-            $check = $db->super_query("SELECT COUNT(*) AS cnt FROM `antispam` WHERE act = '5' AND user_id = '{$user_info['user_id']}' AND date = '{$antiDate}'");
-            //Если кол-во, логов больше, то ставим блок
-            if ($check['cnt'] >= self::$max_comm) {
-                die('antispam_err');
-            }
-        } //Если спам на проверку сообществ
-        elseif ($act == 'groups') {
-            //Проверяем в таблице
-            $check = $db->super_query("SELECT COUNT(*) AS cnt FROM `antispam` WHERE act = '6' AND user_id = '{$user_info['user_id']}' AND date = '{$antiDate}'");
-            //Если кол-во, логов больше, то ставим блок
-            if ($check['cnt'] >= self::$max_groups) {
-                die('antispam_err');
-            }
+        $action = self::$types[$act];
+        $limit = self::limit($act);
+
+        //Проверяем в таблице
+        $check = $db->super_query("SELECT COUNT(*) AS cnt FROM `antispam` WHERE act = '{$action}' AND user_id = '{$user_info['user_id']}' AND date = '{$antiDate}' AND txt = '{$text}'");
+        //Если кол-во, логов больше, то ставим блок
+        if ($check['cnt'] >= $limit) {
+            die('antispam_err');
         }
     }
 
