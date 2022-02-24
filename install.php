@@ -365,29 +365,27 @@ HTML;
  *   file that was distributed with this source code.
  *
  */
-@session_start();
-@ob_start();
-@ob_implicit_flush(0);
+session_start();
+ob_start();
+ob_implicit_flush(0);
+
+if (version_compare(PHP_VERSION, '8.0.0') < 0) {
+    throw new InvalidArgumentException("Please change php version");
+}
+if (!file_exists('./vendor/autoload.php')) {
+    throw new InvalidArgumentException("Please install composer");
+}
 
 const MOZG = true;
 define('ROOT_DIR', dirname (__FILE__));
 const ENGINE_DIR = ROOT_DIR . '/system';
 const ADMIN_DIR = ROOT_DIR . '/system/inc';
-include ENGINE_DIR . '/classes/Registry.php';
-include ENGINE_DIR . '/classes/Filesystem.php';
-include_once ENGINE_DIR . '/classes/Templates.php';
+require_once './vendor/autoload.php';
 include ADMIN_DIR.'/functions.php';
 \$config = settings_load();
-
 \$admin_index = \$config['admin_index'];
-
 \$admin_link = \$config['home_url'].\$admin_index;
-
-include ENGINE_DIR.'/classes/mysql.php';
 include ADMIN_DIR.'/login.php';
-
-\$db->close();
-
 HTML;
                 $con_file = fopen($_POST['adminfile'], "w+") or die("Извините, но невозможно создать файл <b>{$_POST['adminfile']}</b>.<br />Проверьте правильность проставленного CHMOD!");
                 fwrite($con_file, $admin);
