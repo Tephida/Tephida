@@ -7,15 +7,19 @@
  *
  */
 
-include __DIR__ .'/../functions.php';
+use Mozg\classes\Filesystem;
+use Mozg\classes\Registry;
+use Mozg\classes\Templates;
 
-$domain_cookie = explode (".", clean_url( $_SERVER['HTTP_HOST'] ));
+include __DIR__ . '/../functions.php';
+
+$domain_cookie = explode(".", clean_url($_SERVER['HTTP_HOST']));
 $domain_cookie_count = count($domain_cookie);
 $domain_allow_count = -2;
 
-if($domain_cookie_count > 2){
+if ($domain_cookie_count > 2) {
 
-	if(in_array($domain_cookie[$domain_cookie_count-2], array('com', 'net', 'org') )) 
+    if (in_array($domain_cookie[$domain_cookie_count - 2], array('com', 'net', 'org')))
 		$domain_allow_count = -3;
 		
 	if($domain_cookie[$domain_cookie_count-1] == 'ua' ) 
