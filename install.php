@@ -9,8 +9,14 @@
 
 use Mozg\classes\Filesystem;
 
+if (!file_exists('./vendor/autoload.php')) {
+    throw new InvalidArgumentException("Please install composer");
+}
+
+require_once './vendor/autoload.php';
+
 header('Content-type: text/html; charset=utf-8');
-const MOZG = true;
+
 define('ROOT_DIR', dirname(__FILE__));
 const ENGINE_DIR = ROOT_DIR . '/system';
 

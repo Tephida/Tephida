@@ -9,6 +9,9 @@
 if (version_compare(PHP_VERSION, '8.0.0') < 0) {
     throw new InvalidArgumentException("Please change php version");
 }
+if (!file_exists('./vendor/autoload.php')) {
+    throw new InvalidArgumentException("Please install composer");
+}
 if (isset($_POST["PHPSESSID"])) {
     session_id($_POST["PHPSESSID"]);
 }
