@@ -7,6 +7,8 @@
  *
  */
 
+namespace Mozg\modules;
+
 use Mozg\classes\Filesystem;
 use Mozg\classes\Module;
 use Mozg\classes\Registry;
@@ -18,14 +20,14 @@ class Register extends Module
     {
         require ENGINE_DIR . '/classes/Status.php';
         if (requestFilter('ajax') == 'yes') {
-            if (Registry::get('logged') == false) {
+            if (!Registry::get('logged')) {
                 $db = Registry::get('db');
                 $server_time = Registry::get('server_time');
 //    NoAjaxQuery();
                 //Код безопасности
                 $session_sec_code = $_SESSION['sec_code'] ?? null;
                 $sec_code = requestFilter('sec_code') ?? null;
-                //Если код введные юзером совпадает, то пропускаем, иначе выводим ошибку
+                //Если код введенный юзером совпадает, то пропускаем, иначе выводим ошибку
                 if ($sec_code == $session_sec_code) {
                     //Входные POST Данные
 

@@ -193,23 +193,21 @@ function navigation($gc, $num, $type) {
     }
     for ($index = - 1;++$index <= $page_refers_per_page_count - 1;) {
         if ($index + $start_page == $page) $pages.= '<span>' . ($start_page + $index) . '</span>';
-        else $pages.= '<a href="' . $type . ($start_page + $index) . '" onClick="Page.Go(this.href); return false">' . ($start_page + $index) . '</a>';
+        else $pages .= '<a href="' . $type . ($start_page + $index) . '" onClick="Page.Go(this.href); return false">' . ($start_page + $index) . '</a>';
     }
     if ($page + $page_refers_per_page <= $pages_count) {
-        $pages.= '<a href="' . $type . ($start_page + $page_refers_per_page_count) . '" onClick="Page.Go(this.href); return false">...</a>';
-        $pages.= '<a href="' . $type . $pages_count . '" onClick="Page.Go(this.href); return false">' . $pages_count . '</a>';
+        $pages .= '<a href="' . $type . ($start_page + $page_refers_per_page_count) . '" onClick="Page.Go(this.href); return false">...</a>';
+        $pages .= '<a href="' . $type . $pages_count . '" onClick="Page.Go(this.href); return false">' . $pages_count . '</a>';
     }
     $resif = $cnt / $gcount;
-    if (ceil($resif) == $page) $pages.= '';
+    if (ceil($resif) == $page) $pages .= '';
     else $pages .= '<a href="' . $type . ($page + 1) . '" onClick="Page.Go(this.href); return false">&raquo;</a>';
     if ($pages_count <= 1) $pages = '';
-    $tpl_2 = new Templates();
-    $tpl_2->dir = TEMPLATE_DIR;
-    $tpl_2->load_template('nav.tpl');
-    $tpl_2->set('{pages}', $pages);
-    $tpl_2->compile('content');
-    $tpl_2->clear();
-    $tpl->result['content'] .= $tpl_2->result['content'];
+
+    $content = <<<HTML
+<div class="nav" id="nav">{$pages}</div>
+HTML;
+    $tpl->result['content'] .= $content;
 }
 
 /**
@@ -1396,6 +1394,8 @@ function _e_json(array $value): int
  * @param $tpl
  * @param array $params
  * @return int
+ * @throws JsonException
+ * @throws Exception
  */
 function compile($tpl, array $params = array()): int
 {
@@ -1472,7 +1472,6 @@ function compile($tpl, array $params = array()): int
             $params['new_groups'] = '';
             $params['new_groups_lnk'] = '/groups';
         }
-
     } else {
         $params['user_pm_num'] = '';
         $params['new_news'] = '';
@@ -1486,7 +1485,6 @@ function compile($tpl, array $params = array()): int
         $params['requests_link'] = '/requests';
         $params['new_groups_lnk'] = '/groups';
         $params['new_groups'] = '';
-
     }
 
     //Если включен AJAX, то загружаем стр.
@@ -1502,19 +1500,18 @@ function compile($tpl, array $params = array()): int
  * @param $params
  * @return int
  * @throws JsonException
- * @throws JsonException
+ * @throws Exception
  */
 function compileAjax($tpl, $params): int
 {
     if (!isset($tpl->result['content'])) {
-        $tpl->result['content'] = '';
-//        throw new ErrorException(0,1, null, null);
+        throw new Exception('not content');
     }
     $config = settings_get();
     //Если есть POST Запрос и значение AJAX, а $ajax не равняется "yes", то не пропускаем
     //FIXME
-//    if ($_SERVER['REQUEST_METHOD'] == 'POST')
-//        die('Неизвестная ошибка');
+    if ($_SERVER['REQUEST_METHOD'] == 'POST')
+        throw new Exception('Неизвестная ошибка');
 
     $speedbar = $speedbar ?? null;
     $spBar = $spBar ?? null;
@@ -1569,13 +1566,10 @@ function compileAjax($tpl, $params): int
  * @param $tpl
  * @param $params
  * @return int
+ * @throws Exception
  */
 function compileNoAjax($tpl, $params): int
 {
-    if (!isset($tpl->result['content'])) {
-        $tpl->result['content'] = '';
-//        throw new ErrorException(0,1, null, null);
-    }
     $tpl->load_template('main.tpl');
 //Если юзер авторизован
     if (Registry::get('logged')) {
@@ -1712,10 +1706,20 @@ function compileNoAjax($tpl, $params): int
     $tpl->set('{lang}', $rMyLang);
     $tpl->compile('main');
     header('Content-type: text/html; charset=utf-8');
-    echo str_replace('{theme}', '/templates/' . $config['temp'], $tpl->result['main']);
+    $result = str_replace('{theme}', '/templates/' . $config['temp'], $tpl->result['main']);
+    print $result;
     $tpl->global_clear();
 //    $db->close();
     if ($config['gzip'] == 'yes')
         (new Gzip(false))->GzipOut();
+
     return print('');
+}
+
+function tpl_init(): Templates
+{
+    $tpl = new Templates();
+    $tpl->dir = ROOT_DIR . '/templates/' . $config['temp'];
+    define('TEMPLATE_DIR', $tpl->dir);
+    return $tpl;
 }

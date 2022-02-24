@@ -8,6 +8,8 @@
  */
 namespace Mozg\classes;
 
+use Exception;
+
 class Router
 {
     /**
@@ -64,6 +66,7 @@ class Router
     /**
      * Factory method construct Router from global vars.
      * @return Router
+     * @throws Exception
      */
     public static function fromGlobals(): Router
     {
@@ -76,8 +79,6 @@ class Router
             $uri_data = $config['home_url'];
         } else {
             throw new Exception('err');
-//            $uri_data = '';
-//            echo 'error: non url';
         }
         if (false !== $pos__ = strpos($uri_data, '?')) {
             $uri_data = substr($uri_data, 0, $pos__);
@@ -224,9 +225,7 @@ class Router
     public function executeHandler(callable|null|string $handler = null, array $params = []): mixed
     {
         if ($handler === null) {
-//            echo 'err1';exit();
             throw new Exception('err');
-//            throw SuraException::error('Request handler not setted out. Please check ' . __CLASS__ . '::isFound() first');
         }
 
         // execute action in callable
@@ -240,26 +239,20 @@ class Router
             $controller_name = self::$controllerName = $ca['0'];
             $action = self::$actionName = $ca['1'];
 
-            if (class_exists($controller_name)) {
-                if (!method_exists($controller_name, $action)) {
-//                    echo 'err2';exit();
-                    throw new Exception('err');
-//                    throw SuraException::error("Method '\\App\\Modules\\{$controller_name}::{$action}()' not found");
+            if (class_exists('\\Mozg\\modules\\' . $controller_name)) {
+                if (!method_exists('\\Mozg\\modules\\' . $controller_name, $action)) {
+                    throw new Exception("Method '\\App\\Modules\\{$controller_name}::{$action}()' not found");
                 }
 
-                $class = $controller_name;
+                $class = '\\Mozg\\modules\\' . $controller_name;
                 $controller = new $class();
 
                 $params['params'] = '';
                 $params = [$params];
                 return call_user_func_array([$controller, $action], $params);
             }
-//            echo 'err3';exit();
-            throw new Exception('err');
-//            throw SuraException::error("Class '{$controller_name}' not found");
+            throw new Exception("Class '{$controller_name}' not found");
         }
-//        echo 'err4';exit();
-        throw new Exception('err');
-//        throw SuraException::error('Execute handler error');
+        throw new Exception('Execute handler error');
     }
 }

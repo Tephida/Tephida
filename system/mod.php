@@ -25,11 +25,11 @@ switch ($go) {
         include ENGINE_DIR . '/modules/register.php';
         break;
 
-    /** Профиль пользователя */
-    case "profile":
-        $spBar = true;
-        include ENGINE_DIR . '/modules/profile.php';
-        break;
+//    /** Профиль пользователя */
+//    case "profile":
+//        $spBar = true;
+//        include ENGINE_DIR . '/modules/profile.php';
+//        break;
 
     /** Редактирование моей страницы */
     case "editprofile":

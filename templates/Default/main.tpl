@@ -182,10 +182,9 @@
         </form>
     </div>
     [/not-logged]
-    <div class="content" [logged] style="width:800px;" [
-    /logged]>
-    <div class="shadow">
-        <div class="speedbar no_display" id="">{speedbar}</div>
+    <div class="content" style="width:800px;">
+        <div class="shadow">
+            <div class="speedbar no_display" id="">{speedbar}</div>
         <div class="padcont">
             <div id="audioPlayer"></div>
             <div id="page">{info}{content}</div>

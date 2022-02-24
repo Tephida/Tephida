@@ -10,6 +10,7 @@
 use Mozg\classes\Registry;
 
 //    NoAjaxQuery();
+$tpl = $tpl ?? tpl_init();
 
 if (!Registry::get('logged')) {
     $db = Registry::get('db');

@@ -27,7 +27,6 @@ if ($act == 'logout') {
     Registry::set('logged', false);
     $user_info = array();
     header('Location: /');
-    die();
 }
 //Если есть данные сессии
 if (isset($_SESSION['user_id']) > 0) {

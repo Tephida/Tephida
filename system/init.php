@@ -98,14 +98,13 @@ if (Registry::get('logged')) {
         $user_info['user_lastupdate'] = 1;
     }
     $server_time = Registry::get('server_time');
-    if (date('Y-m-d', $user_info['user_lastupdate']) < date('Y-m-d', Registry::get('server_time'))) {
+    if (date('Y-m-d', $user_info['user_lastupdate']) < date('Y-m-d', $server_time)) {
         $sql_balance = ", user_balance = user_balance+1, user_lastupdate = '{$server_time}'";
     } else {
         $sql_balance = '';
     }
     //Определяем устройство
     $device_user = isset($check_smartphone) ? 1 : 0;
-//    echo $user_info['user_last_visit'];
     if (empty($user_info['user_last_visit']))
         $user_info['user_last_visit'] = $server_time;
 
@@ -118,10 +117,6 @@ if (Registry::get('logged')) {
 $online_time = Registry::get('server_time') - $config['online_time'];
 
 try {
-    include_once ENGINE_DIR . '/classes/Module.php';
-    include_once ENGINE_DIR . '/modules/Register.php';
-    include_once ENGINE_DIR . '/modules/Profile.php';
-    include_once ENGINE_DIR . '/classes/Router.php';
 
     $router = Router::fromGlobals();
 //        $this->get('path.base');

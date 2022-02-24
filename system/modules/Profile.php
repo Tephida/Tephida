@@ -7,6 +7,9 @@
  *
  */
 
+namespace Mozg\modules;
+
+use ErrorException;
 use Mozg\classes\Module;
 use Mozg\classes\Registry;
 
