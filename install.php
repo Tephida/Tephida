@@ -101,7 +101,7 @@ $act = requestFilter('act') ?? null;
 
 switch ($act) {
     case "files":
-        if (check_install()) {
+        if (!check_install()) {
             echo '<div class="h1">Проверка на запись у важных файлов системы</div>';
 
             $important_files = array(
@@ -215,7 +215,7 @@ switch ($act) {
             main_print();
         break;
     case "system":
-        if (check_install()) {
+        if (!check_install()) {
             echo "<div class=\"h1\">Системные требования</div>
 		<b><div style=\"float:left;width:448px;padding:10px;border: 1px solid #ddd;background: #f7f7f7;\">Требования движка</div>
 		<div style=\"float:left;width:90px;text-align:center;padding:10px;border: 1px solid #ddd;background: #f7f7f7;\">Ваша версия</div>
@@ -255,7 +255,7 @@ switch ($act) {
             main_print();
         break;
     case "server":
-        if (check_install()) {
+        if (!check_install()) {
             echo "<div class=\"h1\">Настройки сервера</div>
 		<b><div style=\"float:left;width:388px;padding:10px;border: 1px solid #ddd;background: #f7f7f7;\">Рекомендуемые настройки</div>
 		<div style=\"float:left;width:150px;text-align:center;padding:10px;border: 1px solid #ddd;background: #f7f7f7;\">Рекомендуемое значение</div>
@@ -300,7 +300,7 @@ switch ($act) {
             main_print();
         break;
     case "settings":
-        if (check_install()) {
+        if (!check_install()) {
             $url = $_SERVER['HTTP_HOST'];
             echo <<<HTML
 <form method="POST" action="/install.php?act=install">
@@ -328,7 +328,7 @@ HTML;
             main_print();
         break;
     case "install":
-        if (check_install()) {
+        if (!check_install()) {
             if (!empty($_POST['mysql_server']) && !empty($_POST['mysql_dbname']) && !empty($_POST['mysql_dbuser']) && !empty($_POST['adminfile']) && !empty($_POST['name']) && !empty($_POST['lastname']) && !empty($_POST['email']) && !empty($_POST['pass'])) {
                 $_POST['mysql_server'] = str_replace('"', '\"', str_replace("$", "\\$", $_POST['mysql_server']));
                 $_POST['mysql_dbname'] = str_replace('"', '\"', str_replace("$", "\\$", $_POST['mysql_dbname']));
@@ -497,8 +497,6 @@ HTML;
                 $con_file = fopen(ROOT_DIR . "/system/data/config.php", "w+") or die("Извините, но невозможно создать файл <b>.system/data/config.php</b>.<br />Проверьте правильность проставленного CHMOD!");
                 fwrite($con_file, $config);
                 fclose($con_file);
-                @chmod("system/data/config.php", 0666);
-                include ENGINE_DIR . '/classes/mysql.php';
                 $db = require_once ENGINE_DIR . '/data/db.php';
 
                 $_POST['name'] = strip_tags($_POST['name']);
