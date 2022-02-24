@@ -9,9 +9,6 @@
 
 use Mozg\classes\Registry;
 
-if (!defined('MOZG'))
-    die('Hacking attempt!');
-
 header('Content-type: text/html; charset=utf-8');
 
 $db = require_once ENGINE_DIR . '/data/db.php';
