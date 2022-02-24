@@ -335,7 +335,7 @@ HTML;
                 $_POST['mysql_dbuser'] = str_replace('"', '\"', str_replace("$", "\\$", $_POST['mysql_dbuser']));
                 $_POST['mysql_pass'] = str_replace('"', '\"', str_replace("$", "\\$", $_POST['mysql_pass']));
                 //Создаём файл БД
-                $dbconfig = <<<HTML
+                $db_config = <<<HTML
 <?php
 
 const DBHOST = "{$_POST['mysql_server']}"; 
@@ -348,11 +348,11 @@ const DBPASS = "{$_POST['mysql_pass']}";
 
 const COLLATE = "utf8";
 
-return new db;
+return new \Mozg\classes\Mysql;
 
 HTML;
                 $con_file = fopen("system/data/db.php", "w+") or die("Извините, но невозможно создать файл <b>.system/data/db.php</b>.<br />Проверьте правильность проставленного CHMOD!");
-                fwrite($con_file, $dbconfig);
+                fwrite($con_file, $db_config);
                 fclose($con_file);
                 @chmod("system/data/db.php", 0666);
                 //Создаём файл админ панели
