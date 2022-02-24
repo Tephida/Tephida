@@ -256,7 +256,7 @@ if (Registry::get('logged')) {
                                     $wall->query("SELECT tb1.id, author_user_id, text, add_date, fasts_num, likes_num, likes_users, type, tell_uid, tell_date, public, attach, tell_comm, tb2.user_photo, user_search_pref, user_last_visit, user_logged_mobile FROM `wall` tb1, `users` tb2 WHERE for_user_id = '{$for_user_id}' AND tb1.author_user_id = tb2.user_id AND tb1.fast_comm_id = '0' ORDER by `add_date` DESC LIMIT 0, {$limit_select}");
                                     $wall->template('wall/record.tpl');
                                     $wall->compile('content');
-
+                                    $id = $id ?? false;
                                     $wall->select($config, $id, $for_user_id, $user_privacy, $check_friend, $user_info);
                                 }
 

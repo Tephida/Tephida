@@ -11,34 +11,34 @@ use Mozg\classes\Registry;
 
 NoAjaxQuery();
 
-$user_info = $user_info ?? Registry::get('user_info');
+$user_info = (isset($user_info)) ? $user_info : Registry::get('user_info');
 $metatags['title'] = $lang['search'];
 $db = Registry::get('db');
-    $mobile_speedbar = 'Поиск';
+$mobile_speedbar = 'Поиск';
 
-    $_SERVER['QUERY_STRING'] = strip_tags($_SERVER['QUERY_STRING']);
-    $query_string = preg_replace("/&page=[0-9]+/i", '', $_SERVER['QUERY_STRING']);
-    $user_id = $user_info['user_id'];
+$_SERVER['QUERY_STRING'] = strip_tags($_SERVER['QUERY_STRING']);
+$query_string = preg_replace("/&page=[0-9]+/i", '', $_SERVER['QUERY_STRING']);
+$user_id = $user_info['user_id'] ?? null;
 
-    $page = intFilter('page', 1);
+$page = intFilter('page', 1);
 
-    $gcount = 20;
-    $limit_page = ($page - 1) * $gcount;
+$gcount = 20;
+$limit_page = ($page - 1) * $gcount;
 
+$query = strip_data(urldecode(requestFilter('query')));
+if (isset($_GET['n']))
     $query = strip_data(urldecode(requestFilter('query')));
-    if (isset($_GET['n']))
-        $query = strip_data(urldecode(requestFilter('query')));
-    $query = strtr($query, array(' ' => '%')); //Заменяем пробелы на проценты чтоб поиск был точнее
+$query = strtr($query, array(' ' => '%')); //Заменяем пробелы на проценты чтоб поиск был точнее
 
-    $type = intFilter('type', 1);
-    $sex = intFilter('sex');
-    $day = intFilter('day');
-    $month = intFilter('month');
-    $year = intFilter('year');
-    $country = intFilter('country');
-    $city = intFilter('city');
-    $online = intFilter('online');
-    $user_photo = intFilter('user_photo');
+$type = intFilter('type', 1);
+$sex = intFilter('sex');
+$day = intFilter('day');
+$month = intFilter('month');
+$year = intFilter('year');
+$country = intFilter('country');
+$city = intFilter('city');
+$online = intFilter('online');
+$user_photo = intFilter('user_photo');
 $sp = intFilter('sp');
 
 //Задаём параметры сортировки
