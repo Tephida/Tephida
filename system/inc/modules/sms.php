@@ -6,8 +6,6 @@
  *   file that was distributed with this source code.
  *
  */
-if (!defined('MOZG'))
-    die('Hacking attempt!');
 
 $uid = intval($_GET['id']);
 if ($uid <= 0) $uid = '';

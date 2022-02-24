@@ -9,9 +9,6 @@
 
 use Mozg\classes\Filesystem;
 
-if (!defined('MOZG'))
-    die('Hacking attempt!');
-
 //Удаление жалобы
 if ($_GET['action'] == 'del') {
     $id = intval($_POST['id']);

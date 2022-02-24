@@ -9,9 +9,6 @@
 
 use Mozg\classes\Filesystem;
 
-if (!defined('MOZG'))
-    die('Hacking attempt!');
-
 //echoheader();
 //echohtmlstart('Общая статистика сайта');
 

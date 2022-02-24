@@ -6,8 +6,6 @@
  *   file that was distributed with this source code.
  *
  */
-if (!defined('MOZG'))
-    die('Hacking attempt!');
 
 //Если начали замену
 if (isset($_POST['save'])) {

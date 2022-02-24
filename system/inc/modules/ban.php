@@ -9,9 +9,6 @@
 
 use Mozg\classes\Filesystem;
 
-if (!defined('MOZG'))
-    die('Hacking attempt!');
-
 //Если добавляем
 if (isset($_POST['save'])) {
     $ban_date = intFilter('days');

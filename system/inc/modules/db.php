@@ -6,8 +6,6 @@
  *   file that was distributed with this source code.
  *
  */
-if(!defined('MOZG'))
-	die('Hacking attempt!');
 
 if(isset($_POST['action']) AND count($_REQUEST['ta'])){
 	$arr = $_REQUEST['ta'];

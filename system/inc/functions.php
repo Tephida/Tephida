@@ -6,17 +6,8 @@
  *   file that was distributed with this source code.
  *
  */
-if(!defined('MOZG'))
-	die('Hacking attempt!');
-
-
 
 include __DIR__ .'/../functions.php';
-/*function GetVar($v) {
-	if(ini_get('magic_quotes_gpc'))
-		return stripslashes($v) ;
-	return $v;
-}*/
 
 $domain_cookie = explode (".", clean_url( $_SERVER['HTTP_HOST'] ));
 $domain_cookie_count = count($domain_cookie);

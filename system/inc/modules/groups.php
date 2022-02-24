@@ -9,9 +9,6 @@
 
 use Mozg\classes\Filesystem;
 
-if (!defined('MOZG'))
-    die('Hacking attempt!');
-
 //Редактирование
 if ($_GET['act'] == 'edit') {
     $id = intval($_GET['id']);

@@ -9,9 +9,6 @@
 
 use Mozg\classes\Filesystem;
 
-if (!defined('MOZG'))
-    die('Hacking attempt!');
-
 //Если нажали "Добавить"
 if (isset($_POST['save'])) {
     $price = intval($_POST['price']);

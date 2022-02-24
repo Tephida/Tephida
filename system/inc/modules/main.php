@@ -6,8 +6,6 @@
  *   file that was distributed with this source code.
  *
  */
-if (!defined('MOZG'))
-    die('Hacking attempt!');
 
 $row = $db->super_query("SELECT COUNT(*) AS cnt FROM `report`");
 if ($row['cnt'])

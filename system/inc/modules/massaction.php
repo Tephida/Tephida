@@ -7,16 +7,7 @@
  *
  */
 
-/*
-	Appointment: Массовые действия
-	File: mysettings.php
- 
-*/
-
 use Mozg\classes\Filesystem;
-
-if (!defined('MOZG'))
-    die('Hacking attempt!');
 
 $act = $_GET['act'];
 
