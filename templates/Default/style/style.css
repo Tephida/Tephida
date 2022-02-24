@@ -198,6 +198,11 @@ blockquote {
     height: 22px
 }
 
+.btn_headmenu {
+    font-size: 1.3em;
+    padding: 13px;
+}
+
 .headm_newac {
     position: absolute;
     background: #404244;

@@ -123,6 +123,7 @@ try {
     $params = [];
     $routers = array(
         '/' => 'Register@main',
+        '/login' => 'Register@login',
         '/u:num' => 'Profile@main',
         '/u:numafter' => 'Profile@main',
     );

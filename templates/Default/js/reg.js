@@ -75,7 +75,7 @@ var reg = {
         var year = $("#year").val();
         var country = $("#country").val();
         var city = $("#select_city").val();
-        $.post('/index.php?go=register', {
+        $.post('/index.php?go=register&act=send', {
             name: name,
             lastname: lastname,
             email: email,
@@ -99,6 +99,12 @@ var reg = {
                 Box.Info('boxerr', 'Ошибка', 'Неизвестная ошибка', 300);
                 Box.Close('sec_code');
             }
+        });
+    },
+    box: function () {
+        $('.js_titleRemove').remove();
+        $.post('/login', function (d) {
+            Box.Show('login_box', 400, 'Войти', d, lang_box_cancel);
         });
     }
 }
