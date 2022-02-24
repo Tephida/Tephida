@@ -6,6 +6,9 @@
  *   file that was distributed with this source code.
  *
  */
+
+use Mozg\classes\Filesystem;
+
 header('Content-type: text/html; charset=utf-8');
 const MOZG = true;
 define('ROOT_DIR', dirname(__FILE__));

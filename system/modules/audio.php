@@ -6,10 +6,15 @@
  *   file that was distributed with this source code.
  *
  */
+
+use Mozg\classes\Filesystem;
+use Mozg\classes\Id3v2;
+use Mozg\classes\Registry;
+
 if (!defined('MOZG'))
     die('Hacking attempt!');
 
-    NoAjaxQuery();
+NoAjaxQuery();
 
 if (Registry::get('logged')) {
     $act = requestFilter('act');
@@ -42,7 +47,6 @@ if (Registry::get('logged')) {
                     fclose($fp);
                     fclose($fd);
 
-                    include ENGINE_DIR . "/classes/id3v2.php";
                     $id3v2 = new Id3v2;
                     $res = $id3v2->read(ROOT_DIR . '/uploads/audio_tmp/' . $ranTmp . '.mp3');
 
@@ -212,7 +216,6 @@ if (Registry::get('logged')) {
                 $res_type = '.' . $type;
                 if (move_uploaded_file($file_tmp, $audio_dir . $file_rename . $res_type)) {
                     //Узнаем исполнителя и название песни по id3
-                    include ENGINE_DIR . "/classes/id3v2.php";
                     $id3v2 = new Id3v2;
                     $res = $id3v2->read(ROOT_DIR . '/uploads/audio/' . $user_id . '/' . $file_rename . $res_type);
 

@@ -6,6 +6,10 @@
  *   file that was distributed with this source code.
  *
  */
+
+use Mozg\classes\AntiSpam;
+use Mozg\classes\Registry;
+
 if (!defined('MOZG'))
     die('Hacking attempt!');
 

@@ -6,15 +6,18 @@
  *   file that was distributed with this source code.
  *
  */
-if(!defined('MOZG'))
-	die("Hacking attempt!");
+
+use Mozg\classes\Registry;
+
+if (!defined('MOZG'))
+    die("Hacking attempt!");
 $user_info = $user_info ?? Registry::get('user_info');
-if($user_info['user_group'] != '1'){
-	$tpl->load_template('profile_baned.tpl');
-	if($user_info['user_ban_date'])
-		$tpl->set('{date}', langdate('j F Y в H:i', $user_info['user_ban_date']));
-	else
-		$tpl->set('{date}', 'Неограниченно');
+if ($user_info['user_group'] != '1') {
+    $tpl->load_template('profile_baned.tpl');
+    if ($user_info['user_ban_date'])
+        $tpl->set('{date}', langdate('j F Y в H:i', $user_info['user_ban_date']));
+    else
+        $tpl->set('{date}', 'Неограниченно');
 	$tpl->compile('main');
     $config = settings_get();
 	echo str_replace('{theme}', '/templates/'.$config['temp'], $tpl->result['main']);

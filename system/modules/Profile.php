@@ -6,6 +6,10 @@
  *   file that was distributed with this source code.
  *
  */
+
+use Mozg\classes\Module;
+use Mozg\classes\Registry;
+
 class Profile extends Module
 {
     /**

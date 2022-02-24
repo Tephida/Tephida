@@ -6,6 +6,9 @@
  *   file that was distributed with this source code.
  *
  */
+
+use Mozg\classes\Filesystem;
+
 if (!defined('MOZG'))
     die('Hacking attempt!');
 

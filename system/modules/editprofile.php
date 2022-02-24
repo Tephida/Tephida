@@ -6,6 +6,10 @@
  *   file that was distributed with this source code.
  *
  */
+
+use Mozg\classes\Filesystem;
+use Mozg\classes\Registry;
+
 if (!defined('MOZG'))
     die('Hacking attempt!');
 
@@ -23,10 +27,6 @@ if (Registry::get('logged')) {
         //Загрузка фотографии
         case "upload":
             NoAjaxQuery();
-
-            //Подключаем класс для фотографий
-            include ENGINE_DIR . '/classes/images.php';
-
             $user_id = $user_info['user_id'];
             $uploaddir = ROOT_DIR . '/uploads/users/';
 
@@ -42,7 +42,8 @@ if (Registry::get('logged')) {
             $image_name = to_translit($_FILES['uploadfile']['name']); // оригинальное название для оприделения формата
             $image_rename = substr(md5($server_time + rand(1, 100000)), 0, 15); // имя фотографии
             $image_size = $_FILES['uploadfile']['size']; // размер файла
-            $type = end(explode(".", $image_name)); // формат файла
+            $array = explode(".", $image_name);
+            $type = end($array); // формат файла
 
             //Проверяем если, формат верный то пропускаем
             if (in_array($type, $allowed_files)) {
@@ -52,25 +53,25 @@ if (Registry::get('logged')) {
                     if (move_uploaded_file($image_tmp, $uploaddir . $image_rename . $res_type)) {
 
                         //Создание оригинала
-                        $tmb = new thumbnail($uploaddir . $image_rename . $res_type);
+                        $tmb = new Thumbnail($uploaddir . $image_rename . $res_type);
                         $tmb->size_auto(770);
                         $tmb->jpeg_quality(95);
                         $tmb->save($uploaddir . 'o_' . $image_rename . $res_type);
 
                         //Создание главной фотографии
-                        $tmb = new thumbnail($uploaddir . $image_rename . $res_type);
+                        $tmb = new Thumbnail($uploaddir . $image_rename . $res_type);
                         $tmb->size_auto(200, 1);
                         $tmb->jpeg_quality(97);
                         $tmb->save($uploaddir . $image_rename . $res_type);
 
                         //Создание уменьшенной копии 50х50
-                        $tmb = new thumbnail($uploaddir . $image_rename . $res_type);
+                        $tmb = new Thumbnail($uploaddir . $image_rename . $res_type);
                         $tmb->size_auto('50x50');
                         $tmb->jpeg_quality(97);
                         $tmb->save($uploaddir . '50_' . $image_rename . $res_type);
 
                         //Создание уменьшенной копии 100х100
-                        $tmb = new thumbnail($uploaddir . $image_rename . $res_type);
+                        $tmb = new Thumbnail($uploaddir . $image_rename . $res_type);
                         $tmb->size_auto('100x100');
                         $tmb->jpeg_quality(97);
                         $tmb->save($uploaddir . '100_' . $image_rename . $res_type);
@@ -330,20 +331,17 @@ if (Registry::get('logged')) {
             $i_height = intFilter('i_height');
 
             if ($row['user_photo'] and $i_width >= 100 and $i_height >= 100 and $i_left >= 0) {
-
-                include_once ENGINE_DIR . '/classes/images.php';
-
-                $tmb = new thumbnail(ROOT_DIR . "/uploads/users/{$user_info['user_id']}/{$row['user_photo']}");
+                $tmb = new Thumbnail(ROOT_DIR . "/uploads/users/{$user_info['user_id']}/{$row['user_photo']}");
                 $tmb->size_auto($i_width . "x" . $i_height, 0, "{$i_left}|{$i_top}");
                 $tmb->jpeg_quality(100);
                 $tmb->save(ROOT_DIR . "/uploads/users/{$user_info['user_id']}/100_{$row['user_photo']}");
 
-                $tmb = new thumbnail(ROOT_DIR . "/uploads/users/{$user_info['user_id']}/100_{$row['user_photo']}");
+                $tmb = new Thumbnail(ROOT_DIR . "/uploads/users/{$user_info['user_id']}/100_{$row['user_photo']}");
                 $tmb->size_auto("100x100", 1);
                 $tmb->jpeg_quality(100);
                 $tmb->save(ROOT_DIR . "/uploads/users/{$user_info['user_id']}/100_{$row['user_photo']}");
 
-                $tmb = new thumbnail(ROOT_DIR . "/uploads/users/{$user_info['user_id']}/100_{$row['user_photo']}");
+                $tmb = new Thumbnail(ROOT_DIR . "/uploads/users/{$user_info['user_id']}/100_{$row['user_photo']}");
                 $tmb->size_auto("50x50");
                 $tmb->jpeg_quality(100);
                 $tmb->save(ROOT_DIR . "/uploads/users/{$user_info['user_id']}/50_{$row['user_photo']}");

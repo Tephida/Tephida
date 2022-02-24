@@ -8,20 +8,20 @@ declare(strict_types=1);
  *   file that was distributed with this source code.
  *
  */
+namespace Mozg\classes;
 
 use JetBrains\PhpStorm\NoReturn;
 
-if (!defined('MOZG')) die('Hacking attempt!');
 
-class db
+class Mysql
 {
-    public false|mysqli|null $db_id = false;
+    public false|\mysqli|null $db_id = false;
     public int $query_num = 0;
     public array $query_list = array();
     public array $query_errors_list = array();
     public string $mysql_error = '';
     public int $mysql_error_num = 0;
-    public bool|mysqli_result $query_id = false;
+    public bool|\mysqli_result $query_id = false;
 
 
     public function connect(?string $db_user, ?string $db_pass, ?string $db_name, ?string $db_location = 'localhost', $show_error = 1): bool
@@ -57,7 +57,7 @@ class db
         return true;
     }
 
-    public function query(string $query, bool $show_error = true,): mysqli_result|bool
+    public function query(string $query, bool $show_error = true,): \mysqli_result|bool
     {
         if (!$this->db_id)
             $this->connect(DBUSER, DBPASS, DBNAME, DBHOST);
@@ -117,7 +117,7 @@ class db
     }
 
     /** 1 used */
-    public function get_row(mysqli_result|string $query_id = ''): array|bool|null|string
+    public function get_row(\mysqli_result|string $query_id = ''): array|bool|null|string
     {
         if ($query_id == '')
             $query_id = $this->query_id;
@@ -135,7 +135,7 @@ class db
     }
 
     /** 2 used */
-    function get_array(mysqli_result|string $query_id = ''): bool|array|null
+    function get_array(\mysqli_result|string $query_id = ''): bool|array|null
     {
         if ($query_id == '')
             $query_id = $this->query_id;
@@ -169,7 +169,7 @@ class db
     }
 
     /** 1 used */
-    function num_rows(mysqli_result|string $query_id = ''): int|string
+    function num_rows(\mysqli_result|string $query_id = ''): int|string
     {
         if ($query_id == '')
             $query_id = $this->query_id;
@@ -187,7 +187,7 @@ class db
      * @return array
      * @deprecated
      */
-    function get_result_fields(mysqli_result|string $query_id = ''): array
+    function get_result_fields(\mysqli_result|string $query_id = ''): array
     {
         if ($query_id == '')
             $query_id = $this->query_id;
@@ -199,7 +199,7 @@ class db
         return $fields ?? array();
     }
 
-    public function free(mysqli_result|string $query_id = ''): void
+    public function free(\mysqli_result|string $query_id = ''): void
     {
 
         if ($query_id == '')

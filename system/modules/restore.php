@@ -6,12 +6,15 @@
  *   file that was distributed with this source code.
  *
  */
+
+use Mozg\classes\Registry;
+
 if (!defined('MOZG'))
     die('Hacking attempt!');
 
 //    NoAjaxQuery();
 
-if (Registry::get('logged') == false) {
+if (!Registry::get('logged')) {
     $db = Registry::get('db');
     $act = requestFilter('act');
 //    $user_info = $user_info ?? Registry::get('user_info');

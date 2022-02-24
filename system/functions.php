@@ -8,6 +8,10 @@
  */
 
 use JetBrains\PhpStorm\Pure;
+use Mozg\classes\Filesystem;
+use Mozg\classes\Gzip;
+use Mozg\classes\Registry;
+use Mozg\classes\Templates;
 
 if (!defined('MOZG')) die('Hacking attempt!');
 
@@ -1499,6 +1503,8 @@ function compile($tpl, array $params = array()): int
  * @param $tpl
  * @param $params
  * @return int
+ * @throws JsonException
+ * @throws JsonException
  */
 function compileAjax($tpl, $params): int
 {

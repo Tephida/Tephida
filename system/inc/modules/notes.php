@@ -18,7 +18,7 @@ if ($_GET['act'] == 'edit') {
 
     if ($row) {
         //Подключаем парсер
-        include ENGINE_DIR . '/classes/parse.php';
+        include ENGINE_DIR . '/classes/Parse.php';
         $parse = new parse();
 
         if (isset($_POST['save'])) {

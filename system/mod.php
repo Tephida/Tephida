@@ -6,6 +6,9 @@
  *   file that was distributed with this source code.
  *
  */
+
+use Mozg\classes\Registry;
+
 if (!defined('MOZG')) die('Hacking attempt!');
 
 $go = isset($_GET['go']) ? htmlspecialchars(strip_tags(stripslashes(trim(urldecode($_GET['go']))))) : "main";

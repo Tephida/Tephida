@@ -7,6 +7,11 @@
  *
  */
 
+use Mozg\classes\Filesystem;
+use Mozg\classes\Module;
+use Mozg\classes\Registry;
+use Mozg\classes\Status;
+
 class Register extends Module
 {
     public function send()

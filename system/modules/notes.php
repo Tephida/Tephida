@@ -6,6 +6,10 @@
  *   file that was distributed with this source code.
  *
  */
+
+use Mozg\classes\Parse;
+use Mozg\classes\Registry;
+
 if (!defined('MOZG'))
     die('Hacking attempt!');
 
@@ -51,7 +55,7 @@ if (Registry::get('logged')) {
             NoAjaxQuery();
 
             //Подключаем парсер
-            include ENGINE_DIR . '/classes/parse.php';
+            include ENGINE_DIR . '/classes/Parse.php';
             $parse = new parse();
 
             $title = requestFilter('title');
@@ -84,7 +88,7 @@ if (Registry::get('logged')) {
             NoAjaxQuery();
 
             //Подключаем парсер
-            include ENGINE_DIR . '/classes/parse.php';
+            include ENGINE_DIR . '/classes/Parse.php';
             $parse = new parse();
 
             $title = requestFilter('title');
@@ -116,7 +120,7 @@ if (Registry::get('logged')) {
 
             if ($row) {
                 //Подключаем парсер
-                include ENGINE_DIR . '/classes/parse.php';
+                include ENGINE_DIR . '/classes/Parse.php';
                 $parse = new parse();
 
                 //Загружаем head заметок
@@ -148,7 +152,7 @@ if (Registry::get('logged')) {
             NoAjaxQuery();
 
             //Подключаем парсер
-            include ENGINE_DIR . '/classes/parse.php';
+            include ENGINE_DIR . '/classes/Parse.php';
             $parse = new parse();
 
             $note_id = intFilter('note_id');

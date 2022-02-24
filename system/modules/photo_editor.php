@@ -6,6 +6,10 @@
  *   file that was distributed with this source code.
  *
  */
+
+use Mozg\classes\Filesystem;
+use Mozg\classes\Registry;
+
 if (!defined('MOZG'))
     die('Hacking attempt!');
 
@@ -38,7 +42,8 @@ if (Registry::get('logged')) {
             $allowed_files = explode(', ', $config['photo_format']);
 
             $res_image = requestFilter('image');
-            $format = end(explode('.', $res_image));
+            $array = explode('.', $res_image);
+            $format = end($array);
             $pid = intFilter('pid');
 
             if (stripos($_SERVER['HTTP_REFERER'], 'pixlr.com') !== false and $pid and $format) {
@@ -51,17 +56,14 @@ if (Registry::get('logged')) {
 
                     Filesystem::copy($res_image, ROOT_DIR . "/uploads/users/{$user_id}/albums/{$row['album_id']}/{$row['photo_name']}");
 
-                    //Подключаем класс для фотографий
-                    include ENGINE_DIR . '/classes/images.php';
-
                     //Создание оригинала
-                    $tmb = new thumbnail(ROOT_DIR . "/uploads/users/{$user_id}/albums/{$row['album_id']}/{$row['photo_name']}");
+                    $tmb = new Thumbnail(ROOT_DIR . "/uploads/users/{$user_id}/albums/{$row['album_id']}/{$row['photo_name']}");
                     $tmb->size_auto('770');
                     $tmb->jpeg_quality('85');
                     $tmb->save(ROOT_DIR . "/uploads/users/{$user_id}/albums/{$row['album_id']}/{$row['photo_name']}");
 
                     //Создание маленькой копии
-                    $tmb = new thumbnail(ROOT_DIR . "/uploads/users/{$user_id}/albums/{$row['album_id']}/{$row['photo_name']}");
+                    $tmb = new Thumbnail(ROOT_DIR . "/uploads/users/{$user_id}/albums/{$row['album_id']}/{$row['photo_name']}");
                     $tmb->size_auto('140x100');
                     $tmb->jpeg_quality('90');
                     $tmb->save(ROOT_DIR . "/uploads/users/{$user_id}/albums/{$row['album_id']}/c_{$row['photo_name']}");

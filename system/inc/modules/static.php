@@ -12,7 +12,7 @@ if (!defined('MOZG'))
 //Если начали замену
 if (isset($_POST['save'])) {
     //Подключаем парсер
-    include_once ENGINE_DIR . '/classes/parse.php';
+    include_once ENGINE_DIR . '/classes/Parse.php';
     $parse = new parse();
 
     $title = requestFilter('title', 25000, true);
@@ -41,7 +41,7 @@ if (isset($_POST['save'])) {
             //Сохраняем
             if (isset($_POST['save_edit'])) {
                 //Подключаем парсер
-                include_once ENGINE_DIR . '/classes/parse.php';
+                include_once ENGINE_DIR . '/classes/Parse.php';
                 $parse = new parse();
 
                 $title = requestFilter('title', 25000, true);
@@ -62,7 +62,7 @@ if (isset($_POST['save'])) {
             $row['title'] = stripslashes($row['title']);
 
             //Подключаем парсер
-            include_once ENGINE_DIR . '/classes/parse.php';
+            include_once ENGINE_DIR . '/classes/Parse.php';
             $parse = new parse();
 
             $row['text'] = $parse->BBdecode(myBrRn(stripslashes($row['text'])));

@@ -6,15 +6,18 @@
  *   file that was distributed with this source code.
  *
  */
+
+use Mozg\classes\Registry;
+
 if (!defined('MOZG')) {
     die('Hacking attempt!');
 }
 
 NoAjaxQuery();
 
-    $user_info = $user_info ?? Registry::get('user_info');
-    $metatags['title'] = $lang['search'];
-    $db = Registry::get('db');
+$user_info = $user_info ?? Registry::get('user_info');
+$metatags['title'] = $lang['search'];
+$db = Registry::get('db');
     $mobile_speedbar = 'Поиск';
 
     $_SERVER['QUERY_STRING'] = strip_tags($_SERVER['QUERY_STRING']);

@@ -6,6 +6,10 @@
  *   file that was distributed with this source code.
  *
  */
+
+use Mozg\classes\Filesystem;
+use Mozg\classes\Registry;
+
 if (!defined('MOZG')) {
     die('Hacking attempt!');
 }
@@ -76,9 +80,6 @@ if (Registry::get('logged')) {
                     //Если нет папки юзера, то создаём её
                     Filesystem::createDir($upload_dir);
 
-                    //Подключаем класс для фотографий
-                    include ENGINE_DIR . '/classes/images.php';
-
 //					copy($photo, $upload_dir.'/'.$image_name.'.'.$img_format);
 
 //                    if (!copy($photo, $upload_dir.'/'.$image_name.'.'.$img_format)) {
@@ -94,7 +95,7 @@ if (Registry::get('logged')) {
                         exit();
                     }
 
-                    $tmb = new thumbnail($upload_dir . '/' . $image_name . '.' . $img_format);
+                    $tmb = new Thumbnail($upload_dir . '/' . $image_name . '.' . $img_format);
                     $tmb->size_auto('175x131');
                     $tmb->jpeg_quality(100);
                     $tmb->save($upload_dir . '/' . $image_name . '.' . $img_format);

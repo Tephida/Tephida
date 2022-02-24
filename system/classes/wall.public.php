@@ -7,6 +7,8 @@
  *
  */
 
+use Mozg\classes\Registry;
+
 class wall
 {
 

@@ -6,6 +6,7 @@
  *   file that was distributed with this source code.
  *
  */
+namespace Mozg\classes;
 
 class Module
 {

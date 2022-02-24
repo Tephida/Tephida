@@ -6,6 +6,12 @@
  *   file that was distributed with this source code.
  *
  */
+
+use Mozg\classes\AntiSpam;
+use Mozg\classes\Filesystem;
+use Mozg\classes\Registry;
+use Mozg\classes\WallProfile;
+
 if (!defined('MOZG'))
     die('Hacking attempt!');
 
@@ -18,13 +24,11 @@ if (Registry::get('logged')) {
     $limit_page = 0;
     $server_time = Registry::get('server_time');
 
-    include ENGINE_DIR . '/classes/wall.php';
-
     switch ($act) {
 
         //################### Добавление новой записи на стену ###################//
         case "send":
-            $wall = new wall($tpl);
+            $wall = new WallProfile($tpl);
 //			NoAjaxQuery();
             $wall_text = requestFilter('wall_text');
             AntiSpam::check('identical', $wall_text);
@@ -109,7 +113,7 @@ if (Registry::get('logged')) {
                                             include ENGINE_DIR . '/classes/images.php';
 
                                             if (Filesystem::copy($rImgUrl, $upload_dir . '/' . $image_name . '.' . $img_format)) {
-                                                $tmb = new thumbnail($upload_dir . '/' . $image_name . '.' . $img_format);
+                                                $tmb = new Thumbnail($upload_dir . '/' . $image_name . '.' . $img_format);
                                                 $tmb->size_auto('100x80');
                                                 $tmb->jpeg_quality(100);
                                                 $tmb->save($upload_dir . '/' . $image_name . '.' . $img_format);
@@ -732,7 +736,7 @@ if (Registry::get('logged')) {
             break;
 
         default:
-            $wall = new wall($tpl);
+            $wall = new WallProfile($tpl);
             //################### Показ последних 10 записей ###################//
 
             //Если вызвана страница стены, не со страницы юзера

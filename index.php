@@ -18,13 +18,15 @@ ob_implicit_flush(0);
 const MOZG = true;
 define("ROOT_DIR", dirname(__FILE__));
 const ENGINE_DIR = ROOT_DIR . '/system';
+require_once './vendor/autoload.php';
 include_once ENGINE_DIR . '/functions.php';
-include_once ENGINE_DIR . '/classes/Registry.php';
-include_once ENGINE_DIR . '/classes/AntiSpam.php';
-include_once ENGINE_DIR . '/classes/Filesystem.php';
-include_once ENGINE_DIR . '/classes/Templates.php';
-include_once ENGINE_DIR . '/classes/mysql.php';
-include_once ENGINE_DIR . '/classes/Gzip.php';
+
+//include_once ENGINE_DIR . '/classes/Registry.php';
+//include_once ENGINE_DIR . '/classes/AntiSpam.php';
+//include_once ENGINE_DIR . '/classes/Filesystem.php';
+//include_once ENGINE_DIR . '/classes/Templates.php';
+//include_once ENGINE_DIR . '/classes/mysql.php';
+//include_once ENGINE_DIR . '/classes/Gzip.php';
 
 /** Initialize */
 include_once ENGINE_DIR . '/init.php';

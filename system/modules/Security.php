@@ -7,6 +7,8 @@
  *
  */
 
+use Mozg\classes\Status;
+
 class Security
 {
     private static function clean_url(string $url)

@@ -1,5 +1,8 @@
 <?php
 
+use Mozg\classes\Filesystem;
+use Mozg\classes\Registry;
+
 NoAjaxQuery();
 if (Registry::get('logged')) {
     $db = Registry::get('db');

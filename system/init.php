@@ -6,6 +6,11 @@
  *   file that was distributed with this source code.
  *
  */
+
+use Mozg\classes\Registry;
+use Mozg\classes\Router;
+use Mozg\classes\Templates;
+
 if (!defined('MOZG')) die('Hacking attempt!');
 
 
@@ -20,8 +25,6 @@ try {
 $db = require_once ENGINE_DIR . '/data/db.php';
 Registry::set('db', $db);
 
-if ($config['gzip'] == 'yes')
-    include_once ENGINE_DIR . '/modules/gzip.php';
 //FUNC. COOKIES
 $domain_cookie = explode(".", clean_url($_SERVER['HTTP_HOST']));
 $domain_cookie_count = count($domain_cookie);
@@ -121,7 +124,7 @@ try {
     include_once ENGINE_DIR . '/classes/Module.php';
     include_once ENGINE_DIR . '/modules/Register.php';
     include_once ENGINE_DIR . '/modules/Profile.php';
-    include_once ENGINE_DIR . '/classes/Routing.php';
+    include_once ENGINE_DIR . '/classes/Router.php';
 
     $router = Router::fromGlobals();
 //        $this->get('path.base');
