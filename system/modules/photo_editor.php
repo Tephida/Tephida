@@ -10,9 +10,6 @@
 use Mozg\classes\Filesystem;
 use Mozg\classes\Registry;
 
-if (!defined('MOZG'))
-    die('Hacking attempt!');
-
 if (Registry::get('logged')) {
 
     $act = requestFilter('act');

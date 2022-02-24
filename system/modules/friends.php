@@ -10,9 +10,6 @@
 use Mozg\classes\AntiSpam;
 use Mozg\classes\Registry;
 
-if (!defined('MOZG'))
-    die('Hacking attempt!');
-
 //Если страница вызвана через AJAX, то включаем защиту, чтоб не могли обращаться напрямую к странице
 NoAjaxQuery();
 

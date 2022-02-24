@@ -11,9 +11,8 @@ use Mozg\classes\AntiSpam;
 use Mozg\classes\Filesystem;
 use Mozg\classes\Registry;
 
-if (!defined('MOZG'))
-    die('Hacking attempt!');
 NoAjaxQuery();
+
 $jsonResponse = array();
 if (Registry::get('logged')) {
     $act = requestFilter('act');

@@ -9,10 +9,6 @@
 
 use Mozg\classes\Registry;
 
-if (!defined('MOZG')) {
-    die('Hacking attempt!');
-}
-
 NoAjaxQuery();
 
 $user_info = $user_info ?? Registry::get('user_info');

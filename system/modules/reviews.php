@@ -9,9 +9,6 @@
 
 use Mozg\classes\Registry;
 
-if (!defined('MOZG'))
-    die('Hacking attempt!');
-
 NoAjaxQuery();
 
 $act = requestFilter('act');

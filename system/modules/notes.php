@@ -10,9 +10,6 @@
 use Mozg\classes\Parse;
 use Mozg\classes\Registry;
 
-if (!defined('MOZG'))
-    die('Hacking attempt!');
-
 NoAjaxQuery();
 
 if (Registry::get('logged')) {

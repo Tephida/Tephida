@@ -13,8 +13,6 @@ use Mozg\classes\Gzip;
 use Mozg\classes\Registry;
 use Mozg\classes\Templates;
 
-if (!defined('MOZG')) die('Hacking attempt!');
-
 /**
  * @param string $source
  * @param int $substr_num

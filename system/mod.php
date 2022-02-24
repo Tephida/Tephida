@@ -9,8 +9,6 @@
 
 use Mozg\classes\Registry;
 
-if (!defined('MOZG')) die('Hacking attempt!');
-
 $go = isset($_GET['go']) ? htmlspecialchars(strip_tags(stripslashes(trim(urldecode($_GET['go']))))) : "main";
 
 Registry::set('go', $go);

@@ -9,9 +9,6 @@
 
 use Mozg\classes\Registry;
 
-if (!defined('MOZG'))
-    die('Hacking attempt!');
-
 if (Registry::get('logged')) {
     $act = requestFilter('act');
     $user_info = $user_info ?? Registry::get('user_info');

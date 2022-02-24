@@ -9,7 +9,6 @@
 
 use Mozg\classes\Registry;
 
-if (!defined('MOZG')) die('Hacking attempt!');
 $_IP = $_SERVER['REMOTE_ADDR'];
 $_BROWSER = $_SERVER['HTTP_USER_AGENT'];
 //Если делаем выход

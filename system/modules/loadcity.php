@@ -9,9 +9,6 @@
 
 use Mozg\classes\Registry;
 
-if (!defined('MOZG'))
-    die('Hacking attempt!');
-
 NoAjaxQuery();
 
 $country_id = intFilter('country');

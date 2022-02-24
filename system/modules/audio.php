@@ -11,9 +11,6 @@ use Mozg\classes\Filesystem;
 use Mozg\classes\Id3v2;
 use Mozg\classes\Registry;
 
-if (!defined('MOZG'))
-    die('Hacking attempt!');
-
 NoAjaxQuery();
 
 if (Registry::get('logged')) {

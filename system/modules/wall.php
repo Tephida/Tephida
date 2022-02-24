@@ -12,9 +12,6 @@ use Mozg\classes\Filesystem;
 use Mozg\classes\Registry;
 use Mozg\classes\WallProfile;
 
-if (!defined('MOZG'))
-    die('Hacking attempt!');
-
 if (Registry::get('logged')) {
     $db = Registry::get('db');
     $act = requestFilter('act');

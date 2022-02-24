@@ -15,7 +15,6 @@ if (isset($_POST["PHPSESSID"])) {
 session_start();
 ob_start();
 ob_implicit_flush(0);
-const MOZG = true;
 define("ROOT_DIR", dirname(__FILE__));
 const ENGINE_DIR = ROOT_DIR . '/system';
 require_once './vendor/autoload.php';

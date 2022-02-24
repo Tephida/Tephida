@@ -9,9 +9,6 @@
 
 use Mozg\classes\Registry;
 
-if (!defined('MOZG'))
-    die('Hacking attempt!');
-
 if (Registry::get('logged')) {
     $db = Registry::get('db');
     $act = requestFilter('act');

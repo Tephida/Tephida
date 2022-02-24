@@ -11,9 +11,6 @@ use Mozg\classes\Registry;
 use Mozg\classes\Router;
 use Mozg\classes\Templates;
 
-if (!defined('MOZG')) die('Hacking attempt!');
-
-
 try {
     $config = settings_load();
     Registry::set('config', $config);

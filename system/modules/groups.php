@@ -11,9 +11,6 @@ use Mozg\classes\AntiSpam;
 use Mozg\classes\Filesystem;
 use Mozg\classes\Registry;
 
-if (!defined('MOZG'))
-    die('Hacking attempt!');
-
 NoAjaxQuery();
 
 if (Registry::get('logged')) {

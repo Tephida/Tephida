@@ -9,10 +9,6 @@
 
 use Mozg\classes\Filesystem;
 
-if (!defined('MOZG')) {
-    die("Hacking attempt!");
-}
-
 class Thumbnail
 {
     private array $img;
