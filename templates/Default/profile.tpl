@@ -37,14 +37,9 @@
 <input type="hidden" id="typePlay" value="standart"/>
 <div class="ava">
     [owner]
-    <div class="cover_newava" {cover-param-7}><span id="ava"><img src="{ava}" alt="" title=""
-                                                                  id="ava_{user-id}"/></span></div>
+    <div class="cover_newava" {cover-param-7}><span id="ava"><img src="{ava}" alt="" id="ava_{user-id}"/></span></div>
     [/owner]
-    [not-owner][cover]
-    <div class="cover_newava" {cover-param-7}>[/cover]<span id="ava"><img src="{ava}" alt="" title=""
-                                                                          id="ava_{user-id}"/></span>[cover]
-    </div>
-    [/cover][/not-owner]
+    [not-owner]<span id="ava"><img src="{ava}" alt="" id="ava_{user-id}"/></span>[/not-owner]
     <div class="menuleft" style="margin-top:5px">
         [owner]
         <a href="/my_stats" onClick="Page.Go(this.href); return false;">
@@ -237,9 +232,10 @@
     <div class="set_status_bg no_display" id="set_status_bg">
         <input type="text" id="status_text" class="status_inp" value="{status-text}" style="width:500px;"
                maxlength="255" onKeyPress="if(event.keyCode == 13)gStatus.set()"/>
-        <div class="fl_l status_text"><span class="no_status_text [status]no_display[/status]">Введите здесь текст Вашего статуса.</span><a
-                    href="/" class="yes_status_text [no-status]no_display[/no-status]"
-                    onClick="gStatus.set(1); return false">Удалить статус</a></div>
+        <div class="fl_l status_text">
+            <span class="no_status_text [status]no_display[/status]">Введите здесь текст Вашего статуса.</span>
+            <a href="/" class="yes_status_text [no-status]no_display[/no-status]"
+               onClick="gStatus.set(1); return false">Удалить статус</a></div>
         [status]
         <div class="button_div_gray fl_r status_but margin_left">
             <button>Отмена</button>
@@ -274,8 +270,8 @@
         </a>
         [/owner]
         <div class="profile_rate_add" onClick="doLoad.data(1); rating.addbox('{user-id}')"
-             onMouseOver="myhtml.title('1', 'Повысить рейтинг', 'rate', 1)" id="rate1"><img
-                    src="{theme}/images/icons/rate_ic.png"/></div>
+             onMouseOver="myhtml.title('1', 'Повысить рейтинг', 'rate', 1)" id="rate1">
+            <img src="{theme}/images/icons/rate_ic.png"/></div>
         [owner]
         <a class="cursor_pointer" onClick="doLoad.data(1); rating.view()" style="text-decoration:none">
             [/owner]
@@ -310,221 +306,232 @@
     <div id="moreInfo" class="no_display">
         [privacy-info][not-block-contact]
         <div class="fieldset">
-            <div class="w2_a" [owner]style="width:230px;" [
-            /owner]>Контактная информация [owner]<span><a href="/editmypage/contact"
-                                                          onClick="Page.Go(this.href); return false;">редактировать</a></span>[/owner]
+            <div class="w2_a" style="width:230px;">
+                Контактная информация [owner]<span><a href="/editmypage/contact"
+                                                      onClick="Page.Go(this.href); return false;">редактировать</a></span>[/owner]
+            </div>
         </div>
+        [not-contact-phone]
+        <div class="flpodtext">Моб. телефон:</div>
+        <div class="flpodinfo">{phone}</div>
+        [/not-contact-phone]
+        [not-contact-vk]
+        <div class="flpodtext">В контакте:</div>
+        <div class="flpodinfo">{vk}</div>
+        [/not-contact-vk]
+        [not-contact-od]
+        <div class="flpodtext">Одноклассники:</div>
+        <div class="flpodinfo">{od}</div>
+        [/not-contact-od]
+        [not-contact-fb]
+        <div class="flpodtext">FaceBook:</div>
+        <div class="flpodinfo">{fb}</div>
+        [/not-contact-fb]
+        [not-contact-skype]
+        <div class="flpodtext">Skype:</div>
+        <div class="flpodinfo"><a href="skype:{skype}">{skype}</a></div>
+        [/not-contact-skype]
+        [not-contact-icq]
+        <div class="flpodtext">ICQ:</div>
+        <div class="flpodinfo">{icq}</div>
+        [/not-contact-icq]
+        [not-contact-site]
+        <div class="flpodtext">Веб-сайт:</div>
+        <div class="flpodinfo">{site}</div>
+        [/not-contact-site][/not-block-contact]
+        <div class="fieldset">
+            <div class="w2_b" style="width:200px;">Личная информация [owner]<span><a href="/editmypage/interests"
+                                                                                     onClick="Page.Go(this.href); return false;">редактировать</a></span>[/owner]
+            </div>
+        </div>
+        {not-block-info}
+        [not-info-activity]
+        <div class="flpodtext">Деятельность:</div>
+        <div class="flpodinfo">{activity}</div>
+        [/not-info-activity]
+        [not-info-interests]
+        <div class="flpodtext">Интересы:</div>
+        <div class="flpodinfo">{interests}</div>
+        [/not-info-interests]
+        [not-info-music]
+        <div class="flpodtext">Любимая музыка:</div>
+        <div class="flpodinfo">{music}</div>
+        [/not-info-music]
+        [not-info-kino]
+        <div class="flpodtext">Любимые фильмы:</div>
+        <div class="flpodinfo">{kino}</div>
+        [/not-info-kino]
+        [not-info-books]
+        <div class="flpodtext">Любимые книги:</div>
+        <div class="flpodinfo">{books}</div>
+        [/not-info-books]
+        [not-info-games]
+        <div class="flpodtext">Любимые игры:</div>
+        <div class="flpodinfo">{games}</div>
+        [/not-info-games]
+        [not-info-quote]
+        <div class="flpodtext">Любимые цитаты:</div>
+        <div class="flpodinfo">{quote}</div>
+        [/not-info-quote]
+        [not-info-myinfo]
+        <div class="flpodtext">О себе:</div>
+        <div class="flpodinfo">{myinfo}</div>
+        [/not-info-myinfo][/privacy-info]
     </div>
-    [not-contact-phone]
-    <div class="flpodtext">Моб. телефон:</div>
-    <div class="flpodinfo">{phone}</div>
-    [/not-contact-phone]
-    [not-contact-vk]
-    <div class="flpodtext">В контакте:</div>
-    <div class="flpodinfo">{vk}</div>
-    [/not-contact-vk]
-    [not-contact-od]
-    <div class="flpodtext">Одноклассники:</div>
-    <div class="flpodinfo">{od}</div>
-    [/not-contact-od]
-    [not-contact-fb]
-    <div class="flpodtext">FaceBook:</div>
-    <div class="flpodinfo">{fb}</div>
-    [/not-contact-fb]
-    [not-contact-skype]
-    <div class="flpodtext">Skype:</div>
-    <div class="flpodinfo"><a href="skype:{skype}">{skype}</a></div>
-    [/not-contact-skype]
-    [not-contact-icq]
-    <div class="flpodtext">ICQ:</div>
-    <div class="flpodinfo">{icq}</div>
-    [/not-contact-icq]
-    [not-contact-site]
-    <div class="flpodtext">Веб-сайт:</div>
-    <div class="flpodinfo">{site}</div>
-    [/not-contact-site][/not-block-contact]
-    <div class="fieldset">
-        <div class="w2_b" [owner]style="width:200px;" [
-        /owner]>Личная информация [owner]<span><a href="/editmypage/interests"
-                                                  onClick="Page.Go(this.href); return false;">редактировать</a></span>[/owner]
-    </div>
-</div>
-{not-block-info}
-[not-info-activity]
-<div class="flpodtext">Деятельность:</div>
-<div class="flpodinfo">{activity}</div>
-[/not-info-activity]
-[not-info-interests]
-<div class="flpodtext">Интересы:</div>
-<div class="flpodinfo">{interests}</div>
-[/not-info-interests]
-[not-info-music]
-<div class="flpodtext">Любимая музыка:</div>
-<div class="flpodinfo">{music}</div>
-[/not-info-music]
-[not-info-kino]
-<div class="flpodtext">Любимые фильмы:</div>
-<div class="flpodinfo">{kino}</div>
-[/not-info-kino]
-[not-info-books]
-<div class="flpodtext">Любимые книги:</div>
-<div class="flpodinfo">{books}</div>
-[/not-info-books]
-[not-info-games]
-<div class="flpodtext">Любимые игры:</div>
-<div class="flpodinfo">{games}</div>
-[/not-info-games]
-[not-info-quote]
-<div class="flpodtext">Любимые цитаты:</div>
-<div class="flpodinfo">{quote}</div>
-[/not-info-quote]
-[not-info-myinfo]
-<div class="flpodtext">О себе:</div>
-<div class="flpodinfo">{myinfo}</div>
-[/not-info-myinfo][/privacy-info]
-</div>
-[albums]
-<a href="/albums/{user-id}" onClick="Page.Go(this.href); return false" style="text-decoration:none">
-    <div class="albtitle" style="margin-top:5px">
-        Альбомы <span>{albums-num}</span>
-        <div><b>Все</b></div>
-    </div>
-</a>
-{albums}
-<div class="clear"></div>
-[/albums]
-[audios]
-<div id="jquery_jplayer"></div>
-<input type="hidden" id="teck_id" value="1"/>
-<a href="/audio{user-id}" onClick="Page.Go(this.href); return false" style="text-decoration:none">
-    <div class="albtitle" style="margin-top:5px">
-        {audios-num}
-        <div><b>Все</b></div>
-    </div>
-</a>
-{audios}
-<div class="clear"></div>
-[/audios]
-[gifts]
-<a href="/gifts{user-id}" onClick="Page.Go(this.href); return false" style="text-decoration:none">
-    <div class="albtitle" style="margin-top:5px">
-        {gifts-text}
-        <div><b>Все</b></div>
-    </div>
-    <center>{gifts}</center>
+    [albums]
+    <a href="/albums/{user-id}" onClick="Page.Go(this.href); return false" style="text-decoration:none">
+        <div class="albtitle" style="margin-top:5px">
+            Альбомы <span>{albums-num}</span>
+            <div><b>Все</b></div>
+        </div>
+    </a>
+    {albums}
     <div class="clear"></div>
-</a>
-[/gifts]
-<a href="/wall{user-id}" onClick="Page.Go(this.href); return false" style="text-decoration:none">
-    <div class="albtitle" style="border-bottom:0px">Стена <span id="wall_rec_num">{wall-rec-num}</span></div>
-</a>
-[privacy-wall]
-<div class="newmes" id="wall_tab" style="border-bottom:0px;margin-bottom:-5px">
-    <input type="hidden" value="[owner]Что у Вас нового?[/owner][not-owner]Написать сообщение...[/not-owner]"
-           id="wall_input_text"/>
-    <input type="text" class="wall_inpst"
-           value="[owner]Что у Вас нового?[/owner][not-owner]Написать сообщение...[/not-owner]"
-           onMouseDown="wall.form_open(); return false" id="wall_input" style="margin:0px"/>
-    <div class="no_display" id="wall_textarea">
+    [/albums]
+    [audios]
+    <div id="jquery_jplayer"></div>
+    <input type="hidden" id="teck_id" value="1"/>
+    <a href="/audio{user-id}" onClick="Page.Go(this.href); return false" style="text-decoration:none">
+        <div class="albtitle" style="margin-top:5px">
+            {audios-num}
+            <div><b>Все</b></div>
+        </div>
+    </a>
+    {audios}
+    <div class="clear"></div>
+    [/audios]
+    [gifts]
+    <a href="/gifts{user-id}" onClick="Page.Go(this.href); return false" style="text-decoration:none">
+        <div class="albtitle" style="margin-top:5px">
+            {gifts-text}
+            <div><b>Все</b></div>
+        </div>
+        <center>{gifts}</center>
+        <div class="clear"></div>
+    </a>
+    [/gifts]
+    <a href="/wall{user-id}" onClick="Page.Go(this.href); return false" style="text-decoration:none">
+        <div class="albtitle" style="border-bottom:0px">Стена <span id="wall_rec_num">{wall-rec-num}</span></div>
+    </a>
+    {privacy-wall}
+        <div class="newmes" id="wall_tab" style="border-bottom:0px;margin-bottom:-5px">
+            <input type="hidden" value="[owner]Что у Вас нового?[/owner][not-owner]Написать сообщение...[/not-owner]"
+                   id="wall_input_text"/>
+            <input type="text" class="wall_inpst"
+                   value="[owner]Что у Вас нового?[/owner][not-owner]Написать сообщение...[/not-owner]"
+                   onMouseDown="wall.form_open(); return false" id="wall_input" style="margin:0px"/>
+            <div class="no_display" id="wall_textarea">
 		<textarea id="wall_text" class="wall_inpst wall_fast_opened_texta" style="width:534px"
                   onKeyUp="wall.CheckLinkText(this.value)"
                   onBlur="wall.CheckLinkText(this.value, 1)"
         >
    </textarea>
-        <div id="attach_files" class="margin_top_10 no_display"></div>
-        <div id="attach_block_lnk" class="no_display clear">
-            <div class="attach_link_bg">
-                <div align="center" id="loading_att_lnk"><img src="{theme}/images/loading_mini.gif"
-                                                              style="margin-bottom:-2px"/></div>
-                <img src="" align="left" id="attatch_link_img" class="no_display cursor_pointer"
-                     onClick="wall.UrlNextImg()"/>
-                <div id="attatch_link_title"></div>
-                <div id="attatch_link_descr"></div>
-                <div class="clear"></div>
-            </div>
-            <div class="attach_toolip_but"></div>
-            <div class="attach_link_block_ic fl_l"></div>
-            <div class="attach_link_block_te">
-                <div class="fl_l">Ссылка: <a href="/" id="attatch_link_url" target="_blank"></a></div>
-                <img class="fl_l cursor_pointer" style="margin-top:2px;margin-left:5px" src="{theme}/images/close_a.png"
-                     onMouseOver="myhtml.title('1', 'Не прикреплять', 'attach_lnk_')" id="attach_lnk_1"
-                     onClick="wall.RemoveAttachLnk()"/>
-            </div>
-            <input type="hidden" id="attach_lnk_stared"/>
-            <input type="hidden" id="teck_link_attach"/>
-            <span id="urlParseImgs" class="no_display"></span>
-        </div>
-        <div class="clear"></div>
-        <div id="attach_block_vote" class="no_display">
-            <div class="attach_link_bg">
-                <div class="texta">Тема опроса:</div>
-                <input type="text" id="vote_title" class="inpst" maxlength="80" value=""
-                       style="width:355px;margin-left:5px"
-                       onKeyUp="$('#attatch_vote_title').text(this.value)"
-                />
-                <div class="mgclr"></div>
-                <div class="texta">Варианты ответа:<br/><small><span id="addNewAnswer"><a class="cursor_pointer"
-                                                                                          onClick="Votes.AddInp()">добавить</a></span>
-                        | <span id="addDelAnswer">удалить</span></small></div>
-                <input type="text" id="vote_answer_1" class="inpst" maxlength="80" value=""
-                       style="width:355px;margin-left:5px"/>
-                <div class="mgclr"></div>
-                <div class="texta">&nbsp;</div>
-                <input type="text" id="vote_answer_2" class="inpst" maxlength="80" value=""
-                       style="width:355px;margin-left:5px"/>
-                <div class="mgclr"></div>
-                <div id="addAnswerInp"></div>
-                <div class="clear"></div>
-            </div>
-            <div class="attach_toolip_but"></div>
-            <div class="attach_link_block_ic fl_l"></div>
-            <div class="attach_link_block_te">
-                <div class="fl_l">Опрос: <a id="attatch_vote_title" style="text-decoration:none;cursor:default"></a>
+                <div id="attach_files" class="margin_top_10 no_display"></div>
+                <div id="attach_block_lnk" class="no_display clear">
+                    <div class="attach_link_bg">
+                        <div align="center" id="loading_att_lnk"><img src="{theme}/images/loading_mini.gif"
+                                                                      style="margin-bottom:-2px"/></div>
+                        <img src="" align="left" id="attatch_link_img" class="no_display cursor_pointer"
+                             onClick="wall.UrlNextImg()"/>
+                        <div id="attatch_link_title"></div>
+                        <div id="attatch_link_descr"></div>
+                        <div class="clear"></div>
+                    </div>
+                    <div class="attach_toolip_but"></div>
+                    <div class="attach_link_block_ic fl_l"></div>
+                    <div class="attach_link_block_te">
+                        <div class="fl_l">Ссылка: <a href="/" id="attatch_link_url" target="_blank"></a></div>
+                        <img class="fl_l cursor_pointer" style="margin-top:2px;margin-left:5px"
+                             src="{theme}/images/close_a.png"
+                             onMouseOver="myhtml.title('1', 'Не прикреплять', 'attach_lnk_')" id="attach_lnk_1"
+                             onClick="wall.RemoveAttachLnk()"/>
+                    </div>
+                    <input type="hidden" id="attach_lnk_stared"/>
+                    <input type="hidden" id="teck_link_attach"/>
+                    <span id="urlParseImgs" class="no_display"></span>
                 </div>
-                <img class="fl_l cursor_pointer" style="margin-top:2px;margin-left:5px" src="{theme}/images/close_a.png"
-                     onMouseOver="myhtml.title('1', 'Не прикреплять', 'attach_vote_')" id="attach_vote_1"
-                     onClick="Votes.RemoveForAttach()"/>
+                <div class="clear"></div>
+                <div id="attach_block_vote" class="no_display">
+                    <div class="attach_link_bg">
+                        <div class="texta">Тема опроса:</div>
+                        <input type="text" id="vote_title" class="inpst" maxlength="80" value=""
+                               style="width:355px;margin-left:5px"
+                               onKeyUp="$('#attatch_vote_title').text(this.value)"
+                        />
+                        <div class="mgclr"></div>
+                        <div class="texta">Варианты ответа:<br/><small><span id="addNewAnswer"><a class="cursor_pointer"
+                                                                                                  onClick="Votes.AddInp()">добавить</a></span>
+                                | <span id="addDelAnswer">удалить</span></small></div>
+                        <input type="text" id="vote_answer_1" class="inpst" maxlength="80" value=""
+                               style="width:355px;margin-left:5px"/>
+                        <div class="mgclr"></div>
+                        <div class="texta">&nbsp;</div>
+                        <input type="text" id="vote_answer_2" class="inpst" maxlength="80" value=""
+                               style="width:355px;margin-left:5px"/>
+                        <div class="mgclr"></div>
+                        <div id="addAnswerInp"></div>
+                        <div class="clear"></div>
+                    </div>
+                    <div class="attach_toolip_but"></div>
+                    <div class="attach_link_block_ic fl_l"></div>
+                    <div class="attach_link_block_te">
+                        <div class="fl_l">Опрос: <a id="attatch_vote_title"
+                                                    style="text-decoration:none;cursor:default"></a>
+                        </div>
+                        <img class="fl_l cursor_pointer" style="margin-top:2px;margin-left:5px"
+                             src="{theme}/images/close_a.png"
+                             onMouseOver="myhtml.title('1', 'Не прикреплять', 'attach_vote_')" id="attach_vote_1"
+                             onClick="Votes.RemoveForAttach()"/>
+                    </div>
+                    <input type="hidden" id="answerNum" value="2"/>
+                </div>
+                <div class="clear"></div>
+                <input id="vaLattach_files" type="hidden"/>
+                <div class="clear"></div>
+                <div class="button_div fl_l margin_top_10">
+                    <button onClick="wall.send(); return false" id="wall_send">Отправить</button>
+                </div>
+                <div class="wall_attach fl_r" onClick="wall.attach_menu('open', this.id, 'wall_attach_menu')"
+                     onMouseOut="wall.attach_menu('close', this.id, 'wall_attach_menu')" id="wall_attach">Прикрепить
+                </div>
+                <div class="wall_attach_menu no_display"
+                     onMouseOver="wall.attach_menu('open', 'wall_attach', 'wall_attach_menu')"
+                     onMouseOut="wall.attach_menu('close', 'wall_attach', 'wall_attach_menu')" id="wall_attach_menu">
+                    <div class="wall_attach_icon_smile" id="wall_attach_link" onClick="wall.attach_addsmile()">Смайлик
+                    </div>
+                    <div class="wall_attach_icon_photo" id="wall_attach_link" onClick="wall.attach_addphoto()">
+                        Фотографию
+                    </div>
+                    <div class="wall_attach_icon_video" id="wall_attach_link" onClick="wall.attach_addvideo()">
+                        Видеозапись
+                    </div>
+                    <div class="wall_attach_icon_audio" id="wall_attach_link" onClick="wall.attach_addaudio()">
+                        Аудиозапись
+                    </div>
+                    <div class="wall_attach_icon_doc" id="wall_attach_link" onClick="wall.attach_addDoc()">Документ
+                    </div>
+                    <div class="wall_attach_icon_vote" id="wall_attach_link"
+                         onClick="$('#attach_block_vote').slideDown('fast');wall.attach_menu('close', 'wall_attach', 'wall_attach_menu');$('#vote_title').focus();$('#vaLattach_files').val($('#vaLattach_files').val()+'vote|start||')">
+                        Опрос
+                    </div>
+                </div>
             </div>
-            <input type="hidden" id="answerNum" value="2"/>
+            <div class="clear"></div>
         </div>
-        <div class="clear"></div>
-        <input id="vaLattach_files" type="hidden"/>
-        <div class="clear"></div>
-        <div class="button_div fl_l margin_top_10">
-            <button onClick="wall.send(); return false" id="wall_send">Отправить</button>
+    {/privacy-wall}
+    <div id="wall_records">{records}[no-records]
+        <div class="wall_none" {privacy-wall}style="border-top:0px"
+                {/privacy-wall}>На стене пока нет ни одной записи.
         </div>
-        <div class="wall_attach fl_r" onClick="wall.attach_menu('open', this.id, 'wall_attach_menu')"
-             onMouseOut="wall.attach_menu('close', this.id, 'wall_attach_menu')" id="wall_attach">Прикрепить
-        </div>
-        <div class="wall_attach_menu no_display"
-             onMouseOver="wall.attach_menu('open', 'wall_attach', 'wall_attach_menu')"
-             onMouseOut="wall.attach_menu('close', 'wall_attach', 'wall_attach_menu')" id="wall_attach_menu">
-            <div class="wall_attach_icon_smile" id="wall_attach_link" onClick="wall.attach_addsmile()">Смайлик</div>
-            <div class="wall_attach_icon_photo" id="wall_attach_link" onClick="wall.attach_addphoto()">Фотографию</div>
-            <div class="wall_attach_icon_video" id="wall_attach_link" onClick="wall.attach_addvideo()">Видеозапись</div>
-            <div class="wall_attach_icon_audio" id="wall_attach_link" onClick="wall.attach_addaudio()">Аудиозапись</div>
-            <div class="wall_attach_icon_doc" id="wall_attach_link" onClick="wall.attach_addDoc()">Документ</div>
-            <div class="wall_attach_icon_vote" id="wall_attach_link"
-                 onClick="$('#attach_block_vote').slideDown('fast');wall.attach_menu('close', 'wall_attach', 'wall_attach_menu');$('#vote_title').focus();$('#vaLattach_files').val($('#vaLattach_files').val()+'vote|start||')">
-                Опрос
-            </div>
-        </div>
+        [/no-records]
     </div>
-    <div class="clear"></div>
-</div>
-[/privacy-wall]
-<div id="wall_records">{records}[no-records]
-    <div class="wall_none" [privacy-wall]style="border-top:0px" [
-    /privacy-wall]>На стене пока нет ни одной записи.
-</div>
-[/no-records]</div>
-[wall-link]<span id="wall_all_record"></span>
-<div onClick="wall.page('{user-id}'); return false" id="wall_l_href" class="cursor_pointer">
-    <div class="photo_all_comm_bg wall_upgwi" id="wall_link">к предыдущим записям</div>
-</div>
-[/wall-link][/blacklist]
-[not-blacklist]
-<div class="err_yellow" style="font-weight:normal;margin-top:5px">{name} ограничила доступ к своей странице.</div>
-[/not-blacklist]
+    [wall-link]<span id="wall_all_record"></span>
+    <div onClick="wall.page('{user-id}'); return false" id="wall_l_href" class="cursor_pointer">
+        <div class="photo_all_comm_bg wall_upgwi" id="wall_link">к предыдущим записям</div>
+    </div>
+    [/wall-link][/blacklist]
+    [not-blacklist]
+    <div class="err_yellow" style="font-weight:normal;margin-top:5px">{name} ограничила доступ к своей странице.</div>
+    [/not-blacklist]
 </div>
 <div class="clear"></div>

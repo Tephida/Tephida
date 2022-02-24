@@ -422,7 +422,7 @@ var trsn = {
     box: function () {
         $('.js_titleRemove').remove();
         $.post('/index.php?go=lang', function (d) {
-            Box.Show('lang', 400, lang, d, lang_box_canсel);
+            Box.Show('lang', 400, 'Выбор языка', d, lang_box_cancel);
         });
     }
 }

@@ -70,6 +70,7 @@ if (!isset($checkLang)) {
     $checkLang = 'Russian';
 }
 $lang = include_once ROOT_DIR . '/lang/' . $checkLang . '/site.php';
+Registry::set('lang', $lang);
 $langdate = include_once ROOT_DIR . '/lang/' . $checkLang . '/date.php';
 
 $tpl = new Templates();
@@ -123,9 +124,17 @@ try {
     $params = [];
     $routers = array(
         '/' => 'Register@main',
+        '/register/send' => 'Register@send',
         '/login' => 'Register@login',
         '/u:num' => 'Profile@main',
         '/u:numafter' => 'Profile@main',
+        //restore
+        '/restore' => 'Restore@main',
+        '/restore/next' => 'Restore@next',
+        '/restore/next/' => 'Restore@next',
+        '/restore/send' => 'Restore@send',
+        '/restore/prefinish' => 'Restore@preFinish',
+        '/restore/finish' => 'Restore@finish',
     );
     $router->add($routers);
     try {

@@ -17,9 +17,9 @@ use Mozg\classes\Templates;
  * @param string $source
  * @param int $substr_num
  * @param bool $strip_tags
- * @return array|string|null
+ * @return string
  */
-function textFilter(string $source, int $substr_num = 25000, bool $strip_tags = false): array|string|null
+function textFilter(string $source, int $substr_num = 25000, bool $strip_tags = false): string
 {
     $source = trim($source);
     $source = stripslashes($source);
@@ -31,6 +31,11 @@ function textFilter(string $source, int $substr_num = 25000, bool $strip_tags = 
 
 }
 
+/**
+ * @param string $source
+ * @param int $default
+ * @return int
+ */
 function intFilter(string $source, int $default = 0): int
 {
     if (isset($_POST[$source])) {
@@ -43,24 +48,26 @@ function intFilter(string $source, int $default = 0): int
     return intval($source);
 }
 
-#[Pure] function requestFilter(string $source, int $substr_num = 25000, bool $strip_tags = false): array|string|null
+/**
+ * @param string $source
+ * @param int $substr_num
+ * @param bool $strip_tags
+ * @return string
+ */
+function requestFilter(string $source, int $substr_num = 25000, bool $strip_tags = false): string
 {
-    if (isset($_POST[$source])) {
-        $source = $_POST[$source];
-    } elseif (isset($_GET[$source])) {
-        $source = $_GET[$source];
-    } else {
-        return '';
-    }
-
-    if (is_array($source)) {
-        return $source;
-    } elseif (empty($source)) {
+    if (empty($source)) {
         return '';
     } else {
+        if (!empty($_POST[$source])) {
+            $source = $_POST[$source];
+        } elseif (!empty($_GET[$source])) {
+            $source = $_GET[$source];
+        } else {
+            return '';
+        }
         return textFilter($source, $substr_num, $strip_tags);
     }
-
 }
 
 function informationText($array): string
@@ -1504,14 +1511,11 @@ function compile($tpl, array $params = array()): int
  */
 function compileAjax($tpl, $params): int
 {
-    if (!isset($tpl->result['content'])) {
-        throw new Exception('not content');
-    }
     $config = settings_get();
     //Если есть POST Запрос и значение AJAX, а $ajax не равняется "yes", то не пропускаем
     //FIXME
-    if ($_SERVER['REQUEST_METHOD'] == 'POST')
-        throw new Exception('Неизвестная ошибка');
+//    if ($_SERVER['REQUEST_METHOD'] == 'POST')
+//        throw new Exception('Неизвестная ошибка');
 
     $speedbar = $speedbar ?? null;
     $spBar = $spBar ?? null;
@@ -1598,23 +1602,26 @@ function compileNoAjax($tpl, $params): int
             $tpl->set('{news-link}', '');
         }
         //Сообщения
-        if (!empty($params['user_pm_num']))
+        if (!empty($params['user_pm_num'])) {
             $tpl->set('{msg}', $params['user_pm_num']);
-        else
+        } else {
             $tpl->set('{msg}', '');
+        }
 
         $user_support = $user_support ?? null;
         //Поддержка
-        if ($user_support)
+        if ($user_support) {
             $tpl->set('{new-support}', $params['support']);
-        else
+        } else {
             $tpl->set('{new-support}', '');
+        }
         //Отметки на фото
         if ($user_info['user_new_mark_photos']) {
             $tpl->set('{my-id}', 'newphotos');
             $tpl->set('{new_photos}', $params['new_photos']);
-        } else
+        } else {
             $tpl->set('{new_photos}', '');
+        }
         //UBM
 
         $CacheGift = $CacheGift ?? null;
@@ -1652,10 +1659,11 @@ function compileNoAjax($tpl, $params): int
     $config = settings_get();
     if ($config['temp'] == 'mobile') {
         $tpl->result['content'] = str_replace('onClick="Page.Go(this.href); return false"', '', $tpl->result['content']);
-        if ($user_info['user_status'])
+        if ($user_info['user_status']) {
             $tpl->set('{status-mobile}', '<span style="font-size:11px;color:#000">' . $user_info['user_status'] . '</span>');
-        else
+        } else {
             $tpl->set('{status-mobile}', '<span style="font-size:11px;color:#999">установить статус</span>');
+        }
 
         $user_friends_demands = $user_friends_demands ?? null;
         $user_support = $user_support ?? null;
@@ -1663,14 +1671,15 @@ function compileNoAjax($tpl, $params): int
         $CacheGift = $CacheGift ?? null;
 
         $new_actions = $user_friends_demands + $user_support + $CacheNews + $CacheGift + $user_info['user_pm_num'];
-        if ($new_actions)
+        if ($new_actions) {
             $tpl->set('{new-actions}', "<div class=\"headm_newac\" style=\"margin-top:5px;margin-left:30px\">+{$new_actions}</div>");
-        else
+        } else {
             $tpl->set('{new-actions}', "");
+        }
     }
     $tpl->set('{content}', $tpl->result['content']);
 
-    if (isset($spBar) and $spBar) {
+    if (isset($spBar) && $spBar) {
         $tpl->set_block("'\\[speedbar\\](.*?)\\[/speedbar\\]'si", "");
     } else {
         $tpl->set('[speedbar]', '');
@@ -1684,7 +1693,7 @@ function compileNoAjax($tpl, $params): int
 <script type="text/javascript" src="{theme}/js/profile.js"></script>');
 
 // FOR MOBILE VERSION 1.0
-    if (isset($user_info['user_photo']) and $user_info['user_photo']) {
+    if (isset($user_info['user_photo']) && $user_info['user_photo']) {
         $tpl->set('{my-ava}', "/uploads/users/{$user_info['user_id']}/50_{$user_info['user_photo']}");
     } else {
         $tpl->set('{my-ava}', "{theme}/images/no_ava_50.png");
@@ -1710,8 +1719,9 @@ function compileNoAjax($tpl, $params): int
     print $result;
     $tpl->global_clear();
 //    $db->close();
-    if ($config['gzip'] == 'yes')
+    if ($config['gzip'] == 'yes') {
         (new Gzip(false))->GzipOut();
+    }
 
     return print('');
 }
@@ -1719,6 +1729,7 @@ function compileNoAjax($tpl, $params): int
 function tpl_init(): Templates
 {
     $tpl = new Templates();
+    $config = settings_get();
     $tpl->dir = ROOT_DIR . '/templates/' . $config['temp'];
     define('TEMPLATE_DIR', $tpl->dir);
     return $tpl;

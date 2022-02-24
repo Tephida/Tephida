@@ -6,6 +6,7 @@
  *   file that was distributed with this source code.
  *
  */
+
 if (version_compare(PHP_VERSION, '8.0.0') < 0) {
     throw new InvalidArgumentException("Please change php version");
 }

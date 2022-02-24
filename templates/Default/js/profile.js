@@ -3775,7 +3775,7 @@ var imRoom = {
         }, function (d) {
             el.removeAttr('disabled');
             // viiBox.win('inviteToRoom', d);
-            Box.Show('inviteToRoom', 400, inviteToRoom, d, lang_box_canсel);
+            Box.Show('inviteToRoom', 400, inviteToRoom, d, lang_box_cancel);
         });
     },
     viewRoom: function (el, room_id) {

@@ -6,9 +6,13 @@
  *   file that was distributed with this source code.
  *
  */
-class vii_mail {
-	
-	public mixed $site_name = "";
+
+namespace Mozg\classes;
+
+class ViiMail
+{
+
+    public mixed $site_name = "";
     public mixed $from = "";
     public string $to = "";
     public $subject = "";
@@ -16,7 +20,7 @@ class vii_mail {
     public $header = "";
     public $additional_parameters = null;
     public $error = "";
-    public $bcc = array ();
+    public $bcc = array();
     public $mail_headers = "";
     public $html_mail = 0;
     public $charset = 'windows-1251';

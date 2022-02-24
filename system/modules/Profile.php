@@ -17,7 +17,7 @@ class Profile extends Module
 {
     /**
      * @return void
-     * @throws ErrorException
+     * @throws ErrorException|\JsonException|\Exception
      */
     function main(): void
     {
@@ -43,9 +43,11 @@ class Profile extends Module
             }
             $row_online['user_last_visit'] = $row['user_last_visit'];
             $row_online['user_logged_mobile'] = $row['user_logged_mobile'];
-        } else
+        } else {
             $row_online = $db->super_query("SELECT user_last_visit, user_logged_mobile FROM `users` WHERE user_id = '{$id}'");
+        }
 
+        $params['metatags']['title'] = $row['user_search_pref'];
         //Если есть такой юзер, то продолжаем выполнение скрипта
         if ($row) {
             $mobile_speedbar = $row['user_search_pref'];
@@ -68,10 +70,11 @@ class Profile extends Module
                 $tpl->compile('content');
 
             } else {
-                if (Registry::get('logged'))
+                if (Registry::get('logged')) {
                     $CheckBlackList = CheckBlackList($id);
-                else
+                } else {
                     $CheckBlackList = false;
+                }
 
                 $user_privacy = xfieldsdataload($row['user_privacy']);
 
@@ -79,8 +82,9 @@ class Profile extends Module
 
                 $user_name_lastname_exp = explode(' ', $row['user_search_pref']);
 
-                if ($row['user_country_city_name'] == '')
+                if ($row['user_country_city_name'] == '') {
                     $row['user_country_city_name'] = ' | ';
+                }
                 $user_country_city_name_exp = explode('|', $row['user_country_city_name']);
 
                 //################### Друзья ###################//
@@ -101,11 +105,12 @@ class Profile extends Module
                 }
 
                 //################### Друзья на сайте ###################//
-                if (Registry::get('logged') and $user_id != $id)
-                    //Проверка естьли запрашиваемый юзер в друзьях у юзера который смотрит стр
+                if (Registry::get('logged') and $user_id != $id) //Проверка естьли запрашиваемый юзер в друзьях у юзера который смотрит стр
+                {
                     $check_friend = CheckFriends($row['user_id']);
-                else
+                } else {
                     $check_friend = null;
+                }
 
 
                 //Кол-во друзей в онлайне
@@ -702,16 +707,16 @@ class Profile extends Module
 
                 //Приватность стены
                 if ($user_privacy['val_wall1'] == 1 or $user_privacy['val_wall1'] == 2 and $check_friend or $user_id == $id) {
-                    $tpl->set('[privacy-wall]', '');
-                    $tpl->set('[/privacy-wall]', '');
+                    $tpl->set('{privacy-wall}', '');
+                    $tpl->set('{/privacy-wall}', '');
                 } else
-                    $tpl->set_block("'\\[privacy-wall\\](.*?)\\[/privacy-wall\\]'si", "");
+                    $tpl->set_block("'\\{privacy-wall\\}(.*?)\\{/privacy-wall\\}'si", "");
 
                 if ($user_privacy['val_wall2'] == 1 or $user_privacy['val_wall2'] == 2 and $check_friend or $user_id == $id) {
-                    $tpl->set('[privacy-wall]', '');
-                    $tpl->set('[/privacy-wall]', '');
+                    $tpl->set('{privacy-wall}', '');
+                    $tpl->set('{/privacy-wall}', '');
                 } else
-                    $tpl->set_block("'\\[privacy-wall\\](.*?)\\[/privacy-wall\\]'si", "");
+                    $tpl->set_block("'\\{privacy-wall\\}(.*?)\\{/privacy-wall\\}'si", "");
 
                 //Приватность информации
                 if ($user_privacy['val_info'] == 1 or $user_privacy['val_info'] == 2 and $check_friend or $user_id == $id) {
@@ -958,7 +963,7 @@ class Profile extends Module
             msgbox('', $lang['no_upage'], 'info');
 
         }
-        compile($tpl);
+        compile($tpl, $params);
 //    $tpl->clear();
 //	$db->free();
 

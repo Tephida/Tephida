@@ -11,7 +11,7 @@ NoAjaxQuery();
 
 $tpl->load_template('lang/main.tpl');
 
-$useLang = isset($_COOKIE['lang']) ? intval($_COOKIE['lang']) : null;
+$useLang = isset($_COOKIE['lang']) ? (int)$_COOKIE['lang'] : null;
 
 if($useLang <= 0) $useLang = 1;
 $config = settings_get();

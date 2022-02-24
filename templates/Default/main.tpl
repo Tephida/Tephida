@@ -15,7 +15,7 @@
 <div class="head">
     <div class="autowr">
         [logged]<a href="{my-page-link}" class="udinsMy" onClick="Page.Go(this.href); return false;"></a>[/logged]
-        [not-logged]<a href="/" class="udins"></a>[/not-logged]
+        [not-logged]<a href="/" class="udins" onClick="Page.Go(this.href); return false;"></a>[/not-logged]
         <div class="headmenu">
             [logged]
             <a href="/messages" onClick="Page.Go(this.href); return false;">
