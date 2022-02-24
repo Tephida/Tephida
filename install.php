@@ -586,7 +586,6 @@ HTML;
 
             Filesystem::delete(ROOT_DIR . '/adminpanel.php');
 
-            include ENGINE_DIR . '/classes/mysql.php';
             $db = require_once ENGINE_DIR . '/data/db.php';
 
             $table_Chema = array();
