@@ -1,5 +1,7 @@
 # VII Engine
 
+![vii engine](https://raw.githubusercontent.com/Semyon492/vii/master/templates/Default/images/vii.gif)
+
 <a name="installation"></a>
 
 ## Installation
