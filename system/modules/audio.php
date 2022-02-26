@@ -10,6 +10,7 @@
 use Mozg\classes\Filesystem;
 use Mozg\classes\Id3v2;
 use Mozg\classes\Registry;
+use Mozg\classes\Status;
 
 NoAjaxQuery();
 
@@ -29,11 +30,11 @@ if (Registry::get('logged')) {
             $lnk = requestFilter('lnk');
             $format = strtolower(end(explode('.', $lnk)));
             $config = settings_get();
-            if ($format == 'mp3' and !empty($lnk) and $config['audio_mod_add'] == 'yes') {
+            if ($format == 'mp3' && !empty($lnk) && $config['audio_mod_add'] == 'yes') {
                 $check_url = @get_headers(stripslashes($lnk));
                 if (strpos($check_url[0], '200')) {
                     //Узнаем исполнителя и название песни по id3
-                    $ranTmp = rand(0, 100500);
+                    $ranTmp = random_int(0, 100500);
 
                     $fp = fopen(stripslashes($lnk), "rb");
                     $fd = fopen(ROOT_DIR . '/uploads/audio_tmp/' . $ranTmp . '.mp3', "w");
@@ -201,12 +202,12 @@ if (Registry::get('logged')) {
             //Получаем данные о файле
             $file_tmp = $_FILES['uploadfile']['tmp_name'];
             $file_name = to_translit($_FILES['uploadfile']['name']); // оригинальное название для определения формата
-            $file_rename = substr(md5($server_time + rand(1, 100000)), 0, 15); // имя
+            $file_rename = substr(md5($server_time + random_int(1, 100000)), 0, 15); // имя
             $file_size = $_FILES['uploadfile']['size']; // размер файла
             $array = explode(".", $file_name);
             $type = strtolower(end($array)); // формат файла
             $config = settings_get();
-            if ($type == 'mp3' and $config['audio_mod_add'] == 'yes' and $file_size < 10000000) {
+            if ($type == 'mp3' && $config['audio_mod_add'] == 'yes' && $file_size < 10000000) {
                 $audio_dir = ROOT_DIR . '/uploads/audio/' . $user_id . '/';
                 Filesystem::createDir($audio_dir);
 
@@ -234,11 +235,18 @@ if (Registry::get('logged')) {
                     $db->query("UPDATE `users` SET user_audio = user_audio+1 WHERE user_id = '" . $user_id . "'");
 
                     mozg_mass_clear_cache_file('user_' . $user_id . '/audios_profile|user_' . $user_id . '/profile_' . $user_id);
-                } else
-                    echo 1;
-            } else
-                echo 1;
+                    $status = Status::OK;
+                } else {
+                    $status = Status::BAD_MOVE;
+                }
+            } else {
+                $status = Status::NOT_VALID;
+            }
+            $response = array(
+                'status' => $status,
 
+            );
+            _e_json($response);
             break;
 
         default:
