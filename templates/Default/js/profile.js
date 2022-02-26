@@ -2700,7 +2700,7 @@ var audio = {
         first = f;
         $('.js_titleRemove').remove();
         Box.Close();
-        Box.Show('addaudio', 510, lang_audio_add, '<div class="videos_pad"><div class="buttonsprofile albumsbuttonsprofile buttonsprofileSecond" style="height:22px;margin-bottom:20px;margin-top:-5px"><div class="buttonsprofileSec cursor_pointer"><a><div><b>По ссылке</b></div></a></div><a class="cursor_pointer" onClick="audio.addBoxComp()"><div><b>С компьютера</b></div></a></div><div class="videos_text">Вставьте ссылку на mp3 файл</div><input type="text" class="videos_input" id="audio_lnk" style="margin-top:5px" /><span id="vi_info">Например: <b>https://music.com/uploads/files/audio/2012/faxo_-_kalp.mp3</b></span></div>', lang_box_canсel, lang_album_create, 'audio.send()', 0, 0, 1, 1);
+        Box.Show('addaudio', 510, lang_audio_add, '<div class="videos_pad"><div class="buttonsprofile albumsbuttonsprofile buttonsprofileSecond" style="height:22px;margin-bottom:20px;margin-top:-5px"><div class="buttonsprofileSec cursor_pointer"><a><div><b>По ссылке</b></div></a></div><a class="cursor_pointer" onClick="audio.addBoxComp()"><div><b>С компьютера</b></div></a></div><div class="videos_text">Вставьте ссылку на mp3 файл</div><input type="text" class="videos_input" id="audio_lnk" style="margin-top:5px" /><span id="vi_info">Например: <b>https://music.com/uploads/files/audio/2012/faxo_-_kalp.mp3</b></span></div>', lang_box_cancel, lang_album_create, 'audio.send()', 0, 0, 1, 1);
         $('#audio_lnk').focus();
     },
     addBoxComp: function () {
