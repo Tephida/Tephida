@@ -6,8 +6,8 @@
  *   file that was distributed with this source code.
  *
  */
-if (!defined('MOZG'))
-    die('Hacking attempt!');
+
+use Mozg\classes\Registry;
 
 NoAjaxQuery();
 
@@ -37,7 +37,7 @@ if (Registry::get('logged')) {
             NoAjaxQuery();
             if ($user_info['user_group'] == 1) {
                 //Подключаем парсер
-                include ENGINE_DIR . '/classes/parse.php';
+                include ENGINE_DIR . '/classes/Parse.php';
                 $parse = new parse();
 
                 $title = requestFilter('title', 25000, true);
@@ -72,7 +72,7 @@ if (Registry::get('logged')) {
                 $row = $db->super_query("SELECT title, story FROM `blog` WHERE id = '{$id}'");
                 if ($row) {
                     //Подключаем парсер
-                    include ENGINE_DIR . '/classes/parse.php';
+                    include ENGINE_DIR . '/classes/Parse.php';
                     $parse = new parse();
 
                     function BBdecodeImg($source)
@@ -100,7 +100,7 @@ if (Registry::get('logged')) {
             NoAjaxQuery();
             if ($user_info['user_group'] == 1) {
                 //Подключаем парсер
-                include ENGINE_DIR . '/classes/parse.php';
+                include ENGINE_DIR . '/classes/Parse.php';
                 $parse = new parse();
 
                 $title = requestFilter('title', 25000, true);
@@ -143,11 +143,8 @@ if (Registry::get('logged')) {
                         $res_type = strtolower('.' . $type);
 
                         if (move_uploaded_file($image_tmp, $album_dir . $image_rename . $res_type)) {
-                            //Подключаем класс для фотографий
-                            include ENGINE_DIR . '/classes/images.php';
-
                             //Создание оригинала
-                            $tmb = new thumbnail($album_dir . $image_rename . $res_type);
+                            $tmb = new Thumbnail($album_dir . $image_rename . $res_type);
                             $tmb->size_auto('570', 1);
                             $tmb->jpeg_quality('100');
                             $tmb->save($album_dir . $image_rename . $res_type);

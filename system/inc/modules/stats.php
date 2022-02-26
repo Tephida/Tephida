@@ -6,8 +6,8 @@
  *   file that was distributed with this source code.
  *
  */
-if (!defined('MOZG'))
-    die('Hacking attempt!');
+
+use Mozg\classes\Filesystem;
 
 //echoheader();
 //echohtmlstart('Общая статистика сайта');

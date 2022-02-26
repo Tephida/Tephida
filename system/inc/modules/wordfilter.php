@@ -6,15 +6,15 @@
  *   file that was distributed with this source code.
  *
  */
-if(!defined('MOZG'))
-	die('Hacking attempt!');
+
+use Mozg\classes\Registry;
 
 //Добавление слова
-if(isset($_POST['send'])){
+if (isset($_POST['send'])) {
 
-	$word_find = trim(strip_tags(stripslashes($_POST['word_find'])));
-	
-	if($word_find == ""){
+    $word_find = trim(strip_tags(stripslashes($_POST['word_find'])));
+
+    if ($word_find == "") {
 	
 		msgbox('Информация', 'Введите слово', '?mod=wordfilter');
 		

@@ -7,8 +7,11 @@ declare(strict_types=1);
  *   file that was distributed with this source code.
  *
  */
+namespace Mozg\classes;
 
-class wall
+use ErrorException;
+
+class WallProfile
 {
 
     public $tpl;

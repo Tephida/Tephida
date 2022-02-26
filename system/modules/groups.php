@@ -6,8 +6,10 @@
  *   file that was distributed with this source code.
  *
  */
-if (!defined('MOZG'))
-    die('Hacking attempt!');
+
+use Mozg\classes\AntiSpam;
+use Mozg\classes\Filesystem;
+use Mozg\classes\Registry;
 
 NoAjaxQuery();
 
@@ -29,11 +31,11 @@ if (Registry::get('logged')) {
         case "send":
             NoAjaxQuery();
             $title = requestFilter('title', 60, true);
-            AntiSpam('groups');
+            AntiSpam::check('groups');
 
             if (!empty($title)) {
 
-                AntiSpamLogInsert('groups');
+                AntiSpam::LogInsert('groups');
                 $db->query("INSERT INTO `communities` SET title = '{$title}', type = 1, traf = 1, ulist = '|{$user_id}|', date = NOW(), admin = 'u{$user_id}|', real_admin = '{$user_id}', comments = 1");
                 $cid = $db->insert_id();
                 $db->query("INSERT INTO `friends` SET friend_id = '{$cid}', user_id = '{$user_id}', friends_date = NOW(), subscriptions = 2");
@@ -126,23 +128,20 @@ if (Registry::get('logged')) {
                         $upload_dir = ROOT_DIR . "/uploads/groups/{$id}/";
 
                         if (move_uploaded_file($image_tmp, $upload_dir . $image_rename . $res_type)) {
-                            //Подключаем класс для фотографий
-                            include ENGINE_DIR . '/classes/images.php';
-
                             //Создание оригинала
-                            $tmb = new thumbnail($upload_dir . $image_rename . $res_type);
+                            $tmb = new Thumbnail($upload_dir . $image_rename . $res_type);
                             $tmb->size_auto('200', 1);
                             $tmb->jpeg_quality('97');
                             $tmb->save($upload_dir . $image_rename . $res_type);
 
                             //Создание маленькой копии 100
-                            $tmb = new thumbnail($upload_dir . $image_rename . $res_type);
+                            $tmb = new Thumbnail($upload_dir . $image_rename . $res_type);
                             $tmb->size_auto('100x100');
                             $tmb->jpeg_quality('100');
                             $tmb->save($upload_dir . '100_' . $image_rename . $res_type);
 
                             //Создание маленькой копии 50
-                            $tmb = new thumbnail($upload_dir . $image_rename . $res_type);
+                            $tmb = new Thumbnail($upload_dir . $image_rename . $res_type);
                             $tmb->size_auto('50x50');
                             $tmb->jpeg_quality('100');
                             $tmb->save($upload_dir . '50_' . $image_rename . $res_type);
@@ -515,7 +514,7 @@ if (Registry::get('logged')) {
                                 include ENGINE_DIR . '/classes/images.php';
 
                                 if (Filesystem::copy($rImgUrl, $upload_dir . '/' . $image_name . '.' . $img_format)) {
-                                    $tmb = new thumbnail($upload_dir . '/' . $image_name . '.' . $img_format);
+                                    $tmb = new Thumbnail($upload_dir . '/' . $image_name . '.' . $img_format);
                                     $tmb->size_auto('100x80');
                                     $tmb->jpeg_quality(100);
                                     $tmb->save($upload_dir . '/' . $image_name . '.' . $img_format);
@@ -589,7 +588,7 @@ if (Registry::get('logged')) {
         case "wall_send_comm":
             NoAjaxQuery();
 
-            AntiSpam('comments');
+            AntiSpam::check('comments');
 
             $rec_id = intFilter('rec_id');
             $public_id = intFilter('public_id');
@@ -601,7 +600,7 @@ if (Registry::get('logged')) {
 
             if ($row['comments'] or stripos($row['admin'], "u{$user_id}|") !== false and isset($wall_text) and !empty($wall_text)) {
 
-                AntiSpamLogInsert('comments');
+                AntiSpam::LogInsert('comments');
 
                 //Если добавляется ответ на комментарий, то вносим в ленту новостей "ответы"
                 if ($answer_comm_id) {
@@ -1240,7 +1239,7 @@ if (Registry::get('logged')) {
                             include_once ENGINE_DIR . '/classes/images.php';
 
                             //Создание маленькой копии
-                            $tmb = new thumbnail($rImg);
+                            $tmb = new Thumbnail($rImg);
                             $tmb->size_auto('800', 1);
                             $tmb->jpeg_quality('100');
                             $tmb->save($rImg);

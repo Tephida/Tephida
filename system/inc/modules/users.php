@@ -12,8 +12,6 @@
 	File: users.php
  
 */
-if (!defined('MOZG'))
-    die('Hacking attempt!');
 
 //echoheader();
 

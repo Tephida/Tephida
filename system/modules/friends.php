@@ -6,10 +6,11 @@
  *   file that was distributed with this source code.
  *
  */
-if (!defined('MOZG'))
-    die('Hacking attempt!');
 
-//Если страница вызвана через AJAX то включаем защиту, чтоб не могли обращаться напрямую к странице
+use Mozg\classes\AntiSpam;
+use Mozg\classes\Registry;
+
+//Если страница вызвана через AJAX, то включаем защиту, чтоб не могли обращаться напрямую к странице
 NoAjaxQuery();
 
 if (Registry::get('logged')) {
@@ -29,7 +30,7 @@ if (Registry::get('logged')) {
         case "send_demand":
             NoAjaxQuery();
 
-            AntiSpam('friends');
+            AntiSpam::check('friends');
 
             $for_user_id = intFilter('for_user_id');
             $from_user_id = $user_info['user_id'];
@@ -47,7 +48,7 @@ if (Registry::get('logged')) {
                     $check_friendlist = $db->super_query("SELECT user_id FROM `friends` WHERE friend_id = '{$for_user_id}' AND user_id = '{$from_user_id}' AND subscriptions = 0");
                     if (!$check_friendlist) {
                         $db->query("INSERT INTO `friends_demands` (for_user_id, from_user_id, demand_date) VALUES ('{$for_user_id}', '{$from_user_id}', NOW())");
-                        AntiSpamLogInsert('friends');
+                        AntiSpam::LogInsert('friends');
                         $db->query("UPDATE `users` SET user_friends_demands = user_friends_demands+1 WHERE user_id = '{$for_user_id}'");
                         echo 'ok';
 

@@ -6,7 +6,9 @@
  *   file that was distributed with this source code.
  *
  */
-if (!defined('MOZG')) die('Hacking attempt!');
+
+use Mozg\classes\Registry;
+
 if (Registry::get('logged')) {
     $act = requestFilter('act');
     $user_info = $user_info ?? Registry::get('user_info');
@@ -124,24 +126,24 @@ if (Registry::get('logged')) {
                 $imgInfo = explode('.', $check_photo['photo_name']);
                 $newName = substr(md5($server_time . $check_photo['check_photo']), 0, 15) . "." . $imgInfo[1];
                 $newDir = ROOT_DIR . "/uploads/users/{$user_id}/";
-                include ENGINE_DIR . '/classes/images.php';
+
                 //Создаём оригинал
-                $tmb = new thumbnail(ROOT_DIR . "/uploads/users/{$user_id}/albums/{$check_photo['album_id']}/{$check_photo['photo_name']}");
+                $tmb = new Thumbnail(ROOT_DIR . "/uploads/users/{$user_id}/albums/{$check_photo['album_id']}/{$check_photo['photo_name']}");
                 $tmb->size_auto($i_width . "x" . $i_height, 0, "{$i_left}|{$i_top}");
                 $tmb->jpeg_quality(90);
                 $tmb->save($newDir . "o_{$newName}");
                 //Создание главной фотографии
-                $tmb = new thumbnail($newDir . "o_{$newName}");
+                $tmb = new Thumbnail($newDir . "o_{$newName}");
                 $tmb->size_auto(200, 1);
                 $tmb->jpeg_quality(100);
                 $tmb->save($newDir . $newName);
                 //Создание уменьшенной копии 50х50
-                $tmb = new thumbnail($newDir . "o_{$newName}");
+                $tmb = new Thumbnail($newDir . "o_{$newName}");
                 $tmb->size_auto('50x50');
                 $tmb->jpeg_quality(100);
                 $tmb->save($newDir . '50_' . $newName);
                 //Создание уменьшенной копии 100х100
-                $tmb = new thumbnail($newDir . "o_{$newName}");
+                $tmb = new Thumbnail($newDir . "o_{$newName}");
                 $tmb->size_auto('100x100');
                 $tmb->jpeg_quality(100);
                 $tmb->save($newDir . '100_' . $newName);
@@ -234,7 +236,7 @@ if (Registry::get('logged')) {
                 //Подключаем класс для фотографий
                 include ENGINE_DIR . '/classes/images.php';
                 //Создание маленькой копии
-                $tmb = new thumbnail(ROOT_DIR . '/uploads/users/' . $user_id . '/albums/' . $row['album_id'] . '/' . $row['photo_name']);
+                $tmb = new Thumbnail(ROOT_DIR . '/uploads/users/' . $user_id . '/albums/' . $row['album_id'] . '/' . $row['photo_name']);
                 $tmb->size_auto('140x100');
                 $tmb->jpeg_quality('100');
                 $tmb->save(ROOT_DIR . '/uploads/users/' . $user_id . '/albums/' . $row['album_id'] . '/c_' . $row['photo_name']);

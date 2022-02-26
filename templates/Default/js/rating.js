@@ -9,9 +9,10 @@
 var rating = {
     addbox: function (f) {
         $('.js_titleRemove').remove();
-        viiBox.start();
+        // viiBox.start();
         $.post('/index.php?go=rating', {for_user_id: f}, function (d) {
-            viiBox.win('rate', d);
+            // viiBox.win('rate', d);
+            Box.Show('rate', 400, rate, data, lang_box_canсel);
         });
     },
     save: function (u) {
@@ -34,7 +35,7 @@ var rating = {
                     $('.profile_rate_100_right').addClass('profile_rate_500_right');
                     $('.profile_rate_100_head').addClass('profile_rate_500_head');
                 }
-                viiBox.clos('rate', 1);
+                Box.Close('rate');
             });
         } else
             setErrorInputMsg('rate_num');
@@ -57,9 +58,10 @@ var rating = {
         }
     },
     view: function () {
-        viiBox.start();
+        // viiBox.start();
         $.post('/index.php?go=rating&act=view', function (d) {
-            viiBox.win('view_rating', d);
+            // viiBox.win('view_rating', d);
+            Box.Show('view_rating', 400, 'view_rating', d, lang_box_canсel);
         });
     },
     page: function () {

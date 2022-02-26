@@ -6,8 +6,12 @@
  *   file that was distributed with this source code.
  *
  */
-class parse {
-    function BBparse($source, $preview = false) {
+namespace Mozg\classes;
+
+class Parse
+{
+    function BBparse($source, $preview = false)
+    {
         global $config;
         $source = preg_replace("#<iframe#i", "&lt;iframe", $source);
         $source = preg_replace("#<script#i", "&lt;script", $source);

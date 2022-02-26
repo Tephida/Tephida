@@ -6,6 +6,7 @@
  *   file that was distributed with this source code.
  *
  */
+namespace Mozg\classes;
 
 class Filesystem
 {
@@ -71,10 +72,10 @@ class Filesystem
             return false;
     }
 
-    public static function copy($from, $to)
+    public static function copy($from, $to): bool
     {
         if (is_file($from) and !is_file($to))
-            copy($from, $to);
+            return copy($from, $to);
         else
             return false;
     }

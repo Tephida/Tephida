@@ -6,15 +6,23 @@
  *   file that was distributed with this source code.
  *
  */
+
+namespace Mozg\modules;
+
+use ErrorException;
+use Mozg\classes\Module;
+use Mozg\classes\Registry;
+use Mozg\classes\TpLSite;
+
 class Profile extends Module
 {
     /**
      * @return void
-     * @throws ErrorException
+     * @throws ErrorException|\JsonException|\Exception
      */
     function main(): void
     {
-        $tpl = $this->tpl;
+
         $user_id = $user_info['user_id'] ?? null;
         $db = Registry::get('db');
         $config = settings_get();
@@ -33,11 +41,16 @@ class Profile extends Module
             if ($row) {
                 mozg_create_folder_cache($cache_folder);
                 mozg_create_cache($cache_folder . '/profile_' . $id, serialize($row));
+                $row_online['user_last_visit'] = $row['user_last_visit'];
+                $row_online['user_logged_mobile'] = $row['user_logged_mobile'];
             }
-            $row_online['user_last_visit'] = $row['user_last_visit'];
-            $row_online['user_logged_mobile'] = $row['user_logged_mobile'];
-        } else
+        } else {
             $row_online = $db->super_query("SELECT user_last_visit, user_logged_mobile FROM `users` WHERE user_id = '{$id}'");
+        }
+
+        $config = settings_get();
+        $meta_tags['title'] = $row['user_search_pref'] ?? $config['home'];
+        $tpl = new TpLSite($this->tpl_dir_name, $meta_tags);
 
         //Если есть такой юзер, то продолжаем выполнение скрипта
         if ($row) {
@@ -53,7 +66,7 @@ class Profile extends Module
                 $tpl->set('{lastname}', $user_name_lastname_exp[1]);
                 $tpl->compile('content');
 
-            } elseif ($row['user_ban_date'] >= $server_time or $row['user_ban_date'] == '0') {
+            } elseif ($row['user_ban_date'] >= $server_time || $row['user_ban_date'] == '0') {
                 $tpl->load_template("profile_baned_all.tpl");
                 $user_name_lastname_exp = explode(' ', $row['user_search_pref']);
                 $tpl->set('{name}', $user_name_lastname_exp[0]);
@@ -61,10 +74,11 @@ class Profile extends Module
                 $tpl->compile('content');
 
             } else {
-                if (Registry::get('logged'))
+                if (Registry::get('logged')) {
                     $CheckBlackList = CheckBlackList($id);
-                else
+                } else {
                     $CheckBlackList = false;
+                }
 
                 $user_privacy = xfieldsdataload($row['user_privacy']);
 
@@ -72,8 +86,9 @@ class Profile extends Module
 
                 $user_name_lastname_exp = explode(' ', $row['user_search_pref']);
 
-                if ($row['user_country_city_name'] == '')
+                if ($row['user_country_city_name'] == '') {
                     $row['user_country_city_name'] = ' | ';
+                }
                 $user_country_city_name_exp = explode('|', $row['user_country_city_name']);
 
                 //################### Друзья ###################//
@@ -85,23 +100,25 @@ class Profile extends Module
                         $tpl->set('{user-id}', $row_friends['friend_id']);
                         $tpl->set('{name}', $friend_info[0]);
                         $tpl->set('{last-name}', $friend_info[1]);
-                        if ($row_friends['user_photo'])
+                        if ($row_friends['user_photo']) {
                             $tpl->set('{ava}', $config['home_url'] . 'uploads/users/' . $row_friends['friend_id'] . '/50_' . $row_friends['user_photo']);
-                        else
+                        } else {
                             $tpl->set('{ava}', '{theme}/images/no_ava_50.png');
+                        }
                         $tpl->compile('all_friends');
                     }
                 }
 
                 //################### Друзья на сайте ###################//
-                if (Registry::get('logged') and $user_id != $id)
-                    //Проверка естьли запрашиваемый юзер в друзьях у юзера который смотрит стр
+                if (Registry::get('logged') && $user_id != $id) //Проверка естьли запрашиваемый юзер в друзьях у юзера который смотрит стр
+                {
                     $check_friend = CheckFriends($row['user_id']);
-                else
+                } else {
                     $check_friend = null;
+                }
 
 
-                //Кол-во друзей в онлайне
+                //Кол-во друзей в онлайн
                 if ($row['user_friends_num']) {
                     $online_friends = $db->super_query("SELECT COUNT(*) AS cnt FROM `users` tb1, `friends` tb2 WHERE tb1.user_id = tb2.friend_id AND tb2.user_id = '{$id}' AND tb1.user_last_visit >= '{$online_time}' AND subscriptions = 0");
 
@@ -114,10 +131,11 @@ class Profile extends Module
                             $tpl->set('{user-id}', $row_friends_online['user_id']);
                             $tpl->set('{name}', $friend_info_online[0]);
                             $tpl->set('{last-name}', $friend_info_online[1]);
-                            if ($row_friends_online['user_photo'])
+                            if ($row_friends_online['user_photo']) {
                                 $tpl->set('{ava}', $config['home_url'] . 'uploads/users/' . $row_friends_online['user_id'] . '/50_' . $row_friends_online['user_photo']);
-                            else
+                            } else {
                                 $tpl->set('{ava}', '{theme}/images/no_ava_50.png');
+                            }
                             $tpl->compile('all_online_friends');
                         }
                     }
@@ -144,9 +162,9 @@ class Profile extends Module
                 //################### Видеозаписи ###################//
                 if ($row['user_videos_num']) {
                     //Настройки приватности
-                    if ($user_id == $id)
+                    if ($user_id == $id) {
                         $sql_privacy = "";
-                    elseif ($check_friend) {
+                    } elseif ($check_friend) {
                         $sql_privacy = "AND privacy regexp '[[:<:]](1|2)[[:>:]]'";
                         $cache_pref_videos = "_friends";
                     } else {
@@ -155,7 +173,7 @@ class Profile extends Module
                     }
 
                     //Если страницу смотрит другой юзер, то считаем кол-во видео
-                    if ($user_id != $id) {
+                    if ($user_id !== $id) {
                         $video_cnt = $db->super_query("SELECT COUNT(*) AS cnt FROM `videos` WHERE owner_user_id = '{$id}' {$sql_privacy} AND public_id = '0'", false);
                         $row['user_videos_num'] = $video_cnt['cnt'];
                     }
@@ -192,10 +210,11 @@ class Profile extends Module
                                 $tpl->set('{info}', $country_city[1]);
                             }
 
-                            if ($row_subscr['user_photo'])
+                            if ($row_subscr['user_photo']) {
                                 $tpl->set('{ava}', $config['home_url'] . 'uploads/users/' . $row_subscr['friend_id'] . '/50_' . $row_subscr['user_photo']);
-                            else
+                            } else {
                                 $tpl->set('{ava}', '{theme}/images/no_ava_50.png');
+                            }
                             $tpl->compile('subscriptions');
                         }
                         mozg_create_cache('/subscr_user_' . $id, $tpl->result['subscriptions']);
@@ -219,7 +238,7 @@ class Profile extends Module
                 }
 
                 //################### Праздники друзей ###################//
-                if ($user_id == $id and !isset($_SESSION['happy_friends_block_hide'])) {
+                if ($user_id == $id && !isset($_SESSION['happy_friends_block_hide'])) {
                     $sql_happy_friends = $db->super_query("SELECT tb1.friend_id, tb2.user_search_pref, user_photo, user_birthday FROM `friends` tb1, `users` tb2 WHERE tb1.user_id = '" . $id . "' AND tb1.friend_id = tb2.user_id  AND subscriptions = 0 AND user_day = '" . date('j', $server_time) . "' AND user_month = '" . date('n', $server_time) . "' ORDER by `user_last_visit` DESC LIMIT 0, 50", true);
                     $tpl->load_template('profile_happy_friends.tpl');
                     $cnt_happfr = 0;
@@ -229,8 +248,11 @@ class Profile extends Module
                         $tpl->set('{user-name}', $happy_row_friends['user_search_pref']);
                         $user_birthday = explode('-', $happy_row_friends['user_birthday']);
                         $tpl->set('{user-age}', user_age($user_birthday[0], $user_birthday[1], $user_birthday[2]));
-                        if ($happy_row_friends['user_photo']) $tpl->set('{ava}', '/uploads/users/' . $happy_row_friends['friend_id'] . '/100_' . $happy_row_friends['user_photo']);
-                        else $tpl->set('{ava}', '{theme}/images/100_no_ava.png');
+                        if ($happy_row_friends['user_photo']) {
+                            $tpl->set('{ava}', '/uploads/users/' . $happy_row_friends['friend_id'] . '/100_' . $happy_row_friends['user_photo']);
+                        } else {
+                            $tpl->set('{ava}', '{theme}/images/100_no_ava.png');
+                        }
                         $tpl->compile('happy_all_friends');
                     }
                 } else {
@@ -260,10 +282,11 @@ class Profile extends Module
                             $tpl->set('{name}', $friend_info_mutual[0]);
                             $tpl->set('{last-name}', $friend_info_mutual[1]);
 
-                            if ($row_mutual['user_photo'])
+                            if ($row_mutual['user_photo']) {
                                 $tpl->set('{ava}', $config['home_url'] . 'uploads/users/' . $row_mutual['friend_id'] . '/50_' . $row_mutual['user_photo']);
-                            else
+                            } else {
                                 $tpl->set('{ava}', '{theme}/images/no_ava_50.png');
+                            }
 
                             $tpl->compile('mutual_friends');
 
@@ -283,8 +306,9 @@ class Profile extends Module
                     $tpl->set('[common-friends]', '');
                     $tpl->set('[/common-friends]', '');
 
-                } else
+                } else {
                     $tpl->set_block("'\\[common-friends\\](.*?)\\[/common-friends\\]'si", "");
+                }
 
                 $tpl->set('{user-id}', $row['user_id']);
 
@@ -295,10 +319,14 @@ class Profile extends Module
                 $tpl->set('{city-id}', $row['user_city']);
 
                 //Если человек сидит с мобильнйо версии
-                if ($row_online['user_logged_mobile']) $mobile_icon = '<img src="{theme}/images/spacer.gif" class="mobile_online" />';
-                else $mobile_icon = '';
+                if ($row_online['user_logged_mobile']) {
+                    $mobile_icon = '<img src="{theme}/images/spacer.gif" class="mobile_online" />';
+                } else {
+                    $mobile_icon = '';
+                }
 
                 if ($row_online['user_last_visit'] >= $online_time) {
+                    $lang['online'] = $lang['online'] ?? 'online';
                     $tpl->set('{online}', $lang['online'] . $mobile_icon);
                 } else {
 //                    if (date('Y-m-d', intval($row_online['user_last_visit'])) == date('Y-m-d', $server_time))
@@ -308,27 +336,35 @@ class Profile extends Module
 //                    else
 //                        $dateTell = langdate('j F Y в H:i', $row_online['user_last_visit']);
 
-                    $dateTell = megaDate(intval($row_online['user_last_visit']));
+                    if ((int)$row_online['user_last_visit'] > 0) {
+                        $dateTell = megaDate((int)$row_online['user_last_visit']);
+                        if ($row['user_sex'] == 2) {
+                            $tpl->set('{online}', 'последний раз была ' . $dateTell . $mobile_icon);
+                        } else {
+                            $tpl->set('{online}', 'последний раз был ' . $dateTell . $mobile_icon);
+                        }
+                    } else {
+                        $tpl->set('{online}', '');
+                    }//FIXME
 
-                    if ($row['user_sex'] == 2)
-                        $tpl->set('{online}', 'последний раз была ' . $dateTell . $mobile_icon);
-                    else
-                        $tpl->set('{online}', 'последний раз был ' . $dateTell . $mobile_icon);
+
                 }
 
-                if ($row['user_city'] and $row['user_country']) {
+                if ($row['user_city'] && $row['user_country']) {
                     $tpl->set('[not-all-city]', '');
                     $tpl->set('[/not-all-city]', '');
-                } else
+                } else {
                     $tpl->set_block("'\\[not-all-city\\](.*?)\\[/not-all-city\\]'si", "");
+                }
 
                 if ($row['user_country']) {
                     $tpl->set('[not-all-country]', '');
                     $tpl->set('[/not-all-country]', '');
-                } else
+                } else {
                     $tpl->set_block("'\\[not-all-country\\](.*?)\\[/not-all-country\\]'si", "");
+                }
 
-                //Конакты
+                //Контакты
                 $xfields = xfieldsdataload($row['user_xfields']);
                 $preg_safq_name_exp = explode(', ', 'phone, vk, od, skype, fb, icq, site');
                 foreach ($preg_safq_name_exp as $preg_safq_name) {
@@ -356,16 +392,18 @@ class Profile extends Module
                 $tpl->set('{phone}', stripslashes($xfields['phone']));
 
                 if (preg_match('/https:\/\//i', $xfields['site'])) {
-                    if (preg_match('/\.ru|\.com|\.net|\.su|\.in\.ua|\.ua/i', $xfields['site']))
+                    if (preg_match('/\.ru|\.com|\.net|\.su|\.in\.ua|\.ua/i', $xfields['site'])) {
                         $tpl->set('{site}', '<a href="' . stripslashes($xfields['site']) . '" target="_blank">' . stripslashes($xfields['site']) . '</a>');
-                    else
+                    } else {
                         $tpl->set('{site}', stripslashes($xfields['site']));
-                } else
+                    }
+                } else {
                     $tpl->set('{site}', 'https://' . stripslashes($xfields['site']));
+                }
 
-                if (!$xfields['vk'] && !$xfields['od'] && !$xfields['fb'] && !$xfields['skype'] && !$xfields['icq'] && !$xfields['phone'] && !$xfields['site'])
+                if (!$xfields['vk'] && !$xfields['od'] && !$xfields['fb'] && !$xfields['skype'] && !$xfields['icq'] && !$xfields['phone'] && !$xfields['site']) {
                     $tpl->set_block("'\\[not-block-contact\\](.*?)\\[/not-block-contact\\]'si", "");
-                else {
+                } else {
                     $tpl->set('[not-block-contact]', '');
                     $tpl->set('[/not-block-contact]', '');
                 }
@@ -384,17 +422,19 @@ class Profile extends Module
 
                 $preg_safq_name_exp = explode(', ', 'activity, interests, myinfo, music, kino, books, games, quote');
 
-                if (!$xfields_all['activity'] and !$xfields_all['interests'] and !$xfields_all['myinfo'] and !$xfields_all['music'] and !$xfields_all['kino'] and !$xfields_all['books'] and !$xfields_all['games'] and !$xfields_all['quote'])
+                if (!$xfields_all['activity'] and !$xfields_all['interests'] and !$xfields_all['myinfo'] and !$xfields_all['music'] and !$xfields_all['kino'] and !$xfields_all['books'] and !$xfields_all['games'] and !$xfields_all['quote']) {
                     $tpl->set('{not-block-info}', '<div align="center" style="color:#999;">Информация отсутствует.</div>');
-                else
+                } else {
                     $tpl->set('{not-block-info}', '');
+                }
 
                 foreach ($preg_safq_name_exp as $preg_safq_name) {
                     if ($xfields_all[$preg_safq_name]) {
                         $tpl->set("[not-info-{$preg_safq_name}]", '');
                         $tpl->set("[/not-info-{$preg_safq_name}]", '');
-                    } else
+                    } else {
                         $tpl->set_block("'\\[not-info-{$preg_safq_name}\\](.*?)\\[/not-info-{$preg_safq_name}\\]'si", "");
+                    }
                 }
 
                 $tpl->set('{activity}', nl2br(stripslashes($xfields_all['activity'])));
@@ -453,15 +493,11 @@ class Profile extends Module
 
                 // FOR MOBILE VERSION 1.0
                 if ($config['temp'] == 'mobile') {
-
                     $avaPREFver = '50_';
                     $noAvaPrf = 'no_ava_50.png';
-
                 } else {
-
                     $avaPREFver = '';
                     $noAvaPrf = 'no_ava.gif';
-
                 }
 
                 //Аватарка
@@ -511,11 +547,12 @@ class Profile extends Module
                 }
                 $tpl->set('{albums}', $albums);
                 $tpl->set('{albums-num}', $albums_count['cnt']);
-                if ($albums_count['cnt'] and $config['album_mod'] == 'yes') {
+                if ($albums_count['cnt'] && $config['album_mod'] == 'yes') {
                     $tpl->set('[albums]', '');
                     $tpl->set('[/albums]', '');
-                } else
+                } else {
                     $tpl->set_block("'\\[albums\\](.*?)\\[/albums\\]'si", "");
+                }
 
                 //Делаем проверки на существования запрашиваемого юзера у себя в друзьяз, заклаках, в подписка, делаем всё это если страницу смотрет другой человек
                 if ($user_id != $id) {
@@ -569,10 +606,11 @@ class Profile extends Module
 
 
                     //Проверка есть ли запрашиваемый юзер в черном списке
-                    if (Registry::get('logged'))
+                    if (Registry::get('logged')) {
                         $MyCheckBlackList = MyCheckBlackList($id);
-                    else
+                    } else {
                         $MyCheckBlackList = false;
+                    }
                     if ($MyCheckBlackList) {
                         $tpl->set('[yes-blacklist]', '');
                         $tpl->set('[/yes-blacklist]', '');
@@ -600,16 +638,18 @@ class Profile extends Module
                     $tpl->set('[notes]', '');
                     $tpl->set('[/notes]', '');
                     $tpl->set('{notes}', $tpl->result['notes'] ?? '');
-                } else
+                } else {
                     $tpl->set_block("'\\[notes\\](.*?)\\[/notes\\]'si", "");
+                }
 
                 //Если есть видео то выводим
-                if ($row['user_videos_num'] and $config['video_mod'] == 'yes') {
+                if ($row['user_videos_num'] && $config['video_mod'] == 'yes') {
                     $tpl->set('[videos]', '');
                     $tpl->set('[/videos]', '');
                     $tpl->set('{videos}', $tpl->result['videos'] ?? '');
-                } else
+                } else {
                     $tpl->set_block("'\\[videos\\](.*?)\\[/videos\\]'si", "");
+                }
 
                 //Если есть друзья, то выводим
                 if ($row['user_friends_num']) {
@@ -624,16 +664,18 @@ class Profile extends Module
                     $tpl->set('[subscriptions]', '');
                     $tpl->set('[/subscriptions]', '');
                     $tpl->set('{subscriptions}', $tpl->result['subscriptions'] ?? '');
-                } else
+                } else {
                     $tpl->set_block("'\\[subscriptions\\](.*?)\\[/subscriptions\\]'si", "");
+                }
 
                 //Если есть друзья на сайте, то выводим
                 if ($online_friends['cnt']) {
                     $tpl->set('[online-friends]', '');
                     $tpl->set('[/online-friends]', '');
                     $tpl->set('{online-friends}', $tpl->result['all_online_friends'] ?? '');
-                } else
+                } else {
                     $tpl->set_block("'\\[online-friends\\](.*?)\\[/online-friends\\]'si", "");
+                }
 
                 //Если человек пришел после реги, то открываем ему окно загрузи фотографии
                 if (intFilter('after')) {
@@ -656,14 +698,15 @@ class Profile extends Module
                 if ($row['user_wall_num'] > 10) {
                     $tpl->set('[wall-link]', '');
                     $tpl->set('[/wall-link]', '');
-                } else
+                } else {
                     $tpl->set_block("'\\[wall-link\\](.*?)\\[/wall-link\\]'si", "");
+                }
 
                 $tpl->set('{wall-rec-num}', $row['user_wall_num']);
 
-                if ($row['user_wall_num'])
+                if ($row['user_wall_num']) {
                     $tpl->set_block("'\\[no-records\\](.*?)\\[/no-records\\]'si", "");
-                else {
+                } else {
                     $tpl->set('[no-records]', '');
                     $tpl->set('[/no-records]', '');
                 }
@@ -685,21 +728,24 @@ class Profile extends Module
                 if ($user_privacy['val_msg'] == 1 or $user_privacy['val_msg'] == 2 and $check_friend) {
                     $tpl->set('[privacy-msg]', '');
                     $tpl->set('[/privacy-msg]', '');
-                } else
+                } else {
                     $tpl->set_block("'\\[privacy-msg\\](.*?)\\[/privacy-msg\\]'si", "");
+                }
 
                 //Приватность стены
                 if ($user_privacy['val_wall1'] == 1 or $user_privacy['val_wall1'] == 2 and $check_friend or $user_id == $id) {
-                    $tpl->set('[privacy-wall]', '');
-                    $tpl->set('[/privacy-wall]', '');
-                } else
-                    $tpl->set_block("'\\[privacy-wall\\](.*?)\\[/privacy-wall\\]'si", "");
+                    $tpl->set('{privacy-wall}', '');
+                    $tpl->set('{/privacy-wall}', '');
+                } else {
+                    $tpl->set_block("'\\{privacy-wall\\}(.*?)\\{/privacy-wall\\}'si", "");
+                }
 
                 if ($user_privacy['val_wall2'] == 1 or $user_privacy['val_wall2'] == 2 and $check_friend or $user_id == $id) {
-                    $tpl->set('[privacy-wall]', '');
-                    $tpl->set('[/privacy-wall]', '');
-                } else
-                    $tpl->set_block("'\\[privacy-wall\\](.*?)\\[/privacy-wall\\]'si", "");
+                    $tpl->set('{privacy-wall}', '');
+                    $tpl->set('{/privacy-wall}', '');
+                } else {
+                    $tpl->set_block("'\\{privacy-wall\\}(.*?)\\{/privacy-wall\\}'si", "");
+                }
 
                 //Приватность информации
                 if ($user_privacy['val_info'] == 1 or $user_privacy['val_info'] == 2 and $check_friend or $user_id == $id) {
@@ -712,12 +758,13 @@ class Profile extends Module
                 $user_sp = explode('|', $row['user_sp']);
                 if (isset($user_sp[1]) and $user_sp[1]) {
                     $rowSpUserName = $db->super_query("SELECT user_search_pref, user_sp, user_sex FROM `users` WHERE user_id = '{$user_sp[1]}'");
-                    if ($row['user_sex'] == 1)
+                    if ($row['user_sex'] == 1) {
                         $check_sex = 2;
-                    elseif ($row['user_sex'] == 2)
+                    } elseif ($row['user_sex'] == 2) {
                         $check_sex = 1;
-                    else
+                    } else {
                         $check_sex = null;
+                    }
 
                     if ($rowSpUserName['user_sp'] == $user_sp[0] . '|' . $id or $user_sp[0] == 5 and $rowSpUserName['user_sex'] == $check_sex) {
                         $spExpName = explode(' ', $rowSpUserName['user_search_pref']);
@@ -801,8 +848,9 @@ class Profile extends Module
                     $tpl->set('[/gifts]', '');
                     $tpl->set('{gifts}', $gifts);
                     $tpl->set('{gifts-text}', $row['user_gifts'] . ' ' . gram_record($row['user_gifts'], 'gifts'));
-                } else
+                } else {
                     $tpl->set_block("'\\[gifts\\](.*?)\\[/gifts\\]'si", "");
+                }
 
                 //################### Интересные страницы ###################//
                 if ($row['user_public_num']) {
@@ -826,13 +874,14 @@ class Profile extends Module
                     $tpl->set_block("'\\[groups\\](.*?)\\[/groups\\]'si", "");
 
                 //################### Музыка ###################//
-                if ($row['user_audio'] and $config['audio_mod'] == 'yes') {
+                if ($row['user_audio'] && $config['audio_mod'] == 'yes') {
                     $tpl->set('[audios]', '');
                     $tpl->set('[/audios]', '');
                     $tpl->set('{audios}', $tpl->result['audios'] ?? '');
                     $tpl->set('{audios-num}', $row['user_audio'] . ' ' . gram_record($row['user_audio'], 'audio'));
-                } else
+                } else {
                     $tpl->set_block("'\\[audios\\](.*?)\\[/audios\\]'si", "");
+                }
 
                 //################### Праздники друзей ###################//
                 if ($cnt_happfr) {
@@ -840,8 +889,9 @@ class Profile extends Module
                     $tpl->set('{happy-friends-num}', $cnt_happfr);
                     $tpl->set('[happy-friends]', '');
                     $tpl->set('[/happy-friends]', '');
-                } else
+                } else {
                     $tpl->set_block("'\\[happy-friends\\](.*?)\\[/happy-friends\\]'si", "");
+                }
 
                 //################### Обработка дополнительных полей ###################//
                 $xfieldsdata = xfieldsdataload($row['xfields']);
@@ -883,8 +933,9 @@ class Profile extends Module
 
                     $tpl->set('{cover-param-7}', $ava_marg_top);
 
-                } else
+                } else {
                     $tpl->set('{cover-param-7}', "");
+                }
 
                 //Rating
                 if ($row['user_rating'] > 1000) {
@@ -907,46 +958,34 @@ class Profile extends Module
                 $tpl->compile('content');
 
                 //Обновляем кол-во посещений на страницу, если юзер есть у меня в друзьях
-                if (isset($check_friend) and $check_friend)
+                if (isset($check_friend) && $check_friend)
                     $db->query("UPDATE LOW_PRIORITY `friends` SET views = views+1 WHERE user_id = '{$user_info['user_id']}' AND friend_id = '{$id}' AND subscriptions = 0");
 
                 //Вставляем в статистику
-                if (Registry::get('logged') and $user_info['user_id'] != $id) {
-
+                if (Registry::get('logged') && $user_info['user_id'] != $id) {
                     $stat_date = date('Ymd', $server_time);
                     $stat_x_date = date('Ym', $server_time);
-
                     $check_user_stat = $db->super_query("SELECT COUNT(*) AS cnt FROM `users_stats_log` WHERE user_id = '{$user_info['user_id']}' AND for_user_id = '{$id}' AND date = '{$stat_date}'");
-
                     if (!$check_user_stat['cnt']) {
-
                         $check_stat = $db->super_query("SELECT COUNT(*) AS cnt FROM `users_stats` WHERE user_id = '{$id}' AND date = '{$stat_date}'");
-
-                        if ($check_stat['cnt'])
-
+                        if ($check_stat['cnt']) {
                             $db->query("UPDATE `users_stats` SET users = users + 1, views = views + 1 WHERE user_id = '{$id}' AND date = '{$stat_date}'");
-
-                        else
-
+                        } else {
                             $db->query("INSERT INTO `users_stats` SET user_id = '{$id}', date = '{$stat_date}', users = '1', views = '1', date_x = '{$stat_x_date}'");
-
+                        }
                         $db->query("INSERT INTO `users_stats_log` SET user_id = '{$user_info['user_id']}', date = '{$stat_date}', for_user_id = '{$id}'");
-
                     } else {
-
                         $db->query("UPDATE `users_stats` SET views = views + 1 WHERE user_id = '{$id}' AND date = '{$stat_date}'");
-
                     }
-
                 }
             }
 
+            $tpl->render();
         } else {
-            $user_speedbar = $lang['no_infooo'];
-            msgbox('', $lang['no_upage'], 'info');
 
+            msgBoxNew($tpl, 'Информация', 'no_upage', 'info.tpl');
         }
-        compile($tpl);
+
 //    $tpl->clear();
 //	$db->free();
 

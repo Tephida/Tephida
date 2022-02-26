@@ -6,25 +6,20 @@
  *   file that was distributed with this source code.
  *
  */
-if(!defined('MOZG'))
-	die('Hacking attempt!');
 
+use Mozg\classes\Filesystem;
+use Mozg\classes\Registry;
+use Mozg\classes\Templates;
 
+include __DIR__ . '/../functions.php';
 
-include __DIR__ .'/../functions.php';
-/*function GetVar($v) {
-	if(ini_get('magic_quotes_gpc'))
-		return stripslashes($v) ;
-	return $v;
-}*/
-
-$domain_cookie = explode (".", clean_url( $_SERVER['HTTP_HOST'] ));
+$domain_cookie = explode(".", clean_url($_SERVER['HTTP_HOST']));
 $domain_cookie_count = count($domain_cookie);
 $domain_allow_count = -2;
 
-if($domain_cookie_count > 2){
+if ($domain_cookie_count > 2) {
 
-	if(in_array($domain_cookie[$domain_cookie_count-2], array('com', 'net', 'org') )) 
+    if (in_array($domain_cookie[$domain_cookie_count - 2], array('com', 'net', 'org')))
 		$domain_allow_count = -3;
 		
 	if($domain_cookie[$domain_cookie_count-1] == 'ua' ) 

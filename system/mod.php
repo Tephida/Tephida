@@ -6,7 +6,8 @@
  *   file that was distributed with this source code.
  *
  */
-if (!defined('MOZG')) die('Hacking attempt!');
+
+use Mozg\classes\Registry;
 
 $go = isset($_GET['go']) ? htmlspecialchars(strip_tags(stripslashes(trim(urldecode($_GET['go']))))) : "main";
 
@@ -24,11 +25,11 @@ switch ($go) {
         include ENGINE_DIR . '/modules/register.php';
         break;
 
-    /** Профиль пользователя */
-    case "profile":
-        $spBar = true;
-        include ENGINE_DIR . '/modules/profile.php';
-        break;
+//    /** Профиль пользователя */
+//    case "profile":
+//        $spBar = true;
+//        include ENGINE_DIR . '/modules/profile.php';
+//        break;
 
     /** Редактирование моей страницы */
     case "editprofile":

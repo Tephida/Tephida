@@ -6,7 +6,7 @@
  *   file that was distributed with this source code.
  *
  */
-if (!defined('MOZG')) die('Hacking attempt!');
+
 $row = $db->super_query("SELECT user_email, user_name, user_lastname, user_password FROM `users` WHERE user_id = '" . $user_info['user_id'] . "'");
 //Если сохраянем
 if (isset($_POST['save'])) {

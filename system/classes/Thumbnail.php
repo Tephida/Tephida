@@ -7,11 +7,9 @@
  *
  */
 
-if (!defined('MOZG')) {
-    die("Hacking attempt!");
-}
+use Mozg\classes\Filesystem;
 
-class thumbnail
+class Thumbnail
 {
     private array $img;
 

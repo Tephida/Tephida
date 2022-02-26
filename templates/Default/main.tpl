@@ -15,7 +15,7 @@
 <div class="head">
     <div class="autowr">
         [logged]<a href="{my-page-link}" class="udinsMy" onClick="Page.Go(this.href); return false;"></a>[/logged]
-        [not-logged]<a href="/" class="udins"></a>[/not-logged]
+        [not-logged]<a href="/" class="udins" onClick="Page.Go(this.href); return false;"></a>[/not-logged]
         <div class="headmenu">
             [logged]
             <a href="/messages" onClick="Page.Go(this.href); return false;">
@@ -109,6 +109,13 @@
                 </div>
             </a>
             [/logged]
+            [not-logged]
+            <a href="#" onclick="reg.box();">
+                <div class="headm_posic btn_headmenu">
+                    Войти
+                </div>
+            </a>
+            [/not-logged]
         </div>
         <!--search-->
         <div class="search_tab no_display" id="search_tab">
@@ -165,48 +172,29 @@
 <div class="clear"></div>
 <div style="margin-top:44px;"></div>
 <div class="autowr">
-    [not-logged]
-    <div class="leftpanel">
-        <form method="POST" action="">
-            <div class="flLg">Электронный адрес</div>
-            <input type="text" name="email" id="log_email" class="inplog" maxlength="50"/>
-            <div class="flLg">Пароль</div>
-            <input type="password" name="password" id="log_password" class="inplog" maxlength="50"/>
-            <div class="logpos">
-                <div class="button_div">
-                    <button name="log_in" id="login_but" style="width:138px">Войти</button>
-                </div>
-                <div style="margin-top:5px"><a href="/restore" onClick="Page.Go(this.href); return false">Не можете
-                        войти?</a></div>
-            </div>
-        </form>
-    </div>
-    [/not-logged]
-    <div class="content" [logged] style="width:800px;" [
-    /logged]>
-    <div class="shadow">
-        <div class="speedbar no_display" id="">{speedbar}</div>
+    <div class="content" style="width:800px;">
+        <div class="shadow">
         <div class="padcont">
             <div id="audioPlayer"></div>
             <div id="page">{info}{content}</div>
             <div class="clear"></div>
         </div>
-    </div>
-    <div class="footer">
-        Vii Engine &copy; 2022 <a class="cursor_pointer" onClick="trsn.box()"
-                                  onMouseOver="myhtml.title('1', 'Выбор используемого языка на сайте', 'langTitle', 1)"
-                                  id="langTitle1">{lang}</a>
+        </div>
+        <div class="footer">
+            Vii Engine &copy; 2022 <a class="cursor_pointer" onClick="trsn.box()"
+                                      onMouseOver="myhtml.title('1', 'Выбор используемого языка на сайте', 'langTitle', 1)"
+                                      id="langTitle1">{lang}</a>
         <div class="fl_r">
-            <a href="/?act=change_mobile">мобильная версия</a>
-            <a href="/?go=search&online=1" onClick="Page.Go(this.href); return false">люди</a>
-            <a href="/?go=search&type=2" onClick="Page.Go(this.href); return false">видео</a>
-            <a href="/?go=search&type=5" onClick="Page.Go(this.href); return false">музыка</a>
+            <a href="/index.php?act=change_mobile">мобильная версия</a>
+            <a href="/index.php?go=search&online=1" onClick="Page.Go(this.href); return false">люди</a>
+            <a href="/index.php?go=search&type=2" onClick="Page.Go(this.href); return false">видео</a>
+            <a href="/index.php?go=search&type=5" onClick="Page.Go(this.href); return false">музыка</a>
             <a href="/support?act=new" onClick="Page.Go(this.href); return false">помощь</a>
             <a href="/reviews" onClick="Page.Go(this.href); return false">отзывы</a>
             <a href="/blog" onClick="Page.Go(this.href); return false">блог</a>
         </div>
     </div>
-</div>
+    </div>
 </div>
 [logged]
 <script type="text/javascript" src="{theme}/js/push.js"></script>

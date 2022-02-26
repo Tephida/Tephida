@@ -6,20 +6,20 @@
  *   file that was distributed with this source code.
  *
  */
-if (!defined('MOZG'))
-    die('Hacking attempt!');
 
 //Если начали замену
+use Mozg\classes\Parse;
+
 if (isset($_POST['save'])) {
     //Подключаем парсер
-    include_once ENGINE_DIR . '/classes/parse.php';
-    $parse = new parse();
+    include_once ENGINE_DIR . '/classes/Parse.php';
+    $parse = new Parse();
 
     $title = requestFilter('title', 25000, true);
     $alt_name = to_translit($_POST['alt_name']);
     $text = $parse->BBparse(requestFilter('text'));
 
-    if (!empty($title) and !empty($text) and and !empty($alt_name)) {
+    if (!empty($title) and !empty($text) and !empty($alt_name)) {
         $db->query("INSERT INTO `static` SET alt_name = '" . $alt_name . "', title = '" . $title . "', text = '" . $text . "'");
         header("Location: ?mod=static");
     } else
@@ -41,7 +41,7 @@ if (isset($_POST['save'])) {
             //Сохраняем
             if (isset($_POST['save_edit'])) {
                 //Подключаем парсер
-                include_once ENGINE_DIR . '/classes/parse.php';
+                include_once ENGINE_DIR . '/classes/Parse.php';
                 $parse = new parse();
 
                 $title = requestFilter('title', 25000, true);
@@ -62,7 +62,7 @@ if (isset($_POST['save'])) {
             $row['title'] = stripslashes($row['title']);
 
             //Подключаем парсер
-            include_once ENGINE_DIR . '/classes/parse.php';
+            include_once ENGINE_DIR . '/classes/Parse.php';
             $parse = new parse();
 
             $row['text'] = $parse->BBdecode(myBrRn(stripslashes($row['text'])));

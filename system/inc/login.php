@@ -6,19 +6,24 @@
  *   file that was distributed with this source code.
  *
  */
-if (!defined('MOZG'))
-    die('Hacking attempt!');
+
+use Mozg\classes\Registry;
+use Mozg\classes\Templates;
 
 header('Content-type: text/html; charset=utf-8');
 
-$db = require_once ENGINE_DIR . '/data/db.php';
+$config = settings_load();
+$admin_index = $config['admin_index'];
+$admin_link = $config['home_url'] . $admin_index;
+
+$db = require ENGINE_DIR . '/data/db.php';
 Registry::set('db', $db);
 
 $_IP = $_SERVER['REMOTE_ADDR'];
 $_BROWSER = $_SERVER['HTTP_USER_AGENT'];
 
 //Если делаем выход
-if (isset($_GET['act']) and $_GET['act'] == 'logout') {
+if (isset($_GET['act']) && $_GET['act'] == 'logout') {
     set_cookie("user_id", "", 0);
     set_cookie("password", "", 0);
     set_cookie("hid", "", 0);
@@ -29,14 +34,13 @@ if (isset($_GET['act']) and $_GET['act'] == 'logout') {
     Registry::set('logged', false);
     $user_info = array();
     header("Location: {$admin_link}");
-    die();
 }
 
 //Если есть данные сесии
 if (isset($_SESSION['user_id']) > 0) {
     $logged = true;
     Registry::set('logged', true);
-    $logged_user_id = intval($_SESSION['user_id']);
+    $logged_user_id = (int)$_SESSION['user_id'];
     $user_info = $db->super_query("SELECT user_id, user_email, user_group, user_password FROM `users` WHERE user_id = '" . $logged_user_id . "'");
 
     //Если есть данные о сесии, но нет инфы о юзере, то выкидываем его
@@ -44,12 +48,12 @@ if (isset($_SESSION['user_id']) > 0) {
         header("Location: {$admin_link}?act=logout");
 
 //Если есть данные о COOKIE то проверяем
-} elseif (isset($_COOKIE['user_id']) > 0 and $_COOKIE['password'] and $_COOKIE['hid']) {
-    $cookie_user_id = intval($_COOKIE['user_id']);
+} elseif (isset($_COOKIE['user_id']) > 0 && $_COOKIE['password'] && $_COOKIE['hid']) {
+    $cookie_user_id = (int)$_COOKIE['user_id'];
     $user_info = $db->super_query("SELECT user_id, user_email, user_group, user_password, user_hid FROM `users` WHERE user_id = '" . $cookie_user_id . "' AND user_group = '1'");
 
     //Если пароль и HID совпадает то пропускаем
-    if ($user_info['user_password'] == $_COOKIE['password'] and $user_info['user_hid'] == $_COOKIE['password'] . md5(md5($_IP))) {
+    if ($user_info['user_password'] == $_COOKIE['password'] && $user_info['user_hid'] == $_COOKIE['password'] . md5(md5($_IP))) {
         $_SESSION['user_id'] = $user_info['user_id'];
 
         //Вставляем лог в бд
@@ -69,7 +73,7 @@ if (isset($_SESSION['user_id']) > 0) {
 }
 
 //Если данные поступили через пост и пользователь не авторизован
-if (isset($_POST['log_in']) and !isset($_SESSION['user_id'])) {
+if (isset($_POST['log_in']) && !isset($_SESSION['user_id'])) {
 
     //Приготавливаем данные
     $email = requestFilter('email');
@@ -91,21 +95,23 @@ if (isset($_POST['log_in']) and !isset($_SESSION['user_id'])) {
                 $hid = $md5_pass . md5(md5($_IP));
 
                 //Устанавливаем в сессию ИД юзера
-                $_SESSION['user_id'] = intval($check_user['user_id']);
+                $_SESSION['user_id'] = (int)$check_user['user_id'];
 
                 //Обновляем хэш входа
                 $db->query("UPDATE `users` SET user_hid = '" . $hid . "' WHERE user_id = '" . $check_user['user_id'] . "'");
 
                 //Записываем COOKIE
-                set_cookie("user_id", intval($check_user['user_id']), 365);
+                set_cookie("user_id", (int)$check_user['user_id'], 365);
                 set_cookie("password", $md5_pass, 365);
                 set_cookie("hid", $hid, 365);
 
                 header("Location: {$admin_link}");
-            } else
+            } else {
                 $error_log = 'Доступ отключён!';
-        } else
+            }
+        } else {
             $error_log = 'Доступ отключён!';
+        }
     }
 }
 
@@ -123,9 +129,15 @@ if (!$logged) {
 <div class="clear"></div>
 HTML;
     echohtmlend();
+} else if ($user_info['user_group'] == 1) {
+    include ADMIN_DIR . '/mod.php';
 } else {
-    if ($user_info['user_group'] == 1)
-        include ADMIN_DIR . '/mod.php';
-    else
-        msgbox('Информация', 'У вас недостаточно прав для просмотра этого раздела. <a href="' . $admin_link . '?act=logout">Выйти</a>', '');
+    $config = settings_load();
+
+    $tpl = new \Mozg\classes\TplCp(ADMIN_DIR . '/tpl/');
+    $tpl->load_template('info/info_red.tpl');
+    $tpl->set('{error}', 'У вас недостаточно прав для просмотра этого раздела. <a href="' . $admin_link . '?act=logout">Выйти</a>');
+    $tpl->set('{title}', 'Информация');
+    $tpl->compile('content');
+    $tpl->render();
 }

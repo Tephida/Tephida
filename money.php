@@ -14,7 +14,6 @@ exit();
 
 @error_reporting(E_ALL ^ E_WARNING ^ E_NOTICE);
 
-define('MOZG', true);
 define('ROOT_DIR', dirname(__FILE__));
 define('ENGINE_DIR', ROOT_DIR . '/system');
 

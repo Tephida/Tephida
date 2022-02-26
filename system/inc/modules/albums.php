@@ -6,9 +6,6 @@
  *   file that was distributed with this source code.
  *
  */
-if (!defined('MOZG'))
-    die('Hacking attempt!');
-
 echoheader();
 
 $se_uid = intFilter('se_uid');

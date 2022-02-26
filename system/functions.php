@@ -8,16 +8,19 @@
  */
 
 use JetBrains\PhpStorm\Pure;
-
-if (!defined('MOZG')) die('Hacking attempt!');
+use Mozg\classes\Filesystem;
+use Mozg\classes\Gzip;
+use Mozg\classes\Registry;
+use Mozg\classes\Templates;
+use Mozg\classes\TpLSite;
 
 /**
  * @param string $source
  * @param int $substr_num
  * @param bool $strip_tags
- * @return array|string|null
+ * @return string
  */
-function textFilter(string $source, int $substr_num = 25000, bool $strip_tags = false): array|string|null
+function textFilter(string $source, int $substr_num = 25000, bool $strip_tags = false): string
 {
     $source = trim($source);
     $source = stripslashes($source);
@@ -29,6 +32,11 @@ function textFilter(string $source, int $substr_num = 25000, bool $strip_tags = 
 
 }
 
+/**
+ * @param string $source
+ * @param int $default
+ * @return int
+ */
 function intFilter(string $source, int $default = 0): int
 {
     if (isset($_POST[$source])) {
@@ -38,27 +46,29 @@ function intFilter(string $source, int $default = 0): int
     } else {
         return $default;
     }
-    return intval($source);
+    return (int)$source;
 }
 
-#[Pure] function requestFilter(string $source, int $substr_num = 25000, bool $strip_tags = false): array|string|null
+/**
+ * @param string $source
+ * @param int $substr_num
+ * @param bool $strip_tags
+ * @return string
+ */
+function requestFilter(string $source, int $substr_num = 25000, bool $strip_tags = false): string
 {
-    if (isset($_POST[$source])) {
-        $source = $_POST[$source];
-    } elseif (isset($_GET[$source])) {
-        $source = $_GET[$source];
-    } else {
-        return '';
-    }
-
-    if (is_array($source)) {
-        return $source;
-    } elseif (empty($source)) {
+    if (empty($source)) {
         return '';
     } else {
+        if (!empty($_POST[$source])) {
+            $source = $_POST[$source];
+        } elseif (!empty($_GET[$source])) {
+            $source = $_GET[$source];
+        } else {
+            return '';
+        }
         return textFilter($source, $substr_num, $strip_tags);
     }
-
 }
 
 function informationText($array): string
@@ -191,23 +201,21 @@ function navigation($gc, $num, $type) {
     }
     for ($index = - 1;++$index <= $page_refers_per_page_count - 1;) {
         if ($index + $start_page == $page) $pages.= '<span>' . ($start_page + $index) . '</span>';
-        else $pages.= '<a href="' . $type . ($start_page + $index) . '" onClick="Page.Go(this.href); return false">' . ($start_page + $index) . '</a>';
+        else $pages .= '<a href="' . $type . ($start_page + $index) . '" onClick="Page.Go(this.href); return false">' . ($start_page + $index) . '</a>';
     }
     if ($page + $page_refers_per_page <= $pages_count) {
-        $pages.= '<a href="' . $type . ($start_page + $page_refers_per_page_count) . '" onClick="Page.Go(this.href); return false">...</a>';
-        $pages.= '<a href="' . $type . $pages_count . '" onClick="Page.Go(this.href); return false">' . $pages_count . '</a>';
+        $pages .= '<a href="' . $type . ($start_page + $page_refers_per_page_count) . '" onClick="Page.Go(this.href); return false">...</a>';
+        $pages .= '<a href="' . $type . $pages_count . '" onClick="Page.Go(this.href); return false">' . $pages_count . '</a>';
     }
     $resif = $cnt / $gcount;
-    if (ceil($resif) == $page) $pages.= '';
+    if (ceil($resif) == $page) $pages .= '';
     else $pages .= '<a href="' . $type . ($page + 1) . '" onClick="Page.Go(this.href); return false">&raquo;</a>';
     if ($pages_count <= 1) $pages = '';
-    $tpl_2 = new Templates();
-    $tpl_2->dir = TEMPLATE_DIR;
-    $tpl_2->load_template('nav.tpl');
-    $tpl_2->set('{pages}', $pages);
-    $tpl_2->compile('content');
-    $tpl_2->clear();
-    $tpl->result['content'] .= $tpl_2->result['content'];
+
+    $content = <<<HTML
+<div class="nav" id="nav">{$pages}</div>
+HTML;
+    $tpl->result['content'] .= $content;
 }
 
 /**
@@ -322,13 +330,30 @@ function box_navigation($gc, $num, $id, $function, $act) {
 function msgbox($title, $text, $tpl_name) {
     global $tpl;
     $tpl_2 = new Templates();
-    $tpl_2->dir = TEMPLATE_DIR;
+    $config = settings_load();
+    $tpl_2->dir = ROOT_DIR . '/templates/' . $config['temp'];
     $tpl_2->load_template($tpl_name . '.tpl');
     $tpl_2->set('{error}', $text);
     $tpl_2->set('{title}', $title);
     $tpl_2->compile('info');
     $tpl_2->clear();
-    $tpl->result['info'].= $tpl_2->result['info'];
+    $tpl->result['info'] .= $tpl_2->result['info'];
+}
+
+/**
+ * @param $tpl
+ * @param $title
+ * @param $text
+ * @param $tpl_name
+ * @return int
+ */
+function msgBoxNew($tpl, $title, $text, $tpl_name): int
+{
+    $tpl->load_template($tpl_name);
+    $tpl->set('{error}', $text);
+    $tpl->set('{title}', $title);
+    $tpl->compile('content');
+    return $tpl->render();
 }
 
 /**
@@ -336,7 +361,7 @@ function msgbox($title, $text, $tpl_name) {
  */
 function check_smartphone(): bool
 {
-    if ( isset($_SESSION['mobile_enable']))
+    if (isset($_SESSION['mobile_enable']))
         return true;
     $phone_array = array('iphone', 'android', 'pocket', 'palm', 'windows ce', 'windowsce', 'mobile windows', 'cellphone', 'opera mobi', 'operamobi', 'ipod', 'small', 'sharp', 'sonyericsson', 'symbian', 'symbos', 'opera mini', 'nokia', 'htc_', 'samsung', 'motorola', 'smartphone', 'blackberry', 'playstation portable', 'tablet browser', 'android');
     $agent = strtolower($_SERVER['HTTP_USER_AGENT']);
@@ -404,13 +429,15 @@ function mozg_create_cache($prefix, $cache_text): false|int
     } else
         return file_put_contents($filename, $cache_text);
 }
-function mozg_cache($prefix): false|string
+
+function mozg_cache($prefix): false|string|int
 {
     $filename = ENGINE_DIR . '/cache/' . $prefix . '.tmp';
-    if (file_exists($filename))
+    if (file_exists($filename)) {
         return file_get_contents($filename);
-    else
+    } else {
         return false;
+    }
 }
 
 /**
@@ -424,8 +451,7 @@ function strip_data($text): array|string
     $repquotes = array("\-", "\+", "\#");
     $text = stripslashes($text);
     $text = trim(strip_tags($text));
-    $text = str_replace($quotes, '', $text);
-    return str_replace($goodquotes, $repquotes, $text);
+    return str_replace(array(...$quotes, ...$goodquotes), array('', ...$repquotes), $text);
 }
 
 /**
@@ -451,11 +477,9 @@ function xfieldsdataload(string $id) : array
 
     $data = array();
     foreach ( $x_fields_data as $x_field_data ) {
-        list ( $x_field_data_name, $x_field_data_value ) = explode( "|", $x_field_data );
-        $x_field_data_name = str_replace( "&#124;", "|", $x_field_data_name );
-        $x_field_data_name = str_replace( "__NEWL__", "\r\n", $x_field_data_name );
-        $x_field_data_value = str_replace( "&#124;", "|", $x_field_data_value );
-        $x_field_data_value = str_replace( "__NEWL__", "\r\n", $x_field_data_value );
+        list ($x_field_data_name, $x_field_data_value) = explode("|", $x_field_data);
+        $x_field_data_name = str_replace(array("&#124;", "__NEWL__"), array("|", "\r\n"), $x_field_data_name);
+        $x_field_data_value = str_replace(array("&#124;", "__NEWL__"), array("|", "\r\n"), $x_field_data_value);
         $data[$x_field_data_name] = trim($x_field_data_value);
     }
     return $data;
@@ -473,8 +497,7 @@ function profileload() {
     foreach ($filecontents as $name => $value) {
         $filecontents[$name] = explode("|", trim($value));
         foreach ($filecontents[$name] as $name2 => $value2) {
-            $value2 = str_replace("&#124;", "|", $value2);
-            $value2 = str_replace("__NEWL__", "\r\n", $value2);
+            $value2 = str_replace(array("&#124;", "__NEWL__"), array("|", "\r\n"), $value2);
             $filecontents[$name][$name2] = $value2;
         }
     }
@@ -486,8 +509,8 @@ function profileload() {
  */
 function NoAjaxQuery() : void
 {
-    if (!empty($_POST['ajax']) and $_POST['ajax'] == 'yes')
-        if (clean_url($_SERVER['HTTP_REFERER']) != clean_url($_SERVER['HTTP_HOST']) and $_SERVER['REQUEST_METHOD'] != 'POST')
+    if (!empty($_POST['ajax']) && $_POST['ajax'] == 'yes')
+        if (clean_url($_SERVER['HTTP_REFERER']) != clean_url($_SERVER['HTTP_HOST']) && $_SERVER['REQUEST_METHOD'] != 'POST')
             header('Location: /index.php?go=none');
 }
 
@@ -907,7 +930,7 @@ HTML;
 
 function checkAjax(): bool
 {
-    return !empty($_POST['ajax']) and $_POST['ajax'] == 'yes';
+    return !empty($_POST['ajax']) && $_POST['ajax'] == 'yes';
 }
 
 /**
@@ -928,7 +951,7 @@ function user_age($user_year, $user_month, $user_day) {
             $user_age = $current_year - $user_year;
         else
             $user_age = $current_year - $user_year - 1;
-        if ($user_month and $user_day)
+        if ($user_month && $user_day)
             return $user_age . ' ' . gram_record($user_age, 'user_age');
         else
             return false;
@@ -1033,8 +1056,8 @@ function check_ip($ips) {
             $db_ip_split = explode(".", $ip_arr);
             $this_ip_split = explode(".", $_IP);
             for ($i_i = 0;$i_i < 4;$i_i++) {
-                if ($this_ip_split[$i_i] == $db_ip_split[$i_i] or $db_ip_split[$i_i] == '*') {
-                    $ip_check_matches+= 1;
+                if ($this_ip_split[$i_i] == $db_ip_split[$i_i] || $db_ip_split[$i_i] == '*') {
+                    $ip_check_matches += 1;
                 }
             }
             if ($ip_check_matches == 4) {
@@ -1048,10 +1071,11 @@ function check_ip($ips) {
 
 /**
  * @param $source
- * @param $encode
+ * @param bool $encode
  * @return array|mixed|string|string[]|null
  */
-function word_filter($source, $encode = true) {
+function word_filter($source, bool $encode = true)
+{
     global $config;
     $safe_mode = false;
     if ($encode) {
@@ -1061,7 +1085,7 @@ function word_filter($source, $encode = true) {
         if (!$all_words or !count($all_words)) return $source;
         foreach ($all_words as $word_line) {
             $word_arr = explode("|", $word_line);
-            if (function_exists("get_magic_quotes_gpc") AND get_magic_quotes_gpc()) {
+            if (function_exists("get_magic_quotes_gpc") and get_magic_quotes_gpc()) {
                 $word_arr[1] = addslashes($word_arr[1]);
             }
             if ($word_arr[4]) {
@@ -1134,9 +1158,10 @@ function newGram($num, $a, $b, $c, bool $t = false): string
     else
         return declOfNum($num, array(sprintf("%d {$a}", $num), sprintf("%d {$b}", $num), sprintf("%d {$c}", $num)));
 }
+
 //FOR MOBILE VERSION 1.0
-if (isset($_GET['act']) AND $_GET['act'] == 'change_mobile') $_SESSION['mobile'] = 1;
-if (isset($_GET['act']) AND $_GET['act'] == 'change_fullver') {
+if (isset($_GET['act']) && $_GET['act'] == 'change_mobile') $_SESSION['mobile'] = 1;
+if (isset($_GET['act']) && $_GET['act'] == 'change_fullver') {
     $_SESSION['mobile'] = 2;
     header('Location: /');
 }
@@ -1145,7 +1170,7 @@ if (check_smartphone()) {
         $config['temp'] = "mobile";
     $check_smartphone = true;
 }
-if (isset($_SESSION['mobile']) AND $_SESSION['mobile'] == 1) {
+if (isset($_SESSION['mobile']) && $_SESSION['mobile'] == 1) {
     $config['temp'] = "mobile";
 }
 function AntiSpam($act, $text = false)
@@ -1162,14 +1187,14 @@ function AntiSpam($act, $text = false)
     5 - Комментарии к записям (стены групп/людей)
     */
     //Антиспам дата
-    $antiDate = date('Y-m-d', Registry::get('server_time'));
+    $antiDate = date('Y-m-d', time());
     $antiDate = strtotime($antiDate);
     //Лимиты на день
     $max_frieds = 40; #максимум заявок в друзья
     $max_msg = 40; #максимум сообщений не друзьям
-    $max_wall = 500; #максимум записей на стену
-    $max_identical = 100; #максимум одинаковых текстовых данных
-    $max_comm = 2000; #максимум комментариев к записям на стенах людей и сообществ
+    $max_wall = 10; #максимум записей на стену
+    $max_identical = 10; #максимум одинаковых текстовых данных
+    $max_comm = 100; #максимум комментариев к записям на стенах людей и сообществ
     $max_groups = 5; #максимум сообществ за день
     //Если антиспам на друзей
     if ($act == 'friends') {
@@ -1341,8 +1366,7 @@ function cleanPath($path): string
 
 function clean_url($url)
 {
-    $url = str_replace("http://", "", strtolower($url));
-    $url = str_replace("https://", "", $url);
+    $url = str_replace(array("http://", "https://"), "", strtolower($url));
     if (str_starts_with($url, 'www.'))
         $url = substr($url, 4);
     $url = explode('/', $url);
@@ -1394,6 +1418,8 @@ function _e_json(array $value): int
  * @param $tpl
  * @param array $params
  * @return int
+ * @throws JsonException
+ * @throws Exception
  */
 function compile($tpl, array $params = array()): int
 {
@@ -1470,7 +1496,6 @@ function compile($tpl, array $params = array()): int
             $params['new_groups'] = '';
             $params['new_groups_lnk'] = '/groups';
         }
-
     } else {
         $params['user_pm_num'] = '';
         $params['new_news'] = '';
@@ -1484,7 +1509,6 @@ function compile($tpl, array $params = array()): int
         $params['requests_link'] = '/requests';
         $params['new_groups_lnk'] = '/groups';
         $params['new_groups'] = '';
-
     }
 
     //Если включен AJAX, то загружаем стр.
@@ -1499,18 +1523,16 @@ function compile($tpl, array $params = array()): int
  * @param $tpl
  * @param $params
  * @return int
+ * @throws JsonException
+ * @throws Exception
  */
 function compileAjax($tpl, $params): int
 {
-    if (!isset($tpl->result['content'])) {
-        $tpl->result['content'] = '';
-//        throw new ErrorException(0,1, null, null);
-    }
     $config = settings_get();
     //Если есть POST Запрос и значение AJAX, а $ajax не равняется "yes", то не пропускаем
     //FIXME
 //    if ($_SERVER['REQUEST_METHOD'] == 'POST')
-//        die('Неизвестная ошибка');
+//        throw new Exception('Неизвестная ошибка');
 
     $speedbar = $speedbar ?? null;
     $spBar = $spBar ?? null;
@@ -1565,13 +1587,10 @@ function compileAjax($tpl, $params): int
  * @param $tpl
  * @param $params
  * @return int
+ * @throws Exception
  */
 function compileNoAjax($tpl, $params): int
 {
-    if (!isset($tpl->result['content'])) {
-        $tpl->result['content'] = '';
-//        throw new ErrorException(0,1, null, null);
-    }
     $tpl->load_template('main.tpl');
 //Если юзер авторизован
     if (Registry::get('logged')) {
@@ -1600,23 +1619,26 @@ function compileNoAjax($tpl, $params): int
             $tpl->set('{news-link}', '');
         }
         //Сообщения
-        if (!empty($params['user_pm_num']))
+        if (!empty($params['user_pm_num'])) {
             $tpl->set('{msg}', $params['user_pm_num']);
-        else
+        } else {
             $tpl->set('{msg}', '');
+        }
 
         $user_support = $user_support ?? null;
         //Поддержка
-        if ($user_support)
+        if ($user_support) {
             $tpl->set('{new-support}', $params['support']);
-        else
+        } else {
             $tpl->set('{new-support}', '');
+        }
         //Отметки на фото
         if ($user_info['user_new_mark_photos']) {
             $tpl->set('{my-id}', 'newphotos');
             $tpl->set('{new_photos}', $params['new_photos']);
-        } else
+        } else {
             $tpl->set('{new_photos}', '');
+        }
         //UBM
 
         $CacheGift = $CacheGift ?? null;
@@ -1654,10 +1676,11 @@ function compileNoAjax($tpl, $params): int
     $config = settings_get();
     if ($config['temp'] == 'mobile') {
         $tpl->result['content'] = str_replace('onClick="Page.Go(this.href); return false"', '', $tpl->result['content']);
-        if ($user_info['user_status'])
+        if ($user_info['user_status']) {
             $tpl->set('{status-mobile}', '<span style="font-size:11px;color:#000">' . $user_info['user_status'] . '</span>');
-        else
+        } else {
             $tpl->set('{status-mobile}', '<span style="font-size:11px;color:#999">установить статус</span>');
+        }
 
         $user_friends_demands = $user_friends_demands ?? null;
         $user_support = $user_support ?? null;
@@ -1665,14 +1688,15 @@ function compileNoAjax($tpl, $params): int
         $CacheGift = $CacheGift ?? null;
 
         $new_actions = $user_friends_demands + $user_support + $CacheNews + $CacheGift + $user_info['user_pm_num'];
-        if ($new_actions)
+        if ($new_actions) {
             $tpl->set('{new-actions}', "<div class=\"headm_newac\" style=\"margin-top:5px;margin-left:30px\">+{$new_actions}</div>");
-        else
+        } else {
             $tpl->set('{new-actions}', "");
+        }
     }
     $tpl->set('{content}', $tpl->result['content']);
 
-    if (isset($spBar) and $spBar) {
+    if (isset($spBar) && $spBar) {
         $tpl->set_block("'\\[speedbar\\](.*?)\\[/speedbar\\]'si", "");
     } else {
         $tpl->set('[speedbar]', '');
@@ -1686,7 +1710,7 @@ function compileNoAjax($tpl, $params): int
 <script type="text/javascript" src="{theme}/js/profile.js"></script>');
 
 // FOR MOBILE VERSION 1.0
-    if (isset($user_info['user_photo']) and $user_info['user_photo']) {
+    if (isset($user_info['user_photo']) && $user_info['user_photo']) {
         $tpl->set('{my-ava}', "/uploads/users/{$user_info['user_id']}/50_{$user_info['user_photo']}");
     } else {
         $tpl->set('{my-ava}', "{theme}/images/no_ava_50.png");
@@ -1708,10 +1732,22 @@ function compileNoAjax($tpl, $params): int
     $tpl->set('{lang}', $rMyLang);
     $tpl->compile('main');
     header('Content-type: text/html; charset=utf-8');
-    echo str_replace('{theme}', '/templates/' . $config['temp'], $tpl->result['main']);
+    $result = str_replace('{theme}', '/templates/' . $config['temp'], $tpl->result['main']);
+    print $result;
     $tpl->global_clear();
 //    $db->close();
-    if ($config['gzip'] == 'yes')
+    if ($config['gzip'] == 'yes') {
         (new Gzip(false))->GzipOut();
+    }
+
     return print('');
+}
+
+function tpl_init(): Templates
+{
+    $tpl = new Templates();
+    $config = settings_load();
+    $tpl->dir = ROOT_DIR . '/templates/' . $config['temp'];
+    define('TEMPLATE_DIR', $tpl->dir);
+    return $tpl;
 }

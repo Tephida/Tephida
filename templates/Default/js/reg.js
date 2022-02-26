@@ -75,7 +75,7 @@ var reg = {
         var year = $("#year").val();
         var country = $("#country").val();
         var city = $("#select_city").val();
-        $.post('/index.php?go=register', {
+        $.post('/register/send', {
             name: name,
             lastname: lastname,
             email: email,
@@ -89,16 +89,27 @@ var reg = {
             password_second: new_pass2,
             sec_code: sec_code
         }, function (d) {
-            var exp = d.split('|');
-            if (exp[0] == 'ok') {
-                window.location = '/u' + exp[1] + 'after';
-            } else if (exp[0] == 'err_mail') {
+            if (d.status == 1) {
+                window.location = '/u' + d.user_id + 'after';
+            } else if (d.status == 4) {
                 $('#err2').show().html('Пользователь с таким E-Mail адресом уже зарегистрирован.');
+                Box.Close('sec_code');
+            } else if (d.status == 9) {
+                $('#err2').show().html('Не верные данные.');
+                Box.Close('sec_code');
+            } else if (d.status == 9) {
+                $('#err2').show().html('Ошибка доступа.');
                 Box.Close('sec_code');
             } else {
                 Box.Info('boxerr', 'Ошибка', 'Неизвестная ошибка', 300);
                 Box.Close('sec_code');
             }
+        });
+    },
+    box: function () {
+        $('.js_titleRemove').remove();
+        $.post('/login', function (d) {
+            Box.Show('login_box', 400, 'Войти', d, lang_box_cancel);
         });
     }
 }
@@ -108,15 +119,16 @@ var restore = {
         var email = $('#email').val();
         if (email != 0 && email != 'Ваш электронный адрес' && isValidEmailAddress(email)) {
             butloading('send', '32', 'disabled', '');
-            $.post('/index.php?go=restore&act=next', {email: email}, function (data) {
-                if (data == 'no_user') {
+            $.post('/restore/next', {email: email}, function (data) {
+                if (data.status == 8) {
                     $('#err').show().html('Пользователь <b>' + email + '</b> не найден.<br />Пожалуйста, убедитесь, что правильно ввели e-mail.');
+                } else if (data.status == 0) {
+                    $('#err').show().html('Неизвестная ошибка.');
                 } else {
-                    var exp = data.split('|');
                     $('#step1').hide();
                     $('#step2').show();
-                    $('#c_src').attr('src', exp[1]);
-                    $('#c_name').html('<b>' + exp[0] + '</b>');
+                    $('#c_src').attr('src', data.user_photo);
+                    $('#c_name').html('<b>' + data.user_name + '</b>');
                 }
             });
             butloading('send', '32', 'enabled', 'Далее');
@@ -126,7 +138,7 @@ var restore = {
     send: function () {
         var email = $('#email').val();
         butloading('send2', '129', 'disabled', '');
-        $.post('/index.php?go=restore&act=send', {email: email}, function (d) {
+        $.post('/restore/send', {email: email}, function (d) {
             $('#step2').hide();
             $('#step3').show();
         });
@@ -141,7 +153,7 @@ var restore = {
                     if (new_pass.length >= 6) {
                         $('#err').hide();
                         butloading('send', '43', 'disabled', '');
-                        $.post('/index.php?go=restore&act=finish', {
+                        $.post('/restore/finish', {
                             new_pass: new_pass,
                             new_pass2: new_pass2,
                             hash: hash

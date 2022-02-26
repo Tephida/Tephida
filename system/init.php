@@ -6,8 +6,10 @@
  *   file that was distributed with this source code.
  *
  */
-if (!defined('MOZG')) die('Hacking attempt!');
 
+use Mozg\classes\Registry;
+use Mozg\classes\Router;
+use Mozg\classes\Templates;
 
 try {
     $config = settings_load();
@@ -20,8 +22,6 @@ try {
 $db = require_once ENGINE_DIR . '/data/db.php';
 Registry::set('db', $db);
 
-if ($config['gzip'] == 'yes')
-    include_once ENGINE_DIR . '/modules/gzip.php';
 //FUNC. COOKIES
 $domain_cookie = explode(".", clean_url($_SERVER['HTTP_HOST']));
 $domain_cookie_count = count($domain_cookie);
@@ -70,6 +70,7 @@ if (!isset($checkLang)) {
     $checkLang = 'Russian';
 }
 $lang = include_once ROOT_DIR . '/lang/' . $checkLang . '/site.php';
+Registry::set('lang', $lang);
 $langdate = include_once ROOT_DIR . '/lang/' . $checkLang . '/date.php';
 
 $tpl = new Templates();
@@ -98,14 +99,13 @@ if (Registry::get('logged')) {
         $user_info['user_lastupdate'] = 1;
     }
     $server_time = Registry::get('server_time');
-    if (date('Y-m-d', $user_info['user_lastupdate']) < date('Y-m-d', Registry::get('server_time'))) {
+    if (date('Y-m-d', $user_info['user_lastupdate']) < date('Y-m-d', $server_time)) {
         $sql_balance = ", user_balance = user_balance+1, user_lastupdate = '{$server_time}'";
     } else {
         $sql_balance = '';
     }
     //Определяем устройство
     $device_user = isset($check_smartphone) ? 1 : 0;
-//    echo $user_info['user_last_visit'];
     if (empty($user_info['user_last_visit']))
         $user_info['user_last_visit'] = $server_time;
 
@@ -118,18 +118,23 @@ if (Registry::get('logged')) {
 $online_time = Registry::get('server_time') - $config['online_time'];
 
 try {
-    include_once ENGINE_DIR . '/classes/Module.php';
-    include_once ENGINE_DIR . '/modules/Register.php';
-    include_once ENGINE_DIR . '/modules/Profile.php';
-    include_once ENGINE_DIR . '/classes/Routing.php';
 
     $router = Router::fromGlobals();
 //        $this->get('path.base');
     $params = [];
     $routers = array(
         '/' => 'Register@main',
+        '/register/send' => 'Register@send',
+        '/login' => 'Register@login',
         '/u:num' => 'Profile@main',
         '/u:numafter' => 'Profile@main',
+        //restore
+        '/restore' => 'Restore@main',
+        '/restore/next' => 'Restore@next',
+        '/restore/next/' => 'Restore@next',
+        '/restore/send' => 'Restore@send',
+        '/restore/prefinish' => 'Restore@preFinish',
+        '/restore/finish' => 'Restore@finish',
     );
     $router->add($routers);
     try {

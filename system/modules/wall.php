@@ -6,8 +6,11 @@
  *   file that was distributed with this source code.
  *
  */
-if (!defined('MOZG'))
-    die('Hacking attempt!');
+
+use Mozg\classes\AntiSpam;
+use Mozg\classes\Filesystem;
+use Mozg\classes\Registry;
+use Mozg\classes\WallProfile;
 
 if (Registry::get('logged')) {
     $db = Registry::get('db');
@@ -18,15 +21,14 @@ if (Registry::get('logged')) {
     $limit_page = 0;
     $server_time = Registry::get('server_time');
 
-    include ENGINE_DIR . '/classes/wall.php';
-
     switch ($act) {
 
         //################### Добавление новой записи на стену ###################//
         case "send":
-            $wall = new wall($tpl);
+            $wall = new WallProfile($tpl);
 //			NoAjaxQuery();
             $wall_text = requestFilter('wall_text');
+            AntiSpam::check('identical', $wall_text);
             $attach_files = requestFilter('attach_files', 25000, true);
             $for_user_id = intFilter('for_user_id');
             $fast_comm_id = intFilter('rid');
@@ -34,9 +36,9 @@ if (Registry::get('logged')) {
             $str_date = time();
 
             if (!$fast_comm_id)
-                AntiSpam('wall');
+                AntiSpam::check('wall');
             else
-                AntiSpam('comments');
+                AntiSpam::check('comments');
 
             //Проверка на наличие юзера, которому отправляется запись
             $check = $db->super_query("SELECT user_privacy, user_last_visit FROM `users` WHERE user_id = '{$for_user_id}'");
@@ -108,7 +110,7 @@ if (Registry::get('logged')) {
                                             include ENGINE_DIR . '/classes/images.php';
 
                                             if (Filesystem::copy($rImgUrl, $upload_dir . '/' . $image_name . '.' . $img_format)) {
-                                                $tmb = new thumbnail($upload_dir . '/' . $image_name . '.' . $img_format);
+                                                $tmb = new Thumbnail($upload_dir . '/' . $image_name . '.' . $img_format);
                                                 $tmb->size_auto('100x80');
                                                 $tmb->jpeg_quality(100);
                                                 $tmb->save($upload_dir . '/' . $image_name . '.' . $img_format);
@@ -245,14 +247,16 @@ if (Registry::get('logged')) {
                                 $db->query("UPDATE `users` SET user_wall_num = user_wall_num+1 WHERE user_id = '{$for_user_id}'");
 
                             //Если добавлена просто запись, то сразу обновляем все записи на стене
-                            AntiSpamLogInsert('wall');
+                            AntiSpam::LogInsert('wall');
+                            AntiSpam::LogInsert('identical', $wall_text);
+
                             if (!$fast_comm_id) {
                                 $config = settings_get();
                                 if ($xPrivasyX) {
                                     $wall->query("SELECT tb1.id, author_user_id, text, add_date, fasts_num, likes_num, likes_users, type, tell_uid, tell_date, public, attach, tell_comm, tb2.user_photo, user_search_pref, user_last_visit, user_logged_mobile FROM `wall` tb1, `users` tb2 WHERE for_user_id = '{$for_user_id}' AND tb1.author_user_id = tb2.user_id AND tb1.fast_comm_id = '0' ORDER by `add_date` DESC LIMIT 0, {$limit_select}");
                                     $wall->template('wall/record.tpl');
                                     $wall->compile('content');
-
+                                    $id = $id ?? false;
                                     $wall->select($config, $id, $for_user_id, $user_privacy, $check_friend, $user_info);
                                 }
 
@@ -276,7 +280,8 @@ if (Registry::get('logged')) {
                                 //Если добавлен комментарий к записи, то просто обновляем нужную часть, то есть только часть комментариев, но не всю стену
                             } else {
 
-                                AntiSpamLogInsert('comments');
+                                AntiSpam::LogInsert('comments');
+                                AntiSpam::LogInsert('identical', $wall_text);
 
                                 //Выводим кол-во комментов к записи
                                 $row = $db->super_query("SELECT fasts_num FROM `wall` WHERE id = '{$fast_comm_id}'");
@@ -728,7 +733,7 @@ if (Registry::get('logged')) {
             break;
 
         default:
-            $wall = new wall($tpl);
+            $wall = new WallProfile($tpl);
             //################### Показ последних 10 записей ###################//
 
             //Если вызвана страница стены, не со страницы юзера

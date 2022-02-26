@@ -7,9 +7,12 @@
  *
  */
 
-if (!defined('MOZG'))
-    die('Hacking attempt!');
+use Mozg\classes\AntiSpam;
+use Mozg\classes\Filesystem;
+use Mozg\classes\Registry;
+
 NoAjaxQuery();
+
 $jsonResponse = array();
 if (Registry::get('logged')) {
     $act = requestFilter('act');
@@ -80,6 +83,7 @@ if (Registry::get('logged')) {
                     try {
                         Filesystem::createDir($uploaddir);
                     } catch (Exception $e) {
+
                     }
 
                     $image_tmp = $_FILES['uploadfile']['tmp_name'];
@@ -435,21 +439,24 @@ if (Registry::get('logged')) {
 
         case "send":
             NoAjaxQuery();
-            AntiSpam('messages');
+            AntiSpam::check('messages');
             $room_id = intFilter('room_id');
             $for_user_id = intFilter('for_user_id');
-            if ($room_id) $for_user_id = 0;
+            if ($room_id) {
+                $for_user_id = 0;
+            }
             $msg = requestFilter('msg');
             $my_ava = requestFilter('my_ava');
             $my_name = requestFilter('my_name');
             $attach_files = requestFilter('attach_files');
             $attach_files = str_replace('vote|', 'hack|', $attach_files);
-            AntiSpam('identical', $msg . $attach_files);
-            if (!empty($msg) or !empty($attach_files)) {
-                if (!$room_id)
+            AntiSpam::check('identical', $msg . $attach_files);
+            if (!empty($msg) || !empty($attach_files)) {
+                if (!$room_id) {
                     $row = $db->super_query("SELECT user_privacy FROM `users` WHERE user_id = '" . $for_user_id . "'");
-                else
+                } else {
                     $row = $db->super_query("SELECT id FROM `room_users` WHERE room_id = '" . $room_id . "' and oid2 = '" . $user_id . "' and type = 0");
+                }
                 if ($row) {
                     if (!$room_id) {
                         $user_privacy = xfieldsdataload($row['user_privacy']);
@@ -462,12 +469,13 @@ if (Registry::get('logged')) {
                             $xPrivasy = 1;
                         else
                             $xPrivasy = 0;
-                    } else
+                    } else {
                         $xPrivasy = 1;
+                    }
                     if ($xPrivasy and $user_id != $for_user_id) {
-                        AntiSpamLogInsert('identical', $msg . $attach_files);
+                        AntiSpam::LogInsert('identical', $msg . $attach_files);
                         if (!$room_id && !CheckFriends($for_user_id))
-                            AntiSpamLogInsert('messages');
+                            AntiSpam::LogInsert('messages');
                         $user_ids = array();
                         if (!$room_id) {
                             $user_ids[] = $for_user_id;
@@ -504,6 +512,8 @@ if (Registry::get('logged')) {
                             $db->query("INSERT INTO im SET iuser_id = '" . $user_id . "', im_user_id = '" . $for_user_id . "', room_id = '" . $room_id . "', idate = '" . $server_time . "', all_msg_num = 1");
                         else
                             $db->query("UPDATE im  SET idate = '" . $server_time . "', all_msg_num = all_msg_num+1 WHERE id = '" . $check_im['id'] . "'");
+
+
                         $tpl->load_template('im/msg.tpl');
                         $tpl->set('{ava}', $my_ava);
                         $tpl->set('{name}', $my_name);
@@ -843,7 +853,6 @@ HTML;
                 mozg_create_cache("user_{$for_user_id}/typograf{$user_id}", "");
             $limit_msg = 20;
             if ($need_read) {
-                /** fixme limit */
                 $sql = $db->super_query("SELECT id, history_user_id, read_ids, user_ids, room_id FROM `messages` WHERE " . ($room_id ? "room_id = '{$room_id}'" : "room_id = 0 and find_in_set('{$for_user_id}', user_ids)") . " and find_in_set('{$user_id}', user_ids) AND not find_in_set('{$user_id}', del_ids) AND not find_in_set('{$user_id}', read_ids) and history_user_id != '{$user_id}'", true);
                 if ($sql) {
                     foreach ($sql as $row) {

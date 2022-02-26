@@ -6,6 +6,7 @@
  *   file that was distributed with this source code.
  *
  */
+namespace Mozg\classes;
 
 class Registry
 {
@@ -39,7 +40,7 @@ class Registry
      * @param string $name
      * @return string|bool|array|null
      */
-    public static function get(mixed $name): string|bool|null|array|db
+    public static function get(mixed $name): string|bool|null|array|Mysql
     {
         return (isset(self::$store[$name])) ? self::$store[$name] : null;
     }

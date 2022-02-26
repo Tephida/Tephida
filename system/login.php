@@ -6,7 +6,9 @@
  *   file that was distributed with this source code.
  *
  */
-if (!defined('MOZG')) die('Hacking attempt!');
+
+use Mozg\classes\Registry;
+
 $_IP = $_SERVER['REMOTE_ADDR'];
 $_BROWSER = $_SERVER['HTTP_USER_AGENT'];
 //Если делаем выход
@@ -25,7 +27,6 @@ if ($act == 'logout') {
     Registry::set('logged', false);
     $user_info = array();
     header('Location: /');
-    die();
 }
 //Если есть данные сессии
 if (isset($_SESSION['user_id']) > 0) {

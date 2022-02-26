@@ -6,12 +6,13 @@
  *   file that was distributed with this source code.
  *
  */
-if(!defined('MOZG'))
-	die("Hacking attempt!");
+
+use Mozg\classes\Registry;
+
 $user_info = $user_info ?? Registry::get('user_info');
-if($user_info['user_group'] != '1'){
-	$tpl->load_template('profile_deleted.tpl');
-	$tpl->compile('main');
+if ($user_info['user_group'] != '1') {
+    $tpl->load_template('profile_deleted.tpl');
+    $tpl->compile('main');
     $config = settings_get();
-	echo str_replace('{theme}', '/templates/'.$config['temp'], $tpl->result['main']);
+    echo str_replace('{theme}', '/templates/' . $config['temp'], $tpl->result['main']);
 }

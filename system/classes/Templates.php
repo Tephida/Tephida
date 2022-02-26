@@ -7,6 +7,9 @@ declare(strict_types=1);
  *   file that was distributed with this source code.
  *
  */
+namespace Mozg\classes;
+
+use ErrorException;
 
 class Templates
 {
@@ -41,7 +44,7 @@ class Templates
     public function load_template(string $tpl_name): false|string
     {
         if ($tpl_name == '' || !file_exists($this->dir . DIRECTORY_SEPARATOR . $tpl_name)) {
-            throw new ErrorException("Невозможно загрузить шаблон: " . $tpl_name, 0, 0, 'null', 0);
+            throw new ErrorException("Unable to load template: " . $this->dir . DIRECTORY_SEPARATOR . $tpl_name, 0, 0, 'null', 0);
         }
         $this->template = file_get_contents($this->dir . DIRECTORY_SEPARATOR . $tpl_name);
 
