@@ -11,7 +11,11 @@ use Mozg\classes\Registry;
 
 header('Content-type: text/html; charset=utf-8');
 
-$db = require_once ENGINE_DIR . '/data/db.php';
+$config = settings_load();
+$admin_index = $config['admin_index'];
+$admin_link = $config['home_url'] . $admin_index;
+
+$db = require ENGINE_DIR . '/data/db.php';
 Registry::set('db', $db);
 
 $_IP = $_SERVER['REMOTE_ADDR'];
@@ -124,8 +128,9 @@ if (!$logged) {
 HTML;
     echohtmlend();
 } else {
-    if ($user_info['user_group'] == 1)
+    if ($user_info['user_group'] == 1) {
         include ADMIN_DIR . '/mod.php';
-    else
+    } else {
         msgbox('Информация', 'У вас недостаточно прав для просмотра этого раздела. <a href="' . $admin_link . '?act=logout">Выйти</a>', '');
+    }
 }

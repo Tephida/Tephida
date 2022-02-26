@@ -329,13 +329,14 @@ function box_navigation($gc, $num, $id, $function, $act) {
 function msgbox($title, $text, $tpl_name) {
     global $tpl;
     $tpl_2 = new Templates();
-    $tpl_2->dir = TEMPLATE_DIR;
+    $config = settings_load();
+    $tpl_2->dir = ROOT_DIR . '/templates/' . $config['temp'];
     $tpl_2->load_template($tpl_name . '.tpl');
     $tpl_2->set('{error}', $text);
     $tpl_2->set('{title}', $title);
     $tpl_2->compile('info');
     $tpl_2->clear();
-    $tpl->result['info'].= $tpl_2->result['info'];
+    $tpl->result['info'] .= $tpl_2->result['info'];
 }
 
 /**
