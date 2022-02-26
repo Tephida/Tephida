@@ -302,12 +302,7 @@ class wall
                 else
                     $rowUserTell = $db->super_query("SELECT user_search_pref, user_photo FROM `users` WHERE user_id = '{$row_wall['tell_uid']}'");
 
-                if (date('Y-m-d', $row_wall['tell_date']) == date('Y-m-d', $server_time))
-                    $dateTell = langdate('сегодня в H:i', $row_wall['tell_date']);
-                elseif (date('Y-m-d', $row_wall['tell_date']) == date('Y-m-d', ($server_time - 84600)))
-                    $dateTell = langdate('вчера в H:i', $row_wall['tell_date']);
-                else
-                    $dateTell = langdate('j F Y в H:i', $row_wall['tell_date']);
+                $dateTell = megaDate($row_wall['tell_date']);
 
                 if ($row_wall['public']) {
                     $rowUserTell['user_search_pref'] = stripslashes($rowUserTell['title']);

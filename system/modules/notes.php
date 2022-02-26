@@ -366,12 +366,8 @@ if (Registry::get('logged')) {
                     $tpl->set('{user-id}', $row['owner_user_id']);
 
                     $date_comm = strtotime($row['date']);
-                    if (date('Y-m-d', $date_comm) == date('Y-m-d', $yesterday_date))
-                        $tpl->set('{date}', langdate('сегодня в H:i', $date_comm));
-                    elseif (date('Y-m-d', $date_comm) == date('Y-m-d', ($yesterday_date - 84600)))
-                        $tpl->set('{date}', langdate('вчера в H:i', $date_comm));
-                    else
-                        $tpl->set('{date}', langdate('j F Y в H:i', $date_comm));
+
+                    $tpl->set('{date}', megaDate($date_comm));
 
                     if ($row['owner_user_id'] == $user_id) {
                         $tpl->set('[owner]', '');
@@ -514,12 +510,8 @@ if (Registry::get('logged')) {
                             $tpl->set('{note-id}', $row['id']);
 
                             $date_comm = strtotime($row['date']);
-                            if (date('Y-m-d', $date_comm) == date('Y-m-d', $yesterday_date))
-                                $tpl->set('{date}', langdate('сегодня в H:i', $date_comm));
-                            elseif (date('Y-m-d', $date_comm) == date('Y-m-d', ($yesterday_date - 84600)))
-                                $tpl->set('{date}', langdate('вчера в H:i', $date_comm));
-                            else
-                                $tpl->set('{date}', langdate('j F Y в H:i', $date_comm));
+
+                            $tpl->set('{date}', megaDate($date_comm));
 
                             if ($get_user_id == $user_id) {
                                 $tpl->set('[owner]', '');

@@ -36,7 +36,7 @@ if (Registry::get('logged')) {
                             $sql = $db->super_query("SELECT oid2 FROM room_users WHERE room_id = '{$room_id}' and type = 0", true);
                             if ($sql) {
                                 $msg = json_encode(array('type' => 5, 'oid' => $user_id, 'oid2' => $id));
-                                $id2 = md5(rand(0, 1000000) . $server_time);
+                                $id2 = md5(random_int(0, 1000000) . $server_time);
                                 $user_ids = array();
                                 foreach ($sql as $k => $v) $user_ids[] = $v['oid2'];
                                 $db->query("INSERT INTO `messages` SET user_ids = '" . implode(',', $user_ids) . "', information = 1, theme = '...', text = '" . $msg . "', room_id = '{$room_id}', date = '" . $server_time . "', history_user_id = 0, attach = '" . $attach_files . "'");
@@ -289,7 +289,7 @@ if (Registry::get('logged')) {
                         $db->query("INSERT INTO room SET title = '{$title}', owner = '{$user_id}', date = '{$server_time}'");
                         $room_id = $db->insert_id();
                         $msg = json_encode(array('type' => 0, 'oid' => $user_id));
-                        $id2 = md5(rand(0, 1000000) . $server_time);
+                        $id2 = md5(random_int(0, 1000000) . $server_time);
                         $user_ids2 = $user_ids;
                         $user_ids2[] = $user_id;
                         $db->query("INSERT INTO `messages` 
@@ -684,7 +684,7 @@ if (Registry::get('logged')) {
                                 $attach_result .= "<div><a href=\"/video{$attach_type[3]}_{$attach_type[2]}\" onClick=\"videos.show({$attach_type[2]}, this.href, location.href); return false\"><img src=\"/uploads/videos/{$attach_type[3]}/{$attach_type[1]}\" style=\"margin-top:3px;margin-right:3px\" {$size[3]} align=\"left\" /></a></div>";
                                 $resLinkTitle = '';
                             } elseif ($attach_type[0] == 'audio') {
-                                $audioId = intval($attach_type[1]);
+                                $audioId = (int)$attach_type[1];
                                 $audioInfo = $db->super_query("SELECT artist, name, url FROM `audio` WHERE aid = '" . $audioId . "'");
                                 if ($audioInfo) {
                                     $jid++;
@@ -721,14 +721,14 @@ if (Registry::get('logged')) {
                                 }
                                 $cnt_attach_link++;
                             } elseif ($attach_type[0] == 'doc') {
-                                $doc_id = intval($attach_type[1]);
+                                $doc_id = (int)$attach_type[1];
                                 $row_doc = $db->super_query("SELECT dname, dsize FROM `doc` WHERE did = '{$doc_id}'", false);
                                 if ($row_doc) {
                                     $attach_result .= '<div style="margin-top:5px;margin-bottom:5px" class="clear"><div class="doc_attach_ic fl_l" style="margin-top:4px;margin-left:0px"></div><div class="attach_link_block_te"><div class="fl_l">Файл <a href="/index.php?go=doc&act=download&did=' . $doc_id . '" target="_blank" onMouseOver="myhtml.title(\'' . $doc_id . $cnt_attach . $row['id'] . '\', \'<b>Размер файла: ' . $row_doc['dsize'] . '</b>\', \'doc_\')" id="doc_' . $doc_id . $cnt_attach . $row['id'] . '">' . $row_doc['dname'] . '</a></div></div></div><div class="clear"></div>';
                                     $cnt_attach++;
                                 }
                             } elseif ($attach_type[0] == 'vote') {
-                                $vote_id = intval($attach_type[1]);
+                                $vote_id = (int)$attach_type[1];
                                 $row_vote = $db->super_query("SELECT title, answers, answer_num FROM `votes` WHERE id = '{$vote_id}'", false);
                                 if ($vote_id) {
                                     $checkMyVote = $db->super_query("SELECT COUNT(*) AS cnt FROM `votes_result` WHERE user_id = '{$user_id}' AND vote_id = '{$vote_id}'", false);
@@ -744,7 +744,7 @@ if (Registry::get('logged')) {
                                         $answer[$row_answer['answer']]['cnt'] = $row_answer['cnt'];
                                     }
                                     $attach_result .= "<div class=\"clear\" style=\"height:10px\"></div><div id=\"result_vote_block{$vote_id}\"><div class=\"wall_vote_title\">{$row_vote['title']}</div>";
-                                    for ($ai = 0; $ai < sizeof($arr_answe_list); $ai++) {
+                                    for ($ai = 0; $ai < count($arr_answe_list); $ai++) {
                                         if (!$checkMyVote['cnt']) {
                                             $attach_result .= "<div class=\"wall_vote_oneanswe\" onClick=\"Votes.Send({$ai}, {$vote_id})\" id=\"wall_vote_oneanswe{$ai}\"><input type=\"radio\" name=\"answer\" /><span id=\"answer_load{$ai}\">{$arr_answe_list[$ai]}</span></div>";
                                         } else {
@@ -796,12 +796,9 @@ if (Registry::get('logged')) {
                             $rowUserTell = $db->super_query("SELECT title, photo FROM `communities` WHERE id = '{$row['tell_uid']}'", false);
                         else
                             $rowUserTell = $db->super_query("SELECT user_search_pref, user_photo FROM `users` WHERE user_id = '{$row['tell_uid']}'");
-                        if (date('Y-m-d', $row['tell_date']) == date('Y-m-d', $server_time))
-                            $dateTell = langdate('сегодня в H:i', $row['tell_date']);
-                        elseif (date('Y-m-d', $row['tell_date']) == date('Y-m-d', ($server_time - 84600)))
-                            $dateTell = langdate('вчера в H:i', $row['tell_date']);
-                        else
-                            $dateTell = langdate('j F Y в H:i', $row['tell_date']);
+
+                        $dateTell = megaDate($row['tell_date']);
+
                         if ($row['public']) {
                             $rowUserTell['user_search_pref'] = stripslashes($rowUserTell['title']);
                             $tell_link = 'public';
@@ -1054,12 +1051,9 @@ HTML;
                             $rowUserTell = $db->super_query("SELECT title, photo FROM `communities` WHERE id = '{$row['tell_uid']}'", false);
                         else
                             $rowUserTell = $db->super_query("SELECT user_search_pref, user_photo FROM `users` WHERE user_id = '{$row['tell_uid']}'");
-                        if (date('Y-m-d', $row['tell_date']) == date('Y-m-d', $server_time))
-                            $dateTell = langdate('сегодня в H:i', $row['tell_date']);
-                        elseif (date('Y-m-d', $row['tell_date']) == date('Y-m-d', ($server_time - 84600)))
-                            $dateTell = langdate('вчера в H:i', $row['tell_date']);
-                        else
-                            $dateTell = langdate('j F Y в H:i', $row['tell_date']);
+
+                        $dateTell = megaDate($row['tell_date']);
+
                         if ($row['public']) {
                             $rowUserTell['user_search_pref'] = stripslashes($rowUserTell['title']);
                             $tell_link = 'public';

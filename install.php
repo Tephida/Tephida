@@ -255,8 +255,9 @@ switch ($act) {
 		<div style="background:lightyellow;padding:10px;margin-bottom:10px;margin-top:10px;border:1px dashed #ccc;"><div style="margin-bottom:7px;text-align: center;font-size: 12px;"><b>Если любой из этих пунктов выделен красным, то выполните действия для исправления положения. <br />В случае несоблюдения минимальных требований скрипта возможна его некорректная работа в системе.</b></div></div>
 		<input type="submit" class="inp fl_r" value="Продолжить &raquo;" onClick="location.href=\'/install.php?act=server\'" />
 		';
-        } else
+        } else {
             main_print();
+        }
         break;
     case "server":
         if (!check_install()) {
@@ -300,8 +301,9 @@ switch ($act) {
 		<div style="background:lightyellow;padding:10px;margin-bottom:10px;margin-top:10px;border:1px dashed #ccc;margin-top:10px"><div style="margin-bottom:7px;text-align: center;font-size: 12px;"><b>Данные настройки являются рекомендуемыми для полной совместимости, однако скрипт способен работать даже если рекомендуемые настройки несовпадают с текущими.</b></div></div>
 		<input type="submit" class="inp fl_r" value="Продолжить &raquo;" onClick="location.href=\'/install.php?act=settings\'" />
 		';
-        } else
+        } else {
             main_print();
+        }
         break;
     case "settings":
         if (!check_install()) {
@@ -334,10 +336,10 @@ HTML;
     case "install":
         if (!check_install()) {
             if (!empty($_POST['mysql_server']) && !empty($_POST['mysql_dbname']) && !empty($_POST['mysql_dbuser']) && !empty($_POST['adminfile']) && !empty($_POST['name']) && !empty($_POST['lastname']) && !empty($_POST['email']) && !empty($_POST['pass'])) {
-                $_POST['mysql_server'] = str_replace('"', '\"', str_replace("$", "\\$", $_POST['mysql_server']));
-                $_POST['mysql_dbname'] = str_replace('"', '\"', str_replace("$", "\\$", $_POST['mysql_dbname']));
-                $_POST['mysql_dbuser'] = str_replace('"', '\"', str_replace("$", "\\$", $_POST['mysql_dbuser']));
-                $_POST['mysql_pass'] = str_replace('"', '\"', str_replace("$", "\\$", $_POST['mysql_pass']));
+                $_POST['mysql_server'] = str_replace(array("$", '"'), array("\\$", '\"'), $_POST['mysql_server']);
+                $_POST['mysql_dbname'] = str_replace(array("$", '"'), array("\\$", '\"'), $_POST['mysql_dbname']);
+                $_POST['mysql_dbuser'] = str_replace(array("$", '"'), array("\\$", '\"'), $_POST['mysql_dbuser']);
+                $_POST['mysql_pass'] = str_replace(array("$", '"'), array("\\$", '\"'), $_POST['mysql_pass']);
                 //Создаём файл БД
                 $db_config = <<<HTML
 <?php
@@ -500,7 +502,7 @@ HTML;
                 $con_file = fopen(ROOT_DIR . "/system/data/config.php", "w+") or die("Извините, но невозможно создать файл <b>.system/data/config.php</b>.<br />Проверьте правильность проставленного CHMOD!");
                 fwrite($con_file, $config);
                 fclose($con_file);
-                $db = require_once ENGINE_DIR . '/data/db.php';
+                $db = require ENGINE_DIR . '/data/db.php';
 
                 $_POST['name'] = strip_tags($_POST['name']);
                 $_POST['lastname'] = strip_tags($_POST['lastname']);
@@ -533,8 +535,10 @@ SET user_name = '{$_POST['name']}',
     user_lastupdate = '{$server_time}',   
     user_reg_date = '{$server_time}'";
                 $table_Chema[] = "INSERT INTO `log` SET uid = '1', browser = '', ip = ''";
-                foreach ($table_Chema as $query)
+
+                foreach ($table_Chema as $query) {
                     $db->query($query);
+                }
 
                 $admin_index = $admin_index ?? 'adminpanel.php';
                 echo <<<HTML
@@ -547,15 +551,17 @@ SET user_name = '{$_POST['name']}',
 Приятной Вам работы!
 HTML;
 
-            } else
+            } else {
                 echo <<<HTML
 <div class="h1">Ошибка</div>
 Заполните необходимые поля!
 <input type="submit" class="inp fl_r" value="Назад" onClick="javascript:history.back()" />
 HTML;
+            }
 
-        } else
+        } else {
             main_print();
+        }
         break;
     case "remove_installer":
         if (check_install()) {
@@ -563,8 +569,9 @@ HTML;
             Filesystem::delete('./system/mysql_tables.php');
             header('Location: /');
 
-        } else
+        } else {
             main_print();
+        }
         break;
     case "clean":
         if (check_install()) {
@@ -587,7 +594,7 @@ HTML;
 
             Filesystem::delete(ROOT_DIR . '/adminpanel.php');
 
-            $db = require_once ENGINE_DIR . '/data/db.php';
+            $db = require ENGINE_DIR . '/data/db.php';
 
             $table_Chema = array();
             $table_Chema[] = "DROP TABLE IF EXISTS `room`";
@@ -648,8 +655,9 @@ HTML;
             $table_Chema[] = "DROP TABLE IF EXISTS `votes_result`";
             $table_Chema[] = "DROP TABLE IF EXISTS `wall`";
             $table_Chema[] = "DROP TABLE IF EXISTS `wall_like`";
-            foreach ($table_Chema as $query)
+            foreach ($table_Chema as $query) {
                 $db->query($query);
+            }
 
             Filesystem::delete(ENGINE_DIR . '/data/config.php');
             Filesystem::delete(ENGINE_DIR . '/data/db.php');
@@ -661,8 +669,9 @@ HTML;
 
 <input type="submit" class="inp fl_r" value="Начать установку" onClick="location.href='/install.php?act=files'" />
 HTML;
-        } else
+        } else {
             main_print();
+        }
         break;
     default:
         if (check_install()) {
@@ -680,8 +689,9 @@ HTML;
 </div>
 
 HTML;
-        } else
+        } else {
             main_print();
+        }
 }
 
 echo <<<HTML

@@ -493,12 +493,7 @@ if (Registry::get('logged')) {
                         else
                             $rowUserTell = $db->super_query("SELECT user_search_pref, user_photo FROM `users` WHERE user_id = '{$row_info['tell_uid']}'");
 
-                        if (date('Y-m-d', $row_info['tell_date']) == date('Y-m-d', $server_time))
-                            $dateTell = langdate('сегодня в H:i', $row_info['tell_date']);
-                        elseif (date('Y-m-d', $row_info['tell_date']) == date('Y-m-d', ($server_time - 84600)))
-                            $dateTell = langdate('вчера в H:i', $row_info['tell_date']);
-                        else
-                            $dateTell = langdate('j F Y в H:i', $row_info['tell_date']);
+                        $dateTell = megaDate($row_info['tell_date']);
 
                         if ($row_info['public']) {
                             $rowUserTell['user_search_pref'] = stripslashes($rowUserTell['title']);
@@ -528,15 +523,8 @@ HTML;
                     $tpl->set('{wall-text}', stripslashes($row_info['text']));
 
                     if (!$str_text) {
-                        if (date('Y-m-d', $row_info['add_date']) == date('Y-m-d', $server_time))
-                            $nDate = langdate('сегодня в H:i', $row_info['add_date']);
-                        elseif (date('Y-m-d', $row_info['add_date']) == date('Y-m-d', ($server_time - 84600)))
-                            $nDate = langdate('вчера в H:i', $row_info['add_date']);
-                        else
-                            $nDate = langdate('j F Y в H:i', $row_info['add_date']);
-
+                        $nDate = megaDate($row_info['add_date']);
                         $str_text = 'от ' . $nDate;
-
                     }
 
                     if (strlen($str_text) == 70)
@@ -798,12 +786,7 @@ HTML;
                         else
                             $rowUserTell = $db->super_query("SELECT user_search_pref, user_photo FROM `users` WHERE user_id = '{$row_info_likes['tell_uid']}'");
 
-                        if (date('Y-m-d', $row_info_likes['tell_date']) == date('Y-m-d', $server_time))
-                            $dateTell = langdate('сегодня в H:i', $row_info_likes['tell_date']);
-                        elseif (date('Y-m-d', $row_info_likes['tell_date']) == date('Y-m-d', ($server_time - 84600)))
-                            $dateTell = langdate('вчера в H:i', $row_info_likes['tell_date']);
-                        else
-                            $dateTell = langdate('j F Y в H:i', $row_info_likes['tell_date']);
+                        $dateTell = megaDate($row_info_likes['tell_date']);
 
                         if ($row_info_likes['public']) {
                             $rowUserTell['user_search_pref'] = stripslashes($rowUserTell['title']);
@@ -833,12 +816,8 @@ HTML;
                     $tpl->set('{wall-text}', stripslashes($row_info_likes['text']));
 
                     if (!$str_text_likes) {
-                        if (date('Y-m-d', $row_info_likes['add_date']) == date('Y-m-d', $server_time))
-                            $nDate = langdate('сегодня в H:i', $row_info_likes['add_date']);
-                        elseif (date('Y-m-d', $row_info_likes['add_date']) == date('Y-m-d', ($server_time - 84600)))
-                            $nDate = langdate('вчера в H:i', $row_info_likes['add_date']);
-                        else
-                            $nDate = langdate('j F Y в H:i', $row_info_likes['add_date']);
+
+                        $nDate = megaDate($row_info_likes['add_date']);
 
                         $str_text_likes = 'от ' . $nDate;
                     }
@@ -1183,12 +1162,7 @@ HTML;
                     else
                         $rowUserTell = $db->super_query("SELECT user_search_pref, user_photo FROM `users` WHERE user_id = '{$rec_info['tell_uid']}'");
 
-                    if (date('Y-m-d', $rec_info['tell_date']) == date('Y-m-d', $server_time))
-                        $dateTell = langdate('сегодня в H:i', $rec_info['tell_date']);
-                    elseif (date('Y-m-d', $rec_info['tell_date']) == date('Y-m-d', ($server_time - 84600)))
-                        $dateTell = langdate('вчера в H:i', $rec_info['tell_date']);
-                    else
-                        $dateTell = langdate('j F Y в H:i', $rec_info['tell_date']);
+                    $dateTell = megaDate($rec_info['tell_date']);
 
                     if ($rec_info['public']) {
                         $rowUserTell['user_search_pref'] = stripslashes($rowUserTell['title']);
@@ -1617,12 +1591,7 @@ HTML;
                     else
                         $rowUserTell = $db->super_query("SELECT user_search_pref, user_photo FROM `users` WHERE user_id = '{$rec_info_groups['tell_uid']}'");
 
-                    if (date('Y-m-d', $rec_info_groups['tell_date']) == date('Y-m-d', $server_time))
-                        $dateTell = langdate('сегодня в H:i', $rec_info_groups['tell_date']);
-                    elseif (date('Y-m-d', $rec_info_groups['tell_date']) == date('Y-m-d', ($server_time - 84600)))
-                        $dateTell = langdate('вчера в H:i', $rec_info_groups['tell_date']);
-                    else
-                        $dateTell = langdate('j F Y в H:i', $rec_info_groups['tell_date']);
+                    $dateTell = megaDate($rec_info_groups['tell_date']);
 
                     if ($rec_info_groups['public']) {
                         $rowUserTell['user_search_pref'] = stripslashes($rowUserTell['title']);
