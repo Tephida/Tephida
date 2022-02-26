@@ -1,26 +1,31 @@
 # VII Engine
 
 <a name="installation"></a>
+
 ## Installation
 
-Please run install.php
+Install VII Engine with Composer.
+
+1.
+install [composer](https://getcomposer.org/) ([linux/Unix/macOS/Windows](https://getcomposer.org/doc/00-intro.md))([OpenServer](https://ospanel.io/docs/#rabota-s-composer))
+
+2. Please run install.php
 
 It requires PHP version 8.0 and supports PHP up to 8.1.
 
 <a name="server-requirements"></a>
+
 ### Server Requirements
 
 The Sura framework has a few system requirements.
 
 However, if you are not using Homestead, you will need to make sure your server meets the following requirements:
 
-<div class="content-list" markdown="1" style="display: flex;flex-direction: column">
-
 - PHP ^8.0
 - ICONV PHP Extension
 - GD PHP extension
 - MySQLI PHP Extension
-</div>
+- Zlib PHP Extension
 
 ## License
 
