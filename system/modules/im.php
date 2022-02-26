@@ -1162,7 +1162,7 @@ HTML;
                         $del_ids = implode(',', $del_ids);
                         $db->query("UPDATE `messages` SET del_ids = '{$del_ids}' WHERE id = '{$row2['id']}'");
                         $read_ids = explode(',', $row2['read_ids']);
-                        if ($row['history_user_id'] != $user_id && !in_array($user_id, $read_ids)) {
+                        if ($row['history_user_id'] !== $user_id && !in_array($user_id, $read_ids, true)) {
                             $read_ids[] = $user_id;
                             $db->query("UPDATE `messages` SET read_ids = '" . implode(',', $read_ids) . "' WHERE id = '{$row2['id']}'");
                             $db->query("UPDATE `users` SET user_pm_num = user_pm_num-1 WHERE user_id = '" . $user_id . "'");

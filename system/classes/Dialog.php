@@ -9,6 +9,8 @@
 
 namespace Mozg\classes;
 
+use Status;
+
 class Dialog
 {
     /** @var int ID юзера */
@@ -169,5 +171,42 @@ class Dialog
         return false;
     }
 
-
+    final public function delete(int $room_id, int $im_user_id): bool
+    {
+        if ($room_id > 0) {
+            $im_user_id = 0;
+        }
+        $row = $this->db->super_query("SELECT id, msg_num, all_msg_num FROM `im` WHERE iuser_id = '{$this->user_id}' AND im_user_id = '{$im_user_id}' AND room_id = '{$room_id}'");
+        if ($row) {
+            $sql = $this->db->super_query("SELECT id, read_ids, room_id, history_user_id, del_ids FROM `messages` WHERE " . ($room_id ? "room_id = '{$room_id}'" : "room_id = 0 and find_in_set('{$im_user_id}', tb1.user_ids)") . " and find_in_set('{$user_id}', user_ids) AND not find_in_set('{$user_id}', del_ids)");
+            if ($sql) {
+                foreach ($sql as $row2) {
+                    $del_ids = $row2['del_ids'] ? explode(',', $row2['del_ids']) : array();
+                    $del_ids[] = $user_id;
+                    $del_ids = implode(',', $del_ids);
+                    $this->db->query("UPDATE `messages` SET del_ids = '{$del_ids}' WHERE id = '{$row2['id']}'");
+                    $read_ids = explode(',', $row2['read_ids']);
+                    if ($row['history_user_id'] !== $user_id && !in_array($user_id, $read_ids, true)) {
+                        $read_ids[] = $user_id;
+                        $this->db->query("UPDATE `messages` SET read_ids = '" . implode(',', $read_ids) . "' WHERE id = '{$row2['id']}'");
+                        $this->db->query("UPDATE `users` SET user_pm_num = user_pm_num-1 WHERE user_id = '" . $user_id . "'");
+                        if (!$row2['room_id']) {
+                            $user_ids = explode(',', $row2['user_ids']);
+                            $im_user_id = $user_ids[0] === $user_id ? $user_ids[1] : $user_ids[0];
+                        } else {
+                            $im_user_id = 0;
+                        }
+                        $this->db->query("UPDATE `im` SET msg_num = msg_num-1 WHERE iuser_id = '" . $user_id . "' and im_user_id = '" . $im_user_id . "' AND room_id = '" . $row2['room_id'] . "'");
+                        mozg_clear_cache_file('user_' . $row2['history_user_id'] . '/im');
+                    }
+                }
+            }
+            if ($row['msg_num']) {
+                $this->db->query("UPDATE `users` SET user_pm_num = user_pm_num-{$row['msg_num']} WHERE user_id = '{$user_id}'");
+            }
+            $this->db->query("DELETE FROM `im` WHERE id = '{$row['id']}'");
+            return true;
+        }
+        return false;
+    }
 }
