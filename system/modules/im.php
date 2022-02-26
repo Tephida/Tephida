@@ -35,19 +35,22 @@ if (Registry::get('logged')) {
                             /** fixme limit */
                             $sql = $db->super_query("SELECT oid2 FROM room_users WHERE room_id = '{$room_id}' and type = 0", true);
                             if ($sql) {
-                                $msg = json_encode(array('type' => 5, 'oid' => $user_id, 'oid2' => $id));
+                                $msg = json_encode(array('type' => 5, 'oid' => $user_id, 'oid2' => $id), JSON_THROW_ON_ERROR);
                                 $id2 = md5(random_int(0, 1000000) . $server_time);
                                 $user_ids = array();
-                                foreach ($sql as $k => $v) $user_ids[] = $v['oid2'];
+                                foreach ($sql as $k => $v) {
+                                    $user_ids[] = $v['oid2'];
+                                }
                                 $db->query("INSERT INTO `messages` SET user_ids = '" . implode(',', $user_ids) . "', information = 1, theme = '...', text = '" . $msg . "', room_id = '{$room_id}', date = '" . $server_time . "', history_user_id = 0, attach = '" . $attach_files . "'");
                                 $dbid2 = $db->insert_id();
                                 foreach ($sql as $k => $v) {
                                     $db->query("UPDATE `users` SET user_pm_num = user_pm_num+1 WHERE user_id = '" . $v['oid2'] . "'");
                                     $check_im_2 = $db->super_query("SELECT id FROM im WHERE iuser_id = '" . $v['oid2'] . "' AND im_user_id = 0 AND room_id = '" . $room_id . "'");
-                                    if (!$check_im_2)
+                                    if (!$check_im_2) {
                                         $db->query("INSERT INTO im SET iuser_id = '" . $v['oid2'] . "', im_user_id = 0, room_id = '" . $room_id . "', msg_num = 1, idate = '" . $server_time . "', all_msg_num = 1");
-                                    else
+                                    } else {
                                         $db->query("UPDATE im  SET idate = '" . $server_time . "', msg_num = msg_num+1, all_msg_num = all_msg_num+1 WHERE id = '" . $check_im_2['id'] . "'");
+                                    }
                                     $check2 = $db->super_query("SELECT user_last_visit FROM `users` WHERE user_id = '{$v['oid2']}'");
                                     $update_time = $server_time - 70;
                                     if ($check2['user_last_visit'] >= $update_time) {
@@ -71,7 +74,7 @@ if (Registry::get('logged')) {
                     $jsonResponse['error'] = 'Пользователь не найден';
             } else
                 $jsonResponse['error'] = 'Ошибка доступа';
-            echo json_encode($jsonResponse);
+            echo json_encode($jsonResponse, JSON_THROW_ON_ERROR);
             break;
 
         case 'uploadRoomAvatar':
@@ -103,19 +106,22 @@ if (Registry::get('logged')) {
                                 /** fixme limit */
                                 $sql = $db->super_query("SELECT oid2 FROM room_users WHERE room_id = '{$room_id}' and type = 0", true);
                                 if ($sql) {
-                                    $msg = json_encode(array('type' => 4, 'oid' => $user_id));
-                                    $id2 = md5(rand(0, 1000000) . $server_time);
+                                    $msg = json_encode(array('type' => 4, 'oid' => $user_id), JSON_THROW_ON_ERROR);
+                                    $id2 = md5(random_int(0, 1000000) . $server_time);
                                     $user_ids = array();
-                                    foreach ($sql as $k => $v) $user_ids[] = $v['oid2'];
+                                    foreach ($sql as $k => $v) {
+                                        $user_ids[] = $v['oid2'];
+                                    }
                                     $db->query("INSERT INTO `messages` SET user_ids = '" . implode(',', $user_ids) . "', information = 1, theme = '...', text = '" . $msg . "', room_id = '{$room_id}', date = '" . $server_time . "',  history_user_id = 0, attach = '" . $attach_files . "'");
                                     $dbid2 = $db->insert_id();
                                     foreach ($sql as $k => $v) {
                                         $db->query("UPDATE `users` SET user_pm_num = user_pm_num+1 WHERE user_id = '" . $v['oid2'] . "'");
                                         $check_im_2 = $db->super_query("SELECT id FROM im WHERE iuser_id = '" . $v['oid2'] . "' AND im_user_id = 0 AND room_id = '" . $room_id . "'");
-                                        if (!$check_im_2)
+                                        if (!$check_im_2) {
                                             $db->query("INSERT INTO im SET iuser_id = '" . $v['oid2'] . "', im_user_id = 0, room_id = '" . $room_id . "', msg_num = 1, idate = '" . $server_time . "', all_msg_num = 1");
-                                        else
+                                        } else {
                                             $db->query("UPDATE im  SET idate = '" . $server_time . "', msg_num = msg_num+1, all_msg_num = all_msg_num+1 WHERE id = '" . $check_im_2['id'] . "'");
+                                        }
                                         $check2 = $db->super_query("SELECT user_last_visit FROM `users` WHERE user_id = '{$v['oid2']}'");
                                         $update_time = $server_time - 70;
                                         if ($check2['user_last_visit'] >= $update_time) {
@@ -130,17 +136,22 @@ if (Registry::get('logged')) {
                                     }
                                 }
                                 $jsonResponse['response'] = $room_id;
-                            } else
+                            } else {
                                 $jsonResponse['error'] = 'Нет места на диске';
-                        } else
+                            }
+                        } else {
                             $jsonResponse['error'] = 'Превышен максимальный объем фотографии';
-                    } else
+                        }
+                    } else {
                         $jsonResponse['error'] = 'Неподходящий формат';
-                } else
+                    }
+                } else {
                     $jsonResponse['error'] = 'Ошибка доступа';
-            } else
+                }
+            } else {
                 $jsonResponse['error'] = 'Ошибка доступа';
-            echo json_encode($jsonResponse);
+            }
+            echo json_encode($jsonResponse, JSON_THROW_ON_ERROR);
             break;
 
         case 'viewRoomBox':
@@ -171,7 +182,9 @@ if (Registry::get('logged')) {
                 if ($row['owner'] == $user_id) {
                     $tpl->set('[owner]', '');
                     $tpl->set('[/owner]', '');
-                } else $tpl->set_block("'\\[owner\\](.*?)\\[/owner\\]'si", "");
+                } else {
+                    $tpl->set_block("'\\[owner\\](.*?)\\[/owner\\]'si", "");
+                }
                 $tpl->set('{nameAttr}', $row['owner'] == $user_id ? '' : 'disabled');
                 $tpl->set('{avatar}', $row['photo'] ? $row['photo'] : '{theme}/images/no_ava_50.png');
                 $tpl->compile('content');
@@ -191,17 +204,22 @@ if (Registry::get('logged')) {
                         /** fixme limit */
                         $sql = $db->super_query("SELECT oid2 FROM room_users WHERE room_id = '{$room_id}' and type = 0", true);
                         if ($sql) {
-                            $msg = json_encode(array('type' => 3, 'oid' => $user_id));
-                            $id2 = md5(rand(0, 1000000) . $server_time);
+                            $msg = json_encode(array('type' => 3, 'oid' => $user_id), JSON_THROW_ON_ERROR);
+                            $id2 = md5(random_int(0, 1000000) . $server_time);
                             $user_ids = array();
-                            foreach ($sql as $k => $v) $user_ids[] = $v['oid2'];
+                            foreach ($sql as $k => $v) {
+                                $user_ids[] = $v['oid2'];
+                            }
                             $db->query("INSERT INTO `messages` SET user_ids = '" . implode(',', $user_ids) . "', information = 1, theme = '...', text = '" . $msg . "', room_id = '{$room_id}', date = '" . $server_time . "',  history_user_id = 0, attach = '" . $attach_files . "'");
                             $dbid2 = $db->insert_id();
                             foreach ($sql as $k => $v) {
                                 $db->query("UPDATE `users` SET user_pm_num = user_pm_num+1 WHERE user_id = '" . $v['oid2'] . "'");
                                 $check_im_2 = $db->super_query("SELECT id FROM im WHERE iuser_id = '" . $v['oid2'] . "' AND im_user_id = 0 AND room_id = '" . $room_id . "'");
-                                if (!$check_im_2) $db->query("INSERT INTO im SET iuser_id = '" . $v['oid2'] . "', im_user_id = 0, room_id = '" . $room_id . "', msg_num = 1, idate = '" . $server_time . "', all_msg_num = 1");
-                                else $db->query("UPDATE im  SET idate = '" . $server_time . "', msg_num = msg_num+1, all_msg_num = all_msg_num+1 WHERE id = '" . $check_im_2['id'] . "'");
+                                if (!$check_im_2) {
+                                    $db->query("INSERT INTO im SET iuser_id = '" . $v['oid2'] . "', im_user_id = 0, room_id = '" . $room_id . "', msg_num = 1, idate = '" . $server_time . "', all_msg_num = 1");
+                                } else {
+                                    $db->query("UPDATE im  SET idate = '" . $server_time . "', msg_num = msg_num+1, all_msg_num = all_msg_num+1 WHERE id = '" . $check_im_2['id'] . "'");
+                                }
                                 $check2 = $db->super_query("SELECT user_last_visit FROM `users` WHERE user_id = '{$v['oid2']}'");
                                 $update_time = $server_time - 70;
                                 if ($check2['user_last_visit'] >= $update_time) {
@@ -216,13 +234,16 @@ if (Registry::get('logged')) {
                             }
                         }
                         $jsonResponse['response'] = $room_id;
-                    } else
+                    } else {
                         $jsonResponse['error'] = 'Ошибка доступа';
-                } else
+                    }
+                } else {
                     $jsonResponse['error'] = 'Введите название';
-            } else
+                }
+            } else {
                 $jsonResponse['error'] = 'Ошибка доступа';
-            echo json_encode($jsonResponse);
+            }
+            echo json_encode($jsonResponse, JSON_THROW_ON_ERROR);
             break;
 
         case 'createRoomBox':
