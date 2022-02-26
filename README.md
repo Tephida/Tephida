@@ -6,8 +6,9 @@
 
 Install VII Engine with Composer.
 
-1.
-install [composer](https://getcomposer.org/) ([linux/Unix/macOS/Windows](https://getcomposer.org/doc/00-intro.md))([OpenServer](https://ospanel.io/docs/#rabota-s-composer))
+1. install [composer](https://getcomposer.org/)
+   ([linux/Unix/macOS/Windows](https://getcomposer.org/doc/00-intro.md))
+   ([OpenServer](https://ospanel.io/docs/#rabota-s-composer))
 
 2. Please run install.php
 
@@ -29,4 +30,5 @@ However, if you are not using Homestead, you will need to make sure your server 
 
 ## License
 
-This software is distributed as open source with the [MIT](https://github.com/semyon492/vii/blob/master/LICENSE) license.
+This software is distributed as open source with the [MIT](https://github.com/semyon492/vii/blob/master/LICENSE)
+license.
