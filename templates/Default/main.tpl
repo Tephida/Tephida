@@ -174,17 +174,16 @@
 <div class="autowr">
     <div class="content" style="width:800px;">
         <div class="shadow">
-            <div class="speedbar no_display" id="">{speedbar}</div>
         <div class="padcont">
             <div id="audioPlayer"></div>
             <div id="page">{info}{content}</div>
             <div class="clear"></div>
         </div>
-    </div>
-    <div class="footer">
-        Vii Engine &copy; 2022 <a class="cursor_pointer" onClick="trsn.box()"
-                                  onMouseOver="myhtml.title('1', 'Выбор используемого языка на сайте', 'langTitle', 1)"
-                                  id="langTitle1">{lang}</a>
+        </div>
+        <div class="footer">
+            Vii Engine &copy; 2022 <a class="cursor_pointer" onClick="trsn.box()"
+                                      onMouseOver="myhtml.title('1', 'Выбор используемого языка на сайте', 'langTitle', 1)"
+                                      id="langTitle1">{lang}</a>
         <div class="fl_r">
             <a href="/index.php?act=change_mobile">мобильная версия</a>
             <a href="/index.php?go=search&online=1" onClick="Page.Go(this.href); return false">люди</a>

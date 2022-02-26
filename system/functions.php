@@ -12,6 +12,7 @@ use Mozg\classes\Filesystem;
 use Mozg\classes\Gzip;
 use Mozg\classes\Registry;
 use Mozg\classes\Templates;
+use Mozg\classes\TpLSite;
 
 /**
  * @param string $source
@@ -340,11 +341,27 @@ function msgbox($title, $text, $tpl_name) {
 }
 
 /**
+ * @param $tpl
+ * @param $title
+ * @param $text
+ * @param $tpl_name
+ * @return int
+ */
+function msgBoxNew($tpl, $title, $text, $tpl_name): int
+{
+    $tpl->load_template($tpl_name);
+    $tpl->set('{error}', $text);
+    $tpl->set('{title}', $title);
+    $tpl->compile('content');
+    return $tpl->render();
+}
+
+/**
  * @return bool
  */
 function check_smartphone(): bool
 {
-    if ( isset($_SESSION['mobile_enable']))
+    if (isset($_SESSION['mobile_enable']))
         return true;
     $phone_array = array('iphone', 'android', 'pocket', 'palm', 'windows ce', 'windowsce', 'mobile windows', 'cellphone', 'opera mobi', 'operamobi', 'ipod', 'small', 'sharp', 'sonyericsson', 'symbian', 'symbos', 'opera mini', 'nokia', 'htc_', 'samsung', 'motorola', 'smartphone', 'blackberry', 'playstation portable', 'tablet browser', 'android');
     $agent = strtolower($_SERVER['HTTP_USER_AGENT']);
@@ -412,13 +429,15 @@ function mozg_create_cache($prefix, $cache_text): false|int
     } else
         return file_put_contents($filename, $cache_text);
 }
-function mozg_cache($prefix): false|string
+
+function mozg_cache($prefix): false|string|int
 {
     $filename = ENGINE_DIR . '/cache/' . $prefix . '.tmp';
-    if (file_exists($filename))
+    if (file_exists($filename)) {
         return file_get_contents($filename);
-    else
+    } else {
         return false;
+    }
 }
 
 /**
@@ -432,8 +451,7 @@ function strip_data($text): array|string
     $repquotes = array("\-", "\+", "\#");
     $text = stripslashes($text);
     $text = trim(strip_tags($text));
-    $text = str_replace($quotes, '', $text);
-    return str_replace($goodquotes, $repquotes, $text);
+    return str_replace(array(...$quotes, ...$goodquotes), array('', ...$repquotes), $text);
 }
 
 /**
@@ -459,11 +477,9 @@ function xfieldsdataload(string $id) : array
 
     $data = array();
     foreach ( $x_fields_data as $x_field_data ) {
-        list ( $x_field_data_name, $x_field_data_value ) = explode( "|", $x_field_data );
-        $x_field_data_name = str_replace( "&#124;", "|", $x_field_data_name );
-        $x_field_data_name = str_replace( "__NEWL__", "\r\n", $x_field_data_name );
-        $x_field_data_value = str_replace( "&#124;", "|", $x_field_data_value );
-        $x_field_data_value = str_replace( "__NEWL__", "\r\n", $x_field_data_value );
+        list ($x_field_data_name, $x_field_data_value) = explode("|", $x_field_data);
+        $x_field_data_name = str_replace(array("&#124;", "__NEWL__"), array("|", "\r\n"), $x_field_data_name);
+        $x_field_data_value = str_replace(array("&#124;", "__NEWL__"), array("|", "\r\n"), $x_field_data_value);
         $data[$x_field_data_name] = trim($x_field_data_value);
     }
     return $data;
@@ -481,8 +497,7 @@ function profileload() {
     foreach ($filecontents as $name => $value) {
         $filecontents[$name] = explode("|", trim($value));
         foreach ($filecontents[$name] as $name2 => $value2) {
-            $value2 = str_replace("&#124;", "|", $value2);
-            $value2 = str_replace("__NEWL__", "\r\n", $value2);
+            $value2 = str_replace(array("&#124;", "__NEWL__"), array("|", "\r\n"), $value2);
             $filecontents[$name][$name2] = $value2;
         }
     }
@@ -494,8 +509,8 @@ function profileload() {
  */
 function NoAjaxQuery() : void
 {
-    if (!empty($_POST['ajax']) and $_POST['ajax'] == 'yes')
-        if (clean_url($_SERVER['HTTP_REFERER']) != clean_url($_SERVER['HTTP_HOST']) and $_SERVER['REQUEST_METHOD'] != 'POST')
+    if (!empty($_POST['ajax']) && $_POST['ajax'] == 'yes')
+        if (clean_url($_SERVER['HTTP_REFERER']) != clean_url($_SERVER['HTTP_HOST']) && $_SERVER['REQUEST_METHOD'] != 'POST')
             header('Location: /index.php?go=none');
 }
 
@@ -915,7 +930,7 @@ HTML;
 
 function checkAjax(): bool
 {
-    return !empty($_POST['ajax']) and $_POST['ajax'] == 'yes';
+    return !empty($_POST['ajax']) && $_POST['ajax'] == 'yes';
 }
 
 /**
@@ -936,7 +951,7 @@ function user_age($user_year, $user_month, $user_day) {
             $user_age = $current_year - $user_year;
         else
             $user_age = $current_year - $user_year - 1;
-        if ($user_month and $user_day)
+        if ($user_month && $user_day)
             return $user_age . ' ' . gram_record($user_age, 'user_age');
         else
             return false;
@@ -1041,8 +1056,8 @@ function check_ip($ips) {
             $db_ip_split = explode(".", $ip_arr);
             $this_ip_split = explode(".", $_IP);
             for ($i_i = 0;$i_i < 4;$i_i++) {
-                if ($this_ip_split[$i_i] == $db_ip_split[$i_i] or $db_ip_split[$i_i] == '*') {
-                    $ip_check_matches+= 1;
+                if ($this_ip_split[$i_i] == $db_ip_split[$i_i] || $db_ip_split[$i_i] == '*') {
+                    $ip_check_matches += 1;
                 }
             }
             if ($ip_check_matches == 4) {
@@ -1056,10 +1071,11 @@ function check_ip($ips) {
 
 /**
  * @param $source
- * @param $encode
+ * @param bool $encode
  * @return array|mixed|string|string[]|null
  */
-function word_filter($source, $encode = true) {
+function word_filter($source, bool $encode = true)
+{
     global $config;
     $safe_mode = false;
     if ($encode) {
@@ -1069,7 +1085,7 @@ function word_filter($source, $encode = true) {
         if (!$all_words or !count($all_words)) return $source;
         foreach ($all_words as $word_line) {
             $word_arr = explode("|", $word_line);
-            if (function_exists("get_magic_quotes_gpc") AND get_magic_quotes_gpc()) {
+            if (function_exists("get_magic_quotes_gpc") and get_magic_quotes_gpc()) {
                 $word_arr[1] = addslashes($word_arr[1]);
             }
             if ($word_arr[4]) {
@@ -1142,9 +1158,10 @@ function newGram($num, $a, $b, $c, bool $t = false): string
     else
         return declOfNum($num, array(sprintf("%d {$a}", $num), sprintf("%d {$b}", $num), sprintf("%d {$c}", $num)));
 }
+
 //FOR MOBILE VERSION 1.0
-if (isset($_GET['act']) AND $_GET['act'] == 'change_mobile') $_SESSION['mobile'] = 1;
-if (isset($_GET['act']) AND $_GET['act'] == 'change_fullver') {
+if (isset($_GET['act']) && $_GET['act'] == 'change_mobile') $_SESSION['mobile'] = 1;
+if (isset($_GET['act']) && $_GET['act'] == 'change_fullver') {
     $_SESSION['mobile'] = 2;
     header('Location: /');
 }
@@ -1153,7 +1170,7 @@ if (check_smartphone()) {
         $config['temp'] = "mobile";
     $check_smartphone = true;
 }
-if (isset($_SESSION['mobile']) AND $_SESSION['mobile'] == 1) {
+if (isset($_SESSION['mobile']) && $_SESSION['mobile'] == 1) {
     $config['temp'] = "mobile";
 }
 function AntiSpam($act, $text = false)
@@ -1349,8 +1366,7 @@ function cleanPath($path): string
 
 function clean_url($url)
 {
-    $url = str_replace("http://", "", strtolower($url));
-    $url = str_replace("https://", "", $url);
+    $url = str_replace(array("http://", "https://"), "", strtolower($url));
     if (str_starts_with($url, 'www.'))
         $url = substr($url, 4);
     $url = explode('/', $url);
@@ -1730,7 +1746,7 @@ function compileNoAjax($tpl, $params): int
 function tpl_init(): Templates
 {
     $tpl = new Templates();
-    $config = settings_get();
+    $config = settings_load();
     $tpl->dir = ROOT_DIR . '/templates/' . $config['temp'];
     define('TEMPLATE_DIR', $tpl->dir);
     return $tpl;

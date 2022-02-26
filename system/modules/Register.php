@@ -13,6 +13,7 @@ use Mozg\classes\Filesystem;
 use Mozg\classes\Module;
 use Mozg\classes\Registry;
 use Mozg\classes\Status;
+use Mozg\classes\TpLSite;
 
 class Register extends Module
 {
@@ -27,7 +28,7 @@ class Register extends Module
 //    NoAjaxQuery();
             //Код безопасности
             $session_sec_code = $_SESSION['sec_code'] ?? null;
-            $sec_code = requestFilter('sec_code') ?? null;
+            $sec_code = requestFilter('sec_code');
             //Если код введенный юзером совпадает, то пропускаем, иначе выводим ошибку
             if ($sec_code == $session_sec_code) {
                 //Входные POST Данные
@@ -55,8 +56,8 @@ class Register extends Module
                 $user_city = intFilter('city');
                 if ($user_city < 0 or $user_city > 1587)
                     $user_city = 0;
-                $password_first = requestFilter('password_first') ?? null;
-                $password_second = requestFilter('password_second') ?? null;
+                $password_first = requestFilter('password_first');
+                $password_second = requestFilter('password_second');
 
                 $user_birthday = $user_year . '-' . $user_month . '-' . $user_day;
 
@@ -82,7 +83,7 @@ class Register extends Module
                     $err_str .= 'no_email|' . $user_email . '|';
                 }
                 //Проверка Паролей
-                if (strlen($password_first) >= 6 and $password_first == $password_second) {
+                if (strlen($password_first) >= 6 && $password_first == $password_second) {
                     $errors[] = 0;
                 } else {
                     $err_str .= 'no_password|' . $password_first . ' ' . $password_second . '|';
@@ -170,12 +171,10 @@ class Register extends Module
      */
     public function login()
     {
-        $tpl = $this->tpl;
+        $tpl = new TpLSite($this->tpl_dir_name);
         $tpl->load_template('login.tpl');
-
         $tpl->compile('content');
-
-        AjaxTpl($tpl);
+        $tpl->renderAjax();
     }
 
     /**
@@ -184,18 +183,20 @@ class Register extends Module
      */
     public function main()
     {
-        $tpl = $this->tpl;
+//        $tpl = $this->tpl;//todo
+        $config = settings_get();
+        $meta_tags['title'] = $config['home'];
+        $tpl = new TpLSite($this->tpl_dir_name, $meta_tags);
         $tpl->load_template('reg.tpl');
         $db = Registry::get('db');
 //################## Загружаем Страны ##################//
         $sql_country = $db->super_query("SELECT * FROM `country` ORDER by `name` ASC", true);
         $all_country = '';
-        foreach ($sql_country as $row_country)
+        foreach ($sql_country as $row_country) {
             $all_country .= '<option value="' . $row_country['id'] . '">' . stripslashes($row_country['name']) . '</option>';
-
+        }
         $tpl->set('{country}', $all_country);
-
         $tpl->compile('content');
-        compile($tpl);
+        $tpl->render();
     }
 }

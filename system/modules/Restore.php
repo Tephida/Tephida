@@ -9,16 +9,19 @@
 
 namespace Mozg\modules;
 
+use ErrorException;
+use JsonException;
 use Mozg\classes\Module;
 use Mozg\classes\Registry;
 use Mozg\classes\Router;
 use Mozg\classes\Status;
+use Mozg\classes\TpLSite;
 use Mozg\classes\ViiMail;
 
 class Restore extends Module
 {
     /**
-     * @throws \JsonException
+     * @throws JsonException
      */
     public function next()
     {
@@ -30,10 +33,11 @@ class Restore extends Module
             if ($check) {
                 $config = settings_get();
                 $theme = '/templates/' . $config['temp'];
-                if ($check['user_photo'])
+                if ($check['user_photo']) {
                     $check['user_photo'] = "/uploads/users/{$check['user_id']}/50_{$check['user_photo']}";
-                else
+                } else {
                     $check['user_photo'] = "{$theme}/images/no_ava_50.png";
+                }
 
                 $response = array(
                     'status' => Status::OK,
@@ -56,6 +60,9 @@ class Restore extends Module
 
     }
 
+    /**
+     * @throws \Exception
+     */
     public function send()
     {
         NoAjaxQuery();
@@ -70,9 +77,9 @@ class Restore extends Module
             $salt = "abchefghjkmnpqrstuvwxyz0123456789";
             $rand_lost = '';
             for ($i = 0; $i < 15; $i++) {
-                $rand_lost .= $salt[rand(0, 33)];
+                $rand_lost .= $salt[random_int(0, 33)];
             }
-            $hash = md5($server_time . $email . rand(0, 100000) . $rand_lost . $check['user_name']);
+            $hash = md5($server_time . $email . random_int(0, 100000) . $rand_lost . $check['user_name']);
 
             //Вставляем в базу
             $_IP = '';//FIXME
@@ -97,8 +104,9 @@ HTML;
     }
 
     /**
-     * @throws \JsonException
-     * @throws \ErrorException
+     * @throws JsonException
+     * @throws ErrorException
+     * @throws \Exception
      */
     public function preFinish()
     {
@@ -116,9 +124,9 @@ HTML;
                 $salt = "abchefghjkmnpqrstuvwxyz0123456789";
                 $rand_lost = '';
                 for ($i = 0; $i < 15; $i++) {
-                    $rand_lost .= $salt[rand(0, 33)];
+                    $rand_lost .= $salt[random_int(0, 33)];
                 }
-                $newhash = md5(time() . $row['email'] . rand(0, 100000) . $rand_lost);
+                $newhash = md5(time() . $row['email'] . random_int(0, 100000) . $rand_lost);
                 $tpl->set('{hash}', $newhash);
                 $db->query("UPDATE `restore` SET hash = '{$newhash}' WHERE email = '{$row['email']}'");
 
@@ -157,19 +165,21 @@ HTML;
     }
 
     /**
-     * @throws \ErrorException
-     * @throws \JsonException
+     * @throws JsonException | ErrorException
      */
     public function main()
     {
-        $tpl = $this->tpl;
+        $meta_tags['title'] = 'Восстановление';
+        $tpl = new TpLSite($this->tpl_dir_name, $meta_tags);
         if (!Registry::get('logged')) {
             $tpl->load_template('restore/main.tpl');
             $tpl->compile('content');
+            $tpl->render();
         } else {
             $lang = $this->lang;
-            msgbox('', $lang['not_logged'], 'info');
+            msgBoxNew($tpl, 'Восстановление', $lang['no_str_bar'], 'info.tpl');
+
         }
-        compile($tpl);
+
     }
 }
