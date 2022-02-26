@@ -53,22 +53,27 @@ function intFilter(string $source, int $default = 0): int
  * @param string $source
  * @param int $substr_num
  * @param bool $strip_tags
- * @return string
+ * @return string|array
  */
-function requestFilter(string $source, int $substr_num = 25000, bool $strip_tags = false): string
+function requestFilter(string $source, int $substr_num = 25000, bool $strip_tags = false): string|array
 {
     if (empty($source)) {
         return '';
-    } else {
-        if (!empty($_POST[$source])) {
-            $source = $_POST[$source];
-        } elseif (!empty($_GET[$source])) {
-            $source = $_GET[$source];
-        } else {
-            return '';
-        }
-        return textFilter($source, $substr_num, $strip_tags);
     }
+    if (!empty($_POST[$source])) {
+        if (is_array($_POST[$source])) {
+            return $_POST[$source];
+        }
+        $source = $_POST[$source];
+    } elseif (!empty($_GET[$source])) {
+        if (is_array($_GET[$source])) {
+            return $_POST[$source];
+        }
+        $source = $_GET[$source];
+    } else {
+        return '';
+    }
+    return textFilter($source, $substr_num, $strip_tags);
 }
 
 function informationText($array): string
@@ -147,22 +152,22 @@ function to_translit(string $value, bool $lower = true, bool $part = true): arra
 /**
  * @return void
  */
-function check_xss() {
-    $url = html_entity_decode(urldecode($_SERVER['QUERY_STRING']));
-    if ($url) {
-        if ((str_contains($url, '<')) || (str_contains($url, '>')) || (str_contains($url, '"')) || (str_contains($url, './')) || (str_contains($url, '../')) || (str_contains($url, '\'')) || (str_contains($url, '.php'))) {
-            if ($_GET['go'] != "search" and $_GET['go'] != "messages")
-                die('Hacking attempt!');
-        }
-    }
-    $url = html_entity_decode(urldecode($_SERVER['REQUEST_URI']));
-    if ($url) {
-        if ((str_contains($url, '<')) || (str_contains($url, '>')) || (str_contains($url, '"')) || (str_contains($url, '\''))) {
-            if ($_GET['go'] != "search" and $_GET['go'] != "messages")
-                die('Hacking attempt!');
-        }
-    }
-}
+//function check_xss() {
+//    $url = html_entity_decode(urldecode($_SERVER['QUERY_STRING']));
+//    if ($url) {
+//        if ((str_contains($url, '<')) || (str_contains($url, '>')) || (str_contains($url, '"')) || (str_contains($url, './')) || (str_contains($url, '../')) || (str_contains($url, '\'')) || (str_contains($url, '.php'))) {
+//            if ($_GET['go'] != "search" and $_GET['go'] != "messages")
+//                die('Hacking attempt!');
+//        }
+//    }
+//    $url = html_entity_decode(urldecode($_SERVER['REQUEST_URI']));
+//    if ($url) {
+//        if ((str_contains($url, '<')) || (str_contains($url, '>')) || (str_contains($url, '"')) || (str_contains($url, '\''))) {
+//            if ($_GET['go'] != "search" and $_GET['go'] != "messages")
+//                die('Hacking attempt!');
+//        }
+//    }
+//}
 
 /**
  * @param $format

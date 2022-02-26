@@ -57,7 +57,7 @@
     }
 
     function videoPubEditBox(i, p) {
-        Box.Page('/index.php?go=public_videos&act=edit', 'id=' + i + '&pid=' + p, 'edit_video', 510, lang_video_edit, lang_box_canсel, lang_box_save, 'videoPubEditSave(' + i + ', ' + p + '); return false', 255, 0, 1, 1, 0);
+        Box.Page('/index.php?go=public_videos&act=edit', 'id=' + i + '&pid=' + p, 'edit_video', 510, lang_video_edit, lang_box_cancel, lang_box_save, 'videoPubEditSave(' + i + ', ' + p + '); return false', 255, 0, 1, 1, 0);
     }
 
     function videoPubEditSave(i, p) {

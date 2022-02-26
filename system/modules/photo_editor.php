@@ -73,8 +73,9 @@ if (Registry::get('logged')) {
 
                 }
 
-            } else
+            } else {
                 echo 'Hacking attempt!';
+            }
 
     }
 

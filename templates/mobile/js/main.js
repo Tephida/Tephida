@@ -8,40 +8,392 @@ $(document).ready(function(){$('.update_code').click(function(){var rndval=new D
 var Profile={LoadCity:function(id){if(id>0){$('#select_city').load('/index.php?go=loadcity',{country:id});}}}
 var Box={Page:function(url,data,name,width,title,cancel_text,func_text,func,height,overflow,bg_show,bg_show_bottom,input_focus,cache){if(cache)
 if(ge('box_'+name)){Box.Close(name,cache);$('#box_'+name).show();$('#box_content_'+name).scrollTop(0);return false;}
-$.post(url,data,function(html){Box.Close(name,cache);Box.Show(name,width,title,html,cancel_text,func_text,func,height,overflow,bg_show,bg_show_bottom,cache);if(input_focus)
-$('#'+input_focus).focus();});},Show:function(name,width,title,content,close_text,func_text,func,height,overflow,bg_show,bg_show_bottom,cache){if(func_text)
-var func_but='<span id="box_but"><button onClick="'+func+'" id="box_butt_create" class="button" style="margin-right:10px">'+func_text+'</button></span>';else
-var func_but='';var close_but='<button onClick="Box.Close(\''+name+'\', '+cache+'); return false;" class="button">'+close_text+'</button>';$('#page, #text_mob_bar').hide();$('#modalmobbar').html(title);$('#modalbox').html('<div id="modal_box"><div id="box_'+name+'" class="box_pos"><div class="box_bg"><div class="box_title" id="box_title_'+name+'"><div class="box_close" onClick="Box.Close(\''+name+'\', '+cache+'); return false;"></div></div><div class="box_conetnt" id="box_content_'+name+'">'+content+'<div class="clear"></div></div><div class="box_footer"><div id="box_bottom_left_text" class="fl_l"></div>'+func_but+close_but+'</div></div></div></div>');$('#box_'+name).show();},Close:function(name,cache){$('#page, #text_mob_bar').show();$('#modalbox, #modalmobbar').html('');},GeneralClose:function(){$('#page, #text_mob_bar').show();$('#modalbox, #modalmobbar').html('');},Info:function(bid,title,content,width,tout){$('.infobl').html(title).show();}}
-function ge(i){return document.getElementById(i);}
-function updateNum(i,type){if(type)
-$(i).text(parseInt($(i).text())+1);else
-$(i).text($(i).text()-1);}
-function setErrorInputMsg(i){$("#"+i).css('background','#ffefef');}
-function addAllErr(text,tim){Box.Info('a',text,'','');}
-template_dir='/templates/Default';uploads_dir='/uploads';uploads_smile_dir='/uploads/smiles';lang_empty='Поля не должны быть пустыми.';lang_nosymbol='Специальные символы и пробелы запрещены.';lang_pass_none='Пароли не совпадают';lang_code_none='Код безопасности не соответствует отображённому';lang_please_code='Введите код с картинки';lang_bad_email='Неправильный адрес';lang_none_sex='Укажите Ваш пол';lang_no_vk='Указанная Вами ссылка не является сайтом в контакте';lang_no_od='Указанная Вами ссылка не является сайтом однаклассники';lang_no_fb='Указанная Вами ссылка не является сайтом facebook';lang_no_icq='Номер ICQ должен состоять только из цифр';lang_infosave='Изменения сохранены';lang_bad_format='Неверный формат файла';lang_bad_size='Файл не должен превышать 5 Mб';lang_bad_aaa='Неизвестная ошибка';lang_del_photo='Вы уверены, что хотите удалить фотографию?';lang_del_album='Вы уверены, что хотите удалить альбом?';lang_title_del_photo='Предупреждениe';lang_box_canсel='Отмена';lang_box_yes='Да';lang_box_send='Отправить';lang_box_save='Сохранить';lang_box_insert='Вставить';lang_title_load_photo='Загрузка главной фотографии';lang_title_new_album='Создание нового альбома';lang_album_create='Готово';lang_nooo_er='Код ошибки: 1';lang_del_comm='Комментарий успешно удален.';lang_edit_albums='Редактирование альбома';lang_edit_cover_album='Выберите фотографию на обложку';lang_demand_ok='Заявка отправлена';lang_demand_no='Повторно заявка отправлена не будет.';lang_demand_sending='Заявка отправляеться';lang_demand_sending_t='В данный момент заявка на дружбу отправляеться.';lang_demand_s_ok=' получил уведомление и подтвердит, что Вы его друг.';lang_take_ok='Заявка принята.';lang_take_no='Заявка отклонена.';lang_dd2f_no='Информация';lang_dd2f22_no='Этот пользователь есть у Вас в заявках.';lang_22dd2f22_no='Этот пользователь уже есть у Вас в друзьях.';lang_no_user_fave='Такого пользователя не существует.';lang_yes_user_fave='Этот пользователя уже есть у Вас в закладках.';lang_del_fave='Удалить из закладок';lang_add_fave='Добавить в закладки';lang_fave_info='Вы уверены, что хотите удалить этого пользователя из закладок?';lang_fave_no_users='<div class="info_center">Вы можете добавлять сюда страницы интересных Вам людей.<br />Из этого раздела у Вас всегда будет быстрый доступ к ним.</div>';lang_new_msg='Новое сообщение';lang_new_msg_send='Отправить';lang_msg_box='Сообщения';lang_msg_max_strlen='Ваше сообщение слишком длинное.';lang_msg_ok_title='Сообщение отправлено.';lang_msg_ok_text='Ваше сообщение успешно отправлено.';lang_msg_close='Закрыть';lang_photo_info_text='Фотография удалена либо еще не загружена.';lang_photo_info_delok='<br /><span class="online">Фотография удалена.</span>';lang_albums_add_photo='Описание фотографии';lang_albums_set_cover='Сделать обложкой альбома';lang_albums_del_photo='Удалить фотографию';lang_albums_save_descr='Сохранить описание';lang_notes_no_title='Введите заголовок заметки.';lang_notes_no_text='Введите текст заметки.';lang_del_note='Вы действительно хотите удалить эту заметку?';lang_del_process='Заметка удаляется...';lang_notes_comm_max='Ваш комментарий слишком длинный.';lang_notes_setting_addphoto='Настройки фотографии';lang_notes_setting_addvdeio='Настройки видеозаписи';lang_notes_preview='Как это будет после публикации';lang_wysiwyg_title='Настройки ссылки';lang_unsubscribe='Отписаться от обновлений';lang_subscription='Подписаться на обновления';lang_subscription_box_title='Подписки';lang_max_albums='Привышен лимит альбомов.';lang_video_new='Добавление нового видео';lang_videos_no_url='Введите ссылку на видеоролик.';lang_videos_no_url='Напишите название для видеоролика.';lang_videos_sending='В данный момент видео обрабатывается.';lang_videos_del_text='Вы действительно хотите удалить эту видеозапись?';lang_videos_deletes='Видеозапись удаляется...';lang_videos_delok='<div class="videos_delok">Видеозапись удалена.</div>';lang_videos_delok_2='<div class="online" style="margin-top:10px">Видеозапись удалена.</div>';lang_video_edit='Редактирование видеозаписи';lang_video_info_text='Видеозапись удалена либо еще не добавлена.';lang_scroll_loading='<span id="scroll_loading"><center><img src="/templates/Default/images/loading_mini.gif" alt="" /></center><br /></span>';lang_se_go='Найти';lang_bad_format='Загружать разрешено только фотографии в формате JPG, PNG, GIF.';lang_max_imgs='Привышен лимит фотографий в одном альбоме.';lang_max_size='Привышен максимальный размер изображения.';lang_news_prev='Показать предыдущие новости &#8595;';lang_editprof_text_1='Укажите Вашу подругу';lang_editprof_text_2='Укажите Вашу невесту';lang_editprof_text_3='Укажите Вашу жену';lang_editprof_text_4='Укажите Вашу любимую';lang_editprof_text_5='Укажите Вашего партнёра';lang_editprof_atext_1='Укажите Вашего друга';lang_editprof_atext_2='Укажите Вашего жениха';lang_editprof_atext_3='Укажите Вашего мужа';lang_editprof_atext_4='Укажите Вашего любимого';lang_editprof_atext_5='Укажите Вашего партнёра';lang_editprof_sptext_1='Подруга:';lang_editprof_sptext_2='Невеста:';lang_editprof_sptext_3='Жена:';lang_editprof_sptext_4='Любимая:';lang_editprof_sptext_5='Партнёр:';lang_editprof_asptext_1='Друг:';lang_editprof_asptext_2='Жених:';lang_editprof_asptext_3='Муж:';lang_editprof_asptext_4='Любимый:';lang_editprof_asptext_5='Партнёр:';lang_pr_no_title='Ошибка доступа';lang_pr_no_msg='Вы не можете отправить сообщение данному пользователю, так как он ограничивает круг лиц, которые могут присылать ему сообщения.';lang_support_text='Вы действительно хотите удалить вопрос? Это действие нельзя будет отменить.';lang_support_ltitle='Лимит';lang_support_ltext='Следующий вопрос Вы сможете задать через час.';lang_news_text='Вы действительно хотите удалить новость? Это действие нельзя будет отменить.';lang_gifts_title='Выберите подарок';lang_gifts_tnoubm='У Вас недостаточно убм для отправки этого подарка.';lang_gifts_oktitle='Подарок отправлен';lang_gifts_oktext='Ваш подарок был успешно отправлен.';lang_groups_new='Создание нового сообщества';lang_groups_cretate='Создать сообщество';lang_audio_add='Добавление новой песни';lang_audio_err='Формат не поддерживается либо ссылка является неправильной';lang_audio_wall_attatch='Выберите аудиозапись';lang_wall_tell_tes='Эта запись уже есть на стене';lang_wall_text='Что у Вас нового?';lang_wall_del_ok='<div class="color777">Запись успешно удалена.</div>';lang_wall_del_com_ok='<div class="online" style="margin-bottom:10px">Комментарий успешно удален.</div>';lang_wall_all_lnk='к предыдущим записям';lang_wall_hide_comm='Скрыть комментарии';lang_wall_atttach_addsmile='Выберите смайлик для отправки';lang_wall_attatch_photos='Выберите фотографию';lang_wall_attatch_videos='Выберите видеозапись';lang_wall_no_atttach='Не прикреплять';lang_wall_max_smiles='Максимально можно прикреплять 3 смайлика.';lang_wall_liked_users='Люди, которым это понравилось';lang_wall_attach_smiles='<img src="'+uploads_smile_dir+'/1.gif" class="wall_attach_smile" onClick="wall.attach_insert(\'smile\', this.src)" /><img src="'+uploads_smile_dir+'/2.gif" class="wall_attach_smile" onClick="wall.attach_insert(\'smile\', this.src)" /><img src="'+uploads_smile_dir+'/3.gif" class="wall_attach_smile" onClick="wall.attach_insert(\'smile\', this.src)" /><img src="'+uploads_smile_dir+'/4.gif" class="wall_attach_smile" onClick="wall.attach_insert(\'smile\', this.src)" /><img src="'+uploads_smile_dir+'/5.gif" class="wall_attach_smile" onClick="wall.attach_insert(\'smile\', this.src)" /><img src="'+uploads_smile_dir+'/6.gif" class="wall_attach_smile" onClick="wall.attach_insert(\'smile\', this.src)" /><img src="'+uploads_smile_dir+'/7.gif" class="wall_attach_smile" onClick="wall.attach_insert(\'smile\', this.src)" /><img src="'+uploads_smile_dir+'/8.gif" class="wall_attach_smile" onClick="wall.attach_insert(\'smile\', this.src)" /><img src="'+uploads_smile_dir+'/9.gif" class="wall_attach_smile" onClick="wall.attach_insert(\'smile\', this.src)" /><img src="'+uploads_smile_dir+'/10.gif" class="wall_attach_smile" onClick="wall.attach_insert(\'smile\', this.src)" /><img src="'+uploads_smile_dir+'/11.gif" class="wall_attach_smile" onClick="wall.attach_insert(\'smile\', this.src)" /><img src="'+uploads_smile_dir+'/12.gif" class="wall_attach_smile" onClick="wall.attach_insert(\'smile\', this.src)" /><img src="'+uploads_smile_dir+'/13.gif" class="wall_attach_smile" onClick="wall.attach_insert(\'smile\', this.src)" /><img src="'+uploads_smile_dir+'/14.gif" class="wall_attach_smile" onClick="wall.attach_insert(\'smile\', this.src)" /><img src="'+uploads_smile_dir+'/15.gif" class="wall_attach_smile" onClick="wall.attach_insert(\'smile\', this.src)" /><img src="'+uploads_smile_dir+'/1.gif" class="wall_attach_smile" onClick="wall.attach_insert(\'smile\', this.src)" /><img src="'+uploads_smile_dir+'/29.gif" class="wall_attach_smile" onClick="wall.attach_insert(\'smile\', this.src)" /><img src="'+uploads_smile_dir+'/17.gif" class="wall_attach_smile" onClick="wall.attach_insert(\'smile\', this.src)" /><img src="'+uploads_smile_dir+'/18.gif" class="wall_attach_smile" onClick="wall.attach_insert(\'smile\', this.src)" /><img src="'+uploads_smile_dir+'/19.gif" class="wall_attach_smile" onClick="wall.attach_insert(\'smile\', this.src)" /><img src="'+uploads_smile_dir+'/20.gif" class="wall_attach_smile" onClick="wall.attach_insert(\'smile\', this.src)" /><img src="'+uploads_smile_dir+'/21.gif" class="wall_attach_smile" onClick="wall.attach_insert(\'smile\', this.src)" /><img src="'+uploads_smile_dir+'/22.gif" class="wall_attach_smile" onClick="wall.attach_insert(\'smile\', this.src)" /><img src="'+uploads_smile_dir+'/23.gif" class="wall_attach_smile" onClick="wall.attach_insert(\'smile\', this.src)" /><img src="'+uploads_smile_dir+'/24.gif" class="wall_attach_smile" onClick="wall.attach_insert(\'smile\', this.src)" /><img src="'+uploads_smile_dir+'/25.gif" class="wall_attach_smile" onClick="wall.attach_insert(\'smile\', this.src)" /><img src="'+uploads_smile_dir+'/26.gif" class="wall_attach_smile" onClick="wall.attach_insert(\'smile\', this.src)" /><img src="'+uploads_smile_dir+'/27.gif" class="wall_attach_smile" onClick="wall.attach_insert(\'smile\', this.src)" /><img src="'+uploads_smile_dir+'/30.gif" class="wall_attach_smile" onClick="wall.attach_insert(\'smile\', this.src)" /><img src="'+uploads_smile_dir+'/31.gif" class="wall_attach_smile" onClick="wall.attach_insert(\'smile\', this.src)" /><img src="'+uploads_smile_dir+'/32.gif" class="wall_attach_smile" onClick="wall.attach_insert(\'smile\', this.src)" /><img src="'+uploads_smile_dir+'/33.gif" class="wall_attach_smile" onClick="wall.attach_insert(\'smile\', this.src)" /><img src="'+uploads_smile_dir+'/34.gif" class="wall_attach_smile" onClick="wall.attach_insert(\'smile\', this.src)" /><img src="'+uploads_smile_dir+'/35.gif" class="wall_attach_smile" onClick="wall.attach_insert(\'smile\', this.src)" /><img src="'+uploads_smile_dir+'/36.gif" class="wall_attach_smile" onClick="wall.attach_insert(\'smile\', this.src)" /><img src="'+uploads_smile_dir+'/37.gif" class="wall_attach_smile" onClick="wall.attach_insert(\'smile\', this.src)" /><img src="'+uploads_smile_dir+'/38.gif" class="wall_attach_smile" onClick="wall.attach_insert(\'smile\', this.src)" /><img src="'+uploads_smile_dir+'/39.gif" class="wall_attach_smile" onClick="wall.attach_insert(\'smile\', this.src)" /><img src="'+uploads_smile_dir+'/40.gif" class="wall_attach_smile" onClick="wall.attach_insert(\'smile\', this.src)" /><img src="'+uploads_smile_dir+'/41.gif" class="wall_attach_smile" onClick="wall.attach_insert(\'smile\', this.src)" /><img src="'+uploads_smile_dir+'/42.gif" class="wall_attach_smile" onClick="wall.attach_insert(\'smile\', this.src)" /><img src="'+uploads_smile_dir+'/43.gif" class="wall_attach_smile" onClick="wall.attach_insert(\'smile\', this.src)" /><img src="'+uploads_smile_dir+'/44.gif" class="wall_attach_smile" onClick="wall.attach_insert(\'smile\', this.src)" /><img src="'+uploads_smile_dir+'/45.gif" class="wall_attach_smile" onClick="wall.attach_insert(\'smile\', this.src)" /><img src="'+uploads_smile_dir+'/46.gif" class="wall_attach_smile" onClick="wall.attach_insert(\'smile\', this.src)" /><img src="'+uploads_smile_dir+'/47.gif" class="wall_attach_smile" onClick="wall.attach_insert(\'smile\', this.src)" />';var Albums={CreatAlbum:function(){$.post('/index.php?go=albums&act=create_page',function(data){Box.Show('albums',450,lang_title_new_album,data,lang_box_canсel,lang_album_create,'StartCreatAlbum(); return false;',0,0,1,1);$('#name').focus();});},Delete:function(id,hash){Box.Show('del_album_'+id,350,lang_title_del_photo,'<div style="padding-bottom:10px;">'+lang_del_album+'</div>',lang_box_canсel,lang_box_yes,'Albums.StartDelete('+id+', \''+hash+'\'); return false;');},StartDelete:function(id,hash){$('#box_loading').show();$.post('/index.php?go=albums&act=del_album',{id:id,hash:hash},function(d){Box.Close('del_album_'+id);$('#album_'+id).remove();updateNum('#albums_num');if($('.albums').size()<1)
-Page.Go(location.href);});},EditBox:function(id){$.post('/index.php?go=albums&act=edit_page',{id:id},function(d){Box.Show('edit_albums_'+id,450,lang_edit_albums,d,lang_box_canсel,lang_box_save,'Albums.SaveDescr('+id+'); return false',0,0,1,1);});},SaveDescr:function(id){var name=$("#name_"+id).val();var descr=$("#descr_t"+id).val();if(name!=0){$("#name_"+id).css('background','#fff');$('#box_loading').show();$.post('/index.php?go=albums&act=save_album',{id:id,name:name,descr:descr,privacy:$('#privacy').val(),privacy_comm:$('#privacy_comment').val()},function(data){$('#box_loading').hide();if(data=='no_name'){$('.err_red').show().text(lang_empty);ge('box_but').disabled=false;}else if(data=='no'){$('.err_red').show().text(lang_nooo_er);ge('box_but').disabled=false;}else{Box.Close('edit_albums_'+id);row=data.split('|#|||#row#|||#|');$('#descr_'+id).html('<div style="padding-top:4px;">'+row[1]+'</div>');$('#albums_name_'+id).html(row[0]);}});}else{$("#name_"+id).css('background','#ffefef');setTimeout("$('#name_"+id+"').css('background', '#fff').focus()",800);$('#box_loading').hide();}}}
-var Photo={Show:function(h){var id=h.split('_');var uid=id[0].split('photo');var section=h.split('sec=');var fuser=h.split('wall/fuser=');var note_id=h.split('notes/id=');var msg_id=h.split('msg/id=');if(fuser[1])
-section[1]='wall';if(note_id[1]){section[1]='notes';fuser[1]=note_id[1];}
-if(msg_id[1]){section[1]='msg';fuser[1]=msg_id[1];}
-$('.photo_view').hide();if(ge('photo_view_'+id[1])){$('#photo_view_'+id[1]).show();history.pushState({link:h},null,h);}else{$.post('/index.php?go=photo',{uid:uid[1],pid:id[1],section:section[1],fuser:fuser[1]},function(d){$('#page, #text_mob_bar').hide();$('#modalmobbar').html('Фотография');$('#modalbox').append(d);$('#photo_view_'+id[1]).show();history.pushState({link:h},null,h);});}},Profile:function(uid,photo,type){window.location.href='/uploads/users/'+uid+'/o_'+photo;},Close:function(close_link){$('.ladybug_ant').imgAreaSelect({remove:true});$('.photo_view').remove();$('#page, #text_mob_bar').show();$('#modalmobbar').html('');$('#modalbox').html('');if(close_link!=false)
-history.pushState({link:close_link},null,close_link);}}
-var comments={add:function(id){var comment=$('#textcom_'+id).val();if(comment!=0){$.post('/index.php?go=photo&act=addcomm',{pid:id,comment:comment},function(data){if(data=='err_privacy'){addAllErr(lang_pr_no_title);}else{$('#comments_'+id).append(data);$('#textcom_'+id).val('');}});}},delet_page_comm:function(id,hash){$.post('/index.php?go=photo&act=del_comm',{hash:hash},function(){$('#comment_all_'+id).html('<div style="color:#000;">'+lang_del_comm+'</div>');});},all:function(id,num){$.post('/index.php?go=photo&act=all_comm',{pid:id,num:num},function(d){$('#all_href_lnk_comm_'+id).hide();$('#all_comments_'+id).html(d);});},}
-var friends={add:function(for_id,user_name){if(for_id){if(user_name)
-name=user_name;else
-name=$('title').text();$.get('/friedns/send_demand/'+for_id,function(data){if(data=='yes_demand')
-$('.infobl').html(lang_demand_no).show();else if(data=='yes_demand2')
+$.post(url, data, function (html) {
+    Box.Close(name, cache);
+    Box.Show(name, width, title, html, cancel_text, func_text, func, height, overflow, bg_show, bg_show_bottom, cache);
+    if (input_focus)
+        $('#' + input_focus).focus();
+});
+    },
+    Show: function (name, width, title, content, close_text, func_text, func, height, overflow, bg_show, bg_show_bottom, cache) {
+        if (func_text)
+            var func_but = '<span id="box_but"><button onClick="' + func + '" id="box_butt_create" class="button" style="margin-right:10px">' + func_text + '</button></span>'; else
+            var func_but = '';
+        var close_but = '<button onClick="Box.Close(\'' + name + '\', ' + cache + '); return false;" class="button">' + close_text + '</button>';
+        $('#page, #text_mob_bar').hide();
+        $('#modalmobbar').html(title);
+        $('#modalbox').html('<div id="modal_box"><div id="box_' + name + '" class="box_pos"><div class="box_bg"><div class="box_title" id="box_title_' + name + '"><div class="box_close" onClick="Box.Close(\'' + name + '\', ' + cache + '); return false;"></div></div><div class="box_conetnt" id="box_content_' + name + '">' + content + '<div class="clear"></div></div><div class="box_footer"><div id="box_bottom_left_text" class="fl_l"></div>' + func_but + close_but + '</div></div></div></div>');
+        $('#box_' + name).show();
+    },
+    Close: function (name, cache) {
+        $('#page, #text_mob_bar').show();
+        $('#modalbox, #modalmobbar').html('');
+    },
+    GeneralClose: function () {
+        $('#page, #text_mob_bar').show();
+        $('#modalbox, #modalmobbar').html('');
+    },
+    Info: function (bid, title, content, width, tout) {
+        $('.infobl').html(title).show();
+    }
+}
+
+function ge(i) {
+    return document.getElementById(i);
+}
+
+function updateNum(i, type) {
+    if (type)
+        $(i).text(parseInt($(i).text()) + 1); else
+        $(i).text($(i).text() - 1);
+}
+
+function setErrorInputMsg(i) {
+    $("#" + i).css('background', '#ffefef');
+}
+
+function addAllErr(text, tim) {
+    Box.Info('a', text, '', '');
+}
+
+template_dir = '/templates/Default';
+uploads_dir = '/uploads';
+uploads_smile_dir = '/uploads/smiles';
+lang_empty = 'Поля не должны быть пустыми.';
+lang_nosymbol = 'Специальные символы и пробелы запрещены.';
+lang_pass_none = 'Пароли не совпадают';
+lang_code_none = 'Код безопасности не соответствует отображённому';
+lang_please_code = 'Введите код с картинки';
+lang_bad_email = 'Неправильный адрес';
+lang_none_sex = 'Укажите Ваш пол';
+lang_no_vk = 'Указанная Вами ссылка не является сайтом в контакте';
+lang_no_od = 'Указанная Вами ссылка не является сайтом однаклассники';
+lang_no_fb = 'Указанная Вами ссылка не является сайтом facebook';
+lang_no_icq = 'Номер ICQ должен состоять только из цифр';
+lang_infosave = 'Изменения сохранены';
+lang_bad_format = 'Неверный формат файла';
+lang_bad_size = 'Файл не должен превышать 5 Mб';
+lang_bad_aaa = 'Неизвестная ошибка';
+lang_del_photo = 'Вы уверены, что хотите удалить фотографию?';
+lang_del_album = 'Вы уверены, что хотите удалить альбом?';
+lang_title_del_photo = 'Предупреждениe';
+lang_box_cancel = 'Отмена';
+lang_box_yes = 'Да';
+lang_box_send = 'Отправить';
+lang_box_save = 'Сохранить';
+lang_box_insert = 'Вставить';
+lang_title_load_photo = 'Загрузка главной фотографии';
+lang_title_new_album = 'Создание нового альбома';
+lang_album_create = 'Готово';
+lang_nooo_er = 'Код ошибки: 1';
+lang_del_comm = 'Комментарий успешно удален.';
+lang_edit_albums = 'Редактирование альбома';
+lang_edit_cover_album = 'Выберите фотографию на обложку';
+lang_demand_ok = 'Заявка отправлена';
+lang_demand_no = 'Повторно заявка отправлена не будет.';
+lang_demand_sending = 'Заявка отправляеться';
+lang_demand_sending_t = 'В данный момент заявка на дружбу отправляеться.';
+lang_demand_s_ok = ' получил уведомление и подтвердит, что Вы его друг.';
+lang_take_ok = 'Заявка принята.';
+lang_take_no = 'Заявка отклонена.';
+lang_dd2f_no = 'Информация';
+lang_dd2f22_no = 'Этот пользователь есть у Вас в заявках.';
+lang_22dd2f22_no = 'Этот пользователь уже есть у Вас в друзьях.';
+lang_no_user_fave = 'Такого пользователя не существует.';
+lang_yes_user_fave = 'Этот пользователя уже есть у Вас в закладках.';
+lang_del_fave = 'Удалить из закладок';
+lang_add_fave = 'Добавить в закладки';
+lang_fave_info = 'Вы уверены, что хотите удалить этого пользователя из закладок?';
+lang_fave_no_users = '<div class="info_center">Вы можете добавлять сюда страницы интересных Вам людей.<br />Из этого раздела у Вас всегда будет быстрый доступ к ним.</div>';
+lang_new_msg = 'Новое сообщение';
+lang_new_msg_send = 'Отправить';
+lang_msg_box = 'Сообщения';
+lang_msg_max_strlen = 'Ваше сообщение слишком длинное.';
+lang_msg_ok_title = 'Сообщение отправлено.';
+lang_msg_ok_text = 'Ваше сообщение успешно отправлено.';
+lang_msg_close = 'Закрыть';
+lang_photo_info_text = 'Фотография удалена либо еще не загружена.';
+lang_photo_info_delok = '<br /><span class="online">Фотография удалена.</span>';
+lang_albums_add_photo = 'Описание фотографии';
+lang_albums_set_cover = 'Сделать обложкой альбома';
+lang_albums_del_photo = 'Удалить фотографию';
+lang_albums_save_descr = 'Сохранить описание';
+lang_notes_no_title = 'Введите заголовок заметки.';
+lang_notes_no_text = 'Введите текст заметки.';
+lang_del_note = 'Вы действительно хотите удалить эту заметку?';
+lang_del_process = 'Заметка удаляется...';
+lang_notes_comm_max = 'Ваш комментарий слишком длинный.';
+lang_notes_setting_addphoto = 'Настройки фотографии';
+lang_notes_setting_addvdeio = 'Настройки видеозаписи';
+lang_notes_preview = 'Как это будет после публикации';
+lang_wysiwyg_title = 'Настройки ссылки';
+lang_unsubscribe = 'Отписаться от обновлений';
+lang_subscription = 'Подписаться на обновления';
+lang_subscription_box_title = 'Подписки';
+lang_max_albums = 'Привышен лимит альбомов.';
+lang_video_new = 'Добавление нового видео';
+lang_videos_no_url = 'Введите ссылку на видеоролик.';
+lang_videos_no_url = 'Напишите название для видеоролика.';
+lang_videos_sending = 'В данный момент видео обрабатывается.';
+lang_videos_del_text = 'Вы действительно хотите удалить эту видеозапись?';
+lang_videos_deletes = 'Видеозапись удаляется...';
+lang_videos_delok = '<div class="videos_delok">Видеозапись удалена.</div>';
+lang_videos_delok_2 = '<div class="online" style="margin-top:10px">Видеозапись удалена.</div>';
+lang_video_edit = 'Редактирование видеозаписи';
+lang_video_info_text = 'Видеозапись удалена либо еще не добавлена.';
+lang_scroll_loading = '<span id="scroll_loading"><center><img src="/templates/Default/images/loading_mini.gif" alt="" /></center><br /></span>';
+lang_se_go = 'Найти';
+lang_bad_format = 'Загружать разрешено только фотографии в формате JPG, PNG, GIF.';
+lang_max_imgs = 'Привышен лимит фотографий в одном альбоме.';
+lang_max_size = 'Привышен максимальный размер изображения.';
+lang_news_prev = 'Показать предыдущие новости &#8595;';
+lang_editprof_text_1 = 'Укажите Вашу подругу';
+lang_editprof_text_2 = 'Укажите Вашу невесту';
+lang_editprof_text_3 = 'Укажите Вашу жену';
+lang_editprof_text_4 = 'Укажите Вашу любимую';
+lang_editprof_text_5 = 'Укажите Вашего партнёра';
+lang_editprof_atext_1 = 'Укажите Вашего друга';
+lang_editprof_atext_2 = 'Укажите Вашего жениха';
+lang_editprof_atext_3 = 'Укажите Вашего мужа';
+lang_editprof_atext_4 = 'Укажите Вашего любимого';
+lang_editprof_atext_5 = 'Укажите Вашего партнёра';
+lang_editprof_sptext_1 = 'Подруга:';
+lang_editprof_sptext_2 = 'Невеста:';
+lang_editprof_sptext_3 = 'Жена:';
+lang_editprof_sptext_4 = 'Любимая:';
+lang_editprof_sptext_5 = 'Партнёр:';
+lang_editprof_asptext_1 = 'Друг:';
+lang_editprof_asptext_2 = 'Жених:';
+lang_editprof_asptext_3 = 'Муж:';
+lang_editprof_asptext_4 = 'Любимый:';
+lang_editprof_asptext_5 = 'Партнёр:';
+lang_pr_no_title = 'Ошибка доступа';
+lang_pr_no_msg = 'Вы не можете отправить сообщение данному пользователю, так как он ограничивает круг лиц, которые могут присылать ему сообщения.';
+lang_support_text = 'Вы действительно хотите удалить вопрос? Это действие нельзя будет отменить.';
+lang_support_ltitle = 'Лимит';
+lang_support_ltext = 'Следующий вопрос Вы сможете задать через час.';
+lang_news_text = 'Вы действительно хотите удалить новость? Это действие нельзя будет отменить.';
+lang_gifts_title = 'Выберите подарок';
+lang_gifts_tnoubm = 'У Вас недостаточно убм для отправки этого подарка.';
+lang_gifts_oktitle = 'Подарок отправлен';
+lang_gifts_oktext = 'Ваш подарок был успешно отправлен.';
+lang_groups_new = 'Создание нового сообщества';
+lang_groups_cretate = 'Создать сообщество';
+lang_audio_add = 'Добавление новой песни';
+lang_audio_err = 'Формат не поддерживается либо ссылка является неправильной';
+lang_audio_wall_attatch = 'Выберите аудиозапись';
+lang_wall_tell_tes = 'Эта запись уже есть на стене';
+lang_wall_text = 'Что у Вас нового?';
+lang_wall_del_ok = '<div class="color777">Запись успешно удалена.</div>';
+lang_wall_del_com_ok = '<div class="online" style="margin-bottom:10px">Комментарий успешно удален.</div>';
+lang_wall_all_lnk = 'к предыдущим записям';
+lang_wall_hide_comm = 'Скрыть комментарии';
+lang_wall_atttach_addsmile = 'Выберите смайлик для отправки';
+lang_wall_attatch_photos = 'Выберите фотографию';
+lang_wall_attatch_videos = 'Выберите видеозапись';
+lang_wall_no_atttach = 'Не прикреплять';
+lang_wall_max_smiles = 'Максимально можно прикреплять 3 смайлика.';
+lang_wall_liked_users = 'Люди, которым это понравилось';
+lang_wall_attach_smiles = '<img src="' + uploads_smile_dir + '/1.gif" class="wall_attach_smile" onClick="wall.attach_insert(\'smile\', this.src)" /><img src="' + uploads_smile_dir + '/2.gif" class="wall_attach_smile" onClick="wall.attach_insert(\'smile\', this.src)" /><img src="' + uploads_smile_dir + '/3.gif" class="wall_attach_smile" onClick="wall.attach_insert(\'smile\', this.src)" /><img src="' + uploads_smile_dir + '/4.gif" class="wall_attach_smile" onClick="wall.attach_insert(\'smile\', this.src)" /><img src="' + uploads_smile_dir + '/5.gif" class="wall_attach_smile" onClick="wall.attach_insert(\'smile\', this.src)" /><img src="' + uploads_smile_dir + '/6.gif" class="wall_attach_smile" onClick="wall.attach_insert(\'smile\', this.src)" /><img src="' + uploads_smile_dir + '/7.gif" class="wall_attach_smile" onClick="wall.attach_insert(\'smile\', this.src)" /><img src="' + uploads_smile_dir + '/8.gif" class="wall_attach_smile" onClick="wall.attach_insert(\'smile\', this.src)" /><img src="' + uploads_smile_dir + '/9.gif" class="wall_attach_smile" onClick="wall.attach_insert(\'smile\', this.src)" /><img src="' + uploads_smile_dir + '/10.gif" class="wall_attach_smile" onClick="wall.attach_insert(\'smile\', this.src)" /><img src="' + uploads_smile_dir + '/11.gif" class="wall_attach_smile" onClick="wall.attach_insert(\'smile\', this.src)" /><img src="' + uploads_smile_dir + '/12.gif" class="wall_attach_smile" onClick="wall.attach_insert(\'smile\', this.src)" /><img src="' + uploads_smile_dir + '/13.gif" class="wall_attach_smile" onClick="wall.attach_insert(\'smile\', this.src)" /><img src="' + uploads_smile_dir + '/14.gif" class="wall_attach_smile" onClick="wall.attach_insert(\'smile\', this.src)" /><img src="' + uploads_smile_dir + '/15.gif" class="wall_attach_smile" onClick="wall.attach_insert(\'smile\', this.src)" /><img src="' + uploads_smile_dir + '/1.gif" class="wall_attach_smile" onClick="wall.attach_insert(\'smile\', this.src)" /><img src="' + uploads_smile_dir + '/29.gif" class="wall_attach_smile" onClick="wall.attach_insert(\'smile\', this.src)" /><img src="' + uploads_smile_dir + '/17.gif" class="wall_attach_smile" onClick="wall.attach_insert(\'smile\', this.src)" /><img src="' + uploads_smile_dir + '/18.gif" class="wall_attach_smile" onClick="wall.attach_insert(\'smile\', this.src)" /><img src="' + uploads_smile_dir + '/19.gif" class="wall_attach_smile" onClick="wall.attach_insert(\'smile\', this.src)" /><img src="' + uploads_smile_dir + '/20.gif" class="wall_attach_smile" onClick="wall.attach_insert(\'smile\', this.src)" /><img src="' + uploads_smile_dir + '/21.gif" class="wall_attach_smile" onClick="wall.attach_insert(\'smile\', this.src)" /><img src="' + uploads_smile_dir + '/22.gif" class="wall_attach_smile" onClick="wall.attach_insert(\'smile\', this.src)" /><img src="' + uploads_smile_dir + '/23.gif" class="wall_attach_smile" onClick="wall.attach_insert(\'smile\', this.src)" /><img src="' + uploads_smile_dir + '/24.gif" class="wall_attach_smile" onClick="wall.attach_insert(\'smile\', this.src)" /><img src="' + uploads_smile_dir + '/25.gif" class="wall_attach_smile" onClick="wall.attach_insert(\'smile\', this.src)" /><img src="' + uploads_smile_dir + '/26.gif" class="wall_attach_smile" onClick="wall.attach_insert(\'smile\', this.src)" /><img src="' + uploads_smile_dir + '/27.gif" class="wall_attach_smile" onClick="wall.attach_insert(\'smile\', this.src)" /><img src="' + uploads_smile_dir + '/30.gif" class="wall_attach_smile" onClick="wall.attach_insert(\'smile\', this.src)" /><img src="' + uploads_smile_dir + '/31.gif" class="wall_attach_smile" onClick="wall.attach_insert(\'smile\', this.src)" /><img src="' + uploads_smile_dir + '/32.gif" class="wall_attach_smile" onClick="wall.attach_insert(\'smile\', this.src)" /><img src="' + uploads_smile_dir + '/33.gif" class="wall_attach_smile" onClick="wall.attach_insert(\'smile\', this.src)" /><img src="' + uploads_smile_dir + '/34.gif" class="wall_attach_smile" onClick="wall.attach_insert(\'smile\', this.src)" /><img src="' + uploads_smile_dir + '/35.gif" class="wall_attach_smile" onClick="wall.attach_insert(\'smile\', this.src)" /><img src="' + uploads_smile_dir + '/36.gif" class="wall_attach_smile" onClick="wall.attach_insert(\'smile\', this.src)" /><img src="' + uploads_smile_dir + '/37.gif" class="wall_attach_smile" onClick="wall.attach_insert(\'smile\', this.src)" /><img src="' + uploads_smile_dir + '/38.gif" class="wall_attach_smile" onClick="wall.attach_insert(\'smile\', this.src)" /><img src="' + uploads_smile_dir + '/39.gif" class="wall_attach_smile" onClick="wall.attach_insert(\'smile\', this.src)" /><img src="' + uploads_smile_dir + '/40.gif" class="wall_attach_smile" onClick="wall.attach_insert(\'smile\', this.src)" /><img src="' + uploads_smile_dir + '/41.gif" class="wall_attach_smile" onClick="wall.attach_insert(\'smile\', this.src)" /><img src="' + uploads_smile_dir + '/42.gif" class="wall_attach_smile" onClick="wall.attach_insert(\'smile\', this.src)" /><img src="' + uploads_smile_dir + '/43.gif" class="wall_attach_smile" onClick="wall.attach_insert(\'smile\', this.src)" /><img src="' + uploads_smile_dir + '/44.gif" class="wall_attach_smile" onClick="wall.attach_insert(\'smile\', this.src)" /><img src="' + uploads_smile_dir + '/45.gif" class="wall_attach_smile" onClick="wall.attach_insert(\'smile\', this.src)" /><img src="' + uploads_smile_dir + '/46.gif" class="wall_attach_smile" onClick="wall.attach_insert(\'smile\', this.src)" /><img src="' + uploads_smile_dir + '/47.gif" class="wall_attach_smile" onClick="wall.attach_insert(\'smile\', this.src)" />';
+var Albums = {
+    CreatAlbum: function () {
+        $.post('/index.php?go=albums&act=create_page', function (data) {
+            Box.Show('albums', 450, lang_title_new_album, data, lang_box_cancel, lang_album_create, 'StartCreatAlbum(); return false;', 0, 0, 1, 1);
+            $('#name').focus();
+        });
+    }, Delete: function (id, hash) {
+        Box.Show('del_album_' + id, 350, lang_title_del_photo, '<div style="padding-bottom:10px;">' + lang_del_album + '</div>', lang_box_cancel, lang_box_yes, 'Albums.StartDelete(' + id + ', \'' + hash + '\'); return false;');
+    }, StartDelete: function (id, hash) {
+        $('#box_loading').show();
+        $.post('/index.php?go=albums&act=del_album', {id: id, hash: hash}, function (d) {
+            Box.Close('del_album_' + id);
+            $('#album_' + id).remove();
+            updateNum('#albums_num');
+            if ($('.albums').size() < 1)
+                Page.Go(location.href);
+        });
+    }, EditBox: function (id) {
+        $.post('/index.php?go=albums&act=edit_page', {id: id}, function (d) {
+            Box.Show('edit_albums_' + id, 450, lang_edit_albums, d, lang_box_cancel, lang_box_save, 'Albums.SaveDescr(' + id + '); return false', 0, 0, 1, 1);
+        });
+    }, SaveDescr: function (id) {
+        var name = $("#name_" + id).val();
+        var descr = $("#descr_t" + id).val();
+        if (name != 0) {
+            $("#name_" + id).css('background', '#fff');
+            $('#box_loading').show();
+            $.post('/index.php?go=albums&act=save_album', {
+                id: id,
+                name: name,
+                descr: descr,
+                privacy: $('#privacy').val(),
+                privacy_comm: $('#privacy_comment').val()
+            }, function (data) {
+                $('#box_loading').hide();
+                if (data == 'no_name') {
+                    $('.err_red').show().text(lang_empty);
+                    ge('box_but').disabled = false;
+                } else if (data == 'no') {
+                    $('.err_red').show().text(lang_nooo_er);
+                    ge('box_but').disabled = false;
+                } else {
+                    Box.Close('edit_albums_' + id);
+                    row = data.split('|#|||#row#|||#|');
+                    $('#descr_' + id).html('<div style="padding-top:4px;">' + row[1] + '</div>');
+                    $('#albums_name_' + id).html(row[0]);
+                }
+            });
+        } else {
+            $("#name_" + id).css('background', '#ffefef');
+            setTimeout("$('#name_" + id + "').css('background', '#fff').focus()", 800);
+            $('#box_loading').hide();
+        }
+    }
+}
+var Photo = {
+    Show: function (h) {
+        var id = h.split('_');
+        var uid = id[0].split('photo');
+        var section = h.split('sec=');
+        var fuser = h.split('wall/fuser=');
+        var note_id = h.split('notes/id=');
+        var msg_id = h.split('msg/id=');
+        if (fuser[1])
+            section[1] = 'wall';
+        if (note_id[1]) {
+            section[1] = 'notes';
+            fuser[1] = note_id[1];
+        }
+        if (msg_id[1]) {
+            section[1] = 'msg';
+            fuser[1] = msg_id[1];
+        }
+        $('.photo_view').hide();
+        if (ge('photo_view_' + id[1])) {
+            $('#photo_view_' + id[1]).show();
+            history.pushState({link: h}, null, h);
+        } else {
+            $.post('/index.php?go=photo', {
+                uid: uid[1],
+                pid: id[1],
+                section: section[1],
+                fuser: fuser[1]
+            }, function (d) {
+                $('#page, #text_mob_bar').hide();
+                $('#modalmobbar').html('Фотография');
+                $('#modalbox').append(d);
+                $('#photo_view_' + id[1]).show();
+                history.pushState({link: h}, null, h);
+            });
+        }
+    }, Profile: function (uid, photo, type) {
+        window.location.href = '/uploads/users/' + uid + '/o_' + photo;
+    }, Close: function (close_link) {
+        $('.ladybug_ant').imgAreaSelect({remove: true});
+        $('.photo_view').remove();
+        $('#page, #text_mob_bar').show();
+        $('#modalmobbar').html('');
+        $('#modalbox').html('');
+        if (close_link != false)
+            history.pushState({link: close_link}, null, close_link);
+    }
+}
+var comments = {
+    add: function (id) {
+        var comment = $('#textcom_' + id).val();
+        if (comment != 0) {
+            $.post('/index.php?go=photo&act=addcomm', {pid: id, comment: comment}, function (data) {
+                if (data == 'err_privacy') {
+                    addAllErr(lang_pr_no_title);
+                } else {
+                    $('#comments_' + id).append(data);
+                    $('#textcom_' + id).val('');
+                }
+            });
+        }
+    }, delet_page_comm: function (id, hash) {
+        $.post('/index.php?go=photo&act=del_comm', {hash: hash}, function () {
+            $('#comment_all_' + id).html('<div style="color:#000;">' + lang_del_comm + '</div>');
+        });
+    }, all: function (id, num) {
+        $.post('/index.php?go=photo&act=all_comm', {pid: id, num: num}, function (d) {
+            $('#all_href_lnk_comm_' + id).hide();
+            $('#all_comments_' + id).html(d);
+        });
+    },
+}
+var friends = {
+    add: function (for_id, user_name) {
+        if (for_id) {
+            if (user_name)
+                name = user_name; else
+                name = $('title').text();
+            $.get('/friedns/send_demand/' + for_id, function (data) {
+                if (data == 'yes_demand')
+                    $('.infobl').html(lang_demand_no).show(); else if (data == 'yes_demand2')
 $('.infobl').html(lang_dd2f22_no).show();else if(data=='yes_friend')
 $('.infobl').html(lang_22dd2f22_no).show();else
 $('.infobl').html('<b><a href="'+location.href+'">'+name+'</a></b> '+lang_demand_s_ok).show();});}},sending_demand:function(for_id){Box.Info('add_sending_demand_'+for_id,lang_demand_sending,lang_demand_sending_t);},take:function(take_user_id){$.get('/friedns/take/'+take_user_id,function(data){$('#action_'+take_user_id).html(lang_take_ok).css('color','#777');});},reject:function(reject_user_id){$.get('/friedns/reject/'+reject_user_id,function(data){$('#action_'+reject_user_id).html(lang_take_no);});},goDelte:function(user_id,atype){$.post('/index.php?go=friends&act=delete',{delet_user_id:user_id},function(){window.location.href='/u'+user_id;});}}
-var fave={add:function(fave_id){$.post('/index.php?go=fave&act=add',{fave_id:fave_id},function(data){$('#addfave_but').attr('onClick','fave.delet('+fave_id+'); return false').attr('href','/');$('#text_add_fave').text(lang_del_fave);});},delet:function(fave_id){$.post('/index.php?go=fave&act=delet',{fave_id:fave_id},function(data){$('#addfave_but').attr('onClick','fave.add('+fave_id+'); return false').attr('href','/');$('#text_add_fave').text(lang_add_fave);});}}
-var messages={new_:function(user_id){var content='<div style="padding-bottom:10px">'+'<div>Тема:</div><input type="text" id="theme" class="inp" maxlength="255" /><div class="mgclr"></div>'+'<div style="margin-top:10px">Сообщение:</div><textarea id="msg" class="inp" style="height:120px;"></textarea><div class="mgclr"></div>'+'</div>';Box.Show('new_msg',460,lang_new_msg,content,lang_box_canсel,lang_new_msg_send,'messages.send('+user_id+'); return false');$('#msg').focus();},send:function(for_user_id){var theme=$('#theme').val();var msg=$('#msg').val();if(msg!=0){$.post('/index.php?go=messages&act=send',{for_user_id:for_user_id,theme:theme,msg:msg},function(data){Box.Close('new_msg');if(data=='max_strlen')
-Box.Info('msg_info',lang_dd2f_no,lang_msg_max_strlen,300);else if(data=='no_user')
-Box.Info('msg_info',lang_dd2f_no,lang_no_user_fave,300);else if(data=='err_privacy')
-Box.Info('msg_info',lang_pr_no_title,lang_pr_no_msg,400,4000);else
-Box.Info('msg_info',lang_msg_ok_title,lang_msg_ok_text,300);});}else{$('#msg').val('');$('#msg').focus();}}}
-var subscriptions={add:function(for_user_id){$.post('/index.php?go=subscriptions&act=add',{for_user_id:for_user_id},function(d){$('#text_add_subscription').text(lang_unsubscribe);$('#lnk_unsubscription').attr('onClick','subscriptions.del('+for_user_id+'); return false');});},del:function(del_user_id){$.post('/index.php?go=subscriptions&act=del',{del_user_id:del_user_id},function(){$('#text_add_subscription').text(lang_subscription);$('#lnk_unsubscription').attr('onClick','subscriptions.add('+del_user_id+'); return false');});},all:function(for_user_id,page_num,subscr_num){if(page_num)
-page='&page='+page_num;else{page='';page_num=1;}
-Box.Page('/index.php?go=subscriptions&act=all','for_user_id='+for_user_id+'&subscr_num='+subscr_num+page,'subscriptions_'+page_num,525,lang_subscription_box_title,lang_msg_close,0,0,345,1,1,1,0,1);}}
+var fave = {
+    add: function (fave_id) {
+        $.post('/index.php?go=fave&act=add', {fave_id: fave_id}, function (data) {
+            $('#addfave_but').attr('onClick', 'fave.delet(' + fave_id + '); return false').attr('href', '/');
+            $('#text_add_fave').text(lang_del_fave);
+        });
+    }, delet: function (fave_id) {
+        $.post('/index.php?go=fave&act=delet', {fave_id: fave_id}, function (data) {
+            $('#addfave_but').attr('onClick', 'fave.add(' + fave_id + '); return false').attr('href', '/');
+            $('#text_add_fave').text(lang_add_fave);
+        });
+    }
+}
+var messages = {
+    new_: function (user_id) {
+        var content = '<div style="padding-bottom:10px">' + '<div>Тема:</div><input type="text" id="theme" class="inp" maxlength="255" /><div class="mgclr"></div>' + '<div style="margin-top:10px">Сообщение:</div><textarea id="msg" class="inp" style="height:120px;"></textarea><div class="mgclr"></div>' + '</div>';
+        Box.Show('new_msg', 460, lang_new_msg, content, lang_box_cancel, lang_new_msg_send, 'messages.send(' + user_id + '); return false');
+        $('#msg').focus();
+    }, send: function (for_user_id) {
+        var theme = $('#theme').val();
+        var msg = $('#msg').val();
+        if (msg != 0) {
+            $.post('/index.php?go=messages&act=send', {
+                for_user_id: for_user_id,
+                theme: theme,
+                msg: msg
+            }, function (data) {
+                Box.Close('new_msg');
+                if (data == 'max_strlen')
+                    Box.Info('msg_info', lang_dd2f_no, lang_msg_max_strlen, 300); else if (data == 'no_user')
+                    Box.Info('msg_info', lang_dd2f_no, lang_no_user_fave, 300); else if (data == 'err_privacy')
+                    Box.Info('msg_info', lang_pr_no_title, lang_pr_no_msg, 400, 4000); else
+                    Box.Info('msg_info', lang_msg_ok_title, lang_msg_ok_text, 300);
+            });
+        } else {
+            $('#msg').val('');
+            $('#msg').focus();
+        }
+    }
+}
+var subscriptions = {
+    add: function (for_user_id) {
+        $.post('/index.php?go=subscriptions&act=add', {for_user_id: for_user_id}, function (d) {
+            $('#text_add_subscription').text(lang_unsubscribe);
+            $('#lnk_unsubscription').attr('onClick', 'subscriptions.del(' + for_user_id + '); return false');
+        });
+    }, del: function (del_user_id) {
+        $.post('/index.php?go=subscriptions&act=del', {del_user_id: del_user_id}, function () {
+            $('#text_add_subscription').text(lang_subscription);
+            $('#lnk_unsubscription').attr('onClick', 'subscriptions.add(' + del_user_id + '); return false');
+        });
+    }, all: function (for_user_id, page_num, subscr_num) {
+        if (page_num)
+            page = '&page=' + page_num; else {
+            page = '';
+            page_num = 1;
+        }
+        Box.Page('/index.php?go=subscriptions&act=all', 'for_user_id=' + for_user_id + '&subscr_num=' + subscr_num + page, 'subscriptions_' + page_num, 525, lang_subscription_box_title, lang_msg_close, 0, 0, 345, 1, 1, 1, 0, 1);
+    }
+}
 var gSearch={go:function(){query=$('#query_full').val();type=$('#se_type_full').val();window.location.href='/?go=search&query='+encodeURIComponent(query)+'&type='+type;}}
 var wall={send:function(for_user_id){wall_text=$('#wall_text').val();rec_num=parseInt($('#wall_rec_num').text())+1;if(!rec_num)
 rec_num=1;if(wall_text!=0){$.post('/index.php?go=wall&act=send',{wall_text:wall_text,for_user_id:for_user_id},function(data){if(data=='err_privacy'){addAllErr(lang_pr_no_title);}else{$('#wall_records').html(data);$('#wall_all_record').html('');$('#wall_rec_num').text(rec_num)
@@ -59,15 +411,88 @@ $('#ok_pass').show();});}else
 setErrorInputMsg('new_pass2');}else
 setErrorInputMsg('new_pass');}else
 setErrorInputMsg('old_pass');},saveNewName:function(){var name=$('#name').val();var lastname=$('#lastname').val();if(name.length>=2&&name!=0&&settings.isValidName(name)){if(lastname.length>=2&&lastname!=0&&settings.isValidName(lastname)){$.post('/index.php?go=settings&act=newname',{name:name,lastname:lastname},function(data){$('.name_errors').hide();$('#ok_name').show();});}else{$('.name_errors').hide();$('#err_name_1').show();setErrorInputMsg('lastname');}}else{$('.name_errors').hide();$('#err_name_1').show();setErrorInputMsg('name');}},isValidName:function(xname){var pattern=new RegExp(/^[a-zA-Zа-яА-Я]+$/);return pattern.test(xname);},savePrivacy:function(){var val_msg=$('#val_msg').val();var val_wall1=$('#val_wall1').val();var val_wall2=$('#val_wall2').val();var val_wall3=$('#val_wall3').val();var val_info=$('#val_info').val();$.post('/index.php?go=settings&act=saveprivacy',{val_msg:val_msg,val_wall1:val_wall1,val_wall2:val_wall2,val_wall3:val_wall3,val_info:val_info},function(){$('#ok_update').show();});}}
-var support={send:function(){var title=$('#title').val();var question=$('#question').val();if(title!=0&&title!='Пожалуйста, добавьте заголовок к Вашему вопросу..'){if(question!=0&&question!='Пожалуйста, расскажите о Вашей проблеме чуть подробнее..'){$('#cancel').hide();$.post('/index.php?go=support&act=send',{title:title,question:question},function(data){if(data=='limit'){Box.Info('err',lang_support_ltitle,lang_support_ltext,280,2000);}else{var qid=data.split('r|x');$('#data').html(qid[0]);history.pushState({link:'/support?act=show&qid='+qid[1]},null,'/support?act=show&qid='+qid[1]);}});}else
-setErrorInputMsg('question');}else
-setErrorInputMsg('title');},delquest:function(qid){Box.Show('del_quest',400,lang_title_del_photo,'<div style="padding:15px;" id="text_del_quest">'+lang_support_text+'</div>',lang_box_canсel,lang_box_yes,'support.startDel('+qid+'); return false');},startDel:function(qid){$('#box_loading').show();$.post('/index.php?go=support&act=delet',{qid:qid},function(){Page.Go('/support');});},answer:function(qid,uid){var answer=$('#answer').val();if(answer!=0&&answer!='Комментировать..'){$.post('/index.php?go=support&act=answer',{answer:answer,qid:qid},function(data){if(uid==0)
-$('#status').text('Есть ответ.');else
-$('#status').text('Вопрос ожидает обработки.');$('#answers').append(data);$('#answer').val('');});}else
-setErrorInputMsg('answer');},delanswe:function(id){$('#asnwe_'+id).html(lang_del_comm);$.post('/index.php?go=support&act=delet_answer',{id:id});},close:function(qid){$.post('/index.php?go=support&act=close',{qid:qid},function(){$('#status').text('Есть ответ.');$('#close_but').hide();});}}
-var gifts={box:function(user_id,c){if(c)
-var cache=0;else
-var cache=1;Box.Page('/index.php?go=gifts&act=view','user_id='+user_id,'gifts',679,lang_gifts_title,lang_box_canсel,0,0,450,1,1,1,0,cache);},select:function(gid,fid){Box.Close(0,1);Box.Show('send_gift'+gid,460,lang_gifts_title,'<center><img src="/uploads/gifts/'+gid+'.png" style="margin-top:30px" /></center><div style="margin-bottom:5px"><b>Тип подарка</b></div><select class="inp" id="privacy_comment'+gid+'"><option value="1">Виден всем</option><option value="2">Личный</option><option value="3">Анонимный</option></select><textarea placeholder="Ваше сообщение.." id="msgfgift'+gid+'" class="inp" style="margin-top:10px;margin-bottom:10px"></textarea>',lang_box_canсel,lang_box_send,'gifts.send('+gid+', '+fid+')',340,0,0,0,0);},send:function(gfid,fid){var privacy=$('#privacy_comment'+gfid).val();var msgfgift=$('#msgfgift'+gfid).val();$('#box_loading').show().css('margin-top','-5px');$.post('/index.php?go=gifts&act=send',{for_user_id:fid,gift:gfid,privacy:privacy,msg:msgfgift},function(d){if(d==1){addAllErr(lang_gifts_tnoubm,3000);Box.Close();}else{Box.Close();Box.Info('giftok',lang_gifts_oktitle,lang_gifts_oktext,250,2000);}});},delet:function(gid){$('#gift_'+gid).html('<div style="color:#000">Подарок удалён.</div>');updateNum('#num');$.post('/index.php?go=gifts&act=del',{gid:gid});}}
+var support= {
+    send: function () {
+        var title = $('#title').val();
+        var question = $('#question').val();
+        if (title != 0 && title != 'Пожалуйста, добавьте заголовок к Вашему вопросу..') {
+            if (question != 0 && question != 'Пожалуйста, расскажите о Вашей проблеме чуть подробнее..') {
+                $('#cancel').hide();
+                $.post('/index.php?go=support&act=send', {title: title, question: question}, function (data) {
+                    if (data == 'limit') {
+                        Box.Info('err', lang_support_ltitle, lang_support_ltext, 280, 2000);
+                    } else {
+                        var qid = data.split('r|x');
+                        $('#data').html(qid[0]);
+                        history.pushState({link: '/support?act=show&qid=' + qid[1]}, null, '/support?act=show&qid=' + qid[1]);
+                    }
+                });
+            } else
+                setErrorInputMsg('question');
+        } else
+            setErrorInputMsg('title');
+    }, delquest: function (qid) {
+        Box.Show('del_quest', 400, lang_title_del_photo, '<div style="padding:15px;" id="text_del_quest">' + lang_support_text + '</div>', lang_box_cancel, lang_box_yes, 'support.startDel(' + qid + '); return false');
+    }, startDel: function (qid) {
+        $('#box_loading').show();
+        $.post('/index.php?go=support&act=delet', {qid: qid}, function () {
+            Page.Go('/support');
+        });
+    }, answer: function (qid, uid) {
+        var answer = $('#answer').val();
+        if (answer != 0 && answer != 'Комментировать..') {
+            $.post('/index.php?go=support&act=answer', {answer: answer, qid: qid}, function (data) {
+                if (uid == 0)
+                    $('#status').text('Есть ответ.'); else
+                    $('#status').text('Вопрос ожидает обработки.');
+                $('#answers').append(data);
+                $('#answer').val('');
+            });
+        } else
+            setErrorInputMsg('answer');
+    }, delanswe: function (id) {
+        $('#asnwe_' + id).html(lang_del_comm);
+        $.post('/index.php?go=support&act=delet_answer', {id: id});
+    }, close: function (qid) {
+        $.post('/index.php?go=support&act=close', {qid: qid}, function () {
+            $('#status').text('Есть ответ.');
+            $('#close_but').hide();
+        });
+    }
+}
+var gifts= {
+    box: function (user_id, c) {
+        if (c)
+            var cache = 0; else
+            var cache = 1;
+        Box.Page('/index.php?go=gifts&act=view', 'user_id=' + user_id, 'gifts', 679, lang_gifts_title, lang_box_cancel, 0, 0, 450, 1, 1, 1, 0, cache);
+    }, select: function (gid, fid) {
+        Box.Close(0, 1);
+        Box.Show('send_gift' + gid, 460, lang_gifts_title, '<center><img src="/uploads/gifts/' + gid + '.png" style="margin-top:30px" /></center><div style="margin-bottom:5px"><b>Тип подарка</b></div><select class="inp" id="privacy_comment' + gid + '"><option value="1">Виден всем</option><option value="2">Личный</option><option value="3">Анонимный</option></select><textarea placeholder="Ваше сообщение.." id="msgfgift' + gid + '" class="inp" style="margin-top:10px;margin-bottom:10px"></textarea>', lang_box_cancel, lang_box_send, 'gifts.send(' + gid + ', ' + fid + ')', 340, 0, 0, 0, 0);
+    }, send: function (gfid, fid) {
+        var privacy = $('#privacy_comment' + gfid).val();
+        var msgfgift = $('#msgfgift' + gfid).val();
+        $('#box_loading').show().css('margin-top', '-5px');
+        $.post('/index.php?go=gifts&act=send', {
+            for_user_id: fid,
+            gift: gfid,
+            privacy: privacy,
+            msg: msgfgift
+        }, function (d) {
+            if (d == 1) {
+                addAllErr(lang_gifts_tnoubm, 3000);
+                Box.Close();
+            } else {
+                Box.Close();
+                Box.Info('giftok', lang_gifts_oktitle, lang_gifts_oktext, 250, 2000);
+            }
+        });
+    }, delet: function (gid) {
+        $('#gift_' + gid).html('<div style="color:#000">Подарок удалён.</div>');
+        updateNum('#num');
+        $.post('/index.php?go=gifts&act=del', {gid: gid});
+    }
+}
 var groups={exit:function(id){$('#exitlink'+id).html('<div class="color777" style="margin-top:6px;margin-right:7px">Вы вышли из сообщества.</div>');$.post('/index.php?go=groups&act=exit',{id:id});},exit2:function(id,user_id){$('#no').hide();$('#yes').show();updateNum('#traf');updateNum('#traf2');if($('#traf').text()==0){$('#users_block').hide();$('#num2').html('<span class="color777">Вы будете первым.</span>');}
 $('#subUser'+user_id).remove();$.post('/index.php?go=groups&act=exit',{id:id});},login:function(id){$('#yes').hide();$('#no').show();if($('#traf').text()==0)$('#users_block').show();updateNum('#traf',1);updateNum('#traf2',1);$.post('/index.php?go=groups&act=login',{id:id});},wall_send:function(id){var wall_text=$('#wall_text').val();if(wall_text!=0){$.post('/index.php?go=groups&act=wall_send',{id:id,wall_text:wall_text},function(data){if($('#rec_num').text()=='Нет записей')
 $('.albtitle').html('<b id="rec_num">1</b> запись');else
@@ -87,7 +512,89 @@ var i=0;var readStart=0;var im={open:function(uid){$.post('/index.php?go=im&act=
 setErrorInputMsg('msg_text');},page:function(for_user_id){first_id=$('.im_msg:first').attr('id').replace('imMsg','');$.post('/index.php?go=im&act=history',{first_id:first_id,for_user_id:for_user_id},function(data){i++;$('#prevMsg').html('<div id="appMsgFScroll'+i+'">'+data+'</div>'+$('#prevMsg').html());if(!data)
 $('#wall_all_records').hide();});}}
 function StartCreatAlbum(){var name=$("#name").val();var descr=$("#descr").val();if(name!=0){$("#name").css('background','#fff');$('#box_loading').show();ge('box_but').disabled=true;$.post('/index.php?go=albums&act=create',{name:name,descr:descr,privacy:$('#privacy').val()},function(data){$('#box_loading').hide();if(data=='no_name'){$('.err_red').show().text(lang_empty);ge('box_but').disabled=false}else if(data=='no'){$('.err_red').show().text(lang_nooo_er);ge('box_but').disabled=false}else if(data=='max'){Box.Close('albums');Box.Info('load_album',lang_dd2f_no,lang_max_albums,280)}else{Box.Close('albums');Page.Go(data)}})}else{$("#name").css('background','#ffefef');setTimeout("$('#name').css('background', '#fff').focus()",800);$('#box_loading').hide()}}
-var reg={step1:function(){var name=$('#name').val();var lastname=$('#lastname').val();if(name!=0){if(isValidName(name)){if(lastname!=0){if(isValidName(lastname)){$('#step1').hide();$('#step2').show();$('#reg_lnk').attr('onClick','');}else{setErrorInputMsg('lastname');}}else{setErrorInputMsg('lastname');}}else{setErrorInputMsg('name');}}else{setErrorInputMsg('name');}},finish:function(){reg.step1();var email=$('#email').val();var new_pass=$('#new_pass').val();var new_pass2=$('#new_pass2').val();var rndval=new Date().getTime();if(email!=0&&isValidEmailAddress(email)){if(new_pass!=0&&new_pass.length>=6){if(new_pass==new_pass2){Box.Show('sec_code',280,'Введите код с картинки:','<div style="padding:20px;text-align:center"><div class="cursor_pointer" onClick="updateCode(); return false"><div id="sec_code"><img src="/antibot/antibot.php?rndval='+rndval+'" alt="" title="Показать другой код" width="120" height="50" /></div></div><div id="code_loading"><input type="text" id="val_sec_code" class="inp" maxlength="6" style="margin-top:10px;width:110px" /></div></div>',lang_box_canсel,'Отправить','checkCode(); return false;');$('#val_sec_code').focus();}else{setErrorInputMsg('new_pass2');}}else{setErrorInputMsg('new_pass');}}else{setErrorInputMsg('email');}},send:function(sec_code){var email=$('#email').val();var new_pass=$('#new_pass').val();var new_pass2=$('#new_pass2').val();var name=$('#name').val();var lastname=$('#lastname').val();var val_sec_code=$("#val_sec_code").val();var sex=$("#sex").val();var day=$("#day").val();var month=$("#month").val();var year=$("#year").val();var country=$("#country").val();var city=$("#select_city").val();$.post('/index.php?go=register',{name:name,lastname:lastname,email:email,sex:sex,day:day,month:month,year:year,country:country,city:city,password_first:new_pass,password_second:new_pass2,sec_code:sec_code},function(d){var exp=d.split('|');if(exp[0]=='ok'){window.location='/u'+exp[1];}else if(exp[0]=='err_mail'){Box.Close('sec_code');}else{Box.Info('boxerr','Ошибка','Неизвестная ошибка',300);Box.Close('sec_code');}});}}
+
+var reg = {
+    step1: function () {
+        var name = $('#name').val();
+        var lastname = $('#lastname').val();
+        if (name != 0) {
+            if (isValidName(name)) {
+                if (lastname != 0) {
+                    if (isValidName(lastname)) {
+                        $('#step1').hide();
+                        $('#step2').show();
+                        $('#reg_lnk').attr('onClick', '');
+                    } else {
+                        setErrorInputMsg('lastname');
+                    }
+                } else {
+                    setErrorInputMsg('lastname');
+                }
+            } else {
+                setErrorInputMsg('name');
+            }
+        } else {
+            setErrorInputMsg('name');
+        }
+    }, finish: function () {
+        reg.step1();
+        var email = $('#email').val();
+        var new_pass = $('#new_pass').val();
+        var new_pass2 = $('#new_pass2').val();
+        var rndval = new Date().getTime();
+        if (email != 0 && isValidEmailAddress(email)) {
+            if (new_pass != 0 && new_pass.length >= 6) {
+                if (new_pass == new_pass2) {
+                    Box.Show('sec_code', 280, 'Введите код с картинки:', '<div style="padding:20px;text-align:center"><div class="cursor_pointer" onClick="updateCode(); return false"><div id="sec_code"><img src="/antibot/antibot.php?rndval=' + rndval + '" alt="" title="Показать другой код" width="120" height="50" /></div></div><div id="code_loading"><input type="text" id="val_sec_code" class="inp" maxlength="6" style="margin-top:10px;width:110px" /></div></div>', lang_box_cancel, 'Отправить', 'checkCode(); return false;');
+                    $('#val_sec_code').focus();
+                } else {
+                    setErrorInputMsg('new_pass2');
+                }
+            } else {
+                setErrorInputMsg('new_pass');
+            }
+        } else {
+            setErrorInputMsg('email');
+        }
+    }, send: function (sec_code) {
+        var email = $('#email').val();
+        var new_pass = $('#new_pass').val();
+        var new_pass2 = $('#new_pass2').val();
+        var name = $('#name').val();
+        var lastname = $('#lastname').val();
+        var val_sec_code = $("#val_sec_code").val();
+        var sex = $("#sex").val();
+        var day = $("#day").val();
+        var month = $("#month").val();
+        var year = $("#year").val();
+        var country = $("#country").val();
+        var city = $("#select_city").val();
+        $.post('/index.php?go=register', {
+            name: name,
+            lastname: lastname,
+            email: email,
+            sex: sex,
+            day: day,
+            month: month,
+            year: year,
+            country: country,
+            city: city,
+            password_first: new_pass,
+            password_second: new_pass2,
+            sec_code: sec_code
+        }, function (d) {
+            var exp = d.split('|');
+            if (exp[0] == 'ok') {
+                window.location = '/u' + exp[1];
+            } else if (exp[0] == 'err_mail') {
+                Box.Close('sec_code');
+            } else {
+                Box.Info('boxerr', 'Ошибка', 'Неизвестная ошибка', 300);
+                Box.Close('sec_code');
+            }
+        });
+    }
+}
 function isValidName(xname){var pattern=new RegExp(/^[a-zA-Zа-яА-Я]+$/);return pattern.test(xname);}
 function isValidEmailAddress(emailAddress){var pattern=new RegExp(/^(("[\w-\s]+")|([\w-]+(?:\.[\w-]+)*)|("[\w-\s]+")([\w-]+(?:\.[\w-]+)*))(@((?:[\w-]+\.)*\w[\w-]{0,66})\.([a-z]{2,6}(?:\.[a-z]{2})?)$)|(@\[?((25[0-5]\.|2[0-4][0-9]\.|1[0-9]{2}\.|[0-9]{1,2}\.))((25[0-5]|2[0-4][0-9]|1[0-9]{2}|[0-9]{1,2})\.){2}(25[0-5]|2[0-4][0-9]|1[0-9]{2}|[0-9]{1,2})\]?$)/i);return pattern.test(emailAddress);}
 function updateCode(){var rndval=new Date().getTime();$('#sec_code').html('<img src="/antibot/antibot.php?rndval='+rndval+'" alt="" title="Показать другой код" width="120" height="50" />');}

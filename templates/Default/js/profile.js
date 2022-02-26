@@ -11,13 +11,13 @@ var Albums = {
     CreatAlbum: function () {
         Page.Loading('start');
         $.post('/index.php?go=albums&act=create_page', function (data) {
-            Box.Show('albums', 450, lang_title_new_album, data, lang_box_canсel, lang_album_create, 'StartCreatAlbum(); return false;', 0, 0, 1, 1);
+            Box.Show('albums', 450, lang_title_new_album, data, lang_box_cancel, lang_album_create, 'StartCreatAlbum(); return false;', 0, 0, 1, 1);
             $('#name').focus();
             Page.Loading('stop');
         });
     },
     Delete: function (id, hash) {
-        Box.Show('del_album_' + id, 350, lang_title_del_photo, '<div style="padding:15px;">' + lang_del_album + '</div>', lang_box_canсel, lang_box_yes, 'Albums.StartDelete(' + id + ', \'' + hash + '\'); return false;');
+        Box.Show('del_album_' + id, 350, lang_title_del_photo, '<div style="padding:15px;">' + lang_del_album + '</div>', lang_box_cancel, lang_box_yes, 'Albums.StartDelete(' + id + ', \'' + hash + '\'); return false;');
     },
     StartDelete: function (id, hash) {
         $('#box_loading').show();
@@ -49,7 +49,7 @@ var Albums = {
             id: id
         }, function (d) {
             Page.Loading('stop');
-            Box.Show('edit_albums_' + id, 450, lang_edit_albums, d, lang_box_canсel, lang_box_save, 'Albums.SaveDescr(' + id + '); return false', 0, 0, 1, 1);
+            Box.Show('edit_albums_' + id, 450, lang_edit_albums, d, lang_box_cancel, lang_box_save, 'Albums.SaveDescr(' + id + '); return false', 0, 0, 1, 1);
         });
     },
     SaveDescr: function (id) {
@@ -96,7 +96,7 @@ var Albums = {
             'edit_cover_' + id + page_num, //ID
             627, //Ширина окна
             lang_edit_cover_album, //Заголовок окна
-            lang_box_canсel, //Имя кнопки для закртие окна
+            lang_box_cancel,
             0, //Текст кнопки выполняющая функцию
             0, //Сама функция для выполнения
             400, //Высота окна
@@ -306,7 +306,7 @@ var Photo = {
         else $('#albums_photo_panel_' + id).hide();
     },
     MsgDelete: function (id, aid, type) {
-        Box.Show('del_photo_' + id, '400', lang_title_del_photo, '<div style="padding:15px;">' + lang_del_photo + '</div>', lang_box_canсel, lang_box_yes, 'Photo.Delete(' + id + ', ' + aid + ', ' + type + '); return false');
+        Box.Show('del_photo_' + id, '400', lang_title_del_photo, '<div style="padding:15px;">' + lang_del_photo + '</div>', lang_box_cancel, lang_box_yes, 'Photo.Delete(' + id + ', ' + aid + ', ' + type + '); return false');
     },
     Delete: function (id, aid, type) {
         $('#box_loading').show();
@@ -462,7 +462,7 @@ var friends = {
             var ava_s1 = $('#ava_' + user_id).attr('src');
             var ava = ava_s1.replace('/users/' + user_id + '/', '/users/' + user_id + '/100_');
         } else var ava = $('#ava_' + user_id).attr('src');
-        Box.Show('del_friend_' + user_id, 410, lang_title_del_photo, '<div style="padding:15px;text-align:center"><img src="' + ava + '" alt="" /><br /><br />Вы уверены, что хотите удалить этого пользователя из списка друзей?</div>', lang_box_canсel, lang_box_yes, 'friends.goDelte(' + user_id + ', ' + atype + '); return false');
+        Box.Show('del_friend_' + user_id, 410, lang_title_del_photo, '<div style="padding:15px;text-align:center"><img src="' + ava + '" alt="" /><br /><br />Вы уверены, что хотите удалить этого пользователя из списка друзей?</div>', lang_box_cancel, lang_box_yes, 'friends.goDelte(' + user_id + ', ' + atype + '); return false');
     },
     goDelte: function (user_id, atype) {
         $('#box_loading').show();
@@ -504,7 +504,7 @@ var fave = {
         });
     },
     del_box: function (fave_id) {
-        Box.Show('del_fave', 410, lang_title_del_photo, '<div style="padding:15px;">' + lang_fave_info + '</div>', lang_box_canсel, lang_box_yes, 'fave.gDelet(' + fave_id + '); return false');
+        Box.Show('del_fave', 410, lang_title_del_photo, '<div style="padding:15px;">' + lang_fave_info + '</div>', lang_box_cancel, lang_box_yes, 'fave.gDelet(' + fave_id + '); return false');
     },
     gDelet: function (fave_id) {
         $('#box_loading').show();
@@ -526,7 +526,7 @@ var fave = {
 var messages = {
     new_: function (user_id) {
         var content = '<div style="padding:20px">' + '<div class="texta" style="width:100px">Тема:</div><input type="text" id="theme" class="inpst" maxlength="255" style="width:300px" /><div class="mgclr"></div>' + '<div class="texta" style="width:100px">Сообщение:</div><textarea id="msg" class="inpst" style="width:300px;height:120px;"></textarea><div class="mgclr"></div>' + '</div>';
-        Box.Show('new_msg', 460, lang_new_msg, content, lang_box_canсel, lang_new_msg_send, 'messages.send(' + user_id + '); return false');
+        Box.Show('new_msg', 460, lang_new_msg, content, lang_box_cancel, lang_new_msg_send, 'messages.send(' + user_id + '); return false');
         $('#msg').focus();
     },
     send: function (for_user_id) {
@@ -609,7 +609,7 @@ var notes = {
         }
     },
     delet: function (note_id, lnk, uid) {
-        Box.Show('del_note_' + note_id, 400, lang_title_del_photo, '<div style="padding:15px;" id="text_del_note_' + note_id + '">' + lang_del_note + '</div>', lang_box_canсel, lang_box_yes, 'notes.startDel(' + note_id + ', ' + lnk + ', ' + uid + '); return false');
+        Box.Show('del_note_' + note_id, 400, lang_title_del_photo, '<div style="padding:15px;" id="text_del_note_' + note_id + '">' + lang_del_note + '</div>', lang_box_cancel, lang_box_yes, 'notes.startDel(' + note_id + ', ' + lnk + ', ' + uid + '); return false');
     },
     startDel: function (note_id, lnk, uid) {
         $('#box_loading').show();
@@ -713,7 +713,7 @@ var subscriptions = {
 //VIDEOS
 var videos = {
     add: function (notes) {
-        Box.Page('/index.php?go=videos&act=add', '', 'add_video', 510, lang_video_new, lang_box_canсel, lang_album_create, 'videos.send(' + notes + '); return false', 0, 0, 1, 1, 'video_lnk');
+        Box.Page('/index.php?go=videos&act=add', '', 'add_video', 510, lang_video_new, lang_box_cancel, lang_album_create, 'videos.send(' + notes + '); return false', 0, 0, 1, 1, 'video_lnk');
     },
     load: function () {
         video_lnk = $('#video_lnk').val();
@@ -798,7 +798,7 @@ var videos = {
         });
     },
     delet: function (vid, type) {
-        Box.Show('del_video_' + vid, 400, lang_title_del_photo, '<div style="padding:15px;" id="text_del_video_' + vid + '">' + lang_videos_del_text + '</div>', lang_box_canсel, lang_box_yes, 'videos.startDel(' + vid + ', \'' + type + '\'); return false');
+        Box.Show('del_video_' + vid, 400, lang_title_del_photo, '<div style="padding:15px;" id="text_del_video_' + vid + '">' + lang_videos_del_text + '</div>', lang_box_cancel, lang_box_yes, 'videos.startDel(' + vid + ', \'' + type + '\'); return false');
         $('#video_object').hide(); //скрываем код видео, чтоб модал-окно норм появилось
     },
     startDel: function (vid, type) {
@@ -815,7 +815,7 @@ var videos = {
         });
     },
     editbox: function (vid) {
-        Box.Page('/index.php?go=videos&act=edit', 'vid=' + vid, 'edit_video', 510, lang_video_edit, lang_box_canсel, lang_box_save, 'videos.editsave(' + vid + '); return false', 255, 0, 1, 1, 0);
+        Box.Page('/index.php?go=videos&act=edit', 'vid=' + vid, 'edit_video', 510, lang_video_edit, lang_box_cancel, lang_box_save, 'videos.editsave(' + vid + '); return false', 255, 0, 1, 1, 0);
         $('#video_object').hide(); //скрываем код видео, чтоб модал-окно норм появилось
     },
     editsave: function (vid) {
@@ -1351,7 +1351,7 @@ var wall = {
     },
     attach_addsmile: function () {
         wall.attach_menu('close', 'wall_attach', 'wall_attach_menu');
-        Box.Show('attach_smile', 395, lang_wall_atttach_addsmile, lang_wall_attach_smiles, lang_box_canсel, '', '', 0, 1, 1, 1);
+        Box.Show('attach_smile', 395, lang_wall_atttach_addsmile, lang_wall_attach_smiles, lang_box_cancel, '', '', 0, 1, 1, 1);
     },
     attach_addphoto: function (id, page_num, notes) {
         wall.attach_menu('close', 'wall_attach', 'wall_attach_menu');
@@ -1519,7 +1519,7 @@ var wysiwyg = {
         Box.Close('all_photos', 1);
         Box.Close('box_note_add_photo_0');
         lang_notes_sett_box_content = '<div style="padding:15px">' + '<div class="texta" style="width:90px">Ширина:</div><input type="text" id="width_' + pid + '" class="inpst" maxlength="3" size="3" value="140" /> &nbsp;px<div class="mgclr"></div>' + '<div class="texta" style="width:90px">Высота:</div><input type="text" id="height_' + pid + '" class="inpst" maxlength="3" size="3" value="100" /> &nbsp;px<div class="mgclr"></div>' + '<div class="texta" style="width:90px">Выравнивание:</div><div class="padstylej"><select class="inpst" id="pos_' + pid + '"><option value="0">стандартно</option><option value="1">по левому краю</option><option value="2">по правому краю</option><option value="3">по центру</option></select></div><div class="mgclr"></div>' + '<div class="texta" style="width:90px">&nbsp;</div><div class="html_checkbox" id="img_link_' + pid + '" onClick="myhtml.checkbox(this.id)">Добавить ссылку</div><div class="mgclr"></div>' + '<div class="texta" style="width:90px">&nbsp;</div><div class="html_checkbox" id="img_blank_' + pid + '" onClick="myhtml.checkbox(this.id)" style="margin-top:5px">Открывать в новом окне</div><div class="mgclr"></div>' + '<div class="texta" style="width:90px">&nbsp;</div><div class="html_checkbox" id="img_border_' + pid + '" onClick="myhtml.checkbox(this.id)" style="margin-top:5px">Показывать рамку</div><div class="mgclr"></div>' + '</div>';
-        Box.Show('note_add_photo_' + pid, 300, lang_notes_setting_addphoto, lang_notes_sett_box_content, lang_box_canсel, lang_box_save, 'wysiwyg.inPhoto(\'' + img + '\', ' + uid + ', ' + pid + ')', 0, 0, 0, 0, 1);
+        Box.Show('note_add_photo_' + pid, 300, lang_notes_setting_addphoto, lang_notes_sett_box_content, lang_box_cancel, lang_box_save, 'wysiwyg.inPhoto(\'' + img + '\', ' + uid + ', ' + pid + ')', 0, 0, 0, 0, 1);
         myhtml.checked(['img_link_' + pid, '0']);
     },
     inPhoto: function (img, uid, pid) {
@@ -1542,7 +1542,7 @@ var wysiwyg = {
     boxVideo: function (img, uid, vid) {
         Box.Close('all_videos', 1);
         lang_notes_sett_box_content = '<div style="padding:15px">' + '<div class="texta" style="width:90px">Ширина:</div><input type="text" id="v_width_' + vid + '" class="inpst" maxlength="3" size="3" value="175" /> &nbsp;px<div class="mgclr"></div>' + '<div class="texta" style="width:90px">Высота:</div><input type="text" id="v_height_' + vid + '" class="inpst" maxlength="3" size="3" value="131" /> &nbsp;px<div class="mgclr"></div>' + '<div class="texta" style="width:90px">Выравнивание:</div><div class="padstylej"><select class="inpst" id="v_pos_' + vid + '"><option value="0">стандартно</option><option value="1">по левому краю</option><option value="2">по правому краю</option><option value="3">по центру</option></select></div><div class="mgclr"></div>' + '<div class="texta" style="width:90px">&nbsp;</div><div class="html_checkbox" id="v_img_blank_' + vid + '" onClick="myhtml.checkbox(this.id)" style="margin-top:5px">Открывать в новом окне</div><div class="mgclr"></div>' + '<div class="texta" style="width:90px">&nbsp;</div><div class="html_checkbox" id="v_img_border_' + vid + '" onClick="myhtml.checkbox(this.id)" style="margin-top:5px">Показывать рамку</div><div class="mgclr"></div>' + '</div>';
-        Box.Show('note_add_video_' + vid, 300, lang_notes_setting_addvdeio, lang_notes_sett_box_content, lang_box_canсel, lang_box_save, 'wysiwyg.inVideo(\'' + img + '\', ' + uid + ', ' + vid + ')', 0, 0, 0, 0, 1);
+        Box.Show('note_add_video_' + vid, 300, lang_notes_setting_addvdeio, lang_notes_sett_box_content, lang_box_cancel, lang_box_save, 'wysiwyg.inVideo(\'' + img + '\', ' + uid + ', ' + vid + ')', 0, 0, 0, 0, 1);
     },
     inVideo: function (img, uid, vid) {
         Box.Close('note_add_video_' + vid, 1);
@@ -1562,7 +1562,7 @@ var wysiwyg = {
     },
     linkBox: function () {
         lang_wysiwyg_box_content = '<div style="padding:15px">' + '<div class="texta" style="width:90px">Адрес ссылки:</div><input type="text" id="l_http" class="inpst" style="width:300px" /><div class="mgclr"></div>' + '<div class="texta" style="width:90px">Текст ссылки:</div><input type="text" id="l_text" class="inpst" style="width:300px" /><div class="mgclr"></div>' + '</div>';
-        Box.Show('w_link', 450, lang_wysiwyg_title, lang_wysiwyg_box_content, lang_box_canсel, lang_box_save, 'wysiwyg.insertLink()');
+        Box.Show('w_link', 450, lang_wysiwyg_title, lang_wysiwyg_box_content, lang_box_cancel, lang_box_save, 'wysiwyg.insertLink()');
         $('#l_http').focus();
     },
     insertLink: function () {
@@ -1927,7 +1927,7 @@ var support = {
         } else setErrorInputMsg('title');
     },
     delquest: function (qid) {
-        Box.Show('del_quest', 400, lang_title_del_photo, '<div style="padding:15px;" id="text_del_quest">' + lang_support_text + '</div>', lang_box_canсel, lang_box_yes, 'support.startDel(' + qid + '); return false');
+        Box.Show('del_quest', 400, lang_title_del_photo, '<div style="padding:15px;" id="text_del_quest">' + lang_support_text + '</div>', lang_box_cancel, lang_box_yes, 'support.startDel(' + qid + '); return false');
     },
     startDel: function (qid) {
         $('#box_loading').show();
@@ -1987,7 +1987,7 @@ var blog = {
         } else setErrorInputMsg('title');
     },
     del: function (id) {
-        Box.Show('del_quest', 400, lang_title_del_photo, '<div style="padding:15px;" id="text_del_quest">' + lang_news_text + '</div>', lang_box_canсel, lang_box_yes, 'blog.startDel(' + id + '); return false');
+        Box.Show('del_quest', 400, lang_title_del_photo, '<div style="padding:15px;" id="text_del_quest">' + lang_news_text + '</div>', lang_box_cancel, lang_box_yes, 'blog.startDel(' + id + '); return false');
     },
     startDel: function (id) {
         $('#box_loading').show();
@@ -2019,7 +2019,7 @@ var gifts = {
     box: function (user_id, c) {
         if (c) var cache = 0;
         else var cache = 1;
-        Box.Page('/index.php?go=gifts&act=view', 'user_id=' + user_id, 'gifts', 679, lang_gifts_title, lang_box_canсel, 0, 0, 450, 1, 1, 1, 0, cache);
+        Box.Page('/index.php?go=gifts&act=view', 'user_id=' + user_id, 'gifts', 679, lang_gifts_title, lang_box_cancel, 0, 0, 450, 1, 1, 1, 0, cache);
     },
     showgift: function (id) {
         $('#g' + id).show();
@@ -2029,7 +2029,7 @@ var gifts = {
     },
     select: function (gid, fid) {
         Box.Close(0, 1);
-        Box.Show('send_gift' + gid, 460, lang_gifts_title, '<center><img src="/uploads/gifts/' + gid + '.jpg" style="margin-top:30px" /></center><div class="fl_l color777" style="padding:3px;margin-left:100px;margin-right:5px">Тип подарка:</div><div class="sett_privacy" onClick="settings.privacyOpen(\'privacy_comment' + gid + '\')" id="privacy_lnk_privacy_comment' + gid + '">Виден всем</div><div class="sett_openmenu no_display" id="privacyMenu_privacy_comment' + gid + '" style="margin-top:-1px;margin-left:176px;width:100px"><div id="selected_p_privacy_lnk_privacy_comment' + gid + '" class="sett_selected" onClick="settings.privacyClose(\'privacy_comment' + gid + '\')">Виден всем</div><div class="sett_hover" onClick="settings.setPrivacy(\'privacy_comment' + gid + '\', \'Виден всем\', \'1\', \'privacy_lnk_privacy_comment' + gid + '\')">Виден всем</div><div class="sett_hover" onClick="settings.setPrivacy(\'privacy_comment' + gid + '\', \'Личный\', \'2\', \'privacy_lnk_privacy_comment' + gid + '\')">Личный</div><div class="sett_hover" onClick="settings.setPrivacy(\'privacy_comment' + gid + '\', \'Анонимный\', \'3\', \'privacy_lnk_privacy_comment' + gid + '\')">Анонимный</div></div><input type="hidden" id="privacy_comment' + gid + '" value="1" /><div class="clear"></div><div class="fl_l color777" style="margin-left:182px;margin-right:5px" id="addmsgtext' + gid + '"><a href="" onClick="gifts.addmssbox(' + gid + '); return false">Добавить сообщение</a></div>', lang_box_canсel, lang_box_send, 'gifts.send(' + gid + ', ' + fid + ')', 340, 0, 0, 0, 0);
+        Box.Show('send_gift' + gid, 460, lang_gifts_title, '<center><img src="/uploads/gifts/' + gid + '.jpg" style="margin-top:30px" /></center><div class="fl_l color777" style="padding:3px;margin-left:100px;margin-right:5px">Тип подарка:</div><div class="sett_privacy" onClick="settings.privacyOpen(\'privacy_comment' + gid + '\')" id="privacy_lnk_privacy_comment' + gid + '">Виден всем</div><div class="sett_openmenu no_display" id="privacyMenu_privacy_comment' + gid + '" style="margin-top:-1px;margin-left:176px;width:100px"><div id="selected_p_privacy_lnk_privacy_comment' + gid + '" class="sett_selected" onClick="settings.privacyClose(\'privacy_comment' + gid + '\')">Виден всем</div><div class="sett_hover" onClick="settings.setPrivacy(\'privacy_comment' + gid + '\', \'Виден всем\', \'1\', \'privacy_lnk_privacy_comment' + gid + '\')">Виден всем</div><div class="sett_hover" onClick="settings.setPrivacy(\'privacy_comment' + gid + '\', \'Личный\', \'2\', \'privacy_lnk_privacy_comment' + gid + '\')">Личный</div><div class="sett_hover" onClick="settings.setPrivacy(\'privacy_comment' + gid + '\', \'Анонимный\', \'3\', \'privacy_lnk_privacy_comment' + gid + '\')">Анонимный</div></div><input type="hidden" id="privacy_comment' + gid + '" value="1" /><div class="clear"></div><div class="fl_l color777" style="margin-left:182px;margin-right:5px" id="addmsgtext' + gid + '"><a href="" onClick="gifts.addmssbox(' + gid + '); return false">Добавить сообщение</a></div>', lang_box_cancel, lang_box_send, 'gifts.send(' + gid + ', ' + fid + ')', 340, 0, 0, 0, 0);
     },
     send: function (gfid, fid) {
         var privacy = $('#privacy_comment' + gfid).val();
@@ -2066,7 +2066,7 @@ var gifts = {
 //GROUPS
 var groups = {
     createbox: function () {
-        Box.Show('create', 490, lang_groups_new, '<div style="padding:20px"><div class="videos_text">Название</div><input type="text" class="videos_input" id="title" maxlength="65" /></div>', lang_box_canсel, lang_groups_cretate, 'groups.creat()', 100, 0, 0, 0, 0, 'title');
+        Box.Show('create', 490, lang_groups_new, '<div style="padding:20px"><div class="videos_text">Название</div><input type="text" class="videos_input" id="title" maxlength="65" /></div>', lang_box_cancel, lang_groups_cretate, 'groups.creat()', 100, 0, 0, 0, 0, 'title');
         $('#title').focus();
     },
     creat: function () {
@@ -2114,10 +2114,10 @@ var groups = {
         });
     },
     loadphoto: function (id) {
-        Box.Page('/index.php?go=groups&act=loadphoto_page', 'id=' + id, 'loadphoto', 400, lang_title_load_photo, lang_box_canсel, 0, 0, 0, 0, 0, 0, 0, 1);
+        Box.Page('/index.php?go=groups&act=loadphoto_page', 'id=' + id, 'loadphoto', 400, lang_title_load_photo, lang_box_cancel, 0, 0, 0, 0, 0, 0, 0, 1);
     },
     delphoto: function (id) {
-        Box.Show('del_photo', 400, lang_title_del_photo, '<div style="padding:15px;">' + lang_del_photo + '</div>', lang_box_canсel, lang_box_yes, 'groups.startdelete(' + id + ')');
+        Box.Show('del_photo', 400, lang_title_del_photo, '<div style="padding:15px;">' + lang_del_photo + '</div>', lang_box_cancel, lang_box_yes, 'groups.startdelete(' + id + ')');
     },
     startdelete: function (id) {
         $('#box_loading').show();
@@ -2131,7 +2131,7 @@ var groups = {
         });
     },
     addcontact: function (id) {
-        Box.Page('/index.php?go=groups&act=addfeedback_pg', 'id=' + id, 'addfeedback', 400, 'Добавление контактного лица', lang_box_canсel, 'Сохранить', 'groups.savefeedback(' + id + ')', 0, 0, 0, 0, 'upage', 0);
+        Box.Page('/index.php?go=groups&act=addfeedback_pg', 'id=' + id, 'addfeedback', 400, 'Добавление контактного лица', lang_box_cancel, 'Сохранить', 'groups.savefeedback(' + id + ')', 0, 0, 0, 0, 'upage', 0);
     },
     savefeedback: function (id) {
         var upage = $('#upage').val();
@@ -2407,7 +2407,7 @@ var groups = {
             page = '';
             page_num = 1;
         }
-        Box.Page('/index.php?go=groups&act=photos', 'public_id=' + public_id + page, 'c_all_photos_' + page_num, 627, lang_wall_attatch_photos, lang_box_canсel, 0, 0, 400, 1, 0, 1, 0, 1);
+        Box.Page('/index.php?go=groups&act=photos', 'public_id=' + public_id + page, 'c_all_photos_' + page_num, 627, lang_wall_attatch_photos, lang_box_cancel, 0, 0, 400, 1, 0, 1, 0, 1);
     },
     wall_attach_insert: function (type, data, action_url) {
         if (!$('#wall_text').val()) wall.form_open();
@@ -2476,7 +2476,7 @@ var groups = {
     },
     wall_video_add_box: function () {
         wall.attach_menu('close', 'wall_attach', 'wall_attach_menu');
-        Box.Show('attach_videos', 400, 'Ссылка видеозаписи на УдинБала', '<div style="padding:15px;"><input  type="text"  placeholder="Введите ссылку видеозаписи на УдинБала.."  class="videos_input" id="video_attach_lnk" style="width:355px;margin-top:10px" /></div>', lang_box_canсel, 'Прикрпепить', 'groups.wall_video_add_select()');
+        Box.Show('attach_videos', 400, 'Ссылка видеозаписи на УдинБала', '<div style="padding:15px;"><input  type="text"  placeholder="Введите ссылку видеозаписи на УдинБала.."  class="videos_input" id="video_attach_lnk" style="width:355px;margin-top:10px" /></div>', lang_box_cancel, 'Прикрпепить', 'groups.wall_video_add_select()');
         $('#video_attach_lnk').focus();
     },
     wall_video_add_select: function () {
@@ -2705,7 +2705,7 @@ var audio = {
     },
     addBoxComp: function () {
         Box.Close();
-        Box.Show('addaudio_comp', 510, lang_audio_add, '<div class="videos_pad"><div class="buttonsprofile albumsbuttonsprofile buttonsprofileSecond" style="height:22px;margin-bottom:20px;margin-top:-5px"><a onClick="audio.addBox()" class="cursor_pointer"><div><b>По ссылке</b></div></a><div class="buttonsprofileSec cursor_pointer"><a><div><b>С компьютера</b></div></a></div></div><div class="videos_text">Ограничения<div class="clear"></div><li style="font-weight:normal;color:#000;font-size:11px;margin-top:10px">Аудиофайл не должен превышать 10 Мб и должен быть в формате MP3.</li><li style="font-weight:normal;color:#000;font-size:11px;margin-bottom:15px">Аудиофайл не должен нарушать авторские права.</li><div class="button_div fl_l" style="margin-left:170px"><button id="upload">Выбрать файл</button></div><div class="clear"></div><div style="margin-top:15px;font-size:11px;color:#000;font-weight:normal">Вы также можете добавить аудиозапись из числа уже загруженных файлов, воспользовавшись <a href="/?go=search&type=5"><b>поиском по аудио.</b></a></div></div></div>', lang_box_canсel, lang_album_create, 'audio.send()', 0, 0, 1, 1);
+        Box.Show('addaudio_comp', 510, lang_audio_add, '<div class="videos_pad"><div class="buttonsprofile albumsbuttonsprofile buttonsprofileSecond" style="height:22px;margin-bottom:20px;margin-top:-5px"><a onClick="audio.addBox()" class="cursor_pointer"><div><b>По ссылке</b></div></a><div class="buttonsprofileSec cursor_pointer"><a><div><b>С компьютера</b></div></a></div></div><div class="videos_text">Ограничения<div class="clear"></div><li style="font-weight:normal;color:#000;font-size:11px;margin-top:10px">Аудиофайл не должен превышать 10 Мб и должен быть в формате MP3.</li><li style="font-weight:normal;color:#000;font-size:11px;margin-bottom:15px">Аудиофайл не должен нарушать авторские права.</li><div class="button_div fl_l" style="margin-left:170px"><button id="upload">Выбрать файл</button></div><div class="clear"></div><div style="margin-top:15px;font-size:11px;color:#000;font-weight:normal">Вы также можете добавить аудиозапись из числа уже загруженных файлов, воспользовавшись <a href="/?go=search&type=5"><b>поиском по аудио.</b></a></div></div></div>', lang_box_cancel, lang_album_create, 'audio.send()', 0, 0, 1, 1);
         $('#audio_lnk').focus();
         $('#box_but').hide();
         Xajax = new AjaxUpload('upload', {
@@ -2752,7 +2752,7 @@ var audio = {
     edit: function (aid, pid) {
         if (pid) funcsave = 'PublicAudioEditsave(' + aid + ', ' + pid + ')';
         else funcsave = 'audio.editsave(' + aid + ')';
-        Box.Show('edit' + aid, 510, 'Редактирование аудиозаписи', '<div class="videos_pad"><div class="videos_text">Исполнитель</div><input type="text" class="videos_input" id="valartis' + aid + '" style="margin-bottom:15px" value="' + $('#artis' + aid).html() + '" /><div class="videos_text">Название</div><input type="text" class="videos_input" id="vaname' + aid + '" value="' + $('#name' + aid).html() + '" /></div>', lang_box_canсel, 'Сохранить', funcsave, 0, 0, 1, 1);
+        Box.Show('edit' + aid, 510, 'Редактирование аудиозаписи', '<div class="videos_pad"><div class="videos_text">Исполнитель</div><input type="text" class="videos_input" id="valartis' + aid + '" style="margin-bottom:15px" value="' + $('#artis' + aid).html() + '" /><div class="videos_text">Название</div><input type="text" class="videos_input" id="vaname' + aid + '" value="' + $('#name' + aid).html() + '" /></div>', lang_box_cancel, 'Сохранить', funcsave, 0, 0, 1, 1);
         $('#audio_lnk').focus();
     },
     editsave: function (aid) {
@@ -3084,7 +3084,7 @@ var im = {
         }
     },
     box_del: function (u) {
-        Box.Show('im_del' + u, 350, 'Удалить все сообщения', '<div style="padding:15px;" id="del_status_text_im">Вы действительно хотите удалить всю переписку с данным пользователем?<br /><br />Отменить это действие будет невозможно.</div>', lang_box_canсel, lang_box_yes, 'im.del(' + u + ')');
+        Box.Show('im_del' + u, 350, 'Удалить все сообщения', '<div style="padding:15px;" id="del_status_text_im">Вы действительно хотите удалить всю переписку с данным пользователем?<br /><br />Отменить это действие будет невозможно.</div>', lang_box_cancel, lang_box_yes, 'im.del(' + u + ')');
     },
     del: function (u) {
         var room_id = u.toString().substr(0, 1) == 'c' ? u.toString().substr(1) : 0;
@@ -3353,7 +3353,7 @@ var Report = {
 //REPOST
 var Repost = {
     Box: function (rec_id, g_tell) {
-        Box.Page('/index.php?go=repost&act=all', 'rec_id=' + rec_id, 'repost', 430, 'Отправка записи', lang_box_canсel, 'Поделиться записью', 'Repost.Send(' + rec_id + ', ' + g_tell + ')', 0, 0, 0, 0, 'comment_repost');
+        Box.Page('/index.php?go=repost&act=all', 'rec_id=' + rec_id, 'repost', 430, 'Отправка записи', lang_box_cancel, 'Поделиться записью', 'Repost.Send(' + rec_id + ', ' + g_tell + ')', 0, 0, 0, 0, 'comment_repost');
     },
     Send: function (rec_id, g_tell) {
         comm = $('#comment_repost').val();
@@ -3619,7 +3619,7 @@ var Forum = {
     },
     DelBox: function (f, p) {
         settings.privacyClose('msg');
-        Box.Show('del_forthe', 350, lang_title_del_photo, '<div style="padding:15px;" id="del_status_text_forum">Вы уверены, что хотите удалить эту тему?</div>', lang_box_canсel, lang_box_yes, 'Forum.StartDelete(' + f + ', ' + p + ')');
+        Box.Show('del_forthe', 350, lang_title_del_photo, '<div style="padding:15px;" id="del_status_text_forum">Вы уверены, что хотите удалить эту тему?</div>', lang_box_cancel, lang_box_yes, 'Forum.StartDelete(' + f + ', ' + p + ')');
     },
     StartDelete: function (f, p) {
         $('#box_loading').show();
@@ -3672,7 +3672,7 @@ var Forum = {
         for (i = 2; i <= 10; i++) $('#div_inp_answr_' + i).remove();
     },
     VoteDelBox: function (f) {
-        Box.Show('del_forthe', 350, lang_title_del_photo, '<div style="padding:15px;" id="del_status_text_forum">Вы уверены, что хотите удалить опрос?</div>', lang_box_canсel, lang_box_yes, 'Forum.StartVoteDelete(' + f + ')');
+        Box.Show('del_forthe', 350, lang_title_del_photo, '<div style="padding:15px;" id="del_status_text_forum">Вы уверены, что хотите удалить опрос?</div>', lang_box_cancel, lang_box_yes, 'Forum.StartVoteDelete(' + f + ')');
     },
     StartVoteDelete: function (f) {
         Box.Close();
@@ -3759,11 +3759,9 @@ var imRoom = {
     createBox: function (el) {
         var el = $(el);
         el.attr('disabled', true);
-        // viiBox.start();
         $.post('/index.php?go=im&act=createRoomBox', function (d) {
             el.removeAttr('disabled');
-            // viiBox.win('createRoom', d);
-            Box.Show('createRoom', 400, 'Создание беседы', d, lang_box_cancel, 'Создать беседу', imRoom.create(this));
+            Box.Show('createRoom', 400, 'Создание беседы', d, lang_box_cancel);
         });
     },
     inviteBox: function (el, room_id) {
@@ -3787,7 +3785,7 @@ var imRoom = {
         }, function (d) {
             el.removeAttr('disabled');
             // viiBox.win('viewRoom', d);
-            Box.Show('viewRoom', 400, viewRoom, d, lang_box_canсel);
+            Box.Show('viewRoom', 685, 'viewRoom', d, lang_box_cancel);
         });
     },
     saveName: function (el, room_id) {
@@ -3874,7 +3872,10 @@ var imRoom = {
                         addAllErr(d.error);
                 });
             });
-        } else title.focus();
+        } else {
+            title.focus();
+            addAllErr('title null');
+        }
     },
     invite: function (el, room_id) {
         var el = $(el),
