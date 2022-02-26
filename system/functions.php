@@ -46,7 +46,7 @@ function intFilter(string $source, int $default = 0): int
     } else {
         return $default;
     }
-    return intval($source);
+    return (int)$source;
 }
 
 /**

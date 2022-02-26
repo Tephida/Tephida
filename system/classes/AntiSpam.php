@@ -29,20 +29,25 @@ class AntiSpam
 
     public static function limit(string $act): int
     {
-        if ($act == 'friends')
+        if ($act === 'friends') {
             return self::$max_friends;
-        elseif ($act == 'messages')
+        }
+        if ($act === 'messages') {
             return self::$max_msg;
-        elseif ($act == 'wall')
+        }
+        if ($act === 'wall') {
             return self::$max_wall;
-        elseif ($act == 'identical')
+        }
+        if ($act === 'identical') {
             return self::$max_identical;
-        elseif ($act == 'comments')
+        }
+        if ($act === 'comments') {
             return self::$max_comm;
-        elseif ($act == 'groups')
+        }
+        if ($act === 'groups') {
             return self::$max_groups;
-        else
-            return 0;
+        }
+        return 0;
     }
 
     public static function check(string $act, $text = false): void
