@@ -1224,21 +1224,24 @@ HTML;
             foreach ($sql_ as $row) {
                 $tpl->set('{name}', $row['user_search_pref']);
                 $tpl->set('{uid}', $row['room_id'] ? 'c' . $row['room_id'] : $row['im_user_id']);
-                if ($row['user_photo'])
+                if ($row['user_photo']) {
                     $tpl->set('{ava}', $row['room_id'] ? $row['user_photo'] : '/uploads/users/' . $row['im_user_id'] . '/50_' . $row['user_photo']);
-                else
+                } else {
                     $tpl->set('{ava}', '{theme}/images/no_ava_50.png');
-                if ($row['msg_num'])
+                }
+                if ($row['msg_num']) {
                     $tpl->set('{msg_num}', '<div class="im_new fl_l" id="msg_num' . ($row['room_id'] ? 'c' . $row['room_id'] : $row['im_user_id']) . '">' . $row['msg_num'] . '</div>');
-                else
+                } else {
                     $tpl->set('{msg_num}', '');
+                }
                 $tpl->compile('dialog');
             }
             $tpl->load_template('im/head.tpl');
-            if ($sql_)
+            if ($sql_) {
                 $tpl->set('{dialogs}', $tpl->result['dialog']);
-            else
+            } else {
                 $tpl->set('{dialogs}', '');
+            }
             $tpl->set('[inbox]', '');
             $tpl->set('[/inbox]', '');
             $tpl->set_block("'\\[outbox\\](.*?)\\[/outbox\\]'si", "");

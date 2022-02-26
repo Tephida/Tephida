@@ -9,7 +9,7 @@
 
 namespace Mozg\classes;
 
-use Status;
+use Mozg\classes\Status;
 
 class Dialog
 {

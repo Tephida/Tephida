@@ -13,7 +13,6 @@ $go = isset($_GET['go']) ? htmlspecialchars(strip_tags(stripslashes(trim(urldeco
 
 Registry::set('go', $go);
 
-check_xss();
 //FOR MOBILE VERSION 1.0
 $config = $config ?? settings_get();
 $lang['online'] = $config['temp'] == 'mobile' ? '<img src="{theme}/images/monline.gif" />' : '';

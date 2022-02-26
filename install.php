@@ -9,18 +9,22 @@
 
 use Mozg\classes\Filesystem;
 
-if (!file_exists('./vendor/autoload.php')) {
-    throw new InvalidArgumentException("Please install composer");
+if (version_compare(PHP_VERSION, '8.0.0') < 0) {
+    echo "Please change php version";
+    exit();
 }
 
-require_once './vendor/autoload.php';
-
+try {
+    require_once './vendor/autoload.php';
+} catch (Exception) {
+    echo "Please install composer";
+    exit();
+}
 header('Content-type: text/html; charset=utf-8');
 
-define('ROOT_DIR', dirname(__FILE__));
+const ROOT_DIR = __DIR__;
 const ENGINE_DIR = ROOT_DIR . '/system';
 
-include './system/classes/Filesystem.php';
 include './system/functions.php';
 
 function check_install(): bool
@@ -370,17 +374,19 @@ ob_start();
 ob_implicit_flush(0);
 
 if (version_compare(PHP_VERSION, '8.0.0') < 0) {
-    throw new InvalidArgumentException("Please change php version");
-}
-if (!file_exists('./vendor/autoload.php')) {
-    throw new InvalidArgumentException("Please install composer");
+    echo "Please change php version";
+    exit();
 }
 
-const MOZG = true;
-define('ROOT_DIR', dirname (__FILE__));
+const ROOT_DIR = __DIR__;
 const ENGINE_DIR = ROOT_DIR . '/system';
 const ADMIN_DIR = ROOT_DIR . '/system/inc';
+try {
 require_once './vendor/autoload.php';
+} catch (Exception) {
+    echo "Please install composer";
+    exit();
+}
 include ADMIN_DIR.'/functions.php';
 include ADMIN_DIR.'/login.php';
 HTML;

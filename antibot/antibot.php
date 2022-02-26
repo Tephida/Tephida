@@ -20,8 +20,10 @@ function clean_url(string $url)
     return reset($url);
 }
 
-if(clean_url($_SERVER['HTTP_REFERER']) != clean_url($_SERVER['HTTP_HOST'])) 
-	die("Hacking attempt!");
+if (clean_url($_SERVER['HTTP_REFERER']) != clean_url($_SERVER['HTTP_HOST'])) {
+
+    throw new ErrorException('host err');
+}
 	
 $width = 120;				//Ширина изображения
 $height = 50;				//Высота изображения

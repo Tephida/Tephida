@@ -4745,15 +4745,15 @@ ul.listing li span {
 
 /* MINIATURE */
 .miniature_box {
-    position: fixed;
-    left: 0;
-    top: 0;
-    right: 0;
-    bottom: 0;
-    overflow: auto;
-    padding-bottom: 20px;
-    background: url("../images/bgb3.png");
-    z-index: 100
+    /*position: fixed;*/
+    /*left: 0;*/
+    /*top: 0;*/
+    /*right: 0;*/
+    /*bottom: 0;*/
+    /*overflow: auto;*/
+    /*padding-bottom: 20px;*/
+    /*background: url("../images/bgb3.png");*/
+    /*z-index: 100*/
 }
 
 .miniature_pos {
@@ -5679,7 +5679,7 @@ ul.listing li span {
     overflow: hidden;
     cursor: pointer;
     padding: 8px;
-    margin: -8px 10px 10px -8px;
+    margin: 3px 10px;
 }
 
 .grIntiveUser img, .grInviteYesed img {

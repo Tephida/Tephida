@@ -226,12 +226,12 @@ var Profile = {
     LoadPhoto: function () {
         Page.Loading('start');
         $.get('/index.php?go=editprofile&act=load_photo', function (data) {
-            Box.Show('photo', 400, lang_title_load_photo, data, lang_box_canсel);
+            Box.Show('photo', 400, lang_title_load_photo, data, lang_box_cancel);
             Page.Loading('stop');
         });
     },
     DelPhoto: function () {
-        Box.Show('del_photo', 400, lang_title_del_photo, '<div style="padding:15px;">' + lang_del_photo + '</div>', lang_box_canсel, lang_box_yes, 'Profile.StartDelPhoto(); return false;');
+        Box.Show('del_photo', 400, lang_title_del_photo, '<div style="padding:15px;">' + lang_del_photo + '</div>', lang_box_cancel, lang_box_yes, 'Profile.StartDelPhoto(); return false;');
     },
     StartDelPhoto: function () {
         $('#box_loading').show();
@@ -289,38 +289,70 @@ var Box = {
             if (input_focus) $('#' + input_focus).focus();
         });
     },
+    /**
+     *
+     * @param name - id окна
+     * @param width - ширина окна
+     * @param title - заголовк окна
+     * @param content - контент окна
+     * @param close_text - текст закрытия
+     * @param func_text - текст который будет выполнять функцию
+     * @param func - функция текста "func_text"
+     * @param height - высота окна
+     * @param overflow - постоянный скролл
+     * @param bg_show - тень внтури окна сверху
+     * @param bg_show_bottom - тень внтури внтури снизу
+     * @param cache - "1" - кешировоть, "0" - не кешировать
+     * @constructor
+     */
     Show: function (name, width, title, content, close_text, func_text, func, height, overflow, bg_show, bg_show_bottom, cache) {
-        //name - id окна
-        //width - ширина окна
-        //title - заголовк окна
-        //content - контент окна
-        //close_text - текст закрытия
-        //func_text - текст который будет выполнять функцию
-        //func - функция текста "func_text"
-        //height - высота окна
-        //overflow - постоянный скролл
-        //bg_show - тень внтури окна сверху
-        //bg_show_bottom - тень внтури внтури снизу
-        //cache - "1" - кешировоть, "0" - не кешировать
-        if (func_text) var func_but = '<div class="button_div fl_r" style="margin-right:10px;" id="box_but"><button onClick="' + func + '" id="box_butt_create">' + func_text + '</button></div>';
-        else var func_but = '';
-        var close_but = '<div class="button_div_gray fl_r"><button onClick="Box.Close(\'' + name + '\', ' + cache + '); return false;">' + close_text + '</button></div>';
-        var box_loading = '<img id="box_loading" style="display:none;padding-top:8px;padding-left:5px;" src="/templates/Default/images/loading_mini.gif" alt="" />';
+        var func_but;
+        if (func_text)
+            func_but = '<div class="button_div fl_r" style="margin-right:10px;" id="box_but">' +
+                '<button onClick="' + func + '" id="box_butt_create">' + func_text + '</button></div>';
+        else
+            func_but = '';
+
+        if (!cache)
+            cache = false;
+        var close_but = '<div class="button_div_gray fl_r">' +
+            '<button ' +
+            'onClick="Box.Close(\'' + name + '\', ' + cache + '); return false;">' + close_text + '</button></div>';
+        var box_loading = '<img id="box_loading" style="display:none;padding-top:8px;padding-left:5px;" ' +
+            'src="/templates/Default/images/loading_mini.gif" alt="" />';
         if (height) var top_pad = ($(window).height() - 150 - height) / 2;
         if (top_pad < 0) top_pad = 100;
-        if (overflow) var overflow = 'overflow-y:scroll;';
-        else var overflow = '';
+        if (overflow)
+            overflow = 'overflow-y:scroll;';
+        else
+            overflow = '';
         if (bg_show)
-            if (overflow) var bg_show = '<div class="bg_show" style="width:' + (width - 19) + 'px;"></div>';
-            else var bg_show = '<div class="bg_show" style="width:' + (width - 2) + 'px;"></div>';
-        else var bg_show = '';
+            if (overflow)
+                bg_show = '<div class="bg_show" style="width:' + (width - 19) + 'px;"></div>';
+            else
+                bg_show = '<div class="bg_show" style="width:' + (width - 2) + 'px;"></div>';
+        else
+            bg_show = '';
         if (bg_show_bottom)
-            if (overflow) var bg_show_bottom = '<div class="bg_show_bottom" style="width:' + (width - 17) + 'px;"></div>';
-            else var bg_show_bottom = '<div class="bg_show_bottom" style="width:' + (width - 2) + 'px;"></div>';
-        else var bg_show_bottom = '';
-        if (height) var sheight = 'height:' + height + 'px';
-        else var sheight = '';
-        $('body').append('<div id="modal_box"><div id="box_' + name + '" class="box_pos"><div class="box_bg" style="width:' + width + 'px;margin-top:' + top_pad + 'px;"><div class="box_title" id="box_title_' + name + '">' + title + '<div class="box_close" onClick="Box.Close(\'' + name + '\', ' + cache + '); return false;"></div></div><div class="box_conetnt" id="box_content_' + name + '" style="' + sheight + ';' + overflow + '">' + bg_show + content + '<div class="clear"></div></div>' + bg_show_bottom + '<div class="box_footer"><div id="box_bottom_left_text" class="fl_l">' + box_loading + '</div>' + close_but + func_but + '</div></div></div></div>');
+            if (overflow)
+                bg_show_bottom = '<div class="bg_show_bottom" style="width:' + (width - 17) + 'px;"></div>';
+            else
+                bg_show_bottom = '<div class="bg_show_bottom" style="width:' + (width - 2) + 'px;"></div>';
+        else
+            bg_show_bottom = '';
+        var sheight;
+        if (height)
+            sheight = 'height:' + height + 'px';
+        else
+            sheight = '';
+        $('body').append('<div id="modal_box"><div id="box_' + name + '" class="box_pos">' +
+            '<div class="box_bg" style="width:' + width + 'px;margin-top:' + top_pad + 'px;">' +
+            '<div class="box_title" id="box_title_' + name + '">' + title +
+            '<div class="box_close" onClick="Box.Close(\'' + name + '\', ' + cache + '); return false;"></div></div>' +
+            '<div class="box_conetnt" id="box_content_' + name + '" style="' + sheight + ';' + overflow + '">' +
+            bg_show + content + '<div class="clear"></div></div>' + bg_show_bottom +
+            '<div class="box_footer"><div id="box_bottom_left_text" class="fl_l">' +
+            box_loading + '</div>' + close_but + func_but + '</div></div></div></div>');
         $('#box_' + name).show();
         $('html').css('overflow', 'hidden');
         $(window).keydown(function (event) {
@@ -330,10 +362,17 @@ var Box = {
         });
     },
     Close: function (name, cache) {
-        if (!cache) $('.box_pos').remove();
-        else $('.box_pos').hide();
-        if (CheckRequestVideo(location.href) == false && CheckRequestPhoto(location.href) == false) $('html, body').css('overflow-y', 'auto');
-        if (CheckRequestVideo(location.href)) $('#video_object').show();
+        if (!cache) {
+            $('.box_pos').remove();
+            $('#modal_box').remove();
+
+        } else
+            $('.box_pos').hide();
+
+        if (CheckRequestVideo(location.href) == false && CheckRequestPhoto(location.href) == false)
+            $('html, body').css('overflow-y', 'auto');
+        if (CheckRequestVideo(location.href))
+            $('#video_object').show();
     },
     GeneralClose: function () {
         $('#modal_box').hide();
