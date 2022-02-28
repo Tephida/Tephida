@@ -544,12 +544,19 @@ if (Registry::get('logged')) {
                         $tpl->set('{comments}', $tpl->result['comments'] ?? '');
                         //Показываем стрелочки если фотографий больше одной и фотография вызвана не со стены
                         if ($row_album['photo_num'] > 1 && !$fuser) {
-                            //Если фотография вызвана из альбом "все фотографии" или вызвана со страницы юзера
-                            if ($row['position'] == $row_album['photo_num'])
-                                $next_photo = $position[1];
-                            else $next_photo = $position[($row['position'] + 1)];
-                            if ($row['position'] == 1) $prev_photo = $position[($row['position'] + $row_album['photo_num'] - 1)];
-                            else $prev_photo = $position[($row['position'] - 1)];
+                            //Если фотография вызвана из альбома "все фотографии" или вызвана со страницы юзера
+
+
+                            if ($row['position'] == $row_album['photo_num']) {
+                                $next_photo = $position[1] ?? null;
+                            } else {
+                                $next_photo = $position[($row['position'] + 1)];
+                            }
+                            if ($row['position'] == 1) {
+                                $prev_photo = $position[($row['position'] + $row_album['photo_num'] - 1)];
+                            } else {
+                                $prev_photo = $position[($row['position'] - 1)];
+                            }
                             $tpl->set('{next-id}', $next_photo);
                             $tpl->set('{prev-id}', $prev_photo);
                         } else {
