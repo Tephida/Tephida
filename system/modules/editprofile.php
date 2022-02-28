@@ -9,6 +9,7 @@
 
 use Mozg\classes\Filesystem;
 use Mozg\classes\Registry;
+use Mozg\classes\Thumbnail;
 
 NoAjaxQuery();
 
@@ -25,11 +26,11 @@ if (Registry::get('logged')) {
         case "upload":
             NoAjaxQuery();
             $user_id = $user_info['user_id'];
-            $uploaddir = ROOT_DIR . '/uploads/users/';
+            $upload_dir = ROOT_DIR . '/uploads/users/';
 
             //Если нет папок юзера, то создаём её
-            Filesystem::createDir($uploaddir . $user_id);
-            Filesystem::createDir($uploaddir . $user_id . '/albums');
+            Filesystem::createDir($upload_dir . $user_id);
+            Filesystem::createDir($upload_dir . $user_id . '/albums');
 
             //Разрешенные форматы
             $allowed_files = array('jpg', 'jpeg', 'jpe', 'png', 'gif');
@@ -37,48 +38,50 @@ if (Registry::get('logged')) {
             //Получаем данные о фотографии
             $image_tmp = $_FILES['uploadfile']['tmp_name'];
             $image_name = to_translit($_FILES['uploadfile']['name']); // оригинальное название для оприделения формата
-            $image_rename = substr(md5($server_time + rand(1, 100000)), 0, 15); // имя фотографии
+            $image_rename = substr(md5($server_time + random_int(1, 100000)), 0, 15); // имя фотографии
             $image_size = $_FILES['uploadfile']['size']; // размер файла
             $array = explode(".", $image_name);
             $type = end($array); // формат файла
 
             //Проверяем если, формат верный то пропускаем
-            if (in_array($type, $allowed_files)) {
+            if (in_array($type, $allowed_files, true)) {
                 if ($image_size < 5000000) {
                     $res_type = '.' . $type;
-                    $uploaddir = ROOT_DIR . '/uploads/users/' . $user_id . '/'; // Директория куда загружать
-                    if (move_uploaded_file($image_tmp, $uploaddir . $image_rename . $res_type)) {
+                    $upload_dir = ROOT_DIR . '/uploads/users/' . $user_id . '/'; // Директория куда загружать
+                    if (move_uploaded_file($image_tmp, $upload_dir . $image_rename . $res_type)) {
 
                         //Создание оригинала
-                        $tmb = new Thumbnail($uploaddir . $image_rename . $res_type);
+                        $tmb = new Thumbnail($upload_dir . $image_rename . $res_type);
                         $tmb->size_auto(770);
                         $tmb->jpeg_quality(95);
-                        $tmb->save($uploaddir . 'o_' . $image_rename . $res_type);
+                        $tmb->save($upload_dir . 'o_' . $image_rename . $res_type);
 
                         //Создание главной фотографии
-                        $tmb = new Thumbnail($uploaddir . $image_rename . $res_type);
+                        $tmb = new Thumbnail($upload_dir . $image_rename . $res_type);
                         $tmb->size_auto(200, 1);
                         $tmb->jpeg_quality(97);
-                        $tmb->save($uploaddir . $image_rename . $res_type);
+                        $tmb->save($upload_dir . $image_rename . $res_type);
 
                         //Создание уменьшенной копии 50х50
-                        $tmb = new Thumbnail($uploaddir . $image_rename . $res_type);
+                        $tmb = new Thumbnail($upload_dir . $image_rename . $res_type);
                         $tmb->size_auto('50x50');
                         $tmb->jpeg_quality(97);
-                        $tmb->save($uploaddir . '50_' . $image_rename . $res_type);
+                        $tmb->save($upload_dir . '50_' . $image_rename . $res_type);
 
                         //Создание уменьшенной копии 100х100
-                        $tmb = new Thumbnail($uploaddir . $image_rename . $res_type);
+                        $tmb = new Thumbnail($upload_dir . $image_rename . $res_type);
                         $tmb->size_auto('100x100');
                         $tmb->jpeg_quality(97);
-                        $tmb->save($uploaddir . '100_' . $image_rename . $res_type);
+                        $tmb->save($upload_dir . '100_' . $image_rename . $res_type);
 
                         //Добавляем на стену
                         $row = $db->super_query("SELECT user_sex FROM `users` WHERE user_id = '{$user_id}'");
-                        if ($row['user_sex'] == 2)
+                        if ($row['user_sex'] == 2) {
                             $sex_text = 'обновила';
-                        else
+                        }
+                        else {
                             $sex_text = 'обновил';
+                        }
 
                         $wall_text = "<div class=\"profile_update_photo\"><a href=\"\" onClick=\"Photo.Profile(\'{$user_id}\', \'{$image_rename}{$res_type}\'); return false\"><img src=\"/uploads/users/{$user_id}/o_{$image_rename}{$res_type}\" style=\"margin-top:3px\"></a></div>";
 
@@ -110,7 +113,7 @@ if (Registry::get('logged')) {
         case "del_photo":
             NoAjaxQuery();
             $user_id = $user_info['user_id'];
-            $uploaddir = ROOT_DIR . '/uploads/users/' . $user_id . '/';
+            $upload_dir = ROOT_DIR . '/uploads/users/' . $user_id . '/';
             $row = $db->super_query("SELECT user_photo, user_wall_id FROM `users` WHERE user_id = '{$user_id}'");
             if ($row['user_photo']) {
                 $check_wall_rec = $db->super_query("SELECT COUNT(*) AS cnt FROM `wall` WHERE id = '{$row['user_wall_id']}'");
@@ -123,11 +126,11 @@ if (Registry::get('logged')) {
 
                 $db->query("UPDATE `users` SET user_photo = '', user_wall_id = '' {$update_wall} WHERE user_id = '{$user_id}'");
 
-                Filesystem::delete($uploaddir . $row['user_photo']);
-                Filesystem::delete($uploaddir . '50_' . $row['user_photo']);
-                Filesystem::delete($uploaddir . '100_' . $row['user_photo']);
-                Filesystem::delete($uploaddir . 'o_' . $row['user_photo']);
-                Filesystem::delete($uploaddir . '130_' . $row['user_photo']);
+                Filesystem::delete($upload_dir . $row['user_photo']);
+                Filesystem::delete($upload_dir . '50_' . $row['user_photo']);
+                Filesystem::delete($upload_dir . '100_' . $row['user_photo']);
+                Filesystem::delete($upload_dir . 'o_' . $row['user_photo']);
+                Filesystem::delete($upload_dir . '130_' . $row['user_photo']);
 
                 mozg_clear_cache_file('user_' . $user_id . '/profile_' . $user_id);
                 mozg_clear_cache();
