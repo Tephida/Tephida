@@ -76,6 +76,8 @@ $langdate = include ROOT_DIR . '/lang/' . $checkLang . '/date.php';
 $tpl = new Templates();
 $tpl->dir = ROOT_DIR . '/templates/' . $config['temp'];
 define('TEMPLATE_DIR', $tpl->dir);
+
+
 $_DOCUMENT_DATE = false;
 Registry::set('server_time', time());
 
@@ -141,7 +143,7 @@ try {
         '/restore/next/' => 'Restore@next',
         '/restore/send' => 'Restore@send',
         '/restore/prefinish' => 'Restore@preFinish',
-        '/restore/finish' => 'Restore@finish',
+        '/wall:num_:num' => 'WallPage@main',
     );
     $router->add($routers);
     try {

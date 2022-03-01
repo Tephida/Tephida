@@ -7,10 +7,13 @@
  *
  */
 
+declare(strict_types=1);
+
 use Mozg\classes\AntiSpam;
 use Mozg\classes\Filesystem;
 use Mozg\classes\Registry;
 use Mozg\classes\Thumbnail;
+use Mozg\classes\TpLSite;
 use Mozg\classes\WallProfile;
 use Mozg\classes\WallPublic;
 
@@ -529,7 +532,11 @@ if (Registry::get('logged')) {
          */
         case "all_comm":
             NoAjaxQuery();
-            $wall = new wall($tpl);
+
+            $meta_tags['title'] = '';
+            $tpl = new TpLSite($this->tpl_dir_name, $meta_tags);
+
+            $wall = new WallProfile($tpl);
             $fast_comm_id = intFilter('fast_comm_id');
             $for_user_id = intFilter('for_user_id');
             if ($fast_comm_id and $for_user_id) {
@@ -755,16 +762,23 @@ if (Registry::get('logged')) {
 
         default:
 
-            if (!isset($id)) {
+            if (requestFilter('uid')) {
+                $meta_tags['title'] = 'wall';
+
+                $tpl = new TpLSite(ROOT_DIR . '/templates/' . $config['temp'], $meta_tags);
+            }
+
+            if (!isset($id) && !requestFilter('uid')) {
                 $wall = new WallPublic($tpl);
             } else {
+
                 $wall = new WallProfile($tpl);
             }
 
             /** Показ последних 10 записей */
 
             //Если вызвана страница стены, не со страницы юзера
-            if (!isset($id)) {
+            if (!isset($id) && !requestFilter('uid')) {
                 $rid = intFilter('rid');
 
                 $id = intFilter('uid');
@@ -840,14 +854,17 @@ if (Registry::get('logged')) {
             $CheckBlackList = $CheckBlackList ?? false;
             $check_friend = $check_friend ?? false;
             $user_privacy = $user_privacy ?? null;
+            $user_privacy['val_wall1'] = $user_privacy['val_wall1'] ?? 3;
             $wallAuthorId = $wallAuthorId ?? null;
+            $wallAuthorId['author_user_id'] = $wallAuthorId['author_user_id'] ?? null;
+            $id = $id ?? null;
 
             if (!$CheckBlackList) {
 
 
                 $where_sql = $where_sql ?? null;
 
-                if ($user_privacy['val_wall1'] == 1 or $user_privacy['val_wall1'] == 2 and $check_friend or $user_id == $id) {
+                if ($user_privacy['val_wall1'] == 1 || ($user_privacy['val_wall1'] == 2 && $check_friend) || $user_id == $id) {
                     $wall->query("SELECT tb1.id, author_user_id, text, add_date, fasts_num, likes_num, likes_users, tell_uid, type, tell_date, public, attach, tell_comm, tb2.user_photo, user_search_pref, user_last_visit, user_logged_mobile FROM `wall` tb1, `users` tb2 WHERE for_user_id = '{$id}' AND tb1.author_user_id = tb2.user_id AND tb1.fast_comm_id = 0 {$where_sql} ORDER by `add_date` DESC LIMIT {$limit_page}, {$limit_select}");
                     $Hacking = false;
                 } elseif ($wallAuthorId['author_user_id'] == $id) {
@@ -855,8 +872,9 @@ if (Registry::get('logged')) {
                     $Hacking = false;
                 } else {
                     $wall->query("SELECT tb1.id, author_user_id, text, add_date, fasts_num, likes_num, likes_users, tell_uid, type, tell_date, public, attach, tell_comm, tb2.user_photo, user_search_pref, user_last_visit, user_logged_mobile FROM `wall` tb1, `users` tb2 WHERE for_user_id = '{$id}' AND tb1.author_user_id = tb2.user_id AND tb1.fast_comm_id = 0 AND tb1.author_user_id = '{$id}' ORDER by `add_date` DESC LIMIT {$limit_page}, {$limit_select}");
-                    if ($wallAuthorId['author_user_id'])
+                    if ($wallAuthorId['author_user_id']) {
                         $Hacking = true;
+                    }
                 }
 
                 $Hacking = $Hacking ?? false;
@@ -868,7 +886,7 @@ if (Registry::get('logged')) {
 
                     $for_user_id = $for_user_id ?? null;
 
-                    if ($rid or $walluid) {
+                    if ($rid || $walluid || requestFilter('uid')) {
                         $wall->template('wall/one_record.tpl');
                         $wall->compile('content');
                         $config = settings_get();
@@ -881,14 +899,26 @@ if (Registry::get('logged')) {
 
                         $type = requestFilter('type');
 
-                        if ($cnt_rec['cnt'] > $gcount and $type == '' or $type == 'own')
+                        if (($cnt_rec['cnt'] > $gcount && $type == '') || $type == 'own') {
                             navigation($gcount, $cnt_rec['cnt'], $page_type);
+                        }
+
+                        if (requestFilter('uid')) {
+//                           var_dump($tpl->result);
+                            try {
+                                $wall->render();
+//                                $tpl->render();
+                            } catch (ErrorException|JsonException $e) {
+                            }
+                        }
                     } else {
                         $wall->template('wall/record.tpl');
                         $wall->compile('wall');
                         $config = settings_get();
                         $wall->select($config, $id, $for_user_id, $user_privacy, $check_friend, $user_info);
                     }
+                } else {
+                    echo 'Error 500';
                 }
             }
     }

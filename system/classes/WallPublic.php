@@ -57,7 +57,7 @@ class WallPublic
             $this->tpl->set('{rec-id}', $row_wall['id']);
 
             //Закрепить запись
-            if ($row_wall['fixed']) {
+            if (isset($row_wall['fixed'])) {
 
                 $this->tpl->set('{styles-fasten}', 'style="opacity:1"');
                 $this->tpl->set('{fasten-text}', 'Закрепленная запись');
@@ -345,13 +345,16 @@ HTML;
             }
 
             $this->tpl->set('{text}', stripslashes($row_wall['text']));
-            $this->tpl->set('{name}', $row_wall['title']);
+            $this->tpl->set('{name}', $row_wall['title'] ?? '');
 
             $this->tpl->set('{user-id}', $row_wall['public_id']);
-            if ($row_wall['adres']) $this->tpl->set('{adres-id}', $row_wall['adres']);
-            else $this->tpl->set('{adres-id}', 'public' . $row_wall['public_id']);
+            if ($row_wall['adres']) {
+                $this->tpl->set('{adres-id}', $row_wall['adres']);
+            } else {
+                $this->tpl->set('{adres-id}', 'public' . $row_wall['public_id']);
+            }
 
-            $date_str = megaDate(intval($row_wall['add_date']));
+            $date_str = megaDate((int)$row_wall['add_date']);
 
             $this->tpl->set('{date}', $date_str);
 
