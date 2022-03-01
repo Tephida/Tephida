@@ -487,15 +487,15 @@ class Profile extends Module
 
                 //Аватарка
                 $row_view_photos = $db->super_query("SELECT * FROM `photos` WHERE user_id = '{$id}'");
-                $tpl->set('{photoid}', $row_view_photos['id']);
-                $tpl->set('{albumid}', $row_view_photos['album_id']);
-                if($row['user_photo']){
+                $tpl->set('{photoid}', $row_view_photos['id'] ?? 0);
+                $tpl->set('{albumid}', $row_view_photos['album_id'] ?? 0);
+                if ($row['user_photo']) {
                     //todo optimize
                     $album = $db->super_query("SELECT aid FROM `albums` WHERE user_id = '{$id}' AND system = '1'");
                     $albuml = $db->super_query("SELECT * FROM `photos` WHERE album_id = '{$album['aid']}' ORDER BY id DESC");
 
-                    $tpl->set('{ava}', $config['home_url'].'uploads/users/'.$row['user_id'].'/'.$row['user_photo']);
-                    $tpl->set('{link}', '/photo'.$row['user_id'].'_'.$albuml['id'].'_'.$albuml['album_id']);
+                    $tpl->set('{ava}', $config['home_url'] . 'uploads/users/' . $row['user_id'] . '/' . $row['user_photo']);
+                    $tpl->set('{link}', '/photo' . $row['user_id'] . '_' . $albuml['id'] . '_' . $albuml['album_id']);
                     $tpl->set('{display-ava}', 'style="display:block;"');
                 } else {
                     $tpl->set('{ava}', '/templates/Default/images/no_ava.gif');

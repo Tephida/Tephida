@@ -13,17 +13,17 @@ namespace Mozg\classes;
 
 class WallPublic
 {
-    public $tpl;
+    public TpLSite|Templates $tpl;
     public array|bool|null $query = false;
     public false|string $template = false;
     public false|string $compile = false;
 
-    public function __construct($tpl)
+    public function __construct(TpLSite|Templates $tpl)
     {
         $this->tpl = $tpl;
     }
 
-    function query($query)
+    function query(string $query)
     {
         $db = Registry::get('db');
         $this->query = $db->super_query($query, true);
@@ -46,8 +46,6 @@ class WallPublic
     {
         global $user_info, $row, $config;
 
-        $tpl = $this->tpl;
-
         $db = Registry::get('db');
         $user_id = $user_info['user_id'];
 
@@ -55,6 +53,7 @@ class WallPublic
 
         foreach ($this->query as $row_wall) {
             $this->tpl->set('{rec-id}', $row_wall['id']);
+            $this->tpl->set('{public-id}', $row_wall['public_id']);
 
             //Закрепить запись
             if (isset($row_wall['fixed'])) {
@@ -95,7 +94,7 @@ class WallPublic
                     else
                         $globParId = $row_wall['public_id'];
 
-                    if ($attach_type[0] == 'photo' and file_exists(ROOT_DIR . "/uploads/groups/{$globParId}/photos/c_{$attach_type[1]}")) {
+                    if ($attach_type[0] == 'photo' && file_exists(ROOT_DIR . "/uploads/groups/{$globParId}/photos/c_{$attach_type[1]}")) {
                         if ($cnt_attach < 2)
                             $attach_result .= "<div class=\"profile_wall_attach_photo cursor_pointer page_num{$row_wall['id']}\" onClick=\"groups.wall_photo_view('{$row_wall['id']}', '{$globParId}', '{$attach_type[1]}', '{$cnt_attach}')\"><img id=\"photo_wall_{$row_wall['id']}_{$cnt_attach}\" src=\"/uploads/groups/{$globParId}/photos/{$attach_type[1]}\" align=\"left\" /></div>";
                         else
@@ -335,13 +334,13 @@ class WallPublic
 
                 if ($row_wall['tell_comm']) $border_tell_class = 'wall_repost_border'; else $border_tell_class = 'wall_repost_border2';
 
-                $row_wall['text'] = <<<HTML
-{$row_wall['tell_comm']}
-<div class="{$border_tell_class}">
-<div class="wall_tell_info"><div class="wall_tell_ava"><a href="/{$tell_link}{$row_wall['tell_uid']}" onClick="Page.Go(this.href); return false"><img src="{$avaTell}" width="30" /></a></div><div class="wall_tell_name"><a href="/{$tell_link}{$row_wall['tell_uid']}" onClick="Page.Go(this.href); return false"><b>{$rowUserTell['user_search_pref']}</b></a></div><div class="wall_tell_date">{$dateTell}</div></div>{$row_wall['text']}
-<div class="clear"></div>
-</div>
-HTML;
+                $row_wall['text'] = "
+                    {$row_wall['tell_comm']}
+                    <div class=\"{$border_tell_class}\">
+                    <div class=\"wall_tell_info\"><div class=\"wall_tell_ava\"><a href=\"/{$tell_link}{$row_wall['tell_uid']}\" onClick=\"Page.Go(this.href); return false\"><img src=\"{$avaTell}\" width=\"30\" /></a></div><div class=\"wall_tell_name\"><a href=\"/{$tell_link}{$row_wall['tell_uid']}\" onClick=\"Page.Go(this.href); return false\"><b>{$rowUserTell['user_search_pref']}</b></a></div><div class=\"wall_tell_date\">{$dateTell}</div></div>{$row_wall['text']}
+                    <div class=\"clear\"></div>
+                    </div>
+                    ";
             }
 
             $this->tpl->set('{text}', stripslashes($row_wall['text']));
@@ -443,20 +442,21 @@ HTML;
                         $this->tpl->set('[all-comm]', '');
                         $this->tpl->set('[/all-comm]', '');
                     }
-                    $this->tpl->set('{public-id}', $row['id']);
+                    $this->tpl->set('{public-id}', $row['id'] ?? 0);//FIXME
                     $this->tpl->set_block("'\\[record\\](.*?)\\[/record\\]'si", "");
                     $this->tpl->set_block("'\\[comment-form\\](.*?)\\[/comment-form\\]'si", "");
                     $this->tpl->set_block("'\\[comment\\](.*?)\\[/comment\\]'si", "");
                     $this->tpl->compile($this->compile);
 
-                    //Сообственно выводим комменты
+                    //Собственно выводим комменты
                     foreach ($sql_comments as $row_comments) {
-                        $this->tpl->set('{public-id}', $row['id']);
+                        $this->tpl->set('{public-id}', $row['id'] ?? 0);
                         $this->tpl->set('{name}', $row_comments['user_search_pref']);
-                        if ($row_comments['user_photo'])
+                        if ($row_comments['user_photo']) {
                             $this->tpl->set('{ava}', $config['home_url'] . 'uploads/users/' . $row_comments['public_id'] . '/50_' . $row_comments['user_photo']);
-                        else
+                        } else {
                             $this->tpl->set('{ava}', '{theme}/images/no_ava_50.png');
+                        }
 
                         $this->tpl->set('{rec-id}', $row_wall['id']);
                         $this->tpl->set('{comm-id}', $row_comments['id']);
@@ -472,7 +472,7 @@ HTML;
                         $row_comments['text'] = preg_replace('`(http(?:s)?://\w+[^\s\[\]\<]+)`i', '<a href="/index.php?go=away&index.php?go=away&url=$1" target="_blank">$1</a>', $row_comments['text']);
 
                         $this->tpl->set('{text}', stripslashes($row_comments['text']));
-                        $date_str = megaDate(intval($row_comments['add_date']));
+                        $date_str = megaDate((int)$row_comments['add_date']);
 
                         $this->tpl->set('{date}', $date_str);
 
