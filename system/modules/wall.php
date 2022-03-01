@@ -10,7 +10,9 @@
 use Mozg\classes\AntiSpam;
 use Mozg\classes\Filesystem;
 use Mozg\classes\Registry;
+use Mozg\classes\Thumbnail;
 use Mozg\classes\WallProfile;
+use Mozg\classes\WallPublic;
 
 if (Registry::get('logged')) {
     $db = Registry::get('db');
@@ -22,8 +24,9 @@ if (Registry::get('logged')) {
     $server_time = Registry::get('server_time');
 
     switch ($act) {
-
-        //################### Добавление новой записи на стену ###################//
+        /**
+         * Добавление новой записи на стену
+         */
         case "send":
             $wall = new WallProfile($tpl);
 //			NoAjaxQuery();
@@ -107,8 +110,6 @@ if (Registry::get('logged')) {
                                             Filesystem::createDir($upload_dir);
 
                                             //Подключаем класс для фотографий
-                                            include ENGINE_DIR . '/classes/images.php';
-
                                             if (Filesystem::copy($rImgUrl, $upload_dir . '/' . $image_name . '.' . $img_format)) {
                                                 $tmb = new Thumbnail($upload_dir . '/' . $image_name . '.' . $img_format);
                                                 $tmb->size_auto('100x80');
@@ -123,8 +124,7 @@ if (Registry::get('logged')) {
                                 }
                             }
 
-                            $attach_files = str_replace('vote|', 'hack|', $attach_files);
-                            $attach_files = str_replace(array('&amp;#124;', '&amp;raquo;', '&amp;quot;'), array('&#124;', '&raquo;', '&quot;'), $attach_files);
+                            $attach_files = str_replace(array('vote|', '&amp;#124;', '&amp;raquo;', '&amp;quot;'), array('hack|', '&#124;', '&raquo;', '&quot;'), $attach_files);
 
                             //Голосование
                             $vote_title = requestFilter('vote_title', 25000, true);
@@ -229,7 +229,7 @@ if (Registry::get('logged')) {
                                         $rowUserEmail = $db->super_query("SELECT user_name, user_email FROM `users` WHERE user_id = '" . $row_owner['author_user_id'] . "'");
                                         if ($rowUserEmail['user_email']) {
                                             include_once ENGINE_DIR . '/classes/mail.php';
-                                            $mail = new vii_mail($config);
+                                            $mail = new \Mozg\classes\ViiMail($config);
                                             $rowMyInfo = $db->super_query("SELECT user_search_pref FROM `users` WHERE user_id = '" . $user_id . "'");
                                             $rowEmailTpl = $db->super_query("SELECT text FROM `mail_tpl` WHERE id = '2'");
                                             $rowEmailTpl['text'] = str_replace('{%user%}', $rowUserEmail['user_name'], $rowEmailTpl['text']);
@@ -267,7 +267,7 @@ if (Registry::get('logged')) {
                                     $rowUserEmail = $db->super_query("SELECT user_name, user_email FROM `users` WHERE user_id = '" . $for_user_id . "'");
                                     if ($rowUserEmail['user_email']) {
                                         include_once ENGINE_DIR . '/classes/mail.php';
-                                        $mail = new vii_mail($config);
+                                        $mail = new \Mozg\classes\ViiMail($config);
                                         $rowMyInfo = $db->super_query("SELECT user_search_pref FROM `users` WHERE user_id = '" . $user_id . "'");
                                         $rowEmailTpl = $db->super_query("SELECT text FROM `mail_tpl` WHERE id = '7'");
                                         $rowEmailTpl['text'] = str_replace('{%user%}', $rowUserEmail['user_name'], $rowEmailTpl['text']);
@@ -315,7 +315,9 @@ if (Registry::get('logged')) {
 
             break;
 
-        //################### Удаление записи со стены ###################//
+        /**
+         * Удаление записи со стены
+         */
         case "delet":
             NoAjaxQuery();
             $rid = intFilter('rid');
@@ -372,7 +374,9 @@ if (Registry::get('logged')) {
 
             break;
 
-        //################### Ставим "Мне нравится" ###################//
+        /**
+         * Ставим "Мне нравится"
+         */
         case "like_yes":
             NoAjaxQuery();
             $rid = intFilter('rid');
@@ -422,7 +426,9 @@ if (Registry::get('logged')) {
 
             break;
 
-        //################### Удаляем "Мне нравится" ###################//
+        /**
+         * Удаляем "Мне нравится"
+         */
         case "like_no":
             NoAjaxQuery();
             $rid = intFilter('rid');
@@ -448,7 +454,9 @@ if (Registry::get('logged')) {
 
             break;
 
-        //################### Выводим первых 7 юзеров которые поставили "мне нравится" ###################//
+        /**
+         * Выводим первых 7 юзеров которые поставили "мне нравится"
+         */
         case "liked_users":
             NoAjaxQuery();
             $rid = intFilter('rid');
@@ -456,15 +464,20 @@ if (Registry::get('logged')) {
             if ($sql_) {
                 $config = settings_get();
                 foreach ($sql_ as $row) {
-                    if ($row['user_photo']) $ava = '/uploads/users/' . $row['user_id'] . '/50_' . $row['user_photo'];
-                    else $ava = '/templates/' . $config['temp'] . '/images/no_ava_50.png';
+                    if ($row['user_photo']) {
+                        $ava = '/uploads/users/' . $row['user_id'] . '/50_' . $row['user_photo'];
+                    } else {
+                        $ava = '/templates/' . $config['temp'] . '/images/no_ava_50.png';
+                    }
                     echo '<a href="/u' . $row['user_id'] . '" id="Xlike_user' . $row['user_id'] . '_' . $rid . '" onClick="Page.Go(this.href); return false"><img src="' . $ava . '" width="32" /></a>';
                 }
             }
 
             break;
 
-        //################### Выводим всех юзеров которые поставили "мне нравится" ###################//
+        /**
+         * Выводим всех юзеров которые поставили "мне нравится"
+         */
         case "all_liked_users":
             NoAjaxQuery();
             $rid = intFilter('rid');
@@ -511,7 +524,9 @@ if (Registry::get('logged')) {
 
             break;
 
-        //################### Показ всех комментариев к записи ###################//
+        /**
+         * Показ всех комментариев к записи
+         */
         case "all_comm":
             NoAjaxQuery();
             $wall = new wall($tpl);
@@ -551,7 +566,9 @@ if (Registry::get('logged')) {
 
             break;
 
-        //################### Показ предыдущих записей ###################//
+        /**
+         * Показ предыдущих записей
+         */
         case "page":
             NoAjaxQuery();
             $wall = new wall($tpl);
@@ -590,7 +607,9 @@ if (Registry::get('logged')) {
 
             break;
 
-        //################### Рассказать друзьям "Мне нравится" ###################//
+        /**
+         * Рассказать друзьям "Мне нравится"
+         */
         case "tell":
             NoAjaxQuery();
             $rid = intFilter('rid');
@@ -625,7 +644,9 @@ if (Registry::get('logged')) {
             }
             break;
 
-        //################### Парсер информации о ссылке ###################//
+        /**
+         * Парсер информации о ссылке
+         */
         case "parse_link":
             $lnk = 'https://' . str_replace('https://', '', requestFilter('lnk'));
             $check_url = get_headers(stripslashes($lnk));
@@ -733,8 +754,14 @@ if (Registry::get('logged')) {
             break;
 
         default:
-            $wall = new WallProfile($tpl);
-            //################### Показ последних 10 записей ###################//
+
+            if (!isset($id)) {
+                $wall = new WallPublic($tpl);
+            } else {
+                $wall = new WallProfile($tpl);
+            }
+
+            /** Показ последних 10 записей */
 
             //Если вызвана страница стены, не со страницы юзера
             if (!isset($id)) {

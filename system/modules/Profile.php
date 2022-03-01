@@ -110,7 +110,7 @@ class Profile extends Module
                 }
 
                 //################### Друзья на сайте ###################//
-                if (Registry::get('logged') && $user_id != $id) //Проверка естьли запрашиваемый юзер в друзьях у юзера который смотрит стр
+                if (Registry::get('logged') && $user_id !== $id) //Проверка есть ли запрашиваемый юзер в друзьях у юзера который смотрит стр
                 {
                     $check_friend = CheckFriends($row['user_id']);
                 } else {
@@ -260,11 +260,12 @@ class Profile extends Module
                 }
 
                 //################### Загрузка стены ###################//
-                if ($row['user_wall_num'])
+                if ($row['user_wall_num']) {
                     include ENGINE_DIR . '/modules/wall.php';
+                }
 
                 //Общие друзья
-                if (Registry::get('logged') and $row['user_friends_num'] and $id != $user_info['user_id']) {
+                if (Registry::get('logged') && $row['user_friends_num'] && $id !== $user_info['user_id']) {
 
                     $count_common = $db->super_query("SELECT COUNT(*) AS cnt FROM `friends` tb1 INNER JOIN `friends` tb2 ON tb1.friend_id = tb2.user_id WHERE tb1.user_id = '{$user_info['user_id']}' AND tb2.friend_id = '{$id}' AND tb1.subscriptions = 0 AND tb2.subscriptions = 0");
 
@@ -329,12 +330,6 @@ class Profile extends Module
                     $lang['online'] = $lang['online'] ?? 'online';
                     $tpl->set('{online}', $lang['online'] . $mobile_icon);
                 } else {
-//                    if (date('Y-m-d', intval($row_online['user_last_visit'])) == date('Y-m-d', $server_time))
-//                        $dateTell = langdate('сегодня в H:i', $row_online['user_last_visit']);
-//                    elseif (date('Y-m-d', intval($row_online['user_last_visit'])) == date('Y-m-d', ($server_time - 84600)))
-//                        $dateTell = langdate('вчера в H:i', $row_online['user_last_visit']);
-//                    else
-//                        $dateTell = langdate('j F Y в H:i', $row_online['user_last_visit']);
 
                     if ((int)$row_online['user_last_visit'] > 0) {
                         $dateTell = megaDate((int)$row_online['user_last_visit']);

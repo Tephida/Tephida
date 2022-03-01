@@ -185,8 +185,8 @@ RewriteEngine On
 	
 # Сообщества -> Публичные страницы
 	RewriteCond %{QUERY_STRING} ^act=([a-z]+)
-	RewriteRule ^public([0-9]+)(/?)+$ index.php?go=public&pid=$1 [QSA,L]
-	RewriteRule ^([^.]+)/?$ index.php?go=public&get_adres=$1 [QSA,L]
+	RewriteRule ^publics([0-9]+)(/?)+$ index.php?go=publics&pid=$1 [QSA,L]
+	RewriteRule ^([^.]+)/?$ index.php?go=publics&get_adres=$1 [QSA,L]
 
 # Стат страницы
 	RewriteCond %{REQUEST_FILENAME} !-f

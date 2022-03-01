@@ -1,5 +1,4 @@
 <?php
-declare(strict_types=1);
 /*
  *   (c) Semen Alekseev
  *
@@ -7,6 +6,9 @@ declare(strict_types=1);
  *   file that was distributed with this source code.
  *
  */
+
+declare(strict_types=1);
+
 namespace Mozg\classes;
 
 use ErrorException;
