@@ -7,7 +7,9 @@
  *
  */
 
+use Mozg\classes\Gzip;
 use Mozg\classes\Registry;
+use Mozg\classes\Thumbnail;
 
 if (Registry::get('logged')) {
     $act = requestFilter('act');
@@ -147,6 +149,12 @@ if (Registry::get('logged')) {
                 $tmb->size_auto('100x100');
                 $tmb->jpeg_quality(100);
                 $tmb->save($newDir . '100_' . $newName);
+
+                $tmb = new Thumbnail($newDir . "o_{$newName}");
+                $tmb->size_auto('140x100');
+                $tmb->jpeg_quality(100);
+                $tmb->save($newDir . 'с_' . $newName);
+
                 //Добавляем на стену
                 $row = $db->super_query("SELECT user_sex FROM `users` WHERE user_id = '{$user_id}'");
                 if ($row['user_sex'] == 2) $sex_text = 'обновила';
@@ -208,12 +216,18 @@ if (Registry::get('logged')) {
             if (file_exists($photo)) {
                 $tpl->load_template('photos/photo_profile.tpl');
                 $tpl->set('{uid}', $uid);
-                if (isset($_POST['type'])) $tpl->set('{photo}', "/uploads/attach/{$uid}/{$photo_name}");
-                else $tpl->set('{photo}', "/uploads/users/{$uid}/o_{$photo_name}");
+                if (isset($_POST['type'])) {
+                    $tpl->set('{photo}', "/uploads/attach/{$uid}/{$photo_name}");
+                }
+                else {
+                    $tpl->set('{photo}', "/uploads/users/{$uid}/o_{$photo_name}");
+                }
                 $tpl->set('{close-link}', requestFilter('close_link'));
                 $tpl->compile('content');
                 AjaxTpl($tpl);
-            } else echo 'no_photo';
+            } else {
+                echo 'no_photo';
+            }
             break;
             //################### Поворот фотографии ###################//
             
@@ -386,7 +400,10 @@ if (Registry::get('logged')) {
                 if (!$fuser and $check_album) {
                     //Проверяем на наличии файла с позициями только для этого фоток
                     $check_pos = mozg_cache('user_' . $uid . '/position_photos_album_' . $check_album['album_id']);
-                    //Если нету, то вызываем функцию генерации
+
+                    //Чистим кеш
+                    mozg_clear_cache_file('user_'.$user_id.'/position_photos_album_'.$check_album['album_id']);
+                    //Если нет, то вызываем функцию генерации
                     if (!$check_pos) {
                         GenerateAlbumPhotosPosition($uid, $check_album['album_id']);
                         $check_pos = mozg_cache('user_' . $uid . '/position_photos_album_' . $check_album['album_id']);
@@ -527,12 +544,19 @@ if (Registry::get('logged')) {
                         $tpl->set('{comments}', $tpl->result['comments'] ?? '');
                         //Показываем стрелочки если фотографий больше одной и фотография вызвана не со стены
                         if ($row_album['photo_num'] > 1 && !$fuser) {
-                            //Если фотография вызвана из альбом "все фотографии" или вызвана со страницы юзера
-                            if ($row['position'] == $row_album['photo_num'])
-                                $next_photo = $position[1];
-                            else $next_photo = $position[($row['position'] + 1)];
-                            if ($row['position'] == 1) $prev_photo = $position[($row['position'] + $row_album['photo_num'] - 1)];
-                            else $prev_photo = $position[($row['position'] - 1)];
+                            //Если фотография вызвана из альбома "все фотографии" или вызвана со страницы юзера
+
+
+                            if ($row['position'] == $row_album['photo_num']) {
+                                $next_photo = $position[1] ?? null;
+                            } else {
+                                $next_photo = $position[($row['position'] + 1)];
+                            }
+                            if ($row['position'] == 1) {
+                                $prev_photo = $position[($row['position'] + $row_album['photo_num'] - 1)];
+                            } else {
+                                $prev_photo = $position[($row['position'] - 1)];
+                            }
                             $tpl->set('{next-id}', $next_photo);
                             $tpl->set('{prev-id}', $prev_photo);
                         } else {

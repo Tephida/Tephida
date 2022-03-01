@@ -7,13 +7,15 @@
  *
  */
 
+namespace Mozg\classes;
+
 use Mozg\classes\Filesystem;
 
 class Thumbnail
 {
     private array $img;
 
-    function __construct(string $img_file)
+    public function __construct(string $img_file)
     {
         //detect image format
         $info = getimagesize($img_file);
@@ -52,14 +54,14 @@ class Thumbnail
         $size = explode("x", $size);
 
         if ($jqCrop) {
-            return $this->jqCrop(intval($size[0]), intval($size[1]), $jqCrop);
+            return $this->jqCrop((int)$size[0], (int)$size[1], $jqCrop);
         } else if (count($size) == 2) {
-            $size[0] = intval($size[0]);
-            $size[1] = intval($size[1]);
-            return $this->crop(intval($size[0]), intval($size[1]));
+            $size[0] = (int)$size[0];
+            $size[1] = (int)$size[1];
+            return $this->crop($size[0], $size[1]);
         } else {
-            $size[0] = intval($size[0]);
-            return $this->scale(intval($size[0]), $site);
+            $size[0] = (int)$size[0];
+            return $this->scale($size[0], $site);
         }
     }
 
@@ -104,11 +106,19 @@ class Thumbnail
         $left = $cropDataExp[0];
         $top = $cropDataExp[1];
 
-        if (!$left or $left <= 0) $left = 0;
-        if (!$top or $top <= 0) $top = 0;
+        if (!$left || $left <= 0) {
+            $left = 0;
+        }
+        if (!$top || $top <= 0) {
+            $top = 0;
+        }
 
-        if ($nw < 100) $nw = 100;
-        if ($nh < 100) $nh = 100;
+        if ($nw < 100) {
+            $nw = 100;
+        }
+        if ($nh < 100) {
+            $nh = 100;
+        }
 
         $w = $this->img['lebar'];
         $h = $this->img['tinggi'];
@@ -141,11 +151,9 @@ class Thumbnail
         return 1;
     }
 
-    private function scale($size = 100, $site = 0): int
+    private function scale(int $size = 100, int $site = 0): int
     {
-        $site = intval($site);
-
-        if ($this->img['lebar'] <= $size and $this->img['tinggi'] <= $size) {
+        if ($this->img['lebar'] <= $size && $this->img['tinggi'] <= $size) {
             $this->img['lebar_thumb'] = $this->img['lebar'];
             $this->img['tinggi_thumb'] = $this->img['tinggi'];
             return 0;
@@ -156,10 +164,10 @@ class Thumbnail
                     $this->img['lebar_thumb'] = $this->img['lebar'];
                     $this->img['tinggi_thumb'] = $this->img['tinggi'];
                     return 0;
-                } else {
-                    $this->img['lebar_thumb'] = $size;
-                    $this->img['tinggi_thumb'] = ($this->img['lebar_thumb'] / $this->img['lebar']) * $this->img['tinggi'];
                 }
+
+                $this->img['lebar_thumb'] = $size;
+                $this->img['tinggi_thumb'] = ($this->img['lebar_thumb'] / $this->img['lebar']) * $this->img['tinggi'];
                 break;
 
             case "2" :
@@ -167,10 +175,10 @@ class Thumbnail
                     $this->img['lebar_thumb'] = $this->img['lebar'];
                     $this->img['tinggi_thumb'] = $this->img['tinggi'];
                     return 0;
-                } else {
-                    $this->img['tinggi_thumb'] = $size;
-                    $this->img['lebar_thumb'] = ($this->img['tinggi_thumb'] / $this->img['tinggi']) * $this->img['lebar'];
                 }
+
+                $this->img['tinggi_thumb'] = $size;
+                $this->img['lebar_thumb'] = ($this->img['tinggi_thumb'] / $this->img['tinggi']) * $this->img['lebar'];
                 break;
 
             default :
@@ -186,8 +194,12 @@ class Thumbnail
                 break;
         }
 
-        if ($this->img['lebar_thumb'] < 1) $this->img['lebar_thumb'] = 1;
-        if ($this->img['tinggi_thumb'] < 1) $this->img['tinggi_thumb'] = 1;
+        if ($this->img['lebar_thumb'] < 1) {
+            $this->img['lebar_thumb'] = 1;
+        }
+        if ($this->img['tinggi_thumb'] < 1) {
+            $this->img['tinggi_thumb'] = 1;
+        }
 
         $this->img['des'] = imagecreatetruecolor($this->img['lebar_thumb'], $this->img['tinggi_thumb']);
 

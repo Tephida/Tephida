@@ -39,23 +39,29 @@ class Register extends Module
                 $user_name = ucfirst($user_name);
                 $user_lastname = ucfirst($user_lastname);
                 $user_sex = intFilter('sex');
-                if ($user_sex < 0 or $user_sex > 2)
+                if ($user_sex < 0 || $user_sex > 2) {
                     $user_sex = 0;
+                }
                 $user_day = intFilter('day');
-                if ($user_day < 0 or $user_day > 31)
+                if ($user_day < 0 || $user_day > 31) {
                     $user_day = 0;
+                }
                 $user_month = intFilter('month');
-                if ($user_month < 0 or $user_month > 12)
+                if ($user_month < 0 || $user_month > 12) {
                     $user_month = 0;
+                }
                 $user_year = intFilter('year');
-                if ($user_year < 1930 or $user_year > 2007)
+                if ($user_year < 1930 || $user_year > 2007) {
                     $user_year = 0;
+                }
                 $user_country = intFilter('country');
-                if ($user_country < 0 or $user_country > 10)
+                if ($user_country < 0 || $user_country > 10) {
                     $user_country = 0;
+                }
                 $user_city = intFilter('city');
-                if ($user_city < 0 or $user_city > 1587)
+                if ($user_city < 0 || $user_city > 1587) {
                     $user_city = 0;
+                }
                 $password_first = requestFilter('password_first');
                 $password_second = requestFilter('password_second');
 
@@ -101,7 +107,7 @@ class Register extends Module
                             $city_info = $db->super_query("SELECT name FROM `city` WHERE id = '" . $user_city . "'");
                             $user_country_city_name = $country_info['name'] . '|' . $city_info['name'];
                         } else {
-                            $user_country_city_name = '' . '|' . '';
+                            $user_country_city_name = '|';
                         }
                         $user_search_pref = $user_name . ' ' . $user_lastname;
                         //Hash ID
@@ -110,9 +116,9 @@ class Register extends Module
                         $db->query("INSERT INTO `users` (user_last_visit, user_email, user_password, user_name, user_lastname, user_sex, user_day, user_month, user_year, user_country, user_city, user_reg_date, user_lastdate, user_group, user_hid, user_country_city_name, user_search_pref, user_birthday, user_privacy) VALUES ('{$server_time}', '{$user_email}', '{$md5_pass}', '{$user_name}', '{$user_lastname}', '{$user_sex}', '{$user_day}', '{$user_month}', '{$user_year}', '{$user_country}', '{$user_city}', '{$server_time}', '{$server_time}', '{$user_group}', '{$hid}', '{$user_country_city_name}', '{$user_search_pref}', '{$user_birthday}', 'val_msg|1||val_wall1|1||val_wall2|1||val_wall3|1||val_info|1||')");
                         $id = $db->insert_id();
                         //Устанавливаем в сессию ИД юзера
-                        $_SESSION['user_id'] = intval($id);
+                        $_SESSION['user_id'] = (int)$id;
                         //Записываем COOKIE
-                        set_cookie("user_id", intval($id), 365);
+                        set_cookie("user_id", (int)$id, 365);
                         set_cookie("password", md5(md5($password_first)), 365);
                         set_cookie("hid", $hid, 365);
                         //Создаём папку юзера в кеше
@@ -130,7 +136,7 @@ class Register extends Module
                             //Проверяем на накрутку убм, что юзер не сам регистрирует анкеты
                             $check_ref = $db->super_query("SELECT COUNT(*) AS cnt FROM `log` WHERE ip = '{$_IP}'");
                             if (!$check_ref['cnt']) {
-                                $ref_id = intval($ref_id);
+                                $ref_id = (int)$ref_id;
                                 //Даём +10 убм
                                 $db->query("UPDATE `users` SET user_balance = user_balance+10 WHERE user_id = '{$ref_id}'");
                                 //Вставляем ид регистратора

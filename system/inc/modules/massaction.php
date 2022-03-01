@@ -49,7 +49,7 @@ switch ($act) {
                             Filesystem::delete($uploaddir . '50_' . $row['user_photo']);
                             Filesystem::delete($uploaddir . '100_' . $row['user_photo']);
                             Filesystem::delete($uploaddir . 'o_' . $row['user_photo']);
-                            Filesystem::delete($uploaddir . '130_' . $row['user_photo']);
+                            Filesystem::delete($uploaddir . 'c_' . $row['user_photo']);
                         } else
                             $db->query("UPDATE `users` SET user_delet = 1,  user_active = 1, user_photo = '' WHERE user_id = '" . $user_id . "'");
 
