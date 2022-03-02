@@ -348,8 +348,9 @@
         <div class="flpodinfo">{site}</div>
         [/not-contact-site][/not-block-contact]
         <div class="fieldset">
-            <div class="w2_b" style="width:200px;">Личная информация [owner]<span><a href="/editmypage/interests"
-                                                                                     onClick="Page.Go(this.href); return false;">редактировать</a></span>[/owner]
+            <div class="w2_b" style="width:200px;">Личная информация [owner]<span>
+                    <a href="/editmypage/interests" onClick="Page.Go(this.href); return false;">редактировать</a>
+                </span>[/owner]
             </div>
         </div>
         {not-block-info}
@@ -414,7 +415,7 @@
             {gifts-text}
             <div><b>Все</b></div>
         </div>
-        <center>{gifts}</center>
+        <div>{gifts}</div>
         <div class="clear"></div>
     </a>
     [/gifts]

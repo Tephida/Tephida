@@ -1,5 +1,4 @@
 <?php
-declare(strict_types=1);
 /*
  *   (c) Semen Alekseev
  *
@@ -7,14 +6,17 @@ declare(strict_types=1);
  *   file that was distributed with this source code.
  *
  */
+
+declare(strict_types=1);
+
 namespace Mozg\classes;
 
 use ErrorException;
+use JsonException;
 
 class WallProfile
 {
-
-    public $tpl;
+    public Templates|TpLSite $tpl;
     public array|bool|null $query = false;
     public false|string $template = false;
     public false|string $compile = false;
@@ -22,7 +24,7 @@ class WallProfile
     public false|string $comm_template = false;
     public false|string $comm_compile = false;
 
-    function __construct($tpl)
+    public function __construct($tpl)
     {
         $this->tpl = $tpl;
     }
@@ -54,12 +56,10 @@ class WallProfile
 //        $user_privacy = $user_privacy ?? Registry::get('user_privacy');
 //        $config = settings_get();
 
-        $tpl = $this->tpl;
-
         $db = Registry::get('db');
 //        $this->template;
         foreach ($this->query as $row_wall) {
-            $tpl->set('{rec-id}', $row_wall['id']);
+            $this->tpl->set('{rec-id}', $row_wall['id']);
 
             //Кнопка Показать полностью..
             $expBR = explode('<br />', $row_wall['text']);
@@ -305,12 +305,7 @@ class WallProfile
                 else
                     $rowUserTell = $db->super_query("SELECT user_search_pref, user_photo FROM `users` WHERE user_id = '{$row_wall['tell_uid']}'");
 
-                if (date('Y-m-d', $row_wall['tell_date']) == date('Y-m-d', Registry::get('server_time')))
-                    $dateTell = langdate('сегодня в H:i', $row_wall['tell_date']);
-                elseif (date('Y-m-d', $row_wall['tell_date']) == date('Y-m-d', (Registry::get('server_time') - 84600)))
-                    $dateTell = langdate('вчера в H:i', $row_wall['tell_date']);
-                else
-                    $dateTell = langdate('j F Y в H:i', $row_wall['tell_date']);
+                $dateTell = megaDate($row_wall['tell_date']);
 
                 if ($row_wall['public']) {
                     $rowUserTell['user_search_pref'] = stripslashes($rowUserTell['title']);
@@ -338,96 +333,96 @@ class WallProfile
 HTML;
             }
 
-            $tpl->set('{text}', stripslashes($row_wall['text']));
+            $this->tpl->set('{text}', stripslashes($row_wall['text']));
 
-            $tpl->set('{name}', $row_wall['user_search_pref']);
-            $tpl->set('{user-id}', $row_wall['author_user_id']);
+            $this->tpl->set('{name}', $row_wall['user_search_pref']);
+            $this->tpl->set('{user-id}', $row_wall['author_user_id']);
             OnlineTpl($row_wall['user_last_visit'], $row_wall['user_logged_mobile']);
             $date_str = megaDate(intval($row_wall['add_date']));
 
-            $tpl->set('{date}', $date_str);
+            $this->tpl->set('{date}', $date_str);
 
             if ($row_wall['user_photo'])
-                $tpl->set('{ava}', '/uploads/users/' . $row_wall['author_user_id'] . '/50_' . $row_wall['user_photo']);
+                $this->tpl->set('{ava}', '/uploads/users/' . $row_wall['author_user_id'] . '/50_' . $row_wall['user_photo']);
             else
-                $tpl->set('{ava}', '{theme}/images/no_ava_50.png');
+                $this->tpl->set('{ava}', '{theme}/images/no_ava_50.png');
 
             //Мне нравится
             if (stripos($row_wall['likes_users'], "u{$user_id}|") !== false) {
-                $tpl->set('{yes-like}', 'public_wall_like_yes');
-                $tpl->set('{yes-like-color}', 'public_wall_like_yes_color');
-                $tpl->set('{like-js-function}', 'groups.wall_remove_like(' . $row_wall['id'] . ', ' . $user_id . ', \'uPages\')');
+                $this->tpl->set('{yes-like}', 'public_wall_like_yes');
+                $this->tpl->set('{yes-like-color}', 'public_wall_like_yes_color');
+                $this->tpl->set('{like-js-function}', 'groups.wall_remove_like(' . $row_wall['id'] . ', ' . $user_id . ', \'uPages\')');
             } else {
-                $tpl->set('{yes-like}', '');
-                $tpl->set('{yes-like-color}', '');
-                $tpl->set('{like-js-function}', 'groups.wall_add_like(' . $row_wall['id'] . ', ' . $user_id . ', \'uPages\')');
+                $this->tpl->set('{yes-like}', '');
+                $this->tpl->set('{yes-like-color}', '');
+                $this->tpl->set('{like-js-function}', 'groups.wall_add_like(' . $row_wall['id'] . ', ' . $user_id . ', \'uPages\')');
             }
 
             if ($row_wall['likes_num']) {
-                $tpl->set('{likes}', $row_wall['likes_num']);
-                $tpl->set('{likes-text}', '<span id="like_text_num' . $row_wall['id'] . '">' . $row_wall['likes_num'] . '</span> ' . gram_record($row_wall['likes_num'], 'like'));
+                $this->tpl->set('{likes}', $row_wall['likes_num']);
+                $this->tpl->set('{likes-text}', '<span id="like_text_num' . $row_wall['id'] . '">' . $row_wall['likes_num'] . '</span> ' . gram_record($row_wall['likes_num'], 'like'));
             } else {
-                $tpl->set('{likes}', '');
-                $tpl->set('{likes-text}', '<span id="like_text_num' . $row_wall['id'] . '">0</span> человеку');
+                $this->tpl->set('{likes}', '');
+                $this->tpl->set('{likes-text}', '<span id="like_text_num' . $row_wall['id'] . '">0</span> человеку');
             }
 
             //Выводим информцию о том кто смотрит страницу для себя
-            $tpl->set('{viewer-id}', $user_id);
+            $this->tpl->set('{viewer-id}', $user_id);
             if ($user_info['user_photo'])
-                $tpl->set('{viewer-ava}', '/uploads/users/' . $user_id . '/50_' . $user_info['user_photo']);
+                $this->tpl->set('{viewer-ava}', '/uploads/users/' . $user_id . '/50_' . $user_info['user_photo']);
             else
-                $tpl->set('{viewer-ava}', '{theme}/images/no_ava_50.png');
+                $this->tpl->set('{viewer-ava}', '{theme}/images/no_ava_50.png');
 
             if ($row_wall['type'])
-                $tpl->set('{type}', $row_wall['type']);
+                $this->tpl->set('{type}', $row_wall['type']);
             else
-                $tpl->set('{type}', '');
+                $this->tpl->set('{type}', '');
 
             if (!$id)
                 $id = $for_user_id;
 
             //Тег Owner означает показ записей только для владельца страницы или для того кто оставил запись
             if ($user_id == $row_wall['author_user_id'] or $user_id == $id) {
-                $tpl->set('[owner]', '');
-                $tpl->set('[/owner]', '');
+                $this->tpl->set('[owner]', '');
+                $this->tpl->set('[/owner]', '');
             } else
-                $tpl->set_block("'\\[owner\\](.*?)\\[/owner\\]'si", "");
+                $this->tpl->set_block("'\\[owner\\](.*?)\\[/owner\\]'si", "");
 
             //Показа кнопки "Рассказать др" только если это записи владельца стр.
             if ($row_wall['author_user_id'] == $id and $user_id != $id) {
-                $tpl->set('[owner-record]', '');
-                $tpl->set('[/owner-record]', '');
+                $this->tpl->set('[owner-record]', '');
+                $this->tpl->set('[/owner-record]', '');
             } else
-                $tpl->set_block("'\\[owner-record\\](.*?)\\[/owner-record\\]'si", "");
+                $this->tpl->set_block("'\\[owner-record\\](.*?)\\[/owner-record\\]'si", "");
 
             //Если есть комменты к записи, то выполняем след. действия / Приватность
             if ($row_wall['fasts_num']) {
-                $tpl->set('[if-comments]', '');
-                $tpl->set('[/if-comments]', '');
-                $tpl->set_block("'\\[comments-link\\](.*?)\\[/comments-link\\]'si", "");
+                $this->tpl->set('[if-comments]', '');
+                $this->tpl->set('[/if-comments]', '');
+                $this->tpl->set_block("'\\[comments-link\\](.*?)\\[/comments-link\\]'si", "");
             } else {
-                $tpl->set('[comments-link]', '');
-                $tpl->set('[/comments-link]', '');
-                $tpl->set_block("'\\[if-comments\\](.*?)\\[/if-comments\\]'si", "");
+                $this->tpl->set('[comments-link]', '');
+                $this->tpl->set('[/comments-link]', '');
+                $this->tpl->set_block("'\\[if-comments\\](.*?)\\[/if-comments\\]'si", "");
             }
 
             //Приватность комментирования записей
             if ($user_privacy['val_wall3'] == 1 or $user_privacy['val_wall3'] == 2 and $check_friend or $user_id == $id) {
-                $tpl->set('[privacy-comment]', '');
-                $tpl->set('[/privacy-comment]', '');
+                $this->tpl->set('[privacy-comment]', '');
+                $this->tpl->set('[/privacy-comment]', '');
             } else
-                $tpl->set_block("'\\[privacy-comment\\](.*?)\\[/privacy-comment\\]'si", "");
+                $this->tpl->set_block("'\\[privacy-comment\\](.*?)\\[/privacy-comment\\]'si", "");
 
-            $tpl->set('[record]', '');
-            $tpl->set('[/record]', '');
-            $tpl->set('{author-id}', $id);
-            $tpl->set_block("'\\[comment\\](.*?)\\[/comment\\]'si", "");
-            $tpl->set_block("'\\[comment-form\\](.*?)\\[/comment-form\\]'si", "");
-            $tpl->set_block("'\\[all-comm\\](.*?)\\[/all-comm\\]'si", "");
-            $tpl->compile($this->compile);
+            $this->tpl->set('[record]', '');
+            $this->tpl->set('[/record]', '');
+            $this->tpl->set('{author-id}', $id);
+            $this->tpl->set_block("'\\[comment\\](.*?)\\[/comment\\]'si", "");
+            $this->tpl->set_block("'\\[comment-form\\](.*?)\\[/comment-form\\]'si", "");
+            $this->tpl->set_block("'\\[all-comm\\](.*?)\\[/all-comm\\]'si", "");
+            $this->tpl->compile($this->compile);
 
             //Помещаем все комменты в id wall_fast_block_{id} это для JS
-            $tpl->result[$this->compile] .= '<div id="wall_fast_block_' . $row_wall['id'] . '">';
+            $this->tpl->result[$this->compile] .= '<div id="wall_fast_block_' . $row_wall['id'] . '">';
 
             //Если есть комменты к записи, то открываем форму ответа уже в развернутом виде и выводим комменты к записи
             if ($user_privacy['val_wall3'] == 1 or $user_privacy['val_wall3'] == 2 and $check_friend or $user_id == $id) {
@@ -441,31 +436,31 @@ HTML;
                     $sql_comments = $db->super_query("SELECT tb1.id, author_user_id, text, add_date, tb2.user_photo, user_search_pref FROM `wall` tb1, `users` tb2 WHERE tb1.author_user_id = tb2.user_id AND tb1.fast_comm_id = '{$row_wall['id']}' ORDER by `add_date` ASC LIMIT {$comments_limit}, 3", true);
 
                     //Загружаем кнопку "Показать N запсии"
-                    $tpl->set('{gram-record-all-comm}', gram_record(($row_wall['fasts_num'] - 3), 'prev') . ' ' . ($row_wall['fasts_num'] - 3) . ' ' . gram_record(($row_wall['fasts_num'] - 3), 'comments'));
+                    $this->tpl->set('{gram-record-all-comm}', gram_record(($row_wall['fasts_num'] - 3), 'prev') . ' ' . ($row_wall['fasts_num'] - 3) . ' ' . gram_record(($row_wall['fasts_num'] - 3), 'comments'));
                     if ($row_wall['fasts_num'] < 4)
-                        $tpl->set_block("'\\[all-comm\\](.*?)\\[/all-comm\\]'si", "");
+                        $this->tpl->set_block("'\\[all-comm\\](.*?)\\[/all-comm\\]'si", "");
                     else {
-                        $tpl->set('{rec-id}', $row_wall['id']);
-                        $tpl->set('[all-comm]', '');
-                        $tpl->set('[/all-comm]', '');
+                        $this->tpl->set('{rec-id}', $row_wall['id']);
+                        $this->tpl->set('[all-comm]', '');
+                        $this->tpl->set('[/all-comm]', '');
                     }
-                    $tpl->set('{author-id}', $id);
-                    $tpl->set_block("'\\[record\\](.*?)\\[/record\\]'si", "");
-                    $tpl->set_block("'\\[comment-form\\](.*?)\\[/comment-form\\]'si", "");
-                    $tpl->set_block("'\\[comment\\](.*?)\\[/comment\\]'si", "");
-                    $tpl->compile($this->compile);
+                    $this->tpl->set('{author-id}', $id);
+                    $this->tpl->set_block("'\\[record\\](.*?)\\[/record\\]'si", "");
+                    $this->tpl->set_block("'\\[comment-form\\](.*?)\\[/comment-form\\]'si", "");
+                    $this->tpl->set_block("'\\[comment\\](.*?)\\[/comment\\]'si", "");
+                    $this->tpl->compile($this->compile);
 
                     //Собственно выводим комменты
                     foreach ($sql_comments as $row_comments) {
-                        $tpl->set('{name}', $row_comments['user_search_pref']);
+                        $this->tpl->set('{name}', $row_comments['user_search_pref']);
                         if ($row_comments['user_photo'])
-                            $tpl->set('{ava}', '/uploads/users/' . $row_comments['author_user_id'] . '/50_' . $row_comments['user_photo']);
+                            $this->tpl->set('{ava}', '/uploads/users/' . $row_comments['author_user_id'] . '/50_' . $row_comments['user_photo']);
                         else
-                            $tpl->set('{ava}', '{theme}/images/no_ava_50.png');
+                            $this->tpl->set('{ava}', '{theme}/images/no_ava_50.png');
 
-                        $tpl->set('{rec-id}', $row_wall['id']);
-                        $tpl->set('{comm-id}', $row_comments['id']);
-                        $tpl->set('{user-id}', $row_comments['author_user_id']);
+                        $this->tpl->set('{rec-id}', $row_wall['id']);
+                        $this->tpl->set('{comm-id}', $row_comments['id']);
+                        $this->tpl->set('{user-id}', $row_comments['author_user_id']);
 
                         $expBR2 = explode('<br />', $row_comments['text']);
                         $textLength2 = count($expBR2);
@@ -476,52 +471,54 @@ HTML;
                         //Обрабатываем ссылки
                         $row_comments['text'] = preg_replace('`(http(?:s)?://\w+[^\s\[\]\<]+)`i', '<a href="/index.php?go=away&url=$1" target="_blank">$1</a>', $row_comments['text']);
 
-                        $tpl->set('{text}', stripslashes($row_comments['text']));
+                        $this->tpl->set('{text}', stripslashes($row_comments['text']));
                         $date_str = megaDate(intval($row_comments['add_date']));
 
-                        $tpl->set('{date}', $date_str);
+                        $this->tpl->set('{date}', $date_str);
 
                         if ($user_id == $row_comments['author_user_id'] || $user_id == $id) {
-                            $tpl->set('[owner]', '');
-                            $tpl->set('[/owner]', '');
+                            $this->tpl->set('[owner]', '');
+                            $this->tpl->set('[/owner]', '');
                         } else
-                            $tpl->set_block("'\\[owner\\](.*?)\\[/owner\\]'si", "");
+                            $this->tpl->set_block("'\\[owner\\](.*?)\\[/owner\\]'si", "");
 
                         if ($user_id == $row_comments['author_user_id'])
 
-                            $tpl->set_block("'\\[not-owner\\](.*?)\\[/not-owner\\]'si", "");
+                            $this->tpl->set_block("'\\[not-owner\\](.*?)\\[/not-owner\\]'si", "");
 
                         else {
 
-                            $tpl->set('[not-owner]', '');
-                            $tpl->set('[/not-owner]', '');
+                            $this->tpl->set('[not-owner]', '');
+                            $this->tpl->set('[/not-owner]', '');
 
                         }
 
-                        $tpl->set('[comment]', '');
-                        $tpl->set('[/comment]', '');
-                        $tpl->set_block("'\\[record\\](.*?)\\[/record\\]'si", "");
-                        $tpl->set_block("'\\[comment-form\\](.*?)\\[/comment-form\\]'si", "");
-                        $tpl->set_block("'\\[all-comm\\](.*?)\\[/all-comm\\]'si", "");
-                        $tpl->compile($this->compile);
+                        $this->tpl->set('[comment]', '');
+                        $this->tpl->set('[/comment]', '');
+                        $this->tpl->set_block("'\\[record\\](.*?)\\[/record\\]'si", "");
+                        $this->tpl->set_block("'\\[comment-form\\](.*?)\\[/comment-form\\]'si", "");
+                        $this->tpl->set_block("'\\[all-comm\\](.*?)\\[/all-comm\\]'si", "");
+                        $this->tpl->compile($this->compile);
                     }
 
                     //Загружаем форму ответа
-                    $tpl->set('{rec-id}', $row_wall['id']);
-                    $tpl->set('{author-id}', $id);
-                    $tpl->set('[comment-form]', '');
-                    $tpl->set('[/comment-form]', '');
-                    $tpl->set_block("'\\[record\\](.*?)\\[/record\\]'si", "");
-                    $tpl->set_block("'\\[comment\\](.*?)\\[/comment\\]'si", "");
-                    $tpl->set_block("'\\[all-comm\\](.*?)\\[/all-comm\\]'si", "");
-                    $tpl->compile($this->compile);
+                    $this->tpl->set('{rec-id}', $row_wall['id']);
+                    $this->tpl->set('{author-id}', $id);
+                    $this->tpl->set('[comment-form]', '');
+                    $this->tpl->set('[/comment-form]', '');
+                    $this->tpl->set_block("'\\[record\\](.*?)\\[/record\\]'si", "");
+                    $this->tpl->set_block("'\\[comment\\](.*?)\\[/comment\\]'si", "");
+                    $this->tpl->set_block("'\\[all-comm\\](.*?)\\[/all-comm\\]'si", "");
+                    $this->tpl->compile($this->compile);
                 }
             }
 
             //Закрываем блок для JS
-            $tpl->result[$this->compile] .= '</div>';
+            $this->tpl->result[$this->compile] .= '</div>';
 
         }
+
+        return $this->tpl;
 
     }
 
@@ -536,8 +533,7 @@ HTML;
      */
     function comm_template($template)
     {
-        global $tpl;
-        $this->comm_template = $tpl->load_template($template);
+        $this->comm_template = $this->tpl->load_template($template);
     }
 
     function comm_compile($compile)
@@ -646,5 +642,17 @@ HTML;
             $tpl->set_block("'\\[all-comm\\](.*?)\\[/all-comm\\]'si", "");
             $tpl->compile($this->comm_compile);
         }
+    }
+
+    /**
+     * @throws ErrorException|JsonException
+     */
+    public function render()
+    {
+
+        var_dump($this->tpl);
+
+
+//        $this->tpl->render();
     }
 }

@@ -2720,11 +2720,17 @@ var audio = {
             },
             onComplete: function (file, data) {
                 butloading('upload', '73', 'enabled', 'Выбрать файл');
-                if (data == 1) Box.Info('load_photo_er', lang_dd2f_no, 'Аудиофайл не должен превышать 10 Мб и должен быть в формате MP3.', 250);
-                else {
+                data = JSON.parse(data);
+                console.log(data);
+                if (data.status === 1) {
                     Box.Close();
                     if (first == 1) window.location.href = '/audio';
                     else player.xSearch();
+
+                } else {
+                    Box.Info('load_photo_er', lang_dd2f_no, 'Аудиофайл не должен превышать 10 Мб и должен быть в формате MP3.', 250);
+
+
                 }
             }
         });

@@ -260,11 +260,12 @@ class Profile extends Module
                 }
 
                 //################### Загрузка стены ###################//
-                if ($row['user_wall_num'])
+                if ($row['user_wall_num']) {
                     include ENGINE_DIR . '/modules/wall.php';
+                }
 
                 //Общие друзья
-                if (Registry::get('logged') and $row['user_friends_num'] and $id != $user_info['user_id']) {
+                if (Registry::get('logged') && $row['user_friends_num'] && $id !== $user_info['user_id']) {
 
                     $count_common = $db->super_query("SELECT COUNT(*) AS cnt FROM `friends` tb1 INNER JOIN `friends` tb2 ON tb1.friend_id = tb2.user_id WHERE tb1.user_id = '{$user_info['user_id']}' AND tb2.friend_id = '{$id}' AND tb1.subscriptions = 0 AND tb2.subscriptions = 0");
 
@@ -299,7 +300,7 @@ class Profile extends Module
                 //################### Загрузка самого профиля ###################//
                 $tpl->load_template('profile.tpl');
 
-                if (isset($count_common['cnt']) and $count_common['cnt']) {
+                if (isset($count_common['cnt']) && $count_common['cnt']) {
 
                     $tpl->set('{mutual_friends}', $tpl->result['mutual_friends'] ?? '');
                     $tpl->set('{mutual-num}', $count_common['cnt']);
@@ -318,7 +319,7 @@ class Profile extends Module
                 $tpl->set('{city}', $user_country_city_name_exp[1]);
                 $tpl->set('{city-id}', $row['user_city']);
 
-                //Если человек сидит с мобильнйо версии
+                //Если человек сидит с мобильной версии
                 if ($row_online['user_logged_mobile']) {
                     $mobile_icon = '<img src="{theme}/images/spacer.gif" class="mobile_online" />';
                 } else {
@@ -329,12 +330,6 @@ class Profile extends Module
                     $lang['online'] = $lang['online'] ?? 'online';
                     $tpl->set('{online}', $lang['online'] . $mobile_icon);
                 } else {
-//                    if (date('Y-m-d', intval($row_online['user_last_visit'])) == date('Y-m-d', $server_time))
-//                        $dateTell = langdate('сегодня в H:i', $row_online['user_last_visit']);
-//                    elseif (date('Y-m-d', intval($row_online['user_last_visit'])) == date('Y-m-d', ($server_time - 84600)))
-//                        $dateTell = langdate('вчера в H:i', $row_online['user_last_visit']);
-//                    else
-//                        $dateTell = langdate('j F Y в H:i', $row_online['user_last_visit']);
 
                     if ((int)$row_online['user_last_visit'] > 0) {
                         $dateTell = megaDate((int)$row_online['user_last_visit']);
@@ -492,15 +487,15 @@ class Profile extends Module
 
                 //Аватарка
                 $row_view_photos = $db->super_query("SELECT * FROM `photos` WHERE user_id = '{$id}'");
-                $tpl->set('{photoid}', $row_view_photos['id']);
-                $tpl->set('{albumid}', $row_view_photos['album_id']);
-                if($row['user_photo']){
+                $tpl->set('{photoid}', $row_view_photos['id'] ?? 0);
+                $tpl->set('{albumid}', $row_view_photos['album_id'] ?? 0);
+                if ($row['user_photo']) {
                     //todo optimize
                     $album = $db->super_query("SELECT aid FROM `albums` WHERE user_id = '{$id}' AND system = '1'");
                     $albuml = $db->super_query("SELECT * FROM `photos` WHERE album_id = '{$album['aid']}' ORDER BY id DESC");
 
-                    $tpl->set('{ava}', $config['home_url'].'uploads/users/'.$row['user_id'].'/'.$row['user_photo']);
-                    $tpl->set('{link}', '/photo'.$row['user_id'].'_'.$albuml['id'].'_'.$albuml['album_id']);
+                    $tpl->set('{ava}', $config['home_url'] . 'uploads/users/' . $row['user_id'] . '/' . $row['user_photo']);
+                    $tpl->set('{link}', '/photo' . $row['user_id'] . '_' . $albuml['id'] . '_' . $albuml['album_id']);
                     $tpl->set('{display-ava}', 'style="display:block;"');
                 } else {
                     $tpl->set('{ava}', '/templates/Default/images/no_ava.gif');
@@ -711,7 +706,7 @@ class Profile extends Module
                     }
                 }
 
-                $row['user_wall_num'] = $row['user_wall_num'] ? $row['user_wall_num'] : '';
+                $row['user_wall_num'] = $row['user_wall_num'] ?? '';
                 if ($row['user_wall_num'] > 10) {
                     $tpl->set('[wall-link]', '');
                     $tpl->set('[/wall-link]', '');
@@ -742,7 +737,7 @@ class Profile extends Module
                 }
 
                 //Приватность сообщений
-                if ($user_privacy['val_msg'] == 1 or $user_privacy['val_msg'] == 2 and $check_friend) {
+                if ($user_privacy['val_msg'] == 1 || ($user_privacy['val_msg'] == 2 && $check_friend)) {
                     $tpl->set('[privacy-msg]', '');
                     $tpl->set('[/privacy-msg]', '');
                 } else {
@@ -750,14 +745,14 @@ class Profile extends Module
                 }
 
                 //Приватность стены
-                if ($user_privacy['val_wall1'] == 1 or $user_privacy['val_wall1'] == 2 and $check_friend or $user_id == $id) {
+                if ($user_privacy['val_wall1'] == 1 || ($user_privacy['val_wall1'] == 2 && $check_friend) || $user_id == $id) {
                     $tpl->set('{privacy-wall}', '');
                     $tpl->set('{/privacy-wall}', '');
                 } else {
                     $tpl->set_block("'\\{privacy-wall\\}(.*?)\\{/privacy-wall\\}'si", "");
                 }
 
-                if ($user_privacy['val_wall2'] == 1 or $user_privacy['val_wall2'] == 2 and $check_friend or $user_id == $id) {
+                if ($user_privacy['val_wall2'] == 1 || ($user_privacy['val_wall2'] == 2 && $check_friend) || $user_id == $id) {
                     $tpl->set('{privacy-wall}', '');
                     $tpl->set('{/privacy-wall}', '');
                 } else {
@@ -765,11 +760,12 @@ class Profile extends Module
                 }
 
                 //Приватность информации
-                if ($user_privacy['val_info'] == 1 or $user_privacy['val_info'] == 2 and $check_friend or $user_id == $id) {
+                if ($user_privacy['val_info'] == 1 || ($user_privacy['val_info'] == 2 && $check_friend) || $user_id == $id) {
                     $tpl->set('[privacy-info]', '');
                     $tpl->set('[/privacy-info]', '');
-                } else
+                } else {
                     $tpl->set_block("'\\[privacy-info\\](.*?)\\[/privacy-info\\]'si", "");
+                }
 
                 //Семейное положение
                 $user_sp = explode('|', $row['user_sp']);
@@ -971,6 +967,17 @@ class Profile extends Module
 
                 if (!$row['user_rating']) $row['user_rating'] = 0;
                 $tpl->set('{rating}', $row['user_rating']);
+
+
+                if (Registry::get('logged')) {
+                    $tpl->set('[logged]', '');
+                    $tpl->set('[/logged]', '');
+                    $tpl->set_block("'\\[not_logged\\](.*?)\\[/not_logged\\]'si", "");
+                } else {
+                    $tpl->set_block("'\\[not_logged\\](.*?)\\[/not_logged\\]'si", "");
+                    $tpl->set('[logged]', '');
+                    $tpl->set('[/logged]', '');
+                }
 
                 $tpl->compile('content');
 

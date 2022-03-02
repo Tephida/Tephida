@@ -972,16 +972,17 @@ function user_age($user_year, $user_month, $user_day) {
 function megaDate(?int $date, bool $func = false, bool $full = false): string
 {
     $server_time = Registry::get('server_time');
-    if (date('Y-m-d', $date) == date('Y-m-d', $server_time))
+    if (date('Y-m-d', $date) === date('Y-m-d', $server_time)) {
         return langdate('сегодня в H:i', $date);
-    elseif (date('Y-m-d', $date) == date('Y-m-d', ($server_time - 84600)))
+    } elseif (date('Y-m-d', $date) === date('Y-m-d', ($server_time - 84600))) {
         return langdate('вчера в H:i', $date);
-    else if ($func == 'no_year')
+    } else if ($func) {//no_year
         return langdate('j M в H:i', $date);
-    else if ($full)
+    } else if ($full) {
         return langdate('j F Y в H:i', $date);
-    else
+    } else {
         return langdate('j M Y в H:i', $date);
+    }
 }
 
 function OnlineTpl($time, $mobile = false) {
@@ -1661,6 +1662,14 @@ function compileNoAjax($tpl, $params): int
             $tpl->set('{new_groups}', '');
         }
         $tpl->set('{groups-link}', $params['new_groups_lnk']);
+
+        if ($user_info['user_photo']) {
+            $config = settings_get();
+            $ava = '<img src="' . $config['home_url'] . 'uploads/users/' . $user_info['user_id'] . '/100_' . $user_info['user_photo'] . '"   style="width: 40px;height: 40px;" />';
+        } else {
+            $ava = '<img src="{theme}/images/no_ava_50.png" />';
+        }
+        $tpl->set('{user_photo}', $ava);
     } else {
         $tpl->set_block("'\\[logged\\](.*?)\\[/logged\\]'si", "");
         $tpl->set('[not-logged]', '');

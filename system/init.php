@@ -19,7 +19,7 @@ try {
 }
 
 
-$db = require_once ENGINE_DIR . '/data/db.php';
+$db = require ENGINE_DIR . '/data/db.php';
 Registry::set('db', $db);
 
 //FUNC. COOKIES
@@ -69,29 +69,37 @@ if (!isset($checkLang)) {
     $rMyLang = 'Русский';
     $checkLang = 'Russian';
 }
-$lang = include_once ROOT_DIR . '/lang/' . $checkLang . '/site.php';
+$lang = include ROOT_DIR . '/lang/' . $checkLang . '/site.php';
 Registry::set('lang', $lang);
-$langdate = include_once ROOT_DIR . '/lang/' . $checkLang . '/date.php';
+$langdate = include ROOT_DIR . '/lang/' . $checkLang . '/date.php';
 
 $tpl = new Templates();
 $tpl->dir = ROOT_DIR . '/templates/' . $config['temp'];
 define('TEMPLATE_DIR', $tpl->dir);
+
+
 $_DOCUMENT_DATE = false;
 Registry::set('server_time', time());
 
 include_once ENGINE_DIR . '/login.php';
 
-if ($config['offline'] == "yes") include ENGINE_DIR . '/modules/offline.php';
+if ($config['offline'] == "yes") {
+    include ENGINE_DIR . '/modules/offline.php';
+}
 
-if (isset($user_info['user_delet']) and $user_info['user_delet'] > 0)
+if (isset($user_info['user_delet']) and $user_info['user_delet'] > 0) {
     include_once ENGINE_DIR . '/modules/profile_delet.php';
+}
 $sql_banned = $db->super_query("SELECT * FROM banned", true);
-if (isset($sql_banned))
+if (isset($sql_banned)) {
     $blockip = check_ip($sql_banned);
-else
+} else {
     $blockip = false;
-if (isset($user_info['user_ban_date']) and $user_info['user_ban_date'] >= Registry::get('server_time') or isset($user_info['user_ban_date']) and $user_info['user_ban_date'] == '0' or $blockip)
+}
+if ((isset($user_info['user_ban_date']) && $user_info['user_ban_date'] >= Registry::get('server_time')) ||
+    (isset($user_info['user_ban_date']) && $user_info['user_ban_date'] == '0') || $blockip) {
     include_once ENGINE_DIR . '/modules/profile_ban.php';
+}
 //Если юзер авторизован, то обновляем последнюю дату посещения в таблице друзей и на личной стр
 if (Registry::get('logged')) {
     //Начисления 1 убм.
@@ -125,16 +133,22 @@ try {
     $routers = array(
         '/' => 'Register@main',
         '/register/send' => 'Register@send',
+        '/register/rules' => 'Register@rules',
+        '/register/step2' => 'Register@step2',
+        '/register/step3' => 'Register@step3',
+        '/register/activate' => 'Register@activate',
+        '/register/finish' => 'Register@finish',
         '/login' => 'Register@login',
         '/u:num' => 'Profile@main',
         '/u:numafter' => 'Profile@main',
+        '/public:num' => 'Communities@main',
         //restore
         '/restore' => 'Restore@main',
         '/restore/next' => 'Restore@next',
         '/restore/next/' => 'Restore@next',
         '/restore/send' => 'Restore@send',
         '/restore/prefinish' => 'Restore@preFinish',
-        '/restore/finish' => 'Restore@finish',
+        '/wall:num_:num' => 'WallPage@main',
     );
     $router->add($routers);
     try {
@@ -144,7 +158,7 @@ try {
             $go = isset($_GET['go']) ? htmlspecialchars(strip_tags(stripslashes(trim(urldecode($_GET['go']))))) : "main";
             $action = requestFilter('act');
             $class = ucfirst($go);
-            if (!class_exists($class) or $action == '' or $class == 'Wall') {
+            if (!class_exists($class) || $action == '' || $class == 'Wall') {
                 include_once ENGINE_DIR . '/mod.php';
             } else {
                 $controller = new $class();

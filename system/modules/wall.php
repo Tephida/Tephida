@@ -7,10 +7,15 @@
  *
  */
 
+declare(strict_types=1);
+
 use Mozg\classes\AntiSpam;
 use Mozg\classes\Filesystem;
 use Mozg\classes\Registry;
+use Mozg\classes\Thumbnail;
+use Mozg\classes\TpLSite;
 use Mozg\classes\WallProfile;
+use Mozg\classes\WallPublic;
 
 if (Registry::get('logged')) {
     $db = Registry::get('db');
@@ -22,8 +27,9 @@ if (Registry::get('logged')) {
     $server_time = Registry::get('server_time');
 
     switch ($act) {
-
-        //################### Добавление новой записи на стену ###################//
+        /**
+         * Добавление новой записи на стену
+         */
         case "send":
             $wall = new WallProfile($tpl);
 //			NoAjaxQuery();
@@ -107,8 +113,6 @@ if (Registry::get('logged')) {
                                             Filesystem::createDir($upload_dir);
 
                                             //Подключаем класс для фотографий
-                                            include ENGINE_DIR . '/classes/images.php';
-
                                             if (Filesystem::copy($rImgUrl, $upload_dir . '/' . $image_name . '.' . $img_format)) {
                                                 $tmb = new Thumbnail($upload_dir . '/' . $image_name . '.' . $img_format);
                                                 $tmb->size_auto('100x80');
@@ -123,8 +127,7 @@ if (Registry::get('logged')) {
                                 }
                             }
 
-                            $attach_files = str_replace('vote|', 'hack|', $attach_files);
-                            $attach_files = str_replace(array('&amp;#124;', '&amp;raquo;', '&amp;quot;'), array('&#124;', '&raquo;', '&quot;'), $attach_files);
+                            $attach_files = str_replace(array('vote|', '&amp;#124;', '&amp;raquo;', '&amp;quot;'), array('hack|', '&#124;', '&raquo;', '&quot;'), $attach_files);
 
                             //Голосование
                             $vote_title = requestFilter('vote_title', 25000, true);
@@ -229,7 +232,7 @@ if (Registry::get('logged')) {
                                         $rowUserEmail = $db->super_query("SELECT user_name, user_email FROM `users` WHERE user_id = '" . $row_owner['author_user_id'] . "'");
                                         if ($rowUserEmail['user_email']) {
                                             include_once ENGINE_DIR . '/classes/mail.php';
-                                            $mail = new vii_mail($config);
+                                            $mail = new \Mozg\classes\ViiMail($config);
                                             $rowMyInfo = $db->super_query("SELECT user_search_pref FROM `users` WHERE user_id = '" . $user_id . "'");
                                             $rowEmailTpl = $db->super_query("SELECT text FROM `mail_tpl` WHERE id = '2'");
                                             $rowEmailTpl['text'] = str_replace('{%user%}', $rowUserEmail['user_name'], $rowEmailTpl['text']);
@@ -267,7 +270,7 @@ if (Registry::get('logged')) {
                                     $rowUserEmail = $db->super_query("SELECT user_name, user_email FROM `users` WHERE user_id = '" . $for_user_id . "'");
                                     if ($rowUserEmail['user_email']) {
                                         include_once ENGINE_DIR . '/classes/mail.php';
-                                        $mail = new vii_mail($config);
+                                        $mail = new \Mozg\classes\ViiMail($config);
                                         $rowMyInfo = $db->super_query("SELECT user_search_pref FROM `users` WHERE user_id = '" . $user_id . "'");
                                         $rowEmailTpl = $db->super_query("SELECT text FROM `mail_tpl` WHERE id = '7'");
                                         $rowEmailTpl['text'] = str_replace('{%user%}', $rowUserEmail['user_name'], $rowEmailTpl['text']);
@@ -315,7 +318,9 @@ if (Registry::get('logged')) {
 
             break;
 
-        //################### Удаление записи со стены ###################//
+        /**
+         * Удаление записи со стены
+         */
         case "delet":
             NoAjaxQuery();
             $rid = intFilter('rid');
@@ -372,7 +377,9 @@ if (Registry::get('logged')) {
 
             break;
 
-        //################### Ставим "Мне нравится" ###################//
+        /**
+         * Ставим "Мне нравится"
+         */
         case "like_yes":
             NoAjaxQuery();
             $rid = intFilter('rid');
@@ -422,7 +429,9 @@ if (Registry::get('logged')) {
 
             break;
 
-        //################### Удаляем "Мне нравится" ###################//
+        /**
+         * Удаляем "Мне нравится"
+         */
         case "like_no":
             NoAjaxQuery();
             $rid = intFilter('rid');
@@ -448,7 +457,9 @@ if (Registry::get('logged')) {
 
             break;
 
-        //################### Выводим первых 7 юзеров которые поставили "мне нравится" ###################//
+        /**
+         * Выводим первых 7 юзеров которые поставили "мне нравится"
+         */
         case "liked_users":
             NoAjaxQuery();
             $rid = intFilter('rid');
@@ -456,15 +467,20 @@ if (Registry::get('logged')) {
             if ($sql_) {
                 $config = settings_get();
                 foreach ($sql_ as $row) {
-                    if ($row['user_photo']) $ava = '/uploads/users/' . $row['user_id'] . '/50_' . $row['user_photo'];
-                    else $ava = '/templates/' . $config['temp'] . '/images/no_ava_50.png';
+                    if ($row['user_photo']) {
+                        $ava = '/uploads/users/' . $row['user_id'] . '/50_' . $row['user_photo'];
+                    } else {
+                        $ava = '/templates/' . $config['temp'] . '/images/no_ava_50.png';
+                    }
                     echo '<a href="/u' . $row['user_id'] . '" id="Xlike_user' . $row['user_id'] . '_' . $rid . '" onClick="Page.Go(this.href); return false"><img src="' . $ava . '" width="32" /></a>';
                 }
             }
 
             break;
 
-        //################### Выводим всех юзеров которые поставили "мне нравится" ###################//
+        /**
+         * Выводим всех юзеров которые поставили "мне нравится"
+         */
         case "all_liked_users":
             NoAjaxQuery();
             $rid = intFilter('rid');
@@ -511,10 +527,16 @@ if (Registry::get('logged')) {
 
             break;
 
-        //################### Показ всех комментариев к записи ###################//
+        /**
+         * Показ всех комментариев к записи
+         */
         case "all_comm":
             NoAjaxQuery();
-            $wall = new wall($tpl);
+
+            $meta_tags['title'] = '';
+            $tpl = new TpLSite($this->tpl_dir_name, $meta_tags);
+
+            $wall = new WallProfile($tpl);
             $fast_comm_id = intFilter('fast_comm_id');
             $for_user_id = intFilter('for_user_id');
             if ($fast_comm_id and $for_user_id) {
@@ -551,7 +573,9 @@ if (Registry::get('logged')) {
 
             break;
 
-        //################### Показ предыдущих записей ###################//
+        /**
+         * Показ предыдущих записей
+         */
         case "page":
             NoAjaxQuery();
             $wall = new wall($tpl);
@@ -590,7 +614,9 @@ if (Registry::get('logged')) {
 
             break;
 
-        //################### Рассказать друзьям "Мне нравится" ###################//
+        /**
+         * Рассказать друзьям "Мне нравится"
+         */
         case "tell":
             NoAjaxQuery();
             $rid = intFilter('rid');
@@ -625,7 +651,9 @@ if (Registry::get('logged')) {
             }
             break;
 
-        //################### Парсер информации о ссылке ###################//
+        /**
+         * Парсер информации о ссылке
+         */
         case "parse_link":
             $lnk = 'https://' . str_replace('https://', '', requestFilter('lnk'));
             $check_url = get_headers(stripslashes($lnk));
@@ -733,11 +761,24 @@ if (Registry::get('logged')) {
             break;
 
         default:
-            $wall = new WallProfile($tpl);
-            //################### Показ последних 10 записей ###################//
+
+            if (requestFilter('uid')) {
+                $meta_tags['title'] = 'wall';
+
+                $tpl = new TpLSite(ROOT_DIR . '/templates/' . $config['temp'], $meta_tags);
+            }
+
+            if (!isset($id) && !requestFilter('uid')) {
+                $wall = new WallPublic($tpl);
+            } else {
+
+                $wall = new WallProfile($tpl);
+            }
+
+            /** Показ последних 10 записей */
 
             //Если вызвана страница стены, не со страницы юзера
-            if (!isset($id)) {
+            if (!isset($id) && !requestFilter('uid')) {
                 $rid = intFilter('rid');
 
                 $id = intFilter('uid');
@@ -813,14 +854,17 @@ if (Registry::get('logged')) {
             $CheckBlackList = $CheckBlackList ?? false;
             $check_friend = $check_friend ?? false;
             $user_privacy = $user_privacy ?? null;
+            $user_privacy['val_wall1'] = $user_privacy['val_wall1'] ?? 3;
             $wallAuthorId = $wallAuthorId ?? null;
+            $wallAuthorId['author_user_id'] = $wallAuthorId['author_user_id'] ?? null;
+            $id = $id ?? null;
 
             if (!$CheckBlackList) {
 
 
                 $where_sql = $where_sql ?? null;
 
-                if ($user_privacy['val_wall1'] == 1 or $user_privacy['val_wall1'] == 2 and $check_friend or $user_id == $id) {
+                if ($user_privacy['val_wall1'] == 1 || ($user_privacy['val_wall1'] == 2 && $check_friend) || $user_id == $id) {
                     $wall->query("SELECT tb1.id, author_user_id, text, add_date, fasts_num, likes_num, likes_users, tell_uid, type, tell_date, public, attach, tell_comm, tb2.user_photo, user_search_pref, user_last_visit, user_logged_mobile FROM `wall` tb1, `users` tb2 WHERE for_user_id = '{$id}' AND tb1.author_user_id = tb2.user_id AND tb1.fast_comm_id = 0 {$where_sql} ORDER by `add_date` DESC LIMIT {$limit_page}, {$limit_select}");
                     $Hacking = false;
                 } elseif ($wallAuthorId['author_user_id'] == $id) {
@@ -828,8 +872,9 @@ if (Registry::get('logged')) {
                     $Hacking = false;
                 } else {
                     $wall->query("SELECT tb1.id, author_user_id, text, add_date, fasts_num, likes_num, likes_users, tell_uid, type, tell_date, public, attach, tell_comm, tb2.user_photo, user_search_pref, user_last_visit, user_logged_mobile FROM `wall` tb1, `users` tb2 WHERE for_user_id = '{$id}' AND tb1.author_user_id = tb2.user_id AND tb1.fast_comm_id = 0 AND tb1.author_user_id = '{$id}' ORDER by `add_date` DESC LIMIT {$limit_page}, {$limit_select}");
-                    if ($wallAuthorId['author_user_id'])
+                    if ($wallAuthorId['author_user_id']) {
                         $Hacking = true;
+                    }
                 }
 
                 $Hacking = $Hacking ?? false;
@@ -841,7 +886,7 @@ if (Registry::get('logged')) {
 
                     $for_user_id = $for_user_id ?? null;
 
-                    if ($rid or $walluid) {
+                    if ($rid || $walluid || requestFilter('uid')) {
                         $wall->template('wall/one_record.tpl');
                         $wall->compile('content');
                         $config = settings_get();
@@ -854,14 +899,26 @@ if (Registry::get('logged')) {
 
                         $type = requestFilter('type');
 
-                        if ($cnt_rec['cnt'] > $gcount and $type == '' or $type == 'own')
+                        if (($cnt_rec['cnt'] > $gcount && $type == '') || $type == 'own') {
                             navigation($gcount, $cnt_rec['cnt'], $page_type);
+                        }
+
+                        if (requestFilter('uid')) {
+//                           var_dump($tpl->result);
+                            try {
+                                $wall->render();
+//                                $tpl->render();
+                            } catch (ErrorException|JsonException $e) {
+                            }
+                        }
                     } else {
                         $wall->template('wall/record.tpl');
                         $wall->compile('wall');
                         $config = settings_get();
                         $wall->select($config, $id, $for_user_id, $user_privacy, $check_friend, $user_info);
                     }
+                } else {
+                    echo 'Error 500';
                 }
             }
     }

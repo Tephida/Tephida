@@ -8,6 +8,7 @@
  */
 
 use Mozg\classes\Registry;
+use Mozg\classes\TpLSite;
 
 $_IP = $_SERVER['REMOTE_ADDR'];
 $_BROWSER = $_SERVER['HTTP_USER_AGENT'];
@@ -74,7 +75,7 @@ if (isset($_SESSION['user_id']) > 0) {
     Registry::set('logged', false);
 }
 //Если данные поступили через пост и пользователь не авторизован
-if (isset($_POST['log_in']) AND !$logged) {
+if (isset($_POST['log_in']) && !$logged) {
     //Приготавливаем данные
     $email = requestFilter('email');
     $password = md5(md5(stripslashes($_POST['password'])));
@@ -83,7 +84,7 @@ if (isset($_POST['log_in']) AND !$logged) {
         msgbox('', $lang['not_loggin'] . '<br /><a href="/restore" onClick="Page.Go(this.href); return false">Забыли пароль?</a>', 'info_red');
     } else {
         //Считаем кол-во символов в пароле и email
-        if (isset($email) AND !empty($email)) {
+        if (!empty($email)) {
             $check_user = $db->super_query("SELECT user_id FROM `users` WHERE user_email = '" . $email . "' AND user_password = '" . $password . "'");
             //Если есть юзер то пропускаем
             if ($check_user) {
@@ -94,20 +95,35 @@ if (isset($_POST['log_in']) AND !$logged) {
                 //Удаляем все ранние события
                 $db->query("DELETE FROM `updates` WHERE for_user_id = '{$check_user['user_id']}'");
                 //Устанавливаем в сессию ИД юзера
-                $_SESSION['user_id'] = intval($check_user['user_id']);
+                $_SESSION['user_id'] = (int)$check_user['user_id'];
                 //Записываем COOKIE
-                set_cookie("user_id", intval($check_user['user_id']), 365);
+                set_cookie("user_id", (int)$check_user['user_id'], 365);
                 set_cookie("password", $password, 365);
                 set_cookie("hid", $hid, 365);
                 //Вставляем лог в бд
                 $db->query("UPDATE `log` SET browser = '" . $_BROWSER . "', ip = '" . $_IP . "' WHERE uid = '" . $check_user['user_id'] . "'");
-                if ($config['temp'] != 'mobile')
+                if ($config['temp'] != 'mobile') {
                     header('Location: /u' . $check_user['user_id']);
-                else
+                } else {
                     header('Location: /');
-            } else
-                msgbox('', $lang['not_loggin'] . '<br /><br /><a href="/restore" onClick="Page.Go(this.href); return false">Забыли пароль?</a>', 'info_red');
-        } else
-            msgbox('', $lang['not_loggin'] . '<br /><br /><a href="/restore" onClick="Page.Go(this.href); return false">Забыли пароль?</a>', 'info_red');
+                }
+            } else {
+                $tpl = new TpLSite(ROOT_DIR . '/templates/' . $config['temp']);
+                $tpl->load_template('info_red.tpl');
+                $tpl->set('{error}', '<a href="/restore" onClick="Page.Go(this.href); return false">Забыли пароль?</a>');
+                $tpl->compile('content');
+                $tpl->render();
+
+//                msgbox('', $lang['not_loggin'] . '<br /><br /><a href="/restore" onClick="Page.Go(this.href); return false">Забыли пароль?</a>', 'info_red');
+            }
+        } else {
+            $tpl = new TpLSite(ROOT_DIR . '/templates/' . $config['temp']);
+            $tpl->load_template('info_red.tpl');
+            $tpl->set('{error}', '<a href="/restore" onClick="Page.Go(this.href); return false">Забыли пароль?</a>');
+            $tpl->compile('content');
+            $tpl->render();
+
+//            msgbox('', $lang['not_loggin'] . '<br /><br /><a href="/restore" onClick="Page.Go(this.href); return false">Забыли пароль?</a>', 'info_red');
+        }
     }
 }
