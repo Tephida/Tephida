@@ -37,7 +37,15 @@
 <input type="hidden" id="typePlay" value="standart"/>
 <div class="ava">
     [owner]
-    <div class="cover_newava" {cover-param-7}><span id="ava"><img src="{ava}" alt="" id="ava_{user-id}"/></span></div>
+    <div class="cover_newava" {cover-param-7}>
+        <a href="{link}" onclick="Photo.Show(this.href); return false">
+            <span id="ava">
+                <img src="{ava}" alt="page_enlarge" id="ava_{user-id}" />
+            </span>
+        </a>
+{*        <span id="ava"><img src="{ava}" alt="" id="ava_{user-id}"/></span>*}
+    </div>
+
     [/owner]
     [not-owner]<span id="ava"><img src="{ava}" alt="" id="ava_{user-id}"/></span>[/not-owner]
     <div class="menuleft" style="margin-top:5px">

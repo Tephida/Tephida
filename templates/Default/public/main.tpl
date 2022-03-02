@@ -39,9 +39,9 @@
     [admin]
     <div class="cover_newava" {cover-param-7}><img src="{photo}" id="ava"/></div>
     [/admin]
-    [not-admin][cover]
-    <div class="cover_newava" {cover-param-7}>[/cover]<img src="{photo}" id="ava"/>[cover]</div>
-    [/cover][/not-admin]
+    [not-admin]
+    <div class="cover_newava" {cover-param-7}><img src="{photo}" id="ava"/></div>
+    [/not-admin]
     <div class="menuleft" style="margin-top:5px">
         <a href="/" onClick="groups.inviteBox('{id}'); return false">
             <div>Пригласить друзей</div>

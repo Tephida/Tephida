@@ -9,6 +9,7 @@
 
 use Mozg\classes\Filesystem;
 use Mozg\classes\Registry;
+use Mozg\classes\Thumbnail;
 
 NoAjaxQuery();
 
@@ -25,11 +26,26 @@ if (Registry::get('logged')) {
         case "upload":
             NoAjaxQuery();
             $user_id = $user_info['user_id'];
-            $uploaddir = ROOT_DIR . '/uploads/users/';
+            $upload_dir = ROOT_DIR . '/uploads/users/';
 
             //Если нет папок юзера, то создаём её
-            Filesystem::createDir($uploaddir . $user_id);
-            Filesystem::createDir($uploaddir . $user_id . '/albums');
+            Filesystem::createDir($upload_dir . $user_id);
+            Filesystem::createDir($upload_dir . $user_id . '/albums');
+
+            //Если нет папки альбома, то создаём её
+            $check_system_albums = $db->super_query("SELECT aid, cover FROM `albums` WHERE user_id = '{$user_id}' AND system = 1");
+            if(!$check_system_albums) {
+                $hash = md5(md5($server_time).md5($user_info['user_id']).md5($user_info['user_email']));
+                $date_create = date('Y-m-d H:i:s', $server_time);
+                $sql_privacy = '';
+                $sql_ = $db->query("INSERT INTO `albums` (user_id, name, descr, ahash, adate, position, system, privacy) VALUES ('{$user_id}', 'Фотографии со страницы', '', '{$hash}', '{$date_create}', '0', '1', '{$sql_privacy}')");
+                $aid_fors = $db->insert_id();
+                $db->query("UPDATE `users` SET user_albums_num = user_albums_num+1 WHERE user_id = '{$user_id}'");
+            } else {
+                $aid_fors = $check_system_albums['aid'];
+            }
+            $album_dir = ROOT_DIR.'/uploads/users/'.$user_id.'/albums/'.$aid_fors.'/';
+            Filesystem::createDir($album_dir);
 
             //Разрешенные форматы
             $allowed_files = array('jpg', 'jpeg', 'jpe', 'png', 'gif');
@@ -37,50 +53,89 @@ if (Registry::get('logged')) {
             //Получаем данные о фотографии
             $image_tmp = $_FILES['uploadfile']['tmp_name'];
             $image_name = to_translit($_FILES['uploadfile']['name']); // оригинальное название для оприделения формата
-            $image_rename = substr(md5($server_time + rand(1, 100000)), 0, 15); // имя фотографии
+            $image_rename = substr(md5($server_time + random_int(1, 100000)), 0, 15); // имя фотографии
             $image_size = $_FILES['uploadfile']['size']; // размер файла
             $array = explode(".", $image_name);
             $type = end($array); // формат файла
 
             //Проверяем если, формат верный то пропускаем
-            if (in_array($type, $allowed_files)) {
+            if (in_array($type, $allowed_files, true)) {
                 if ($image_size < 5000000) {
                     $res_type = '.' . $type;
-                    $uploaddir = ROOT_DIR . '/uploads/users/' . $user_id . '/'; // Директория куда загружать
-                    if (move_uploaded_file($image_tmp, $uploaddir . $image_rename . $res_type)) {
+                    $upload_dir = ROOT_DIR . '/uploads/users/' . $user_id . '/'; // Директория куда загружать
+                    if (move_uploaded_file($image_tmp, $upload_dir . $image_rename . $res_type)) {
+
+                        Filesystem::copy($upload_dir . $image_rename . $res_type, $album_dir.$image_rename.$res_type);
 
                         //Создание оригинала
-                        $tmb = new Thumbnail($uploaddir . $image_rename . $res_type);
+                        $tmb = new Thumbnail($upload_dir . $image_rename . $res_type);
                         $tmb->size_auto(770);
                         $tmb->jpeg_quality(95);
-                        $tmb->save($uploaddir . 'o_' . $image_rename . $res_type);
+                        $tmb->save($upload_dir . 'o_' . $image_rename . $res_type);
 
                         //Создание главной фотографии
-                        $tmb = new Thumbnail($uploaddir . $image_rename . $res_type);
+                        $tmb = new Thumbnail($upload_dir . $image_rename . $res_type);
                         $tmb->size_auto(200, 1);
                         $tmb->jpeg_quality(97);
-                        $tmb->save($uploaddir . $image_rename . $res_type);
+                        $tmb->save($upload_dir . $image_rename . $res_type);
 
                         //Создание уменьшенной копии 50х50
-                        $tmb = new Thumbnail($uploaddir . $image_rename . $res_type);
+                        $tmb = new Thumbnail($upload_dir . $image_rename . $res_type);
                         $tmb->size_auto('50x50');
                         $tmb->jpeg_quality(97);
-                        $tmb->save($uploaddir . '50_' . $image_rename . $res_type);
+                        $tmb->save($upload_dir . '50_' . $image_rename . $res_type);
+
+                        $date = date('Y-m-d H:i:s', $server_time);
+
+                        $position_all = $_SESSION['position_all'] ?? null;
+                        if($position_all){
+                            $position_all = $position_all+1;
+                        } else {
+                            $position_all = 100000;
+                        }
+                        $_SESSION['position_all'] = $position_all;
+
+                        $db->query("INSERT INTO `photos` (album_id, photo_name, user_id, date, 
+                      position, descr, comm_num, rating_all, rating_num, rating_max ) VALUES (
+                            '{$aid_fors}', '{$image_rename}{$res_type}', 
+                            '{$user_id}', '{$date}', '{$position_all}', '', 0, 0, 0, 0
+                                                                             )");
+                        $ins_id = $db->insert_id();
+
+                        if(!$check_system_albums['cover'])
+                            $db->query("UPDATE `albums` SET cover = '' WHERE aid = '{$aid_fors}'");
+                        $db->query("UPDATE `albums` SET cover = '{$image_rename}{$res_type}' WHERE aid = '{$aid_fors}'");
+
+                        $db->query("UPDATE `albums` SET photo_num = photo_num+1, adate = '{$date}' WHERE aid = '{$aid_fors}'");
+
 
                         //Создание уменьшенной копии 100х100
-                        $tmb = new Thumbnail($uploaddir . $image_rename . $res_type);
+                        $tmb = new Thumbnail($upload_dir . $image_rename . $res_type);
                         $tmb->size_auto('100x100');
                         $tmb->jpeg_quality(97);
-                        $tmb->save($uploaddir . '100_' . $image_rename . $res_type);
+                        $tmb->save($upload_dir . '100_' . $image_rename . $res_type);
+
+                        //Создание маленькой копии
+                        $tmb = new Thumbnail($upload_dir . $image_rename . $res_type);
+                        $tmb->size_auto('140x100');
+                        $tmb->jpeg_quality(97);
+                        $tmb->save($upload_dir . 'c_' . $image_rename . $res_type);
+
+                        Filesystem::copy($upload_dir . 'c_' . $image_rename . $res_type, $album_dir. 'c_' . $image_rename.$res_type);
 
                         //Добавляем на стену
                         $row = $db->super_query("SELECT user_sex FROM `users` WHERE user_id = '{$user_id}'");
-                        if ($row['user_sex'] == 2)
+                        if ($row['user_sex'] == 2) {
                             $sex_text = 'обновила';
-                        else
+                        }
+                        else {
                             $sex_text = 'обновил';
+                        }
 
-                        $wall_text = "<div class=\"profile_update_photo\"><a href=\"\" onClick=\"Photo.Profile(\'{$user_id}\', \'{$image_rename}{$res_type}\'); return false\"><img src=\"/uploads/users/{$user_id}/o_{$image_rename}{$res_type}\" style=\"margin-top:3px\"></a></div>";
+//                        $wall_text = "<div class=\"profile_update_photo\"><a href=\"\" onClick=\"Photo.Profile(\'{$user_id}\', \'{$image_rename}{$res_type}\'); return false\"><img src=\"/uploads/users/{$user_id}/o_{$image_rename}{$res_type}\" style=\"margin-top:3px\"></a></div>";
+
+                        $wall_text = "<div class=\"profile_update_photo\"><a href=\"/photo{$user_id}_{$ins_id}_{$aid_fors}\" onClick=\"Photo.Show(this.href); return false\"><img src=\"/uploads/users/{$user_id}/o_{$image_rename}{$res_type}\" style=\"margin-top:3px\"></a></div>";
+
 
                         $db->query("INSERT INTO `wall` SET author_user_id = '{$user_id}', for_user_id = '{$user_id}', text = '{$wall_text}', add_date = '{$server_time}', type = '{$sex_text} фотографию на странице:'");
                         $dbid = $db->insert_id();
@@ -97,12 +152,15 @@ if (Registry::get('logged')) {
 
                         mozg_clear_cache_file('user_' . $user_id . '/profile_' . $user_id);
                         mozg_clear_cache();
-                    } else
+                    } else {
                         echo 'bad';
-                } else
+                    }
+                } else {
                     echo 'big_size';
-            } else
+                }
+            } else {
                 echo 'bad_format';
+            }
 
             break;
 
@@ -110,7 +168,7 @@ if (Registry::get('logged')) {
         case "del_photo":
             NoAjaxQuery();
             $user_id = $user_info['user_id'];
-            $uploaddir = ROOT_DIR . '/uploads/users/' . $user_id . '/';
+            $upload_dir = ROOT_DIR . '/uploads/users/' . $user_id . '/';
             $row = $db->super_query("SELECT user_photo, user_wall_id FROM `users` WHERE user_id = '{$user_id}'");
             if ($row['user_photo']) {
                 $check_wall_rec = $db->super_query("SELECT COUNT(*) AS cnt FROM `wall` WHERE id = '{$row['user_wall_id']}'");
@@ -118,16 +176,18 @@ if (Registry::get('logged')) {
                     $update_wall = ", user_wall_num = user_wall_num-1";
                     $db->query("DELETE FROM `wall` WHERE id = '{$row['user_wall_id']}'");
                     $db->query("DELETE FROM `news` WHERE obj_id = '{$row['user_wall_id']}'");
-                } else
+                } else {
                     $update_wall = null;
+                }
 
                 $db->query("UPDATE `users` SET user_photo = '', user_wall_id = '' {$update_wall} WHERE user_id = '{$user_id}'");
 
-                Filesystem::delete($uploaddir . $row['user_photo']);
-                Filesystem::delete($uploaddir . '50_' . $row['user_photo']);
-                Filesystem::delete($uploaddir . '100_' . $row['user_photo']);
-                Filesystem::delete($uploaddir . 'o_' . $row['user_photo']);
-                Filesystem::delete($uploaddir . '130_' . $row['user_photo']);
+                Filesystem::delete($upload_dir . $row['user_photo']);
+                Filesystem::delete($upload_dir . '50_' . $row['user_photo']);
+                Filesystem::delete($upload_dir . '100_' . $row['user_photo']);
+                Filesystem::delete($upload_dir . 'o_' . $row['user_photo']);
+                Filesystem::delete($upload_dir . 'c_' . $row['user_photo']);
+                //TODO удалить из альбома
 
                 mozg_clear_cache_file('user_' . $user_id . '/profile_' . $user_id);
                 mozg_clear_cache();

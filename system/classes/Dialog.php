@@ -43,13 +43,13 @@ class Dialog
         $attach_files = str_replace('vote|', 'hack|', $attach_files);
         AntiSpam::check('identical', $msg . $attach_files);
         if (!empty($msg) || !empty($attach_files)) {
-            if (!$room_id) {
+            if ($room_id == 0) {
                 $row = $this->db->super_query("SELECT user_privacy FROM `users` WHERE user_id = '" . $for_user_id . "'");
             } else {
                 $row = $this->db->super_query("SELECT id FROM `room_users` WHERE room_id = '" . $room_id . "' and oid2 = '" . $this->user_id . "' and type = 0");
             }
             if ($row) {
-                if (!$room_id) {
+                if ($room_id == 0) {
                     $user_privacy = xfieldsdataload($row['user_privacy']);
                     $CheckBlackList = CheckBlackList($for_user_id);
                     if ($user_privacy['val_msg'] == 2) {

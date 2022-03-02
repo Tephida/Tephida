@@ -110,7 +110,7 @@ class Profile extends Module
                 }
 
                 //################### Друзья на сайте ###################//
-                if (Registry::get('logged') && $user_id !== $id) //Проверка есть ли запрашиваемый юзер в друзьях у юзера который смотрит стр
+                if (Registry::get('logged') && $user_id != $id) //Проверка естьли запрашиваемый юзер в друзьях у юзера который смотрит стр
                 {
                     $check_friend = CheckFriends($row['user_id']);
                 } else {
@@ -260,11 +260,12 @@ class Profile extends Module
                 }
 
                 //################### Загрузка стены ###################//
-                if ($row['user_wall_num'])
+                if ($row['user_wall_num']) {
                     include ENGINE_DIR . '/modules/wall.php';
+                }
 
                 //Общие друзья
-                if (Registry::get('logged') && $row['user_friends_num'] && $id != $user_info['user_id']) {
+                if (Registry::get('logged') && $row['user_friends_num'] && $id !== $user_info['user_id']) {
 
                     $count_common = $db->super_query("SELECT COUNT(*) AS cnt FROM `friends` tb1 INNER JOIN `friends` tb2 ON tb1.friend_id = tb2.user_id WHERE tb1.user_id = '{$user_info['user_id']}' AND tb2.friend_id = '{$id}' AND tb1.subscriptions = 0 AND tb2.subscriptions = 0");
 
@@ -329,6 +330,7 @@ class Profile extends Module
                     $lang['online'] = $lang['online'] ?? 'online';
                     $tpl->set('{online}', $lang['online'] . $mobile_icon);
                 } else {
+
                     if ((int)$row_online['user_last_visit'] > 0) {
                         $dateTell = megaDate((int)$row_online['user_last_visit']);
                         if ($row['user_sex'] == 2) {
@@ -481,6 +483,23 @@ class Profile extends Module
                     $tpl->set('[not-owner]', '');
                     $tpl->set('[/not-owner]', '');
                     $tpl->set_block("'\\[owner\\](.*?)\\[/owner\\]'si", "");
+                }
+
+                //Аватарка
+                $row_view_photos = $db->super_query("SELECT * FROM `photos` WHERE user_id = '{$id}'");
+                $tpl->set('{photoid}', $row_view_photos['id'] ?? 0);
+                $tpl->set('{albumid}', $row_view_photos['album_id'] ?? 0);
+                if ($row['user_photo']) {
+                    //todo optimize
+                    $album = $db->super_query("SELECT aid FROM `albums` WHERE user_id = '{$id}' AND system = '1'");
+                    $albuml = $db->super_query("SELECT * FROM `photos` WHERE album_id = '{$album['aid']}' ORDER BY id DESC");
+
+                    $tpl->set('{ava}', $config['home_url'] . 'uploads/users/' . $row['user_id'] . '/' . $row['user_photo']);
+                    $tpl->set('{link}', '/photo' . $row['user_id'] . '_' . $albuml['id'] . '_' . $albuml['album_id']);
+                    $tpl->set('{display-ava}', 'style="display:block;"');
+                } else {
+                    $tpl->set('{ava}', '/templates/Default/images/no_ava.gif');
+                    $tpl->set('{display-ava}', 'style="display:none;"');
                 }
 
 
@@ -868,7 +887,7 @@ class Profile extends Module
                     $tpl->set_block("'\\[groups\\](.*?)\\[/groups\\]'si", "");
 
                 //################### Музыка ###################//
-                if ($row['user_audio'] && $config['audio_mod'] === 'yes') {
+                if ($row['user_audio'] && $config['audio_mod'] == 'yes') {
                     $tpl->set('[audios]', '');
                     $tpl->set('[/audios]', '');
                     $tpl->set('{audios}', $tpl->result['audios'] ?? '');
