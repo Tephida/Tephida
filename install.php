@@ -7,8 +7,6 @@
  *
  */
 
-use Mozg\classes\Filesystem;
-
 if (version_compare(PHP_VERSION, '8.0.0') < 0) {
     echo "Please change php version";
     exit();
@@ -29,10 +27,10 @@ include './system/functions.php';
 
 function check_install(): bool
 {
-    if (!file_exists(ENGINE_DIR . '/data/config.php') or !file_exists(ENGINE_DIR . '/data/db.php'))
+    if (!file_exists(ENGINE_DIR . '/data/config.php') || !file_exists(ENGINE_DIR . '/data/db.php')) {
         return false;
-    else
-        return true;
+    }
+    return true;
 }
 
 function main_print(): void
@@ -101,7 +99,7 @@ textarea{width:300px;height:100px;}
  <a href="/install.php"><div class="head"><div class="logo"></div></div></a>
 HTML;
 
-$act = requestFilter('act') ?? null;
+$act = requestFilter('act');
 
 switch ($act) {
     case "files":
@@ -136,28 +134,28 @@ switch ($act) {
             );
 
             try {
-                Filesystem::createDir('./uploads/room/');
-                Filesystem::createDir('./uploads/records/');
-                Filesystem::createDir('./uploads/attach/');
-                Filesystem::createDir('./uploads/audio_tmp/');
-                Filesystem::createDir('./uploads/blog/');
-                Filesystem::createDir('./uploads/groups/');
-                Filesystem::createDir('./uploads/users/');
-                Filesystem::createDir('./uploads/videos/');
-                Filesystem::createDir('./uploads/audio/');
-                Filesystem::createDir('./uploads/doc/');
+                \Mozg\classes\Filesystem::createDir('./uploads/room/');
+                \Mozg\classes\Filesystem::createDir('./uploads/records/');
+                \Mozg\classes\Filesystem::createDir('./uploads/attach/');
+                \Mozg\classes\Filesystem::createDir('./uploads/audio_tmp/');
+                \Mozg\classes\Filesystem::createDir('./uploads/blog/');
+                \Mozg\classes\Filesystem::createDir('./uploads/groups/');
+                \Mozg\classes\Filesystem::createDir('./uploads/users/');
+                \Mozg\classes\Filesystem::createDir('./uploads/videos/');
+                \Mozg\classes\Filesystem::createDir('./uploads/audio/');
+                \Mozg\classes\Filesystem::createDir('./uploads/doc/');
 
-                Filesystem::createDir('./system/cache/');
-                Filesystem::createDir('./system/cache/groups/');
-                Filesystem::createDir('./system/cache/groups_forum/');
-                Filesystem::createDir('./system/cache/groups_mark/');
-                Filesystem::createDir('./system/cache/photos_mark/');
-                Filesystem::createDir('./system/cache/votes/');
-                Filesystem::createDir('./system/cache/wall/');
+                \Mozg\classes\Filesystem::createDir('./system/cache/');
+                \Mozg\classes\Filesystem::createDir('./system/cache/groups/');
+                \Mozg\classes\Filesystem::createDir('./system/cache/groups_forum/');
+                \Mozg\classes\Filesystem::createDir('./system/cache/groups_mark/');
+                \Mozg\classes\Filesystem::createDir('./system/cache/photos_mark/');
+                \Mozg\classes\Filesystem::createDir('./system/cache/votes/');
+                \Mozg\classes\Filesystem::createDir('./system/cache/wall/');
 
-                Filesystem::createDir('./system/data/');
+                \Mozg\classes\Filesystem::createDir('./system/data/');
 
-                Filesystem::createDir('./backup/');
+                \Mozg\classes\Filesystem::createDir('./backup/');
 
             } catch (Exception $e) {
                 echo '<div class="h2">Не удалось создать директории</div>';
@@ -165,10 +163,10 @@ switch ($act) {
 
             $chmod_errors = 0;
             $not_found_errors = 0;
-            echo "<b><div style=\"float:left;width:450px;padding:10px;border-bottom:1px dashed #ddd\">Папка/Файл</div>
+            echo "<div style=\"font-weight: bold\"><div style=\"float:left;width:450px;padding:10px;border-bottom:1px dashed #ddd\">Папка/Файл</div>
 		<div style=\"float:left;width:90px;text-align:center;padding:10px;border-bottom:1px dashed #ddd\">CHMOD</div>
 		<div style=\"float:left;width:195px;text-align:center;padding:10px;border-bottom:1px dashed #ddd\">Статус</div>
-		<div class=clear></div></b>";
+		<div class=clear></div></div>";
 
             foreach ($important_files as $file) {
                 if (!file_exists($file)) {
@@ -196,15 +194,15 @@ switch ($act) {
 			<div style=\"float:left;width:195px;text-align:center;padding:10px;border-bottom:1px dashed #ddd\">{$file_status}</div>
 			<div class=clear></div>";
             }
-            if ($chmod_errors == 0 and $not_found_errors == 0) {
+            if ($chmod_errors == 0 && $not_found_errors == 0) {
                 $status_report = 'Проверка успешно завершена! Можете продолжить установку!';
             } else {
                 $status_report = '';
                 if ($chmod_errors > 0) {
-                    $status_report = "<div style=\"color: red;\">Внимание!!!</div><br /><br />Во время проверки обнаружены ошибки: <b>$chmod_errors</b>. Запрещена запись в файл.<br />Вы должны выставить для папок CHMOD 777, для файлов CHMOD 666, используя ФТП-клиент.<br /><br /><div style=\"color: red;\"><b>Настоятельно не рекомендуется</b></div> продолжать установку, пока не будут произведены изменения.<br />";
+                    $status_report = "<div style=\"color: red;\">Внимание!!!</div><br /><br />Во время проверки обнаружены ошибки: <div style=\"font-weight: bold\">$chmod_errors</div>. Запрещена запись в файл.<br />Вы должны выставить для папок CHMOD 777, для файлов CHMOD 666, используя ФТП-клиент.<br /><br /><div style=\"color: red;\"><div style=\"font-weight: bold\">Настоятельно не рекомендуется</div></div> продолжать установку, пока не будут произведены изменения.<br />";
                 }
                 if ($not_found_errors > 0) {
-                    $status_report .= "<div style=\"color: red;\">Внимание!!!</div><br />Во время проверки обнаружены ошибки: <b>$not_found_errors</b>. Файлы не найдены!<br /><br /><div style=\"color: red;\"><b>Не рекомендуется</b></div> продолжать установку, пока не будут произведены изменения.<br />";
+                    $status_report .= "<div style=\"color: red;\">Внимание!!!</div><br />Во время проверки обнаружены ошибки: <div style=\"font-weight: bold\">$not_found_errors</div>. Файлы не найдены!<br /><br /><div style=\"color: red;\"><div style=\"font-weight: bold\">Не рекомендуется</div></div> продолжать установку, пока не будут произведены изменения.<br />";
                 }
                 if (!isset($status_report))
                     $status_report = '';
@@ -212,47 +210,48 @@ switch ($act) {
 
             echo '
 		<div class="clr"></div>
-		<div style="background:lightyellow;padding:10px;margin-bottom:10px;margin-top:10px;border:1px dashed #ccc;margin-top:10px"><div style="margin-bottom:7px;"><b>Состояние проверки</b></div>' . $status_report . '</div>
+		<div style="background:lightyellow;padding:10px;margin-bottom:10px;margin-top:10px;border:1px dashed #ccc;margin-top:10px"><div style="margin-bottom:7px;"><div style=\"font-weight: bold\">Состояние проверки</div></div>' . $status_report . '</div>
 		<input type="submit" class="inp fl_r" value="Продолжить &raquo;" onClick="location.href=\'/install.php?act=system\'" />
 		';
-        } else
+        } else {
             main_print();
+        }
         break;
     case "system":
         if (!check_install()) {
             echo "<div class=\"h1\">Системные требования</div>
-		<b><div style=\"float:left;width:448px;padding:10px;border: 1px solid #ddd;background: #f7f7f7;\">Требования движка</div>
+		<div style=\"font-weight: bold\"><div style=\"float:left;width:448px;padding:10px;border: 1px solid #ddd;background: #f7f7f7;\">Требования движка</div>
 		<div style=\"float:left;width:90px;text-align:center;padding:10px;border: 1px solid #ddd;background: #f7f7f7;\">Ваша версия</div>
 		<div style=\"float:left;width:195px;text-align:center;padding:10px;border: 1px solid #ddd;background: #f7f7f7;\">Статус</div>
-		<div class=clear></div></b>";
-            $status = version_compare(PHP_VERSION, '8.0.0') >= 0 ? '<div style="color: green;"><b>Совместимо</b></div>' : '<div style="color: red;"><b>Не совместимо</b></div>';
-            echo "<div style=\"float:left;width:450px;padding:10px;border-bottom:1px dashed #ddd\"><b>PHP 8.0</b></div>
-		<div style=\"float:left;width:90px;text-align:center;padding:10px;border-bottom:1px dashed #ddd\">" . phpversion() . "</div>
+		<div class=clear></div></div>";
+            $status = version_compare(PHP_VERSION, '8.0.0') >= 0 ? '<div style="color: green;"><div style="font-weight: bold">Совместимо</div></div>' : '<div style="color: red;"><div style="font-weight: bold">Не совместимо</div></div>';
+            echo "<div style=\"float:left;width:450px;padding:10px;border-bottom:1px dashed #ddd\"><div style=\"font-weight: bold\">PHP 8.0</div></div>
+		<div style=\"float:left;width:90px;text-align:center;padding:10px;border-bottom:1px dashed #ddd\">" . PHP_VERSION . "</div>
 		<div style=\"float:left;width:195px;text-align:center;padding:10px;border-bottom:1px dashed #ddd\">{$status}</div>
 		<div class=clear></div>";
-            $status = function_exists('mysqli_connect') ? '<div style="color: green;"><b>Совместимо</b></div>' : '<div style="color: red;"><b>Не совместимо</b></div>';
-            echo "<div style=\"float:left;width:450px;padding:10px;border-bottom:1px dashed #ddd\"><b>Поддержка MySQLi</b></div>
+            $status = function_exists('mysqli_connect') ? '<div style="color: green;"><div style="font-weight: bold">Совместимо</div></div>' : '<div style="color: red;"><div style="font-weight: bold">Не совместимо</div></div>';
+            echo "<div style=\"float:left;width:450px;padding:10px;border-bottom:1px dashed #ddd\"><div style=\"font-weight: bold\">Поддержка MySQLi</div></div>
 		<div style=\"float:left;width:90px;text-align:center;padding:10px;border-bottom:1px dashed #ddd\">не определяется</div>
 		<div style=\"float:left;width:195px;text-align:center;padding:10px;border-bottom:1px dashed #ddd\">{$status}</div>
 		<div class=clear></div>";
-            $status = extension_loaded('zlib') ? '<div style="color: green;"><b>Совместимо</b></div>' : '<div style="color: red;"><b>Не совместимо</b></div>';
-            echo "<div style=\"float:left;width:450px;padding:10px;border-bottom:1px dashed #ddd\"><b>Поддержка сжатия ZLib</b></div>
+            $status = extension_loaded('zlib') ? '<div style="color: green;"><div style="font-weight: bold">Совместимо</div></div>' : '<div style="color: red;"><div style="font-weight: bold">Не совместимо</div></div>';
+            echo "<div style=\"float:left;width:450px;padding:10px;border-bottom:1px dashed #ddd\"><div style=\"font-weight: bold\">Поддержка сжатия ZLib</div></div>
 		<div style=\"float:left;width:90px;text-align:center;padding:10px;border-bottom:1px dashed #ddd\">не определяется</div>
 		<div style=\"float:left;width:195px;text-align:center;padding:10px;border-bottom:1px dashed #ddd\">{$status}</div>
 		<div class=clear></div>";
-            $status = extension_loaded('xml') ? '<div style="color: green;"><b>Совместимо</b></div>' : '<div style="color: red;"><b>Не совместимо</b></div>';
-            echo "<div style=\"float:left;width:450px;padding:10px;border-bottom:1px dashed #ddd\"><b>Поддержка XML</b></div>
+            $status = extension_loaded('xml') ? '<div style="color: green;"><div style="font-weight: bold">Совместимо</div></div>' : '<div style="color: red;"><div style="font-weight: bold">Не совместимо</div></div>';
+            echo "<div style=\"float:left;width:450px;padding:10px;border-bottom:1px dashed #ddd\"><div style=\"font-weight: bold\">Поддержка XML</div></div>
 		<div style=\"float:left;width:90px;text-align:center;padding:10px;border-bottom:1px dashed #ddd\">не определяется</div>
 		<div style=\"float:left;width:195px;text-align:center;padding:10px;border-bottom:1px dashed #ddd\">{$status}</div>
 		<div class=clear></div>";
-            $status = function_exists('iconv') ? '<div style="color: green;"><b>Совместимо</b></div>' : '<div style="color: red;"><b>Не совместимо</b></div>';
-            echo "<div style=\"float:left;width:450px;padding:10px;border-bottom:1px dashed #ddd\"><b>Поддержка iconv</b></div>
+            $status = function_exists('iconv') ? '<div style="color: green;"><div style="font-weight: bold">Совместимо</div></div>' : '<div style="color: red;"><div style="font-weight: bold">Не совместимо</div></div>';
+            echo "<div style=\"float:left;width:450px;padding:10px;border-bottom:1px dashed #ddd\"><div style=\"font-weight: bold\">Поддержка iconv</div></div>
 		<div style=\"float:left;width:90px;text-align:center;padding:10px;border-bottom:1px dashed #ddd\">не определяется</div>
 		<div style=\"float:left;width:195px;text-align:center;padding:10px;border-bottom:1px dashed #ddd\">{$status}</div>
 		<div class=clear></div>";
             echo '
 		<div class="clr"></div>
-		<div style="background:lightyellow;padding:10px;margin-bottom:10px;margin-top:10px;border:1px dashed #ccc;"><div style="margin-bottom:7px;text-align: center;font-size: 12px;"><b>Если любой из этих пунктов выделен красным, то выполните действия для исправления положения. <br />В случае несоблюдения минимальных требований скрипта возможна его некорректная работа в системе.</b></div></div>
+		<div style="background:lightyellow;padding:10px;margin-bottom:10px;margin-top:10px;border:1px dashed #ccc;"><div style="margin-bottom:7px;text-align: center;font-size: 12px;"><div style="font-weight: bold">Если любой из этих пунктов выделен красным, то выполните действия для исправления положения. <br />В случае несоблюдения минимальных требований скрипта возможна его некорректная работа в системе.</div></div></div>
 		<input type="submit" class="inp fl_r" value="Продолжить &raquo;" onClick="location.href=\'/install.php?act=server\'" />
 		';
         } else {
@@ -262,43 +261,28 @@ switch ($act) {
     case "server":
         if (!check_install()) {
             echo "<div class=\"h1\">Настройки сервера</div>
-		<b><div style=\"float:left;width:388px;padding:10px;border: 1px solid #ddd;background: #f7f7f7;\">Рекомендуемые настройки</div>
+		<div style=\"font-weight: bold\"><div style=\"float:left;width:388px;padding:10px;border: 1px solid #ddd;background: #f7f7f7;\">Рекомендуемые настройки</div>
 		<div style=\"float:left;width:150px;text-align:center;padding:10px;border: 1px solid #ddd;background: #f7f7f7;\">Рекомендуемое значение</div>
 		<div style=\"float:left;width:195px;text-align:center;padding:10px;border: 1px solid #ddd;background: #f7f7f7;\">Текущее значение</div>
-		<div class=clear></div></b>";
-            $status = ini_get('safe_mode') ? '<div style="color: red;"><b>Включено</b></div>' : '<div style="color: green;"><b>Выключено</b></div>';
-            echo "<div style=\"float:left;width:390px;padding:10px;border-bottom:1px dashed #ddd\"><b>Safe Mode</b></div>
-		<div style=\"float:left;width:150px;text-align:center;padding:10px;border-bottom:1px dashed #ddd\">Выключено</div>
-		<div style=\"float:left;width:195px;text-align:center;padding:10px;border-bottom:1px dashed #ddd\">{$status}</div>
-		<div class=clear></div>";
-            $status = ini_get('file_uploads') ? '<div style="color: green;"><b>Включено</b></div>' : '<div style="color: red;"><b>Выключено</b></div>';
-            echo "<div style=\"float:left;width:390px;padding:10px;border-bottom:1px dashed #ddd\"><b>Загрузка файлов</b></div>
+		<div class=clear></div></div>";
+            $status = ini_get('file_uploads') ? '<div style="color: green;"><div style="font-weight: bold">Включено</div></div>' : '<div style="color: red;"><div style="font-weight: bold">Выключено</div></div>';
+            echo "<div style=\"float:left;width:390px;padding:10px;border-bottom:1px dashed #ddd\"><div style=\"font-weight: bold\">Загрузка файлов</div></div>
 		<div style=\"float:left;width:150px;text-align:center;padding:10px;border-bottom:1px dashed #ddd\">Включено</div>
 		<div style=\"float:left;width:195px;text-align:center;padding:10px;border-bottom:1px dashed #ddd\">{$status}</div>
 		<div class=clear></div>";
-            $status = ini_get('output_buffering') ? '<div style="div-weight: bold"><b>Включено</b></div>' : '<div style="color: green;"><b>Выключено</b></div>';
-            echo "<div style=\"float:left;width:390px;padding:10px;border-bottom:1px dashed #ddd\"><b>Буферизация вывода</b></div>
+            $status = ini_get('output_buffering') ? '<div style="font-weight: bold"><div style="font-weight: bold">Включено</div></div>' : '<div style="color: green;"><div style="font-weight: bold">Выключено</div></div>';
+            echo "<div style=\"float:left;width:390px;padding:10px;border-bottom:1px dashed #ddd\"><div style=\"font-weight: bold\">Буферизация вывода</div></div>
 		<div style=\"float:left;width:150px;text-align:center;padding:10px;border-bottom:1px dashed #ddd\">Выключено</div>
 		<div style=\"float:left;width:195px;text-align:center;padding:10px;border-bottom:1px dashed #ddd\">{$status}</div>
 		<div class=clear></div>";
-            $status = ini_get('magic_quotes_runtime') ? '<div style="color: red;"><b>Включено</b></div>' : '<div style="color: green;"><b>Выключено</b></div>';
-            echo "<div style=\"float:left;width:390px;padding:10px;border-bottom:1px dashed #ddd\"><b>Magic Quotes Runtime</b></div>
-		<div style=\"float:left;width:150px;text-align:center;padding:10px;border-bottom:1px dashed #ddd\">Выключено</div>
-		<div style=\"float:left;width:195px;text-align:center;padding:10px;border-bottom:1px dashed #ddd\">{$status}</div>
-		<div class=clear></div>";
-            $status = ini_get('register_globals') ? '<div style="color: red;"><b>Включено</b></div>' : '<div style="color: green;"><b>Выключено</b></div>';
-            echo "<div style=\"float:left;width:390px;padding:10px;border-bottom:1px dashed #ddd\"><b>Register Globals</b></div>
-		<div style=\"float:left;width:150px;text-align:center;padding:10px;border-bottom:1px dashed #ddd\">Выключено</div>
-		<div style=\"float:left;width:195px;text-align:center;padding:10px;border-bottom:1px dashed #ddd\">{$status}</div>
-		<div class=clear></div>";
-            $status = ini_get('session.auto_start') ? '<div style="color: red;"><b>Включено</b></div>' : '<div style="color: green;"><b>Выключено</b></div>';
-            echo "<div style=\"float:left;width:390px;padding:10px;border-bottom:1px dashed #ddd\"><b>Session auto start</b></div>
+            $status = ini_get('session.auto_start') ? '<div style="color: red;"><div style="font-weight: bold">Включено</div></div>' : '<div style="color: green;"><div style="font-weight: bold">Выключено</div></div>';
+            echo "<div style=\"float:left;width:390px;padding:10px;border-bottom:1px dashed #ddd\"><div style=\"font-weight: bold\">Session auto start</div></div>
 		<div style=\"float:left;width:150px;text-align:center;padding:10px;border-bottom:1px dashed #ddd\">Выключено</div>
 		<div style=\"float:left;width:195px;text-align:center;padding:10px;border-bottom:1px dashed #ddd\">{$status}</div>
 		<div class=clear></div>";
             echo '
 		<div class="clr"></div>
-		<div style="background:lightyellow;padding:10px;margin-bottom:10px;margin-top:10px;border:1px dashed #ccc;margin-top:10px"><div style="margin-bottom:7px;text-align: center;font-size: 12px;"><b>Данные настройки являются рекомендуемыми для полной совместимости, однако скрипт способен работать даже если рекомендуемые настройки несовпадают с текущими.</b></div></div>
+		<div style="background:lightyellow;padding:10px;margin-bottom:10px;margin-top:10px;border:1px dashed #ccc"><div style="margin-bottom:7px;text-align: center;font-size: 12px;"><div style="font-weight: bold">Данные настройки являются рекомендуемыми для полной совместимости, однако скрипт способен работать даже если рекомендуемые настройки не совпадают с текущими.</div></div></div>
 		<input type="submit" class="inp fl_r" value="Продолжить &raquo;" onClick="location.href=\'/install.php?act=settings\'" />
 		';
         } else {
@@ -330,8 +314,9 @@ switch ($act) {
 <input type="submit" class="inp fl_r" value="Завершить установку &raquo;" onClick="location.href=\'/install.php?act=settings\'" />
 </form>
 HTML;
-        } else
+        } else {
             main_print();
+        }
         break;
     case "install":
         if (!check_install()) {
@@ -357,7 +342,7 @@ const COLLATE = "utf8";
 return new \Mozg\classes\Mysql;
 
 HTML;
-                $con_file = fopen("system/data/db.php", "w+") or die("Извините, но невозможно создать файл <b>.system/data/db.php</b>.<br />Проверьте правильность проставленного CHMOD!");
+                $con_file = fopen("system/data/db.php", 'wb+') || die("Извините, но невозможно создать файл <div style=\"font-weight: bold\">.system/data/db.php</div>.<br />Проверьте правильность проставленного CHMOD!");
                 fwrite($con_file, $db_config);
                 fclose($con_file);
                 @chmod("system/data/db.php", 0666);
@@ -392,7 +377,7 @@ require_once './vendor/autoload.php';
 include ADMIN_DIR.'/functions.php';
 include ADMIN_DIR.'/login.php';
 HTML;
-                $con_file = fopen($_POST['adminfile'], "w+") or die("Извините, но невозможно создать файл <b>{$_POST['adminfile']}</b>.<br />Проверьте правильность проставленного CHMOD!");
+                $con_file = fopen($_POST['adminfile'], 'wb+') or die("Извините, но невозможно создать файл <div style=\"font-weight: bold\">{$_POST['adminfile']}</div>.<br />Проверьте правильность проставленного CHMOD!");
                 fwrite($con_file, $admin);
                 fclose($con_file);
                 $this_year = date('Y');
@@ -499,7 +484,7 @@ return array (
 );
 
 HTML;
-                $con_file = fopen(ROOT_DIR . "/system/data/config.php", "w+") or die("Извините, но невозможно создать файл <b>.system/data/config.php</b>.<br />Проверьте правильность проставленного CHMOD!");
+                $con_file = fopen(ROOT_DIR . "/system/data/config.php", 'wb+') or die("Извините, но невозможно создать файл <div style=\"font-weight: bold\">.system/data/config.php</div>.<br />Проверьте правильность проставленного CHMOD!");
                 fwrite($con_file, $config);
                 fclose($con_file);
                 $db = require ENGINE_DIR . '/data/db.php';
@@ -564,9 +549,9 @@ HTML;
         }
         break;
     case "remove_installer":
-        if (check_install()) {
-            Filesystem::delete('./install.php');
-            Filesystem::delete('./system/mysql_tables.php');
+        if (check_install() && !file_exists('./system/data/look')) {
+            \Mozg\classes\Filesystem::delete('./install.php');
+            \Mozg\classes\Filesystem::delete('./system/mysql_tables.php');
             header('Location: /');
 
         } else {
@@ -574,25 +559,25 @@ HTML;
         }
         break;
     case "clean":
-        if (check_install()) {
-            Filesystem::delete('./uploads/room/');
-            Filesystem::delete('./uploads/records/');
-            Filesystem::delete('./uploads/attach/');
-            Filesystem::delete('./uploads/audio_tmp/');
-            Filesystem::delete('./uploads/blog/');
-            Filesystem::delete('./uploads/groups/');
-            Filesystem::delete('./uploads/users/');
-            Filesystem::delete('./uploads/videos/');
-            Filesystem::delete('./uploads/audio/');
-            Filesystem::delete('./uploads/doc/');
-            Filesystem::delete('./system/cache/groups/');
-            Filesystem::delete('./system/cache/groups_forum/');
-            Filesystem::delete('./system/cache/groups_mark/');
-            Filesystem::delete('./system/cache/photos_mark/');
-            Filesystem::delete('./system/cache/votes/');
-            Filesystem::delete('./system/cache/wall/');
+        if (check_install() && !file_exists('./system/data/look')) {
+            \Mozg\classes\Filesystem::delete('./uploads/room/');
+            \Mozg\classes\Filesystem::delete('./uploads/records/');
+            \Mozg\classes\Filesystem::delete('./uploads/attach/');
+            \Mozg\classes\Filesystem::delete('./uploads/audio_tmp/');
+            \Mozg\classes\Filesystem::delete('./uploads/blog/');
+            \Mozg\classes\Filesystem::delete('./uploads/groups/');
+            \Mozg\classes\Filesystem::delete('./uploads/users/');
+            \Mozg\classes\Filesystem::delete('./uploads/videos/');
+            \Mozg\classes\Filesystem::delete('./uploads/audio/');
+            \Mozg\classes\Filesystem::delete('./uploads/doc/');
+            \Mozg\classes\Filesystem::delete('./system/cache/groups/');
+            \Mozg\classes\Filesystem::delete('./system/cache/groups_forum/');
+            \Mozg\classes\Filesystem::delete('./system/cache/groups_mark/');
+            \Mozg\classes\Filesystem::delete('./system/cache/photos_mark/');
+            \Mozg\classes\Filesystem::delete('./system/cache/votes/');
+            \Mozg\classes\Filesystem::delete('./system/cache/wall/');
 
-            Filesystem::delete(ROOT_DIR . '/adminpanel.php');
+            \Mozg\classes\Filesystem::delete(ROOT_DIR . '/adminpanel.php');
 
             $db = require ENGINE_DIR . '/data/db.php';
 
@@ -659,8 +644,8 @@ HTML;
                 $db->query($query);
             }
 
-            Filesystem::delete(ENGINE_DIR . '/data/config.php');
-            Filesystem::delete(ENGINE_DIR . '/data/db.php');
+            \Mozg\classes\Filesystem::delete(ENGINE_DIR . '/data/config.php');
+            \Mozg\classes\Filesystem::delete(ENGINE_DIR . '/data/db.php');
 
             echo <<<HTML
 Добро пожаловать в мастер установки Vii Engine. 
@@ -677,11 +662,14 @@ HTML;
         if (check_install()) {
             echo <<<HTML
 <div class="h1">Установка скрипта автоматически заблокирована</div>
-Внимание, на сервере обнаружена уже установленная копия Vii Engine. 
+<div style="font-weight: bold">
+    Внимание, на сервере обнаружена уже установленная копия Vii Engine. 
+</div>
+
 
 <div style=" display: flex">
 <input type="submit" class="inp fl_r" style="background: #f44336; margin: 10px" value="Очистить VII Engine" onClick="location.href='/install.php?act=clean'" />
-<input type="submit" class="inp fl_r" style="background: #f44336; margin: 10px" value="Удалить инсталятор" onClick="location.href='/install.php?act=remove_installer'" />
+<input type="submit" class="inp fl_r" style="background: #f44336; margin: 10px;"  value="Удалить инсталятор" onClick="location.href='/install.php?act=remove_installer'" />
 </div>
 
 <div style="width: 100%;height: 50px">
