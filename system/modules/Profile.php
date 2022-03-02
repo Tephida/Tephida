@@ -949,6 +949,17 @@ class Profile extends Module
                 if (!$row['user_rating']) $row['user_rating'] = 0;
                 $tpl->set('{rating}', $row['user_rating']);
 
+
+                if (Registry::get('logged')) {
+                    $tpl->set('[logged]', '');
+                    $tpl->set('[/logged]', '');
+                    $tpl->set_block("'\\[not_logged\\](.*?)\\[/not_logged\\]'si", "");
+                } else {
+                    $tpl->set_block("'\\[not_logged\\](.*?)\\[/not_logged\\]'si", "");
+                    $tpl->set('[logged]', '');
+                    $tpl->set('[/logged]', '');
+                }
+
                 $tpl->compile('content');
 
                 //Обновляем кол-во посещений на страницу, если юзер есть у меня в друзьях

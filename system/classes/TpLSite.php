@@ -222,6 +222,15 @@ class TpLSite extends Templates
             //Приглашения в сообщества
             $this->set('{new_groups}', $this->notify['new_groups']);
             $this->set('{groups-link}', $this->notify['new_groups_lnk']);
+
+            if ($user_info['user_photo']) {
+                $config = settings_get();
+                $ava = '<img src="' . $config['home_url'] . 'uploads/users/' . $user_info['user_id'] . '/100_' . $user_info['user_photo'] . '"   style="width: 40px;height: 40px;" />';
+            } else {
+                $ava = '<img src="/images/no_ava_50.png" />';
+            }
+            $this->set('{user_photo}', $ava);
+
         } else {
             $this->set_block("'\\[logged\\](.*?)\\[/logged\\]'si", "");
             $this->set('[not-logged]', '');

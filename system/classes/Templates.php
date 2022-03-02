@@ -159,7 +159,7 @@ class Templates
         $this->copy_template = word_filter($this->copy_template);
 
         $this->copy_template = preg_replace_callback("#\\{translate=(.+?)\\}#is", function ($matches) {
-            return $this->load_lang($match);
+            return $this->load_lang($matches[1]);
         }, $this->copy_template);
 
         if (str_contains($this->copy_template, "{*")) {

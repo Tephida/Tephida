@@ -3,6 +3,8 @@
 @setlocale(LC_ALL, "ru");
 
 return array(
+    'main_tpl_people' => 'люди',
+    'main_tpl_lang_1' => 'сообщества',
 
     'welcome' => 'Добро пожаловать',
     'meta_tegtitle' => 'Регистрация',

@@ -4089,6 +4089,7 @@ $table_Chema[] = "CREATE TABLE IF NOT EXISTS `users` (
   `user_rating` mediumint(8) NOT NULL,
   `invties_pub_num` smallint(6) NOT NULL,
   `user_real` int(11) NOT NULL,
+  `user_active` int(11) NOT NULL,
   PRIMARY KEY (`user_id`),
   KEY `user_logged_hash` (`user_hid`),
   KEY `user_password` (`user_password`),
