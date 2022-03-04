@@ -7,9 +7,15 @@
  *
  */
 
-use FluffyDollop\Support\Status;
+namespace Mozg\modules;
 
-class Security
+use Error;
+use ErrorException;
+use Exception;
+use FluffyDollop\Support\Status;
+use JsonException;
+
+class Captcha
 {
     private static function clean_url(string $url)
     {
@@ -27,7 +33,7 @@ class Security
     /**
      * @throws Exception | ErrorException
      */
-    function capcha(): void
+    function captcha(): void
     {
         if (self::clean_url($_SERVER['HTTP_REFERER']) != self::clean_url($_SERVER['HTTP_HOST'])) {
             die("Hacking attempt!");
@@ -42,7 +48,7 @@ class Security
 
         $font = ENGINE_DIR . "/fonts/cour.ttf";    //Путь к шрифту
         if (!file_exists($font)) {
-            throw new ErrorException("Невозможно загрузить : " . $font, 0, 0, 'null', 0);
+            throw new Error("Невозможно загрузить : " . $font, 0, 0, 'null', 0);
         }
 
 //набор символов
@@ -92,10 +98,15 @@ class Security
     /**
      * @throws JsonException
      */
-    function main(): void
+    function code(): void
     {
         if (self::clean_url($_SERVER['HTTP_REFERER']) != self::clean_url($_SERVER['HTTP_HOST'])) {
-            echo 'no';
+            $status = Status::BAD;
+            $response = array(
+                'status' => $status,
+            );
+            _e_json($response);
+            exit();
         }
 
         $user_code = $_GET['user_code'];
