@@ -27,10 +27,7 @@ include './system/functions.php';
 
 function check_install(): bool
 {
-    if (!file_exists(ENGINE_DIR . '/data/config.php') || !file_exists(ENGINE_DIR . '/data/db.php')) {
-        return false;
-    }
-    return true;
+    return !(!file_exists(ENGINE_DIR . '/data/config.php') || !file_exists(ENGINE_DIR . '/data/db.php'));
 }
 
 function main_print(): void
@@ -365,15 +362,16 @@ if (version_compare(PHP_VERSION, '8.0.0') < 0) {
     exit();
 }
 
-const ROOT_DIR = __DIR__;
-const ENGINE_DIR = ROOT_DIR . '/system';
-const ADMIN_DIR = ROOT_DIR . '/system/inc';
 try {
-require_once './vendor/autoload.php';
+    require_once './vendor/autoload.php';
 } catch (Exception) {
     echo "Please install composer";
     exit();
 }
+
+const ROOT_DIR = __DIR__;
+const ENGINE_DIR = ROOT_DIR . '/system';
+const ADMIN_DIR = ROOT_DIR . '/system/inc';
 include ADMIN_DIR.'/functions.php';
 include ADMIN_DIR.'/login.php';
 HTML;

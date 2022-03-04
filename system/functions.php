@@ -1412,10 +1412,11 @@ function settings_load(): array
 /**
  * @throws JsonException
  */
-function _e_json(array $value): int
+function _e_json(array $value): bool
 {
     header('Content-Type: application/json');
-    return print(json_encode($value, JSON_THROW_ON_ERROR));
+    echo json_encode($value, JSON_THROW_ON_ERROR);
+    return true;
 }
 
 /**

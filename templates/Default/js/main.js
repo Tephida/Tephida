@@ -99,7 +99,7 @@ var Page = {
         Page.Loading('start');
         $.post(h, {ajax: 'yes'}, function (data) {
             $('#page').html(data.content).css('min-height', '0px');
-            Page.Loading('stop');
+
             $('html, body').scrollTop(0).css('overflow-y', 'auto');
             // $('.ladybug_ant').imgAreaSelect({remove: true});
             $('#addStyleClass').remove();
@@ -123,6 +123,7 @@ var Page = {
             $('.staticPlbg').css('margin-top', '-500px');
             player.reestablish();
         }
+        Page.Loading('stop');
     },
     Prev: function (h) {
         clearInterval(vii_interval);

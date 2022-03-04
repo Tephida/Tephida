@@ -33,22 +33,24 @@ if ($act == 'logout') {
 if (isset($_SESSION['user_id']) > 0) {
     $logged = true;
     Registry::set('logged', true);
-    $logged_user_id = intval($_SESSION['user_id']);
+    $logged_user_id = (int)$_SESSION['user_id'];
     $user_info = $db->super_query("SELECT user_id, user_email, user_group, user_friends_demands, user_pm_num, user_support, user_lastupdate, user_photo, user_msg_type, user_delet, user_ban_date, user_new_mark_photos, user_search_pref, user_status, user_last_visit, invties_pub_num FROM `users` WHERE user_id = '" . $logged_user_id . "'");
     //Если есть данные о сессии, но нет информации о юзере, то выкидываем его
-    if (!$user_info['user_id'])
+    if (!$user_info['user_id']) {
         header('Location: /index.php?act=logout');
+    }
 
     Registry::set('user_info', $user_info);
 
     //Если юзер нажимает "Главная", и он зашел не с моб версии. То скидываем на его стр.
     $host_site = $_SERVER['QUERY_STRING'];
-    if (!$host_site and $config['temp'] != 'mobile')
+    if (!$host_site and $config['temp'] != 'mobile') {
         header('Location: /u' . $user_info['user_id']);
+    }
     //Если есть данные о COOKIE, то проверяем
 
 } elseif (isset($_COOKIE['user_id']) > 0 AND $_COOKIE['password'] AND $_COOKIE['hid']) {
-    $cookie_user_id = intval($_COOKIE['user_id']);
+    $cookie_user_id = (int)$_COOKIE['user_id'];
     $user_info = $db->super_query("SELECT user_id, user_email, user_group, user_password, user_hid, user_friends_demands, user_pm_num, user_support, user_lastupdate, user_photo, user_msg_type, user_delet, user_ban_date, user_new_mark_photos, user_search_pref, user_status, user_last_visit, invties_pub_num FROM `users` WHERE user_id = '" . $cookie_user_id . "'");
     //Если пароль и HID совпадает, то пропускаем
     if ($user_info['user_password'] == $_COOKIE['password'] AND $user_info['user_hid'] == $_COOKIE['password'] . md5(md5($_IP))) {
@@ -81,7 +83,13 @@ if (isset($_POST['log_in']) && !$logged) {
     $password = md5(md5(stripslashes($_POST['password'])));
     //Проверяем правильность e-mail
     if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
-        msgbox('', $lang['not_loggin'] . '<br /><a href="/restore" onClick="Page.Go(this.href); return false">Забыли пароль?</a>', 'info_red');
+        $tpl = new TpLSite(ROOT_DIR . '/templates/' . $config['temp']);
+        $tpl->load_template('info_red.tpl');
+        $tpl->set('{error}', '<a href="/restore" onClick="Page.Go(this.href); return false">Забыли пароль?</a>');
+        $tpl->compile('content');
+        $tpl->render();
+
+//        msgbox('', $lang['not_loggin'] . '<br /><a href="/restore" onClick="Page.Go(this.href); return false">Забыли пароль?</a>', 'info_red');
     } else {
         //Считаем кол-во символов в пароле и email
         if (!empty($email)) {
