@@ -24,18 +24,17 @@ if (Registry::get('logged')) {
     if (!empty($query)) {
 
         //Если критерий поиск "по людям"
-        if ($type == 1)
+        if ($type == 1) {
             $sql_query = "SELECT user_id, user_search_pref, user_photo, user_birthday, user_country_city_name FROM `users` WHERE user_search_pref LIKE '%" . $query . "%' AND user_delet = '0' AND user_ban = '0' ORDER by `user_photo` DESC, `user_country_city_name` DESC LIMIT 0, " . $limit_sql;
-
-        //Если критерий поиск "по видеозаписям"
-        else if ($type == 2)
+        } //Если критерий поиск "по видеозаписям"
+        else if ($type == 2) {
             $sql_query = "SELECT id, photo, title, add_date, owner_user_id FROM `videos` WHERE title LIKE '%" . $query . "%' AND privacy = 1 ORDER by `views` DESC LIMIT 0, " . $limit_sql;
-
-        //Если критерий поиск "по сообщества"
-        else if ($type == 4)
+        } //Если критерий поиск "по сообщества"
+        else if ($type == 4) {
             $sql_query = "SELECT id, title, photo, traf, adres FROM `communities` WHERE title LIKE '%" . $query . "%' AND del = '0' AND ban = '0' ORDER by `traf` DESC, `photo` DESC LIMIT 0, " . $limit_sql;
-        else
+        } else {
             $sql_query = false;
+        }
 
         if ($sql_query) {
             $sql_ = $db->super_query($sql_query, true);
@@ -55,38 +54,43 @@ if (Registry::get('logged')) {
                         //Если критерий поиск "по сообществам"
                     } else if ($type == 4) {
                         $config = settings_get();
-                        if ($row['photo'])
+                        if ($row['photo']) {
                             $ava = '/uploads/groups/' . $row['id'] . '/50_' . $row['photo'];
-                        else
+                        } else {
                             $ava = '/templates/' . $config['temp'] . '/images/no_ava_50.png';
+                        }
 
                         $img_width = 50;
                         $row['user_search_pref'] = $row['title'];
                         $countr = $row['traf'] . ' ' . gram_record($row['traf'], 'groups_users');
 
-                        if ($row['adres'])
+                        if ($row['adres']) {
                             $row['user_id'] = $row['adres'];
-                        else
+                        } else {
                             $row['user_id'] = 'public' . $row['id'];
+                        }
 
                         //Если критерий поиск "по людям"
                     } else {
                         //АВА
-                        if ($row['user_photo'])
+                        if ($row['user_photo']) {
                             $ava = '/uploads/users/' . $row['user_id'] . '/50_' . $row['user_photo'];
-                        else
+                        } else {
                             $ava = '/templates/' . $config['temp'] . '/images/no_ava_50.png';
+                        }
 
                         //Страна город
                         $expCountry = explode('|', $row['user_country_city_name']);
-                        if ($expCountry[0])
+                        if ($expCountry[0]) {
                             $countr = $expCountry[0];
-                        else
+                        } else {
                             $countr = '';
-                        if ($expCountry[1])
+                        }
+                        if ($expCountry[1]) {
                             $city = ', ' . $expCountry[1];
-                        else
+                        } else {
                             $city = '';
+                        }
 
                         //Возраст юзера
                         $user_birthday = explode('-', $row['user_birthday']);
@@ -104,5 +108,6 @@ HTML;
             }
         }
     }
-} else
+} else {
     echo 'no_log';
+}

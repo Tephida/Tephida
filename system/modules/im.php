@@ -66,14 +66,18 @@ if (Registry::get('logged')) {
                             }
                             $db->query("UPDATE `room_users` SET type = 1 WHERE id = '" . $row2['id'] . "'");
                             $jsonResponse['response'] = $room_id;
-                        } else
+                        } else {
                             $jsonResponse['error'] = 'Пользователь не найден';
-                    } else
+                        }
+                    } else {
                         $jsonResponse['error'] = 'Ошибка доступа';
-                } else
+                    }
+                } else {
                     $jsonResponse['error'] = 'Пользователь не найден';
-            } else
+                }
+            } else {
                 $jsonResponse['error'] = 'Ошибка доступа';
+            }
             echo json_encode($jsonResponse, JSON_THROW_ON_ERROR);
             break;
 
@@ -96,7 +100,7 @@ if (Registry::get('logged')) {
                     $type = end(explode(".", $image_name));
                     if ($type == 'jpg' || $type == 'png') {
                         $config = settings_get();
-                        $config['max_photo_size'] = $config['max_photo_size'] * 1000;
+                        $config['max_photo_size'] *= 1000;
                         if ($image_size < $config['max_photo_size']) {
                             $res_type = strtolower('.' . $type);
                             if (move_uploaded_file($image_tmp, $uploaddir . $image_rename . $res_type)) {
@@ -198,7 +202,7 @@ if (Registry::get('logged')) {
             if ($room_id) {
                 if ($title) {
                     $row = $db->super_query("SELECT id FROM room WHERE id = '{$room_id}' and owner = '{$user_id}'");
-                    if ($room_id) {
+                    if ($room_id > 0) {
                         $db->query("UPDATE `room` SET title = '{$title}' WHERE id = '" . $room_id . "'");
                         $attach_files = '';
                         /** fixme limit */
@@ -343,13 +347,15 @@ if (Registry::get('logged')) {
                             mozg_create_cache("user_{$v}/typograf{$user_id}", "");
                         }
                         $jsonResponse['response'] = $room_id;
-                    } else
+                    } else {
                         $jsonResponse['error'] = 'Ошибка! Выберите участников';
-                } else
+                    }
+                } else {
                     $jsonResponse['error'] = 'Выберите участников';
-
-            } else
+                }
+            } else {
                 $jsonResponse['error'] = 'Введите название';
+            }
             echo json_encode($jsonResponse);
             break;
 
@@ -376,16 +382,21 @@ if (Registry::get('logged')) {
                                 $sql = $db->super_query("SELECT oid2 FROM room_users WHERE room_id = '{$room_id}' and type = 0", true);
                                 if ($sql) {
                                     $msg = json_encode(array('type' => 1, 'oid' => $user_id, 'oid2' => $v2));
-                                    $id2 = md5(rand(0, 1000000) . $server_time);
+                                    $id2 = md5(random_int(0, 1000000) . $server_time);
                                     $user_ids = array();
-                                    foreach ($sql as $k => $v) $user_ids[] = $v['oid2'];
+                                    foreach ($sql as $k => $v) {
+                                        $user_ids[] = $v['oid2'];
+                                    }
                                     $db->query("INSERT INTO `messages` SET user_ids = '" . implode(',', $user_ids) . "', information = 1, theme = '...', text = '" . $msg . "', room_id = '{$room_id}', date = '" . $server_time . "',  history_user_id = 0, attach = '" . $attach_files . "'");
                                     $dbid2 = $db->insert_id();
                                     foreach ($sql as $k => $v) {
                                         $db->query("UPDATE `users` SET user_pm_num = user_pm_num+1 WHERE user_id = '" . $v['oid2'] . "'");
                                         $check_im_2 = $db->super_query("SELECT id FROM im WHERE iuser_id = '" . $v['oid2'] . "' AND im_user_id = 0 AND room_id = '" . $room_id . "'");
-                                        if (!$check_im_2) $db->query("INSERT INTO im SET iuser_id = '" . $v['oid2'] . "', im_user_id = 0, room_id = '" . $room_id . "', msg_num = 1, idate = '" . $server_time . "', all_msg_num = 1");
-                                        else $db->query("UPDATE im  SET idate = '" . $server_time . "', msg_num = msg_num+1, all_msg_num = all_msg_num+1 WHERE id = '" . $check_im_2['id'] . "'");
+                                        if (!$check_im_2) {
+                                            $db->query("INSERT INTO im SET iuser_id = '" . $v['oid2'] . "', im_user_id = 0, room_id = '" . $room_id . "', msg_num = 1, idate = '" . $server_time . "', all_msg_num = 1");
+                                        } else {
+                                            $db->query("UPDATE im  SET idate = '" . $server_time . "', msg_num = msg_num+1, all_msg_num = all_msg_num+1 WHERE id = '" . $check_im_2['id'] . "'");
+                                        }
                                         $check2 = $db->super_query("SELECT user_last_visit FROM `users` WHERE user_id = '{$v['oid2']}'");
                                         $update_time = $server_time - 70;
                                         if ($check2['user_last_visit'] >= $update_time) {
@@ -401,14 +412,18 @@ if (Registry::get('logged')) {
                                 }
                             }
                             $jsonResponse['response'] = $room_id;
-                        } else
+                        } else {
                             $jsonResponse['error'] = 'Ошибка доступа';
-                    } else
+                        }
+                    } else {
                         $jsonResponse['error'] = 'Ошибка доступа';
-                } else
+                    }
+                } else {
                     $jsonResponse['error'] = 'Ошибка доступа';
-            } else
+                }
+            } else {
                 $jsonResponse['error'] = 'Выберите друзей';
+            }
             echo json_encode($jsonResponse);
             break;
 
@@ -424,7 +439,7 @@ if (Registry::get('logged')) {
                         $sql = $db->super_query("SELECT oid2 FROM room_users WHERE room_id = '{$room_id}' and type = 0", true);
                         if ($sql) {
                             $msg = json_encode(array('type' => 2, 'oid' => $user_id));
-                            $id2 = md5(rand(0, 1000000) . $server_time);
+                            $id2 = md5(random_int(0, 1000000) . $server_time);
                             $user_ids = array();
                             foreach ($sql as $k => $v) $user_ids[] = $v['oid2'];
                             $db->query("INSERT INTO `messages` SET user_ids = '" . implode(',', $user_ids) . "', information = 1, theme = '...', text = '" . $msg . "', room_id = '{$room_id}', date = '" . $server_time . "',  history_user_id = 0, attach = '" . $attach_files . "'");
@@ -449,12 +464,15 @@ if (Registry::get('logged')) {
                         }
                         $db->query("UPDATE room_users  SET type = 2 WHERE id = '" . $row2['id'] . "'");
                         $jsonResponse['response'] = $room_id;
-                    } else
+                    } else {
                         $jsonResponse['error'] = 'Ошибка доступа';
-                } else
+                    }
+                } else {
                     $jsonResponse['error'] = 'Ошибка доступа';
-            } else
+                }
+            } else {
                 $jsonResponse['error'] = 'Ошибка доступа';
+            }
             echo json_encode($jsonResponse);
             break;
 
@@ -518,10 +536,11 @@ if (Registry::get('logged')) {
                                 foreach ($user_ids as $k => $v) {
                                     $db->query("UPDATE `users` SET user_pm_num = user_pm_num+1 WHERE user_id = '" . $v . "'");
                                     $check_im_2 = $db->super_query("SELECT id FROM im WHERE iuser_id = '" . $v . "' AND im_user_id = '" . ($room_id ? 0 : $user_id) . "' AND room_id = '" . $room_id . "'");
-                                    if (!$check_im_2)
+                                    if (!$check_im_2) {
                                         $db->query("INSERT INTO im SET iuser_id = '" . $v . "', im_user_id = '" . ($room_id ? 0 : $user_id) . "', room_id = '" . $room_id . "', msg_num = 1, idate = '" . $server_time . "', all_msg_num = 1");
-                                    else
+                                    } else {
                                         $db->query("UPDATE im  SET idate = '" . $server_time . "', msg_num = msg_num+1, all_msg_num = all_msg_num+1 WHERE id = '" . $check_im_2['id'] . "'");
+                                    }
                                     $check2 = $db->super_query("SELECT user_last_visit FROM `users` WHERE user_id = '{$v}'");
                                     $update_time = $server_time - 70;
                                     if ($check2['user_last_visit'] >= $update_time) {
@@ -534,10 +553,11 @@ if (Registry::get('logged')) {
                                     mozg_create_cache("user_{$v}/typograf{$user_id}", "");
                                 }
                                 $check_im = $db->super_query("SELECT id FROM `im` WHERE iuser_id = '" . $user_id . "' AND im_user_id = '" . $for_user_id . "' AND room_id = '" . $room_id . "'");
-                                if (!$check_im)
+                                if (!$check_im) {
                                     $db->query("INSERT INTO im SET iuser_id = '" . $user_id . "', im_user_id = '" . $for_user_id . "', room_id = '" . $room_id . "', idate = '" . $server_time . "', all_msg_num = 1");
-                                else
+                                } else {
                                     $db->query("UPDATE im  SET idate = '" . $server_time . "', all_msg_num = all_msg_num+1 WHERE id = '" . $check_im['id'] . "'");
+                                }
 
 
                                 $tpl->load_template('im/msg.tpl');
@@ -566,7 +586,7 @@ if (Registry::get('logged')) {
                                         } elseif ($attach_type[0] == 'video' and file_exists(ROOT_DIR . "/uploads/videos/{$attach_type[3]}/{$attach_type[1]}"))
                                             $attach_result .= "<div><a href=\"/video{$attach_type[3]}_{$attach_type[2]}\" onClick=\"videos.show({$attach_type[2]}, this.href, location.href); return false\"><img src=\"/uploads/videos/{$attach_type[3]}/{$attach_type[1]}\" style=\"margin-top:3px;margin-right:3px\" align=\"left\" /></a></div>";
                                         elseif ($attach_type[0] == 'audio') {
-                                            $audioId = intval($attach_type[1]);
+                                            $audioId = (int)$attach_type[1];
                                             $audioInfo = $db->super_query("SELECT artist, name, url FROM `audio` WHERE aid = '" . $audioId . "'");
                                             if ($audioInfo) {
                                                 $jid++;
@@ -575,18 +595,22 @@ if (Registry::get('logged')) {
                                         } elseif ($attach_type[0] == 'smile' and file_exists(ROOT_DIR . "/uploads/smiles/{$attach_type[1]}")) {
                                             $attach_result .= '<img src=\"/uploads/smiles/' . $attach_type[1] . '\" style="margin-right:5px" />';
                                         } elseif ($attach_type[0] == 'doc') {
-                                            $doc_id = intval($attach_type[1]);
+                                            $doc_id = (int)$attach_type[1];
                                             $row_doc = $db->super_query("SELECT dname, dsize FROM `doc` WHERE did = '{$doc_id}'", false, "wall/doc{$doc_id}");
                                             if ($row_doc) {
                                                 $attach_result .= '<div style="margin-top:5px;margin-bottom:5px" class="clear"><div class="doc_attach_ic fl_l" style="margin-top:4px;margin-left:0px"></div><div class="attach_link_block_te"><div class="fl_l">Файл <a href="/index.php?go=doc&act=download&did=' . $doc_id . '" target="_blank" onMouseOver="myhtml.title(\'' . $doc_id . $cnt_attach . $dbid . '\', \'<b>Размер файла: ' . $row_doc['dsize'] . '</b>\', \'doc_\')" id="doc_' . $doc_id . $cnt_attach . $dbid . '">' . $row_doc['dname'] . '</a></div></div></div><div class="clear"></div>';
                                                 $cnt_attach++;
                                             }
-                                        } else $attach_result .= '';
+                                        } else {
+                                            $attach_result .= '';
+                                        }
                                     }
-                                    if ($attach_result)
+                                    if ($attach_result) {
                                         $msg = '<div style="width:442px;overflow:hidden">' . preg_replace('`(http(?:s)?://\w+[^\s\[\]\<]+)`i', '<a href="/index.php?go=away&url=$1" target="_blank">$1</a>', $msg) . $attach_result . '</div><div class="clear"></div>';
-                                } else
+                                    }
+                                } else {
                                     $msg = preg_replace('`(http(?:s)?://\w+[^\s\[\]\<]+)`i', '<a href="/index.php?go=away&url=$1" target="_blank">$1</a>', $msg) . $attach_result;
+                                }
                                 $tpl->set('[noInformation]', '');
                                 $tpl->set('[/noInformation]', '');
                                 $tpl->set('{style}', '');
@@ -596,12 +620,15 @@ if (Registry::get('logged')) {
                                 $tpl->set('{date}', langdate('H:i:s', $server_time));
                                 $tpl->compile('content');
                                 AjaxTpl($tpl);
-                            } else
+                            } else {
                                 echo 'err_privacy';
-                        } else
+                            }
+                        } else {
                             echo 'no_user';
-                    } else
+                        }
+                    } else {
                         echo 'max_strlen';
+                    }
                 }
             }
             break;
@@ -618,7 +645,9 @@ if (Registry::get('logged')) {
                 if (!$check['room_id']) {
                     $user_ids = explode(',', $check['user_ids']);
                     $im_user_id = $user_ids[0] == $user_id ? $user_ids[1] : $user_ids[0];
-                } else $im_user_id = 0;
+                } else {
+                    $im_user_id = 0;
+                }
                 $db->query("UPDATE `im` SET msg_num = msg_num-1 WHERE iuser_id = '" . $user_id . "' and im_user_id = '" . $im_user_id . "' AND room_id = '" . $check['room_id'] . "'");
                 mozg_clear_cache_file('user_' . $check['history_user_id'] . '/im');
             }
@@ -629,8 +658,11 @@ if (Registry::get('logged')) {
             $room_id = intFilter('room_id');
             $for_user_id = intFilter('for_user_id');
             if (!$room_id) {
-                if (intFilter('stop') == 1) mozg_create_cache("user_{$for_user_id}/typograf{$user_id}", "");
-                else mozg_create_cache("user_{$for_user_id}/typograf{$user_id}", 1);
+                if (intFilter('stop') == 1) {
+                    mozg_create_cache("user_{$for_user_id}/typograf{$user_id}", "");
+                } else {
+                    mozg_create_cache("user_{$for_user_id}/typograf{$user_id}", 1);
+                }
             }
             break;
 
@@ -638,24 +670,29 @@ if (Registry::get('logged')) {
             NoAjaxQuery();
             $room_id = intFilter('room_id');
             $for_user_id = intFilter('for_user_id');
-            if ($room_id)
+            if ($room_id) {
                 $for_user_id = 0;
+            }
             $last_id = intFilter('last_id');
             $sess_last_id = mozg_cache('user_' . $user_id . '/im');
             if (!$room_id) {
                 $typograf = mozg_cache("user_{$user_id}/typograf{$for_user_id}");
-                if ($typograf)
-                    echo "<script>$('#im_typograf').fadeIn()</script>";
+                if ($typograf) {
+                    {
+                        echo "<script>$('#im_typograf').fadeIn()</script>";
+                    }
+                }
             }
-            if ($last_id == $sess_last_id || !$room_id && !$for_user_id) {
+            if ($last_id == $sess_last_id || (!$room_id && !$for_user_id)) {
                 echo 'no_new';
                 die();
             }
             $count = $db->super_query("SELECT msg_num, all_msg_num FROM `im` WHERE iuser_id = '" . $user_id . "' AND im_user_id = '" . ($room_id ? 0 : $for_user_id) . "' and room_id = '{$room_id}'");
-            if ($count['all_msg_num'] > 20)
+            if ($count['all_msg_num'] > 20) {
                 $limit = $count['all_msg_num'] - 20;
-            else
+            } else {
                 $limit = 0;
+            }
 
             $sql_ = $db->super_query("SELECT tb1.id, text, information, date, read_ids, history_user_id, attach, tell_uid, tell_date, public, tell_comm, if(history_user_id > 0, tb2.user_name, '') as user_name, if(history_user_id > 0, tb2.user_photo, '') as user_photo FROM `messages` tb1 LEFT JOIN `users` tb2 ON history_user_id > 0 AND tb1.history_user_id = tb2.user_id WHERE " . ($room_id ? "tb1.room_id = '{$room_id}'" : "tb1.room_id = 0 and find_in_set('{$for_user_id}', tb1.user_ids)") . " and find_in_set('{$user_id}', tb1.user_ids) AND not find_in_set('{$user_id}', tb1.del_ids) ORDER by `date` ASC LIMIT " . $limit . ", 20", true);
             mozg_create_cache('user_' . $user_id . '/im', $last_id);
@@ -665,12 +702,18 @@ if (Registry::get('logged')) {
                     $tpl->set('{name}', $row['user_name']);
                     $tpl->set('{user-id}', $row['history_user_id']);
                     $tpl->set('{msg-id}', $row['id']);
-                    if (date('Y-m-d', $row['date']) == date('Y-m-d', $server_time)) $tpl->set('{date}', langdate('H:i:s', $row['date']));
-                    else $tpl->set('{date}', langdate('d.m.y', $row['date']));
-                    if ($row['user_photo']) $tpl->set('{ava}', '/uploads/users/' . $row['history_user_id'] . '/50_' . $row['user_photo']);
-                    else $tpl->set('{ava}', '{theme}/images/no_ava_50.png');
+                    if (date('Y-m-d', $row['date']) == date('Y-m-d', $server_time)) {
+                        $tpl->set('{date}', langdate('H:i:s', $row['date']));
+                    } else {
+                        $tpl->set('{date}', langdate('d.m.y', $row['date']));
+                    }
+                    if ($row['user_photo']) {
+                        $tpl->set('{ava}', '/uploads/users/' . $row['history_user_id'] . '/50_' . $row['user_photo']);
+                    } else {
+                        $tpl->set('{ava}', '{theme}/images/no_ava_50.png');
+                    }
                     $read_ids = $row['read_ids'] ? explode(',', $row['read_ids']) : array();
-                    if (in_array($user_id, $read_ids) || $read_ids && $user_id == $row['history_user_id']) {
+                    if (in_array($user_id, $read_ids, true) || ($read_ids && $user_id == $row['history_user_id'])) {
                         $tpl->set('{new}', '');
                         $tpl->set('{read-js-func}', '');
                     } else {
@@ -692,11 +735,13 @@ if (Registry::get('logged')) {
                                 $cnt_attach++;
                                 $resLinkTitle = '';
                             } elseif ($attach_type[0] == 'photo_u') {
-                                if ($row['tell_uid'])
+                                if ($row['tell_uid']) {
                                     $attauthor_user_id = $row['tell_uid'];
-                                elseif ($row['history_user_id'] == $user_id)
+                                } elseif ($row['history_user_id'] == $user_id) {
                                     $attauthor_user_id = $user_id;
-                                else $attauthor_user_id = $row['history_user_id'];
+                                } else {
+                                    $attauthor_user_id = $row['history_user_id'];
+                                }
                                 if ($attach_type[1] == 'attach' and file_exists(ROOT_DIR . "/uploads/attach/{$attauthor_user_id}/c_{$attach_type[2]}")) {
                                     $size = getimagesize(ROOT_DIR . "/uploads/attach/{$attauthor_user_id}/c_{$attach_type[2]}");
                                     $attach_result .= "<img id=\"photo_wall_{$row['id']}_{$cnt_attach}\" src=\"/uploads/attach/{$attauthor_user_id}/c_{$attach_type[2]}\" {$size[3]} style=\"margin-top:3px;margin-right:3px\" align=\"left\" onClick=\"groups.wall_photo_view('{$row['id']}', '', '{$attach_type[1]}', '{$cnt_attach}')\" class=\"cursor_pointer page_num{$row['id']}\" />";
@@ -733,12 +778,12 @@ if (Registry::get('logged')) {
                                 if (stripos($attach_type[4], '/uploads/attach/') === false) {
                                     $attach_type[4] = '{theme}/images/no_ava_groups_100.gif';
                                     $no_img = false;
-                                }
-                                else
+                                } else {
                                     $no_img = true;
+                                }
                                 if (!$attach_type[3])
                                     $attach_type[3] = '';
-                                if ($no_img and $attach_type[2]) {
+                                if ($no_img && $attach_type[2]) {
                                     $attach_result .= '<div style="margin-top:2px" class="clear"><div class="attach_link_block_ic fl_l" style="margin-top:4px;margin-left:0px"></div><div class="attach_link_block_te"><div class="fl_l">Ссылка: <a href="/index.php?go=away&url=' . $attach_type[1] . '" target="_blank">' . $rdomain_url_name . '</a></div></div><div class="clear"></div><div class="wall_show_block_link" style="border:0px"><a href="/index.php?go=away&url=' . $attach_type[1] . '" target="_blank"><div style="width:108px;height:80px;float:left;text-align:center"><img src="' . $attach_type[4] . '" /></div></a><div class="attatch_link_title"><a href="/index.php?go=away&url=' . $attach_type[1] . '" target="_blank">' . $str_title . '</a></div><div style="max-height:50px;overflow:hidden">' . $attach_type[3] . '</div></div></div>';
                                     $resLinkTitle = $attach_type[2];
                                     $resLinkUrl = $attach_type[1];
@@ -761,8 +806,11 @@ if (Registry::get('logged')) {
                                 if ($vote_id) {
                                     $checkMyVote = $db->super_query("SELECT COUNT(*) AS cnt FROM `votes_result` WHERE user_id = '{$user_id}' AND vote_id = '{$vote_id}'", false);
                                     $row_vote['title'] = stripslashes($row_vote['title']);
-                                    if (!$row['text'])
-                                        $row['text'] = $row_vote['title'];
+                                    if (!$row['text']) {
+                                        {
+                                            $row['text'] = $row_vote['title'];
+                                        }
+                                    }
                                     $arr_answe_list = explode('|', stripslashes($row_vote['answers']));
                                     $max = $row_vote['answer_num'];
                                     /** fixme limit */
@@ -772,16 +820,19 @@ if (Registry::get('logged')) {
                                         $answer[$row_answer['answer']]['cnt'] = $row_answer['cnt'];
                                     }
                                     $attach_result .= "<div class=\"clear\" style=\"height:10px\"></div><div id=\"result_vote_block{$vote_id}\"><div class=\"wall_vote_title\">{$row_vote['title']}</div>";
-                                    for ($ai = 0; $ai < count($arr_answe_list); $ai++) {
+                                    for ($ai = 0, $aiMax = count($arr_answe_list); $ai < $aiMax; $ai++) {
                                         if (!$checkMyVote['cnt']) {
                                             $attach_result .= "<div class=\"wall_vote_oneanswe\" onClick=\"Votes.Send({$ai}, {$vote_id})\" id=\"wall_vote_oneanswe{$ai}\"><input type=\"radio\" name=\"answer\" /><span id=\"answer_load{$ai}\">{$arr_answe_list[$ai]}</span></div>";
                                         } else {
                                             $num = $answer[$ai]['cnt'];
-                                            if (!$num) $num = 0;
-                                            if ($max != 0)
+                                            if (!$num) {
+                                                $num = 0;
+                                            }
+                                            if ($max !== 0) {
                                                 $proc = (100 * $num) / $max;
-                                            else
+                                            } else {
                                                 $proc = 0;
+                                            }
                                             $proc = round($proc, 2);
                                             $attach_result .= "<div class=\"wall_vote_oneanswe cursor_default\">
 											{$arr_answe_list[$ai]}<br />
@@ -790,56 +841,63 @@ if (Registry::get('logged')) {
 											</div><div class=\"clear\"></div>";
                                         }
                                     }
-                                    if ($row_vote['answer_num'])
+                                    if ($row_vote['answer_num']) {
                                         $answer_num_text = gram_record($row_vote['answer_num'], 'fave');
-                                    else
+                                    } else {
                                         $answer_num_text = 'человек';
-                                    if ($row_vote['answer_num'] <= 1)
+                                    }
+                                    if ($row_vote['answer_num'] <= 1) {
                                         $answer_text2 = 'Проголосовал';
-                                    else
+                                    } else {
                                         $answer_text2 = 'Проголосовало';
+                                    }
                                     $attach_result .= "{$answer_text2} <b>{$row_vote['answer_num']}</b> {$answer_num_text}.<div class=\"clear\" style=\"margin-top:10px\"></div></div>";
                                 }
-                            }
-                            else
+                            } else {
                                 $attach_result .= '';
+                            }
                         }
 
                         $resLinkTitle = $resLinkTitle ?? null;
                         $resLinkUrl = $resLinkUrl ?? null;
 
-                        if ($resLinkTitle and $row['text'] == $resLinkUrl or !$row['text'])
+                        if (($resLinkTitle && $row['text'] == $resLinkUrl) || !$row['text'])
                             $row['text'] = $resLinkTitle . '<div class="clear"></div>' . $attach_result;
-                        else if ($attach_result)
+                        else if ($attach_result) {
                             $row['text'] = preg_replace('`(http(?:s)?://\w+[^\s\[\]\<]+)`i', '<a href="/index.php?go=away&url=$1" target="_blank">$1</a>', $row['text']) . $attach_result;
-                        else
+                        } else {
                             $row['text'] = preg_replace('`(http(?:s)?://\w+[^\s\[\]\<]+)`i', '<a href="/index.php?go=away&url=$1" target="_blank">$1</a>', $row['text']);
-                    } else
+                        }
+                    } else {
                         $row['text'] = preg_replace('`(http(?:s)?://\w+[^\s\[\]\<]+)`i', '<a href="/index.php?go=away&url=$1" target="_blank">$1</a>', $row['text']);
+                    }
 
                     $resLinkTitle = '';
 
                     if ($row['tell_uid']) {
-                        if ($row['public'])
+                        if ($row['public']) {
                             $rowUserTell = $db->super_query("SELECT title, photo FROM `communities` WHERE id = '{$row['tell_uid']}'", false);
-                        else
+                        } else {
                             $rowUserTell = $db->super_query("SELECT user_search_pref, user_photo FROM `users` WHERE user_id = '{$row['tell_uid']}'");
+                        }
 
                         $dateTell = megaDate($row['tell_date']);
 
                         if ($row['public']) {
                             $rowUserTell['user_search_pref'] = stripslashes($rowUserTell['title']);
                             $tell_link = 'public';
-                            if ($rowUserTell['photo'])
+                            if ($rowUserTell['photo']) {
                                 $avaTell = '/uploads/groups/' . $row['tell_uid'] . '/50_' . $rowUserTell['photo'];
-                            else
+                            } else {
                                 $avaTell = '{theme}/images/no_ava_50.png';
+                            }
                         } else {
                             $tell_link = 'u';
-                            if ($rowUserTell['user_photo'])
+                            if ($rowUserTell['user_photo']) {
                                 $avaTell = '/uploads/users/' . $row['tell_uid'] . '/50_' . $rowUserTell['user_photo'];
-                            else
+                            } else {
                                 $avaTell = '{theme}/images/no_ava_50.png';
+                            }
                         }
                         $row['text'] = <<<HTML
 {$row['tell_comm']}
@@ -850,14 +908,15 @@ if (Registry::get('logged')) {
 HTML;
 
                     }
-                    if ($row['information'])
+                    if ($row['information']) {
                         $row['text'] = informationText($row['text']);
+                    }
                     if (!$row['information']) {
                         $tpl->set('[noInformation]', '');
                         $tpl->set('[/noInformation]', '');
-                    }
-                    else
+                    } else {
                         $tpl->set_block("'\\[noInformation\\](.*?)\\[/noInformation\\]'si", "");
+                    }
                     $tpl->set('{style}', $row['information'] ? 'min-height: auto;' : '');
                     $tpl->set('{text}', stripslashes($row['text']));
                     $tpl->compile('content');
@@ -872,10 +931,12 @@ HTML;
             $room_id = intFilter('room_id');
             $for_user_id = intFilter('for_user_id');
             $first_id = intFilter('first_id');
-            if ($room_id)
+            if ($room_id) {
                 $for_user_id = 0;
-            if ($for_user_id)
+            }
+            if ($for_user_id) {
                 mozg_create_cache("user_{$for_user_id}/typograf{$user_id}", "");
+            }
             $limit_msg = 20;
             if ($need_read) {
                 $sql = $db->super_query("SELECT id, history_user_id, read_ids, user_ids, room_id FROM `messages` WHERE " . ($room_id ? "room_id = '{$room_id}'" : "room_id = 0 and find_in_set('{$for_user_id}', user_ids)") . " and find_in_set('{$user_id}', user_ids) AND not find_in_set('{$user_id}', del_ids) AND not find_in_set('{$user_id}', read_ids) and history_user_id != '{$user_id}'", true);
@@ -887,8 +948,9 @@ HTML;
                         if (!$row['room_id']) {
                             $user_ids = explode(',', $row['user_ids']);
                             $im_user_id = $user_ids[0] == $user_id ? $user_ids[1] : $user_ids[0];
-                        } else
+                        } else {
                             $im_user_id = 0;
+                        }
                         $db->query("UPDATE `im` SET msg_num = msg_num-1 WHERE iuser_id = '" . $user_id . "' and im_user_id = '" . $im_user_id . "' AND room_id = '" . $row['room_id'] . "'");
                         mozg_clear_cache_file('user_' . $row['history_user_id'] . '/im');
                     }
@@ -901,10 +963,11 @@ HTML;
             } else {
                 $count = $db->super_query("SELECT all_msg_num FROM `im` WHERE iuser_id = '" . $user_id . "' AND im_user_id = '" . $for_user_id . "' AND room_id = '" . $room_id . "'");
             }
-            if ($count['all_msg_num'] > $limit_msg)
+            if ($count['all_msg_num'] > $limit_msg) {
                 $limit = $count['all_msg_num'] - $limit_msg;
-            else
+            } else {
                 $limit = 0;
+            }
 
             $sql_sort = $sql_sort ?? null;
 
@@ -912,27 +975,31 @@ HTML;
             $tpl->load_template('im/msg.tpl');
             if (!$first_id) {
                 $tpl->result['content'] .= '<div class="im_scroll">';
-                if ($count['all_msg_num'] > $limit_msg)
+                if ($count['all_msg_num'] > $limit_msg) {
                     $tpl->result['content'] .= '<div class="cursor_pointer" onClick="im.page(' . ($room_id ? 'c' . $room_id : $for_user_id) . '); return false" id="wall_all_records" style="width:520px"><div class="public_wall_all_comm" id="load_wall_all_records" style="margin-left:0px">Показать предыдущие сообщения</div></div><div id="prevMsg"></div>';
+                }
                 $tpl->result['content'] .= '<div id="im_scroll">';
-                if (!$sql_)
+                if (!$sql_) {
                     $tpl->result['content'] .= '<div class="info_center"><div style="padding-top:210px">Здесь будет выводиться история переписки.</div></div>';
+                }
             }
             if ($sql_) {
                 foreach ($sql_ as $row) {
                     $tpl->set('{name}', $row['user_name']);
                     $tpl->set('{user-id}', $row['history_user_id']);
                     $tpl->set('{msg-id}', $row['id']);
-                    if (date('Y-m-d', $row['date']) == date('Y-m-d', $server_time))
+                    if (date('Y-m-d', $row['date']) == date('Y-m-d', $server_time)) {
                         $tpl->set('{date}', langdate('H:i:s', $row['date']));
-                    else
+                    } else {
                         $tpl->set('{date}', langdate('d.m.y', $row['date']));
-                    if ($row['user_photo'])
+                    }
+                    if ($row['user_photo']) {
                         $tpl->set('{ava}', '/uploads/users/' . $row['history_user_id'] . '/50_' . $row['user_photo']);
-                    else
+                    } else {
                         $tpl->set('{ava}', '{theme}/images/no_ava_50.png');
+                    }
                     $read_ids = $row['read_ids'] ? explode(',', $row['read_ids']) : array();
-                    if (in_array($user_id, $read_ids) || $read_ids && $user_id == $row['history_user_id']) {
+                    if (in_array($user_id, $read_ids) || ($read_ids && $user_id == $row['history_user_id'])) {
                         $tpl->set('{new}', '');
                         $tpl->set('{read-js-func}', '');
                     } else {
@@ -954,12 +1021,13 @@ HTML;
                                 $cnt_attach++;
                                 $resLinkTitle = '';
                             } elseif ($attach_type[0] == 'photo_u') {
-                                if ($row['tell_uid'])
+                                if ($row['tell_uid']) {
                                     $attauthor_user_id = $row['tell_uid'];
-                                elseif ($row['history_user_id'] == $user_id)
+                                } elseif ($row['history_user_id'] == $user_id) {
                                     $attauthor_user_id = $user_id;
-                                else
+                                } else {
                                     $attauthor_user_id = $row['history_user_id'];
+                                }
                                 if ($attach_type[1] == 'attach' and file_exists(ROOT_DIR . "/uploads/attach/{$attauthor_user_id}/c_{$attach_type[2]}")) {
                                     $size = getimagesize(ROOT_DIR . "/uploads/attach/{$attauthor_user_id}/c_{$attach_type[2]}");
                                     $attach_result .= "<img id=\"photo_wall_{$row['id']}_{$cnt_attach}\" src=\"/uploads/attach/{$attauthor_user_id}/c_{$attach_type[2]}\" {$size[3]} style=\"margin-top:3px;margin-right:3px\" align=\"left\" onClick=\"groups.wall_photo_view('{$row['id']}', '', '{$attach_type[1]}', '{$cnt_attach}')\" class=\"cursor_pointer page_num{$row['id']}\" />";
@@ -975,7 +1043,7 @@ HTML;
                                 $attach_result .= "<div><a href=\"/video{$attach_type[3]}_{$attach_type[2]}\" onClick=\"videos.show({$attach_type[2]}, this.href, location.href); return false\"><img src=\"/uploads/videos/{$attach_type[3]}/{$attach_type[1]}\" style=\"margin-top:3px;margin-right:3px\" {$size[3]} align=\"left\" /></a></div>";
                                 $resLinkTitle = '';
                             } elseif ($attach_type[0] == 'audio') {
-                                $audioId = intval($attach_type[1]);
+                                $audioId = (int)$attach_type[1];
                                 $audioInfo = $db->super_query("SELECT artist, name, url FROM `audio` WHERE aid = '" . $audioId . "'");
                                 if ($audioInfo) {
                                     $jid++;
@@ -996,9 +1064,13 @@ HTML;
                                 if (stripos($attach_type[4], '/uploads/attach/') === false) {
                                     $attach_type[4] = '{theme}/images/no_ava_groups_100.gif';
                                     $no_img = false;
-                                } else $no_img = true;
-                                if (!$attach_type[3]) $attach_type[3] = '';
-                                if ($no_img and $attach_type[2]) {
+                                } else {
+                                    $no_img = true;
+                                }
+                                if (!$attach_type[3]) {
+                                    $attach_type[3] = '';
+                                }
+                                if ($no_img && $attach_type[2]) {
                                     $attach_result .= '<div style="margin-top:2px" class="clear"><div class="attach_link_block_ic fl_l" style="margin-top:4px;margin-left:0px"></div><div class="attach_link_block_te"><div class="fl_l">Ссылка: <a href="/index.php?go=away&url=' . $attach_type[1] . '" target="_blank">' . $rdomain_url_name . '</a></div></div><div class="clear"></div><div class="wall_show_block_link" style="border:0px"><a href="/index.php?go=away&url=' . $attach_type[1] . '" target="_blank"><div style="width:108px;height:80px;float:left;text-align:center"><img src="' . $attach_type[4] . '" /></div></a><div class="attatch_link_title"><a href="/index.php?go=away&url=' . $attach_type[1] . '" target="_blank">' . $str_title . '</a></div><div style="max-height:50px;overflow:hidden">' . $attach_type[3] . '</div></div></div>';
                                     $resLinkTitle = $attach_type[2];
                                     $resLinkUrl = $attach_type[1];
@@ -1009,20 +1081,21 @@ HTML;
                                 }
                                 $cnt_attach_link++;
                             } elseif ($attach_type[0] == 'doc') {
-                                $doc_id = intval($attach_type[1]);
+                                $doc_id = (int)$attach_type[1];
                                 $row_doc = $db->super_query("SELECT dname, dsize FROM `doc` WHERE did = '{$doc_id}'", false);
                                 if ($row_doc) {
                                     $attach_result .= '<div style="margin-top:5px;margin-bottom:5px" class="clear"><div class="doc_attach_ic fl_l" style="margin-top:4px;margin-left:0px"></div><div class="attach_link_block_te"><div class="fl_l">Файл <a href="/index.php?go=doc&act=download&did=' . $doc_id . '" target="_blank" onMouseOver="myhtml.title(\'' . $doc_id . $cnt_attach . $row['id'] . '\', \'<b>Размер файла: ' . $row_doc['dsize'] . '</b>\', \'doc_\')" id="doc_' . $doc_id . $cnt_attach . $row['id'] . '">' . $row_doc['dname'] . '</a></div></div></div><div class="clear"></div>';
                                     $cnt_attach++;
                                 }
                             } elseif ($attach_type[0] == 'vote') {
-                                $vote_id = intval($attach_type[1]);
+                                $vote_id = (int)$attach_type[1];
                                 $row_vote = $db->super_query("SELECT title, answers, answer_num FROM `votes` WHERE id = '{$vote_id}'", false);
                                 if ($vote_id) {
                                     $checkMyVote = $db->super_query("SELECT COUNT(*) AS cnt FROM `votes_result` WHERE user_id = '{$user_id}' AND vote_id = '{$vote_id}'", false);
                                     $row_vote['title'] = stripslashes($row_vote['title']);
-                                    if (!$row['text'])
+                                    if (!$row['text']) {
                                         $row['text'] = $row_vote['title'];
+                                    }
                                     $arr_answe_list = explode('|', stripslashes($row_vote['answers']));
                                     $max = $row_vote['answer_num'];
                                     /** fixme limit */
@@ -1037,12 +1110,14 @@ HTML;
                                             $attach_result .= "<div class=\"wall_vote_oneanswe\" onClick=\"Votes.Send({$ai}, {$vote_id})\" id=\"wall_vote_oneanswe{$ai}\"><input type=\"radio\" name=\"answer\" /><span id=\"answer_load{$ai}\">{$arr_answe_list[$ai]}</span></div>";
                                         } else {
                                             $num = $answer[$ai]['cnt'];
-                                            if (!$num)
+                                            if (!$num) {
                                                 $num = 0;
-                                            if ($max != 0)
+                                            }
+                                            if ($max !== 0) {
                                                 $proc = (100 * $num) / $max;
-                                            else
+                                            } else {
                                                 $proc = 0;
+                                            }
                                             $proc = round($proc, 2);
                                             $attach_result .= "<div class=\"wall_vote_oneanswe cursor_default\">
 											{$arr_answe_list[$ai]}<br />
@@ -1051,50 +1126,59 @@ HTML;
 											</div><div class=\"clear\"></div>";
                                         }
                                     }
-                                    if ($row_vote['answer_num'])
+                                    if ($row_vote['answer_num']) {
                                         $answer_num_text = gram_record($row_vote['answer_num'], 'fave');
-                                    else
+                                    } else {
                                         $answer_num_text = 'человек';
-                                    if ($row_vote['answer_num'] <= 1)
+                                    }
+                                    if ($row_vote['answer_num'] <= 1) {
                                         $answer_text2 = 'Проголосовал';
-                                    else
+                                    } else {
                                         $answer_text2 = 'Проголосовало';
+                                    }
                                     $attach_result .= "{$answer_text2} <b>{$row_vote['answer_num']}</b> {$answer_num_text}.<div class=\"clear\" style=\"margin-top:10px\"></div></div>";
                                 }
-                            } else $attach_result .= '';
+                            } else {
+                                $attach_result .= '';
+                            }
                         }
-                        if ($resLinkTitle and $row['text'] == $resLinkUrl or !$row['text'])
+                        if (($resLinkTitle && $row['text'] == $resLinkUrl) || !$row['text']) {
                             $row['text'] = $resLinkTitle . '<div class="clear"></div>' . $attach_result;
-                        else if ($attach_result)
+                        } else if ($attach_result) {
                             $row['text'] = preg_replace('`(http(?:s)?://\w+[^\s\[\]\<]+)`i', '<a href="/index.php?go=away&url=$1" target="_blank">$1</a>', $row['text']) . $attach_result;
-                        else
+                        } else {
                             $row['text'] = preg_replace('`(http(?:s)?://\w+[^\s\[\]\<]+)`i', '<a href="/index.php?go=away&url=$1" target="_blank">$1</a>', $row['text']);
-                    } else
+                        }
+                    } else {
                         $row['text'] = preg_replace('`(http(?:s)?://\w+[^\s\[\]\<]+)`i', '<a href="/index.php?go=away&url=$1" target="_blank">$1</a>', $row['text']);
+                    }
 
                     $resLinkTitle = '';
 
                     if ($row['tell_uid']) {
-                        if ($row['public'])
+                        if ($row['public']) {
                             $rowUserTell = $db->super_query("SELECT title, photo FROM `communities` WHERE id = '{$row['tell_uid']}'", false);
-                        else
+                        } else {
                             $rowUserTell = $db->super_query("SELECT user_search_pref, user_photo FROM `users` WHERE user_id = '{$row['tell_uid']}'");
+                        }
 
                         $dateTell = megaDate($row['tell_date']);
 
                         if ($row['public']) {
                             $rowUserTell['user_search_pref'] = stripslashes($rowUserTell['title']);
                             $tell_link = 'public';
-                            if ($rowUserTell['photo'])
+                            if ($rowUserTell['photo']) {
                                 $avaTell = '/uploads/groups/' . $row['tell_uid'] . '/50_' . $rowUserTell['photo'];
-                            else
+                            } else {
                                 $avaTell = '{theme}/images/no_ava_50.png';
+                            }
                         } else {
                             $tell_link = 'u';
-                            if ($rowUserTell['user_photo'])
+                            if ($rowUserTell['user_photo']) {
                                 $avaTell = '/uploads/users/' . $row['tell_uid'] . '/50_' . $rowUserTell['user_photo'];
-                            else
+                            } else {
                                 $avaTell = '{theme}/images/no_ava_50.png';
+                            }
                         }
                         $row['text'] = <<<HTML
 {$row['tell_comm']}
@@ -1105,45 +1189,56 @@ HTML;
 HTML;
 
                     }
-                    if ($row['information']) $row['text'] = informationText($row['text']);
+                    if ($row['information']) {
+                        $row['text'] = informationText($row['text']);
+                    }
                     if (!$row['information']) {
                         $tpl->set('[noInformation]', '');
                         $tpl->set('[/noInformation]', '');
-                    } else $tpl->set_block("'\\[noInformation\\](.*?)\\[/noInformation\\]'si", "");
+                    } else {
+                        $tpl->set_block("'\\[noInformation\\](.*?)\\[/noInformation\\]'si", "");
+                    }
                     $tpl->set('{style}', $row['information'] ? 'min-height: auto;' : '');
                     $tpl->set('{text}', stripslashes($row['text']));
                     $tpl->compile('content');
                 }
             }
-            if (!$first_id)
+            if (!$first_id) {
                 $tpl->result['content'] .= '</div></div>';
+            }
             if (!$first_id) {
                 $tpl->load_template('im/form.tpl');
                 $tpl->set('{for_user_id}', $room_id ? 'c' . $room_id : $for_user_id);
                 $myInfo = $db->super_query("SELECT user_name FROM `users` WHERE user_id = '" . $user_id . "'");
                 $tpl->set('{myuser-id}', $user_id);
                 $tpl->set('{my-name}', $myInfo['user_name']);
-                if ($user_info['user_photo'])
+                if ($user_info['user_photo']) {
                     $tpl->set('{my-ava}', '/uploads/users/' . $user_id . '/50_' . $user_info['user_photo']);
-                else
+                } else {
                     $tpl->set('{my-ava}', '{theme}/images/no_ava_50.png');
-                if ($room_id)
+                }
+                if ($room_id) {
                     $checkRoom = $db->super_query("SELECT owner FROM `room` WHERE id = '" . $room_id . "'");
-                else
+                } else {
                     $checkRoom = null;
+                }
                 if ($room_id && $checkRoom['owner'] == $user_id) {
                     $tpl->set('[canInvite]', '');
                     $tpl->set('[/canInvite]', '');
-                } else
+                } else {
                     $tpl->set_block("'\\[canInvite\\](.*?)\\[/canInvite\\]'si", "");
+                }
                 if ($room_id && $checkRoom['owner'] != $user_id) {
                     $checkInRoom = $db->super_query("SELECT id FROM `room_users` WHERE room_id = '" . $room_id . "' and oid2 = '" . $user_id . "' and type = 0");
                     if ($checkInRoom) {
                         $tpl->set('[canExit]', '');
                         $tpl->set('[/canExit]', '');
-                    } else
+                    } else {
                         $tpl->set_block("'\\[canExit\\](.*?)\\[/canExit\\]'si", "");
-                } else $tpl->set_block("'\\[canExit\\](.*?)\\[/canExit\\]'si", "");
+                    }
+                } else {
+                    $tpl->set_block("'\\[canExit\\](.*?)\\[/canExit\\]'si", "");
+                }
                 if ($room_id) {
                     $tpl->set('[room]', '');
                     $tpl->set('[/room]', '');
@@ -1181,8 +1276,9 @@ HTML;
         case 'del':
             $room_id = intFilter('room_id');
             $im_user_id = intFilter('im_user_id');
-            if ($room_id)
+            if ($room_id) {
                 $im_user_id = 0;
+            }
             $row = $db->super_query("SELECT id, msg_num, all_msg_num FROM `im` WHERE iuser_id = '{$user_id}' AND im_user_id = '{$im_user_id}' AND room_id = '{$room_id}'");
             if ($row) {
                 $sql = $db->super_query("SELECT id, read_ids, room_id, history_user_id, del_ids FROM `messages` WHERE " . ($room_id ? "room_id = '{$room_id}'" : "room_id = 0 and find_in_set('{$im_user_id}', tb1.user_ids)") . " and find_in_set('{$user_id}', user_ids) AND not find_in_set('{$user_id}', del_ids)");
@@ -1200,15 +1296,17 @@ HTML;
                             if (!$row2['room_id']) {
                                 $user_ids = explode(',', $row2['user_ids']);
                                 $im_user_id = $user_ids[0] == $user_id ? $user_ids[1] : $user_ids[0];
-                            } else
+                            } else {
                                 $im_user_id = 0;
+                            }
                             $db->query("UPDATE `im` SET msg_num = msg_num-1 WHERE iuser_id = '" . $user_id . "' and im_user_id = '" . $im_user_id . "' AND room_id = '" . $row2['room_id'] . "'");
                             mozg_clear_cache_file('user_' . $row2['history_user_id'] . '/im');
                         }
                     }
                 }
-                if ($row['msg_num'])
+                if ($row['msg_num']) {
                     $db->query("UPDATE `users` SET user_pm_num = user_pm_num-{$row['msg_num']} WHERE user_id = '{$user_id}'");
+                }
                 $db->query("DELETE FROM `im` WHERE id = '{$row['id']}'");
             }
             break;
@@ -1230,8 +1328,9 @@ HTML;
                     if (!$row['room_id']) {
                         $user_ids = explode(',', $row['user_ids']);
                         $im_user_id = $user_ids[0] == $user_id ? $user_ids[1] : $user_ids[0];
-                    } else
+                    } else {
                         $im_user_id = 0;
+                    }
                     $db->query("UPDATE `im` SET msg_num = msg_num-1 WHERE iuser_id = '" . $user_id . "' and im_user_id = '" . $im_user_id . "' AND room_id = '" . $row['room_id'] . "'");
                     mozg_clear_cache_file('user_' . $row['history_user_id'] . '/im');
                 }

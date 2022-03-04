@@ -2,7 +2,7 @@
 /*
  *   (c) Semen Alekseev
  *
- *  For the full copyright and license information, please view the LICENSE
+ *  For the full copyright && license information, please view the LICENSE
  *   file that was distributed with this source code.
  *
  */
@@ -52,31 +52,31 @@ if (Registry::get('logged')) {
 
                     if ($check) {
 
-                        if (!empty($wall_text) or !empty($attach_files)) {
+                        if (!empty($wall_text) || !empty($attach_files)) {
 
                             //Приватность
                             $user_privacy = xfieldsdataload($check['user_privacy']);
 
                             //Проверка есть ли запрашиваемый юзер в друзьях у юзера который смотрит стр
-                            if ($user_privacy['val_wall2'] == 2 or $user_privacy['val_wall1'] == 2 or $user_privacy['val_wall3'] == 2 and $user_id != $for_user_id)
+                            if ($user_privacy['val_wall2'] == 2 || $user_privacy['val_wall1'] == 2 || $user_privacy['val_wall3'] == 2 && $user_id != $for_user_id)
                                 $check_friend = CheckFriends($for_user_id);
                             else {
                                 $check_friend = null;
                             }
 
                             if (!$fast_comm_id) {
-                                if ($user_privacy['val_wall2'] == 1 or $user_privacy['val_wall2'] == 2 and $check_friend or $user_id == $for_user_id)
+                                if ($user_privacy['val_wall2'] == 1 || $user_privacy['val_wall2'] == 2 && $check_friend || $user_id == $for_user_id)
                                     $xPrivasy = 1;
                                 else
                                     $xPrivasy = 0;
                             } else {
-                                if ($user_privacy['val_wall3'] == 1 or $user_privacy['val_wall3'] == 2 and $check_friend or $user_id == $for_user_id)
+                                if ($user_privacy['val_wall3'] == 1 || $user_privacy['val_wall3'] == 2 && $check_friend || $user_id == $for_user_id)
                                     $xPrivasy = 1;
                                 else
                                     $xPrivasy = 0;
                             }
 
-                            if ($user_privacy['val_wall1'] == 1 or $user_privacy['val_wall1'] == 2 and $check_friend or $user_id == $for_user_id)
+                            if ($user_privacy['val_wall1'] == 1 || $user_privacy['val_wall1'] == 2 && $check_friend || $user_id == $for_user_id)
                                 $xPrivasyX = 1;
                             else
                                 $xPrivasyX = 0;
@@ -92,7 +92,7 @@ if (Registry::get('logged')) {
                                         $cnt_attach_link = 1;
                                         foreach ($attach_arr as $attach_file) {
                                             $attach_type = explode('|', $attach_file);
-                                            if ($attach_type[0] == 'link' and preg_match('/https:\/\/(.*?)+$/i', $attach_type[1]) and $cnt_attach_link == 1) {
+                                            if ($attach_type[0] == 'link' && preg_match('/https:\/\/(.*?)+$/i', $attach_type[1]) && $cnt_attach_link == 1) {
                                                 $domain_url_name = explode('/', $attach_type[1]);
                                                 $rdomain_url_name = str_replace('https://', '', $domain_url_name[2]);
                                                 $rImgUrl = $attach_type[4];
@@ -105,7 +105,7 @@ if (Registry::get('logged')) {
                                                 $allowed_files = array('jpg', 'jpeg', 'jpe', 'png');
 
                                                 //Загружаем картинку на сайт
-                                                if (in_array(strtolower($img_format), $allowed_files) and preg_match("/https:\/\/(.*?)(.jpg|.png|.jpeg|.jpe)/i", $rImgUrl)) {
+                                                if (in_array(strtolower($img_format), $allowed_files) && preg_match("/https:\/\/(.*?)(.jpg|.png|.jpeg|.jpe)/i", $rImgUrl)) {
 
                                                     //Директория загрузки фото
                                                     $upload_dir = ROOT_DIR . '/uploads/attach/' . $user_id;
@@ -136,7 +136,7 @@ if (Registry::get('logged')) {
 
                                     $ansers_list = array();
 
-                                    if (!empty($vote_title) and !empty($vote_answer_1)) {
+                                    if (!empty($vote_title) && !empty($vote_answer_1)) {
 
                                         for ($vote_i = 1; $vote_i <= 10; $vote_i++) {
 
@@ -164,7 +164,7 @@ if (Registry::get('logged')) {
                                         $row_owner2 = $db->super_query("SELECT author_user_id FROM `wall` WHERE id = '{$answer_comm_id}' AND fast_comm_id != '0'");
 
                                         //Проверка на то, что юзер не отвечает сам себе
-                                        if ($user_id != $row_owner2['author_user_id'] and $row_owner2) {
+                                        if ($user_id != $row_owner2['author_user_id'] && $row_owner2) {
 
                                             $check2 = $db->super_query("SELECT user_last_visit, user_name FROM `users` WHERE user_id = '{$row_owner2['author_user_id']}'");
 
@@ -199,16 +199,16 @@ if (Registry::get('logged')) {
                                     $dbid = $db->insert_id();
 
                                     //Если пользователь пишет сам у себя на стене, то вносим это в "Мои Новости"
-                                    if ($user_id == $for_user_id and !$fast_comm_id) {
+                                    if ($user_id == $for_user_id && !$fast_comm_id) {
                                         $db->query("INSERT INTO `news` SET ac_user_id = '{$user_id}', action_type = 1, action_text = '{$wall_text}', obj_id = '{$dbid}', action_time = '{$str_date}'");
                                     }
 
                                     //Если добавляется комментарий к записи, то вносим в ленту новостей "ответы"
-                                    if ($fast_comm_id and !$answer_comm_id) {
+                                    if ($fast_comm_id && !$answer_comm_id) {
                                         //Выводим ид владельца записи
                                         $row_owner = $db->super_query("SELECT author_user_id FROM `wall` WHERE id = '{$fast_comm_id}'");
 
-                                        if ($user_id != $row_owner['author_user_id'] and $row_owner) {
+                                        if ($user_id != $row_owner['author_user_id'] && $row_owner) {
                                             $db->query("INSERT INTO `news` SET ac_user_id = '{$user_id}', action_type = 6, action_text = '{$wall_text}', obj_id = '{$fast_comm_id}', for_user_id = '{$row_owner['author_user_id']}', action_time = '{$str_date}'");
 
                                             //Вставляем событие в моментальные оповещения
@@ -266,7 +266,7 @@ if (Registry::get('logged')) {
                                         mozg_clear_cache_file('user_' . $for_user_id . '/profile_' . $for_user_id);
 
                                         //Отправка уведомления на E-mail
-                                        if ($config['news_mail_7'] == 'yes' and $user_id != $for_user_id) {
+                                        if ($config['news_mail_7'] == 'yes' && $user_id != $for_user_id) {
                                             $rowUserEmail = $db->super_query("SELECT user_name, user_email FROM `users` WHERE user_id = '" . $for_user_id . "'");
                                             if ($rowUserEmail['user_email']) {
                                                 include_once ENGINE_DIR . '/classes/mail.php';
@@ -328,7 +328,7 @@ if (Registry::get('logged')) {
             $rid = intFilter('rid');
             //Проверка на существование записи и выводим ID владельца записи и кому предназначена запись
             $row = $db->super_query("SELECT author_user_id, for_user_id, fast_comm_id, add_date, attach FROM `wall` WHERE id = '{$rid}'");
-            if ($row['author_user_id'] == $user_id or $row['for_user_id'] == $user_id) {
+            if ($row['author_user_id'] == $user_id || $row['for_user_id'] == $user_id) {
 
                 //удаляем саму запись
                 $db->query("DELETE FROM `wall` WHERE id = '{$rid}'");
@@ -495,7 +495,7 @@ if (Registry::get('logged')) {
             if (!$liked_num)
                 $liked_num = 24;
 
-            if ($rid and $liked_num) {
+            if ($rid && $liked_num) {
                 $sql_ = $db->super_query("SELECT tb1.user_id, tb2.user_photo, user_search_pref FROM `wall_like` tb1, `users` tb2 WHERE tb1.user_id = tb2.user_id AND tb1.rec_id = '{$rid}' ORDER by `date` DESC LIMIT {$limit_page}, {$gcount}", true);
 
                 if ($sql_) {
@@ -541,7 +541,7 @@ if (Registry::get('logged')) {
             $wall = new WallProfile($tpl);
             $fast_comm_id = intFilter('fast_comm_id');
             $for_user_id = intFilter('for_user_id');
-            if ($fast_comm_id and $for_user_id) {
+            if ($fast_comm_id && $for_user_id) {
 
                 //Проверка на существование получателя
                 $row = $db->super_query("SELECT user_privacy FROM `users` WHERE user_id = '{$for_user_id}'");
@@ -550,12 +550,12 @@ if (Registry::get('logged')) {
                     $user_privacy = xfieldsdataload($row['user_privacy']);
 
                     //Если приватность "Только друзья", то Проверка есть ли запрашиваемый юзер в друзьях у юзера который смотрит стр
-                    if ($user_privacy['val_wall3'] == 2 and $user_id != $for_user_id)
+                    if ($user_privacy['val_wall3'] == 2 && $user_id != $for_user_id)
                         $check_friend = $db->super_query("SELECT user_id FROM `friends` WHERE user_id = '{$user_id}' AND friend_id = '{$for_user_id}' AND subscriptions = 0");
                     else
                         $check_friend = null;
 
-                    if ($user_privacy['val_wall3'] == 1 or $user_privacy['val_wall3'] == 2 and $check_friend or $user_id == $for_user_id) {
+                    if ($user_privacy['val_wall3'] == 1 || $user_privacy['val_wall3'] == 2 && $check_friend || $user_id == $for_user_id) {
                         $wall->comm_query("SELECT tb1.id, author_user_id, text, add_date, fasts_num, tb2.user_photo, user_search_pref, user_last_visit FROM `wall` tb1, `users` tb2 WHERE tb1.author_user_id = tb2.user_id AND tb1.fast_comm_id = '{$fast_comm_id}' ORDER by `add_date` ASC LIMIT 0, 200", '');
 
                         if (intFilter('type') == 1)
@@ -587,7 +587,7 @@ if (Registry::get('logged')) {
             //ЧС
             $CheckBlackList = CheckBlackList($for_user_id);
 
-            if (!$CheckBlackList and $for_user_id and $last_id) {
+            if (!$CheckBlackList && $for_user_id && $last_id) {
 
                 //Проверка на существование получателя
                 $row = $db->super_query("SELECT user_privacy FROM `users` WHERE user_id = '{$for_user_id}'");
@@ -597,11 +597,11 @@ if (Registry::get('logged')) {
                     $user_privacy = xfieldsdataload($row['user_privacy']);
 
                     //Если приватность "Только друзья", то Проверка есть ли запрашиваемый юзер в друзьях у юзера который смотрит стр
-                    if ($user_privacy['val_wall1'] == 2 and $user_id != $for_user_id)
+                    if ($user_privacy['val_wall1'] == 2 && $user_id != $for_user_id)
                         $check_friend = $db->super_query("SELECT user_id FROM `friends` WHERE user_id = '{$user_id}' AND friend_id = '{$for_user_id}' AND subscriptions = 0");
                     else
                         $check_friend = null;
-                    if ($user_privacy['val_wall1'] == 1 or $user_privacy['val_wall1'] == 2 and $check_friend or $user_id == $for_user_id)
+                    if ($user_privacy['val_wall1'] == 1 || $user_privacy['val_wall1'] == 2 && $check_friend || $user_id == $for_user_id)
                         $wall->query("SELECT tb1.id, author_user_id, text, add_date, fasts_num, likes_num, likes_users, type, tell_uid, tell_date, public, attach, tell_comm, tb2.user_photo, user_search_pref, user_last_visit, user_logged_mobile FROM `wall` tb1, `users` tb2 WHERE tb1.id < '{$last_id}' AND for_user_id = '{$for_user_id}' AND tb1.author_user_id = tb2.user_id AND tb1.fast_comm_id = '0' ORDER by `add_date` DESC LIMIT 0, {$limit_select}");
                     else
                         $wall->query("SELECT tb1.id, author_user_id, text, add_date, fasts_num, likes_num, likes_users, type, tell_uid, tell_date, public, attach, tell_comm, tb2.user_photo, user_search_pref, user_last_visit, user_logged_mobile FROM `wall` tb1, `users` tb2 WHERE tb1.id < '{$last_id}' AND for_user_id = '{$for_user_id}' AND tb1.author_user_id = tb2.user_id AND tb1.fast_comm_id = '0' AND tb1.author_user_id = '{$for_user_id}' ORDER by `add_date` DESC LIMIT 0, {$limit_select}");
@@ -663,7 +663,7 @@ if (Registry::get('logged')) {
             if (strpos($check_url[0], '200')) {
                 $open_lnk = file_get_contents($lnk);
 
-//                if (stripos(strtolower($open_lnk), 'charset=utf-8') or stripos(strtolower($check_url[2]), 'charset=utf-8')){
+//                if (stripos(strtolower($open_lnk), 'charset=utf-8') || stripos(strtolower($check_url[2]), 'charset=utf-8')){
 //                }else
 //                    $open_lnk = iconv('windows-1251', 'utf-8', $open_lnk);
 
@@ -803,15 +803,17 @@ if (Registry::get('logged')) {
                     $CheckBlackList = CheckBlackList($id);
                     if (!$CheckBlackList) {
                         //Проверка естьли запрашиваемый юзер в друзьях у юзера который смотрит стр
-                        if ($user_id != $id)
+                        if ($user_id != $id) {
                             $check_friend = CheckFriends($id);
-                        else
+                        } else {
                             $check_friend = false;
+                        }
 
-                        if ($user_privacy['val_wall1'] == 1 or $user_privacy['val_wall1'] == 2 and $check_friend or $user_id == $id)
+                        if ($user_privacy['val_wall1'] == 1 || ($user_privacy['val_wall1'] == 2 && $check_friend) || $user_id == $id) {
                             $cnt_rec['cnt'] = $row_user['user_wall_num'];
-                        else
+                        } else {
                             $cnt_rec = $db->super_query("SELECT COUNT(*) AS cnt FROM `wall` WHERE for_user_id = '{$id}' AND author_user_id = '{$id}' AND fast_comm_id = 0");
+                        }
 
                         $type = requestFilter('type');
 
@@ -832,8 +834,9 @@ if (Registry::get('logged')) {
                             $page_type = '/wall' . $id . '/page/';
                         }
 
-                        if ($cnt_rec['cnt'] > 0)
+                        if ($cnt_rec['cnt'] > 0) {
                             $user_speedbar = 'На стене ' . $cnt_rec['cnt'] . ' ' . gram_record($cnt_rec['cnt'], 'rec');
+                        }
 
                         $tpl->load_template('wall/head.tpl');
                         $tpl->set('{name}', gramatikName($row_user['user_name']));
@@ -842,15 +845,17 @@ if (Registry::get('logged')) {
                         $tpl->set("{activetab-{$type}}", 'activetab');
                         $tpl->compile('info');
 
-                        if ($cnt_rec['cnt'] < 1)
+                        if ($cnt_rec['cnt'] < 1) {
                             msgbox('', $lang['wall_no_rec'], 'info_2');
+                        }
 
                     } else {
                         $user_speedbar = $lang['error'];
                         msgbox('', $lang['no_notes'], 'info');
                     }
-                } else
+                } else {
                     msgbox('', $lang['wall_no_rec'], 'info_2');
+                }
             }
 
             $CheckBlackList = $CheckBlackList ?? false;

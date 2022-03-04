@@ -30,13 +30,15 @@ if (Registry::get('logged')) {
             //Проверка на существование записи
             if (intFilter('g_tell') == 1) {
                 $row = $db->super_query("SELECT add_date, text, public_id, attach, tell_uid, tell_date, public FROM `communities_wall` WHERE fast_comm_id = 0 AND id = '{$rid}'");
-                if ($row['tell_uid'])
+                if ($row['tell_uid']) {
                     $row['author_user_id'] = $row['tell_uid'];
-            } else
+                }
+            } else {
                 $row = $db->super_query("SELECT add_date, text, author_user_id, tell_uid, tell_date, public, attach FROM `wall` WHERE fast_comm_id = '0' AND id = '{$rid}'");
+            }
 
             if ($row) {
-                if ($row['author_user_id'] != $user_id) {
+                if ($row['author_user_id'] !== $user_id) {
                     if ($row['tell_uid']) {
                         $row['add_date'] = $row['tell_date'];
                         $row['author_user_id'] = $row['tell_uid'];
@@ -59,10 +61,12 @@ if (Registry::get('logged')) {
 
                         //Чистим кеш
                         mozg_clear_cache_file("user_{$user_id}/profile_{$user_id}");
-                    } else
+                    } else {
                         echo 1;
-                } else
+                    }
+                } else {
                     echo 1;
+                }
             }
 
             break;
@@ -84,10 +88,11 @@ if (Registry::get('logged')) {
             }
 
             //ДЛя проверки что записи нет в сообществе
-            if ($row['public'])
+            if ($row['public']) {
                 $check_IdGR = $row['tell_uid'];
-            else
+            } else {
                 $check_IdGR = '';
+            }
 
             //Проверка на админа
             $rowGroup = $db->super_query("SELECT admin, del, ban FROM `communities` WHERE id = '{$sel_group}'");
@@ -95,7 +100,7 @@ if (Registry::get('logged')) {
             //Проверяем на существование этой записи В сообществе
             $myRow = $db->super_query("SELECT COUNT(*) AS cnt FROM `communities_wall` WHERE tell_uid = '{$row['author_user_id']}' AND public_id = '{$sel_group}' AND tell_date = '{$row['add_date']}'");
 
-            if ($sel_group != $check_IdGR and !$myRow['cnt'] and stripos($rowGroup['admin'], "u{$user_id}|") !== false and $rowGroup['del'] == 0 and $rowGroup['ban'] == 0) {
+            if ($sel_group !== $check_IdGR && !$myRow['cnt'] && stripos($rowGroup['admin'], "u{$user_id}|") !== false && $rowGroup['del'] == 0 && $rowGroup['ban'] == 0) {
                 //Вставляем саму запись в БД
                 $db->query("INSERT INTO `communities_wall` SET public_id = '{$sel_group}', text = '{$row['text']}', attach = '{$row['attach']}', add_date = '{$server_time}', tell_uid = '{$row['author_user_id']}', tell_date = '{$row['add_date']}', public = '{$row['public']}', tell_comm = '{$comm}'");
                 $dbid = $db->insert_id();
@@ -103,8 +108,9 @@ if (Registry::get('logged')) {
 
                 //Вставляем в ленту новостей
                 $db->query("INSERT INTO `news` SET ac_user_id = '{$sel_group}', action_type = 11, action_text = '{$row['text']}', obj_id = '{$dbid}', action_time = '{$server_time}'");
-            } else
+            } else {
                 echo 1;
+            }
 
             break;
 
@@ -122,8 +128,9 @@ if (Registry::get('logged')) {
             if ($row['tell_uid']) {
                 $tell_uid = $row['tell_uid'];
                 $tell_date = $row['tell_date'];
-                if ($row['public'])
+                if ($row['public']) {
                     $row['public_id'] = $tell_uid;
+                }
             } else {
                 $tell_uid = $row['public_id'];
                 $tell_date = $row['add_date'];
@@ -136,7 +143,7 @@ if (Registry::get('logged')) {
             //Проверяем на существование этой записи В сообществе
             $myRow = $db->super_query("SELECT COUNT(*) AS cnt FROM `communities_wall` WHERE tell_uid = '{$tell_uid}' AND public_id = '{$sel_group}' AND tell_date = '{$tell_date}'");
 
-            if ($sel_group != $row['public_id'] and !$myRow['cnt'] and stripos($rowGroup['admin'], "u{$user_id}|") !== false and $rowGroup['del'] == 0 and $rowGroup['ban'] == 0) {
+            if ($sel_group != $row['public_id'] && !$myRow['cnt'] && stripos($rowGroup['admin'], "u{$user_id}|") !== false && $rowGroup['del'] == 0 && $rowGroup['ban'] == 0) {
                 //Вставляем саму запись в БД
                 $db->query("INSERT INTO `communities_wall` SET public_id = '{$sel_group}', text = '{$row['text']}', attach = '{$row['attach']}', add_date = '{$server_time}', tell_uid = '{$tell_uid}', tell_date = '{$tell_date}', public = '{$row['public']}', tell_comm = '{$comm}'");
                 $dbid = $db->insert_id();
@@ -145,8 +152,9 @@ if (Registry::get('logged')) {
                 //Вставляем в ленту новостей
                 $db->query("INSERT INTO `news` SET ac_user_id = '{$sel_group}', action_type = 11, action_text = '{$row['text']}', obj_id = '{$dbid}', action_time = '{$server_time}'");
 
-            } else
+            } else {
                 echo 1;
+            }
 
             break;
 
@@ -171,49 +179,38 @@ if (Registry::get('logged')) {
                     $CheckBlackList = CheckBlackList($for_user_id);
 
                     //Проверка естьли запрашиваемый юзер в друзьях у юзера который смотрит стр
-                    if ($user_privacy['val_msg'] == 2)
+                    if ($user_privacy['val_msg'] == 2) {
                         $check_friend = CheckFriends($for_user_id);
-                    else
+                    } else {
                         $check_friend = null;
+                    }
 
-                    if (!$CheckBlackList and $user_privacy['val_msg'] == 1 or $user_privacy['val_msg'] == 2 and $check_friend)
+                    if ((!$CheckBlackList && $user_privacy['val_msg'] == 1) || ($user_privacy['val_msg'] == 2 && $check_friend)) {
                         $xPrivasy = 1;
-                    else
+                    } else {
                         $xPrivasy = 0;
-
+                    }
                     if ($xPrivasy) {
-
                         //Выводим данные о записи
-                        if ($_POST['g_tell'] == 1)
-
+                        if ($_POST['g_tell'] == 1) {
                             $row_rec = $db->super_query("SELECT add_date, text, public_id, attach, tell_uid, tell_date, public FROM `communities_wall` WHERE fast_comm_id = 0 AND id = '{$rid}'");
-
-                        else
-
+                        } else {
                             $row_rec = $db->super_query("SELECT add_date, text, author_user_id, tell_uid, tell_date, public, attach FROM `wall` WHERE fast_comm_id = '0' AND id = '{$rid}'");
-
+                        }
                         if ($row_rec) {
                             $msg = $row_rec['text'];
                             $attach_files = $row_rec['attach'];
                             $theme = 'Запись на стене';
-
                             if ($row_rec['tell_uid']) {
-
                                 $tell_uid = $row_rec['tell_uid'];
                                 $tell_date = $row_rec['tell_date'];
-
                             } else {
-
                                 if (intFilter('g_tell') == 1) {
-
                                     $row_rec['author_user_id'] = $row_rec['public_id'];
                                     $row_rec['public'] = 1;
-
                                 }
-
                                 $tell_uid = $row_rec['author_user_id'];
                                 $tell_date = $row_rec['add_date'];
-
                             }
 
                             //Отправляем сообщение получателю
@@ -228,18 +225,19 @@ if (Registry::get('logged')) {
 
                             //Проверка на наличии созданого диалога у себя
                             $check_im = $db->super_query("SELECT iuser_id FROM `im` WHERE iuser_id = '" . $user_id . "' AND im_user_id = '" . $for_user_id . "'");
-                            if (!$check_im)
+                            if (!$check_im) {
                                 $db->query("INSERT INTO im SET iuser_id = '" . $user_id . "', im_user_id = '" . $for_user_id . "', idate = '" . $server_time . "', all_msg_num = 1");
-                            else
+                            } else {
                                 $db->query("UPDATE im  SET idate = '" . $server_time . "', all_msg_num = all_msg_num+1 WHERE iuser_id = '" . $user_id . "' AND im_user_id = '" . $for_user_id . "'");
+                            }
 
                             //Проверка на наличии созданого диалога у получателя, а если есть то просто обновляем кол-во новых сообщений в диалоге
                             $check_im_2 = $db->super_query("SELECT iuser_id FROM im WHERE iuser_id = '" . $for_user_id . "' AND im_user_id = '" . $user_id . "'");
-                            if (!$check_im_2)
+                            if (!$check_im_2) {
                                 $db->query("INSERT INTO im SET iuser_id = '" . $for_user_id . "', im_user_id = '" . $user_id . "', msg_num = 1, idate = '" . $server_time . "', all_msg_num = 1");
-                            else
+                            } else {
                                 $db->query("UPDATE im  SET idate = '" . $server_time . "', msg_num = msg_num+1, all_msg_num = all_msg_num+1 WHERE iuser_id = '" . $for_user_id . "' AND im_user_id = '" . $user_id . "'");
-
+                            }
                             //Чистим кеш обновлений
                             mozg_clear_cache_file('user_' . $for_user_id . '/im');
                             mozg_create_cache('user_' . $for_user_id . '/im_update', '1');
@@ -249,7 +247,7 @@ if (Registry::get('logged')) {
                                 $rowUserEmail = $db->super_query("SELECT user_name, user_email FROM `users` WHERE user_id = '" . $for_user_id . "'");
                                 if ($rowUserEmail['user_email']) {
                                     include_once ENGINE_DIR . '/classes/mail.php';
-                                    $mail = new vii_mail($config);
+                                    $mail = new \FluffyDollop\Support\ViiMail($config);
                                     $rowMyInfo = $db->super_query("SELECT user_search_pref FROM `users` WHERE user_id = '" . $user_id . "'");
                                     $rowEmailTpl = $db->super_query("SELECT text FROM `mail_tpl` WHERE id = '8'");
                                     $rowEmailTpl['text'] = str_replace('{%user%}', $rowUserEmail['user_name'], $rowEmailTpl['text']);
@@ -261,12 +259,15 @@ if (Registry::get('logged')) {
 
                         }
 
-                    } else
+                    } else {
                         echo 'err_privacy';
-                } else
+                    }
+                } else {
                     echo 'no_user';
-            } else
+                }
+            } else {
                 echo 'max_strlen';
+            }
 
             break;
 
@@ -282,27 +283,31 @@ if (Registry::get('logged')) {
             $tpl->load_template('repost/send.tpl');
             $groups_list = '';
             if ($sql_) {
-                foreach ($sql_ as $row)
+                foreach ($sql_ as $row) {
                     $groups_list .= '<option value="' . $row['id'] . '">' . stripslashes($row['title']) . '</option>';
+                }
             }
 
             $tpl->set('{groups-list}', $groups_list);
             $friends_list = '';
             if ($sql_fr) {
-                foreach ($sql_fr as $row_fr)
+                foreach ($sql_fr as $row_fr) {
                     $friends_list .= '<option value="' . $row_fr['friend_id'] . '">' . $row_fr['user_search_pref'] . '</option>';
+                }
             }
             $tpl->set('{friends-list}', $friends_list);
 
-            if (!$friends_list)
+            if (!$friends_list) {
                 $tpl->set('{disabled-friends}', 'disabled');
-            else
+            } else {
                 $tpl->set('{disabled-friends}', '');
+            }
 
-            if (!$groups_list)
+            if (!$groups_list) {
                 $tpl->set('{groups-friends}', 'disabled');
-            else
+            } else {
                 $tpl->set('{groups-friends}', '');
+            }
 
             $tpl->compile('content');
 

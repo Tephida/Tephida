@@ -20,30 +20,21 @@ $expLangList = explode('<br />', $config['lang_list']);
 $numLangs = count($expLangList);
 $cil = 0;
 $langs = '';
-foreach($expLangList as $expLangData){
-	
-	$expLangName = explode(' | ', $expLangData);
-	
-	if($expLangName[0]){
-		
-		$cil++;
-		
-		if($cil == $useLang OR $numLangs == 1)
-		
-			$langs .= "<div class=\"lang_but lang_selected\">{$expLangName[0]}</div>";
-			
-		else
-		
-			$langs .= "<a href=\"/index.php?act=chage_lang&id={$cil}\" style=\"text-decoration:none\"><div class=\"lang_but\">{$expLangName[0]}</div></a>";
-		
-	}
-	
+foreach ($expLangList as $expLangData) {
+    $expLangName = explode(' | ', $expLangData);
+    if ($expLangName[0]) {
+        $cil++;
+        if ($cil == $useLang or $numLangs == 1) {
+            $langs .= "<div class=\"lang_but lang_selected\">{$expLangName[0]}</div>";
+        } else {
+            $langs .= "<a href=\"/index.php?act=chage_lang&id={$cil}\" style=\"text-decoration:none\"><div class=\"lang_but\">{$expLangName[0]}</div></a>";
+        }
+    }
 }
 
-if(!$checkLang) $checkLang = 'Russian';
-
+if (!$checkLang) {
+    $checkLang = 'Russian';
+}
 $tpl->set('{langs}', $langs);
-
 $tpl->compile('content');
-
 AjaxTpl($tpl);

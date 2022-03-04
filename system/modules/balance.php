@@ -44,18 +44,20 @@ if (Registry::get('logged')) {
                     $user_country_city_name = explode('|', $row['user_country_city_name']);
                     $tpl->set('{country}', $user_country_city_name[0]);
 
-                    if ($user_country_city_name[1])
+                    if ($user_country_city_name[1]) {
                         $tpl->set('{city}', ', ' . $user_country_city_name[1]);
-                    else
+                    } else {
                         $tpl->set('{city}', '');
+                    }
 
                     $tpl->set('{user-id}', $row['ruid']);
                     $tpl->set('{name}', $row['user_search_pref']);
 
-                    if ($row['user_photo'])
+                    if ($row['user_photo']) {
                         $tpl->set('{ava}', '/uploads/users/' . $row['ruid'] . '/100_' . $row['user_photo']);
-                    else
+                    } else {
                         $tpl->set('{ava}', '{theme}/images/100_no_ava.png');
+                    }
 
                     //Возраст юзера
                     $user_birthday = explode('-', $row['user_birthday']);
@@ -64,8 +66,9 @@ if (Registry::get('logged')) {
                     OnlineTpl($row['user_last_visit'], $row['user_logged_mobile']);
                     $tpl->compile('content');
                 }
-            } else
+            } else {
                 msgbox('', '<br /><br />Вы еще никого не приглашали.<br /><br /><br />', 'info_2');
+            }
 
             compile($tpl);
             break;
@@ -79,8 +82,11 @@ if (Registry::get('logged')) {
 
             $tpl->load_template('balance/payment.tpl');
 
-            if ($user_info['user_photo']) $tpl->set('{ava}', "/uploads/users/{$user_info['user_id']}/50_{$user_info['user_photo']}");
-            else $tpl->set('{ava}', "{theme}/images/no_ava_50.png");
+            if ($user_info['user_photo']) {
+                $tpl->set('{ava}', "/uploads/users/{$user_info['user_id']}/50_{$user_info['user_photo']}");
+            } else {
+                $tpl->set('{ava}', "{theme}/images/no_ava_50.png");
+            }
 
             $tpl->set('{rub}', $owner['balance_rub']);
             $tpl->set('{text-rub}', declOfNum($owner['balance_rub'], array('рубль', 'рубля', 'рублей')));
@@ -102,8 +108,11 @@ if (Registry::get('logged')) {
 
             $tpl->load_template('balance/payment_2.tpl');
 
-            if ($user_info['user_photo']) $tpl->set('{ava}', "/uploads/users/{$user_info['user_id']}/50_{$user_info['user_photo']}");
-            else $tpl->set('{ava}', "{theme}/images/no_ava_50.png");
+            if ($user_info['user_photo']) {
+                $tpl->set('{ava}', "/uploads/users/{$user_info['user_id']}/50_{$user_info['user_photo']}");
+            } else {
+                $tpl->set('{ava}', "{theme}/images/no_ava_50.png");
+            }
 
             $tpl->set('{balance}', $owner['user_balance']);
             $tpl->set('{rub}', $owner['balance_rub']);
@@ -121,7 +130,9 @@ if (Registry::get('logged')) {
             NoAjaxQuery();
 
             $num = intFilter('num');
-            if ($num <= 0) $num = 0;
+            if ($num <= 0) {
+                $num = 0;
+            }
             $config = settings_get();
             $resCost = $num * $config['cost_balance'];
 
@@ -132,8 +143,9 @@ if (Registry::get('logged')) {
 
                 $db->query("UPDATE `users` SET user_balance = user_balance + '{$num}', balance_rub = balance_rub - '{$resCost}' WHERE user_id = '{$user_id}'");
 
-            } else
+            } else {
                 echo '1';
+            }
             break;
 
         default:

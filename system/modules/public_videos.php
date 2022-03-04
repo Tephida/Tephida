@@ -2,7 +2,7 @@
 /*
  *   (c) Semen Alekseev
  *
- *  For the full copyright and license information, please view the LICENSE
+ *  For the full copyright && license information, please view the LICENSE
  *   file that was distributed with this source code.
  *
  */
@@ -29,12 +29,15 @@ if (Registry::get('logged')) {
 
             $infoGroup = $db->super_query("SELECT admin FROM `communities` WHERE id = '{$pid}'");
 
-            if (str_contains($infoGroup['admin'], "u{$user_id}|")) $public_admin = true;
-            else $public_admin = false;
+            if (str_contains($infoGroup['admin'], "u{$user_id}|")) {
+                $public_admin = true;
+            } else {
+                $public_admin = false;
+            }
 
             $row = $db->super_query("SELECT video, photo, title, descr FROM `videos` WHERE id = '{$id}'");
 
-            if ($public_admin and $row) {
+            if ($public_admin && $row) {
 
                 //Директория загрузки фото
                 $upload_dir = ROOT_DIR . '/uploads/videos/' . $user_id;
@@ -68,53 +71,46 @@ if (Registry::get('logged')) {
 
             $infoGroup = $db->super_query("SELECT admin FROM `communities` WHERE id = '{$pid}'");
 
-            if (str_contains($infoGroup['admin'], "u{$user_id}|")) $public_admin = true;
-            else $public_admin = false;
+            if (str_contains($infoGroup['admin'], "u{$user_id}|")) {
+                $public_admin = true;
+            } else {
+                $public_admin = false;
+            }
 
             $row = $db->super_query("SELECT photo, public_id, owner_user_id FROM `videos` WHERE id = '{$id}'");
 
-            if ($public_admin and $row['public_id'] == $pid) {
+            if ($public_admin && $row['public_id'] == $pid) {
 
                 //Директория загрузки фото
                 $upload_dir = ROOT_DIR . '/uploads/videos/' . $row['owner_user_id'];
-
                 $expPho = end(explode('/', $row['photo']));
                 Filesystem::delete($upload_dir . '/' . $expPho);
-
                 $db->query("DELETE FROM `videos` WHERE id = '{$id}'");
-
                 $db->query("UPDATE `communities` SET videos_num = videos_num - 1 WHERE id = '{$pid}'");
-
                 mozg_clear_cache_file("groups/video{$pid}");
-
             }
-
             break;
 
         //################### Окно редактирования видео ###################//
         case "edit":
-
             NoAjaxQuery();
-
             $pid = intFilter('pid');
             $id = intFilter('id');
-
             $infoGroup = $db->super_query("SELECT admin FROM `communities` WHERE id = '{$pid}'");
-
-            if (str_contains($infoGroup['admin'], "u{$user_id}|")) $public_admin = true;
-            else $public_admin = false;
+            if (str_contains($infoGroup['admin'], "u{$user_id}|")) {
+                $public_admin = true;
+            } else {
+                $public_admin = false;
+            }
 
             $row = $db->super_query("SELECT public_id, title, descr FROM `videos` WHERE id = '{$id}'");
 
-            if ($public_admin and $row['public_id'] == $pid) {
-
+            if ($public_admin && $row['public_id'] == $pid) {
                 $tpl->load_template('public_videos/edit.tpl');
                 $tpl->set('{title}', stripslashes($row['title']));
                 $tpl->set('{descr}', myBrRn(stripslashes($row['descr'])));
                 $tpl->compile('content');
-
                 AjaxTpl($tpl);
-
             }
 
             break;
@@ -132,21 +128,18 @@ if (Registry::get('logged')) {
 
             $infoGroup = $db->super_query("SELECT admin FROM `communities` WHERE id = '{$pid}'");
 
-            if (str_contains($infoGroup['admin'], "u{$user_id}|")) $public_admin = true;
-            else $public_admin = false;
-
-            $row = $db->super_query("SELECT public_id FROM `videos` WHERE id = '{$id}'");
-
-            if ($public_admin and $row['public_id'] == $pid and isset($title) and !empty($title)) {
-
-                $db->query("UPDATE `videos` SET title = '{$title}', descr = '{$descr}' WHERE id = '{$id}'");
-
-                echo stripslashes($descr);
-
-                mozg_clear_cache_file("groups/video{$pid}");
-
+            if (str_contains($infoGroup['admin'], "u{$user_id}|")) {
+                $public_admin = true;
+            } else {
+                $public_admin = false;
             }
 
+            $row = $db->super_query("SELECT public_id FROM `videos` WHERE id = '{$id}'");
+            if ($public_admin && $row['public_id'] == $pid && !empty($title)) {
+                $db->query("UPDATE `videos` SET title = '{$title}', descr = '{$descr}' WHERE id = '{$id}'");
+                echo stripslashes($descr);
+                mozg_clear_cache_file("groups/video{$pid}");
+            }
             break;
 
         //################### Поиск по видеозаписям ###################//
@@ -157,33 +150,30 @@ if (Registry::get('logged')) {
             $sql_limit = 20;
 
             $page_cnt = intFilter('page');
-            if ($page_cnt > 0) $page_cnt = $page_cnt * $sql_limit;
-            else $page_cnt = 0;
+            if ($page_cnt > 0) {
+                $page_cnt *= $sql_limit;
+            }
 
             $pid = intFilter('pid');
-
             $query = strip_data(requestFilter('query'));
             $query = strtr($query, array(' ' => '%')); //Замеянем пробелы на проценты чтоб тоиск был точнее
-
             $adres = strip_tags(requestFilter('adres'));
-
             $row_count = $db->super_query("SELECT COUNT(*) AS cnt FROM `videos` WHERE title LIKE '%{$query}%' AND public_id = '0'");
-
             $sql_ = $db->super_query("SELECT id, owner_user_id, title, descr, photo, comm_num, add_date FROM `videos` WHERE title LIKE '%{$query}%' AND public_id = '0' ORDER by `add_date` DESC LIMIT {$page_cnt}, {$sql_limit}", true);
-
             $infoGroup = $db->super_query("SELECT admin FROM `communities` WHERE id = '{$pid}'");
-
-            if (str_contains($infoGroup['admin'], "u{$user_id}|"))
+            if (str_contains($infoGroup['admin'], "u{$user_id}|")) {
                 $public_admin = true;
-            else
+            } else {
                 $public_admin = false;
+            }
 
             $tpl->load_template('public_videos/search_result.tpl');
 
             if ($sql_) {
 
-                if (!$page_cnt)
+                if (!$page_cnt) {
                     $tpl->result['content'] .= "<script>langNumric('langNumric', '{$row_count['cnt']}', 'видеозапись', 'видеозаписи', 'видеозаписей', 'видеозапись', 'видеозаписей');</script><div class=\"allbar_title\" style=\"margin-bottom:0;border-bottom:0\">В поиске найдено <span id=\"seAudioNum\">{$row_count['cnt']}</span> <span id=\"langNumric\"></span>  |  <a href=\"/{$adres}\" onClick=\"Page.Go(this.href); return false\" style=\"font-weight:normal\">К сообществу</a>  |  <a href=\"/public/videos{$pid}\" onClick=\"Page.Go(location.href); return false\" style=\"font-weight:normal\">Все видеозаписи</a></div>";
+                }
 
                 foreach ($sql_ as $row) {
 
@@ -193,10 +183,11 @@ if (Registry::get('logged')) {
                     $tpl->set('{pid}', $pid);
                     $tpl->set('{user-id}', $row['owner_user_id']);
 
-                    if ($row['descr'])
+                    if ($row['descr']) {
                         $tpl->set('{descr}', stripslashes($row['descr']) . '...');
-                    else
+                    } else {
                         $tpl->set('{descr}', '');
+                    }
 
                     $tpl->set('{comm}', $row['comm_num'] . ' ' . gram_record($row['comm_num'], 'comments'));
                     $date_str = megaDate(strtotime($row['add_date']));
@@ -220,19 +211,11 @@ if (Registry::get('logged')) {
 
                 }
 
-            } else {
-
-                if (!$page_cnt) {
-
-                    $tpl->result['info'] .= "<div class=\"allbar_title\">Нет видеозаписей  |  <a href=\"/{$adres}\" onClick=\"Page.Go(this.href); return false\" style=\"font-weight:normal\">К сообществу</a>  |  <a href=\"/public/videos{$pid}\" onClick=\"Page.Go(location.href); return false\" style=\"font-weight:normal\">Все видеозаписи</a></div>";
-
-                    msgbox('', '<br /><br /><br />По запросу <b>' . stripslashes($query) . '</b> не найдено ни одной видеозаписи.<br /><br /><br />', 'info_2');
-
-                }
+            } else if (!$page_cnt) {
+                $tpl->result['info'] .= "<div class=\"allbar_title\">Нет видеозаписей  |  <a href=\"/{$adres}\" onClick=\"Page.Go(this.href); return false\" style=\"font-weight:normal\">К сообществу</a>  |  <a href=\"/public/videos{$pid}\" onClick=\"Page.Go(location.href); return false\" style=\"font-weight:normal\">Все видеозаписи</a></div>";
+                msgbox('', '<br /><br /><br />По запросу <b>' . stripslashes($query) . '</b> не найдено ни одной видеозаписи.<br /><br /><br />', 'info_2');
             }
-
             AjaxTpl($tpl);
-
             break;
 
         //################### Страница всех видео ###################//
@@ -244,16 +227,21 @@ if (Registry::get('logged')) {
 
             $sql_limit = 20;
             $page_cnt = intFilter('page');
-            if ($page_cnt > 0) $page_cnt = $page_cnt * $sql_limit;
-            else $page_cnt = 0;
+            if ($page_cnt > 0) {
+                $page_cnt *= $sql_limit;
+            }
 
-            if ($page_cnt)
+            if ($page_cnt) {
                 NoAjaxQuery();
+            }
 
             $infoGroup = $db->super_query("SELECT videos_num, adres, admin FROM `communities` WHERE id = '{$pid}'");
 
-            if (str_contains($infoGroup['admin'], "u{$user_id}|")) $public_admin = true;
-            else $public_admin = false;
+            if (str_contains($infoGroup['admin'], "u{$user_id}|")) {
+                $public_admin = true;
+            } else {
+                $public_admin = false;
+            }
 
             if ($infoGroup['videos_num']) {
 
@@ -273,35 +261,31 @@ if (Registry::get('logged')) {
                         $tpl->set('{pid}', $pid);
                         $tpl->set('{user-id}', $row['owner_user_id']);
 
-                        if ($row['descr'])
+                        if ($row['descr']) {
                             $tpl->set('{descr}', stripslashes($row['descr']) . '...');
-                        else
+                        } else {
                             $tpl->set('{descr}', '');
+                        }
 
                         $tpl->set('{comm}', $row['comm_num'] . ' ' . gram_record($row['comm_num'], 'comments'));
                         $date_str = megaDate(strtotime($row['add_date']));
                         $tpl->set('{date}', $date_str);
                         //Права админа
                         if ($public_admin) {
-
                             $tpl->set('[admin-group]', '');
                             $tpl->set('[/admin-group]', '');
                             $tpl->set_block("'\\[all-users\\](.*?)\\[/all-users\\]'si", "");
-
                         } else {
-
                             $tpl->set_block("'\\[admin-group\\](.*?)\\[/admin-group\\]'si", "");
                             $tpl->set('[all-users]', '');
                             $tpl->set('[/all-users]', '');
-
                         }
-
                         $tpl->compile('content');
-
                     }
 
-                    if ($infoGroup['videos_num'] > $sql_limit and !$page_cnt)
+                    if ($infoGroup['videos_num'] > $sql_limit && !$page_cnt) {
                         $tpl->result['content'] .= '<div id="ListAudioAddedLoadAjax"></div><div class="cursor_pointer" style="margin-top:-4px" onClick="ListAudioAddedLoadAjax()" id="wall_l_href_se_audiox"><div class="public_wall_all_comm profile_hide_opne" style="width:754px" id="wall_l_href_audio_se_loadx">Показать больше видеозаписей</div></div>';
+                    }
 
                     $tpl->result['content'] .= '</div>';
 
@@ -314,36 +298,34 @@ if (Registry::get('logged')) {
                 $tpl->load_template('public_videos/top.tpl');
                 $tpl->set('{pid}', $pid);
 
-                if ($infoGroup['adres']) $tpl->set('{adres}', $infoGroup['adres']);
-                else $tpl->set('{adres}', 'public' . $pid);
+                if ($infoGroup['adres']) {
+                    $tpl->set('{adres}', $infoGroup['adres']);
+                } else {
+                    $tpl->set('{adres}', 'public' . $pid);
+                }
 
-                if ($infoGroup['videos_num']) $tpl->set('{videos-num}', $infoGroup['videos_num'] . ' <span id="langNumricAll"></span>');
-                else $tpl->set('{videos-num}', 'Нет видеозаписей');
+                if ($infoGroup['videos_num']) {
+                    $tpl->set('{videos-num}', $infoGroup['videos_num'] . ' <span id="langNumricAll"></span>');
+                } else {
+                    $tpl->set('{videos-num}', 'Нет видеозаписей');
+                }
 
                 $tpl->set('{x-videos-num}', $infoGroup['videos_num']);
 
                 if (!$infoGroup['videos_num']) {
-
                     $tpl->set('[no]', '');
                     $tpl->set('[/no]', '');
                     $tpl->set_block("'\\[yes\\](.*?)\\[/yes\\]'si", "");
-
                 } else {
-
                     $tpl->set('[yes]', '');
                     $tpl->set('[/yes]', '');
                     $tpl->set_block("'\\[no\\](.*?)\\[/no\\]'si", "");
                 }
-
                 $tpl->compile('info');
-
             }
-
             if ($page_cnt) {
                 AjaxTpl($tpl);
-
             }
-
             compile($tpl);
     }
 

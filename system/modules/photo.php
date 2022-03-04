@@ -2,7 +2,7 @@
 /*
  *   (c) Semen Alekseev
  *
- *  For the full copyright and license information, please view the LICENSE
+ *  For the full copyright && license information, please view the LICENSE
  *   file that was distributed with this source code.
  *
  */
@@ -26,10 +26,10 @@ if (Registry::get('logged')) {
             $pid = intFilter('pid');
             $comment = requestFilter('comment');
             $date = date('Y-m-d H:i:s', $server_time);
-            $hash = md5($user_id . $server_time . $_IP . $user_info['user_email'] . rand(0, 1000000000)) . $comment . $pid;
+            $hash = md5($user_id . $server_time . $_IP . $user_info['user_email'] . random_int(0, 1000000000)) . $comment . $pid;
             $check_photo = $db->super_query("SELECT album_id, user_id, photo_name FROM `photos` WHERE id = '{$pid}'");
             //Проверка есть ли запрашиваемый юзер в друзьях у юзера который смотрит стр
-            if ($user_info['user_id'] != $check_photo['user_id']) {
+            if ($user_info['user_id'] !== $check_photo['user_id']) {
                 $check_friend = CheckFriends($check_photo['user_id']);
                 $row_album = $db->super_query("SELECT privacy FROM `albums` WHERE aid = '{$check_photo['album_id']}'");
                 $album_privacy = explode('|', $row_album['privacy']);
@@ -41,7 +41,7 @@ if (Registry::get('logged')) {
             //ЧС
             $CheckBlackList = CheckBlackList($check_photo['user_id']);
             //Проверка на существование фотки и приватность
-            if (!$CheckBlackList AND $check_photo AND $album_privacy[1] == 1 OR $album_privacy[1] == 2 AND $check_friend OR $user_info['user_id'] == $check_photo['user_id']) {
+            if ((!$CheckBlackList && $check_photo && $album_privacy[1] == 1) || ($album_privacy[1] == 2 && $check_friend) || $user_info['user_id'] == $check_photo['user_id']) {
                 $db->query("INSERT INTO `photos_comments` (pid, user_id, text, date, hash, album_id, owner_id, photo_name) VALUES ('{$pid}', '{$user_id}', '{$comment}', '{$date}', '{$hash}', '{$check_photo['album_id']}', '{$check_photo['user_id']}', '{$check_photo['photo_name']}')");
                 $id = $db->insert_id();
                 $db->query("UPDATE `photos` SET comm_num = comm_num+1 WHERE id = '{$pid}'");
@@ -53,15 +53,18 @@ if (Registry::get('logged')) {
                 $tpl->set('{uid}', $user_id);
                 $tpl->set('{hash}', $hash);
                 $tpl->set('{id}', $id);
-                if ($user_info['user_photo']) $tpl->set('{ava}', $config['home_url'] . 'uploads/users/' . $user_id . '/50_' . $user_info['user_photo']);
-                else $tpl->set('{ava}', '{theme}/images/no_ava_50.png');
+                if ($user_info['user_photo']) {
+                    $tpl->set('{ava}', $config['home_url'] . 'uploads/users/' . $user_id . '/50_' . $user_info['user_photo']);
+                } else {
+                    $tpl->set('{ava}', '{theme}/images/no_ava_50.png');
+                }
                 $tpl->set('{online}', $lang['online']);
                 $tpl->set('{date}', langdate('сегодня в H:i', $server_time));
                 $tpl->set('[owner]', '');
                 $tpl->set('[/owner]', '');
                 $tpl->compile('content');
                 //Добавляем действие в ленту новостей "ответы" владельцу фотографии
-                if ($user_id != $check_photo['user_id']) {
+                if ($user_id !== $check_photo['user_id']) {
                     $comment = str_replace("|", "&#124;", $comment);
                     $db->query("INSERT INTO `news` SET ac_user_id = '{$user_id}', action_type = 8, action_text = '{$comment}|{$check_photo['photo_name']}|{$pid}|{$check_photo['album_id']}', obj_id = '{$id}', for_user_id = '{$check_photo['user_id']}', action_time = '{$server_time}'");
                     //Вставляем событие в моментальные оповещания
@@ -71,7 +74,6 @@ if (Registry::get('logged')) {
                         $db->query("INSERT INTO `updates` SET for_user_id = '{$check_photo['user_id']}', from_user_id = '{$user_id}', type = '2', date = '{$server_time}', text = '{$comment}', user_photo = '{$user_info['user_photo']}', user_search_pref = '{$user_info['user_search_pref']}', lnk = '/photo{$check_photo['user_id']}_{$pid}_{$check_photo['album_id']}'");
                         mozg_create_cache("user_{$check_photo['user_id']}/updates", 1);
                         //ИНАЧЕ Добавляем +1 юзеру для оповещания
-                        
                     } else {
                         //Добавляем +1 юзеру для оповещания
                         $cntCacheNews = mozg_cache('user_' . $check_photo['user_id'] . '/new_news');
@@ -81,8 +83,7 @@ if (Registry::get('logged')) {
                     if ($config['news_mail_4'] == 'yes') {
                         $rowUserEmail = $db->super_query("SELECT user_name, user_email FROM `users` WHERE user_id = '" . $check_photo['user_id'] . "'");
                         if ($rowUserEmail['user_email']) {
-                            include_once ENGINE_DIR . '/classes/mail.php';
-                            $mail = new vii_mail($config);
+                            $mail = new \FluffyDollop\Support\ViiMail($config);
                             $rowMyInfo = $db->super_query("SELECT user_search_pref FROM `users` WHERE user_id = '" . $user_id . "'");
                             $rowEmailTpl = $db->super_query("SELECT text FROM `mail_tpl` WHERE id = '4'");
                             $rowEmailTpl['text'] = str_replace('{%user%}', $rowUserEmail['user_name'], $rowEmailTpl['text']);
@@ -95,8 +96,9 @@ if (Registry::get('logged')) {
                 //Чистим кеш кол-во комментов
                 mozg_mass_clear_cache_file("user_{$check_photo['user_id']}/albums_{$check_photo['user_id']}_comm|user_{$check_photo['user_id']}/albums_{$check_photo['user_id']}_comm_all|user_{$check_photo['user_id']}/albums_{$check_photo['user_id']}_comm_friends");
                 AjaxTpl($tpl);
-            } else
+            } else {
                 echo 'err_privacy';
+            }
             break;
             //################### Удаление комментария ###################//
             
@@ -124,7 +126,7 @@ if (Registry::get('logged')) {
             $i_width = intFilter('i_width');
             $i_height = intFilter('i_height');
             $check_photo = $db->super_query("SELECT photo_name, album_id FROM `photos` WHERE id = '{$pid}' AND user_id = '{$user_id}'");
-            if ($check_photo and $i_width >= 100 and $i_height >= 100 and $i_left >= 0) {
+            if ($check_photo && $i_width >= 100 && $i_height >= 100 && $i_left >= 0) {
                 $imgInfo = explode('.', $check_photo['photo_name']);
                 $newName = substr(md5($server_time . $check_photo['check_photo']), 0, 15) . "." . $imgInfo[1];
                 $newDir = ROOT_DIR . "/uploads/users/{$user_id}/";
@@ -157,8 +159,11 @@ if (Registry::get('logged')) {
 
                 //Добавляем на стену
                 $row = $db->super_query("SELECT user_sex FROM `users` WHERE user_id = '{$user_id}'");
-                if ($row['user_sex'] == 2) $sex_text = 'обновила';
-                else $sex_text = 'обновил';
+                if ($row['user_sex'] == 2) {
+                    $sex_text = 'обновила';
+                } else {
+                    $sex_text = 'обновил';
+                }
                 $wall_text = "<div class=\"profile_update_photo\"><a href=\"\" onClick=\"Photo.Profile(\'{$user_id}\', \'{$newName}\'); return false\"><img src=\"/uploads/users/{$user_id}/o_{$newName}\" style=\"margin-top:3px\"></a></div>";
                 $db->query("INSERT INTO `wall` SET author_user_id = '{$user_id}', for_user_id = '{$user_id}', text = '{$wall_text}', add_date = '{$server_time}', type = '{$sex_text} фотографию на странице:'");
                 $dbid = $db->insert_id();
@@ -188,16 +193,21 @@ if (Registry::get('logged')) {
                     $tpl->set('{id}', $row_comm['id']);
                     $tpl->set('{hash}', $row_comm['hash']);
                     $tpl->set('{author}', $row_comm['user_search_pref']);
-                    if ($row_comm['user_photo']) $tpl->set('{ava}', $config['home_url'] . 'uploads/users/' . $row_comm['user_id'] . '/50_' . $row_comm['user_photo']);
-                    else $tpl->set('{ava}', '{theme}/images/no_ava_50.png');
+                    if ($row_comm['user_photo']) {
+                        $tpl->set('{ava}', $config['home_url'] . 'uploads/users/' . $row_comm['user_id'] . '/50_' . $row_comm['user_photo']);
+                    } else {
+                        $tpl->set('{ava}', '{theme}/images/no_ava_50.png');
+                    }
                     OnlineTpl($row_comm['user_last_visit'], $row_comm['user_logged_mobile']);
                     $date_str = megaDate(strtotime($row_comm['date']));
                     $tpl->set('{date}', $date_str);
                     $row_photo = $db->super_query("SELECT user_id FROM `photos` WHERE id = '{$row_comm['pid']}'");
-                    if ($row_comm['user_id'] == $user_info['user_id'] or $row_photo['user_id'] == $user_info['user_id']) {
+                    if ($row_comm['user_id'] == $user_info['user_id'] || $row_photo['user_id'] == $user_info['user_id']) {
                         $tpl->set('[owner]', '');
                         $tpl->set('[/owner]', '');
-                    } else $tpl->set_block("'\\[owner\\](.*?)\\[/owner\\]'si", "");
+                    } else {
+                        $tpl->set_block("'\\[owner\\](.*?)\\[/owner\\]'si", "");
+                    }
                     $tpl->compile('content');
                 }
                 AjaxTpl($tpl);
@@ -235,20 +245,20 @@ if (Registry::get('logged')) {
             $id = intFilter('id');
             $row = $db->super_query("SELECT photo_name, album_id, user_id FROM `photos` WHERE id = '" . $id . "'");
             $photo_position = requestFilter('pos');
-            if ($row['photo_name'] and $photo_position == 'left' or $photo_position == 'right' and $user_id == $row['user_id']) {
+            if (($row['photo_name'] && $photo_position == 'left') || ($photo_position == 'right' && $user_id == $row['user_id'])) {
                 $filename = ROOT_DIR . '/uploads/users/' . $user_id . '/albums/' . $row['album_id'] . '/' . $row['photo_name'];
-                if ($photo_position == 'right')
+                if ($photo_position == 'right') {
                     $degrees = -90;
-                if ($photo_position == 'left')
+                }
+                if ($photo_position == 'left') {
                     $degrees = 90;
+                }
 
                 $degrees = $degrees ?? 0;
 
                 $source = imagecreatefromjpeg($filename);
                 $rotate = imagerotate($source, $degrees, 0);
                 imagejpeg($rotate, ROOT_DIR . '/uploads/users/' . $user_id . '/albums/' . $row['album_id'] . '/' . $row['photo_name'], 93);
-                //Подключаем класс для фотографий
-                include ENGINE_DIR . '/classes/images.php';
                 //Создание маленькой копии
                 $tmb = new Thumbnail(ROOT_DIR . '/uploads/users/' . $user_id . '/albums/' . $row['album_id'] . '/' . $row['photo_name']);
                 $tmb->size_auto('140x100');
@@ -274,8 +284,11 @@ if (Registry::get('logged')) {
                     $rate_price = $config['rate_price']; #Цена оценки 5+
                     //Выводим текущий баланс юзера
                     $row_user = $db->super_query("SELECT user_balance FROM `users` WHERE user_id = '{$user_id}'");
-                    if ($row_user['user_balance'] >= $rate_price) $price = true;
-                    else $price = false;
+                    if ($row_user['user_balance'] >= $rate_price) {
+                        $price = true;
+                    } else {
+                        $price = false;
+                    }
                     //Если хватает голосов, то отнимаем их, и пропускаем оценку
                     if ($price) {
                         $db->query("UPDATE `users` SET user_balance = user_balance-{$rate_price} WHERE user_id = '{$user_id}'");
@@ -288,12 +301,13 @@ if (Registry::get('logged')) {
                 //Обновляем данные у фото
                 $db->query("UPDATE `photos` SET rating_num = rating_num+{$rating}, rating_all = rating_all+1 {$rating_max} WHERE id = '{$pid}'");
                 //Вставляем в ленту "Ответы"
-                if ($rating == 1)
+                if ($rating == 1) {
                     $action_update_text = '<div class="rating rating3 fl_r" style="background:url(\'/templates/' . $config['temp'] . '/images/rating3.png\') no-repeat;padding-top:10px">' . $rating . '</div>';
-                else if ($rating == 6)
+                } else if ($rating == 6) {
                     $action_update_text = '<div class="rating rating3 fl_r"  style="background:url(\'/templates/' . $config['temp'] . '/images/rating2.png\') no-repeat;padding-top:10px">5+</div>';
-                else
+                } else {
                     $action_update_text = '<div class="rating rating3 fl_r" style="padding-top:10px">' . $rating . '</div>';
+                }
 
                 $action_update_text_news = str_replace(' fl_r', ' rate_fnews_bott', $action_update_text);
                 $db->query("INSERT INTO `news` SET ac_user_id = '{$user_info['user_id']}', action_type = 12, action_text = '{$action_update_text_news}|{$row['photo_name']}|{$pid}|{$row['album_id']}', obj_id = '{$id}', for_user_id = '{$row['user_id']}', action_time = '{$server_time}'");
@@ -322,7 +336,9 @@ if (Registry::get('logged')) {
             //Если фото есть, то продолжаем вывод
             if ($check) {
                 //Выводим список последних 10 оценок
-                if ($lid) $where_sql = " AND id < '{$lid}'";
+                if ($lid) {
+                    $where_sql = " AND id < '{$lid}'";
+                }
                 $sql_ = $db->super_query("SELECT tb1.id, rating, date, tb2.user_id, user_search_pref, user_photo FROM `photos_rating` tb1, `users` tb2 WHERE photo_id = '{$pid}' AND tb1.user_id = tb2.user_id {$where_sql} ORDER by `date` DESC LIMIT 0, 10", true);
                 if ($sql_) {
                     $tpl->load_template('photos/rate_user.tpl');
@@ -331,16 +347,18 @@ if (Registry::get('logged')) {
                         $tpl->set('{name}', $row['user_search_pref']);
                         $tpl->set('{user-id}', $row['user_id']);
                         $tpl->set('{user-id}', $row['user_id']);
-                        if ($row['rating'] == 1)
+                        if ($row['rating'] == 1) {
                             $tpl->set('{rate}', '<div class="rating rating3" style="background:url(\'{theme}/images/rating3.png\')">' . $row['rating'] . '</div>');
-                        else if ($row['rating'] == 6)
+                        } else if ($row['rating'] == 6) {
                             $tpl->set('{rate}', '<div class="rating rating3"  style="background:url(\'{theme}/images/rating2.png\')">5+</div>');
-                        else
+                        } else {
                             $tpl->set('{rate}', '<div class="rating rating3">' . $row['rating'] . '</div>');
-                        if ($row['user_photo'])
+                        }
+                        if ($row['user_photo']) {
                             $tpl->set('{ava}', "/uploads/users/{$row['user_id']}/50_{$row['user_photo']}");
-                        else
+                        } else {
                             $tpl->set('{ava}', "{theme}/images/no_ava_50.png");
+                        }
                         $date_str = megaDate($row['date']);
                         $tpl->set('{date}', $date_str);
                         $tpl->compile('rates_users');
@@ -357,7 +375,9 @@ if (Registry::get('logged')) {
                     if ($check['rating_all'] > 10) {
                         $tpl->set('[prev]', '');
                         $tpl->set('[/prev]', '');
-                    } else $tpl->set_block("'\\[prev\\](.*?)\\[/prev\\]'si", "");
+                    } else {
+                        $tpl->set_block("'\\[prev\\](.*?)\\[/prev\\]'si", "");
+                    }
                     $tpl->compile('content');
                 } else {
                     $tpl->result['content'] = $tpl->result['rates_users'];
@@ -374,13 +394,15 @@ if (Registry::get('logged')) {
             //Выводим ИД фото и проверяем на админа фотки
             $row = $db->super_query("SELECT photo_id, rating FROM `photos_rating` WHERE id = '{$id}' AND owner_user_id = '{$user_info['user_id']}'");
             if ($row['photo_id']) {
-                if ($row['rating'] == 6) $rating_max = ", rating_max = rating_max-1";
+                if ($row['rating'] == 6) {
+                    $rating_max = ", rating_max = rating_max-1";
+                }
                 //Удаляем оценку
                 $db->query("DELETE FROM `photos_rating` WHERE id = '{$id}'");
                 //Удаляем оценку из ленты новостей
                 $db->query("DELETE FROM `news` WHERE obj_id = '{$id}' AND action_type = '12'");
                 //Обновляем данные у фото
-                $db->query("UPDATE `photos` SET rating_num = rating_num-{$row['rating']}, rating_all = rating_all-1 {$rating_max} WHERE id = '{$row['photo_id']}'");
+                $db->query("UPDATE `photos` SET rating_num = rating_num-{$row['rating']}, rating_all = rating_all-1 {$rating_max} WHERE id = '{$row['photo_id']}'");//fixme
             }
 
             break;
@@ -397,12 +419,12 @@ if (Registry::get('logged')) {
                 //Получаем ID альбома
                 $check_album = $db->super_query("SELECT album_id FROM `photos` WHERE id = '{$photo_id}'");
                 //Если фотография вызвана не со стены
-                if (!$fuser and $check_album) {
+                if (!$fuser && $check_album) {
                     //Проверяем на наличии файла с позициями только для этого фоток
                     $check_pos = mozg_cache('user_' . $uid . '/position_photos_album_' . $check_album['album_id']);
 
                     //Чистим кеш
-                    mozg_clear_cache_file('user_'.$user_id.'/position_photos_album_'.$check_album['album_id']);
+                    mozg_clear_cache_file('user_' . $user_id . '/position_photos_album_' . $check_album['album_id']);
                     //Если нет, то вызываем функцию генерации
                     if (!$check_pos) {
                         GenerateAlbumPhotosPosition($uid, $check_album['album_id']);
@@ -421,12 +443,13 @@ if (Registry::get('logged')) {
                     $info_album = $db->super_query("SELECT name, privacy FROM `albums` WHERE aid = '{$check_album['album_id']}'");
                     $album_privacy = explode('|', $info_album['privacy']);
                     //Проверка есть ли запрашиваемый юзер в друзьях у юзера который смотрит стр
-                    if ($user_info['user_id'] != $row['user_id'])
+                    if ($user_info['user_id'] !== $row['user_id']) {
                         $check_friend = CheckFriends($row['user_id']);
-                    else
+                    } else {
                         $check_friend = null;
+                    }
                     //Приватность
-                    if ($album_privacy[0] == 1 or $album_privacy[0] == 2 and $check_friend or $user_info['user_id'] == $row['user_id']) {
+                    if ($album_privacy[0] == 1 || ($album_privacy[0] == 2 && $check_friend) || $user_info['user_id'] == $row['user_id']) {
                         //Если фотография вызвана не со стены
                         if (!$fuser) {
                             $exp_photo_num = count(explode('||', $check_pos));
@@ -439,8 +462,11 @@ if (Registry::get('logged')) {
                         //Выводим комментарии если они есть
                         if ($row['comm_num'] > 0) {
                             $tpl->load_template('photo_comment.tpl');
-                            if ($row['comm_num'] > 7) $limit_comm = $row['comm_num'] - 3;
-                            else $limit_comm = 0;
+                            if ($row['comm_num'] > 7) {
+                                $limit_comm = $row['comm_num'] - 3;
+                            } else {
+                                $limit_comm = 0;
+                            }
                             $sql_comm = $db->super_query("SELECT tb1.user_id,text,date,id,hash, tb2.user_search_pref, user_photo, user_last_visit, user_logged_mobile FROM `photos_comments` tb1, `users` tb2 WHERE tb1.user_id = tb2.user_id AND tb1.pid = '{$photo_id}' ORDER by `date` ASC LIMIT {$limit_comm}, {$row['comm_num']}", true);
                             foreach ($sql_comm as $row_comm) {
                                 $tpl->set('{comment}', stripslashes($row_comm['text']));
@@ -448,15 +474,20 @@ if (Registry::get('logged')) {
                                 $tpl->set('{id}', $row_comm['id']);
                                 $tpl->set('{hash}', $row_comm['hash']);
                                 $tpl->set('{author}', $row_comm['user_search_pref']);
-                                if ($row_comm['user_photo']) $tpl->set('{ava}', $config['home_url'] . 'uploads/users/' . $row_comm['user_id'] . '/50_' . $row_comm['user_photo']);
-                                else $tpl->set('{ava}', '{theme}/images/no_ava_50.png');
+                                if ($row_comm['user_photo']) {
+                                    $tpl->set('{ava}', $config['home_url'] . 'uploads/users/' . $row_comm['user_id'] . '/50_' . $row_comm['user_photo']);
+                                } else {
+                                    $tpl->set('{ava}', '{theme}/images/no_ava_50.png');
+                                }
                                 OnlineTpl($row_comm['user_last_visit'], $row_comm['user_logged_mobile']);
                                 $date_str = megaDate(strtotime($row_comm['date']));
                                 $tpl->set('{date}', $date_str);
-                                if ($row_comm['user_id'] == $user_info['user_id'] or $row['user_id'] == $user_info['user_id']) {
+                                if ($row_comm['user_id'] == $user_info['user_id'] || $row['user_id'] == $user_info['user_id']) {
                                     $tpl->set('[owner]', '');
                                     $tpl->set('[/owner]', '');
-                                } else $tpl->set_block("'\\[owner\\](.*?)\\[/owner\\]'si", "");
+                                } else {
+                                    $tpl->set_block("'\\[owner\\](.*?)\\[/owner\\]'si", "");
+                                }
                                 $tpl->compile('comments');
                             }
                         }
@@ -522,12 +553,14 @@ if (Registry::get('logged')) {
                             $tpl->set('{author-info}', '');
                         } else {
                             $author_info = explode('|', $row['user_country_city_name']);
-                            if ($author_info[0])
+                            if ($author_info[0]) {
                                 $tpl->set('{author-info}', $author_info[0]);
-                            else
+                            } else {
                                 $tpl->set('{author-info}', '');
-                            if ($author_info[1])
+                            }
+                            if ($author_info[1]) {
                                 $tpl->set('{author-info}', $author_info[0] . ', ' . $author_info[1] . '<br />');
+                            }
                         }
 
                         $date_str = megaDate(strtotime($row['date']), 1, 1);
@@ -545,8 +578,6 @@ if (Registry::get('logged')) {
                         //Показываем стрелочки если фотографий больше одной и фотография вызвана не со стены
                         if ($row_album['photo_num'] > 1 && !$fuser) {
                             //Если фотография вызвана из альбома "все фотографии" или вызвана со страницы юзера
-
-
                             if ($row['position'] == $row_album['photo_num']) {
                                 $next_photo = $position[1] ?? null;
                             } else {
@@ -570,10 +601,12 @@ if (Registry::get('logged')) {
                             $tpl->set('[/all-comm]', '');
                         }
                         //Приватность комментариев
-                        if ($album_privacy[1] == 1 or $album_privacy[1] == 2 and $check_friend or $user_info['user_id'] == $row['user_id']) {
+                        if ($album_privacy[1] == 1 || ($album_privacy[1] == 2 && $check_friend) || $user_info['user_id'] == $row['user_id']) {
                             $tpl->set('[add-comm]', '');
                             $tpl->set('[/add-comm]', '');
-                        } else $tpl->set_block("'\\[add-comm\\](.*?)\\[/add-comm\\]'si", "");
+                        } else {
+                            $tpl->set_block("'\\[add-comm\\](.*?)\\[/add-comm\\]'si", "");
+                        }
                         //Выводим отмеченных людей на фото если они есть
                         /** fixme limit */
                         $sql_mark = $db->super_query("SELECT muser_id, mphoto_name, msettings_pos, mmark_user_id, mapprove FROM `photos_mark` WHERE mphoto_id = '" . $photo_id . "' ORDER by `mdate` ASC", true);
@@ -584,30 +617,42 @@ if (Registry::get('logged')) {
                             $mark_peoples .= '<div class="fl_l" id="peopleOnPhotoText' . $photo_id . '" style="margin-right:5px">На этой фотографии:</div>';
                             foreach ($sql_mark as $row_mark) {
                                 $cnt_mark++;
-                                if ($cnt_mark != 1) $comma = ', ';
-                                else $comma = '';
-                                if ($row_mark['muser_id'] and $row_mark['mphoto_name'] == '') {
-                                    if ($row['user_id'] == $user_info['user_id'] or $user_info['user_id'] == $row_mark['muser_id'] or $user_info['user_id'] == $row_mark['mmark_user_id']) $del_mark_link = '<div class="fl_l"><img src="/templates/Default/images/hide_lef.gif" class="distin_del_user" title="Удалить отметку" onclick="Distinguish.DeletUser(' . $row_mark['muser_id'] . ', ' . $photo_id . ')"/></div>';
-                                    else $del_mark_link = '';
+                                if ($cnt_mark != 1) {
+                                    $comma = ', ';
+                                } else {
+                                    $comma = '';
+                                }
+                                if ($row_mark['muser_id'] && $row_mark['mphoto_name'] == '') {
+                                    if ($row['user_id'] == $user_info['user_id'] || $user_info['user_id'] == $row_mark['muser_id'] || $user_info['user_id'] == $row_mark['mmark_user_id']) {
+                                        $del_mark_link = '<div class="fl_l"><img src="/templates/Default/images/hide_lef.gif" class="distin_del_user" title="Удалить отметку" onclick="Distinguish.DeletUser(' . $row_mark['muser_id'] . ', ' . $photo_id . ')"/></div>';
+                                    } else {
+                                        $del_mark_link = '';
+                                    }
                                     $row_user = $db->super_query("SELECT user_search_pref FROM `users` WHERE user_id = '" . $row_mark['muser_id'] . "'");
-                                    if ($row_mark['mapprove'] OR $row['user_id'] == $user_info['user_id'] OR $user_info['user_id'] == $row_mark['mmark_user_id'] OR $row_mark['muser_id'] == $user_info['user_id']) {
+                                    if ($row_mark['mapprove'] || $row['user_id'] == $user_info['user_id'] || $user_info['user_id'] == $row_mark['mmark_user_id'] || $row_mark['muser_id'] == $user_info['user_id']) {
                                         $user_link = '<a href="/u' . $row_mark['muser_id'] . '" id="selected_us_' . $row_mark['muser_id'] . $photo_id . '" onclick="Page.Go(this.href); return false" onmouseover="Distinguish.ShowTag(' . $row_mark['msettings_pos'] . ', ' . $photo_id . ')" onmouseout="Distinguish.HideTag(' . $photo_id . ')" class="one_dis_user' . $photo_id . '">';
                                         $user_link_end = '</a>';
                                     } else {
                                         $user_link = '<span style="color:#000" id="selected_us_' . $row_mark['muser_id'] . $photo_id . '" onmouseover="Distinguish.ShowTag(' . $row_mark['msettings_pos'] . ', ' . $photo_id . ')" onmouseout="Distinguish.HideTag(' . $photo_id . ')" class="one_dis_user' . $photo_id . '">';
                                         $user_link_end = '</span>';
                                     }
-                                    $mark_peoples.= '<span id="selectedDivIser' . $row_mark['muser_id'] . $photo_id . '"><div class="fl_l" style="margin-right:4px">' . $comma . '</div><div class="fl_l"> ' . $user_link . $row_user['user_search_pref'] . $user_link_end . '</div>' . $del_mark_link . '</span>';
+                                    $mark_peoples .= '<span id="selectedDivIser' . $row_mark['muser_id'] . $photo_id . '"><div class="fl_l" style="margin-right:4px">' . $comma . '</div><div class="fl_l"> ' . $user_link . $row_user['user_search_pref'] . $user_link_end . '</div>' . $del_mark_link . '</span>';
                                 } else {
-                                    if ($row['user_id'] == $user_info['user_id'] OR $user_info['user_id'] == $row_mark['mmark_user_id']) $del_mark_link = '<div class="fl_l"><img src="/templates/Default/images/hide_lef.gif" class="distin_del_user" title="Удалить отметку" onclick="Distinguish.DeletUser(' . $row_mark['muser_id'] . ', ' . $photo_id . ', \'' . $row_mark['mphoto_name'] . '\')"/></div>';
-                                    else $del_mark_link = '';
-                                    $mark_peoples.= '<span id="selectedDivIser' . $row_mark['muser_id'] . $photo_id . '"><div class="fl_l" style="margin-right:4px">' . $comma . '</div><div class="fl_l"><span style="color:#000" id="selected_us_' . $row_mark['muser_id'] . $photo_id . '" onmouseover="Distinguish.ShowTag(' . $row_mark['msettings_pos'] . ', ' . $photo_id . ')" onmouseout="Distinguish.HideTag(' . $photo_id . ')" class="one_dis_user' . $photo_id . '">' . $row_mark['mphoto_name'] . '</span></div>' . $del_mark_link . '</span>';
+                                    if ($row['user_id'] == $user_info['user_id'] || $user_info['user_id'] == $row_mark['mmark_user_id']) {
+                                        $del_mark_link = '<div class="fl_l"><img src="/templates/Default/images/hide_lef.gif" class="distin_del_user" title="Удалить отметку" onclick="Distinguish.DeletUser(' . $row_mark['muser_id'] . ', ' . $photo_id . ', \'' . $row_mark['mphoto_name'] . '\')"/></div>';
+                                    } else {
+                                        $del_mark_link = '';
+                                    }
+                                    $mark_peoples .= '<span id="selectedDivIser' . $row_mark['muser_id'] . $photo_id . '"><div class="fl_l" style="margin-right:4px">' . $comma . '</div><div class="fl_l"><span style="color:#000" id="selected_us_' . $row_mark['muser_id'] . $photo_id . '" onmouseover="Distinguish.ShowTag(' . $row_mark['msettings_pos'] . ', ' . $photo_id . ')" onmouseout="Distinguish.HideTag(' . $photo_id . ')" class="one_dis_user' . $photo_id . '">' . $row_mark['mphoto_name'] . '</span></div>' . $del_mark_link . '</span>';
                                 }
                                 //Если человек отмечен но не потвердил
                                 if (!$row_mark['mapprove'] AND $row_mark['muser_id'] == $user_info['user_id']) {
                                     $row_mmark_user_id = $db->super_query("SELECT user_search_pref, user_sex FROM `users` WHERE user_id = '" . $row_mark['mmark_user_id'] . "'");
-                                    if ($row_mmark_user_id['user_sex'] == 1) $approve_mark_gram_text = 'отметил';
-                                    else $approve_mark_gram_text = 'отметила';
+                                    if ($row_mmark_user_id['user_sex'] == 1) {
+                                        $approve_mark_gram_text = 'отметил';
+                                    } else {
+                                        $approve_mark_gram_text = 'отметила';
+                                    }
                                     $approve_mark = $row_mmark_user_id['user_search_pref'];
                                     $approve_mark_user_id = $row_mark['mmark_user_id'];
                                     $approve_mark_del_link = 'Distinguish.DeletUser(' . $row_mark['muser_id'] . ', ' . $photo_id . ', \'' . $row_mark['mphoto_name'] . '\')';
@@ -632,15 +677,21 @@ if (Registry::get('logged')) {
                             $tpl->set('{mark-del-link}', $approve_mark_del_link);
                             $tpl->set('[mark-block]', '');
                             $tpl->set('[/mark-block]', '');
-                        } else $tpl->set_block("'\\[mark-block\\](.*?)\\[/mark-block\\]'si", "");
+                        } else {
+                            $tpl->set_block("'\\[mark-block\\](.*?)\\[/mark-block\\]'si", "");
+                        }
                         //Проверка ставил человек на это фото уже оценку или нет
                         $check = $db->super_query("SELECT rating FROM `photos_rating` WHERE user_id = '{$user_info['user_id']}' AND photo_id = '{$photo_id}'");
                         if (!empty($check['rating'])) {
                             $tpl->set('{rate-check}', 'no_display');
                             $tpl->set('{rate-check-2}', '');
-                            if ($check['rating'] == 1) $tpl->set('{ok-rate}', '<div class="rating rating3" style="background:url(\'{theme}/images/rating3.png\')">' . $check['rating'] . '</div>');
-                            else if ($check['rating'] == 6) $tpl->set('{ok-rate}', '<div class="rating rating3"  style="background:url(\'{theme}/images/rating2.png\')">5+</div>');
-                            else $tpl->set('{ok-rate}', '<div class="rating rating3">' . $check['rating'] . '</div>');
+                            if ($check['rating'] == 1) {
+                                $tpl->set('{ok-rate}', '<div class="rating rating3" style="background:url(\'{theme}/images/rating3.png\')">' . $check['rating'] . '</div>');
+                            } else if ($check['rating'] == 6) {
+                                $tpl->set('{ok-rate}', '<div class="rating rating3"  style="background:url(\'{theme}/images/rating2.png\')">5+</div>');
+                            } else {
+                                $tpl->set('{ok-rate}', '<div class="rating rating3">' . $check['rating'] . '</div>');
+                            }
                         } else {
                             $tpl->set('{rate-check-2}', 'no_display');
                             $tpl->set('{rate-check}', '');
@@ -649,19 +700,27 @@ if (Registry::get('logged')) {
                         $tpl->set('{rate-max}', $row['rating_max']);
                         $rate = $row['rating_all'] ? $row['rating_num'] / $row['rating_all'] : 0;
                         $rate = round($rate, 2);
-                        if ($rate > 5) $rate = '5+';
+                        if ($rate > 5) {
+                            $rate = '5+';
+                        }
                         $tpl->set('{rate}', $rate);
                         $tpl->compile('content');
                         AjaxTpl($tpl);
-                        if ($config['gzip'] == 'yes')
+                        if ($config['gzip'] == 'yes') {
                             (new Gzip(false))->GzipOut();
-                    } else echo 'err_privacy';
-                } else
+                        }
+                    } else {
+                        echo 'err_privacy';
+                    }
+                } else {
                     echo 'no_photo';
-            } else
+                }
+            } else {
                 echo 'err_privacy';
+            }
     }
 //        $tpl->clear();
 //        $db->free();
-} else
+} else {
     echo 'no_photo';
+}

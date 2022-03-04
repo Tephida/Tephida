@@ -30,38 +30,27 @@ if (Registry::get('logged')) {
             $row = $db->super_query("SELECT ulist, discussion FROM `communities` WHERE id = '{$public_id}'");
 
             if (stripos($row['ulist'], "|{$user_id}|") !== false and $row['discussion'] and isset($title) and !empty($title) and isset($text) and !empty($text) or isset($attach_files) and !empty($attach_files)) {
-
                 //Вставляем тему в БД
                 $db->query("INSERT INTO `communities_forum` SET public_id = '{$public_id}', fuser_id = '{$user_id}', title = '{$title}', text = '{$text}', attach = '{$attach_files}', fdate = '{$server_time}', lastuser_id = '{$user_id}', lastdate = '{$server_time}', msg_num = 1");
                 $dbid = $db->insert_id();
-
                 //Обновляем кол-во тем в сообществе
                 $db->query("UPDATE `communities` SET forum_num = forum_num+1 WHERE id = '{$public_id}'");
-
                 mozg_clear_cache_file("groups_forum/forum{$public_id}");
-
                 echo $dbid;
-
             }
-
             break;
 
         //################### Страница создания новой темы ###################//
         case "new":
-
             $public_id = intFilter('public_id');
-
             $row = $db->super_query("SELECT ulist, discussion FROM `communities` WHERE id = '{$public_id}'");
-
             if (stripos($row['ulist'], "|{$user_id}|") !== false and $row['discussion']) {
-
                 $tpl->load_template('forum/new.tpl');
                 $tpl->set('{id}', $public_id);
                 $tpl->compile('content');
-
-            } else
+            } else {
                 msgbox('', '<br /><br />Ошибка доступа.<br /><br /><br />', 'info_2');
-
+            }
             compile($tpl);
             break;
 
@@ -80,21 +69,15 @@ if (Registry::get('logged')) {
 
                 //Если добавляется ответ на комментарий то вносим в ленту новостей "ответы"
                 if ($answer_id) {
-
                     //Выводим ид владельца комменатрия
                     $row_owner2 = $db->super_query("SELECT muser_id, msg FROM `communities_forum_msg` WHERE mid = '{$answer_id}'");
-
                     //Проверка на то, что юзер не отвечает сам себе
-                    if ($user_id != $row_owner2['muser_id'] and $row_owner2) {
-
+                    if ($user_id !== $row_owner2['muser_id'] and $row_owner2) {
                         $check2 = $db->super_query("SELECT user_last_visit, user_name FROM `users` WHERE user_id = '{$row_owner2['muser_id']}'");
-
                         $msg = str_replace($check2['user_name'], "<a href=\"/u{$row_owner2['muser_id']}\" onClick=\"Page.Go(this.href); return false\">{$check2['user_name']}</a>", $msg);
-
                         //Вставляем саму запись в БД
                         $db->query("INSERT INTO `communities_forum_msg` SET fid = '{$fid}', muser_id = '{$user_id}', msg = '{$msg}', mdate = '{$server_time}'");
                         $dbid = $db->insert_id();
-
                         //Вставляем в ленту новостей
                         $db->query("INSERT INTO `news` SET ac_user_id = '{$user_id}', action_type = 6, action_text = '{$msg}', obj_id = '{$dbid}', for_user_id = '{$row_owner2['muser_id']}', action_time = '{$server_time}', answer_text = '{$row_owner2['msg']}', link = '/forum{$row['public_id']}?act=view&id={$fid}'");
 
@@ -102,38 +85,26 @@ if (Registry::get('logged')) {
                         $update_time = $server_time - 70;
 
                         if ($check2['user_last_visit'] >= $update_time) {
-
                             $db->query("INSERT INTO `updates` SET for_user_id = '{$row_owner2['muser_id']}', from_user_id = '{$user_id}', type = '6', date = '{$server_time}', text = '{$msg}', user_photo = '{$user_info['user_photo']}', user_search_pref = '{$user_info['user_search_pref']}', lnk = '/forum{$row['public_id']}?act=view&id={$fid}'");
-
                             mozg_create_cache("user_{$row_owner2['muser_id']}/updates", 1);
-
                             //ИНАЧЕ Добавляем +1 юзеру для оповещания
                         } else {
-
                             $cntCacheNews = mozg_cache("user_{$row_owner2['muser_id']}/new_news");
                             mozg_create_cache("user_{$row_owner2['muser_id']}/new_news", ($cntCacheNews + 1));
-
                         }
-
                     }
-
                 } else {
-
                     //Вставляем саму запись в БД
                     $db->query("INSERT INTO `communities_forum_msg` SET fid = '{$fid}', muser_id = '{$user_id}', msg = '{$msg}', mdate = '{$server_time}'");
                     $dbid = $db->insert_id();
-
                 }
 
                 mozg_clear_cache_file("groups_forum/forum{$row['public_id']}");
 
                 //Обновляем данные в теме
                 $db->query("UPDATE `communities_forum` SET msg_num = msg_num+1, lastdate = '{$server_time}', lastuser_id = '{$user_id}' WHERE fid = '{$fid}'");
-
                 $tpl->load_template('forum/msg.tpl');
-
                 $msg = preg_replace('`(http(?:s)?://\w+[^\s\[\]\<]+)`i', '<a href="/index.php?go=away&url=$1" target="_blank">$1</a>', $msg);
-
                 $tpl->set('{text}', stripslashes($msg));
                 $tpl->set('{name}', $user_info['user_search_pref']);
                 $tpl->set('{online}', $lang['online']);
@@ -144,15 +115,13 @@ if (Registry::get('logged')) {
                 $tpl->set('[/admin-2]', '');
                 $tpl->set_block("'\\[not-owner\\](.*?)\\[/not-owner\\]'si", "");
 
-                if ($user_info['user_photo'])
+                if ($user_info['user_photo']) {
                     $tpl->set('{ava}', "/uploads/users/{$user_info['user_id']}/50_{$user_info['user_photo']}");
-                else
+                } else {
                     $tpl->set('{ava}', '{theme}/images/no_ava_50.png');
-
+                }
                 $tpl->compile('content');
-
                 AjaxTpl($tpl);
-
             }
 
             break;
@@ -169,16 +138,19 @@ if (Registry::get('logged')) {
 
             //Выводим данные о сообществе
             $row2 = $db->super_query("SELECT admin, discussion FROM `communities` WHERE id = '{$row['public_id']}'");
-            if (stripos($row2['admin'], "u{$user_id}|") !== false)
+            if (stripos($row2['admin'], "u{$user_id}|") !== false) {
                 $public_admin = true;
-            else
+            } else {
                 $public_admin = false;
+            }
 
             $limit = 10;
 
             $first_id = intFilter('first_id');
             $page_post = intFilter('page');
-            if ($page_post <= 0) $page_post = 1;
+            if ($page_post <= 0) {
+                $page_post = 1;
+            }
 
             $start_limit = $row['msg_num'] - ($page_post * $limit) - 10;
             if ($start_limit < 0) $start_limit = 0;
@@ -186,15 +158,10 @@ if (Registry::get('logged')) {
             $sql_ = $db->super_query("SELECT tb1.mid, muser_id, msg, mdate, tb2.user_search_pref, user_photo, user_last_visit, user_logged_mobile FROM `communities_forum_msg` tb1, `users` tb2 WHERE tb1.muser_id = tb2.user_id AND tb1.fid = '{$id}' AND mid < '{$first_id}' ORDER by `mdate` ASC LIMIT {$start_limit}, {$limit}", 1);
 
             if ($sql_ and $row2['discussion']) {
-
                 $tpl->load_template('forum/msg.tpl');
-
                 foreach ($sql_ as $row_comm) {
-
                     $tpl->set('{name}', $row_comm['user_search_pref']);
-
                     $row_comm['msg'] = preg_replace('`(http(?:s)?://\w+[^\s\[\]\<]+)`i', '<a href="/index.php?go=away&url=$1" target="_blank">$1</a>', $row_comm['msg']);
-
                     $tpl->set('{text}', stripslashes($row_comm['msg']));
                     $tpl->set('{user-id}', $row_comm['muser_id']);
                     $tpl->set('{mid}', $row_comm['mid']);
@@ -202,36 +169,28 @@ if (Registry::get('logged')) {
                     $tpl->set('{date}', $date_str);
                     OnlineTpl($row_comm['user_last_visit'], $row_comm['user_logged_mobile']);
 
-
                     //ADMIN 2
                     if ($user_info['user_group'] == 1 or $public_admin or $row_comm['muser_id'] == $user_id) {
-
                         $tpl->set('[admin-2]', '');
                         $tpl->set('[/admin-2]', '');
-
-                    } else
-                        $tpl->set_block("'\\[admin-2\\](.*?)\\[/admin-2\\]'si", "");
-
-                    if ($row_comm['muser_id'] == $user_id) {
-
-                        $tpl->set_block("'\\[not-owner\\](.*?)\\[/not-owner\\]'si", "");
-
                     } else {
-
-                        $tpl->set('[not-owner]', '');
-                        $tpl->set('[/not-owner]', '');
-
+                        $tpl->set_block("'\\[admin-2\\](.*?)\\[/admin-2\\]'si", "");
                     }
 
-                    if ($row_comm['user_photo'])
+                    if ($row_comm['muser_id'] == $user_id) {
+                        $tpl->set_block("'\\[not-owner\\](.*?)\\[/not-owner\\]'si", "");
+                    } else {
+                        $tpl->set('[not-owner]', '');
+                        $tpl->set('[/not-owner]', '');
+                    }
+
+                    if ($row_comm['user_photo']) {
                         $tpl->set('{ava}', "/uploads/users/{$row_comm['muser_id']}/50_{$row_comm['user_photo']}");
-                    else
+                    } else {
                         $tpl->set('{ava}', '{theme}/images/no_ava_50.png');
-
+                    }
                     $tpl->compile('content');
-
                 }
-
             }
 
             AjaxTpl($tpl);
@@ -248,22 +207,20 @@ if (Registry::get('logged')) {
             $row = $db->super_query("SELECT fuser_id, public_id FROM `communities_forum` WHERE fid = '{$fid}'");
             $row2 = $db->super_query("SELECT admin, discussion FROM `communities` WHERE id = '{$row['public_id']}'");
 
-            if (stripos($row2['admin'], "u{$user_id}|") !== false)
+            if (stripos($row2['admin'], "u{$user_id}|") !== false) {
                 $public_admin = true;
-            else
+            } else {
                 $public_admin = false;
+            }
 
-            if ($user_info['user_group'] == 1 or $public_admin or $row['fuser_id'] == $user_id and $row2['discussion']) {
-
+            if ($user_info['user_group'] == 1 || $public_admin || ($row['fuser_id'] == $user_id && $row2['discussion'])) {
                 $db->query("UPDATE `communities_forum` SET text = '{$text}' WHERE fid = '{$fid}'");
-
                 echo $text;
-
             }
 
             break;
 
-        //################### Сохранение отред. названия ###################//
+        //################### Сохранение отредактированного названия ###################//
         case "savetitle":
             NoAjaxQuery();
 
@@ -273,12 +230,13 @@ if (Registry::get('logged')) {
             $row = $db->super_query("SELECT fuser_id, public_id FROM `communities_forum` WHERE fid = '{$fid}'");
             $row2 = $db->super_query("SELECT admin, discussion FROM `communities` WHERE id = '{$row['public_id']}'");
 
-            if (stripos($row2['admin'], "u{$user_id}|") !== false and $row2['discussion'])
+            if (stripos($row2['admin'], "u{$user_id}|") !== false and $row2['discussion']) {
                 $public_admin = true;
-            else
+            } else {
                 $public_admin = false;
+            }
 
-            if ($user_info['user_group'] == 1 or $public_admin or $row['fuser_id'] == $user_id) {
+            if ($user_info['user_group'] == 1 || $public_admin || $row['fuser_id'] == $user_id) {
 
                 $db->query("UPDATE `communities_forum` SET title = '{$title}' WHERE fid = '{$fid}'");
 
@@ -291,28 +249,24 @@ if (Registry::get('logged')) {
         //################### Фиксирование темы . закрепление ###################//
         case "fix":
             NoAjaxQuery();
-
             $fid = intFilter('fid');
-
             $row = $db->super_query("SELECT fuser_id, public_id, fixed FROM `communities_forum` WHERE fid = '{$fid}'");
             $row2 = $db->super_query("SELECT admin, discussion FROM `communities` WHERE id = '{$row['public_id']}'");
-
-            if (stripos($row2['admin'], "u{$user_id}|") !== false)
+            if (stripos($row2['admin'], "u{$user_id}|") !== false) {
                 $public_admin = true;
-            else
+            } else {
                 $public_admin = false;
-
-            if ($user_info['user_group'] == 1 or $public_admin and $row2['discussion']) {
-
-                if (!$row['fixed']) $fixed = 1;
-                else $fixed = 0;
-
-                $db->query("UPDATE `communities_forum` SET fixed = '{$fixed}' WHERE fid = '{$fid}'");
-
-                mozg_clear_cache_file("groups_forum/forum{$row['public_id']}");
-
             }
 
+            if ($user_info['user_group'] == 1 or $public_admin and $row2['discussion']) {
+                if (!$row['fixed']) {
+                    $fixed = 1;
+                } else {
+                    $fixed = 0;
+                }
+                $db->query("UPDATE `communities_forum` SET fixed = '{$fixed}' WHERE fid = '{$fid}'");
+                mozg_clear_cache_file("groups_forum/forum{$row['public_id']}");
+            }
             break;
 
         //################### Открытие - закрытие тему ###################//
@@ -324,15 +278,19 @@ if (Registry::get('logged')) {
             $row = $db->super_query("SELECT fuser_id, public_id, status FROM `communities_forum` WHERE fid = '{$fid}'");
             $row2 = $db->super_query("SELECT admin, discussion FROM `communities` WHERE id = '{$row['public_id']}'");
 
-            if (stripos($row2['admin'], "u{$user_id}|") !== false)
+            if (stripos($row2['admin'], "u{$user_id}|") !== false) {
                 $public_admin = true;
-            else
+            } else {
                 $public_admin = false;
+            }
 
-            if ($user_info['user_group'] == 1 or $public_admin and $row2['discussion']) {
+            if ($user_info['user_group'] == 1 || ($public_admin && $row2['discussion'])) {
 
-                if (!$row['status']) $status = 1;
-                else $status = 0;
+                if (!$row['status']) {
+                    $status = 1;
+                } else {
+                    $status = 0;
+                }
 
                 $db->query("UPDATE `communities_forum` SET status = '{$status}' WHERE fid = '{$fid}'");
 
@@ -349,27 +307,24 @@ if (Registry::get('logged')) {
             $row = $db->super_query("SELECT fuser_id, public_id, vote FROM `communities_forum` WHERE fid = '{$fid}'");
             $row2 = $db->super_query("SELECT admin, discussion FROM `communities` WHERE id = '{$row['public_id']}'");
 
-            if (stripos($row2['admin'], "u{$user_id}|") !== false)
+            if (stripos($row2['admin'], "u{$user_id}|") !== false) {
                 $public_admin = true;
-            else
+            } else {
                 $public_admin = false;
+            }
 
-            if ($user_info['user_group'] == 1 or $public_admin or $row['fuser_id'] == $user_id and $row2['discussion']) {
+            if ($user_info['user_group'] == 1 || $public_admin || ($row['fuser_id'] == $user_id && $row2['discussion'])) {
 
                 $db->query("UPDATE `communities` SET forum_num = forum_num-1 WHERE id = '{$row['public_id']}'");
                 $db->query("DELETE FROM `communities_forum` WHERE fid = '{$fid}'");
                 $db->query("DELETE FROM `communities_forum_msg` WHERE fid = '{$fid}'");
-
                 $db->query("DELETE FROM `votes` WHERE id = '{$row['vote']}'");
                 $db->query("DELETE FROM `votes_result` WHERE vote_id = '{$row['vote']}'");
-
                 mozg_mass_clear_cache_file("votes/vote_{$row['vote']}|votes/vote_answer_cnt_{$row['vote']}|groups_forum/forum{$row['public_id']}");
-
             }
-
             break;
 
-        //################### Уадаление опроса ###################//
+        //################### Удаление опроса ###################//
         case "delvote":
             NoAjaxQuery();
 
@@ -378,48 +333,39 @@ if (Registry::get('logged')) {
             $row = $db->super_query("SELECT fuser_id, vote, public_id FROM `communities_forum` WHERE fid = '{$fid}'");
             $row2 = $db->super_query("SELECT admin, discussion FROM `communities` WHERE id = '{$row['public_id']}'");
 
-            if (stripos($row2['admin'], "u{$user_id}|") !== false)
+            if (stripos($row2['admin'], "u{$user_id}|") !== false) {
                 $public_admin = true;
-            else
+            } else {
                 $public_admin = false;
+            }
 
-            if ($user_info['user_group'] == 1 or $public_admin or $row['fuser_id'] == $user_id and $row2['discussion']) {
-
+            if ($user_info['user_group'] == 1 || $public_admin || ($row['fuser_id'] == $user_id && $row2['discussion'])) {
                 $db->query("UPDATE `communities_forum` SET vote = '0' WHERE fid = '{$fid}'");
                 $db->query("DELETE FROM `votes` WHERE id = '{$row['vote']}'");
                 $db->query("DELETE FROM `votes_result` WHERE vote_id = '{$row['vote']}'");
-
                 mozg_mass_clear_cache_file("votes/vote_{$row['vote']}|votes/vote_answer_cnt_{$row['vote']}");
-
             }
-
             break;
 
-        //################### Уадаление сообщения ###################//
+        //################### Удаление сообщения ###################//
         case "delmsg":
             NoAjaxQuery();
-
             $mid = intFilter('mid');
-
             $row = $db->super_query("SELECT muser_id, fid, mdate FROM `communities_forum_msg` WHERE mid = '{$mid}'");
             $row2 = $db->super_query("SELECT public_id FROM `communities_forum` WHERE fid = '{$row['fid']}'");
             $row3 = $db->super_query("SELECT admin, discussion FROM `communities` WHERE id = '{$row2['public_id']}'");
-
-            if (stripos($row3['admin'], "u{$user_id}|") !== false)
+            if (stripos($row3['admin'], "u{$user_id}|") !== false) {
                 $public_admin = true;
-            else
+            } else {
                 $public_admin = false;
+            }
 
-            if ($row and $user_info['user_group'] == 1 or $public_admin or $row['muser_id'] == $user_id and $row3['discussion']) {
-
+            if (($row && $user_info['user_group'] == 1) || $public_admin || ($row['muser_id'] == $user_id && $row3['discussion'])) {
                 $db->query("UPDATE `communities_forum` SET msg_num = msg_num-1 WHERE fid = '{$row['fid']}'");
                 $db->query("DELETE FROM `communities_forum_msg` WHERE mid = '{$mid}'");
-
                 //Удаляем из ленты новостей
                 $db->query("DELETE FROM `news` WHERE action_type = '6' AND obj_id = '{$mid}' AND action_time = '{$row['mdate']}'");
-
                 mozg_clear_cache_file("groups_forum/forum{$row2['public_id']}");
-
             }
 
             break;
@@ -433,12 +379,13 @@ if (Registry::get('logged')) {
             $row = $db->super_query("SELECT fuser_id, public_id FROM `communities_forum` WHERE fid = '{$fid}'");
             $row2 = $db->super_query("SELECT admin, discussion FROM `communities` WHERE id = '{$row['public_id']}'");
 
-            if (stripos($row2['admin'], "u{$user_id}|") !== false)
+            if (stripos($row2['admin'], "u{$user_id}|") !== false) {
                 $public_admin = true;
-            else
+            } else {
                 $public_admin = false;
+            }
 
-            if ($user_info['user_group'] == 1 or $public_admin or $row['fuser_id'] == $user_id and $row2['discussion']) {
+            if ($user_info['user_group'] == 1 || $public_admin || ($row['fuser_id'] == $user_id && $row2['discussion'])) {
 
                 //Голосование
                 $vote_title = requestFilter('vote_title', 25000, true);
@@ -446,23 +393,18 @@ if (Registry::get('logged')) {
 
                 $ansers_list = array();
 
-                if (!empty($vote_title) and !empty($vote_answer_1)) {
+                if (!empty($vote_title) && !empty($vote_answer_1)) {
 
                     for ($vote_i = 1; $vote_i <= 10; $vote_i++) {
-
                         $vote_answer = requestFilter('vote_answer_' . $vote_i, 25000, true);
                         $vote_answer = str_replace('|', '&#124;', $vote_answer);
-
-                        if ($vote_answer)
+                        if ($vote_answer) {
                             $ansers_list[] = $vote_answer;
-
+                        }
                     }
-
                     $sql_answers_list = implode('|', $ansers_list);
-
                     //Вставляем голосование в БД
                     $db->query("INSERT INTO `votes` SET title = '{$vote_title}', answers = '{$sql_answers_list}'");
-
                     $db->query("UPDATE `communities_forum` SET vote = '{$db->insert_id()}' WHERE fid = '{$fid}'");
                 }
             }
@@ -481,31 +423,31 @@ if (Registry::get('logged')) {
             //Выводим данные о сообществе
             $row2 = $db->super_query("SELECT admin, discussion FROM `communities` WHERE id = '{$row['public_id']}'");
 
-            if ($row and $row2['discussion']) {
-
-                if (stripos($row2['admin'], "u{$user_id}|") !== false)
+            if ($row && $row2['discussion']) {
+                if (stripos($row2['admin'], "u{$user_id}|") !== false) {
                     $public_admin = true;
-                else
+                } else {
                     $public_admin = false;
+                }
 
                 //Выводимо сообщения к теме
                 if ($row['msg_num'] > 1) {
 
                     //Выводим комменты
                     $limit_msg = 10;
-                    if ($row['msg_num'] >= 10) $sLimit_msg = $row['msg_num'] - $limit_msg;
-                    else $sLimit_msg = 0;
+                    if ($row['msg_num'] >= 10) {
+                        $sLimit_msg = $row['msg_num'] - $limit_msg;
+                    } else {
+                        $sLimit_msg = 0;
+                    }
 
                     $sql_ = $db->super_query("SELECT tb1.mid, muser_id, msg, mdate, tb2.user_search_pref, user_photo, user_last_visit, user_logged_mobile FROM `communities_forum_msg` tb1, `users` tb2 WHERE tb1.muser_id = tb2.user_id AND tb1.fid = '{$id}' ORDER by `mdate` ASC LIMIT {$sLimit_msg}, {$limit_msg}", true);
 
                     $tpl->load_template('forum/msg.tpl');
 
                     foreach ($sql_ as $row_comm) {
-
                         $tpl->set('{name}', $row_comm['user_search_pref']);
-
                         $row_comm['msg'] = preg_replace('`(http(?:s)?://\w+[^\s\[\]\<]+)`i', '<a href="/index.php?go=away&url=$1" target="_blank">$1</a>', $row_comm['msg']);
-
                         $tpl->set('{text}', stripslashes($row_comm['msg']));
                         $tpl->set('{mid}', $row_comm['mid']);
                         $tpl->set('{user-id}', $row_comm['muser_id']);
@@ -513,48 +455,40 @@ if (Registry::get('logged')) {
                         $tpl->set('{date}', $date_str);
                         OnlineTpl($row_comm['user_last_visit'], $row_comm['user_logged_mobile']);
 
-                        if ($row_comm['user_photo'])
+                        if ($row_comm['user_photo']) {
                             $tpl->set('{ava}', "/uploads/users/{$row_comm['muser_id']}/50_{$row_comm['user_photo']}");
-                        else
+                        } else {
                             $tpl->set('{ava}', '{theme}/images/no_ava_50.png');
+                        }
 
                         //ADMIN 2
-                        if ($user_info['user_group'] == 1 or $public_admin or $row_comm['muser_id'] == $user_id) {
+                        if ($user_info['user_group'] == 1 || $public_admin || $row_comm['muser_id'] == $user_id) {
 
                             $tpl->set('[admin-2]', '');
                             $tpl->set('[/admin-2]', '');
 
-                        } else
-                            $tpl->set_block("'\\[admin-2\\](.*?)\\[/admin-2\\]'si", "");
-
-                        if ($row_comm['muser_id'] == $user_id) {
-
-                            $tpl->set_block("'\\[not-owner\\](.*?)\\[/not-owner\\]'si", "");
-
                         } else {
-
-                            $tpl->set('[not-owner]', '');
-                            $tpl->set('[/not-owner]', '');
-
+                            $tpl->set_block("'\\[admin-2\\](.*?)\\[/admin-2\\]'si", "");
                         }
 
+                        if ($row_comm['muser_id'] == $user_id) {
+                            $tpl->set_block("'\\[not-owner\\](.*?)\\[/not-owner\\]'si", "");
+                        } else {
+                            $tpl->set('[not-owner]', '');
+                            $tpl->set('[/not-owner]', '');
+                        }
                         $tpl->compile('msg');
-
                     }
-
                 }
 
                 //Кнопка показ пред сообщений
                 if ($row['msg_num'] > 10) {
-
                     $tpl->set('[msg]', '');
                     $tpl->set('[/msg]', '');
-
-                } else
+                } else {
                     $tpl->set_block("'\\[msg\\](.*?)\\[/msg\\]'si", "");
-
+                }
                 $tpl->load_template('forum/view.tpl');
-
                 $tpl->set('{id}', $public_id);
                 $tpl->set('{fid}', $row['fid']);
                 $tpl->set('{title}', stripslashes($row['title']));
@@ -574,70 +508,46 @@ if (Registry::get('logged')) {
                         //Фото со стены юзера
                         if ($attach_type[0] == 'photo_u') {
                             $attauthor_user_id = $row['fuser_id'];
-
                             if ($attach_type[1] == 'attach' and file_exists(ROOT_DIR . "/uploads/attach/{$attauthor_user_id}/c_{$attach_type[2]}")) {
-
                                 $rodImHeigh = $rodImHeigh ?? '';
                                 $attach_result .= "<img id=\"photo_wall_{$row['fid']}_{$cnt_attach}\" src=\"/uploads/attach/{$attauthor_user_id}/c_{$attach_type[2]}\" style=\"margin-top:3px;margin-right:3px\" align=\"left\" onClick=\"groups.wall_photo_view('{$row['fid']}', '', '{$attach_type[1]}', '{$cnt_attach}')\" class=\"cursor_pointer page_num{$row['fid']}\" height=\"{$rodImHeigh}\" />";
-
-
                                 $cnt_attach++;
-
-
                             } elseif (file_exists(ROOT_DIR . "/uploads/users/{$attauthor_user_id}/albums/{$attach_type[2]}/c_{$attach_type[1]}")) {
-
                                 $row_wall['tell_uid'] = $row_wall['tell_uid'] ?? '';;
                                 $attach_result .= "<img id=\"photo_wall_{$row['fid']}_{$cnt_attach}\" src=\"/uploads/users/{$attauthor_user_id}/albums/{$attach_type[2]}/c_{$attach_type[1]}\" style=\"margin-top:3px;margin-right:3px\" align=\"left\" onClick=\"groups.wall_photo_view('{$row['fid']}', '{$row_wall['tell_uid']}', '{$attach_type[1]}', '{$cnt_attach}')\" class=\"cursor_pointer page_num{$row['fid']}\" />";
-
                                 $cnt_attach++;
                             }
-
-                            //Видео
                         } elseif ($attach_type[0] == 'video' and file_exists(ROOT_DIR . "/uploads/videos/{$attach_type[3]}/{$attach_type[1]}")) {
                             $attach_result .= "<div class=\"clear\"><a href=\"/video{$attach_type[3]}_{$attach_type[2]}\" onClick=\"videos.show({$attach_type[2]}, this.href, location.href); return false\"><img src=\"/uploads/videos/{$attach_type[3]}/{$attach_type[1]}\" style=\"margin-top:3px;margin-right:3px\" align=\"left\" /></a></div>";
-
-                            //Музыка
                         } elseif ($attach_type[0] == 'audio') {
-                            $audioId = intval($attach_type[1]);
+                            $audioId = (int)$attach_type[1];
                             $audioInfo = $db->super_query("SELECT artist, name, url FROM `audio` WHERE aid = '" . $audioId . "'");
                             if ($audioInfo) {
-
                                 $jid++;
-
                                 $attach_result .= '<div class="audioForSize' . $row['fid'] . ' clear" style="width:690px;float:none" id="audioForSize"><div class="audio_onetrack audio_wall_onemus"><div class="audio_playic cursor_pointer fl_l" onClick="music.newStartPlay(\'' . $jid . '\', ' . $row['fid'] . ')" id="icPlay_' . $row['fid'] . $jid . '"></div><div id="music_' . $row['fid'] . $jid . '" data="' . $audioInfo['url'] . '" class="fl_l" style="margin-top:-1px"><a href="/?go=search&type=5&query=' . $audioInfo['artist'] . '&n=1" onClick="Page.Go(this.href); return false"><b>' . stripslashes($audioInfo['artist']) . '</b></a> &ndash; ' . stripslashes($audioInfo['name']) . '</div><div id="play_time' . $row['fid'] . $jid . '" class="color777 fl_r no_display" style="margin-top:2px;margin-right:5px">00:00</div><div class="player_mini_mbar fl_l no_display player_mini_mbar_wall" style="width:690px" id="ppbarPro' . $row['fid'] . $jid . '"></div></div></div>';
-
                             }
-
-                            //Смайлик
                         } elseif ($attach_type[0] == 'smile' and file_exists(ROOT_DIR . "/uploads/smiles/{$attach_type[1]}")) {
                             $attach_result_smiles .= '<img src=\"/uploads/smiles/' . $attach_type[1] . '\" style="margin-right:5px" />';
-
-                            //Если документ
                         } elseif ($attach_type[0] == 'doc') {
-
-                            $doc_id = intval($attach_type[1]);
-
+                            $doc_id = (int)$attach_type[1];
                             $row_doc = $db->super_query("SELECT dname, dsize FROM `doc` WHERE did = '{$doc_id}'", false);
-
                             if ($row_doc) {
-
                                 $attach_result .= '<div style="margin-top:5px;margin-bottom:5px" class="clear"><div class="doc_attach_ic fl_l" style="margin-top:4px;margin-left:0px"></div><div class="attach_link_block_te"><div class="fl_l">Файл <a href="/index.php?go=doc&act=download&did=' . $doc_id . '" target="_blank" onMouseOver="myhtml.title(\'' . $doc_id . $cnt_attach . $row['fid'] . '\', \'<b>Размер файла: ' . $row_doc['dsize'] . '</b>\', \'doc_\')" id="doc_' . $doc_id . $cnt_attach . $row['fid'] . '">' . $row_doc['dname'] . '</a></div></div></div><div class="clear" style="margin-bottom:5px"></div>';
-
                                 $cnt_attach++;
                             }
-
-                        } else
-
+                        } else {
                             $attach_result .= '';
-
+                        }
                     }
 
-                    if ($attach_result or $attach_result_smiles)
+                    if ($attach_result || $attach_result_smiles) {
                         $row['text'] = preg_replace('`(http(?:s)?://\w+[^\s\[\]\<]+)`i', '<a href="/index.php?go=away&url=$1" target="_blank">$1</a>', $row['text']) . '<span id="attach">' . $attach_result_smiles . '<div class="clear"></div>' . $attach_result . '</span>';
-                    else
+                    } else {
                         $row['text'] = preg_replace('`(http(?:s)?://\w+[^\s\[\]\<]+)`i', '<a href="/index.php?go=away&url=$1" target="_blank">$1</a>', $row['text']);
-                } else
+                    }
+                } else {
                     $row['text'] = preg_replace('`(http(?:s)?://\w+[^\s\[\]\<]+)`i', '<a href="/index.php?go=away&url=$1" target="_blank">$1</a>', $row['text']);
+                }
 
                 $tpl->set('{text}', stripslashes($row['text']));
 
@@ -648,38 +558,39 @@ if (Registry::get('logged')) {
                 OnlineTpl($row['user_last_visit'], $row['user_logged_mobile']);
                 $date_str = megaDate($row['fdate']);
                 $tpl->set('{date}', $date_str);
-                if ($row['user_photo'])
+                if ($row['user_photo']) {
                     $tpl->set('{ava}', "/uploads/users/{$row['fuser_id']}/50_{$row['user_photo']}");
-                else
+                } else {
                     $tpl->set('{ava}', '{theme}/images/no_ava_50.png');
+                }
 
-                if ($user_info['user_photo'])
+                if ($user_info['user_photo']) {
                     $tpl->set('{my-ava}', "/uploads/users/{$user_id}/50_{$user_info['user_photo']}");
-                else
+                } else {
                     $tpl->set('{my-ava}', '{theme}/images/no_ava_50.png');
+                }
 
                 $tpl->set('{msg}', $tpl->result['msg']);
 
                 //FIXED
-                if ($row['fixed']) $tpl->set('{fix-text}', 'Не закреплять тему');
-                else $tpl->set('{fix-text}', 'Закрепить тему');
+                if ($row['fixed']) {
+                    $tpl->set('{fix-text}', 'Не закреплять тему');
+                } else {
+                    $tpl->set('{fix-text}', 'Закрепить тему');
+                }
 
                 //STATUS
                 if ($row['status']) {
-
                     $tpl->set('{status-text}', 'Открыть тему');
                     $tpl->set('[add-form]', '');
                     $tpl->set('[/add-form]', '');
-
                 } else {
-
                     $tpl->set('{status-text}', 'Закрыть тему');
                     $tpl->set_block("'\\[add-form\\](.*?)\\[/add-form\\]'si", "");
-
                 }
 
                 //ADMIN
-                if ($public_admin or $user_info['user_group'] == 1) {
+                if ($public_admin || $user_info['user_group'] == 1) {
 
                     $tpl->set('[admin]', '');
                     $tpl->set('[/admin]', '');
@@ -688,7 +599,7 @@ if (Registry::get('logged')) {
                     $tpl->set_block("'\\[admin\\](.*?)\\[/admin\\]'si", "");
 
                 //ADMIN 2
-                if ($user_info['user_group'] == 1 or $public_admin or $row['fuser_id'] == $user_id) {
+                if ($user_info['user_group'] == 1 || $public_admin || $row['fuser_id'] == $user_id) {
 
                     $tpl->set('[admin-2]', '');
                     $tpl->set('[/admin-2]', '');
@@ -721,7 +632,7 @@ if (Registry::get('logged')) {
 
                     $vote_result .= "<div class=\"clear\" style=\"height:10px\"></div><div id=\"result_vote_block{$vote_id}\"><div class=\"wall_vote_title\">{$row_vote['title']}<div class=\"fl_r\"><a href=\"\" style=\"font-weight:normal\" onClick=\"Forum.VoteDelBox({$row['fid']}); return false\">Удалить опрос</a></div></div>";
 
-                    for ($ai = 0; $ai < sizeof($arr_answe_list); $ai++) {
+                    for ($ai = 0, $aiMax = count($arr_answe_list); $ai < $aiMax; $ai++) {
 
                         if (!$checkMyVote['cnt']) {
 
@@ -741,16 +652,19 @@ if (Registry::get('logged')) {
 							<div class=\"wall_vote_proc fl_l\"><div class=\"wall_vote_proc_bg\" style=\"width:" . intval($proc) . "%\"></div><div style=\"margin-top:-16px\">{$num}</div></div>
 							<div class=\"fl_l\" style=\"margin-top:-1px\"><b>{$proc}%</b></div>
 							</div><div class=\"clear\"></div>";
-
                         }
-
+                    }
+                    if ($row_vote['answer_num']) {
+                        $answer_num_text = gram_record($row_vote['answer_num'], 'fave');
+                    } else {
+                        $answer_num_text = 'человек';
                     }
 
-                    if ($row_vote['answer_num']) $answer_num_text = gram_record($row_vote['answer_num'], 'fave');
-                    else $answer_num_text = 'человек';
-
-                    if ($row_vote['answer_num'] <= 1) $answer_text2 = 'Проголосовал';
-                    else $answer_text2 = 'Проголосовало';
+                    if ($row_vote['answer_num'] <= 1) {
+                        $answer_text2 = 'Проголосовал';
+                    } else {
+                        $answer_text2 = 'Проголосовало';
+                    }
 
                     $vote_result .= "{$answer_text2} <b>{$row_vote['answer_num']}</b> {$answer_num_text}.<div class=\"clear\" style=\"margin-top:10px\"></div></div>";
 
@@ -794,10 +708,11 @@ if (Registry::get('logged')) {
                     $forum_num = $row['forum_num'];
 
                     //Проверка подписан юзер или нет
-                    if (stripos($row['ulist'], "|{$user_id}|") !== false)
+                    if (stripos($row['ulist'], "|{$user_id}|") !== false) {
                         $tpl->set('{yes}', 'no_display');
-                    else
+                    } else {
                         $tpl->set('{no}', 'no_display');
+                    }
 
                     $tpl->compile('info');
                 } else {
@@ -807,10 +722,11 @@ if (Registry::get('logged')) {
                 //SQL запрос на вывод
                 $limit = 20;
                 $page_post = intFilter('page');
-                if ($page_post > 0)
+                if ($page_post > 0) {
                     $page = $page_post * $limit;
-                else
+                } else {
                     $page = 0;
+                }
 
                 $sql_ = $db->super_query("SELECT fid, title, lastuser_id, lastdate, msg_num, status, fixed FROM `communities_forum` WHERE public_id = '{$public_id}' ORDER by `fixed` DESC, `lastdate` DESC, `fdate` DESC LIMIT {$page}, {$limit}", true);
 
@@ -831,10 +747,13 @@ if (Registry::get('logged')) {
                         $tpl->set('{pid}', $public_id);
 
                         //STATUS
-                        if ($row['status'] and $row['fixed']) $tpl->set('{status}', 'тема закреплена и закрыта');
-                        else if ($row['status']) $tpl->set('{status}', 'тема закрыта');
-                        else if ($row['fixed']) $tpl->set('{status}', 'тема закреплена');
-                        else $tpl->set('{status}', '');
+                        if ($row['status'] and $row['fixed']) {
+                            $tpl->set('{status}', 'тема закреплена и закрыта');
+                        } else if ($row['status']) {
+                            $tpl->set('{status}', 'тема закрыта');
+                        } else if ($row['fixed']) {
+                            $tpl->set('{status}', 'тема закреплена');
+                        } else $tpl->set('{status}', '');
 
                         $date_str = megaDate($row['lastdate']);
                         $tpl->set('{date}', $date_str);
@@ -850,7 +769,9 @@ if (Registry::get('logged')) {
                 if (!isset($_POST['a']) and $forum_num > 20) {
                     $tpl->load_template('forum/bottom.tpl');
                     $tpl->set('{id}', $public_id);
-                    if (!$row['forum_num']) $row['forum_num'] = '';
+                    if (!$row['forum_num']) {
+                        $row['forum_num'] = '';
+                    }
                     $tpl->set('{forum-num}', $row['forum_num']);
                     $tpl->compile('content');
                 }

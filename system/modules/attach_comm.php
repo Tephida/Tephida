@@ -123,10 +123,11 @@ if (Registry::get('logged')) {
                 $tpl->set('{author}', $user_info['user_search_pref']);
                 $tpl->set('{online}', $lang['online']);
                 $tpl->set('{date}', langdate('сегодня в H:i', $server_time));
-                if ($user_info['user_photo'])
+                if ($user_info['user_photo']) {
                     $tpl->set('{ava}', "/uploads/users/{$user_info['user_id']}/50_{$user_info['user_photo']}");
-                else
+                } else {
                     $tpl->set('{ava}', '{theme}/images/no_ava_50.png');
+                }
                 $tpl->set('[owner]', '');
                 $tpl->set('[/owner]', '');
                 $tpl->compile('content');
@@ -161,18 +162,20 @@ if (Registry::get('logged')) {
             $limit = 10;
             $first_id = intFilter('first_id');
             $page_post = intFilter('page');
-            if ($page_post <= 0) $page_post = 1;
+            if ($page_post <= 0) {
+                $page_post = 1;
+            }
 
             $start_limit = $row['acomm_num'] - ($page_post * $limit) - 3;
-            if ($start_limit < 0) $start_limit = 0;
+            if ($start_limit < 0) {
+                $start_limit = 0;
+            }
 
-            if ($tab_photos)
-
+            if ($tab_photos) {
                 $sql_comm = $db->super_query("SELECT tb1.user_id, text, date, id, tb2.user_search_pref, user_photo, user_last_visit, user_logged_mobile FROM `photos_comments` tb1, `users` tb2 WHERE tb1.user_id = tb2.user_id AND tb1.photo_name = '{$foSQLurl}' AND id < '{$first_id}' ORDER by `date` ASC LIMIT {$start_limit}, {$limit}", true);
-
-            else
-
+            } else {
                 $sql_comm = $db->super_query("SELECT tb1.auser_id, text, adate, id, tb2.user_search_pref, user_photo, user_last_visit, user_logged_mobile FROM `attach_comm` tb1, `users` tb2 WHERE tb1.auser_id = tb2.user_id AND tb1.forphoto = '{$foSQLurl}' AND id < '{$first_id}' ORDER by `adate` ASC LIMIT {$start_limit}, {$limit}", true);
+            }
 
             $tpl->load_template('attach/comment.tpl');
 
@@ -191,8 +194,11 @@ if (Registry::get('logged')) {
                 $tpl->set('{purl}', $foSQLurl);
                 $tpl->set('{author}', $row_comm['user_search_pref']);
 
-                if ($row_comm['user_photo']) $tpl->set('{ava}', '/uploads/users/' . $row_comm['auser_id'] . '/50_' . $row_comm['user_photo']);
-                else $tpl->set('{ava}', '{theme}/images/no_ava_50.png');
+                if ($row_comm['user_photo']) {
+                    $tpl->set('{ava}', '/uploads/users/' . $row_comm['auser_id'] . '/50_' . $row_comm['user_photo']);
+                } else {
+                    $tpl->set('{ava}', '{theme}/images/no_ava_50.png');
+                }
 
                 OnlineTpl($row_comm['user_last_visit'], $row_comm['user_logged_mobile']);
                 $date_str = megaDate($row_comm['adate']);
@@ -200,8 +206,9 @@ if (Registry::get('logged')) {
                 if ($row_comm['auser_id'] == $user_id or $row['ouser_id'] == $user_id) {
                     $tpl->set('[owner]', '');
                     $tpl->set('[/owner]', '');
-                } else
+                } else {
                     $tpl->set_block("'\\[owner\\](.*?)\\[/owner\\]'si", "");
+                }
 
                 $tpl->compile('content');
 
@@ -239,18 +246,17 @@ if (Registry::get('logged')) {
                 //Выводим комментарии если они есть
                 if ($row['acomm_num']) {
 
-                    if ($row['acomm_num'] > 7)
+                    if ($row['acomm_num'] > 7) {
                         $limit_comm = $row['acomm_num'] - 3;
-                    else
+                    } else {
                         $limit_comm = 0;
+                    }
 
-                    if ($tab_photos)
-
+                    if ($tab_photos) {
                         $sql_comm = $db->super_query("SELECT tb1.user_id, text, date, id, tb2.user_search_pref, user_photo, user_last_visit, user_logged_mobile FROM `photos_comments` tb1, `users` tb2 WHERE tb1.user_id = tb2.user_id AND tb1.photo_name = '{$foSQLurl}' ORDER by `date` ASC LIMIT {$limit_comm}, {$row['acomm_num']}", true);
-
-                    else
-
+                    } else {
                         $sql_comm = $db->super_query("SELECT tb1.auser_id, text, adate, id, tb2.user_search_pref, user_photo, user_last_visit, user_logged_mobile FROM `attach_comm` tb1, `users` tb2 WHERE tb1.auser_id = tb2.user_id AND tb1.forphoto = '{$foSQLurl}' ORDER by `adate` ASC LIMIT {$limit_comm}, {$row['acomm_num']}", true);
+                    }
 
                     $tpl->load_template('attach/comment.tpl');
 
@@ -269,17 +275,21 @@ if (Registry::get('logged')) {
                         $tpl->set('{purl}', $foSQLurl);
                         $tpl->set('{author}', $row_comm['user_search_pref']);
 
-                        if ($row_comm['user_photo']) $tpl->set('{ava}', '/uploads/users/' . $row_comm['auser_id'] . '/50_' . $row_comm['user_photo']);
-                        else $tpl->set('{ava}', '{theme}/images/no_ava_50.png');
+                        if ($row_comm['user_photo']) {
+                            $tpl->set('{ava}', '/uploads/users/' . $row_comm['auser_id'] . '/50_' . $row_comm['user_photo']);
+                        } else {
+                            $tpl->set('{ava}', '{theme}/images/no_ava_50.png');
+                        }
 
                         OnlineTpl($row_comm['user_last_visit'], $row_comm['user_logged_mobile']);
                         $date_str = megaDate($row_comm['adate']);
                         $tpl->set('{date}', $date_str);
-                        if ($row_comm['auser_id'] == $user_id or $row['ouser_id'] == $user_id) {
+                        if ($row_comm['auser_id'] == $user_id || $row['ouser_id'] == $user_id) {
                             $tpl->set('[owner]', '');
                             $tpl->set('[/owner]', '');
-                        } else
+                        } else {
                             $tpl->set_block("'\\[owner\\](.*?)\\[/owner\\]'si", "");
+                        }
 
                         $tpl->compile('comments');
                     }
@@ -290,12 +300,11 @@ if (Registry::get('logged')) {
 
                 //Кнопка показ пред сообщений
                 if ($row['acomm_num'] > 7) {
-
                     $tpl->set('[comm]', '');
                     $tpl->set('[/comm]', '');
-
-                } else
+                } else {
                     $tpl->set_block("'\\[comm\\](.*?)\\[/comm\\]'si", "");
+                }
 
                 $tpl->set('{author}', $row['user_search_pref']);
                 $tpl->set('{uid}', $row['ouser_id']);
@@ -305,13 +314,19 @@ if (Registry::get('logged')) {
                 if ($row['add_date']) {
                     $date_str = megaDate($row['add_date']);
                     $tpl->set('{date}', $date_str);
-                } else
+                } else {
                     $tpl->set('{date}', '');
+                }
 
                 $author_info = explode('|', $row['user_country_city_name']);
-                if ($author_info[0]) $tpl->set('{author-info}', $author_info[0]);
-                else $tpl->set('{author-info}', '');
-                if ($author_info[1]) $tpl->set('{author-info}', $author_info[0] . ', ' . $author_info[1] . '<br />');
+                if ($author_info[0]) {
+                    $tpl->set('{author-info}', $author_info[0]);
+                } else {
+                    $tpl->set('{author-info}', '');
+                }
+                if ($author_info[1]) {
+                    $tpl->set('{author-info}', $author_info[0] . ', ' . $author_info[1] . '<br />');
+                }
 
                 $tpl->set('{comments}', $tpl->result['comments']);
                 $tpl->compile('content');

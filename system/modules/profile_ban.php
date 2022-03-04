@@ -10,14 +10,15 @@
 use FluffyDollop\Support\Registry;
 
 $user_info = $user_info ?? Registry::get('user_info');
-if ($user_info['user_group'] != '1') {
+if ($user_info['user_group'] !== '1') {
     $tpl->load_template('profile_baned.tpl');
-    if ($user_info['user_ban_date'])
+    if ($user_info['user_ban_date']) {
         $tpl->set('{date}', langdate('j F Y в H:i', $user_info['user_ban_date']));
-    else
+    } else {
         $tpl->set('{date}', 'Неограниченно');
-	$tpl->compile('main');
+    }
+    $tpl->compile('main');
     $config = settings_get();
-	echo str_replace('{theme}', '/templates/'.$config['temp'], $tpl->result['main']);
+    echo str_replace('{theme}', '/templates/' . $config['temp'], $tpl->result['main']);
 
 }

@@ -2,7 +2,7 @@
 /*
  *   (c) Semen Alekseev
  *
- *  For the full copyright and license information, please view the LICENSE
+ *  For the full copyright && license information, please view the LICENSE
  *   file that was distributed with this source code.
  *
  */
@@ -30,7 +30,7 @@ if (Registry::get('logged')) {
             //ЧС
             $CheckBlackList = CheckBlackList($check['user_id']);
 
-            if (!$CheckBlackList and !$check and $for_user_id != $user_id) {
+            if (!$CheckBlackList && !$check && $for_user_id !== $user_id) {
                 $db->query("INSERT INTO `friends` SET user_id = '{$user_id}', friend_id = '{$for_user_id}', friends_date = NOW(), subscriptions = 1");
                 $db->query("UPDATE `users` SET user_subscriptions_num = user_subscriptions_num+1 WHERE user_id = '{$user_id}'");
 
@@ -42,10 +42,11 @@ if (Registry::get('logged')) {
 
                     $myRow = $db->super_query("SELECT user_sex FROM `users` WHERE user_id = '{$user_info['user_id']}'");
 
-                    if ($myRow['user_sex'] == 1)
+                    if ($myRow['user_sex'] == 1) {
                         $action_update_text = 'подписался на Ваши обновления.';
-                    else
+                    } else {
                         $action_update_text = 'подписалась на Ваши обновления.';
+                    }
 
                     $db->query("INSERT INTO `updates` SET for_user_id = '{$for_user_id}', from_user_id = '{$user_info['user_id']}', type = '13', date = '{$server_time}', text = '{$action_update_text}', user_photo = '{$user_info['user_photo']}', user_search_pref = '{$user_info['user_search_pref']}', lnk = '/u{$user_info['user_id']}'");
 
@@ -97,10 +98,11 @@ if (Registry::get('logged')) {
                 $tpl->load_template('profile_friends.tpl');
                 $config = settings_get();
                 foreach ($sql_ as $row) {
-                    if ($row['user_photo'])
+                    if ($row['user_photo']) {
                         $tpl->set('{ava}', $config['home_url'] . 'uploads/users/' . $row['friend_id'] . '/50_' . $row['user_photo']);
-                    else
+                    } else {
                         $tpl->set('{ava}', '{theme}/images/no_ava_50.png');
+                    }
                     $friend_info_online = explode(' ', $row['user_search_pref']);
                     $tpl->set('{user-id}', $row['friend_id']);
                     $tpl->set('{name}', $friend_info_online[0]);
@@ -113,5 +115,6 @@ if (Registry::get('logged')) {
     }
 //    $tpl->clear();
 //    $db->free();
-} else
+} else {
     echo 'no_log';
+}

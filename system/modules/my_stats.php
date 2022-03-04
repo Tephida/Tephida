@@ -16,7 +16,9 @@ if (Registry::get('logged')) {
     $user_info = $user_info ?? Registry::get('user_info');
     $server_time = Registry::get('server_time');
     $month = intFilter('m');
-    if ($month and $month <= 0 or $month > 12) $month = 1;
+    if ($month and $month <= 0 or $month > 12) {
+        $month = 1;
+    }
 
     $year = intFilter('y');
     if ($year and $year < 2022 or $year > 2030) $year = 2022;

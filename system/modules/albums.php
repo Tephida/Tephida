@@ -9,6 +9,7 @@
 
 use FluffyDollop\Support\Filesystem;
 use FluffyDollop\Support\Registry;
+use FluffyDollop\Support\Thumbnail;
 
 NoAjaxQuery();
 
@@ -50,14 +51,17 @@ if (Registry::get('logged')) {
                     $db->query("UPDATE `users` SET user_albums_num = user_albums_num+1 WHERE user_id = '{$user_info['user_id']}'");
 
                     mozg_mass_clear_cache_file("user_{$user_info['user_id']}/albums|user_{$user_info['user_id']}/albums_all|user_{$user_info['user_id']}/albums_friends|user_{$user_info['user_id']}/albums_cnt_friends|user_{$user_info['user_id']}/albums_cnt_all|user_{$user_info['user_id']}/profile_{$user_info['user_id']}");
-                    if ($sql_)
+                    if ($sql_) {
                         echo '/albums/add/' . $id;
-                    else
+                    } else {
                         echo 'no';
-                } else
+                    }
+                } else {
                     echo 'max';
-            } else
+                }
+            } else {
                 echo 'no_name';
+            }
 
             break;
 
@@ -87,8 +91,9 @@ if (Registry::get('logged')) {
                 $tpl->compile('content');
 
                 compile($tpl, $params);
-            } else
+            } else {
                 Hacking();
+            }
             break;
 
         //################### Загрузка фотографии в альбом ###################//
@@ -126,7 +131,7 @@ if (Registry::get('logged')) {
                     //Получаем данные о фотографии
                     $image_tmp = $_FILES['uploadfile']['tmp_name'];
                     $image_name = to_translit($_FILES['uploadfile']['name']); // оригинальное название для определения формата
-                    $image_rename = substr(md5($server_time + rand(1, 100000)), 0, 20); // имя фотографии
+                    $image_rename = substr(md5($server_time + random_int(1, 100000)), 0, 20); // имя фотографии
                     $image_size = $_FILES['uploadfile']['size']; // размер файла
                     $array1 = explode(".", $image_name);
                     $type = end($array1); // формат файла
@@ -190,20 +195,26 @@ if (Registry::get('logged')) {
                                 //Добавляем действия в ленту новостей
                                 $generateLastTime = $server_time - 10800;
                                 $row = $db->super_query("SELECT ac_id, action_text FROM `news` WHERE action_time > '{$generateLastTime}' AND action_type = 3 AND ac_user_id = '{$user_id}'");
-                                if ($row)
+                                if ($row) {
                                     $db->query("UPDATE `news` SET action_text = '{$ins_id}|{$img_url}||{$row['action_text']}', action_time = '{$server_time}' WHERE ac_id = '{$row['ac_id']}'");
-                                else
+                                } else {
                                     $db->query("INSERT INTO `news` SET ac_user_id = '{$user_id}', action_type = 3, action_text = '{$ins_id}|{$img_url}', action_time = '{$server_time}'");
-                            } else
+                                }
+                            } else {
                                 echo 'big_size';
-                        } else
+                            }
+                        } else {
                             echo 'big_size';
-                    } else
+                        }
+                    } else {
                         echo 'bad_format';
-                } else
+                    }
+                } else {
                     echo 'max_img';
-            } else
+                }
+            } else {
                 echo 'hacking';
+            }
 
             break;
 
@@ -337,13 +348,13 @@ if (Registry::get('logged')) {
             $count = 1;
             $config = settings_get();
             //Если есть данные о массиве
-            if ($array and $config['photos_drag'] == 'yes') {
+            if ($array && $config['photos_drag'] == 'yes') {
                 //Выводим массивом и обновляем порядок
                 $row = $db->super_query("SELECT album_id FROM `photos` WHERE id = '{$array[1]}'");
                 if ($row) {
                     $photo_info = '';
                     foreach ($array as $idval) {
-                        $idval = intval($idval);
+                        $idval = (int)$idval;
                         $db->query("UPDATE `photos` SET position = '{$count}' WHERE id = '{$idval}' AND user_id = '{$user_info['user_id']}'");
                         $photo_info .= $count . '|' . $idval . '||';
                         $count++;
@@ -384,10 +395,12 @@ if (Registry::get('logged')) {
 
             $privacy = intFilter('privacy');
             $privacy_comm = intFilter('privacy_comm');
-            if ($privacy <= 0 or $privacy > 3)
+            if ($privacy <= 0 or $privacy > 3) {
                 $privacy = 1;
-            if ($privacy_comm <= 0 or $privacy_comm > 3)
+            }
+            if ($privacy_comm <= 0 or $privacy_comm > 3) {
                 $privacy_comm = 1;
+            }
             $sql_privacy = $privacy . '|' . $privacy_comm;
 
             //Проверка на существование юзера
@@ -451,10 +464,12 @@ if (Registry::get('logged')) {
                     $tpl->compile('content');
 
                     AjaxTpl($tpl);
-                } else
+                } else {
                     echo $lang['no_photo_alnumx'];
-            } else
+                }
+            } else {
                 Hacking();
+            }
 
             break;
 
@@ -475,10 +490,11 @@ if (Registry::get('logged')) {
 
             //Если есть Фотографии то пропускаем
             if ($row_album['photo_num']) {
-                if ($notes)
+                if ($notes) {
                     $tpl->load_template('notes/attatch_addphoto_top.tpl');
-                else
+                } else {
                     $tpl->load_template('wall/attatch_addphoto_top.tpl');
+                }
 
                 $tpl->set('[top]', '');
                 $tpl->set('[/top]', '');
@@ -487,10 +503,11 @@ if (Registry::get('logged')) {
                 $tpl->compile('content');
 
                 //Выводим циклом фотографии
-                if (!$notes)
+                if (!$notes) {
                     $tpl->load_template('albums_all_photos.tpl');
-                else
+                } else {
                     $tpl->load_template('albums_box_all_photos_notes.tpl');
+                }
 
                 while ($row = $db->get_row($sql_)) {
                     $tpl->set('{photo}', '/uploads/users/' . $user_id . '/albums/' . $row['album_id'] . '/c_' . $row['photo_name']);
@@ -510,10 +527,11 @@ if (Registry::get('logged')) {
 
                 AjaxTpl($tpl);
             } else {
-                if ($notes)
+                if ($notes) {
                     $scrpt_insert = "response[1] = response[1].replace('/c_', '/');wysiwyg.boxPhoto(response[1], 0, 0);";
-                else
+                } else {
                     $scrpt_insert = "var imgname = response[1].split('/');wall.attach_insert('photo', response[1], 'attach|'+imgname[6].replace('c_', ''), response[2]);";
+                }
 
                 echo <<<HTML
 <script type="text/javascript">
@@ -571,8 +589,9 @@ HTML;
 
                     //Удаляем фотки из папки на сервере
                     $fdir = opendir(ROOT_DIR . '/uploads/users/' . $user_id . '/albums/' . $aid);
-                    while ($file = readdir($fdir))
+                    while ($file = readdir($fdir)) {
                         Filesystem::delete(ROOT_DIR . '/uploads/users/' . $user_id . '/albums/' . $aid . '/' . $file);
+                    }
 
                     Filesystem::delete(ROOT_DIR . '/uploads/users/' . $user_id . '/albums/' . $aid);
                 }
@@ -597,10 +616,12 @@ HTML;
             $uid = intFilter('uid');
             $aid = intFilter('aid');
 
-            if ($aid)
+            if ($aid) {
                 $uid = false;
-            if ($uid)
+            }
+            if ($uid) {
                 $aid = false;
+            }
 
             $page = intFilter('page', 1);
             $gcount = 25;
@@ -609,12 +630,13 @@ HTML;
             $privacy = true;
 
             //Если вызваны комменты к альбому
-            if ($aid and !$uid) {
+            if ($aid && !$uid) {
                 $row_album = $db->super_query("SELECT user_id, name, privacy FROM `albums` WHERE aid = '{$aid}'");
                 $album_privacy = explode('|', $row_album['privacy']);
                 $uid = $row_album['user_id'];
-                if (!$uid)
+                if (!$uid) {
                     Hacking();
+                }
             } else {
                 $album_privacy = null;
                 $row_album = null;
@@ -622,23 +644,24 @@ HTML;
 
             $CheckBlackList = CheckBlackList($uid);
 
-            if ($user_id != $uid)
-                //Проверка есть ли запрашиваемый юзер в друзьях у юзера который смотрит стр
+            if ($user_id != $uid) //Проверка есть ли запрашиваемый юзер в друзьях у юзера который смотрит стр
+            {
                 $check_friend = CheckFriends($uid);
-            else {
+            } else {
                 $check_friend = null;
             }
 
-            if ($aid and $album_privacy) {
-                if ($album_privacy[0] == 1 or $album_privacy[0] == 2 and $check_friend or $user_id == $uid)
+            if ($aid && $album_privacy) {
+                if ($album_privacy[0] == 1 || ($album_privacy[0] == 2 && $check_friend) || $user_id == $uid) {
                     $privacy = true;
-                else
+                } else {
                     $privacy = false;
+                }
             }
 
             //Приватность
-            if ($privacy and !$CheckBlackList) {
-                if ($uid and !$aid) {
+            if ($privacy && !$CheckBlackList) {
+                if ($uid && !$aid) {
                     $sql_tb3 = ", `albums` tb3";
 
                     if ($user_id == $uid) {
@@ -657,16 +680,17 @@ HTML;
                 $privacy_sql = $privacy_sql ?? null;
 
                 //Если вызвана страница всех комментариев юзера, если нет, то значит вызвана страница определенного альбома
-                if ($uid and !$aid)
+                if ($uid && !$aid) {
                     $sql_ = $db->super_query("SELECT tb1.user_id, text, date, id, hash, album_id, pid, owner_id, photo_name, tb2.user_search_pref, user_photo, user_last_visit, user_logged_mobile FROM `photos_comments` tb1, `users` tb2 {$sql_tb3} WHERE tb1.owner_id = '{$uid}' AND tb1.user_id = tb2.user_id {$privacy_sql} ORDER by `date` DESC LIMIT {$limit_page}, {$gcount}", true);
-                else
+                } else {
                     $sql_ = $db->super_query("SELECT tb1.user_id, text, date, id, hash, album_id, pid, owner_id, photo_name, tb2.user_search_pref, user_photo, user_last_visit, user_logged_mobile FROM `photos_comments` tb1, `users` tb2 WHERE tb1.album_id = '{$aid}' AND tb1.user_id = tb2.user_id ORDER by `date` DESC LIMIT {$limit_page}, {$gcount}", true);
+                }
 
                 //Выводи имя владельца альбомов
                 $row_owner = $db->super_query("SELECT user_name FROM `users` WHERE user_id = '{$uid}'");
 
                 //Если вызвана страница всех комментов
-                if ($uid and !$aid) {
+                if ($uid && !$aid) {
                     $user_speedbar = $lang['comm_form_album_all'];
                     $params['metatags']['title'] = $lang['comm_form_album_all'];
                 } else {
@@ -686,7 +710,7 @@ HTML;
                 $tpl->set_block("'\\[view\\](.*?)\\[/view\\]'si", "");
                 $tpl->set_block("'\\[editphotos\\](.*?)\\[/editphotos\\]'si", "");
                 $tpl->set_block("'\\[all-photos\\](.*?)\\[/all-photos\\]'si", "");
-                if ($uid and !$aid) {
+                if ($uid && !$aid) {
                     $tpl->set_block("'\\[albums-comments\\](.*?)\\[/albums-comments\\]'si", "");
                 } else {
                     $tpl->set('[albums-comments]', '');
@@ -729,10 +753,11 @@ HTML;
                             $tpl->set('{section}', 'all_comments');
                         }
 
-                        if ($row_comm['user_photo'])
+                        if ($row_comm['user_photo']) {
                             $tpl->set('{ava}', $config['home_url'] . 'uploads/users/' . $row_comm['user_id'] . '/50_' . $row_comm['user_photo']);
-                        else
+                        } else {
                             $tpl->set('{ava}', '{theme}/images/no_ava_50.png');
+                        }
 
                         OnlineTpl($row_comm['user_last_visit'], $row_comm['user_logged_mobile']);
                         $date_str = megaDate(strtotime($row_comm['date']));
@@ -740,28 +765,33 @@ HTML;
                         if ($row_comm['user_id'] == $user_info['user_id'] or $user_info['user_id'] == $uid) {
                             $tpl->set('[owner]', '');
                             $tpl->set('[/owner]', '');
-                        } else
+                        } else {
                             $tpl->set_block("'\\[owner\\](.*?)\\[/owner\\]'si", "");
+                        }
 
                         $tpl->compile('content');
                     }
 
-                    if ($uid and !$aid)
-                        if ($user_id == $uid)
+                    if ($uid && !$aid) {
+                        if ($user_id == $uid) {
                             $row_album = $db->super_query("SELECT SUM(comm_num) AS all_comm_num FROM `albums` WHERE user_id = '{$uid}'");
-                        else
+                        } else {
                             $row_album = $db->super_query("SELECT COUNT(*) AS all_comm_num FROM `photos_comments` tb1, `albums` tb3 WHERE tb1.owner_id = '{$uid}' {$privacy_sql}");
-                    else
+                        }
+                    } else {
                         $row_album = $db->super_query("SELECT comm_num AS all_comm_num FROM `albums` WHERE aid = '{$aid}'");
+                    }
 
-                    if ($uid and !$aid)
+                    if ($uid and !$aid) {
                         navigation($gcount, $row_album['all_comm_num'], $config['home_url'] . 'albums/comments/' . $uid . '/page/');
-                    else
+                    } else {
                         navigation($gcount, $row_album['all_comm_num'], $config['home_url'] . 'albums/view/' . $aid . '/comments/page/');
+                    }
 
                     $user_speedbar = $row_album['all_comm_num'] . ' ' . gram_record($row_album['all_comm_num'], 'comments');
-                } else
+                } else {
                     msgbox('', $lang['no_comments'], 'info_2');
+                }
 
             } else {
                 $user_speedbar = $lang['title_albums'];
@@ -797,9 +827,9 @@ HTML;
                 $tpl->set_block("'\\[albums-comments\\](.*?)\\[/albums-comments\\]'si", "");
 
                 $config = settings_get();
-                if ($config['photos_drag'] == 'no')
+                if ($config['photos_drag'] == 'no') {
                     $tpl->set_block("'\\[admin-drag\\](.*?)\\[/admin-drag\\]'si", "");
-                else {
+                } else {
                     $tpl->set('[admin-drag]', '');
                     $tpl->set('[/admin-drag]', '');
                 }
@@ -817,8 +847,9 @@ HTML;
                     }
                     //Конец ID для Drag-N-Drop jQuery
                     $tpl->result['content'] .= '</div></ul>';
-                } else
+                } else {
                     msgbox('', $lang['no_photos'], 'info_2');
+                }
 
                 compile($tpl, $params);
 
@@ -851,17 +882,19 @@ HTML;
             $CheckBlackList = CheckBlackList($row_album['user_id']);
             if (!$CheckBlackList) {
                 $album_privacy = explode('|', $row_album['privacy']);
-                if (!$row_album)
+                if (!$row_album) {
                     Hacking();
+                }
 
-                //Проверка естьли запрашиваемый юзер в друзьях у юзера который смотрит стр
-                if ($user_id != $row_album['user_id'])
+                //Проверка есть ли запрашиваемый юзер в друзьях у юзера который смотрит стр
+                if ($user_id != $row_album['user_id']) {
                     $check_friend = CheckFriends($row_album['user_id']);
-                else
+                } else {
                     $check_friend = false;
+                }
 
                 //Приватность
-                if ($album_privacy[0] == 1 or $album_privacy[0] == 2 and $check_friend or $user_info['user_id'] == $row_album['user_id']) {
+                if ($album_privacy[0] == 1 || ($album_privacy[0] == 2 && $check_friend) || $user_info['user_id'] == $row_album['user_id']) {
                     //Выводим данные о владельце альбома(ов)
                     $row_owner = $db->super_query("SELECT user_name FROM `users` WHERE user_id = '{$row_album['user_id']}'");
 
@@ -924,8 +957,9 @@ HTML;
                     $check_pos = mozg_cache('user_' . $row_album['user_id'] . '/position_photos_album_' . $aid);
 
                     //Если нет, то вызываем функцию генерации
-                    if (!$check_pos)
+                    if (!$check_pos) {
                         GenerateAlbumPhotosPosition($row_album['user_id'], $aid);
+                    }
 
                     compile($tpl, $params);
                 } else {
@@ -1010,10 +1044,11 @@ HTML;
                         $tpl->result['content'] .= '<div id="dragndrop"><ul>';
 
                         //Проверка естьли запрашиваемый юзер в друзьях у юзера который смотрит стр
-                        if ($user_info['user_id'] != $uid)
+                        if ($user_info['user_id'] != $uid) {
                             $check_friend = CheckFriends($uid);
-                        else
+                        } else {
                             $check_friend = false;
+                        }
 
                         foreach ($sql_ as $row) {
 
@@ -1051,8 +1086,9 @@ HTML;
                                 $tpl->set('{hash}', $row['ahash']);
 
                                 $tpl->compile('content');
-                            } else
+                            } else {
                                 $m_cnt--;
+                            }
                         }
 
                         //Конец ID для DragNDrop jQuery
@@ -1089,8 +1125,9 @@ HTML;
                                 $tpl->set_block("'\\[owner\\](.*?)\\[/owner\\]'si", "");
                             }
 
-                            if ($config['albums_drag'] == 'no')
+                            if ($config['albums_drag'] == 'no') {
                                 $tpl->set_block("'\\[admin-drag\\](.*?)\\[/admin-drag\\]'si", "");
+                            }
                             else {
                                 $tpl->set('[admin-drag]', '');
                                 $tpl->set('[/admin-drag]', '');
@@ -1100,12 +1137,14 @@ HTML;
                                 $tpl->set('[new-photos]', '');
                                 $tpl->set('[/new-photos]', '');
                                 $tpl->set('{num}', $row_owner['user_new_mark_photos']);
-                            } else
+                            } else {
                                 $tpl->set_block("'\\[new-photos\\](.*?)\\[/new-photos\\]'si", "");
+                            }
 
                             $tpl->compile('info');
-                        } else
+                        } else {
                             msgbox('', $lang['no_albums'], 'info_2');
+                        }
                     } else {
                         $tpl->load_template('albums_info.tpl');
                         //Показ скрытых тексто только для владельца страницы

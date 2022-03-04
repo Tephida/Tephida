@@ -7,7 +7,9 @@
  *
  */
 
+use FluffyDollop\Support\Filesystem;
 use FluffyDollop\Support\Registry;
+use Mozg\classes\download;
 
 if (Registry::get('logged')) {
     $act = requestFilter('act');
@@ -44,7 +46,7 @@ if (Registry::get('logged')) {
                     //Если нет папки юзера, то создаём её
                     Filesystem::createDir($upload_dir);
 
-                    $downl_file_name = substr(md5($file_name . rand(0, 1000) . $server_time), 0, 25);
+                    $downl_file_name = substr(md5($file_name . random_int(0, 1000) . $server_time), 0, 25);
 
                     //Загружаем сам файл
                     if (move_uploaded_file($file_tmp, $upload_dir . $downl_file_name . $res_type)) {
@@ -58,7 +60,7 @@ if (Registry::get('logged')) {
                             } elseif ($file_size >= 1024) {
                                 $file_size = round($file_size / 1024 * 100) / 100 . " Кб";
                             } else {
-                                $file_size = $file_size . " б";
+                                $file_size .= " б";
                             }
                             return $file_size;
                         }
@@ -69,7 +71,9 @@ if (Registry::get('logged')) {
                         //Обновляем кол-во док. у юзера
                         $db->query("UPDATE `users` SET user_doc_num = user_doc_num+1 WHERE user_id = '{$user_id}'");
 
-                        if (!$file_name) $file_name = 'Без названия.' . $res_type;
+                        if (!$file_name) {
+                            $file_name = 'Без названия.' . $res_type;
+                        }
 
                         $strLn = strlen($file_name);
                         if ($strLn > 50) {
@@ -86,8 +90,9 @@ if (Registry::get('logged')) {
 
                     }
 
-                } else
+                } else {
                     echo 1;
+                }
 
             }
             break;
@@ -123,8 +128,9 @@ if (Registry::get('logged')) {
             $did = intFilter('did');
             $name = requestFilter('name', 25000, true);
             $strLn = strlen($name);
-            if ($strLn > 50)
+            if ($strLn > 50) {
                 $name = substr($name, 0, 50);
+            }
 
             $row = $db->super_query("SELECT duser_id FROM `doc` WHERE did = '{$did}'");
 
@@ -168,8 +174,9 @@ if (Registry::get('logged')) {
 
                 }
 
-            } else
+            } else {
                 header("Location: /");
+            }
 
             break;
 
@@ -180,12 +187,15 @@ if (Registry::get('logged')) {
 
             $sql_limit = 20;
             $page_cnt = intFilter('page_cnt');
-            if ($page_cnt > 0)
+            if ($page_cnt > 0) {
                 $page_cnt = $page_cnt * $sql_limit;
-            else $page_cnt = 0;
+            } else {
+                $page_cnt = 0;
+            }
 
-            if ($page_cnt)
+            if ($page_cnt) {
                 NoAjaxQuery();
+            }
 
             $sql_ = $db->super_query("SELECT did, dname, ddate, ddownload_name, dsize FROM `doc` WHERE duser_id = '{$user_id}' ORDER by `ddate` DESC LIMIT {$page_cnt}, {$sql_limit}", true);
 
@@ -232,10 +242,11 @@ if (Registry::get('logged')) {
 
             $sql_limit = 20;
             $page_cnt = intFilter('page_cnt');
-            if ($page_cnt > 0)
-                $page_cnt = $page_cnt * $sql_limit;
-            else
+            if ($page_cnt > 0) {
+                $page_cnt *= $sql_limit;
+            } else {
                 $page_cnt = 0;
+            }
 
             $sql_ = $db->super_query("SELECT did, dname, ddate, ddownload_name FROM `doc` WHERE duser_id = '{$user_id}' ORDER by `ddate` DESC LIMIT {$page_cnt}, {$sql_limit}", true);
 
@@ -258,7 +269,7 @@ if (Registry::get('logged')) {
                 $tpl->compile('content');
             }
 
-            if (!$page_cnt and $rowUser['user_doc_num'] > 20) {
+            if (!$page_cnt && $rowUser['user_doc_num'] > 20) {
                 $tpl->load_template('doc/bottom.tpl');
                 $tpl->compile('content');
             }
@@ -270,5 +281,6 @@ if (Registry::get('logged')) {
     $tpl->clear();
     $db->free();
 
-} else
+} else {
     echo 'no_log';
+}

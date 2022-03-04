@@ -38,7 +38,7 @@ if (Registry::get('logged')) {
 
                     $fp = fopen(stripslashes($lnk), "rb");
                     $fd = fopen(ROOT_DIR . '/uploads/audio_tmp/' . $ranTmp . '.mp3', "w");
-                    if ($fp and $fd) {
+                    if ($fp && $fd) {
                         $st = fread($fp, 4096);
                         fwrite($fd, $st);
                     }
@@ -65,10 +65,12 @@ if (Registry::get('logged')) {
 
                     Filesystem::delete(ROOT_DIR . '/uploads/audio_tmp/' . $ranTmp . '.mp3');
                     mozg_mass_clear_cache_file('user_' . $user_id . '/audios_profile|user_' . $user_id . '/profile_' . $user_id);
-                } else
+                } else {
                     echo 2;
-            } else
+                }
+            } else {
                 echo 1;
+            }
 
             break;
 
@@ -81,10 +83,12 @@ if (Registry::get('logged')) {
 
             $check = $db->super_query("SELECT auser_id FROM `audio` WHERE aid = '" . $aid . "'");
 
-            if (empty($artist))
+            if (empty($artist)) {
                 $artist = 'Неизвестный исполнитель';
-            if (empty($name))
+            }
+            if (empty($name)) {
                 $name = 'Без названия';
+            }
 
             if ($check['auser_id'] == $user_id) {
                 $db->query("UPDATE `audio` SET artist = '{$artist}', name = '{$name}' WHERE aid = '" . $aid . "'");
@@ -106,8 +110,9 @@ if (Registry::get('logged')) {
                 $expMusO = explode('/', $checkMusSite[1]);
                 $checkMusSite2 = explode('https://', $config['home_url']);
                 $expMusO2 = explode('/', $checkMusSite2[1]);
-                if ($expMusO[0] == $expMusO2[0])
+                if ($expMusO[0] == $expMusO2[0]) {
                     Filesystem::delete(ROOT_DIR . '/uploads/audio/' . $user_id . '/' . $audioName);
+                }
 
                 $db->query("DELETE FROM `audio` WHERE aid = '" . $aid . "'");
                 $db->query("UPDATE `users` SET user_audio = user_audio-1 WHERE user_id = '" . $user_id . "'");
@@ -123,8 +128,9 @@ if (Registry::get('logged')) {
 
             $check = $db->super_query("SELECT url, artist, name FROM `audio` WHERE aid = '" . $aid . "'");
 
-            if (!$check)
+            if (!$check) {
                 $check = $db->super_query("SELECT url, artist, name FROM `communities_audio` WHERE aid = '" . $aid . "'");
+            }
 
             if ($check) {
                 $db->query("INSERT INTO `audio` SET auser_id = '" . $user_id . "', url = '" . $check['url'] . "', artist = '" . $check['artist'] . "', name = '" . $check['name'] . "',  adate = '" . $server_time . "'");
@@ -190,8 +196,9 @@ if (Registry::get('logged')) {
                 $tpl->compile('content');
 
                 AjaxTpl($tpl);
-            } else
+            } else {
                 echo $lang['audio_box_none'];
+            }
 
             break;
 

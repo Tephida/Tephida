@@ -22,41 +22,53 @@ if (Registry::get('logged')) {
         //################### Отмечаем человека на фото ###################//
         case "mark":
             $i_left = intFilter('i_left');
-            if ($i_left < 0) $i_left = 0;
+            if ($i_left < 0) {
+                $i_left = 0;
+            }
             $i_top = intFilter('i_top');
-            if ($i_top < 0) $i_top = 0;
+            if ($i_top < 0) {
+                $i_top = 0;
+            }
             $i_width = intFilter('i_width');
-            if ($i_width < 0) $i_width = 0;
+            if ($i_width < 0) {
+                $i_width = 0;
+            }
             $i_height = intFilter('i_height');
-            if ($i_height < 0) $i_height = 0;
+            if ($i_height < 0) {
+                $i_height = 0;
+            }
             $photo_id = intFilter('photo_id');
             $muser_id = intFilter('user_id');
             $mphoto_name = strip_data(requestFilter('user_name', 25000, true));
             $msettings_pos = $i_left . ", " . $i_top . ", " . $i_width . ", " . $i_height;
-            if ($user_id == $muser_id) $approve = 1;
-            else $approve = 0;
+            if ($user_id == $muser_id) {
+                $approve = 1;
+            } else {
+                $approve = 0;
+            }
 
-            if ($mphoto_name and $muser_id == 0) {
+            if ($mphoto_name && $muser_id == 0) {
                 $row_no = $db->super_query("SELECT COUNT(*) AS cnt FROM `photos_mark` WHERE mphoto_id = '" . $photo_id . "' AND mphoto_name = '" . $mphoto_name . "'");
                 $row = null;
-            }
-            else {
+            } else {
                 $row = $db->super_query("SELECT COUNT(*) AS cnt FROM `photos_mark` WHERE muser_id = '" . $muser_id . "' AND mphoto_id = '" . $photo_id . "'");
                 $row_no = null;
             }
 
-            if ($row['cnt'])
+            if ($row['cnt']) {
                 $db->query("UPDATE `photos_mark` SET msettings_pos = '" . $msettings_pos . "' WHERE muser_id = '" . $muser_id . "' AND mphoto_id = '" . $photo_id . "'");
-            elseif ($row_no['cnt'])
+            } elseif ($row_no['cnt']) {
                 $db->query("UPDATE `photos_mark` SET msettings_pos = '" . $msettings_pos . "' WHERE mphoto_id = '" . $photo_id . "' AND mphoto_name = '" . $mphoto_name . "'");
-            else
+            } else
                 if (requestFilter('user_ok') == 'yes') {
                     $db->query("INSERT INTO `photos_mark` SET muser_id = '" . $muser_id . "', mphoto_id = '" . $photo_id . "', mdate = '" . $server_time . "', msettings_pos = '" . $msettings_pos . "', mapprove = '" . $approve . "', mmark_user_id = '" . $user_id . "'");
 
-                    if ($user_id != $muser_id)
+                    if ($user_id != $muser_id) {
                         $db->query("UPDATE `users` SET user_new_mark_photos = user_new_mark_photos+1 WHERE user_id = '" . $muser_id . "'");
-                } else
-                    $db->query("INSERT INTO `photos_mark` SET muser_id = '" . rand(0, 100000) . "', mphoto_id = '" . $photo_id . "', mdate = '" . $server_time . "', msettings_pos = '" . $msettings_pos . "', mphoto_name = '" . $mphoto_name . "', mmark_user_id = '" . $user_id . "', mapprove = 1");
+                    }
+                } else {
+                    $db->query("INSERT INTO `photos_mark` SET muser_id = '" . random_int(0, 100000) . "', mphoto_id = '" . $photo_id . "', mdate = '" . $server_time . "', msettings_pos = '" . $msettings_pos . "', mphoto_name = '" . $mphoto_name . "', mmark_user_id = '" . $user_id . "', mapprove = 1");
+                }
 
             mozg_clear_cache_file('photos_mark/p' . $photo_id);
             break;
@@ -68,19 +80,21 @@ if (Registry::get('logged')) {
             $mphoto_name = strip_data(requestFilter('user_name', 25000, true));
             $row = $db->super_query("SELECT user_id FROM `photos` WHERE id = '" . $photo_id . "'");
 
-            if ($mphoto_name and $muser_id == 0)
+            if ($mphoto_name && $muser_id == 0) {
                 $row_mark = $db->super_query("SELECT mmark_user_id FROM `photos_mark` WHERE mphoto_id = '" . $photo_id . "' AND mphoto_name = '" . $mphoto_name . "'");
-            else
+            } else {
                 $row_mark = $db->super_query("SELECT mmark_user_id, mapprove FROM `photos_mark` WHERE mphoto_id = '" . $photo_id . "' AND muser_id = '" . $muser_id . "'");
+            }
 
             if ($row['user_id'] == $user_id or $user_id == $muser_id or $user_id == $row_mark['mmark_user_id']) {
-                if ($mphoto_name and $muser_id == 0)
+                if ($mphoto_name && $muser_id == 0) {
                     $db->query("DELETE FROM `photos_mark` WHERE mphoto_id = '" . $photo_id . "' AND mphoto_name = '" . $mphoto_name . "'");
-                else {
+                } else {
                     $db->query("DELETE FROM `photos_mark` WHERE mphoto_id = '" . $photo_id . "' AND muser_id = '" . $muser_id . "' AND mphoto_name = ''");
 
-                    if (!$row_mark['mapprove'])
+                    if (!$row_mark['mapprove']) {
                         $db->query("UPDATE `users` SET user_new_mark_photos = user_new_mark_photos-1 WHERE user_id = '" . $muser_id . "'");
+                    }
                 }
                 mozg_clear_cache_file('photos_mark/p' . $photo_id);
             }
@@ -90,7 +104,7 @@ if (Registry::get('logged')) {
         case "mark_ok":
             $photo_id = intFilter('photo_id');
             $row = $db->super_query("SELECT mapprove FROM `photos_mark` WHERE mphoto_id = '" . $photo_id . "' AND muser_id = '" . $user_id . "'");
-            if ($row and !$row['mapprove']) {
+            if ($row && !$row['mapprove']) {
                 $db->query("UPDATE `photos_mark` SET mapprove = '1' WHERE mphoto_id = '" . $photo_id . "' AND muser_id = '" . $user_id . "'");
                 $db->query("UPDATE `users` SET user_new_mark_photos = user_new_mark_photos-1 WHERE user_id = '" . $user_id . "'");
                 mozg_clear_cache_file('photos_mark/p' . $photo_id);
@@ -101,9 +115,11 @@ if (Registry::get('logged')) {
         case "load_friends":
             $photo_id = intFilter('photo_id');
             $all_limit = 110;
-            if (requestFilter('page') == 2)
+            if (requestFilter('page') == 2) {
                 $limit = $all_limit . ", " . ($all_limit * 2);
-            else $limit = "0, " . $all_limit;
+            } else {
+                $limit = "0, " . $all_limit;
+            }
 
             $sql_ = $db->super_query("SELECT tb1.friend_id, tb2.user_search_pref FROM `friends` tb1, `users` tb2 WHERE tb1.user_id = '" . $user_id . "' AND tb1.friend_id = tb2.user_id AND tb1.subscriptions = 0 ORDER by `user_search_pref` ASC LIMIT " . $limit, true);
 
@@ -117,9 +133,9 @@ if (Registry::get('logged')) {
                     $cnt++;
                 }
 
-                if ($cnt == $all_limit and !isset($_POST['page']))
+                if ($cnt == $all_limit && !isset($_POST['page'])) {
                     $added_script = "setTimeout('Distinguish.FriendPage(2, " . $photo_id . "')', 2500)";
-                else {
+                } else {
                     $added_script = null;
                 }
 
@@ -143,5 +159,6 @@ HTML;
     }
     $tpl->clear();
     $db->free();
-} else
+} else {
     echo 'no_log';
+}

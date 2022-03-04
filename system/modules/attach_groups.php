@@ -8,6 +8,7 @@
  */
 
 use FluffyDollop\Support\Registry;
+use FluffyDollop\Support\Thumbnail;
 
 NoAjaxQuery();
 
@@ -27,7 +28,7 @@ if (Registry::get('logged')) {
         //Получаем данные о фотографии
         $image_tmp = $_FILES['uploadfile']['tmp_name'];
         $image_name = to_translit($_FILES['uploadfile']['name']); // оригинальное название для определения формата
-        $image_rename = substr(md5($server_time + rand(1, 100000)), 0, 20); // имя фотографии
+        $image_rename = substr(md5($server_time + random_int(1, 100000)), 0, 20); // имя фотографии
         $image_size = $_FILES['uploadfile']['size']; // размер файла
         $type = end(explode(".", $image_name)); // формат файла
 
@@ -56,13 +57,17 @@ if (Registry::get('logged')) {
                     //Результат для ответа
                     echo $image_rename . $res_type;
 
-                } else
+                } else {
                     echo 'big_size';
-            } else
+                }
+            } else {
                 echo 'big_size';
-        } else
+            }
+        } else {
             echo 'bad_format';
+        }
     }
-} else
+} else {
     echo 'no_log';
+}
 

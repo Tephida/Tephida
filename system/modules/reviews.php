@@ -25,11 +25,9 @@ switch ($act) {
 
         $text = requestFilter('text');
 
-        if (!empty($text) and Registry::get('logged')) {
-
+        if (!empty($text) && Registry::get('logged')) {
             //Вставляем в базу
             $db->query("INSERT INTO `reviews` SET user_id = '{$user_info['user_id']}', text = '{$text}', date = '{$server_time}', approve = 1");
-
         }
         break;
 
@@ -42,10 +40,11 @@ switch ($act) {
 
         $limit_num = 25;
         $page_cnt = intFilter('page_cnt');
-        if ($page_cnt > 0)
-            $page_cnt = $page_cnt * $limit_num;
-        else
+        if ($page_cnt > 0) {
+            $page_cnt *= $limit_num;
+        } else {
             $page_cnt = 0;
+        }
 
         //Если вызваны пред.
         if ($page_cnt) {
@@ -78,13 +77,12 @@ switch ($act) {
                 $tpl->set('{text}', stripslashes($row['text']));
                 $date_str = megaDate($row['date']);
                 $tpl->set('{date}', $date_str);
-                if ($row['user_photo'])
+                if ($row['user_photo']) {
                     $tpl->set('{ava}', '/uploads/users/' . $row['user_id'] . '/50_' . $row['user_photo']);
-                else
+                } else {
                     $tpl->set('{ava}', '{theme}/images/no_ava_50.png');
-
+                }
                 $tpl->compile('content');
-
             }
             $num = count($sql_);
         } else {
