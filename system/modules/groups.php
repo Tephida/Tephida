@@ -633,7 +633,7 @@ if (Registry::get('logged')) {
                         } else {
 
                             $cntCacheNews = mozg_cache("user_{$row_owner2['public_id']}/new_news");
-                            mozg_create_cache("user_{$row_owner2['public_id']}/new_news", ($cntCacheNews + 1));
+                            mozg_create_cache("user_{$row_owner2['public_id']}/new_news", ((int)$cntCacheNews + 1));
                         }
                     }
                 }

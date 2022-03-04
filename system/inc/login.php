@@ -8,7 +8,7 @@
  */
 
 use Mozg\classes\Registry;
-use Mozg\classes\Templates;
+use Mozg\classes\TplCp;
 
 header('Content-type: text/html; charset=utf-8');
 
@@ -28,12 +28,23 @@ if (isset($_GET['act']) && $_GET['act'] == 'logout') {
     set_cookie("password", "", 0);
     set_cookie("hid", "", 0);
     unset($_SESSION['user_id']);
-    @session_destroy();
-    @session_unset();
-    $logged = false;
-    Registry::set('logged', false);
-    $user_info = array();
-    header("Location: {$admin_link}");
+//    session_destroy();
+//    session_unset();
+//    $logged = false;
+//    Registry::set('logged', false);
+//    $user_info = array();
+
+//    $tpl = new TplCp(ADMIN_DIR . '/tpl/');
+//    $tpl->load_template('login.tpl');
+//    $tpl->set('{error_log}', '');
+//    $tpl->set('{admin_link}', $admin_link);
+//    $tpl->compile('content');
+//    $tpl->render();
+
+//    header("Location: {$admin_link}");
+//    echo '1';
+
+    exit();
 }
 
 //Если есть данные сесии
@@ -44,8 +55,16 @@ if (isset($_SESSION['user_id']) > 0) {
     $user_info = $db->super_query("SELECT user_id, user_email, user_group, user_password FROM `users` WHERE user_id = '" . $logged_user_id . "'");
 
     //Если есть данные о сесии, но нет инфы о юзере, то выкидываем его
-    if (!$user_info['user_id'])
-        header("Location: {$admin_link}?act=logout");
+    if (!$user_info['user_id']) {
+
+//        $tpl = new TplCp(ADMIN_DIR . '/tpl/');
+//        $tpl->load_template('login.tpl');
+//        $tpl->set('{error_log}', '');
+//        $tpl->compile('content');
+//        $tpl->render();
+
+//        header("Location: {$admin_link}?act=logout");
+    }
 
 //Если есть данные о COOKIE то проверяем
 } elseif (isset($_COOKIE['user_id']) > 0 && $_COOKIE['password'] && $_COOKIE['hid']) {
@@ -53,7 +72,7 @@ if (isset($_SESSION['user_id']) > 0) {
     $user_info = $db->super_query("SELECT user_id, user_email, user_group, user_password, user_hid FROM `users` WHERE user_id = '" . $cookie_user_id . "' AND user_group = '1'");
 
     //Если пароль и HID совпадает то пропускаем
-    if ($user_info['user_password'] == $_COOKIE['password'] && $user_info['user_hid'] == $_COOKIE['password'] . md5(md5($_IP))) {
+    if (($user_info['user_password'] == $_COOKIE['password']) && ($user_info['user_hid'] == $_COOKIE['password'] . md5(md5($_IP)))) {
         $_SESSION['user_id'] = $user_info['user_id'];
 
         //Вставляем лог в бд
@@ -80,63 +99,55 @@ if (isset($_POST['log_in']) && !isset($_SESSION['user_id'])) {
     $password = stripslashes($_POST['pass']);
 
     //Проверяем правильность e-mail
-    if (!preg_match('/^(("[\w-\s]+")|([\w-]+(?:\.[\w-]+)*)|("[\w-\s]+")([\w-]+(?:\.[\w-]+)*))(@((?:[\w-]+\.)*\w[\w-]{0,66})\.([a-z]{2,6}(?:\.[a-z]{2})?)$)|(@\[?((25[0-5]\.|2[0-4][0-9]\.|1[0-9]{2}\.|[0-9]{1,2}\.))((25[0-5]|2[0-4][0-9]|1[0-9]{2}|[0-9]{1,2})\.){2}(25[0-5]|2[0-4][0-9]|1[0-9]{2}|[0-9]{1,2})\]?$)/i', $email)) {
+    if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
         $error_log = 'Доступ отключён!';
-    } else {
+    } else if (strlen($password) >= 0 && strlen($email) > 0) {
+        $md5_pass = md5(md5($password));
+        $check_user = $db->super_query("SELECT user_id FROM `users` WHERE user_email = '" . $email . "' AND user_password = '" . $md5_pass . "' AND user_group = 1");
 
-        //Считаем кол-во символов в пароле и email
-        if (strlen($password) >= 0 and strlen($email) > 0) {
-            $md5_pass = md5(md5($password));
-            $check_user = $db->super_query("SELECT user_id FROM `users` WHERE user_email = '" . $email . "' AND user_password = '" . $md5_pass . "' AND user_group = 1");
+        //Если есть юзер то пропускаем
+        if ($check_user) {
+            //Hash ID
+            $hid = $md5_pass . md5(md5($_IP));
 
-            //Если есть юзер то пропускаем
-            if ($check_user) {
-                //Hash ID
-                $hid = $md5_pass . md5(md5($_IP));
+            //Устанавливаем в сессию ИД юзера
+            $_SESSION['user_id'] = (int)$check_user['user_id'];
 
-                //Устанавливаем в сессию ИД юзера
-                $_SESSION['user_id'] = (int)$check_user['user_id'];
+            //Обновляем хэш входа
+            $db->query("UPDATE `users` SET user_hid = '" . $hid . "' WHERE user_id = '" . $check_user['user_id'] . "'");
 
-                //Обновляем хэш входа
-                $db->query("UPDATE `users` SET user_hid = '" . $hid . "' WHERE user_id = '" . $check_user['user_id'] . "'");
+            //Записываем COOKIE
+            set_cookie("user_id", (int)$check_user['user_id'], 365);
+            set_cookie("password", $md5_pass, 365);
+            set_cookie("hid", $hid, 365);
 
-                //Записываем COOKIE
-                set_cookie("user_id", (int)$check_user['user_id'], 365);
-                set_cookie("password", $md5_pass, 365);
-                set_cookie("hid", $hid, 365);
-
-                header("Location: {$admin_link}");
-            } else {
-                $error_log = 'Доступ отключён!';
-            }
+            header("Location: {$admin_link}");
         } else {
             $error_log = 'Доступ отключён!';
         }
+    } else {
+        $error_log = 'Доступ отключён!';
     }
+} else {
+    $error_log = '';
 }
 
 if (!$logged) {
-    echoheader();
-    echohtmlstart('Вход в панель управления');
-    echo <<<HTML
-<form method="POST" action="">
- <div class="fllogall">E-mail:</div><input type="text" name="email" class="inpu" />&nbsp; <font color="red">{$error_log}</font>
- <div class="mgcler"></div>
- <div class="fllogall">Пароль:</div><input type="password" name="pass" class="inpu" />
- <div class="mgcler"></div>
- <div class="fllogall">&nbsp;</div><input type="submit" class="inp fl_l" name="log_in" value="Войти" style="margin-top:5px" />
-</form>
-<div class="clear"></div>
-HTML;
-    echohtmlend();
+    $tpl = new TplCp(ADMIN_DIR . '/tpl/');
+    $tpl->load_template('login.tpl');
+    $tpl->set('{error_log}', $error_log ?? '');
+    $tpl->set('{admin_link}', $admin_link);
+    $tpl->compile('content');
+    $tpl->render();
 } else if ($user_info['user_group'] == 1) {
     include ADMIN_DIR . '/mod.php';
 } else {
     $config = settings_load();
 
-    $tpl = new \Mozg\classes\TplCp(ADMIN_DIR . '/tpl/');
+    $tpl = new TplCp(ADMIN_DIR . '/tpl/');
     $tpl->load_template('info/info_red.tpl');
     $tpl->set('{error}', 'У вас недостаточно прав для просмотра этого раздела. <a href="' . $admin_link . '?act=logout">Выйти</a>');
+    $tpl->set('{admin_link}', $admin_link);
     $tpl->set('{title}', 'Информация');
     $tpl->compile('content');
     $tpl->render();

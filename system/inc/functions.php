@@ -282,48 +282,36 @@ function compileAdmin($tpl): int
 {
     $tpl->load_template('main.tpl');
     $config = settings_load();
+    $admin_index = $config['admin_index'];
     $admin_link = $config['home_url'] . $config['admin_index'];
     if (Registry::get('logged')) {
-        $stat_lnk = "<a href=\"{$admin_link}?mod=stats\" onclick=\"Page.Go(this.href); return false;\" style=\"margin-right:10px\">статистика</a>";
-        $exit_lnk = "<a href=\"{$admin_link}?act=logout\" onclick=\"Page.Go(this.href); return false;\">выйти</a>";
+        $stat_lnk = "<a href=\"{$admin_index}?mod=stats\" onclick=\"Page.Go(this.href); return false;\" style=\"margin-right:10px\">статистика</a>";
+        $exit_lnk = "<a href=\"#\" onclick=\"Logged.log_out()\">выйти</a>";
     } else {
         $stat_lnk = '';
         $exit_lnk = '';
     }
 
-    $box_width = 600;
-
-    $act = requestFilter('mod');
-    if ($act == 'webstats' || $act == 'users')
-        $box_width = 800;
+    $box_width = 800;
 
     $tpl->set('{admin_link}', $admin_link);
+    $tpl->set('{admin_index}', $admin_index);
     $tpl->set('{box_width}', $box_width);
     $tpl->set('{stat_lnk}', $stat_lnk);
     $tpl->set('{exit_lnk}', $exit_lnk);
     $tpl->set('{content}', $tpl->result['content']);
     $tpl->compile('main');
     if (requestFilter('ajax') == 'yes') {
-
         $metatags['title'] = $metatags['title'] ?? 'Панель управления';
-
         $result_ajax = array(
             'title' => $metatags['title'],
             'content' => $tpl->result['info'] . $tpl->result['content']
         );
-
-//        $result_ajax = <<<HTML
-//<script type="text/javascript">
-//document.title = '{$metatags['title']}';
-//</script>
-//{$tpl->result['info']}{$tpl->result['content']}
-//HTML;
-        _e_json($result_ajax);
-//        echo $result_ajax;
-        return 1;
-    } else {
-        return print($tpl->result['main']);
+        echo _e_json($result_ajax);
+        return true;
     }
+    echo $tpl->result['main'];
+    return true;
 }
 
 function initAdminTpl(): Templates
@@ -331,6 +319,5 @@ function initAdminTpl(): Templates
     $tpl = new Templates();
     $tpl->dir = ADMIN_DIR . '/tpl/';
     define('TEMPLATE_DIR', $tpl->dir);
-//    $_DOCUMENT_DATE = false;
     return $tpl;
 }

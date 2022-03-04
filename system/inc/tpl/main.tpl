@@ -6,6 +6,18 @@
     <script type="text/javascript" src="/templates/Default/js/jquery.lib.js"></script>
     <script type="text/javascript" src="/templates/Default/js/Russian/lang.js"></script>
     <script type="text/javascript" src="/templates/Default/js/main.js"></script>
+    <script>
+        var Logged = {
+            log_out: function () {
+                $.post('/{admin_index}?act=logout', function () {
+                    $.post('/{admin_index}', {ajax: 'yes'}, function (data) {
+                        $('#page').html(data.content).css('min-height', '0px');
+                    });
+
+                });
+            },
+        }
+    </script>
 </head>
 <body>
 <style media="all">

@@ -29,7 +29,7 @@ class TplCp extends Templates
     /**
      * @throws \ErrorException|JsonException
      */
-    final public function render(): int
+    final public function render(): false|string
     {
         $this->load_template('main.tpl');
         $config = settings_load();
@@ -49,27 +49,32 @@ class TplCp extends Templates
         $this->set('{content}', $this->result['content']);
         $this->compile('main');
         if (requestFilter('ajax') === 'yes') {
-            return $this->compileAjax();
+            $this->compileAjax();
+            return true;
         }
-        return $this->compileNoAjax();
+        $this->compileNoAjax();
+        return true;
     }
 
     /**
      * @throws JsonException
      */
-    private function compileAjax(): int
+    private function compileAjax(): bool
     {
         $title = $this->meta_tags['title'];
         $result_ajax = array(
             'title' => $title,
             'content' => $this->result['info'] . $this->result['content']
         );
-        return print(_e_json($result_ajax));
+        _e_json($result_ajax);
+        return true;
     }
 
     private function compileNoAjax(): string
     {
-        return print($this->result['main']);
+        $response = $this->result['main'];
+        echo $response;
+        return true;
     }
 
 }
