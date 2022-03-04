@@ -7,9 +7,9 @@
  *
  */
 
-use Mozg\classes\Gzip;
-use Mozg\classes\Registry;
-use Mozg\classes\Thumbnail;
+use FluffyDollop\Support\Gzip;
+use FluffyDollop\Support\Registry;
+use FluffyDollop\Support\Thumbnail;
 
 if (Registry::get('logged')) {
     $act = requestFilter('act');

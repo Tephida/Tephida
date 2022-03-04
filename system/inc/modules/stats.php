@@ -7,7 +7,7 @@
  *
  */
 
-use Mozg\classes\Filesystem;
+use FluffyDollop\Support\Filesystem;
 
 //echoheader();
 //echohtmlstart('Общая статистика сайта');

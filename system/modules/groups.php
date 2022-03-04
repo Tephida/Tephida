@@ -7,9 +7,9 @@
  *
  */
 
-use Mozg\classes\AntiSpam;
-use Mozg\classes\Filesystem;
-use Mozg\classes\Registry;
+use FluffyDollop\Security\AntiSpam;
+use FluffyDollop\Support\Filesystem;
+use FluffyDollop\Support\Registry;
 
 NoAjaxQuery();
 

@@ -7,7 +7,7 @@
  *
  */
 
-use Mozg\classes\Filesystem;
+use FluffyDollop\Support\Filesystem;
 
 //Удаление жалобы
 if ($_GET['action'] == 'del') {

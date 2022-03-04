@@ -9,10 +9,10 @@
 
 declare(strict_types=1);
 
-use Mozg\classes\AntiSpam;
-use Mozg\classes\Filesystem;
-use Mozg\classes\Registry;
-use Mozg\classes\Thumbnail;
+use FluffyDollop\Security\AntiSpam;
+use FluffyDollop\Support\Filesystem;
+use FluffyDollop\Support\Registry;
+use FluffyDollop\Support\Thumbnail;
 use Mozg\classes\TpLSite;
 use Mozg\classes\WallProfile;
 use Mozg\classes\WallPublic;

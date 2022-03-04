@@ -10,6 +10,7 @@ declare(strict_types=1);
 namespace Mozg\classes;
 
 use ErrorException;
+use FluffyDollop\Support\Registry;
 
 class Templates
 {

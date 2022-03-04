@@ -7,7 +7,7 @@
  *
  */
 
-use Mozg\classes\Registry;
+use FluffyDollop\Support\Registry;
 use Mozg\classes\TpLSite;
 
 $_IP = $_SERVER['REMOTE_ADDR'];

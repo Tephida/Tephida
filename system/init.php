@@ -7,8 +7,8 @@
  *
  */
 
-use Mozg\classes\Registry;
-use Mozg\classes\Router;
+use FluffyDollop\Support\Registry;
+use FluffyDollop\Support\Router;
 use Mozg\classes\Templates;
 
 try {

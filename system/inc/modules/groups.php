@@ -7,7 +7,7 @@
  *
  */
 
-use Mozg\classes\Filesystem;
+use FluffyDollop\Support\Filesystem;
 
 //Редактирование
 if ($_GET['act'] == 'edit') {

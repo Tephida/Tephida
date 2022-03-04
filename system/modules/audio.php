@@ -7,10 +7,10 @@
  *
  */
 
-use Mozg\classes\Filesystem;
-use Mozg\classes\Id3v2;
-use Mozg\classes\Registry;
-use Mozg\classes\Status;
+use FluffyDollop\Support\Filesystem;
+use FluffyDollop\Support\Id3v2;
+use FluffyDollop\Support\Registry;
+use FluffyDollop\Support\Status;
 
 NoAjaxQuery();
 

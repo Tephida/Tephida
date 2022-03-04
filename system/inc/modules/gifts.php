@@ -7,7 +7,7 @@
  *
  */
 
-use Mozg\classes\Filesystem;
+use FluffyDollop\Support\Filesystem;
 
 //Если нажали "Добавить"
 if (isset($_POST['save'])) {

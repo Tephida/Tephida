@@ -7,9 +7,9 @@
  *
  */
 
-use Mozg\classes\Filesystem;
-use Mozg\classes\Registry;
-use Mozg\classes\Thumbnail;
+use FluffyDollop\Support\Filesystem;
+use FluffyDollop\Support\Registry;
+use FluffyDollop\Support\Thumbnail;
 
 NoAjaxQuery();
 

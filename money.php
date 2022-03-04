@@ -20,7 +20,7 @@ define('ENGINE_DIR', ROOT_DIR . '/system');
 header('Content-type: text/html; charset=utf-8');
 
 include_once ENGINE_DIR . '/data/config.php';
-include_once ENGINE_DIR . '/classes/mysql.php';
+//include_once ENGINE_DIR . '/classes/mysql.php';
 include_once ENGINE_DIR . '/data/db.php';
 
 //Кодовое слово

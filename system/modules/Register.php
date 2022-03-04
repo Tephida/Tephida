@@ -9,12 +9,12 @@
 
 namespace Mozg\modules;
 
-use Mozg\classes\Filesystem;
+use FluffyDollop\Support\Filesystem;
 use Mozg\classes\Module;
-use Mozg\classes\Registry;
-use Mozg\classes\Status;
+use FluffyDollop\Support\Registry;
+use FluffyDollop\Support\Status;
 use Mozg\classes\TpLSite;
-use Mozg\classes\ViiMail;
+use FluffyDollop\Support\ViiMail;
 
 class Register extends Module
 {

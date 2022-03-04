@@ -8,73 +8,11 @@
  */
 
 use JetBrains\PhpStorm\Pure;
-use Mozg\classes\Filesystem;
-use Mozg\classes\Gzip;
-use Mozg\classes\Registry;
+use FluffyDollop\Support\Filesystem;
+use FluffyDollop\Support\Gzip;
+use FluffyDollop\Support\Registry;
 use Mozg\classes\Templates;
 use Mozg\classes\TpLSite;
-
-/**
- * @param string $source
- * @param int $substr_num
- * @param bool $strip_tags
- * @return string
- */
-function textFilter(string $source, int $substr_num = 25000, bool $strip_tags = false): string
-{
-    $source = trim($source);
-    $source = stripslashes($source);
-    if (empty($source)) {
-        return '';
-    } else {
-        return htmlspecialchars($source, ENT_QUOTES, 'UTF-8');
-    }
-
-}
-
-/**
- * @param string $source
- * @param int $default
- * @return int
- */
-function intFilter(string $source, int $default = 0): int
-{
-    if (isset($_POST[$source])) {
-        $source = $_POST[$source];
-    } elseif (isset($_GET[$source])) {
-        $source = $_GET[$source];
-    } else {
-        return $default;
-    }
-    return (int)$source;
-}
-
-/**
- * @param string $source
- * @param int $substr_num
- * @param bool $strip_tags
- * @return string|array
- */
-function requestFilter(string $source, int $substr_num = 25000, bool $strip_tags = false): string|array
-{
-    if (empty($source)) {
-        return '';
-    }
-    if (!empty($_POST[$source])) {
-        if (is_array($_POST[$source])) {
-            return $_POST[$source];
-        }
-        $source = $_POST[$source];
-    } elseif (!empty($_GET[$source])) {
-        if (is_array($_GET[$source])) {
-            return $_POST[$source];
-        }
-        $source = $_GET[$source];
-    } else {
-        return '';
-    }
-    return textFilter($source, $substr_num, $strip_tags);
-}
 
 function informationText($array): string
 {
@@ -94,90 +32,6 @@ function informationText($array): string
         4 => $row['user_search_pref'] . ' обновил(а) фотографию беседы',
         5 => $row['user_search_pref'] . ' исключил(а) участника "' . $row2['user_search_pref'] . '"',);
     return $text[$array['type']];
-}
-
-/**
- * @param string $value
- * @param bool $lower
- * @param bool $part
- * @return array|string|null
- */
-function to_translit(string $value, bool $lower = true, bool $part = true): array|string|null
-{
-        $lang_translit = array(
-            'а' => 'a', 'б' => 'b', 'в' => 'v',
-            'г' => 'g', 'д' => 'd', 'е' => 'e',
-            'ё' => 'e', 'ж' => 'zh', 'з' => 'z',
-            'и' => 'i', 'й' => 'y', 'к' => 'k',
-            'л' => 'l', 'м' => 'm', 'н' => 'n',
-            'о' => 'o', 'п' => 'p', 'р' => 'r',
-            'с' => 's', 'т' => 't', 'у' => 'u',
-            'ф' => 'f', 'х' => 'h', 'ц' => 'c',
-            'ч' => 'ch', 'ш' => 'sh', 'щ' => 'sch',
-            'ь' => '', 'ы' => 'y', 'ъ' => '',
-            'э' => 'e', 'ю' => 'yu', 'я' => 'ya',
-            "ї" => "yi", "є" => "ye",
-
-            'А' => 'A', 'Б' => 'B', 'В' => 'V',
-            'Г' => 'G', 'Д' => 'D', 'Е' => 'E',
-            'Ё' => 'E', 'Ж' => 'Zh', 'З' => 'Z',
-            'И' => 'I', 'Й' => 'Y', 'К' => 'K',
-            'Л' => 'L', 'М' => 'M', 'Н' => 'N',
-            'О' => 'O', 'П' => 'P', 'Р' => 'R',
-            'С' => 'S', 'Т' => 'T', 'У' => 'U',
-            'Ф' => 'F', 'Х' => 'H', 'Ц' => 'C',
-            'Ч' => 'Ch', 'Ш' => 'Sh', 'Щ' => 'Sch',
-            'Ь' => '', 'Ы' => 'Y', 'Ъ' => '',
-            'Э' => 'E', 'Ю' => 'Yu', 'Я' => 'Ya',
-            "Ї" => "yi", "Є" => "ye",
-        );
-    $value = str_replace(".php", "", $value);
-    $value = trim(strip_tags($value));
-    $value = preg_replace("/\s+/ms", "-", $value);
-    $value = strtr($value, $lang_translit);
-    if ($part)
-        $value = preg_replace("/[^a-z0-9\_\-.]+/mi", "", $value);
-    else
-        $value = preg_replace("/[^a-z0-9\_\-]+/mi", "", $value);
-    $value = preg_replace('#[\-]+#i', '-', $value);
-    if ($lower)
-        $value = strtolower($value);
-    if (strlen($value) > 200) {
-        $value = substr($value, 0, 200);
-        if (($temp_max = strrpos($value, '-'))) $value = substr($value, 0, $temp_max);
-    }
-    return $value;
-}
-
-/**
- * @return void
- */
-//function check_xss() {
-//    $url = html_entity_decode(urldecode($_SERVER['QUERY_STRING']));
-//    if ($url) {
-//        if ((str_contains($url, '<')) || (str_contains($url, '>')) || (str_contains($url, '"')) || (str_contains($url, './')) || (str_contains($url, '../')) || (str_contains($url, '\'')) || (str_contains($url, '.php'))) {
-//            if ($_GET['go'] != "search" and $_GET['go'] != "messages")
-//                die('Hacking attempt!');
-//        }
-//    }
-//    $url = html_entity_decode(urldecode($_SERVER['REQUEST_URI']));
-//    if ($url) {
-//        if ((str_contains($url, '<')) || (str_contains($url, '>')) || (str_contains($url, '"')) || (str_contains($url, '\''))) {
-//            if ($_GET['go'] != "search" and $_GET['go'] != "messages")
-//                die('Hacking attempt!');
-//        }
-//    }
-//}
-
-/**
- * @param $format
- * @param $stamp
- * @return string
- */
-function langdate($format, $stamp): string
-{
-    global $langdate;
-    return strtr(date($format, intval($stamp)), $langdate);
 }
 
 /**
@@ -445,69 +299,7 @@ function mozg_cache($prefix): false|string|int
     }
 }
 
-/**
- * @param $text
- * @return array|string
- */
-function strip_data($text): array|string
-{
-    $quotes = array("\x27", "\x22", "\x60", "\t", "\n", "\r", "'", ",", "/", ";", ":", "@", "[", "]", "{", "}", "=", ")", "(", "*", "&", "^", "%", "$", "<", ">", "?", "!", '"');
-    $goodquotes = array("-", "+", "#");
-    $repquotes = array("\-", "\+", "\#");
-    $text = stripslashes($text);
-    $text = trim(strip_tags($text));
-    return str_replace(array(...$quotes, ...$goodquotes), array('', ...$repquotes), $text);
-}
 
-/**
- * @param $id
- * @param $options
- * @return array|string
- */
-function installationSelected($id, $options): array|string
-{
-    return str_replace('value="' . $id . '"', 'value="' . $id . '" selected', $options);
-}
-
-/**
- * @param $id
- * @return array
- */
-function xfieldsdataload(string $id) : array
-{
-    $x_fields_data = explode( "||", $id );
-    $end = array_key_last($x_fields_data);
-    if (!$x_fields_data[$end])
-        unset($x_fields_data[$end]);
-
-    $data = array();
-    foreach ( $x_fields_data as $x_field_data ) {
-        list ($x_field_data_name, $x_field_data_value) = explode("|", $x_field_data);
-        $x_field_data_name = str_replace(array("&#124;", "__NEWL__"), array("|", "\r\n"), $x_field_data_name);
-        $x_field_data_value = str_replace(array("&#124;", "__NEWL__"), array("|", "\r\n"), $x_field_data_value);
-        $data[$x_field_data_name] = trim($x_field_data_value);
-    }
-    return $data;
-}
-
-/**
- * @return array|false|void
- */
-function profileload() {
-    $path = ENGINE_DIR . '/data/xfields.txt';
-    $filecontents = file($path);
-    if (!is_array($filecontents)) {
-        exit('Невозможно загрузить файл');
-    }
-    foreach ($filecontents as $name => $value) {
-        $filecontents[$name] = explode("|", trim($value));
-        foreach ($filecontents[$name] as $name2 => $value2) {
-            $value2 = str_replace(array("&#124;", "__NEWL__"), array("|", "\r\n"), $value2);
-            $filecontents[$name][$name2] = $value2;
-        }
-    }
-    return $filecontents;
-}
 
 /**
  * @return void
@@ -543,6 +335,32 @@ function rn_replace(array|string $source): array|string
     $find[] = "'\n'";
     $replace[] = "";
     return preg_replace($find, $replace, $source);
+}
+
+/**
+ * @param $user_year
+ * @param $user_month
+ * @param $user_day
+ * @return false|string|void
+ */
+function user_age($user_year, $user_month, $user_day)
+{
+    $server_time = Registry::get('server_time');
+    if ($user_year) {
+        $current_year = date('Y', $server_time);
+        $current_month = date('n', $server_time);
+        $current_day = date('j', $server_time);
+        $current_str = strtotime($current_year . '-' . $current_month . '-' . $current_day);
+        $current_user = strtotime($current_year . '-' . $user_month . '-' . $user_day);
+        if ($current_str >= $current_user)
+            $user_age = $current_year - $user_year;
+        else
+            $user_age = $current_year - $user_year - 1;
+        if ($user_month && $user_day)
+            return $user_age . ' ' . gram_record($user_age, 'user_age');
+        else
+            return false;
+    }
 }
 
 /**
@@ -933,57 +751,8 @@ HTML;
         return header('Location: /index.php?go=none');
 }
 
-function checkAjax(): bool
-{
-    return !empty($_POST['ajax']) && $_POST['ajax'] == 'yes';
-}
 
-/**
- * @param $user_year
- * @param $user_month
- * @param $user_day
- * @return false|string|void
- */
-function user_age($user_year, $user_month, $user_day) {
-    $server_time = Registry::get('server_time');
-    if ($user_year) {
-        $current_year = date('Y', $server_time);
-        $current_month = date('n', $server_time);
-        $current_day = date('j', $server_time);
-        $current_str = strtotime($current_year . '-' . $current_month . '-' . $current_day);
-        $current_user = strtotime($current_year . '-' . $user_month . '-' . $user_day);
-        if ($current_str >= $current_user)
-            $user_age = $current_year - $user_year;
-        else
-            $user_age = $current_year - $user_year - 1;
-        if ($user_month && $user_day)
-            return $user_age . ' ' . gram_record($user_age, 'user_age');
-        else
-            return false;
-    }
-}
 
-/**
- * @param int|null $date
- * @param bool $func
- * @param bool $full
- * @return string
- */
-function megaDate(?int $date, bool $func = false, bool $full = false): string
-{
-    $server_time = Registry::get('server_time');
-    if (date('Y-m-d', $date) === date('Y-m-d', $server_time)) {
-        return langdate('сегодня в H:i', $date);
-    } elseif (date('Y-m-d', $date) === date('Y-m-d', ($server_time - 84600))) {
-        return langdate('вчера в H:i', $date);
-    } else if ($func) {//no_year
-        return langdate('j M в H:i', $date);
-    } else if ($full) {
-        return langdate('j F Y в H:i', $date);
-    } else {
-        return langdate('j M Y в H:i', $date);
-    }
-}
 
 function OnlineTpl($time, $mobile = false) {
     global $tpl, $online_time, $lang;
@@ -1138,32 +907,6 @@ function word_filter($source, bool $encode = true)
     return $source;
 }
 
-/**
- * @param int $number
- * @param array $titles
- * @return mixed
- */
-function declOfNum(int $number, array $titles): string
-{
-    $cases = array(2, 0, 1, 1, 1, 2);
-    return $titles[($number % 100 > 4 AND $number % 100 < 20) ? 2 : $cases[min($number % 10, 5) ]];
-}
-
-/**
- * @param $num
- * @param $a
- * @param $b
- * @param $c
- * @param bool $t
- * @return mixed
- */
-function newGram($num, $a, $b, $c, bool $t = false): string
-{
-    if ($t)
-        return declOfNum($num, array(sprintf($a, $num), sprintf($b, $num), sprintf($c, $num)));
-    else
-        return declOfNum($num, array(sprintf("%d {$a}", $num), sprintf("%d {$b}", $num), sprintf("%d {$c}", $num)));
-}
 
 //FOR MOBILE VERSION 1.0
 if (isset($_GET['act']) && $_GET['act'] == 'change_mobile') $_SESSION['mobile'] = 1;
@@ -1179,123 +922,7 @@ if (check_smartphone()) {
 if (isset($_SESSION['mobile']) && $_SESSION['mobile'] == 1) {
     $config['temp'] = "mobile";
 }
-function AntiSpam($act, $text = false)
-{
-    $user_info = Registry::get('user_info');
-    $db = Registry::get('db');
-    if ($text)
-        $text = md5($text);
-    /* Типы
-    1 - Друзья
-    2 - Сообщения не друзьям
-    3 - Записей на стену
-    4 - Проверка на одинаковый текст
-    5 - Комментарии к записям (стены групп/людей)
-    */
-    //Антиспам дата
-    $antiDate = date('Y-m-d', time());
-    $antiDate = strtotime($antiDate);
-    //Лимиты на день
-    $max_frieds = 40; #максимум заявок в друзья
-    $max_msg = 40; #максимум сообщений не друзьям
-    $max_wall = 10; #максимум записей на стену
-    $max_identical = 10; #максимум одинаковых текстовых данных
-    $max_comm = 100; #максимум комментариев к записям на стенах людей и сообществ
-    $max_groups = 5; #максимум сообществ за день
-    //Если антиспам на друзей
-    if ($act == 'friends') {
-        //Проверяем в таблице
-        $check = $db->super_query("SELECT COUNT(*) AS cnt FROM `antispam` WHERE act = '1' AND user_id = '{$user_info['user_id']}' AND date = '{$antiDate}'");
-        //Если кол-во, логов больше, то ставим блок
-        if ($check['cnt'] >= $max_frieds) {
-            die('antispam_err');
-        }
-    } //Если антиспам на сообщения
-    elseif ($act == 'messages') {
-        //Проверяем в таблице
-        $check = $db->super_query("SELECT COUNT(*) AS cnt FROM `antispam` WHERE act = '2' AND user_id = '{$user_info['user_id']}' AND date = '{$antiDate}'");
-        //Если кол-во, логов больше, то ставим блок
-        if ($check['cnt'] >= $max_msg) {
-            die('antispam_err');
-        }
-    }
-    //Если антиспам на проверку стены
-    elseif ($act == 'wall') {
-        //Проверяем в таблице
-        $check = $db->super_query("SELECT COUNT(*) AS cnt FROM `antispam` WHERE act = '3' AND user_id = '{$user_info['user_id']}' AND date = '{$antiDate}'");
-        //Если кол-во, логов больше, то ставим блок
-        if ($check['cnt'] >= $max_wall) {
-            die('antispam_err');
-        }
-    }
-    //Если антиспам на одинаковые тестовые данные
-    elseif ($act == 'identical') {
-        //Проверяем в таблице
-        $check = $db->super_query("SELECT COUNT(*) AS cnt FROM `antispam` WHERE act = '4' AND user_id = '{$user_info['user_id']}' AND date = '{$antiDate}' AND txt = '{$text}'");
-        //Если кол-во, логов больше, то ставим блок
-        if ($check['cnt'] >= $max_identical) {
-            die('antispam_err');
-        }
-    }
-    //Если антиспам на проверку комментов
-    elseif ($act == 'comments') {
-        //Проверяем в таблице
-        $check = $db->super_query("SELECT COUNT(*) AS cnt FROM `antispam` WHERE act = '5' AND user_id = '{$user_info['user_id']}' AND date = '{$antiDate}'");
-        //Если кол-во, логов больше, то ставим блок
-        if ($check['cnt'] >= $max_comm) {
-            die('antispam_err');
-        }
-    }
-    //Если антиспам на проверку сообществ
-    elseif ($act == 'groups') {
-        //Проверяем в таблице
-        $check = $db->super_query("SELECT COUNT(*) AS cnt FROM `antispam` WHERE act = '6' AND user_id = '{$user_info['user_id']}' AND date = '{$antiDate}'");
-        //Если кол-во, логов больше, то ставим блок
-        if ($check['cnt'] >= $max_groups) {
-            die('antispam_err');
-        }
-    }
-}
 
-/**
- * @param string $act
- * @param bool $text
- * @return void
- */
-function AntiSpamLogInsert(string $act, bool|string $text = false): void
-{
-    $user_info = Registry::get('user_info');
-    $db = Registry::get('db');
-    if ($text)
-        $text = md5($text);
-    //Антиспам дата
-    $antiDate = date('Y-m-d', Registry::get('server_time'));
-    $antiDate = strtotime($antiDate);
-    //Если антиспам на друзей
-    if ($act == 'friends') {
-        $db->query("INSERT INTO `antispam` SET act = '1', user_id = '{$user_info['user_id']}', date = '{$antiDate}'");
-        //Если антиспам на сообщения не друзьям
-        
-    } elseif ($act == 'messages') {
-        $db->query("INSERT INTO `antispam` SET act = '2', user_id = '{$user_info['user_id']}', date = '{$antiDate}'");
-        //Если антиспам на стену
-        
-    } elseif ($act == 'wall') {
-        $db->query("INSERT INTO `antispam` SET act = '3', user_id = '{$user_info['user_id']}', date = '{$antiDate}'");
-        //Если антиспам на одинаковых текстов
-        
-    } elseif ($act == 'identical') {
-        $db->query("INSERT INTO `antispam` SET act = '4', user_id = '{$user_info['user_id']}', date = '{$antiDate}', txt = '{$text}'");
-        //Если антиспам комменты
-        
-    } elseif ($act == 'comments') {
-        $db->query("INSERT INTO `antispam` SET act = '5', user_id = '{$user_info['user_id']}', date = '{$antiDate}'");
-        //Если антиспам комменты
-        
-    } elseif ($act == 'groups') {
-        $db->query("INSERT INTO `antispam` SET act = '6', user_id = '{$user_info['user_id']}', date = '{$antiDate}'");
-    }
-}
 
 function normalizeName(string $value, bool $part = true): array|null|string
 {
@@ -1408,14 +1035,6 @@ function settings_load(): array
     die("Vii Engine not installed. Please run install.php");
 }
 
-/**
- * @throws JsonException
- */
-function _e_json(array $value): void
-{
-    header('Content-Type: application/json');
-    echo json_encode($value, JSON_THROW_ON_ERROR);
-}
 
 /**
  *
@@ -1583,8 +1202,9 @@ function compileAjax($tpl, $params): int
     _e_json($res);
     $tpl->global_clear();
 //        $db->close();
-    if ($config['gzip'] == 'yes')
+    if ($config['gzip'] == 'yes') {
         (new Gzip(false))->GzipOut();
+    }
     return print('');
 }
 

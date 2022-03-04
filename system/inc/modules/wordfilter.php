@@ -7,7 +7,7 @@
  *
  */
 
-use Mozg\classes\Registry;
+use FluffyDollop\Support\Registry;
 
 //Добавление слова
 if (isset($_POST['send'])) {

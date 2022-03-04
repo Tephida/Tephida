@@ -12,6 +12,7 @@ declare(strict_types=1);
 namespace Mozg\classes;
 
 use ErrorException;
+use FluffyDollop\Support\Registry;
 use JsonException;
 
 class WallProfile
