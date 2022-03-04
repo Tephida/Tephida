@@ -278,7 +278,7 @@ function system_mozg_clear_cache_file($prefix)
 /**
  * @throws JsonException
  */
-function compileAdmin($tpl): int
+function compileAdmin($tpl): void
 {
     $tpl->load_template('main.tpl');
     $config = settings_load();
@@ -307,11 +307,11 @@ function compileAdmin($tpl): int
             'title' => $metatags['title'],
             'content' => $tpl->result['info'] . $tpl->result['content']
         );
-        echo _e_json($result_ajax);
-        return true;
+        _e_json($result_ajax);
+    } else {
+        echo $tpl->result['main'];
     }
-    echo $tpl->result['main'];
-    return true;
+
 }
 
 function initAdminTpl(): Templates

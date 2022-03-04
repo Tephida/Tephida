@@ -8,16 +8,18 @@
  */
 
 $row = $db->super_query("SELECT COUNT(*) AS cnt FROM `report`");
-if ($row['cnt'])
+if ($row['cnt']) {
     $new_report = '<div style="color: red">(' . $row['cnt'] . ')</div>';
-else
+} else {
     $new_report = '';
+}
 
 $row_reviews = $db->super_query("SELECT COUNT(*) AS cnt FROM `reviews` WHERE approve = '1'");
-if ($row_reviews['cnt'])
+if ($row_reviews['cnt']) {
     $new_reviews = '<div style="color: red">(' . $row_reviews['cnt'] . ')</div>';
-else
+} else {
     $new_reviews = '';
+}
 
 $tpl = initAdminTpl();
 $modules = array(
