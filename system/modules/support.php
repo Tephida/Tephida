@@ -83,8 +83,9 @@ if (Registry::get('logged')) {
                     $tpl->compile('content');
                     AjaxTpl($tpl);
                     echo 'r|x' . $dbid;
-                } else
+                } else {
                     echo 'limit';
+                }
             }
 
 
@@ -95,7 +96,7 @@ if (Registry::get('logged')) {
             NoAjaxQuery();
             $qid = intFilter('qid');
             $row = $db->super_query("SELECT suser_id FROM `support` WHERE id = '{$qid}'");
-            if ($row['suser_id'] == $user_id or $user_info['user_group'] == 4) {
+            if ($row['suser_id'] == $user_id || $user_info['user_group'] == 4) {
                 $db->query("DELETE FROM `support` WHERE id = '{$qid}'");
                 $db->query("DELETE FROM `support_answers` WHERE qid = '{$qid}'");
             }
@@ -107,11 +108,10 @@ if (Registry::get('logged')) {
             NoAjaxQuery();
             $id = intFilter('id');
             $row = $db->super_query("SELECT auser_id FROM `support_answers` WHERE id = '{$id}'");
-            if ($row['auser_id'] == $user_id or $user_info['user_group'] == 4) {
+            if ($row['auser_id'] == $user_id || $user_info['user_group'] == 4) {
                 $db->query("DELETE FROM `support_answers` WHERE id = '{$id}'");
             }
 
-            die();
             break;
 
         //################### Закрытие вопроса  ###################//
@@ -170,7 +170,7 @@ if (Registry::get('logged')) {
                     $tpl->set('[/no-agent]', '');
                 }
 
-                if ($auser_id == $user_id or $user_info['user_group'] == 4) {
+                if ($auser_id == $user_id || $user_info['user_group'] == 4) {
                     $tpl->set('[owner]', '');
                     $tpl->set('[/owner]', '');
                 } else {
@@ -287,8 +287,9 @@ if (Registry::get('logged')) {
             $tpl_dir_name = ROOT_DIR . '/templates/' . $config['temp'];
             $tpl = new TpLSite($tpl_dir_name, $meta_tags);
 
-            if ($user_info['user_support'] and $user_info['user_group'] != 4)
+            if ($user_info['user_support'] and $user_info['user_group'] != 4) {
                 $db->query("UPDATE `users` SET user_support = 0 WHERE user_id = '{$user_id}'");
+            }
 
             if ($user_info['user_group'] == 4) {
                 $sql_where = "ORDER by `sdate` DESC";
@@ -300,17 +301,18 @@ if (Registry::get('logged')) {
 
             $sql_ = $db->super_query("SELECT tb1.id, title, suser_id, sfor_user_id, sdate, tb2.user_photo, user_search_pref FROM `support` tb1, `users` tb2 WHERE tb1.suser_id = tb2.user_id {$sql_where} LIMIT {$limit_page}, {$gcount}", true);
 
-            if ($sql_)
+            $tpl->load_template('support/head.tpl');
+            if ($sql_) {
                 $count = $db->super_query("SELECT COUNT(*) AS cnt FROM `support` {$sql_where_cnt}");
 
-            $tpl->load_template('support/head.tpl');
-            if ($sql_)
-                if ($user_info['user_group'] == 4)
+                if ($user_info['user_group'] == 4) {
                     $tpl->set('{cnt}', $count['cnt'] . ' ' . gram_record($count['cnt'], 'questions'));
-                else
+                } else {
                     $tpl->set('{cnt}', 'Вы задали ' . $count['cnt'] . ' ' . gram_record($count['cnt'], 'questions'));
-            else
+                }
+            } else {
                 $tpl->set('{cnt}', '');
+            }
 
             $tpl->compile('info');
 
@@ -321,16 +323,18 @@ if (Registry::get('logged')) {
                     $date_str = megaDate($row['sdate']);
                     $tpl->set('{date}', $date_str);
                     if ($row['sfor_user_id'] == $row['suser_id'] or $user_info['user_group'] == 4) {
-                        if ($row['sfor_user_id'] == $row['suser_id'])
+                        if ($row['sfor_user_id'] == $row['suser_id']) {
                             $tpl->set('{status}', 'Вопрос ожидает обработки.');
-                        else
+                        } else {
                             $tpl->set('{status}', 'Есть ответ.');
+                        }
                         $tpl->set('{name}', $row['user_search_pref']);
                         $tpl->set('{answer}', '');
-                        if ($row['user_photo'])
+                        if ($row['user_photo']) {
                             $tpl->set('{ava}', '/uploads/users/' . $row['suser_id'] . '/50_' . $row['user_photo']);
-                        else
+                        } else {
                             $tpl->set('{ava}', '{theme}/images/no_ava_50.png');
+                        }
                     } else {
                         $tpl->set('{name}', 'Агент поддержки');
                         $tpl->set('{status}', 'Есть ответ.');
