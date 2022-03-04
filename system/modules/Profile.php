@@ -11,7 +11,7 @@ namespace Mozg\modules;
 
 use ErrorException;
 use Mozg\classes\Module;
-use Mozg\classes\Registry;
+use FluffyDollop\Support\Registry;
 use Mozg\classes\TpLSite;
 
 class Profile extends Module

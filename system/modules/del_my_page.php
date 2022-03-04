@@ -1,7 +1,7 @@
 <?php
 
-use Mozg\classes\Filesystem;
-use Mozg\classes\Registry;
+use FluffyDollop\Support\Filesystem;
+use FluffyDollop\Support\Registry;
 
 NoAjaxQuery();
 if (Registry::get('logged')) {

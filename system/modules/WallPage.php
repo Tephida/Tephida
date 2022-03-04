@@ -5,7 +5,7 @@ namespace Mozg\modules;
 use ErrorException;
 use JsonException;
 use Mozg\classes\Module;
-use Mozg\classes\Registry;
+use FluffyDollop\Support\Registry;
 use Mozg\classes\TpLSite;
 use Mozg\classes\WallProfile;
 use Mozg\classes\WallPublic;

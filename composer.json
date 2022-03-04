@@ -1,5 +1,5 @@
 {
-  "name": "semyon492/vii",
+  "name": "tephida/tephida",
   "description": "VII Engine",
   "minimum-stability": "stable",
   "license": "MIT",
@@ -13,7 +13,11 @@
     "ext-mysqli": "*",
     "ext-zlib": "*",
     "ext-gd": "*",
-    "ext-iconv": "*"
+    "ext-iconv": "*",
+    "tephida/fluffy-dollop": "^1.0"
+  },
+  "require-dev": {
+    "roave/security-advisories": "dev-latest"
   },
   "autoload": {
     "psr-4": {

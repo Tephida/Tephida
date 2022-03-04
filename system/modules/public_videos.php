@@ -7,8 +7,8 @@
  *
  */
 
-use Mozg\classes\Filesystem;
-use Mozg\classes\Registry;
+use FluffyDollop\Support\Filesystem;
+use FluffyDollop\Support\Registry;
 
 if (Registry::get('logged')) {
     $db = Registry::get('db');

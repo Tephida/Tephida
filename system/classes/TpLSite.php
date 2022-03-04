@@ -11,6 +11,7 @@ namespace Mozg\classes;
 
 use ErrorException;
 use Exception;
+use FluffyDollop\Support\Registry;
 use JsonException;
 
 class TpLSite extends Templates

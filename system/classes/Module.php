@@ -8,6 +8,9 @@
  */
 namespace Mozg\classes;
 
+use FluffyDollop\Support\Registry;
+use FluffyDollop\Support\Mysql;
+
 class Module
 {
     public Mysql $db;

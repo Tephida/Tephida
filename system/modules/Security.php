@@ -7,7 +7,7 @@
  *
  */
 
-use Mozg\classes\Status;
+use FluffyDollop\Support\Status;
 
 class Security
 {
@@ -94,7 +94,6 @@ class Security
      */
     function main(): void
     {
-        include ENGINE_DIR . '/classes/Status.php';
         if (self::clean_url($_SERVER['HTTP_REFERER']) != self::clean_url($_SERVER['HTTP_HOST'])) {
             echo 'no';
         }

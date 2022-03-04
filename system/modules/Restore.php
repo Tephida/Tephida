@@ -12,11 +12,11 @@ namespace Mozg\modules;
 use ErrorException;
 use JsonException;
 use Mozg\classes\Module;
-use Mozg\classes\Registry;
-use Mozg\classes\Router;
-use Mozg\classes\Status;
+use FluffyDollop\Support\Registry;
+use FluffyDollop\Support\Router;
+use FluffyDollop\Support\Status;
 use Mozg\classes\TpLSite;
-use Mozg\classes\ViiMail;
+use FluffyDollop\Support\ViiMail;
 
 class Restore extends Module
 {

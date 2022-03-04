@@ -7,8 +7,8 @@
  *
  */
 
-use Mozg\classes\AntiSpam;
-use Mozg\classes\Registry;
+use FluffyDollop\Security\AntiSpam;
+use FluffyDollop\Support\Registry;
 
 //Если страница вызвана через AJAX, то включаем защиту, чтоб не могли обращаться напрямую к странице
 NoAjaxQuery();

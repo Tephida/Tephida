@@ -7,7 +7,7 @@
  *
  */
 
-use Mozg\classes\Registry;
+use FluffyDollop\Support\Registry;
 
 NoAjaxQuery();
 
@@ -18,8 +18,9 @@ echo '<option value="0">- Выбрать -</option>';
 if ($country_id) {
     $db = Registry::get('db');
     $sql_ = $db->super_query("SELECT id, name FROM `city` WHERE id_country = '{$country_id}' ORDER by `name` ASC", true);
-    foreach ($sql_ as $row2)
+    foreach ($sql_ as $row2) {
         echo '<option value="' . $row2['id'] . '">' . stripslashes($row2['name']) . '</option>';
+    }
 }
 
 echo <<<HTML

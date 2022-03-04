@@ -7,7 +7,7 @@
  *
  */
 
-use Mozg\classes\Registry;
+use FluffyDollop\Support\Registry;
 
 if (Registry::get('logged')) {
     $act = requestFilter('act');

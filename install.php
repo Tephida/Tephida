@@ -131,28 +131,28 @@ switch ($act) {
             );
 
             try {
-                \Mozg\classes\Filesystem::createDir('./uploads/room/');
-                \Mozg\classes\Filesystem::createDir('./uploads/records/');
-                \Mozg\classes\Filesystem::createDir('./uploads/attach/');
-                \Mozg\classes\Filesystem::createDir('./uploads/audio_tmp/');
-                \Mozg\classes\Filesystem::createDir('./uploads/blog/');
-                \Mozg\classes\Filesystem::createDir('./uploads/groups/');
-                \Mozg\classes\Filesystem::createDir('./uploads/users/');
-                \Mozg\classes\Filesystem::createDir('./uploads/videos/');
-                \Mozg\classes\Filesystem::createDir('./uploads/audio/');
-                \Mozg\classes\Filesystem::createDir('./uploads/doc/');
+                \FluffyDollop\Support\Filesystem::createDir('./uploads/room/');
+                \FluffyDollop\Support\Filesystem::createDir('./uploads/records/');
+                \FluffyDollop\Support\Filesystem::createDir('./uploads/attach/');
+                \FluffyDollop\Support\Filesystem::createDir('./uploads/audio_tmp/');
+                \FluffyDollop\Support\Filesystem::createDir('./uploads/blog/');
+                \FluffyDollop\Support\Filesystem::createDir('./uploads/groups/');
+                \FluffyDollop\Support\Filesystem::createDir('./uploads/users/');
+                \FluffyDollop\Support\Filesystem::createDir('./uploads/videos/');
+                \FluffyDollop\Support\Filesystem::createDir('./uploads/audio/');
+                \FluffyDollop\Support\Filesystem::createDir('./uploads/doc/');
 
-                \Mozg\classes\Filesystem::createDir('./system/cache/');
-                \Mozg\classes\Filesystem::createDir('./system/cache/groups/');
-                \Mozg\classes\Filesystem::createDir('./system/cache/groups_forum/');
-                \Mozg\classes\Filesystem::createDir('./system/cache/groups_mark/');
-                \Mozg\classes\Filesystem::createDir('./system/cache/photos_mark/');
-                \Mozg\classes\Filesystem::createDir('./system/cache/votes/');
-                \Mozg\classes\Filesystem::createDir('./system/cache/wall/');
+                \FluffyDollop\Support\Filesystem::createDir('./system/cache/');
+                \FluffyDollop\Support\Filesystem::createDir('./system/cache/groups/');
+                \FluffyDollop\Support\Filesystem::createDir('./system/cache/groups_forum/');
+                \FluffyDollop\Support\Filesystem::createDir('./system/cache/groups_mark/');
+                \FluffyDollop\Support\Filesystem::createDir('./system/cache/photos_mark/');
+                \FluffyDollop\Support\Filesystem::createDir('./system/cache/votes/');
+                \FluffyDollop\Support\Filesystem::createDir('./system/cache/wall/');
 
-                \Mozg\classes\Filesystem::createDir('./system/data/');
+                \FluffyDollop\Support\Filesystem::createDir('./system/data/');
 
-                \Mozg\classes\Filesystem::createDir('./backup/');
+                \FluffyDollop\Support\Filesystem::createDir('./backup/');
 
             } catch (Exception $e) {
                 echo '<div class="h2">Не удалось создать директории</div>';
@@ -336,7 +336,7 @@ const DBPASS = "{$_POST['mysql_pass']}";
 
 const COLLATE = "utf8";
 
-return new \Mozg\classes\Mysql;
+return new \FluffyDollop\Support\Mysql;
 
 HTML;
                 $con_file = fopen("system/data/db.php", 'wb+') || die("Извините, но невозможно создать файл <div style=\"font-weight: bold\">.system/data/db.php</div>.<br />Проверьте правильность проставленного CHMOD!");
@@ -548,8 +548,8 @@ HTML;
         break;
     case "remove_installer":
         if (check_install() && !file_exists('./system/data/look')) {
-            \Mozg\classes\Filesystem::delete('./install.php');
-            \Mozg\classes\Filesystem::delete('./system/mysql_tables.php');
+            \FluffyDollop\Support\Filesystem::delete('./install.php');
+            \FluffyDollop\Support\Filesystem::delete('./system/mysql_tables.php');
             header('Location: /');
 
         } else {
@@ -558,24 +558,24 @@ HTML;
         break;
     case "clean":
         if (check_install() && !file_exists('./system/data/look')) {
-            \Mozg\classes\Filesystem::delete('./uploads/room/');
-            \Mozg\classes\Filesystem::delete('./uploads/records/');
-            \Mozg\classes\Filesystem::delete('./uploads/attach/');
-            \Mozg\classes\Filesystem::delete('./uploads/audio_tmp/');
-            \Mozg\classes\Filesystem::delete('./uploads/blog/');
-            \Mozg\classes\Filesystem::delete('./uploads/groups/');
-            \Mozg\classes\Filesystem::delete('./uploads/users/');
-            \Mozg\classes\Filesystem::delete('./uploads/videos/');
-            \Mozg\classes\Filesystem::delete('./uploads/audio/');
-            \Mozg\classes\Filesystem::delete('./uploads/doc/');
-            \Mozg\classes\Filesystem::delete('./system/cache/groups/');
-            \Mozg\classes\Filesystem::delete('./system/cache/groups_forum/');
-            \Mozg\classes\Filesystem::delete('./system/cache/groups_mark/');
-            \Mozg\classes\Filesystem::delete('./system/cache/photos_mark/');
-            \Mozg\classes\Filesystem::delete('./system/cache/votes/');
-            \Mozg\classes\Filesystem::delete('./system/cache/wall/');
+            \FluffyDollop\Support\Filesystem::delete('./uploads/room/');
+            \FluffyDollop\Support\Filesystem::delete('./uploads/records/');
+            \FluffyDollop\Support\Filesystem::delete('./uploads/attach/');
+            \FluffyDollop\Support\Filesystem::delete('./uploads/audio_tmp/');
+            \FluffyDollop\Support\Filesystem::delete('./uploads/blog/');
+            \FluffyDollop\Support\Filesystem::delete('./uploads/groups/');
+            \FluffyDollop\Support\Filesystem::delete('./uploads/users/');
+            \FluffyDollop\Support\Filesystem::delete('./uploads/videos/');
+            \FluffyDollop\Support\Filesystem::delete('./uploads/audio/');
+            \FluffyDollop\Support\Filesystem::delete('./uploads/doc/');
+            \FluffyDollop\Support\Filesystem::delete('./system/cache/groups/');
+            \FluffyDollop\Support\Filesystem::delete('./system/cache/groups_forum/');
+            \FluffyDollop\Support\Filesystem::delete('./system/cache/groups_mark/');
+            \FluffyDollop\Support\Filesystem::delete('./system/cache/photos_mark/');
+            \FluffyDollop\Support\Filesystem::delete('./system/cache/votes/');
+            \FluffyDollop\Support\Filesystem::delete('./system/cache/wall/');
 
-            \Mozg\classes\Filesystem::delete(ROOT_DIR . '/adminpanel.php');
+            \FluffyDollop\Support\Filesystem::delete(ROOT_DIR . '/adminpanel.php');
 
             $db = require ENGINE_DIR . '/data/db.php';
 
@@ -642,8 +642,8 @@ HTML;
                 $db->query($query);
             }
 
-            \Mozg\classes\Filesystem::delete(ENGINE_DIR . '/data/config.php');
-            \Mozg\classes\Filesystem::delete(ENGINE_DIR . '/data/db.php');
+            \FluffyDollop\Support\Filesystem::delete(ENGINE_DIR . '/data/config.php');
+            \FluffyDollop\Support\Filesystem::delete(ENGINE_DIR . '/data/db.php');
 
             echo <<<HTML
 Добро пожаловать в мастер установки Vii Engine. 

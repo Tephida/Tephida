@@ -8,7 +8,7 @@
  */
 
 use Mozg\classes\Parse;
-use Mozg\classes\Registry;
+use FluffyDollop\Support\Registry;
 
 NoAjaxQuery();
 

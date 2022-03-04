@@ -7,8 +7,8 @@
  *
  */
 
-use Mozg\classes\Filesystem;
-use Mozg\classes\Registry;
+use FluffyDollop\Support\Filesystem;
+use FluffyDollop\Support\Registry;
 use Mozg\classes\Templates;
 
 include __DIR__ . '/../functions.php';

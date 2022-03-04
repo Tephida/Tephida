@@ -7,7 +7,7 @@
  *
  */
 
-use Mozg\classes\Registry;
+use FluffyDollop\Support\Registry;
 use Mozg\classes\TplCp;
 
 header('Content-type: text/html; charset=utf-8');

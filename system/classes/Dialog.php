@@ -9,7 +9,9 @@
 
 namespace Mozg\classes;
 
-use Mozg\classes\Status;
+use FluffyDollop\Security\AntiSpam;
+use FluffyDollop\Support\Mysql;
+use FluffyDollop\Support\Registry;
 
 class Dialog
 {
