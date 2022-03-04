@@ -1404,19 +1404,17 @@ function settings_load(): array
 {
     if (file_exists(ENGINE_DIR . '/data/config.php')) {
         return require ENGINE_DIR . '/data/config.php';
-    } else {
-        die("Vii Engine not installed. Please run install.php");
     }
+    die("Vii Engine not installed. Please run install.php");
 }
 
 /**
  * @throws JsonException
  */
-function _e_json(array $value): bool
+function _e_json(array $value): void
 {
     header('Content-Type: application/json');
     echo json_encode($value, JSON_THROW_ON_ERROR);
-    return true;
 }
 
 /**
