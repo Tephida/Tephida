@@ -7,9 +7,9 @@
  *
  */
 
-use FluffyDollop\Security\AntiSpam;
 use FluffyDollop\Support\Filesystem;
 use FluffyDollop\Support\Registry;
+use Mozg\classes\Flood;
 
 NoAjaxQuery();
 
@@ -31,24 +31,25 @@ if (Registry::get('logged')) {
         case "send":
             NoAjaxQuery();
             $title = requestFilter('title', 60, true);
-            AntiSpam::check('groups');
+            if (Flood::check('groups')) {
+                echo 'no_title';//fixme
+            } else {
+                if (!empty($title)) {
 
-            if (!empty($title)) {
+                    Flood::LogInsert('groups');
+                    $db->query("INSERT INTO `communities` SET title = '{$title}', type = 1, traf = 1, ulist = '|{$user_id}|', date = NOW(), admin = 'u{$user_id}|', real_admin = '{$user_id}', comments = 1");
+                    $cid = $db->insert_id();
+                    $db->query("INSERT INTO `friends` SET friend_id = '{$cid}', user_id = '{$user_id}', friends_date = NOW(), subscriptions = 2");
+                    $db->query("UPDATE `users` SET user_public_num = user_public_num+1 WHERE user_id = '{$user_id}'");
 
-                AntiSpam::LogInsert('groups');
-                $db->query("INSERT INTO `communities` SET title = '{$title}', type = 1, traf = 1, ulist = '|{$user_id}|', date = NOW(), admin = 'u{$user_id}|', real_admin = '{$user_id}', comments = 1");
-                $cid = $db->insert_id();
-                $db->query("INSERT INTO `friends` SET friend_id = '{$cid}', user_id = '{$user_id}', friends_date = NOW(), subscriptions = 2");
-                $db->query("UPDATE `users` SET user_public_num = user_public_num+1 WHERE user_id = '{$user_id}'");
+                    Filesystem::createDir(ROOT_DIR . '/uploads/groups/' . $cid . '/');
+                    Filesystem::createDir(ROOT_DIR . '/uploads/groups/' . $cid . '/photos/');
+                    mozg_mass_clear_cache_file("user_{$user_id}/profile_{$user_id}|groups/{$user_id}");
 
-                Filesystem::createDir(ROOT_DIR . '/uploads/groups/' . $cid . '/');
-                Filesystem::createDir(ROOT_DIR . '/uploads/groups/' . $cid . '/photos/');
-                mozg_mass_clear_cache_file("user_{$user_id}/profile_{$user_id}|groups/{$user_id}");
-
-                echo $cid;
-            } else
-                echo 'no_title';
-
+                    echo $cid;
+                } else
+                    echo 'no_title';
+            }
             break;
 
         //################### Выход из сообщества ###################//
@@ -588,148 +589,152 @@ if (Registry::get('logged')) {
         case "wall_send_comm":
             NoAjaxQuery();
 
-            AntiSpam::check('comments');
+            if (Flood::check('comments')) {
+                //fixme
+            } else {
+                $rec_id = intFilter('rec_id');
+                $public_id = intFilter('public_id');
+                $wall_text = requestFilter('wall_text');
+                $answer_comm_id = intFilter('answer_comm_id');
 
-            $rec_id = intFilter('rec_id');
-            $public_id = intFilter('public_id');
-            $wall_text = requestFilter('wall_text');
-            $answer_comm_id = intFilter('answer_comm_id');
+                //Проверка на админа и проверяем включены ли комменты
+                $row = $db->super_query("SELECT tb1.fasts_num, public_id, tb2.admin, comments FROM `communities_wall` tb1, `communities` tb2 WHERE tb1.public_id = tb2.id AND tb1.id = '{$rec_id}'");
 
-            //Проверка на админа и проверяем включены ли комменты
-            $row = $db->super_query("SELECT tb1.fasts_num, public_id, tb2.admin, comments FROM `communities_wall` tb1, `communities` tb2 WHERE tb1.public_id = tb2.id AND tb1.id = '{$rec_id}'");
+                if ($row['comments'] or stripos($row['admin'], "u{$user_id}|") !== false and isset($wall_text) and !empty($wall_text)) {
 
-            if ($row['comments'] or stripos($row['admin'], "u{$user_id}|") !== false and isset($wall_text) and !empty($wall_text)) {
+                    Flood::LogInsert('comments');
 
-                AntiSpam::LogInsert('comments');
+                    //Если добавляется ответ на комментарий, то вносим в ленту новостей "ответы"
+                    if ($answer_comm_id) {
 
-                //Если добавляется ответ на комментарий, то вносим в ленту новостей "ответы"
-                if ($answer_comm_id) {
+                        //Выводим ид владельца комментария
+                        $row_owner2 = $db->super_query("SELECT public_id, text FROM `communities_wall` WHERE id = '{$answer_comm_id}' AND fast_comm_id != '0'");
 
-                    //Выводим ид владельца комментария
-                    $row_owner2 = $db->super_query("SELECT public_id, text FROM `communities_wall` WHERE id = '{$answer_comm_id}' AND fast_comm_id != '0'");
+                        //Проверка на то, что юзер не отвечает сам себе
+                        if ($user_id != $row_owner2['public_id'] and $row_owner2) {
 
-                    //Проверка на то, что юзер не отвечает сам себе
-                    if ($user_id != $row_owner2['public_id'] and $row_owner2) {
+                            $answer_text = $row_owner2['text'];
 
-                        $answer_text = $row_owner2['text'];
+                            $check2 = $db->super_query("SELECT user_last_visit, user_name FROM `users` WHERE user_id = '{$row_owner2['public_id']}'");
 
-                        $check2 = $db->super_query("SELECT user_last_visit, user_name FROM `users` WHERE user_id = '{$row_owner2['public_id']}'");
+                            $wall_text = str_replace($check2['user_name'], "<a href=\"/u{$row_owner2['public_id']}\" onClick=\"Page.Go(this.href); return false\" class=\"newcolor000\">{$check2['user_name']}</a>", $wall_text);
 
-                        $wall_text = str_replace($check2['user_name'], "<a href=\"/u{$row_owner2['public_id']}\" onClick=\"Page.Go(this.href); return false\" class=\"newcolor000\">{$check2['user_name']}</a>", $wall_text);
+                            //Вставляем в ленту новостей
+                            $db->query("INSERT INTO `news` SET ac_user_id = '{$user_id}', action_type = 6, action_text = '{$wall_text}', obj_id = '{$answer_comm_id}', for_user_id = '{$row_owner2['public_id']}', action_time = '{$server_time}', answer_text = '{$answer_text}', link = '/wallgroups{$row['public_id']}_{$rec_id}'");
 
-                        //Вставляем в ленту новостей
-                        $db->query("INSERT INTO `news` SET ac_user_id = '{$user_id}', action_type = 6, action_text = '{$wall_text}', obj_id = '{$answer_comm_id}', for_user_id = '{$row_owner2['public_id']}', action_time = '{$server_time}', answer_text = '{$answer_text}', link = '/wallgroups{$row['public_id']}_{$rec_id}'");
+                            //Вставляем событие в моментальные оповещения
+                            $update_time = $server_time - 70;
 
-                        //Вставляем событие в моментальные оповещения
-                        $update_time = $server_time - 70;
+                            if ($check2['user_last_visit'] >= $update_time) {
 
-                        if ($check2['user_last_visit'] >= $update_time) {
+                                $db->query("INSERT INTO `updates` SET for_user_id = '{$row_owner2['public_id']}', from_user_id = '{$user_id}', type = '5', date = '{$server_time}', text = '{$wall_text}', user_photo = '{$user_info['user_photo']}', user_search_pref = '{$user_info['user_search_pref']}', lnk = '/news/notifications'");
 
-                            $db->query("INSERT INTO `updates` SET for_user_id = '{$row_owner2['public_id']}', from_user_id = '{$user_id}', type = '5', date = '{$server_time}', text = '{$wall_text}', user_photo = '{$user_info['user_photo']}', user_search_pref = '{$user_info['user_search_pref']}', lnk = '/news/notifications'");
+                                mozg_create_cache("user_{$row_owner2['public_id']}/updates", 1);
 
-                            mozg_create_cache("user_{$row_owner2['public_id']}/updates", 1);
+                                //ИНАЧЕ Добавляем +1 юзеру для оповещения
+                            } else {
 
-                            //ИНАЧЕ Добавляем +1 юзеру для оповещения
-                        } else {
-
-                            $cntCacheNews = mozg_cache("user_{$row_owner2['public_id']}/new_news");
-                            mozg_create_cache("user_{$row_owner2['public_id']}/new_news", ((int)$cntCacheNews + 1));
+                                $cntCacheNews = mozg_cache("user_{$row_owner2['public_id']}/new_news");
+                                mozg_create_cache("user_{$row_owner2['public_id']}/new_news", ((int)$cntCacheNews + 1));
+                            }
                         }
                     }
-                }
 
-                //Вставляем саму запись в БД
-                $db->query("INSERT INTO `communities_wall` SET public_id = '{$user_id}', text = '{$wall_text}', add_date = '{$server_time}', fast_comm_id = '{$rec_id}'");
-                $db->query("UPDATE `communities_wall` SET fasts_num = fasts_num+1 WHERE id = '{$rec_id}'");
+                    //Вставляем саму запись в БД
+                    $db->query("INSERT INTO `communities_wall` SET public_id = '{$user_id}', text = '{$wall_text}', add_date = '{$server_time}', fast_comm_id = '{$rec_id}'");
+                    $db->query("UPDATE `communities_wall` SET fasts_num = fasts_num+1 WHERE id = '{$rec_id}'");
 
-                $row['fasts_num'] = $row['fasts_num'] + 1;
+                    $row['fasts_num'] = $row['fasts_num'] + 1;
 
-                if ($row['fasts_num'] > 3)
-                    $comments_limit = $row['fasts_num'] - 3;
-                else
-                    $comments_limit = 0;
-
-                $sql_comments = $db->super_query("SELECT tb1.id, public_id, text, add_date, tb2.user_photo, user_search_pref FROM `communities_wall` tb1, `users` tb2 WHERE tb1.public_id = tb2.user_id AND tb1.fast_comm_id = '{$rec_id}' ORDER by `add_date` ASC LIMIT {$comments_limit}, 3", true);
-
-                //Загружаем кнопку "Показать N запси"
-                $tpl->load_template('groups/record.tpl');
-                $tpl->set('{gram-record-all-comm}', gram_record(($row['fasts_num'] - 3), 'prev') . ' ' . ($row['fasts_num'] - 3) . ' ' . gram_record(($row['fasts_num'] - 3), 'comments'));
-                if ($row['fasts_num'] < 4)
-                    $tpl->set_block("'\\[all-comm\\](.*?)\\[/all-comm\\]'si", "");
-                else {
-                    $tpl->set('{rec-id}', $rec_id);
-                    $tpl->set('[all-comm]', '');
-                    $tpl->set('[/all-comm]', '');
-                }
-                $tpl->set('{public-id}', $public_id);
-                $tpl->set_block("'\\[record\\](.*?)\\[/record\\]'si", "");
-                $tpl->set_block("'\\[comment-form\\](.*?)\\[/comment-form\\]'si", "");
-                $tpl->set_block("'\\[comment\\](.*?)\\[/comment\\]'si", "");
-                $tpl->compile('content');
-
-                $tpl->load_template('groups/record.tpl');
-                //Собственно выводим комменты
-                foreach ($sql_comments as $row_comments) {
-                    $tpl->set('{public-id}', $public_id);
-                    $tpl->set('{name}', $row_comments['user_search_pref']);
-                    if ($row_comments['user_photo'])
-                        $tpl->set('{ava}', $config['home_url'] . 'uploads/users/' . $row_comments['public_id'] . '/50_' . $row_comments['user_photo']);
+                    if ($row['fasts_num'] > 3)
+                        $comments_limit = $row['fasts_num'] - 3;
                     else
-                        $tpl->set('{ava}', '{theme}/images/no_ava_50.png');
-                    $tpl->set('{comm-id}', $row_comments['id']);
-                    $tpl->set('{user-id}', $row_comments['public_id']);
-                    $tpl->set('{rec-id}', $rec_id);
+                        $comments_limit = 0;
 
-                    $expBR2 = explode('<br />', $row_comments['text']);
-                    $textLength2 = count($expBR2);
-                    $strTXT2 = strlen($row_comments['text']);
-                    if ($textLength2 > 6 or $strTXT2 > 470)
-                        $row_comments['text'] = '<div class="wall_strlen" id="hide_wall_rec' . $row_comments['id'] . '" style="max-height:102px"">' . $row_comments['text'] . '</div><div class="wall_strlen_full" onMouseDown="wall.FullText(' . $row_comments['id'] . ', this.id)" id="hide_wall_rec_lnk' . $row_comments['id'] . '">Показать полностью..</div>';
+                    $sql_comments = $db->super_query("SELECT tb1.id, public_id, text, add_date, tb2.user_photo, user_search_pref FROM `communities_wall` tb1, `users` tb2 WHERE tb1.public_id = tb2.user_id AND tb1.fast_comm_id = '{$rec_id}' ORDER by `add_date` ASC LIMIT {$comments_limit}, 3", true);
 
-                    //Обрабатываем ссылки
-                    $row_comments['text'] = preg_replace('`(http(?:s)?://\w+[^\s\[\]\<]+)`i', '<a href="/index.php?go=away&url=$1" target="_blank">$1</a>', $row_comments['text']);
-
-                    $tpl->set('{text}', stripslashes($row_comments['text']));
-                    $date_str = megaDate($row_comments['add_date']);
-                    $tpl->set('{date}', $date_str);
-                    if (stripos($row['admin'], "u{$user_id}|") !== false or $user_id == $row_comments['public_id']) {
-                        $tpl->set('[owner]', '');
-                        $tpl->set('[/owner]', '');
-                    } else
-                        $tpl->set_block("'\\[owner\\](.*?)\\[/owner\\]'si", "");
-
-                    if ($user_id == $row_comments['public_id'])
-
-                        $tpl->set_block("'\\[not-owner\\](.*?)\\[/not-owner\\]'si", "");
-
+                    //Загружаем кнопку "Показать N запси"
+                    $tpl->load_template('groups/record.tpl');
+                    $tpl->set('{gram-record-all-comm}', gram_record(($row['fasts_num'] - 3), 'prev') . ' ' . ($row['fasts_num'] - 3) . ' ' . gram_record(($row['fasts_num'] - 3), 'comments'));
+                    if ($row['fasts_num'] < 4)
+                        $tpl->set_block("'\\[all-comm\\](.*?)\\[/all-comm\\]'si", "");
                     else {
-
-                        $tpl->set('[not-owner]', '');
-                        $tpl->set('[/not-owner]', '');
-
+                        $tpl->set('{rec-id}', $rec_id);
+                        $tpl->set('[all-comm]', '');
+                        $tpl->set('[/all-comm]', '');
                     }
-
-                    $tpl->set('[comment]', '');
-                    $tpl->set('[/comment]', '');
+                    $tpl->set('{public-id}', $public_id);
                     $tpl->set_block("'\\[record\\](.*?)\\[/record\\]'si", "");
                     $tpl->set_block("'\\[comment-form\\](.*?)\\[/comment-form\\]'si", "");
+                    $tpl->set_block("'\\[comment\\](.*?)\\[/comment\\]'si", "");
+                    $tpl->compile('content');
+
+                    $tpl->load_template('groups/record.tpl');
+                    //Собственно выводим комменты
+                    foreach ($sql_comments as $row_comments) {
+                        $tpl->set('{public-id}', $public_id);
+                        $tpl->set('{name}', $row_comments['user_search_pref']);
+                        if ($row_comments['user_photo'])
+                            $tpl->set('{ava}', $config['home_url'] . 'uploads/users/' . $row_comments['public_id'] . '/50_' . $row_comments['user_photo']);
+                        else
+                            $tpl->set('{ava}', '{theme}/images/no_ava_50.png');
+                        $tpl->set('{comm-id}', $row_comments['id']);
+                        $tpl->set('{user-id}', $row_comments['public_id']);
+                        $tpl->set('{rec-id}', $rec_id);
+
+                        $expBR2 = explode('<br />', $row_comments['text']);
+                        $textLength2 = count($expBR2);
+                        $strTXT2 = strlen($row_comments['text']);
+                        if ($textLength2 > 6 or $strTXT2 > 470)
+                            $row_comments['text'] = '<div class="wall_strlen" id="hide_wall_rec' . $row_comments['id'] . '" style="max-height:102px"">' . $row_comments['text'] . '</div><div class="wall_strlen_full" onMouseDown="wall.FullText(' . $row_comments['id'] . ', this.id)" id="hide_wall_rec_lnk' . $row_comments['id'] . '">Показать полностью..</div>';
+
+                        //Обрабатываем ссылки
+                        $row_comments['text'] = preg_replace('`(http(?:s)?://\w+[^\s\[\]\<]+)`i', '<a href="/index.php?go=away&url=$1" target="_blank">$1</a>', $row_comments['text']);
+
+                        $tpl->set('{text}', stripslashes($row_comments['text']));
+                        $date_str = megaDate($row_comments['add_date']);
+                        $tpl->set('{date}', $date_str);
+                        if (stripos($row['admin'], "u{$user_id}|") !== false or $user_id == $row_comments['public_id']) {
+                            $tpl->set('[owner]', '');
+                            $tpl->set('[/owner]', '');
+                        } else
+                            $tpl->set_block("'\\[owner\\](.*?)\\[/owner\\]'si", "");
+
+                        if ($user_id == $row_comments['public_id'])
+
+                            $tpl->set_block("'\\[not-owner\\](.*?)\\[/not-owner\\]'si", "");
+
+                        else {
+
+                            $tpl->set('[not-owner]', '');
+                            $tpl->set('[/not-owner]', '');
+
+                        }
+
+                        $tpl->set('[comment]', '');
+                        $tpl->set('[/comment]', '');
+                        $tpl->set_block("'\\[record\\](.*?)\\[/record\\]'si", "");
+                        $tpl->set_block("'\\[comment-form\\](.*?)\\[/comment-form\\]'si", "");
+                        $tpl->set_block("'\\[all-comm\\](.*?)\\[/all-comm\\]'si", "");
+                        $tpl->compile('content');
+                    }
+
+                    //Загружаем форму ответа
+                    $tpl->load_template('groups/record.tpl');
+                    $tpl->set('{rec-id}', $rec_id);
+                    $tpl->set('{user-id}', $public_id);
+                    $tpl->set('[comment-form]', '');
+                    $tpl->set('[/comment-form]', '');
+                    $tpl->set_block("'\\[record\\](.*?)\\[/record\\]'si", "");
+                    $tpl->set_block("'\\[comment\\](.*?)\\[/comment\\]'si", "");
                     $tpl->set_block("'\\[all-comm\\](.*?)\\[/all-comm\\]'si", "");
                     $tpl->compile('content');
+
+                    AjaxTpl($tpl);
                 }
 
-                //Загружаем форму ответа
-                $tpl->load_template('groups/record.tpl');
-                $tpl->set('{rec-id}', $rec_id);
-                $tpl->set('{user-id}', $public_id);
-                $tpl->set('[comment-form]', '');
-                $tpl->set('[/comment-form]', '');
-                $tpl->set_block("'\\[record\\](.*?)\\[/record\\]'si", "");
-                $tpl->set_block("'\\[comment\\](.*?)\\[/comment\\]'si", "");
-                $tpl->set_block("'\\[all-comm\\](.*?)\\[/all-comm\\]'si", "");
-                $tpl->compile('content');
-
-                AjaxTpl($tpl);
             }
+
 
             break;
 

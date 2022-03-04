@@ -8,6 +8,7 @@
  */
 
 use FluffyDollop\Support\Registry;
+use Mozg\classes\Flood;
 
 NoAjaxQuery();
 
@@ -38,34 +39,40 @@ if (Registry::get('logged')) {
         //################### Отправка нового вопроса  ###################//
         case "send":
             NoAjaxQuery();
-            $title = requestFilter('title', 25000, true);
-            $question = requestFilter('question');
-            $limitTime = $server_time - 3600;
-            $rowLast = $db->super_query("SELECT COUNT(*) AS cnt FROM `support` WHERE сdate > '{$limitTime}'");
-            if (!$rowLast['cnt'] and !empty($title) and !empty($question) and $user_info['user_group'] != 4) {
-                $question = preg_replace('`(http(?:s)?://\w+[^\s\[\]\<]+)`i', '<!--link:$1--><a href="$1" target="_blank">$1</a><!--/link-->', $question);
-                $db->query("INSERT INTO `support` SET title = '{$title}', question = '{$question}', suser_id = '{$user_id}', sfor_user_id = '{$user_id}', sdate = '{$server_time}', сdate = '{$server_time}'");
-                $dbid = $db->insert_id();
-                $row = $db->super_query("SELECT user_search_pref, user_photo FROM `users` WHERE user_id = '{$user_id}'");
-                $tpl->load_template('support/show.tpl');
-                $tpl->set('{title}', stripslashes($title));
-                $tpl->set('{question}', stripslashes($question));
-                $tpl->set('{qid}', $dbid);
-                $date_str = megaDate($server_time);
-                $tpl->set('{date}', $date_str);
-                $tpl->set('{status}', 'Вопрос ожидает обработки.');
-                $tpl->set('{name}', $row['user_search_pref']);
-                $tpl->set('{uid}', $user_id);
-                if ($row['user_photo'])
-                    $tpl->set('{ava}', '/uploads/users/' . $user_id . '/50_' . $row['user_photo']);
-                else
-                    $tpl->set('{ava}', '{theme}/images/no_ava_50.png');
-                $tpl->set('{answers}', '');
-                $tpl->compile('content');
-                AjaxTpl($tpl);
-                echo 'r|x' . $dbid;
-            } else
+            if (Flood::check('support')) {
                 echo 'limit';
+            } else {
+                $title = requestFilter('title', 25000, true);
+                $question = requestFilter('question');
+                $limitTime = $server_time - 3600;
+                $rowLast = $db->super_query("SELECT COUNT(*) AS cnt FROM `support` WHERE сdate > '{$limitTime}'");
+                if (!$rowLast['cnt'] and !empty($title) and !empty($question) and $user_info['user_group'] != 4) {
+                    Flood::LogInsert('support');
+                    $question = preg_replace('`(http(?:s)?://\w+[^\s\[\]\<]+)`i', '<!--link:$1--><a href="$1" target="_blank">$1</a><!--/link-->', $question);
+                    $db->query("INSERT INTO `support` SET title = '{$title}', question = '{$question}', suser_id = '{$user_id}', sfor_user_id = '{$user_id}', sdate = '{$server_time}', сdate = '{$server_time}'");
+                    $dbid = $db->insert_id();
+                    $row = $db->super_query("SELECT user_search_pref, user_photo FROM `users` WHERE user_id = '{$user_id}'");
+                    $tpl->load_template('support/show.tpl');
+                    $tpl->set('{title}', stripslashes($title));
+                    $tpl->set('{question}', stripslashes($question));
+                    $tpl->set('{qid}', $dbid);
+                    $date_str = megaDate($server_time);
+                    $tpl->set('{date}', $date_str);
+                    $tpl->set('{status}', 'Вопрос ожидает обработки.');
+                    $tpl->set('{name}', $row['user_search_pref']);
+                    $tpl->set('{uid}', $user_id);
+                    if ($row['user_photo'])
+                        $tpl->set('{ava}', '/uploads/users/' . $user_id . '/50_' . $row['user_photo']);
+                    else
+                        $tpl->set('{ava}', '{theme}/images/no_ava_50.png');
+                    $tpl->set('{answers}', '');
+                    $tpl->compile('content');
+                    AjaxTpl($tpl);
+                    echo 'r|x' . $dbid;
+                } else
+                    echo 'limit';
+            }
+
 
             break;
 

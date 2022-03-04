@@ -12,6 +12,7 @@ namespace Mozg\classes;
 use FluffyDollop\Security\AntiSpam;
 use FluffyDollop\Support\Mysql;
 use FluffyDollop\Support\Registry;
+use FluffyDollop\Support\Status;
 
 class Dialog
 {
@@ -38,13 +39,21 @@ class Dialog
     final public function send(int $for_user_id, int $room_id, string $msg, string $attach_files): array
     {
         $user_info = $this->db->super_query("SELECT user_id, user_photo, user_search_pref FROM `users` WHERE user_id = '{$this->user_id}'");
-        AntiSpam::check('messages');
+        if (Flood::check('messages')) {
+            return array(
+                'status' => Status::LIMIT
+            );
+        }
+
         if ($room_id) {
             $for_user_id = 0;
         }
         $attach_files = str_replace('vote|', 'hack|', $attach_files);
-        AntiSpam::check('identical', $msg . $attach_files);
-        if (!empty($msg) || !empty($attach_files)) {
+        if (Flood::check('identical', $msg . $attach_files)) {
+            return array(
+                'status' => Status::LIMIT
+            );
+        } else if (!empty($msg) || !empty($attach_files)) {
             if ($room_id == 0) {
                 $row = $this->db->super_query("SELECT user_privacy FROM `users` WHERE user_id = '" . $for_user_id . "'");
             } else {
@@ -123,6 +132,7 @@ class Dialog
                 'status' => Status::NOT_USER
             );
         }
+
         return array(
             'status' => Status::NOT_VALID
         );

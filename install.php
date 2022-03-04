@@ -317,7 +317,9 @@ HTML;
         break;
     case "install":
         if (!check_install()) {
-            if (!empty($_POST['mysql_server']) && !empty($_POST['mysql_dbname']) && !empty($_POST['mysql_dbuser']) && !empty($_POST['adminfile']) && !empty($_POST['name']) && !empty($_POST['lastname']) && !empty($_POST['email']) && !empty($_POST['pass'])) {
+            if (!empty($_POST['mysql_server']) && !empty($_POST['mysql_dbname']) && !empty($_POST['mysql_dbuser']) &&
+                !empty($_POST['adminfile']) && !empty($_POST['name']) && !empty($_POST['lastname']) &&
+                !empty($_POST['email']) && !empty($_POST['pass'])) {
                 $_POST['mysql_server'] = str_replace(array("$", '"'), array("\\$", '\"'), $_POST['mysql_server']);
                 $_POST['mysql_dbname'] = str_replace(array("$", '"'), array("\\$", '\"'), $_POST['mysql_dbname']);
                 $_POST['mysql_dbuser'] = str_replace(array("$", '"'), array("\\$", '\"'), $_POST['mysql_dbuser']);
@@ -339,10 +341,8 @@ const COLLATE = "utf8";
 return new \FluffyDollop\Support\Mysql;
 
 HTML;
-                $con_file = fopen("system/data/db.php", 'wb+') || die("Извините, но невозможно создать файл <div style=\"font-weight: bold\">.system/data/db.php</div>.<br />Проверьте правильность проставленного CHMOD!");
-                fwrite($con_file, $db_config);
-                fclose($con_file);
-                @chmod("system/data/db.php", 0666);
+                file_put_contents(ENGINE_DIR . "/data/db.php", $db_config);
+
                 //Создаём файл админ панели
                 $admin = <<<HTML
 <?php
@@ -375,10 +375,9 @@ const ADMIN_DIR = ROOT_DIR . '/system/inc';
 include ADMIN_DIR.'/functions.php';
 include ADMIN_DIR.'/login.php';
 HTML;
-                $con_file = fopen($_POST['adminfile'], 'wb+') or die("Извините, но невозможно создать файл <div style=\"font-weight: bold\">{$_POST['adminfile']}</div>.<br />Проверьте правильность проставленного CHMOD!");
-                fwrite($con_file, $admin);
-                fclose($con_file);
-                $this_year = date('Y');
+                file_put_contents(ROOT_DIR . "/" . $_POST['adminfile'], $admin);
+
+
                 //Создаём файл конфигурации системы
                 $config = <<<HTML
 <?php
@@ -482,9 +481,8 @@ return array (
 );
 
 HTML;
-                $con_file = fopen(ROOT_DIR . "/system/data/config.php", 'wb+') or die("Извините, но невозможно создать файл <div style=\"font-weight: bold\">.system/data/config.php</div>.<br />Проверьте правильность проставленного CHMOD!");
-                fwrite($con_file, $config);
-                fclose($con_file);
+                file_put_contents(ENGINE_DIR . "/data/config.php", $config);
+
                 $db = require ENGINE_DIR . '/data/db.php';
 
                 $_POST['name'] = strip_tags($_POST['name']);

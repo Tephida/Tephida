@@ -7,8 +7,8 @@
  *
  */
 
-use FluffyDollop\Security\AntiSpam;
 use FluffyDollop\Support\Registry;
+use Mozg\classes\Flood;
 
 //Если страница вызвана через AJAX, то включаем защиту, чтоб не могли обращаться напрямую к странице
 NoAjaxQuery();
@@ -30,62 +30,62 @@ if (Registry::get('logged')) {
         case "send_demand":
             NoAjaxQuery();
 
-            AntiSpam::check('friends');
+            if (Flood::check('friends')) {
+                echo 'yes_demand';//fixme
+            } else {
+                $for_user_id = intFilter('for_user_id');
+                $from_user_id = $user_info['user_id'];
 
-            $for_user_id = intFilter('for_user_id');
-            $from_user_id = $user_info['user_id'];
+                //Проверяем на факт сушествования заявки для пользователя, если она уже есть, то даёт ответ "yes_demand"
+                $check = $db->super_query("SELECT for_user_id FROM `friends_demands` WHERE for_user_id = '{$for_user_id}' AND from_user_id = '{$from_user_id}'");
 
-            //Проверяем на факт сушествования заявки для пользователя, если она уже есть, то даёт ответ "yes_demand"
-            $check = $db->super_query("SELECT for_user_id FROM `friends_demands` WHERE for_user_id = '{$for_user_id}' AND from_user_id = '{$from_user_id}'");
+                if ($for_user_id and !$check and $for_user_id !== $from_user_id) {
 
-            if ($for_user_id and !$check and $for_user_id != $from_user_id) {
+                    //Проверяем существования заявки у себя в заявках
+                    $check_demands = $db->super_query("SELECT for_user_id FROM `friends_demands` WHERE for_user_id = '{$from_user_id}' AND from_user_id = '{$for_user_id}'");
+                    if (!$check_demands) {
 
-                //Проверяем существования заявки у себя в заявках
-                $check_demands = $db->super_query("SELECT for_user_id FROM `friends_demands` WHERE for_user_id = '{$from_user_id}' AND from_user_id = '{$for_user_id}'");
-                if (!$check_demands) {
+                        //Проверяем нет ли этого юзера уже в списке друзей
+                        $check_friendlist = $db->super_query("SELECT user_id FROM `friends` WHERE friend_id = '{$for_user_id}' AND user_id = '{$from_user_id}' AND subscriptions = 0");
+                        if (!$check_friendlist) {
+                            $db->query("INSERT INTO `friends_demands` (for_user_id, from_user_id, demand_date) VALUES ('{$for_user_id}', '{$from_user_id}', NOW())");
+                            Flood::LogInsert('friends');
+                            $db->query("UPDATE `users` SET user_friends_demands = user_friends_demands+1 WHERE user_id = '{$for_user_id}'");
+                            echo 'ok';
 
-                    //Проверяем нет ли этого юзера уже в списке друзей
-                    $check_friendlist = $db->super_query("SELECT user_id FROM `friends` WHERE friend_id = '{$for_user_id}' AND user_id = '{$from_user_id}' AND subscriptions = 0");
-                    if (!$check_friendlist) {
-                        $db->query("INSERT INTO `friends_demands` (for_user_id, from_user_id, demand_date) VALUES ('{$for_user_id}', '{$from_user_id}', NOW())");
-                        AntiSpam::LogInsert('friends');
-                        $db->query("UPDATE `users` SET user_friends_demands = user_friends_demands+1 WHERE user_id = '{$for_user_id}'");
-                        echo 'ok';
+                            //Вставляем событие в моментальные оповещания
+                            $row_owner = $db->super_query("SELECT user_last_visit FROM `users` WHERE user_id = '{$for_user_id}'");
+                            $update_time = $server_time - 70;
 
-                        //Вставляем событие в моментальные оповещания
-                        $row_owner = $db->super_query("SELECT user_last_visit FROM `users` WHERE user_id = '{$for_user_id}'");
-                        $update_time = $server_time - 70;
+                            if ($row_owner['user_last_visit'] >= $update_time) {
 
-                        if ($row_owner['user_last_visit'] >= $update_time) {
+                                $action_update_text = 'хочет добавить Вас в друзья.';
 
-                            $action_update_text = 'хочет добавить Вас в друзья.';
+                                $db->query("INSERT INTO `updates` SET for_user_id = '{$for_user_id}', from_user_id = '{$user_info['user_id']}', type = '11', date = '{$server_time}', text = '{$action_update_text}', user_photo = '{$user_info['user_photo']}', user_search_pref = '{$user_info['user_search_pref']}', lnk = '/friends/requests'");
 
-                            $db->query("INSERT INTO `updates` SET for_user_id = '{$for_user_id}', from_user_id = '{$user_info['user_id']}', type = '11', date = '{$server_time}', text = '{$action_update_text}', user_photo = '{$user_info['user_photo']}', user_search_pref = '{$user_info['user_search_pref']}', lnk = '/friends/requests'");
+                                mozg_create_cache("user_{$for_user_id}/updates", 1);
 
-                            mozg_create_cache("user_{$for_user_id}/updates", 1);
-
-                        }
-                        $config = settings_get();
-                        //Отправка уведомления на E-mail
-                        if ($config['news_mail_1'] == 'yes') {
-                            $rowUserEmail = $db->super_query("SELECT user_name, user_email FROM `users` WHERE user_id = '" . $for_user_id . "'");
-                            if ($rowUserEmail['user_email']) {
-                                include_once ENGINE_DIR . '/classes/mail.php';
-                                $mail = new vii_mail($config);
-                                $rowMyInfo = $db->super_query("SELECT user_search_pref FROM `users` WHERE user_id = '" . $user_id . "'");
-                                $rowEmailTpl = $db->super_query("SELECT text FROM `mail_tpl` WHERE id = '1'");
-                                $rowEmailTpl['text'] = str_replace('{%user%}', $rowUserEmail['user_name'], $rowEmailTpl['text']);
-                                $rowEmailTpl['text'] = str_replace('{%user-friend%}', $rowMyInfo['user_search_pref'], $rowEmailTpl['text']);
-                                $mail->send($rowUserEmail['user_email'], 'Новая заявка в друзья', $rowEmailTpl['text']);
                             }
-                        }
+                            $config = settings_get();
+                            //Отправка уведомления на E-mail
+                            if ($config['news_mail_1'] == 'yes') {
+                                $rowUserEmail = $db->super_query("SELECT user_name, user_email FROM `users` WHERE user_id = '" . $for_user_id . "'");
+                                if ($rowUserEmail['user_email']) {
+                                    $mail = new \FluffyDollop\Support\ViiMail($config);
+                                    $rowMyInfo = $db->super_query("SELECT user_search_pref FROM `users` WHERE user_id = '" . $user_id . "'");
+                                    $rowEmailTpl = $db->super_query("SELECT text FROM `mail_tpl` WHERE id = '1'");
+                                    $rowEmailTpl['text'] = str_replace('{%user%}', $rowUserEmail['user_name'], $rowEmailTpl['text']);
+                                    $rowEmailTpl['text'] = str_replace('{%user-friend%}', $rowMyInfo['user_search_pref'], $rowEmailTpl['text']);
+                                    $mail->send($rowUserEmail['user_email'], 'Новая заявка в друзья', $rowEmailTpl['text']);
+                                }
+                            }
+                        } else
+                            echo 'yes_friend';
                     } else
-                        echo 'yes_friend';
+                        echo 'yes_demand2';
                 } else
-                    echo 'yes_demand2';
-            } else
-                echo 'yes_demand';
-
+                    echo 'yes_demand';
+            }
             break;
 
         //################### Принятие заявки на дружбу ###################//

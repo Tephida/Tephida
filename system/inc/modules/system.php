@@ -14,52 +14,47 @@ $act = requestFilter('act');
 switch ($act) {
     case "save":
         if (isset($_POST['saveconf'])) {
-            if (file_exists(ENGINE_DIR . '/data/config.php')) {
-//                $saves = $_POST['save'];
-
-                if (isset($_POST['save'])) {
-                    $saves = json_decode(stripslashes($_POST['save']));
-
-                    $find[] = "'\r'";
-                    $replace[] = "";
-                    $find[] = "'\n'";
-                    $replace[] = "";
-
-                    $handler = fopen(ENGINE_DIR . '/data/config.php', "w");
-                    fwrite($handler, "<?php \n\n//System Configurations\n\nreturn array (\n\n");
-
-                    foreach ($saves as $name => $value) {
-
-                        if ($name != "offline_msg" and $name != "lang_list") {
-                            $value = trim(stripslashes($value));
-                            $value = htmlspecialchars($value, ENT_QUOTES);
-                            $value = preg_replace($find, $replace, $value);
-
-                            $name = trim(stripslashes($name));
-                            $name = htmlspecialchars($name, ENT_QUOTES);
-                            $name = preg_replace($find, $replace, $name);
-                        }
-
-                        $value = str_replace("$", "&#036;", $value);
-                        $value = str_replace("{", "&#123;", $value);
-                        $value = str_replace("}", "&#125;", $value);
-
-                        $name = str_replace("$", "&#036;", $name);
-                        $name = str_replace("{", "&#123;", $name);
-                        $name = str_replace("}", "&#125;", $name);
-
-                        fwrite($handler, "'{$name}' => \"{$value}\",\n\n");
-                    }
-                    fwrite($handler, ");\n\n?>");
-                    fclose($handler);
-                    $response = array(
-                        'info' => 'Настройки системы были успешно сохранены!'
-                    );
-                } else {
-                    $response = array(
-                        'info' => 'Ошибка сохранения',
-                    );
+            //                $saves = $_POST['save'];
+            if (file_exists(ENGINE_DIR . '/data/config.php') && isset($_POST['save'])) {
+                try {
+                    $saves = json_decode(stripslashes($_POST['save']), false, 512, JSON_THROW_ON_ERROR);
+                } catch (JsonException $e) {
+                    $saves = array();
+                    throw new Error('error decode data');
                 }
+
+                $find[] = "'\r'";
+                $replace[] = "";
+                $find[] = "'\n'";
+                $replace[] = "";
+
+                $config_data = "<?php \n\n//System Configurations\n\nreturn array (\n\n";
+
+                foreach ($saves as $name => $value) {
+
+                    if ($name != "offline_msg" and $name != "lang_list") {
+                        $value = trim(stripslashes($value));
+                        $value = htmlspecialchars($value, ENT_QUOTES);
+                        $value = preg_replace($find, $replace, $value);
+
+                        $name = trim(stripslashes($name));
+                        $name = htmlspecialchars($name, ENT_QUOTES);
+                        $name = preg_replace($find, $replace, $name);
+                    }
+
+                    $value = str_replace(array("$", "{", "}"), array("&#036;", "&#123;", "&#125;"), $value);
+
+                    $name = str_replace(array("$", "{", "}"), array("&#036;", "&#123;", "&#125;"), $name);
+
+                    $config_data .= "'{$name}' => \"{$value}\",\n\n";
+                }
+                $config_data .= ");\n\n?>";
+
+                file_put_contents(ENGINE_DIR . "/data/config.php", $config_data);
+
+                $response = array(
+                    'info' => 'Настройки системы были успешно сохранены!'
+                );
             } else {
                 $response = array(
                     'info' => 'Ошибка сохранения',
@@ -101,7 +96,7 @@ switch ($act) {
         $root_dir2 = scandir('./lang/');
         $for_select_lang = '';
         foreach ($root_dir2 as $lang) {
-            if ($lang != '.' and $lang != '..' and $lang != '.htaccess')
+            if ($lang != '.' && $lang != '..' && $lang != '.htaccess')
                 $for_select_lang .= str_replace('value="' . $config['lang'] . '"', 'value="' . $config['lang'] . '" selected', '<option value="' . $lang . '">' . $lang . '</option>');
         }
 
@@ -124,7 +119,7 @@ switch ($act) {
 
         $config['offline_msg'] = stripslashes($config['offline_msg']);
 
-        $tpl->set('{config_offline_msg}', $config['offline_msg'] ?? '');
+        $tpl->set('{config_offline_msg}', $config['offline_msg']);
 
         $tpl->set('{config_lang_list}', $config['lang_list']);
         $tpl->set('{config_bonus_rate}', $config['bonus_rate']);
