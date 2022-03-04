@@ -47,7 +47,7 @@ var reg = {
         if (email != 0 && isValidEmailAddress(email)) {
             if (new_pass != 0 && new_pass.length >= 6) {
                 if (new_pass == new_pass2) {
-                    Box.Show('sec_code', 280, 'Введите код с картинки:', '<div style="padding:20px;text-align:center"><div class="cursor_pointer" onClick="updateCode(); return false"><div id="sec_code"><img src="/antibot/antibot.php?rndval=' + rndval + '" alt="" title="Показать другой код" width="120" height="50" /></div></div><div id="code_loading"><input type="text" id="val_sec_code" class="inpst" maxlength="6" style="margin-top:10px;width:110px" /></div></div>', lang_box_cancel, 'Отправить', 'checkCode(); return false;');
+                    Box.Show('sec_code', 280, 'Введите код с картинки:', '<div style="padding:20px;text-align:center"><div class="cursor_pointer" onClick="updateCode(); return false"><div id="sec_code"><img src="/security/img?rndval=' + rndval + '" alt="" title="Показать другой код" width="120" height="50" /></div></div><div id="code_loading"><input type="text" id="val_sec_code" class="inpst" maxlength="6" style="margin-top:10px;width:110px" /></div></div>', lang_box_cancel, 'Отправить', 'checkCode(); return false;');
                     $('#val_sec_code').focus();
                 } else {
                     setErrorInputMsg('new_pass2');
@@ -184,14 +184,14 @@ function isValidEmailAddress(emailAddress) {
 
 function updateCode() {
     var rndval = new Date().getTime();
-    $('#sec_code').html('<img src="/antibot/antibot.php?rndval=' + rndval + '" alt="" title="Показать другой код" width="120" height="50" />');
+    $('#sec_code').html('<img src="/security/img?rndval=' + rndval + '" alt="" title="Показать другой код" width="120" height="50" />');
 }
 
 function checkCode() {
     var val_sec_code = $("#val_sec_code").val();
     $('#code_loading').html('<img src="' + template_dir + '/images/loading_mini.gif" style="margin-top:21px" />');
-    $.get('/antibot/sec_code.php?user_code=' + val_sec_code, function (data) {
-        if (data == 'ok') {
+    $.get('/security/code?user_code=' + val_sec_code, function (data) {
+        if (data.status == '1') {
             reg.send(val_sec_code);
         } else {
             updateCode();

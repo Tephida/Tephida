@@ -132,6 +132,7 @@ try {
     $params = [];
     $routers = array(
         '/' => 'Register@main',
+
         '/register/send' => 'Register@send',
         '/register/rules' => 'Register@rules',
         '/register/step2' => 'Register@step2',
@@ -139,6 +140,7 @@ try {
         '/register/activate' => 'Register@activate',
         '/register/finish' => 'Register@finish',
         '/login' => 'Register@login',
+
         '/u:num' => 'Profile@main',
         '/u:numafter' => 'Profile@main',
         '/public:num' => 'Communities@main',
@@ -148,7 +150,11 @@ try {
         '/restore/next/' => 'Restore@next',
         '/restore/send' => 'Restore@send',
         '/restore/prefinish' => 'Restore@preFinish',
+
         '/wall:num_:num' => 'WallPage@main',
+
+        '/security/img' => 'Captcha@captcha',
+        '/security/code' => 'Captcha@code',
     );
     $router->add($routers);
     try {
