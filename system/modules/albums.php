@@ -442,7 +442,7 @@ if (Registry::get('logged')) {
                     $tpl->load_template('albums_editcover.tpl');
                     $tpl->set('[top]', '');
                     $tpl->set('[/top]', '');
-                    $tpl->set('{photo-num}', $row_album['photo_num'] . ' ' . gram_record($row_album['photo_num'], 'photos'));
+                    $tpl->set('{photo-num}', $row_album['photo_num'] . ' ' . declWord($row_album['photo_num'], 'photos'));
                     $tpl->set_block("'\\[bottom\\](.*?)\\[/bottom\\]'si", "");
                     $tpl->compile('content');
 
@@ -498,7 +498,7 @@ if (Registry::get('logged')) {
 
                 $tpl->set('[top]', '');
                 $tpl->set('[/top]', '');
-                $tpl->set('{photo-num}', $row_album['photo_num'] . ' ' . gram_record($row_album['photo_num'], 'photos'));
+                $tpl->set('{photo-num}', $row_album['photo_num'] . ' ' . declWord($row_album['photo_num'], 'photos'));
                 $tpl->set_block("'\\[bottom\\](.*?)\\[/bottom\\]'si", "");
                 $tpl->compile('content');
 
@@ -788,7 +788,7 @@ HTML;
                         navigation($gcount, $row_album['all_comm_num'], $config['home_url'] . 'albums/view/' . $aid . '/comments/page/');
                     }
 
-                    $user_speedbar = $row_album['all_comm_num'] . ' ' . gram_record($row_album['all_comm_num'], 'comments');
+                    $user_speedbar = $row_album['all_comm_num'] . ' ' . declWord($row_album['all_comm_num'], 'comments');
                 } else {
                     msgbox('', $lang['no_comments'], 'info_2');
                 }
@@ -925,8 +925,8 @@ HTML;
                     $tpl->compile('info');
 
                     //Мета теги и формирование спидбара
-                    $params['metatags']['title'] = stripslashes($row_album['name']) . ' | ' . $row_album['photo_num'] . ' ' . gram_record($row_album['photo_num'], 'photos');
-                    $user_speedbar = '<span id="photo_num">' . $row_album['photo_num'] . '</span> ' . gram_record($row_album['photo_num'], 'photos');
+                    $params['metatags']['title'] = stripslashes($row_album['name']) . ' | ' . $row_album['photo_num'] . ' ' . declWord($row_album['photo_num'], 'photos');
+                    $user_speedbar = '<span id="photo_num">' . $row_album['photo_num'] . '</span> ' . declWord($row_album['photo_num'], 'photos');
 
                     if ($sql_photos) {
                         $tpl->load_template('album_photo.tpl');
@@ -1071,8 +1071,8 @@ HTML;
                                 else
                                     $tpl->set('{descr}', '');
 
-                                $tpl->set('{photo-num}', $row['photo_num'] . ' ' . gram_record($row['photo_num'], 'photos'));
-                                $tpl->set('{comm-num}', $row['comm_num'] . ' ' . gram_record($row['comm_num'], 'comments'));
+                                $tpl->set('{photo-num}', $row['photo_num'] . ' ' . declWord($row['photo_num'], 'photos'));
+                                $tpl->set('{comm-num}', $row['comm_num'] . ' ' . declWord($row['comm_num'], 'comments'));
 
                                 $date_str = megaDate(strtotime($row['adate']), 1, 1);
                                 $tpl->set('{date}', $date_str);
@@ -1098,9 +1098,9 @@ HTML;
 
                         if ($row_owner['user_albums_num']) {
                             if ($user_info['user_id'] == $uid) {
-                                $user_speedbar = 'У Вас <span id="albums_num">' . $row_owner['user_albums_num'] . '</span> ' . gram_record($row_owner['user_albums_num'], 'albums');
+                                $user_speedbar = 'У Вас <span id="albums_num">' . $row_owner['user_albums_num'] . '</span> ' . declWord($row_owner['user_albums_num'], 'albums');
                             } else {
-                                $user_speedbar = 'У ' . gramatikName($author_info[0]) . ' ' . $row_owner['user_albums_num'] . ' ' . gram_record($row_owner['user_albums_num'], 'albums');
+                                $user_speedbar = 'У ' . gramatikName($author_info[0]) . ' ' . $row_owner['user_albums_num'] . ' ' . declWord($row_owner['user_albums_num'], 'albums');
                             }
 
                             $tpl->load_template('albums_top.tpl');

@@ -545,7 +545,7 @@ if (Registry::get('logged')) {
                             $tpl->set_block("'\\[all\\](.*?)\\[/all\\]'si", "");
                         }
                         $tpl->set('{jid}', $row['position']);
-                        $tpl->set('{comm_num}', ($row['comm_num'] - 3) . ' ' . gram_record(($row['comm_num'] - 3), 'comments'));
+                        $tpl->set('{comm_num}', ($row['comm_num'] - 3) . ' ' . declWord(($row['comm_num'] - 3), 'comments'));
                         $tpl->set('{num}', $row['comm_num']);
                         $tpl->set('{author}', $row['user_search_pref']);
 

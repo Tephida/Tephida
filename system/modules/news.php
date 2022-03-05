@@ -201,7 +201,7 @@ if (Registry::get('logged')) {
                             $action_cnt++;
                         }
                     }
-                    $tpl->set('{action-type}', $action_cnt . ' ' . gram_record($action_cnt, 'videos') . ', ');
+                    $tpl->set('{action-type}', $action_cnt . ' ' . declWord($action_cnt, 'videos') . ', ');
                     $tpl->set('{comment}', $comment);
                 }
                 //Если фотография
@@ -214,7 +214,7 @@ if (Registry::get('logged')) {
                             $action_cnt++;
                         }
                     }
-                    $tpl->set('{action-type}', $action_cnt . ' ' . gram_record($action_cnt, 'photos') . ', ');
+                    $tpl->set('{action-type}', $action_cnt . ' ' . declWord($action_cnt, 'photos') . ', ');
                     $tpl->set('{comment}', $comment);
                     $comment = '';
                 }
@@ -238,7 +238,7 @@ if (Registry::get('logged')) {
                     }
                     $newfriends .= '<div class="clear"></div>';
 
-                    $tpl->set('{action-type-updates}', $sex_text . ' в друзья ' . $action_cnt . ' ' . gram_record($action_cnt, 'updates') . '.');
+                    $tpl->set('{action-type-updates}', $sex_text . ' в друзья ' . $action_cnt . ' ' . declWord($action_cnt, 'updates') . '.');
                     $tpl->set('{action-type}', '');
                     $tpl->set('{comment}', $newfriends);
                 }
@@ -254,7 +254,7 @@ if (Registry::get('logged')) {
                         }
                     }
 
-                    $type_updates = $action_cnt == 1 ? $type_updates = 'новую заметку' : $action_cnt . ' ' . gram_record($action_cnt, 'notes');
+                    $type_updates = $action_cnt == 1 ? $type_updates = 'новую заметку' : $action_cnt . ' ' . declWord($action_cnt, 'notes');
 
                     $tpl->set('{action-type-updates}', $sex_text . ' ' . $type_updates . '.');
                     $tpl->set('{action-type}', '');
@@ -444,7 +444,7 @@ if (Registry::get('logged')) {
                                         }
                                     }
                                     if ($row_vote['answer_num']) {
-                                        $answer_num_text = gram_record($row_vote['answer_num'], 'fave');
+                                        $answer_num_text = declWord($row_vote['answer_num'], 'fave');
                                     } else {
                                         $answer_num_text = 'человек';
                                     }
@@ -725,7 +725,7 @@ HTML;
                                         }
                                     }
                                     if ($row_vote['answer_num']) {
-                                        $answer_num_text = gram_record($row_vote['answer_num'], 'fave');
+                                        $answer_num_text = declWord($row_vote['answer_num'], 'fave');
                                     } else {
                                         $answer_num_text = 'человек';
                                     }
@@ -821,7 +821,7 @@ HTML;
                     if ($cntUse == 1) {
                         $sex_text = $sex_text_3;
                     } else {
-                        $sex_text = '<b>' . $cntUse . '</b> ' . gram_record($cntUse, 'fave') . ' оценили';
+                        $sex_text = '<b>' . $cntUse . '</b> ' . declWord($cntUse, 'fave') . ' оценили';
                     }
 
                     if (strlen($str_text_likes) == 70) {
@@ -1097,7 +1097,7 @@ HTML;
                                     }
                                 }
                                 if ($row_vote['answer_num']) {
-                                    $answer_num_text = gram_record($row_vote['answer_num'], 'fave');
+                                    $answer_num_text = declWord($row_vote['answer_num'], 'fave');
                                 } else {
                                     $answer_num_text = 'человек';
                                 }
@@ -1206,7 +1206,7 @@ HTML;
 
                 if ($rec_info['likes_num']) {
                     $tpl->set('{likes}', $rec_info['likes_num']);
-                    $tpl->set('{likes-text}', '<span id="like_text_num' . $row['obj_id'] . '">' . $rec_info['likes_num'] . '</span> ' . gram_record($rec_info['likes_num'], 'like'));
+                    $tpl->set('{likes-text}', '<span id="like_text_num' . $row['obj_id'] . '">' . $rec_info['likes_num'] . '</span> ' . declWord($rec_info['likes_num'], 'like'));
                 } else {
                     $tpl->set('{likes}', '');
                     $tpl->set('{likes-text}', '<span id="like_text_num' . $row['obj_id'] . '">0</span> человеку');
@@ -1248,7 +1248,7 @@ HTML;
                         $sql_comments = $db->super_query("SELECT tb1.id, author_user_id, text, add_date, tb2.user_photo, user_search_pref FROM `wall` tb1, `users` tb2 WHERE tb1.author_user_id = tb2.user_id AND tb1.fast_comm_id = '{$row['obj_id']}' ORDER by `add_date` ASC LIMIT {$comments_limit}, 3", true);
 
                         //Загружаем кнопку "Показать N запсии"
-                        $tpl->set('{gram-record-all-comm}', gram_record(($rec_info['fasts_num'] - 3), 'prev') . ' ' . ($rec_info['fasts_num'] - 3) . ' ' . gram_record(($rec_info['fasts_num'] - 3), 'comments'));
+                        $tpl->set('{gram-record-all-comm}', declWord(($rec_info['fasts_num'] - 3), 'prev') . ' ' . ($rec_info['fasts_num'] - 3) . ' ' . declWord(($rec_info['fasts_num'] - 3), 'comments'));
                         if ($rec_info['fasts_num'] < 4) {
                             $tpl->set_block("'\\[all-comm\\](.*?)\\[/all-comm\\]'si", "");
                         } else {
@@ -1515,7 +1515,7 @@ HTML;
                                     }
                                 }
                                 if ($row_vote['answer_num']) {
-                                    $answer_num_text = gram_record($row_vote['answer_num'], 'fave');
+                                    $answer_num_text = declWord($row_vote['answer_num'], 'fave');
                                 } else {
                                     $answer_num_text = 'человек';
                                 }
@@ -1609,7 +1609,7 @@ HTML;
 
                 if ($rec_info_groups['likes_num']) {
                     $tpl->set('{likes}', $rec_info_groups['likes_num']);
-                    $tpl->set('{likes-text}', '<span id="like_text_num' . $row['obj_id'] . '">' . $rec_info_groups['likes_num'] . '</span> ' . gram_record($rec_info_groups['likes_num'], 'like'));
+                    $tpl->set('{likes-text}', '<span id="like_text_num' . $row['obj_id'] . '">' . $rec_info_groups['likes_num'] . '</span> ' . declWord($rec_info_groups['likes_num'], 'like'));
                 } else {
                     $tpl->set('{likes}', '');
                     $tpl->set('{likes-text}', '<span id="like_text_num' . $row['obj_id'] . '">0</span> человеку');
@@ -1650,7 +1650,7 @@ HTML;
                         $sql_comments = $db->super_query("SELECT tb1.id, public_id, text, add_date, tb2.user_photo, user_search_pref FROM `communities_wall` tb1, `users` tb2 WHERE tb1.public_id = tb2.user_id AND tb1.fast_comm_id = '{$row['obj_id']}' ORDER by `add_date` ASC LIMIT {$comments_limit}, 3", true);
 
                         //Загружаем кнопку "Показать N запсии"
-                        $tpl->set('{gram-record-all-comm}', gram_record(($rec_info_groups['fasts_num'] - 3), 'prev') . ' ' . ($rec_info_groups['fasts_num'] - 3) . ' ' . gram_record(($rec_info_groups['fasts_num'] - 3), 'comments'));
+                        $tpl->set('{gram-record-all-comm}', declWord(($rec_info_groups['fasts_num'] - 3), 'prev') . ' ' . ($rec_info_groups['fasts_num'] - 3) . ' ' . declWord(($rec_info_groups['fasts_num'] - 3), 'comments'));
                         if ($rec_info_groups['fasts_num'] < 4) {
                             $tpl->set_block("'\\[all-comm\\](.*?)\\[/all-comm\\]'si", "");
                         } else {

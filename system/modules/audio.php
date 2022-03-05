@@ -160,7 +160,7 @@ if (Registry::get('logged')) {
                 $tpl->load_template('albums_editcover.tpl');
                 $tpl->set('[top]', '');
                 $tpl->set('[/top]', '');
-                $tpl->set('{photo-num}', $count['user_audio'] . ' ' . gram_record($count['user_audio'], 'audio'));
+                $tpl->set('{photo-num}', $count['user_audio'] . ' ' . declWord($count['user_audio'], 'audio'));
                 $tpl->set_block("'\\[bottom\\](.*?)\\[/bottom\\]'si", "");
                 $tpl->compile('content');
 

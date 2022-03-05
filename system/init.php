@@ -47,6 +47,7 @@ if (requestFilter('act') == 'chage_lang') {
     $langReferer = $_SERVER['HTTP_REFERER'];
     header("Location: {$langReferer}");
 }
+
 //lang
 $config['lang_list'] = nl2br($config['lang_list']);
 $expLangList = explode('<br />', $config['lang_list']);

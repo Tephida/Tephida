@@ -91,7 +91,7 @@ if (Registry::get('logged')) {
                 $tpl->load_template('profile_subscription_box_top.tpl');
                 $tpl->set('[top]', '');
                 $tpl->set('[/top]', '');
-                $tpl->set('{subcr-num}', $subscr_num . ' ' . gram_record($subscr_num, 'subscr'));
+                $tpl->set('{subcr-num}', $subscr_num . ' ' . declWord($subscr_num, 'subscr'));
                 $tpl->set_block("'\\[bottom\\](.*?)\\[/bottom\\]'si", "");
                 $tpl->compile('content');
 

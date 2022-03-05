@@ -74,7 +74,7 @@ if (Registry::get('logged')) {
             //Если кто-то есть в закладках то выводим
             if ($user['user_fave_num']) {
 
-                $user_speedbar = '<span id="fave_num">' . $user['user_fave_num'] . '</span> ' . gram_record($user['user_fave_num'], 'fave');
+                $user_speedbar = '<span id="fave_num">' . $user['user_fave_num'] . '</span> ' . declWord($user['user_fave_num'], 'fave');
 
                 //Загружаем поиск на странице
                 $tpl->load_template('fave_search.tpl');

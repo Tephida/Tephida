@@ -12,6 +12,7 @@ use FluffyDollop\Support\Filesystem;
 use FluffyDollop\Support\Gzip;
 use FluffyDollop\Support\Registry;
 use FluffyDollop\Support\Templates;
+use Mozg\classes\Declensions;
 use Mozg\classes\TpLSite;
 
 function informationText($array): string
@@ -342,12 +343,18 @@ function user_age($user_year, $user_month, $user_day)
             $user_age = $current_year - $user_year - 1;
         if ($user_month && $user_day) {
 
-            return $user_age . ' ' . declOfNum($user_age, array('год', 'года', 'лет'));
-
-//            return $user_age . ' ' . gram_record($user_age, 'user_age');
-        } else
+            return $user_age . ' ' . declWord($user_age, 'user_age');
+        } else {
             return false;
+        }
     }
+}
+
+function declWord(int $num, string $type): string
+{
+    $lang = getLang();
+    $decl_list = require ROOT_DIR . "/lang/{$lang}/declensions.php";
+    return (new Declensions($decl_list))->makeWord($num, $type);
 }
 
 /**
@@ -643,7 +650,7 @@ function gram_record($num, $type): string
             $gram_num_record = 'подписчик';
         }
     }
-    if ($type == 'subscribers2') {
+    if ($type == 'subscribers2') {//todo
         if ($numres == 1) {
             $gram_num_record = 'Подписался <span id="traf2">' . $num . '</span> человек';
         } elseif ($numres < 5) {
@@ -737,9 +744,6 @@ HTML;
     } else
         return header('Location: /index.php?go=none');
 }
-
-
-
 
 function OnlineTpl($time, $mobile = false) {
     global $tpl, $online_time, $lang;
@@ -1022,10 +1026,7 @@ function settings_load(): array
     die("Vii Engine not installed. Please run install.php");
 }
 
-
 /**
- *
- *
  * @param $tpl
  * @param array $params
  * @return int
@@ -1372,8 +1373,26 @@ function tpl_init(): Templates
     return $tpl;
 }
 
-function declOfNum($number, $titles)
+function getLang()
 {
-    $cases = array(2, 0, 1, 1, 1, 2);
-    return $titles[($number % 100 > 4 and $number % 100 < 20) ? 2 : $cases[min($number % 10, 5)]];
+    $config = settings_get() ?? settings_load();
+    $config['lang_list'] = nl2br($config['lang_list']);
+    $expLangList = explode('<br />', $config['lang_list']);
+    $numLangs = count($expLangList);
+    $useLang = (!empty($_COOKIE['lang'])) > 0 ? (int)$_COOKIE['lang'] : 0;
+    if ($useLang <= 0) {
+        $useLang = 1;
+    }
+    $cil = 0;
+    foreach ($expLangList as $expLangData) {
+        ++$cil;
+        $expLangName = explode(' | ', $expLangData);
+        if ($cil == $useLang && $expLangName[0]) {
+            $checkLang = $expLangName[1];
+        }
+    }
+    if (!isset($checkLang)) {
+        $checkLang = 'Russian';
+    }
+    return $checkLang;
 }

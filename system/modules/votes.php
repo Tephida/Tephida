@@ -56,7 +56,7 @@ if (Registry::get('logged')) {
             $result .= "<div class=\"wall_vote_oneanswe cursor_default\">{$arr_answe_list[$ai]}<br /><div class=\"wall_vote_proc fl_l\"><div class=\"wall_vote_proc_bg\" style=\"width:" . intval($proc) . "%\"></div><div style=\"margin-top:-16px\">{$num}</div></div><div class=\"fl_l\" style=\"margin-top:-1px\"><b>{$proc}%</b></div></div><div class=\"clear\"></div>";
         }
         if ($row_vote['answer_num']) {
-            $answer_num_text = gram_record($row_vote['answer_num'], 'fave');
+            $answer_num_text = declWord($row_vote['answer_num'], 'fave');
         } else {
             $answer_num_text = 'человек';
         }

@@ -62,7 +62,7 @@ if (Registry::get('logged')) {
 
                         $img_width = 50;
                         $row['user_search_pref'] = $row['title'];
-                        $countr = $row['traf'] . ' ' . gram_record($row['traf'], 'groups_users');
+                        $countr = $row['traf'] . ' ' . declWord($row['traf'], 'groups_users');
 
                         if ($row['adres']) {
                             $row['user_id'] = $row['adres'];

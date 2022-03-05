@@ -367,7 +367,7 @@ if (Registry::get('logged')) {
                     $tpl->set('{vid}', $vid);
                     $tpl->set('{video}', $row['video']);
                     if ($row['views']) {
-                        $tpl->set('{views}', $row['views'] . ' ' . gram_record($row['views'], 'video_views') . '<br /><br />');
+                        $tpl->set('{views}', $row['views'] . ' ' . declWord($row['views'], 'video_views') . '<br /><br />');
                     } else {
                         $tpl->set('{views}', '');
                     }
@@ -399,7 +399,7 @@ if (Registry::get('logged')) {
                     if ($config['video_mod_add_my'] == 'no') {
                         $tpl->set_block("'\\[not-owner\\](.*?)\\[/not-owner\\]'si", "");
                     }
-                    $tpl->set('{prev-text-comm}', gram_record(($row['comm_num'] - 3), 'prev') . ' ' . ($row['comm_num'] - 3) . ' ' . gram_record(($row['comm_num'] - 3), 'comments'));
+                    $tpl->set('{prev-text-comm}', declWord(($row['comm_num'] - 3), 'prev') . ' ' . ($row['comm_num'] - 3) . ' ' . declWord(($row['comm_num'] - 3), 'comments'));
                     if ($row['comm_num'] < 4) {
                         $tpl->set_block("'\\[all-comm\\](.*?)\\[/all-comm\\]'si", "");
                     } else {
@@ -614,7 +614,7 @@ if (Registry::get('logged')) {
 
                 $tpl->set('[top]', '');
                 $tpl->set('[/top]', '');
-                $tpl->set('{photo-num}', $count['user_videos_num'] . ' ' . gram_record($count['user_videos_num'], 'videos'));
+                $tpl->set('{photo-num}', $count['user_videos_num'] . ' ' . declWord($count['user_videos_num'], 'videos'));
                 $tpl->set_block("'\\[bottom\\](.*?)\\[/bottom\\]'si", "");
                 $tpl->compile('content');
 
@@ -664,7 +664,7 @@ if (Registry::get('logged')) {
                 $tpl->load_template('videos/box_all_video_top.tpl');
                 $tpl->set('[top]', '');
                 $tpl->set('[/top]', '');
-                $tpl->set('{photo-num}', $count['videos_num'] . ' ' . gram_record($count['videos_num'], 'videos'));
+                $tpl->set('{photo-num}', $count['videos_num'] . ' ' . declWord($count['videos_num'], 'videos'));
                 $tpl->set_block("'\\[bottom\\](.*?)\\[/bottom\\]'si", "");
                 $tpl->compile('content');
                 //Выводим циклом видео
@@ -733,7 +733,7 @@ if (Registry::get('logged')) {
                             } else {
                                 $tpl->set('{descr}', '');
                             }
-                            $tpl->set('{comm}', $row['comm_num'] . ' ' . gram_record($row['comm_num'], 'comments'));
+                            $tpl->set('{comm}', $row['comm_num'] . ' ' . declWord($row['comm_num'], 'comments'));
                             $date_str = megaDate(strtotime($row['add_date']));
                             $tpl->set('{date}', $date_str);
                             if ($get_user_id == $user_id) {
@@ -820,9 +820,9 @@ if (Registry::get('logged')) {
                     }
 
                     if ($get_user_id == $user_id) {
-                        $user_speedbar = 'У Вас <span id="nums">' . ($owner['user_videos_num'] ? $owner['user_videos_num'] : false) . '</span> ' . gram_record($owner['user_videos_num'], 'videos');
+                        $user_speedbar = 'У Вас <span id="nums">' . ($owner['user_videos_num'] ? $owner['user_videos_num'] : false) . '</span> ' . declWord($owner['user_videos_num'], 'videos');
                     } else {
-                        $user_speedbar = 'У ' . gramatikName($name_info[0]) . ' ' . ($owner['user_videos_num'] ? $owner['user_videos_num'] : false) . ' ' . gram_record($owner['user_videos_num'], 'videos');
+                        $user_speedbar = 'У ' . gramatikName($name_info[0]) . ' ' . ($owner['user_videos_num'] ? $owner['user_videos_num'] : false) . ' ' . declWord($owner['user_videos_num'], 'videos');
                     }
                     if ($owner['user_videos_num']) {
 
@@ -866,7 +866,7 @@ if (Registry::get('logged')) {
                                 } else {
                                     $tpl->set('{descr}', '');
                                 }
-                                $tpl->set('{comm}', $row['comm_num'] . ' ' . gram_record($row['comm_num'], 'comments'));
+                                $tpl->set('{comm}', $row['comm_num'] . ' ' . declWord($row['comm_num'], 'comments'));
                                 $date_str = megaDate(strtotime($row['add_date']));
                                 $tpl->set('{date}', $date_str);
                                 if ($get_user_id == $user_id) {

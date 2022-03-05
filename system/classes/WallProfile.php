@@ -269,7 +269,7 @@ class WallProfile
 
                             }
 
-                            if ($row_vote['answer_num']) $answer_num_text = gram_record($row_vote['answer_num'], 'fave');
+                            if ($row_vote['answer_num']) $answer_num_text = declWord($row_vote['answer_num'], 'fave');
                             else $answer_num_text = 'человек';
 
                             if ($row_vote['answer_num'] <= 1) $answer_text2 = 'Проголосовал';
@@ -361,7 +361,7 @@ HTML;
 
             if ($row_wall['likes_num']) {
                 $this->tpl->set('{likes}', $row_wall['likes_num']);
-                $this->tpl->set('{likes-text}', '<span id="like_text_num' . $row_wall['id'] . '">' . $row_wall['likes_num'] . '</span> ' . gram_record($row_wall['likes_num'], 'like'));
+                $this->tpl->set('{likes-text}', '<span id="like_text_num' . $row_wall['id'] . '">' . $row_wall['likes_num'] . '</span> ' . declWord($row_wall['likes_num'], 'like'));
             } else {
                 $this->tpl->set('{likes}', '');
                 $this->tpl->set('{likes-text}', '<span id="like_text_num' . $row_wall['id'] . '">0</span> человеку');
@@ -437,7 +437,7 @@ HTML;
                     $sql_comments = $db->super_query("SELECT tb1.id, author_user_id, text, add_date, tb2.user_photo, user_search_pref FROM `wall` tb1, `users` tb2 WHERE tb1.author_user_id = tb2.user_id AND tb1.fast_comm_id = '{$row_wall['id']}' ORDER by `add_date` ASC LIMIT {$comments_limit}, 3", true);
 
                     //Загружаем кнопку "Показать N запсии"
-                    $this->tpl->set('{gram-record-all-comm}', gram_record(($row_wall['fasts_num'] - 3), 'prev') . ' ' . ($row_wall['fasts_num'] - 3) . ' ' . gram_record(($row_wall['fasts_num'] - 3), 'comments'));
+                    $this->tpl->set('{gram-record-all-comm}', declWord(($row_wall['fasts_num'] - 3), 'prev') . ' ' . ($row_wall['fasts_num'] - 3) . ' ' . declWord(($row_wall['fasts_num'] - 3), 'comments'));
                     if ($row_wall['fasts_num'] < 4)
                         $this->tpl->set_block("'\\[all-comm\\](.*?)\\[/all-comm\\]'si", "");
                     else {
@@ -554,7 +554,7 @@ HTML;
 
             //Загружаем кнопку "Показать N запсии" если их больше 3
             if ($record_fasts_num > 3) {
-                $tpl->set('{gram-record-all-comm}', gram_record(($record_fasts_num - 3), 'prev') . ' ' . ($record_fasts_num - 3) . ' ' . gram_record(($record_fasts_num - 3), 'comments'));
+                $tpl->set('{gram-record-all-comm}', declWord(($record_fasts_num - 3), 'prev') . ' ' . ($record_fasts_num - 3) . ' ' . declWord(($record_fasts_num - 3), 'comments'));
                 $tpl->set('[all-comm]', '');
                 $tpl->set('[/all-comm]', '');
                 $tpl->set('{rec-id}', $fast_comm_id);

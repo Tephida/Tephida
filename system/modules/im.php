@@ -842,7 +842,7 @@ if (Registry::get('logged')) {
                                         }
                                     }
                                     if ($row_vote['answer_num']) {
-                                        $answer_num_text = gram_record($row_vote['answer_num'], 'fave');
+                                        $answer_num_text = declWord($row_vote['answer_num'], 'fave');
                                     } else {
                                         $answer_num_text = 'человек';
                                     }
@@ -1127,7 +1127,7 @@ HTML;
                                         }
                                     }
                                     if ($row_vote['answer_num']) {
-                                        $answer_num_text = gram_record($row_vote['answer_num'], 'fave');
+                                        $answer_num_text = declWord($row_vote['answer_num'], 'fave');
                                     } else {
                                         $answer_num_text = 'человек';
                                     }

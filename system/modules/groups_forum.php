@@ -655,7 +655,7 @@ if (Registry::get('logged')) {
                         }
                     }
                     if ($row_vote['answer_num']) {
-                        $answer_num_text = gram_record($row_vote['answer_num'], 'fave');
+                        $answer_num_text = declWord($row_vote['answer_num'], 'fave');
                     } else {
                         $answer_num_text = 'человек';
                     }
@@ -740,7 +740,7 @@ if (Registry::get('logged')) {
                         $row_last_user['user_search_pref'] = gramatikName($last_userX[0]) . ' ' . gramatikName($last_userX[1]);
 
                         $tpl->set('{name}', $row_last_user['user_search_pref']);
-                        $tpl->set('{msg-num}', '<b>' . $row['msg_num'] . '</b> ' . gram_record($row['msg_num'], 'msg'));
+                        $tpl->set('{msg-num}', '<b>' . $row['msg_num'] . '</b> ' . declWord($row['msg_num'], 'msg'));
                         $tpl->set('{title}', stripslashes($row['title']));
                         $tpl->set('{fid}', $row['fid']);
                         $tpl->set('{user-id}', $row['lastuser_id']);

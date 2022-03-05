@@ -243,7 +243,7 @@ if (Registry::get('logged')) {
             $user_id = $user_info['user_id'];
 
             if ($user_info['user_friends_demands']) {
-                $user_speedbar = $user_info['user_friends_demands'] . ' ' . gram_record($user_info['user_friends_demands'], 'friends_demands');
+                $user_speedbar = $user_info['user_friends_demands'] . ' ' . declWord($user_info['user_friends_demands'], 'friends_demands');
             } else {
                 $user_speedbar = $lang['no_requests'];
             }
@@ -341,7 +341,7 @@ if (Registry::get('logged')) {
 
 
                 if (!empty($online_friends['cnt'])) {
-                    $user_speedbar = 'У ' . $gram_name . ' ' . $online_friends['cnt'] . ' ' . gram_record($online_friends['cnt'], 'friends_online');
+                    $user_speedbar = 'У ' . $gram_name . ' ' . $online_friends['cnt'] . ' ' . declWord($online_friends['cnt'], 'friends_online');
                 } else {
                     $user_speedbar = $lang['no_requests_online'];
                 }
@@ -513,7 +513,7 @@ if (Registry::get('logged')) {
 
                 //Если есть на вывод
                 if ($count_common['cnt']) {
-                    $user_speedbar = $count_common['cnt'] . ' ' . gram_record($count_common['cnt'], 'friends_common');
+                    $user_speedbar = $count_common['cnt'] . ' ' . declWord($count_common['cnt'], 'friends_common');
                     //SQL запрос на вывод друзей, по дате новых 20
                     $sql_mutual = $db->super_query("SELECT tb1.friend_id, tb3.user_birthday, user_photo, user_search_pref, user_country_city_name, user_last_visit, user_logged_mobile FROM `users` tb3, `friends` tb1 INNER JOIN `friends` tb2 ON tb1.friend_id = tb2.user_id WHERE tb1.user_id = '{$user_info['user_id']}' AND tb2.friend_id = '{$uid}' AND tb1.subscriptions = 0 AND tb2.subscriptions = 0 AND tb1.friend_id = tb3.user_id ORDER by `friends_date` LIMIT {$limit_page}, {$gcount}", true);
                     if ($sql_mutual) {
@@ -595,7 +595,7 @@ if (Registry::get('logged')) {
                 }
 
                 if ($friends_sql['user_friends_num']) {
-                    $user_speedbar = 'У ' . $gram_name . ' <span id="friend_num">' . $friends_sql['user_friends_num'] . '</span> ' . gram_record($friends_sql['user_friends_num'], 'friends');
+                    $user_speedbar = 'У ' . $gram_name . ' <span id="friend_num">' . $friends_sql['user_friends_num'] . '</span> ' . declWord($friends_sql['user_friends_num'], 'friends');
                 } else {
                     $user_speedbar = $lang['no_requests'];
                 }

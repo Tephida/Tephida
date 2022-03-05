@@ -149,7 +149,7 @@ if (Registry::get('logged')) {
                 $tpl->set_block("'\\[owner\\](.*?)\\[/owner\\]'si", "");
             }
             $tpl->set('{name}', gramatikName($owner['user_name']));
-            $tpl->set('{gifts-num}', '<span id="num">' . $owner['user_gifts'] . '</span> ' . gram_record($owner['user_gifts'], 'gifts'));
+            $tpl->set('{gifts-num}', '<span id="num">' . $owner['user_gifts'] . '</span> ' . declWord($owner['user_gifts'], 'gifts'));
             if ($owner['user_gifts']) {
                 $tpl->set('[yes]', '');
                 $tpl->set('[/yes]', '');

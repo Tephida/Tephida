@@ -502,7 +502,7 @@ if (Registry::get('logged')) {
                     $tpl->load_template('profile_subscription_box_top.tpl');
                     $tpl->set('[top]', '');
                     $tpl->set('[/top]', '');
-                    $tpl->set('{subcr-num}', 'Понравилось ' . $liked_num . ' ' . gram_record($liked_num, 'like'));
+                    $tpl->set('{subcr-num}', 'Понравилось ' . $liked_num . ' ' . declWord($liked_num, 'like'));
                     $tpl->set_block("'\\[bottom\\](.*?)\\[/bottom\\]'si", "");
                     $tpl->compile('content');
 
@@ -835,7 +835,7 @@ if (Registry::get('logged')) {
                         }
 
                         if ($cnt_rec['cnt'] > 0) {
-                            $user_speedbar = 'На стене ' . $cnt_rec['cnt'] . ' ' . gram_record($cnt_rec['cnt'], 'rec');
+                            $user_speedbar = 'На стене ' . $cnt_rec['cnt'] . ' ' . declWord($cnt_rec['cnt'], 'rec');
                         }
 
                         $tpl->load_template('wall/head.tpl');

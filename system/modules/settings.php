@@ -196,7 +196,7 @@ if (Registry::get('logged')) {
 
             $row = $db->super_query("SELECT user_blacklist, user_blacklist_num FROM `users` WHERE user_id = '{$user_id}'");
             $tpl->load_template('settings/blacklist.tpl');
-            $tpl->set('{cnt}', '<span id="badlistnum">' . $row['user_blacklist_num'] . '</span> ' . gram_record($row['user_blacklist_num'], 'fave'));
+            $tpl->set('{cnt}', '<span id="badlistnum">' . $row['user_blacklist_num'] . '</span> ' . declWord($row['user_blacklist_num'], 'fave'));
             if ($row['user_blacklist_num']) {
                 $tpl->set('[yes-users]', '');
                 $tpl->set('[/yes-users]', '');

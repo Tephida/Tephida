@@ -146,15 +146,15 @@ if (isset($count['cnt']) && $count['cnt']) {
         }
 
     if ($type == 1) {
-        $tpl->set('{count}', $count['cnt'] . ' ' . gram_record($count['cnt'], 'fave'));
+        $tpl->set('{count}', $count['cnt'] . ' ' . declWord($count['cnt'], 'fave'));
     } elseif ($type == 2 && $config['video_mod'] == 'yes') {
-        $tpl->set('{count}', $count['cnt'] . ' ' . gram_record($count['cnt'], 'videos'));
+        $tpl->set('{count}', $count['cnt'] . ' ' . declWord($count['cnt'], 'videos'));
     } elseif ($type == 3) {
-        $tpl->set('{count}', $count['cnt'] . ' ' . gram_record($count['cnt'], 'notes'));
+        $tpl->set('{count}', $count['cnt'] . ' ' . declWord($count['cnt'], 'notes'));
     } elseif ($type == 4) {
-        $tpl->set('{count}', $count['cnt'] . ' ' . gram_record($count['cnt'], 'se_groups'));
+        $tpl->set('{count}', $count['cnt'] . ' ' . declWord($count['cnt'], 'se_groups'));
     } elseif ($type == 5) {
-        $tpl->set('{count}', $count['cnt'] . ' ' . gram_record($count['cnt'], 'audio'));
+        $tpl->set('{count}', $count['cnt'] . ' ' . declWord($count['cnt'], 'audio'));
     }
 } else {
     $tpl->set_block("'\\[yes\\](.*?)\\[/yes\\]'si", "");
@@ -245,7 +245,7 @@ foreach ($sql_country as $row_country) {
                 $tpl->set('{user-id}', $row['owner_user_id']);
                 $tpl->set('{id}', $row['id']);
                 $tpl->set('{close-link}', '/index.php?' . $query_string . '&page=' . $page);
-                $tpl->set('{comm}', $row['comm_num'] . ' ' . gram_record($row['comm_num'], 'comments'));
+                $tpl->set('{comm}', $row['comm_num'] . ' ' . declWord($row['comm_num'], 'comments'));
                 $date_str = megaDate(strtotime($row['add_date']), 1, 1);
                 $tpl->set('{date}', $date_str);
                 $tpl->compile('content');
@@ -269,7 +269,7 @@ foreach ($sql_country as $row_country) {
                 $date_str = megaDate(strtotime($row['date']), 1, 1);
                 $tpl->set('{date}', $date_str);
                 if ($row['comm_num']) {
-                    $tpl->set('{comm-num}', $row['comm_num'] . ' ' . gram_record($row['comm_num'], 'comments'));
+                    $tpl->set('{comm-num}', $row['comm_num'] . ' ' . declWord($row['comm_num'], 'comments'));
                 } else {
                     $tpl->set('{comm-num}', $lang['note_no_comments']);
                 }
@@ -289,7 +289,7 @@ foreach ($sql_country as $row_country) {
                 $tpl->set('{public-id}', $row['id']);
                 $tpl->set('{name}', stripslashes($row['title']));
                 $tpl->set('{note-id}', $row['id']);
-                $tpl->set('{traf}', $row['traf'] . ' ' . gram_record($row['traf'], 'groups_users'));
+                $tpl->set('{traf}', $row['traf'] . ' ' . declWord($row['traf'], 'groups_users'));
                 if ($row['adres']) {
                     $tpl->set('{adres}', $row['adres']);
                 } else {

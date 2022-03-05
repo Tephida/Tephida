@@ -306,9 +306,9 @@ if (Registry::get('logged')) {
                 $count = $db->super_query("SELECT COUNT(*) AS cnt FROM `support` {$sql_where_cnt}");
 
                 if ($user_info['user_group'] == 4) {
-                    $tpl->set('{cnt}', $count['cnt'] . ' ' . gram_record($count['cnt'], 'questions'));
+                    $tpl->set('{cnt}', $count['cnt'] . ' ' . declWord($count['cnt'], 'questions'));
                 } else {
-                    $tpl->set('{cnt}', 'Вы задали ' . $count['cnt'] . ' ' . gram_record($count['cnt'], 'questions'));
+                    $tpl->set('{cnt}', 'Вы задали ' . $count['cnt'] . ' ' . declWord($count['cnt'], 'questions'));
                 }
             } else {
                 $tpl->set('{cnt}', '');

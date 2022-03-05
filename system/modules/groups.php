@@ -663,7 +663,7 @@ if (Registry::get('logged')) {
 
                     //Загружаем кнопку "Показать N записи"
                     $tpl->load_template('groups/record.tpl');
-                    $tpl->set('{gram-record-all-comm}', gram_record(($row['fasts_num'] - 3), 'prev') . ' ' . ($row['fasts_num'] - 3) . ' ' . gram_record(($row['fasts_num'] - 3), 'comments'));
+                    $tpl->set('{gram-record-all-comm}', declWord(($row['fasts_num'] - 3), 'prev') . ' ' . ($row['fasts_num'] - 3) . ' ' . declWord(($row['fasts_num'] - 3), 'comments'));
                     if ($row['fasts_num'] < 4) {
                         $tpl->set_block("'\\[all-comm\\](.*?)\\[/all-comm\\]'si", "");
                     } else {
@@ -871,7 +871,7 @@ if (Registry::get('logged')) {
 
                 //HEAD
                 $tpl->load_template('public/photos/head.tpl');
-                $tpl->set('{photo-num}', $rowPublic['photos_num'] . ' ' . gram_record($rowPublic['photos_num'], 'photos'));
+                $tpl->set('{photo-num}', $rowPublic['photos_num'] . ' ' . declWord($rowPublic['photos_num'], 'photos'));
                 $tpl->set('{public_id}', $public_id);
                 $tpl->set('[top]', '');
                 $tpl->set('[/top]', '');
@@ -983,7 +983,7 @@ if (Registry::get('logged')) {
                     $tpl->load_template('profile_subscription_box_top.tpl');
                     $tpl->set('[top]', '');
                     $tpl->set('[/top]', '');
-                    $tpl->set('{subcr-num}', 'Понравилось ' . $liked_num . ' ' . gram_record($liked_num, 'like'));
+                    $tpl->set('{subcr-num}', 'Понравилось ' . $liked_num . ' ' . declWord($liked_num, 'like'));
                     $tpl->set_block("'\\[bottom\\](.*?)\\[/bottom\\]'si", "");
                     $tpl->compile('content');
 
@@ -1068,7 +1068,7 @@ if (Registry::get('logged')) {
                 $tpl->load_template('profile_subscription_box_top.tpl');
                 $tpl->set('[top]', '');
                 $tpl->set('[/top]', '');
-                $tpl->set('{subcr-num}', $subscr_num . ' ' . gram_record($subscr_num, 'subscribers'));
+                $tpl->set('{subcr-num}', $subscr_num . ' ' . declWord($subscr_num, 'subscribers'));
                 $tpl->set_block("'\\[bottom\\](.*?)\\[/bottom\\]'si", "");
                 $tpl->compile('content');
 
@@ -1109,7 +1109,7 @@ if (Registry::get('logged')) {
                 $tpl->load_template('profile_subscription_box_top.tpl');
                 $tpl->set('[top]', '');
                 $tpl->set('[/top]', '');
-                $tpl->set('{subcr-num}', $subscr_num . ' ' . gram_record($subscr_num, 'subscr'));
+                $tpl->set('{subcr-num}', $subscr_num . ' ' . declWord($subscr_num, 'subscr'));
                 $tpl->set_block("'\\[bottom\\](.*?)\\[/bottom\\]'si", "");
                 $tpl->compile('content');
 
@@ -1122,7 +1122,7 @@ if (Registry::get('logged')) {
                     }
                     $tpl->set('{name}', stripslashes($row['title']));
                     $tpl->set('{public-id}', $row['id']);
-                    $tpl->set('{num}', '<span id="traf">' . $row['traf'] . ' ' . gram_record($row['traf'], 'subscribers'));
+                    $tpl->set('{num}', '<span id="traf">' . $row['traf'] . ' ' . declWord($row['traf'], 'subscribers'));
                     if ($row['adres']) $tpl->set('{adres}', $row['adres']);
                     else $tpl->set('{adres}', 'public' . $row['id']);
                     $tpl->compile('content');
@@ -1497,7 +1497,7 @@ if (Registry::get('logged')) {
             }
 
             if ($owner['user_public_num']) {
-                $tpl->set('{num}', $owner['user_public_num'] . ' ' . gram_record($owner['user_public_num'], 'groups'));
+                $tpl->set('{num}', $owner['user_public_num'] . ' ' . declWord($owner['user_public_num'], 'groups'));
                 $tpl->set('[yes]', '');
                 $tpl->set('[/yes]', '');
                 $tpl->set_block("'\\[no\\](.*?)\\[/no\\]'si", "");
@@ -1522,7 +1522,7 @@ if (Registry::get('logged')) {
                     }
 
                     $tpl->set('{name}', stripslashes($row['title']));
-                    $tpl->set('{traf}', $row['traf'] . ' ' . gram_record($row['traf'], 'groups_users'));
+                    $tpl->set('{traf}', $row['traf'] . ' ' . declWord($row['traf'], 'groups_users'));
 
                     if ($act !== 'admin') {
                         $tpl->set('[admin]', '');
