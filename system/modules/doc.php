@@ -133,7 +133,8 @@ if (Registry::get('logged')) {
 
 
         //################### Скачивание документа с сервера ###################//
-        case "download";
+        case "download":
+
             NoAjaxQuery();
 
             $did = intFilter('did');
@@ -141,25 +142,16 @@ if (Registry::get('logged')) {
             $row = $db->super_query("SELECT duser_id, ddownload_name, dname FROM `doc` WHERE did = '{$did}'");
 
             if ($row) {
-
                 $filename = str_replace(array('/', '\\', 'php', 'tpl'), '', $row['ddownload_name']);
                 define('FILE_DIR', "uploads/doc/{$row['duser_id']}/");
-
                 include ENGINE_DIR . '/classes/download.php';
-
                 $config['files_max_speed'] = 0;
-
                 $format = end(explode('.', $filename));
-
                 $row['dname'] = str_replace('.' . $format, '', $row['dname']) . '.' . $format;
-
                 if (file_exists(FILE_DIR . $filename) and $filename) {
-
                     $file = new download(FILE_DIR . $filename, $row['dname'], 1, $config['files_max_speed']);
                     $file->download_file();
-
                 }
-
             } else {
                 header("Location: /");
             }
@@ -265,7 +257,7 @@ if (Registry::get('logged')) {
     }
 
     $tpl->clear();
-    $db->free();
+//    $db->free();
 
 } else {
     echo 'no_log';

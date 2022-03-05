@@ -113,15 +113,6 @@ function navigationNew($gc, $num, $type): string
     if (ceil($resif) == $page) $pages .= '';
     else $pages .= '<a href="' . $type . ($page + 1) . '" onClick="Page.Go(this.href); return false">&raquo;</a>';
     if ($pages_count <= 1) $pages = '';
-//    $tpl_2 = new Templates();
-//    $tpl_2->dir = TEMPLATE_DIR;
-//    $tpl_2->load_template('nav.tpl');
-//    $tpl_2->set('{pages}', $pages);
-//    $tpl_2->compile('content');
-//    $tpl_2->clear();
-
-//    $tpl->result['content'].= $tpl_2->result['content'];
-
     return <<<HTML
 <div class="nav" id="nav">{$pages}</div>
 HTML;
@@ -159,23 +150,18 @@ function box_navigation($gc, $num, $id, $function, $act) {
     }
     for ($index = - 1;++$index <= $page_refers_per_page_count - 1;) {
         if ($index + $start_page == $page) $pages.= '<span>' . ($start_page + $index) . '</span>';
-        else $pages.= '<a href="" onClick="' . $function . '(' . $id . ', ' . ($start_page + $index) . ', ' . $act . '); return false">' . ($start_page + $index) . '</a>';
+        else $pages .= '<a href="" onClick="' . $function . '(' . $id . ', ' . ($start_page + $index) . ', ' . $act . '); return false">' . ($start_page + $index) . '</a>';
     }
     if ($page + $page_refers_per_page <= $pages_count) {
-        $pages.= '<a href="" onClick="' . $function . '(' . $id . ', ' . ($start_page + $page_refers_per_page_count) . ', ' . $act . '); return false">...</a>';
-        $pages.= '<a href="" onClick="' . $function . '(' . $id . ', ' . $pages_count . ', ' . $act . '); return false">' . $pages_count . '</a>';
+        $pages .= '<a href="" onClick="' . $function . '(' . $id . ', ' . ($start_page + $page_refers_per_page_count) . ', ' . $act . '); return false">...</a>';
+        $pages .= '<a href="" onClick="' . $function . '(' . $id . ', ' . $pages_count . ', ' . $act . '); return false">' . $pages_count . '</a>';
     }
     $resif = $cnt / $gcount;
-    if (ceil($resif) == $page) $pages.= '';
-    else $pages.= '<a href="/" onClick="' . $function . '(' . $id . ', ' . ($page + 1) . ', ' . $act . '); return false">&raquo;</a>';
+    if (ceil($resif) == $page) $pages .= '';
+    else $pages .= '<a href="/" onClick="' . $function . '(' . $id . ', ' . ($page + 1) . ', ' . $act . '); return false">&raquo;</a>';
     if ($pages_count <= 1) $pages = '';
-    $tpl_2 = new \FluffyDollop\Support\Templates();
-    $tpl_2->dir = TEMPLATE_DIR;
-    $tpl_2->load_template('nav.tpl');
-    $tpl_2->set('{pages}', $pages);
-    $tpl_2->compile('content');
-    $tpl_2->clear();
-    $tpl->result['content'].= $tpl_2->result['content'];
+    $navigation = "<div class=\"nav\" id=\"nav\">{$pages}</div>";
+    $tpl->result['content'] .= $navigation;
 }
 
 /**
@@ -188,7 +174,7 @@ function box_navigation($gc, $num, $id, $function, $act) {
  */
 function msgbox($title, $text, $tpl_name) {
     global $tpl;
-    $tpl_2 = new \FluffyDollop\Support\Templates();
+    $tpl_2 = new Templates();
     $config = settings_load();
     $tpl_2->dir = ROOT_DIR . '/templates/' . $config['temp'];
     $tpl_2->load_template($tpl_name . '.tpl');
@@ -299,8 +285,6 @@ function mozg_cache($prefix): false|string|int
     }
 }
 
-
-
 /**
  * @return void
  */
@@ -356,9 +340,12 @@ function user_age($user_year, $user_month, $user_day)
             $user_age = $current_year - $user_year;
         else
             $user_age = $current_year - $user_year - 1;
-        if ($user_month && $user_day)
-            return $user_age . ' ' . gram_record($user_age, 'user_age');
-        else
+        if ($user_month && $user_day) {
+
+            return $user_age . ' ' . declOfNum($user_age, array('год', 'года', 'лет'));
+
+//            return $user_age . ' ' . gram_record($user_age, 'user_age');
+        } else
             return false;
     }
 }
@@ -1378,9 +1365,15 @@ function compileNoAjax($tpl, $params): int
 
 function tpl_init(): Templates
 {
-    $tpl = new \FluffyDollop\Support\Templates();
+    $tpl = new Templates();
     $config = settings_load();
     $tpl->dir = ROOT_DIR . '/templates/' . $config['temp'];
     define('TEMPLATE_DIR', $tpl->dir);
     return $tpl;
+}
+
+function declOfNum($number, $titles)
+{
+    $cases = array(2, 0, 1, 1, 1, 2);
+    return $titles[($number % 100 > 4 and $number % 100 < 20) ? 2 : $cases[min($number % 10, 5)]];
 }

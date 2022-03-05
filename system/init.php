@@ -78,8 +78,6 @@ $tpl = new Templates();
 $tpl->dir = ROOT_DIR . '/templates/' . $config['temp'];
 define('TEMPLATE_DIR', $tpl->dir);
 
-
-$_DOCUMENT_DATE = false;
 Registry::set('server_time', time());
 
 include_once ENGINE_DIR . '/login.php';
@@ -88,7 +86,7 @@ if ($config['offline'] == "yes") {
     include ENGINE_DIR . '/modules/offline.php';
 }
 
-if (isset($user_info['user_delet']) and $user_info['user_delet'] > 0) {
+if (isset($user_info['user_delet']) && $user_info['user_delet'] > 0) {
     include_once ENGINE_DIR . '/modules/profile_delet.php';
 }
 $sql_banned = $db->super_query("SELECT * FROM banned", true);

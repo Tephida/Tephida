@@ -43,7 +43,6 @@
                 <img src="{ava}" alt="page_enlarge" id="ava_{user-id}" />
             </span>
         </a>
-{*        <span id="ava"><img src="{ava}" alt="" id="ava_{user-id}"/></span>*}
     </div>
 
     [/owner]

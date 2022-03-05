@@ -44,7 +44,6 @@ class Dialog
                 'status' => Status::LIMIT
             );
         }
-
         if ($room_id) {
             $for_user_id = 0;
         }
@@ -53,7 +52,9 @@ class Dialog
             return array(
                 'status' => Status::LIMIT
             );
-        } else if (!empty($msg) || !empty($attach_files)) {
+        }
+
+        if (!empty($msg) || !empty($attach_files)) {
             if ($room_id == 0) {
                 $row = $this->db->super_query("SELECT user_privacy FROM `users` WHERE user_id = '" . $for_user_id . "'");
             } else {

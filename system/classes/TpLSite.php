@@ -10,10 +10,10 @@
 namespace Mozg\classes;
 
 use ErrorException;
-use Exception;
+use FluffyDollop\Support\Gzip;
 use FluffyDollop\Support\Registry;
-use JsonException;
 use FluffyDollop\Support\Templates;
+use JsonException;
 
 class TpLSite extends Templates
 {
@@ -44,13 +44,15 @@ class TpLSite extends Templates
         if (!empty($meta_tags['title'])) {
             $this->meta_tags['title'] = $meta_tags['title'];
         }
-        if (!defined('TEMPLATE_DIR'))
+        if (!defined('TEMPLATE_DIR')) {
             define('TEMPLATE_DIR', $dir);
+        }
     }
 
     /**
      * @return int
-     * @throws JsonException|ErrorException
+     * @throws ErrorException
+     * @throws \JsonException
      */
     final public function render(): int
     {
@@ -78,36 +80,41 @@ class TpLSite extends Templates
                 $this->notify['new_news'] = "<div class=\"headm_newac\" style=\"margin-left:18px\">{$CacheNews}</div>";
                 $this->notify['news_link'] = '/notifications';
             }
-//Загружаем кол-во новых подарков
+            /** Загружаем кол-во новых подарков */
             $CacheGift = mozg_cache("user_{$user_info['user_id']}/new_gift");
             if ($CacheGift) {
                 $this->notify['new_ubm'] = "<div class=\"headm_newac\" style=\"margin-left:20px\">{$CacheGift}</div>";
                 $this->notify['gifts_link'] = "/gifts{$user_info['user_id']}?new=1";
             }
-//Новые сообщения
+
+            /** Новые сообщения */
             $user_pm_num = $user_info['user_pm_num'];
             if ($user_pm_num) {
                 $this->notify['user_pm_num'] = "<div class=\"headm_newac\" style=\"margin-left:37px\">{$user_pm_num}</div>";
             }
-//Новые друзья
+
+            /** Новые друзья */
             $user_friends_demands = $user_info['user_friends_demands'];
             if ($user_friends_demands) {
                 $this->notify['demands'] = "<div class=\"headm_newac\">{$user_friends_demands}</div>";
                 $this->notify['requests_link'] = '/requests';
             }
-//ТП
+
+            /** ТП */
             $user_support = $user_info['user_support'];
             if ($user_support) {
                 $this->notify['support'] = "<div class=\"headm_newac\" style=\"margin-left:26px\">{$user_support}</div>";
             }
-//Отметки на фото
+
+            /** Отметки на фото */
             if ($user_info['user_new_mark_photos']) {
                 $this->notify['new_photos_link'] = 'newphotos';
                 $this->notify['new_photos'] = "<div class=\"headm_newac\" style=\"margin-left:22px\">" . $user_info['user_new_mark_photos'] . "</div>";
             } else {
                 $this->notify['new_photos_link'] = $user_info['user_id'];
             }
-//Приглашения в сообщества
+
+            /** Приглашения в сообщества */
             if ($user_info['invties_pub_num']) {
                 $this->notify['new_groups'] = "<div class=\"headm_newac\" style=\"margin-left:26px\">" . $user_info['invties_pub_num'] . "</div>";
                 $this->notify['new_groups_lnk'] = '/groups?act=invites';
@@ -116,7 +123,6 @@ class TpLSite extends Templates
             }
         }
 
-        //Если включен AJAX, то загружаем стр.
         if (requestFilter('ajax') === 'yes') {
             return $this->compileAjax();
         }

@@ -77,7 +77,7 @@ function compileAdmin($tpl): void
 
 }
 
-function initAdminTpl(): \FluffyDollop\Support\Templates
+function initAdminTpl(): Templates
 {
     $tpl = new Templates();
     $tpl->dir = ADMIN_DIR . '/tpl/';
