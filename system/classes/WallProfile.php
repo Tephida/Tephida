@@ -17,7 +17,7 @@ use JsonException;
 
 class WallProfile
 {
-    public Templates|TpLSite $tpl;
+    public \FluffyDollop\Support\Templates|TpLSite $tpl;
     public array|bool|null $query = false;
     public false|string $template = false;
     public false|string $compile = false;

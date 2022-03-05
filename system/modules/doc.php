@@ -51,21 +51,7 @@ if (Registry::get('logged')) {
                     //Загружаем сам файл
                     if (move_uploaded_file($file_tmp, $upload_dir . $downl_file_name . $res_type)) {
 
-                        function formatsize($file_size): string
-                        {
-                            if ($file_size >= 1073741824) {
-                                $file_size = round($file_size / 1073741824 * 100) / 100 . " Гб";
-                            } elseif ($file_size >= 1048576) {
-                                $file_size = round($file_size / 1048576 * 100) / 100 . " Мб";
-                            } elseif ($file_size >= 1024) {
-                                $file_size = round($file_size / 1024 * 100) / 100 . " Кб";
-                            } else {
-                                $file_size .= " б";
-                            }
-                            return $file_size;
-                        }
-
-                        $dsize = formatsize($file_size);
+                        $dsize = Filesystem::formatsize($file_size);
                         $file_name = textFilter($file_name, 25000, true);
 
                         //Обновляем кол-во док. у юзера

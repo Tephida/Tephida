@@ -9,7 +9,7 @@
 
 use FluffyDollop\Support\Registry;
 use FluffyDollop\Support\Router;
-use Mozg\classes\Templates;
+use FluffyDollop\Support\Templates;
 
 try {
     $config = settings_load();
@@ -73,7 +73,7 @@ $lang = include ROOT_DIR . '/lang/' . $checkLang . '/site.php';
 Registry::set('lang', $lang);
 $langdate = include ROOT_DIR . '/lang/' . $checkLang . '/date.php';
 
-$tpl = new Templates();
+$tpl = new \FluffyDollop\Support\Templates();
 $tpl->dir = ROOT_DIR . '/templates/' . $config['temp'];
 define('TEMPLATE_DIR', $tpl->dir);
 

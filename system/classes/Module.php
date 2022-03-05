@@ -14,7 +14,7 @@ use FluffyDollop\Support\Mysql;
 class Module
 {
     public Mysql $db;
-    public Templates $tpl;
+    public \FluffyDollop\Support\Templates $tpl;
     public string|Mysql|array|bool|null $user_info;
 //    private string|Mysql|array|bool|null $lang;
     protected string $tpl_dir_name;
@@ -25,7 +25,7 @@ class Module
         $this->db = Registry::get('db');
         $this->user_info = Registry::get('user_info');
         $this->lang = Registry::get('lang');
-        $this->tpl = new Templates();
+        $this->tpl = new \FluffyDollop\Support\Templates();
         $config = settings_get();
         $this->tpl->dir = ROOT_DIR . '/templates/' . $config['temp'];
 

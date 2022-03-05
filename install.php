@@ -12,24 +12,6 @@ if (version_compare(PHP_VERSION, '8.0.0') < 0) {
     exit();
 }
 
-try {
-    require_once './vendor/autoload.php';
-} catch (Exception) {
-    echo "Please install composer";
-    exit();
-}
-header('Content-type: text/html; charset=utf-8');
-
-const ROOT_DIR = __DIR__;
-const ENGINE_DIR = ROOT_DIR . '/system';
-
-include './system/functions.php';
-
-function check_install(): bool
-{
-    return !(!file_exists(ENGINE_DIR . '/data/config.php') || !file_exists(ENGINE_DIR . '/data/db.php'));
-}
-
 function main_print(): void
 {
     echo <<<HTML
@@ -61,9 +43,9 @@ echo <<<HTML
 </head>
 <body>
 <style media="all">
-body{font-size:11px;
+body{font-size:0.8em;
 font-family:Tahoma;
-line-height:17px;background: linear-gradient(180deg, #0d789c, #c8eeb1, white, white) repeat-x;}
+background: linear-gradient(180deg, #0d789c, #c8eeb1, white, white) repeat-x;}
 a{color:#4274a5;text-decoration:underline}
 a:hover{color:#4274a5;text-decoration:none}
 .box {margin: auto;width: 800px;
@@ -74,18 +56,19 @@ padding: 10px;border-radius: 5px;
 .head{background: linear-gradient(0deg, #1993b0, #1993b0, #3db9c2) repeat-x;height:49px;border-top-left-radius:5px;
 margin:-10px -10px 5px -10px;
 }
-.logo{background:url("/system/inc/images/logo.png") no-repeat;width:133px;height:48px;margin-left:5px}
-.h1{font-size:13px;font-weight:bold;color:#4274a5;margin-top:5px;margin-bottom:5px;padding-bottom:2px;
+.h1{font-size:1.2em;font-weight:bold;color:#4274a5;
+margin: 5px;padding-bottom:2px;
 border-bottom:1px solid #e5edf5;padding-left:2px}
 .clr{clear:both}
 .fl_l{float:left}
 .fl_r{float:right}
-.inp{padding: 5.5px 10px 5.5px 10px; 
+.inp{padding: 5px 10px 5px 10px; 
  background: linear-gradient(45deg, #b7c42d, #8d991b); color: #fff; font-size: 11px; font-family: Tahoma, Verdana, Arial, sans-serif, Lucida Sans; 
  text-shadow: 0 1px 0 #767f18; border: 0; border-top: 1px solid #cdd483; cursor: pointer; margin: 10px 0 0 0; 
  font-weight: bold; border-radius: 2px;
    box-shadow: inset 0 1px 3px 0 #d2d2d2;}
-.inp:hover{background:-webkit-linear-gradient(top, #c6d059, #a3ae36);}
+.inp:hover{background:linear-gradient(180deg, #c6d059, #a3ae36);
+}
 .inp:active{background:#848f18;position:relative;border-top:1px solid #727c0e;outline:none}
 .inpu{width:200px;box-shadow:inset 0 1px 3px 0 #d2d2d2;border:1px solid #ccc;padding:4px;border-radius:3px;font-size:11px;
 font-family:tahoma;margin-bottom:3px;}
@@ -93,8 +76,34 @@ textarea{width:300px;height:100px;}
 .fllogall{color:#555}
 </style>
 <div class="box clr">
- <a href="/install.php"><div class="head"><div class="logo"></div></div></a>
+ <a href="/install.php"><div class="head"><div style="color: white;font-size: 1.5em;padding: 10px;margin-left: 5px">Vii Engine - Установка</div></div></a>
 HTML;
+
+try {
+    require_once './vendor/autoload.php';
+} catch (Error $e) {
+    echo <<<HTML
+Please install composer <a href="https://getcomposer.org/" target="_blank" style="text-decoration: underline;color: darkblue">Composer</a>
+<div style="width: 100%;height: 50px">
+<input type="submit" class="inp fl_r" value="Обновить" onClick="location.href='/install.php'" />
+</div>
+
+</div>
+</body>
+</html>
+HTML;
+    die('');
+}
+
+header('Content-type: text/html; charset=utf-8');
+
+const ROOT_DIR = __DIR__;
+const ENGINE_DIR = ROOT_DIR . '/system';
+
+function check_install(): bool
+{
+    return !(!file_exists(ENGINE_DIR . '/data/config.php') || !file_exists(ENGINE_DIR . '/data/db.php'));
+}
 
 $act = requestFilter('act');
 

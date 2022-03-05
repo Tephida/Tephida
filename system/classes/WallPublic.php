@@ -16,7 +16,7 @@ use FluffyDollop\Support\Registry;
 
 class WallPublic
 {
-    public TpLSite|Templates $tpl;
+    public TpLSite|\FluffyDollop\Support\Templates $tpl;
     public array|bool|null $query = false;
     public false|string $template = false;
     public false|string $compile = false;

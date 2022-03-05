@@ -29,9 +29,9 @@ while ($r = $db->get_array()) {
         $mysql_size += $r['Data_length'] + $r['Index_length'];
 }
 $db->free();
-$mysql_size = formatsize($mysql_size);
+$mysql_size = Filesystem::formatsize($mysql_size);
 
-$cache_size = formatsize(Filesystem::dirSize("uploads"));
+$cache_size = Filesystem::formatsize(Filesystem::dirSize("uploads"));
 
 $tpl = initAdminTpl();
 $tpl->load_template('stats/main.tpl');

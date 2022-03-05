@@ -11,6 +11,7 @@ namespace Mozg\classes;
 
 use FluffyDollop\Support\Registry;
 use JsonException;
+use FluffyDollop\Support\Templates;
 
 class TplCp extends Templates
 {

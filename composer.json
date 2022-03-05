@@ -21,6 +21,9 @@
     "roave/security-advisories": "dev-latest"
   },
   "autoload": {
+    "files": [
+      "system/functions.php"
+    ],
     "psr-4": {
       "Mozg\\": "system/"
     }

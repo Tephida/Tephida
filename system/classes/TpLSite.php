@@ -13,6 +13,7 @@ use ErrorException;
 use Exception;
 use FluffyDollop\Support\Registry;
 use JsonException;
+use FluffyDollop\Support\Templates;
 
 class TpLSite extends Templates
 {

@@ -11,7 +11,7 @@ use JetBrains\PhpStorm\Pure;
 use FluffyDollop\Support\Filesystem;
 use FluffyDollop\Support\Gzip;
 use FluffyDollop\Support\Registry;
-use Mozg\classes\Templates;
+use FluffyDollop\Support\Templates;
 use Mozg\classes\TpLSite;
 
 function informationText($array): string
@@ -169,7 +169,7 @@ function box_navigation($gc, $num, $id, $function, $act) {
     if (ceil($resif) == $page) $pages.= '';
     else $pages.= '<a href="/" onClick="' . $function . '(' . $id . ', ' . ($page + 1) . ', ' . $act . '); return false">&raquo;</a>';
     if ($pages_count <= 1) $pages = '';
-    $tpl_2 = new Templates();
+    $tpl_2 = new \FluffyDollop\Support\Templates();
     $tpl_2->dir = TEMPLATE_DIR;
     $tpl_2->load_template('nav.tpl');
     $tpl_2->set('{pages}', $pages);
@@ -188,7 +188,7 @@ function box_navigation($gc, $num, $id, $function, $act) {
  */
 function msgbox($title, $text, $tpl_name) {
     global $tpl;
-    $tpl_2 = new Templates();
+    $tpl_2 = new \FluffyDollop\Support\Templates();
     $config = settings_load();
     $tpl_2->dir = ROOT_DIR . '/templates/' . $config['temp'];
     $tpl_2->load_template($tpl_name . '.tpl');
@@ -1378,7 +1378,7 @@ function compileNoAjax($tpl, $params): int
 
 function tpl_init(): Templates
 {
-    $tpl = new Templates();
+    $tpl = new \FluffyDollop\Support\Templates();
     $config = settings_load();
     $tpl->dir = ROOT_DIR . '/templates/' . $config['temp'];
     define('TEMPLATE_DIR', $tpl->dir);
