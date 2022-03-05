@@ -51,7 +51,7 @@ if (requestFilter('act') == 'chage_lang') {
 $config['lang_list'] = nl2br($config['lang_list']);
 $expLangList = explode('<br />', $config['lang_list']);
 $numLangs = count($expLangList);
-$useLang = !empty($_COOKIE['lang']) > 0 ? intval($_COOKIE['lang']) : 0;
+$useLang = !empty($_COOKIE['lang']) > 0 ? (int)$_COOKIE['lang'] : 0;
 if ($useLang <= 0)
     $useLang = 1;
 $cil = 0;
