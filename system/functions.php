@@ -7,23 +7,25 @@
  *
  */
 
-use JetBrains\PhpStorm\Pure;
 use FluffyDollop\Support\Filesystem;
 use FluffyDollop\Support\Gzip;
 use FluffyDollop\Support\Registry;
 use FluffyDollop\Support\Templates;
 use Mozg\classes\Declensions;
-use Mozg\classes\TpLSite;
 
+/**
+ * @throws JsonException
+ */
 function informationText($array): string
 {
     $db = Registry::get('db');
-    $array = json_decode($array, 1);
+    $array = json_decode($array, 1, 512, JSON_THROW_ON_ERROR);
     $row = $db->super_query("SELECT user_search_pref FROM  users WHERE user_id = '" . ($array['type'] == 1 ? $array['oid2'] : $array['oid']) . "'");
-    if ($array['type'] == 5)
+    if ($array['type'] == 5) {
         $row2 = $db->super_query("SELECT user_search_pref FROM  users WHERE user_id = '" . $array['oid2'] . "'");
-    else
+    } else {
         $row2['user_search_pref'] = null;
+    }
 
     $text = array(
         0 => $row['user_search_pref'] . ' создал(а) беседу',
@@ -79,46 +81,47 @@ HTML;
 }
 
 /**
- * @param $gc
- * @param $num
+ * @param $items_per_page
+ * @param $items_count
  * @param $type
  * @return string
  */
-function navigationNew($gc, $num, $type): string
+function navigationNew($items_per_page, $items_count, $type): string
 {
     $page = intFilter('page', 1);
-    $gcount = $gc;
-    $cnt = $num;
-    $items_count = $cnt;
-    $items_per_page = $gcount;
     $page_refers_per_page = 5;
     $pages = '';
-    $pages_count = (($items_count % $items_per_page != 0)) ? floor($items_count / $items_per_page) + 1 : floor($items_count / $items_per_page);
+    $pages_count = (($items_count % $items_per_page !== 0)) ? floor($items_count / $items_per_page) + 1 : floor($items_count / $items_per_page);
     $start_page = ($page - $page_refers_per_page <= 0) ? 1 : $page - $page_refers_per_page + 1;
     $page_refers_per_page_count = (($page - $page_refers_per_page < 0) ? $page : $page_refers_per_page) + (($page + $page_refers_per_page > $pages_count) ? ($pages_count - $page) : $page_refers_per_page - 1);
-    if ($page > 1) $pages .= '<a href="' . $type . ($page - 1) . '" onClick="Page.Go(this.href); return false">&laquo;</a>';
-    else $pages .= '';
+    if ($page > 1) {
+        $pages .= '<a href="' . $type . ($page - 1) . '" onClick="Page.Go(this.href); return false">&laquo;</a>';
+    }
     if ($start_page > 1) {
         $pages .= '<a href="' . $type . '1" onClick="Page.Go(this.href); return false">1</a>';
         $pages .= '<a href="' . $type . ($start_page - 1) . '" onClick="Page.Go(this.href); return false">...</a>';
     }
     for ($index = -1; ++$index <= $page_refers_per_page_count - 1;) {
-        if ($index + $start_page == $page) $pages .= '<span>' . ($start_page + $index) . '</span>';
-        else $pages .= '<a href="' . $type . ($start_page + $index) . '" onClick="Page.Go(this.href); return false">' . ($start_page + $index) . '</a>';
+        if ($index + $start_page == $page) {
+            $pages .= '<span>' . ($start_page + $index) . '</span>';
+        } else {
+            $pages .= '<a href="' . $type . ($start_page + $index) . '" onClick="Page.Go(this.href); return false">' . ($start_page + $index) . '</a>';
+        }
     }
     if ($page + $page_refers_per_page <= $pages_count) {
         $pages .= '<a href="' . $type . ($start_page + $page_refers_per_page_count) . '" onClick="Page.Go(this.href); return false">...</a>';
         $pages .= '<a href="' . $type . $pages_count . '" onClick="Page.Go(this.href); return false">' . $pages_count . '</a>';
     }
-    $resif = $cnt / $gcount;
-    if (ceil($resif) == $page) $pages .= '';
-    else $pages .= '<a href="' . $type . ($page + 1) . '" onClick="Page.Go(this.href); return false">&raquo;</a>';
-    if ($pages_count <= 1) $pages = '';
-    return <<<HTML
-<div class="nav" id="nav">{$pages}</div>
-HTML;
-
-
+    $res_if = $items_count / $items_per_page;
+    if (ceil($res_if) == $page) {
+        $pages .= '';
+    } else {
+        $pages .= '<a href="' . $type . ($page + 1) . '" onClick="Page.Go(this.href); return false">&raquo;</a>';
+    }
+    if ($pages_count <= 1) {
+        $pages = '';
+    }
+    return "<div class=\"nav\" id=\"nav\">{$pages}</div>";
 }
 
 /**
@@ -246,9 +249,11 @@ function mozg_clear_cache_file($prefix): bool
 function mozg_mass_clear_cache_file($prefix): void
 {
     $arr_prefix = explode('|', $prefix);
-    foreach ($arr_prefix as $file)
-        if (is_file(ENGINE_DIR . '/cache/' . $file . '.tmp'))
+    foreach ($arr_prefix as $file) {
+        if (is_file(ENGINE_DIR . '/cache/' . $file . '.tmp')) {
             Filesystem::delete(ENGINE_DIR . '/cache/' . $file . '.tmp');
+        }
+    }
 
 }
 
@@ -257,10 +262,6 @@ function mozg_mass_clear_cache_file($prefix): void
  */
 function mozg_create_folder_cache($prefix): void
 {
-//    if (!is_dir(ROOT_DIR . '/system/cache/' . $prefix)) {
-//        @mkdir(ROOT_DIR . '/system/cache/' . $prefix, 0777);
-//        @chmod(ROOT_DIR . '/system/cache/' . $prefix, 0777);
-//    }
     Filesystem::createDir(ROOT_DIR . '/system/cache/' . $prefix);
 }
 function mozg_create_cache($prefix, $cache_text): false|int
@@ -270,10 +271,11 @@ function mozg_create_cache($prefix, $cache_text): false|int
         $fp = fopen($filename, 'wb+');
         fwrite($fp, $cache_text);
         fclose($fp);
-        @chmod($filename, 0666);
+        chmod($filename, 0666);
         return 1;
-    } else
+    } else {
         return file_put_contents($filename, $cache_text);
+    }
 }
 
 function mozg_cache($prefix): false|string|int
@@ -281,9 +283,8 @@ function mozg_cache($prefix): false|string|int
     $filename = ENGINE_DIR . '/cache/' . $prefix . '.tmp';
     if (file_exists($filename)) {
         return file_get_contents($filename);
-    } else {
-        return false;
     }
+    return false;
 }
 
 /**
@@ -291,9 +292,11 @@ function mozg_cache($prefix): false|string|int
  */
 function NoAjaxQuery() : void
 {
-    if (!empty($_POST['ajax']) && $_POST['ajax'] == 'yes')
-        if (clean_url($_SERVER['HTTP_REFERER']) != clean_url($_SERVER['HTTP_HOST']) && $_SERVER['REQUEST_METHOD'] != 'POST')
+    if (!empty($_POST['ajax']) && $_POST['ajax'] == 'yes') {
+        if (clean_url($_SERVER['HTTP_REFERER']) !== clean_url($_SERVER['HTTP_HOST']) && $_SERVER['REQUEST_METHOD'] !== 'POST') {
             header('Location: /index.php?go=none');
+        }
+    }
 }
 
 /**
@@ -337,16 +340,17 @@ function user_age($user_year, $user_month, $user_day)
         $current_day = date('j', $server_time);
         $current_str = strtotime($current_year . '-' . $current_month . '-' . $current_day);
         $current_user = strtotime($current_year . '-' . $user_month . '-' . $user_day);
-        if ($current_str >= $current_user)
+        if ($current_str >= $current_user) {
             $user_age = $current_year - $user_year;
-        else
+        } else {
             $user_age = $current_year - $user_year - 1;
+        }
         if ($user_month && $user_day) {
 
             return $user_age . ' ' . declWord($user_age, 'user_age');
-        } else {
-            return false;
         }
+
+        return false;//fixme
     }
 }
 
@@ -355,357 +359,6 @@ function declWord(int $num, string $type): string
     $lang = getLang();
     $decl_list = require ROOT_DIR . "/lang/{$lang}/declensions.php";
     return (new Declensions($decl_list))->makeWord($num, $type);
-}
-
-/**
- * @param $num
- * @param $type
- * @return string
- */
-function gram_record($num, $type): string
-{
-    $strlen_num = strlen($num);
-    if ($num <= 21) {
-        $numres = $num;
-    } elseif ($strlen_num == 2) {
-        $parsnum = substr($num, 1, 2);
-        $numres = str_replace('0', '10', $parsnum);
-    } elseif ($strlen_num == 3) {
-        $parsnum = substr($num, 2, 3);
-        $numres = str_replace('0', '10', $parsnum);
-    } elseif ($strlen_num == 4) {
-        $parsnum = substr($num, 3, 4);
-        $numres = str_replace('0', '10', $parsnum);
-    } elseif ($strlen_num == 5) {
-        $parsnum = substr($num, 4, 5);
-        $numres = str_replace('0', '10', $parsnum);
-    }
-    if ($type == 'rec') {
-        if ($numres == 1) {
-            $gram_num_record = 'запись';
-        } elseif ($numres < 5) {
-            $gram_num_record = 'записи';
-        } elseif ($numres < 21) {
-            $gram_num_record = 'записей';
-        } elseif ($numres == 21) {
-            $gram_num_record = 'запись';
-        }
-    }
-    if ($type == 'comments') {
-        if ($numres == 0) {
-            $gram_num_record = 'комментариев';
-        } elseif ($numres == 1) {
-            $gram_num_record = 'комментарий';
-        } elseif ($numres < 5) {
-            $gram_num_record = 'комментария';
-        } elseif ($numres < 21) {
-            $gram_num_record = 'комментариев';
-        } elseif ($numres == 21) {
-            $gram_num_record = 'комментарий';
-        }
-    }
-    if ($type == 'albums') {
-        if ($numres == 0) {
-            $gram_num_record = 'альбомов';
-        } elseif ($numres == 1) {
-            $gram_num_record = 'альбом';
-        } elseif ($numres < 5) {
-            $gram_num_record = 'альбома';
-        } elseif ($numres < 21) {
-            $gram_num_record = 'альбомов';
-        } elseif ($numres == 21) {
-            $gram_num_record = 'альбом';
-        }
-    }
-    if ($type == 'photos') {
-        if ($numres == 0) {
-            $gram_num_record = 'фотографий';
-        } elseif ($numres == 1) {
-            $gram_num_record = 'фотография';
-        } elseif ($numres < 5) {
-            $gram_num_record = 'фотографии';
-        } elseif ($numres < 21) {
-            $gram_num_record = 'фотографий';
-        } elseif ($numres == 21) {
-            $gram_num_record = 'фотография';
-        }
-    }
-    if ($type == 'friends_demands') {
-        if ($numres == 0) {
-            $gram_num_record = 'нет заявок в друзья';
-        } elseif ($numres == 1) {
-            $gram_num_record = 'заявка в друзья';
-        } elseif ($numres < 5) {
-            $gram_num_record = 'заявки в друзья';
-        } elseif ($numres < 21) {
-            $gram_num_record = 'заявок в друзья';
-        } elseif ($numres == 21) {
-            $gram_num_record = 'заявка в друзья';
-        }
-    }
-    if ($type == 'user_age') {
-        if ($numres == 0) {
-            $gram_num_record = 'лет';
-        } elseif ($numres == 1) {
-            $gram_num_record = 'год';
-        } elseif ($numres < 5) {
-            $gram_num_record = 'года';
-        } elseif ($numres < 21) {
-            $gram_num_record = 'лет';
-        } elseif ($numres == 21) {
-            $gram_num_record = 'год';
-        }
-    }
-    if ($type == 'friends_common') {
-        if ($numres == 1) {
-            $gram_num_record = 'общий друг';
-        } elseif ($numres < 5) {
-            $gram_num_record = 'общих друга';
-        } elseif ($numres < 21) {
-            $gram_num_record = 'общих друзей';
-        } elseif ($numres == 21) {
-            $gram_num_record = 'общий друг';
-        }
-    }
-    if ($type == 'friends') {
-        if ($numres == 0) {
-            $gram_num_record = 'нет друзей';
-        } elseif ($numres == 1) {
-            $gram_num_record = 'друг';
-        } elseif ($numres < 5) {
-            $gram_num_record = 'друга';
-        } elseif ($numres < 21) {
-            $gram_num_record = 'друзей';
-        } elseif ($numres == 21) {
-            $gram_num_record = 'друг';
-        }
-    }
-    if ($type == 'friends_online') {
-        if ($numres == 0) {
-            $gram_num_record = 'нет друзей';
-        } elseif ($numres == 1) {
-            $gram_num_record = 'друг на сайте';
-        } elseif ($numres < 5) {
-            $gram_num_record = 'друга на сайте';
-        } elseif ($numres < 21) {
-            $gram_num_record = 'друзей на сайте';
-        } elseif ($numres == 21) {
-            $gram_num_record = 'друг на сайте';
-        }
-    }
-    if ($type == 'fave') {
-        if ($numres == 0) {
-            $gram_num_record = 'нет людей';
-        } elseif ($numres == 1) {
-            $gram_num_record = 'человек';
-        } elseif ($numres < 5) {
-            $gram_num_record = 'человека';
-        } elseif ($numres < 21) {
-            $gram_num_record = 'человек';
-        } elseif ($numres == 21) {
-            $gram_num_record = 'человек';
-        }
-    }
-    if ($type == 'prev') {
-        if ($numres == 0) {
-            $gram_num_record = 'нет комментариев';
-        } elseif ($numres == 1) {
-            $gram_num_record = 'предыдущий';
-        } elseif ($numres < 5) {
-            $gram_num_record = 'предыдущие';
-        } elseif ($numres < 21) {
-            $gram_num_record = 'предыдущие';
-        } elseif ($numres == 21) {
-            $gram_num_record = 'предыдущий';
-        }
-    }
-    if ($type == 'subscr') {
-        if ($numres == 0) {
-            $gram_num_record = 'нет подписчиков';
-        } elseif ($numres == 1) {
-            $gram_num_record = 'подписка';
-        } elseif ($numres < 5) {
-            $gram_num_record = 'подписки';
-        } elseif ($numres < 21) {
-            $gram_num_record = 'подписок';
-        } elseif ($numres == 21) {
-            $gram_num_record = 'подписка';
-        }
-    }
-    if ($type == 'videos') {
-        if ($numres == 0) {
-            $gram_num_record = 'нет видеозаписей';
-        } elseif ($numres == 1) {
-            $gram_num_record = 'видеозапись';
-        } elseif ($numres < 5) {
-            $gram_num_record = 'видеозаписи';
-        } elseif ($numres < 21) {
-            $gram_num_record = 'видеозаписей';
-        } elseif ($numres == 21) {
-            $gram_num_record = 'видеозапись';
-        }
-    }
-    if ($type == 'notes') {
-        if ($numres == 0) {
-            $gram_num_record = 'нет заметок';
-        } elseif ($numres == 1) {
-            $gram_num_record = 'заметка';
-        } elseif ($numres < 5) {
-            $gram_num_record = 'заметки';
-        } elseif ($numres < 21) {
-            $gram_num_record = 'заметок';
-        } elseif ($numres == 21) {
-            $gram_num_record = 'заметка';
-        }
-    }
-    if ($type == 'like') {
-        if ($numres == 0) {
-            $gram_num_record = 'человеку';
-        } elseif ($numres == 1) {
-            $gram_num_record = 'человеку';
-        } elseif ($numres < 5) {
-            $gram_num_record = 'людям';
-        } elseif ($numres < 21) {
-            $gram_num_record = 'людям';
-        } elseif ($numres == 21) {
-            $gram_num_record = 'человеку';
-        }
-    }
-    if ($type == 'updates') {
-        if ($numres == 0) {
-            $gram_num_record = '';
-        } elseif ($numres == 1) {
-            $gram_num_record = 'человека';
-        } elseif ($numres < 5) {
-            $gram_num_record = 'человек';
-        } elseif ($numres < 21) {
-            $gram_num_record = 'человек';
-        } elseif ($numres == 21) {
-            $gram_num_record = 'человека';
-        }
-    }
-    if ($type == 'msg') {
-        if ($numres == 1) {
-            $gram_num_record = 'сообщение';
-        } elseif ($numres < 5) {
-            $gram_num_record = 'сообщения';
-        } elseif ($numres < 21) {
-            $gram_num_record = 'сообщений';
-        } elseif ($numres == 21) {
-            $gram_num_record = 'сообщение';
-        }
-    }
-    if ($type == 'questions') {
-        if ($numres == 1) {
-            $gram_num_record = 'вопрос';
-        } elseif ($numres < 5) {
-            $gram_num_record = 'вопроса';
-        } elseif ($numres < 21) {
-            $gram_num_record = 'вопросов';
-        } elseif ($numres == 21) {
-            $gram_num_record = 'вопрос';
-        }
-    }
-    if ($type == 'gifts') {
-        if ($numres == 1) {
-            $gram_num_record = 'подарок';
-        } elseif ($numres < 5) {
-            $gram_num_record = 'подарка';
-        } elseif ($numres < 21) {
-            $gram_num_record = 'подарков';
-        } elseif ($numres == 21) {
-            $gram_num_record = 'подарок';
-        }
-    }
-    if ($type == 'groups_users') {
-        if ($numres == 1) {
-            $gram_num_record = 'участник';
-        } elseif ($numres < 5) {
-            $gram_num_record = 'участника';
-        } elseif ($numres < 21) {
-            $gram_num_record = 'участников';
-        } elseif ($numres == 21) {
-            $gram_num_record = 'участник';
-        }
-    }
-    if ($type == 'groups') {
-        if ($numres == 1) {
-            $gram_num_record = 'сообществе';
-        } elseif ($numres < 5) {
-            $gram_num_record = 'сообществах';
-        } elseif ($numres < 21) {
-            $gram_num_record = 'сообществах';
-        } elseif ($numres == 21) {
-            $gram_num_record = 'сообществе';
-        }
-    }
-    if ($type == 'subscribers') {
-        if ($numres == 1) {
-            $gram_num_record = 'подписчик';
-        } elseif ($numres < 5) {
-            $gram_num_record = 'подписчика';
-        } elseif ($numres < 21) {
-            $gram_num_record = 'подписчиков';
-        } elseif ($numres == 21) {
-            $gram_num_record = 'подписчик';
-        }
-    }
-    if ($type == 'subscribers2') {//todo
-        if ($numres == 1) {
-            $gram_num_record = 'Подписался <span id="traf2">' . $num . '</span> человек';
-        } elseif ($numres < 5) {
-            $gram_num_record = 'Подписались <span id="traf2">' . $num . '</span> человека';
-        } elseif ($numres < 21) {
-            $gram_num_record = 'Подписались <span id="traf2">' . $num . '</span> человек';
-        } elseif ($numres == 21) {
-            $gram_num_record = 'Подписался <span id="traf2">' . $num . '</span> человек';
-        }
-    }
-    if ($type == 'feedback') {
-        if ($numres == 1) {
-            $gram_num_record = 'контакт';
-        } elseif ($numres < 5) {
-            $gram_num_record = 'контакта';
-        } elseif ($numres < 21) {
-            $gram_num_record = 'контактов';
-        } elseif ($numres == 21) {
-            $gram_num_record = 'контакт';
-        }
-    }
-    if ($type == 'se_groups') {
-        if ($numres == 1) {
-            $gram_num_record = 'сообщество';
-        } elseif ($numres < 5) {
-            $gram_num_record = 'сообщества';
-        } elseif ($numres < 21) {
-            $gram_num_record = 'сообществ';
-        } elseif ($numres == 21) {
-            $gram_num_record = 'сообщество';
-        }
-    }
-    if ($type == 'audio') {
-        if ($numres == 1) {
-            $gram_num_record = 'песня';
-        } elseif ($numres < 5) {
-            $gram_num_record = 'песни';
-        } elseif ($numres < 21) {
-            $gram_num_record = 'песен';
-        } elseif ($numres == 21) {
-            $gram_num_record = 'песня';
-        }
-    }
-    if ($type == 'video_views') {
-        if ($numres == 1) {
-            $gram_num_record = 'просмотр';
-        } elseif ($numres < 5) {
-            $gram_num_record = 'просмотра';
-        } elseif ($numres < 21) {
-            $gram_num_record = 'просмотров';
-        } elseif ($numres == 21) {
-            $gram_num_record = 'просмотр';
-        }
-    }
-    return $gram_num_record;
 }
 
 /**
