@@ -51,14 +51,15 @@ if (requestFilter('act') == 'chage_lang') {
 $config['lang_list'] = nl2br($config['lang_list']);
 $expLangList = explode('<br />', $config['lang_list']);
 $numLangs = count($expLangList);
-$useLang = !empty($_COOKIE['lang']) > 0 ? (int)$_COOKIE['lang'] : 0;
-if ($useLang <= 0)
+$useLang = (!empty($_COOKIE['lang'])) > 0 ? (int)$_COOKIE['lang'] : 0;
+if ($useLang <= 0) {
     $useLang = 1;
+}
 $cil = 0;
 foreach ($expLangList as $expLangData) {
     $cil++;
     $expLangName = explode(' | ', $expLangData);
-    if ($cil == $useLang and $expLangName[0]) {
+    if ($cil == $useLang && $expLangName[0]) {
         $rMyLang = $expLangName[0];
         $checkLang = $expLangName[1];
         Registry::set('rMyLang', $rMyLang);
@@ -73,7 +74,7 @@ $lang = include ROOT_DIR . '/lang/' . $checkLang . '/site.php';
 Registry::set('lang', $lang);
 $langdate = include ROOT_DIR . '/lang/' . $checkLang . '/date.php';
 
-$tpl = new \FluffyDollop\Support\Templates();
+$tpl = new Templates();
 $tpl->dir = ROOT_DIR . '/templates/' . $config['temp'];
 define('TEMPLATE_DIR', $tpl->dir);
 
@@ -128,7 +129,6 @@ $online_time = Registry::get('server_time') - $config['online_time'];
 try {
 
     $router = Router::fromGlobals();
-//        $this->get('path.base');
     $params = [];
     $routers = array(
         '/' => 'Register@main',
@@ -151,6 +151,7 @@ try {
         '/restore/send' => 'Restore@send',
         '/restore/prefinish' => 'Restore@preFinish',
 
+        '/wall:num' => 'WallPage@main',
         '/wall:num_:num' => 'WallPage@main',
 
         '/security/img' => 'Captcha@captcha',
