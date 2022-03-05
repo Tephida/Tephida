@@ -8,12 +8,8 @@
  */
 
 $tpl = initAdminTpl();
-
 $directory = './templates';
-
-
 $scanned_directory = array_diff(scandir($directory), array('..', '.', '.htaccess'));
-
 $tpl->load_template('tpl/tpl.tpl');
 foreach ($scanned_directory as $directory) {
     $tpl->set('{dir}', $directory);
@@ -26,11 +22,7 @@ foreach ($scanned_directory as $directory) {
 
     $tpl->compile('tpl');
 }
-
-
 $tpl->load_template('/tpl/home.tpl');
-
-
 $tpl->set('{tpl}', $tpl->result['tpl']);
 $tpl->compile('content');
 compileAdmin($tpl);

@@ -25,7 +25,6 @@
                 'gzip_js': $('#gzip_js').val(),
                 'offline': $('#offline').val(),
                 'offline_msg': $('#offline_msg').val(),
-                'lang_list': $('#lang_list').val(),
                 'bonus_rate': $('#bonus_rate').val(),
                 'cost_balance': $('#cost_balance').val(),
                 'video_mod': $('#video_mod').val(),
@@ -93,10 +92,6 @@
 
     <div class="fllogall">Время онлайна людей в секундах:</div>
     <input type="text" name="save[online_time]" id="online_time" class="inpu" value="{config_online_time}"/>
-    <div class="mgcler"></div>
-
-    <div class="fllogall">Используемый язык:</div>
-    <select name="save[lang]" id="lang" class="inpu" style="width:auto">{for_select_lang}</select>
     <div class="mgcler"></div>
 
     <div class="fllogall">Включить Gzip сжатие HTML страниц:</div>

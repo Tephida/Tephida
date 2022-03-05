@@ -367,21 +367,18 @@ ob_start();
 ob_implicit_flush(0);
 
 if (version_compare(PHP_VERSION, '8.0.0') < 0) {
-    echo "Please change php version";
-    exit();
+    throw new \RuntimeException("Please change php version");
 }
 
 try {
     require_once './vendor/autoload.php';
 } catch (Exception) {
-    echo "Please install composer";
-    exit();
+    throw new \RuntimeException("Please install composer");
 }
 
 const ROOT_DIR = __DIR__;
 const ENGINE_DIR = ROOT_DIR . '/system';
 const ADMIN_DIR = ROOT_DIR . '/system/inc';
-include ADMIN_DIR.'/functions.php';
 include ADMIN_DIR.'/login.php';
 HTML;
                 file_put_contents(ROOT_DIR . "/" . $_POST['adminfile'], $admin);
@@ -416,8 +413,6 @@ return array (
 'offline' => "no", 
 
 'offline_msg' => "Сайт находится на текущей реконструкции, после завершения всех работ сайт будет открыт.\r\n\r\nПриносим вам свои извинения за доставленные неудобства.",
-
-'lang_list' => "Русский | Russian", 
 
 'bonus_rate' => "", 
 
@@ -504,7 +499,7 @@ HTML;
                 $_POST['pass'] = md5(md5($_POST['pass']));
                 $hid = $_POST['pass'] . md5(md5($_SERVER['REMOTE_ADDR']));
 
-                $server_time = $server_time ?? time();
+                $server_time = time();
 
                 $table_Chema[] = "INSERT INTO `users` 
 SET user_name = '{$_POST['name']}', 

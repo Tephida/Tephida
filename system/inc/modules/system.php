@@ -92,16 +92,6 @@ switch ($act) {
 
         $tpl->set('{config_online_time}', $config['online_time']);
 
-        //Чтение всех языков
-        $root_dir2 = scandir('./lang/');
-        $for_select_lang = '';
-        foreach ($root_dir2 as $lang) {
-            if ($lang != '.' && $lang != '..' && $lang != '.htaccess')
-                $for_select_lang .= str_replace('value="' . $config['lang'] . '"', 'value="' . $config['lang'] . '" selected', '<option value="' . $lang . '">' . $lang . '</option>');
-        }
-
-        $tpl->set('{for_select_lang}', $for_select_lang);
-
         //GZIP
         $for_select_gzip = installationSelected($config['gzip'], '<option value="yes">Да</option><option value="no">Нет</option>');
 
