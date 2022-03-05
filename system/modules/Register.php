@@ -10,6 +10,7 @@
 namespace Mozg\modules;
 
 use FluffyDollop\Support\Filesystem;
+use Mozg\classes\Cookie;
 use Mozg\classes\Module;
 use FluffyDollop\Support\Registry;
 use FluffyDollop\Support\Status;
@@ -119,9 +120,9 @@ class Register extends Module
                         //Устанавливаем в сессию ИД юзера
                         $_SESSION['user_id'] = (int)$id;
                         //Записываем COOKIE
-                        set_cookie("user_id", (int)$id, 365);
-                        set_cookie("password", md5(md5($password_first)), 365);
-                        set_cookie("hid", $hid, 365);
+                        Cookie::append("user_id", (int)$id, 365);
+                        Cookie::append("password", md5(md5($password_first)), 365);
+                        Cookie::append("hid", $hid, 365);
                         //Создаём папку юзера в кеше
                         mozg_create_folder_cache("user_{$id}");
                         //Директория юзеров
@@ -388,9 +389,9 @@ HTML;
                     $_SESSION['user_id'] = $id;
 
                     //Записываем COOKIE
-                    set_cookie("user_id", $id, 365);
-                    set_cookie("password", md5(md5($password_first)), 365);
-                    set_cookie("hid", $hid, 365);
+                    Cookie::append("user_id", $id, 365);
+                    Cookie::append("password", md5(md5($password_first)), 365);
+                    Cookie::append("hid", $hid, 365);
 
                     //Создаём папку юзера в кеше
                     mozg_create_folder_cache("user_{$id}");

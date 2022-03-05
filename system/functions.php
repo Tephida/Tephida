@@ -293,7 +293,7 @@ function mozg_cache($prefix): false|string|int
 function NoAjaxQuery() : void
 {
     if (!empty($_POST['ajax']) && $_POST['ajax'] == 'yes') {
-        if (clean_url($_SERVER['HTTP_REFERER']) !== clean_url($_SERVER['HTTP_HOST']) && $_SERVER['REQUEST_METHOD'] !== 'POST') {
+        if ($_SERVER['HTTP_REFERER'] !== $_SERVER['HTTP_HOST'] && $_SERVER['REQUEST_METHOD'] !== 'POST') {
             header('Location: /index.php?go=none');
         }
     }
@@ -641,31 +641,6 @@ function cleanPath($path): string
     return implode('/', $absolutes);
 }
 
-function clean_url($url)
-{
-    $url = str_replace(array("http://", "https://"), "", strtolower($url));
-    if (str_starts_with($url, 'www.'))
-        $url = substr($url, 4);
-    $url = explode('/', $url);
-    $url = reset($url);
-    $url = explode(':', $url);
-    return reset($url);
-}
-
-function set_cookie($name, $value, $expires)
-{
-    if ($expires) {
-        $expires = time() + ($expires * 86400);
-    } else {
-        $expires = FALSE;
-    }
-    if (PHP_VERSION < 5.2) {
-        setcookie($name, $value, $expires, "/", DOMAIN . "; HttpOnly");
-    } else {
-        setcookie($name, $value, $expires, "/", DOMAIN, NULL, TRUE);
-    }
-}
-
 function settings_get(): array
 {
     return Registry::get('config');
@@ -691,9 +666,9 @@ function compile($tpl, array $params = array()): int
     $config = settings_get();
 
     $metatags['title'] = $params['metatags']['title'] ?? $config['home'];
-    $checkLang = Registry::get('checkLang') ?? 'Russian';
-    $lang = require ROOT_DIR . '/lang/' . $checkLang . '/site.php';
-    $params['speedbar'] = $user_speedbar ?? $lang['welcome'];
+//    $checkLang = Registry::get('checkLang') ?? 'Russian';
+//    $lang = require ROOT_DIR . '/lang/' . $checkLang . '/site.php';
+    $params['speedbar'] = $config['home'];
     $params['headers'] = '<title>' . $metatags['title'] . '</title>
     <meta name="generator" content="VII ENGINE" />
     <meta http-equiv="content-type" content="text/html; charset=utf-8" />';
@@ -977,9 +952,9 @@ function compileNoAjax($tpl, $params): int
         $tpl->set('[/speedbar]', '');
     }
 //BUILD JS
-    $checkLang = Registry::get('checkLang');
+//    $checkLang = Registry::get('checkLang');
     $tpl->set('{js}', '<script type="text/javascript" src="{theme}/js/jquery.lib.js"></script>
-<script type="text/javascript" src="{theme}/js/' . $checkLang . '/lang.js"></script>
+<script type="text/javascript" src="{theme}/js/' . getLang() . '/lang.js"></script>
 <script type="text/javascript" src="{theme}/js/main.js"></script>
 <script type="text/javascript" src="{theme}/js/profile.js"></script>');
 
@@ -1002,8 +977,7 @@ function compileNoAjax($tpl, $params): int
         $tpl->set('{mobile-link}', '');
     }
 
-    $rMyLang = Registry::get('rMyLang');
-    $tpl->set('{lang}', $rMyLang);
+    $tpl->set('{lang}', getLangName());
     $tpl->compile('main');
     header('Content-type: text/html; charset=utf-8');
     $result = str_replace('{theme}', '/templates/' . $config['temp'], $tpl->result['main']);
@@ -1028,24 +1002,16 @@ function tpl_init(): Templates
 
 function getLang()
 {
-    $config = settings_get() ?? settings_load();
-    $config['lang_list'] = nl2br($config['lang_list']);
-    $expLangList = explode('<br />', $config['lang_list']);
-    $numLangs = count($expLangList);
-    $useLang = (!empty($_COOKIE['lang'])) > 0 ? (int)$_COOKIE['lang'] : 0;
-    if ($useLang <= 0) {
-        $useLang = 1;
-    }
-    $cil = 0;
-    foreach ($expLangList as $expLangData) {
-        ++$cil;
-        $expLangName = explode(' | ', $expLangData);
-        if ($cil == $useLang && $expLangName[0]) {
-            $checkLang = $expLangName[1];
-        }
-    }
-    if (!isset($checkLang)) {
-        $checkLang = 'Russian';
-    }
-    return $checkLang;
+    $lang_list = require ENGINE_DIR . '/data/langs.php';
+    $lang_count = count($lang_list);
+    $useLang = ((!empty($_COOKIE['lang'])) > 0 && (!empty($_COOKIE['lang'])) <= $lang_count) ? (int)$_COOKIE['lang'] : 0;
+    return $lang_list[$useLang]['key'];
+}
+
+function getLangName()
+{
+    $lang_list = require ENGINE_DIR . '/data/langs.php';
+    $lang_count = count($lang_list);
+    $useLang = ((!empty($_COOKIE['lang'])) > 0 && (!empty($_COOKIE['lang'])) <= $lang_count) ? (int)$_COOKIE['lang'] : 0;
+    return $lang_list[$useLang]['name'];
 }

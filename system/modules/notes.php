@@ -470,7 +470,7 @@ if (Registry::get('logged')) {
                     //Формирование мета титле и спидбара
                     $author_info = explode(' ', $owner['user_search_pref']);
                     $metatags['title'] = $lang['title_notes'] . ' ' . gramatikName($author_info[0]) . ' ' . gramatikName($author_info[1]);
-                    $user_speedbar = 'У ' . gramatikName($author_info[0]) . ' <span id="notes_num">' . $owner['user_notes_num'] . '</span> ' . declWord($owner['user_notes_num'], 'notes');;
+                    $user_speedbar = 'У ' . gramatikName($author_info[0]) . ' <span id="notes_num">' . $owner['user_notes_num'] . '</span> ' . declWord((int)$owner['user_notes_num'], 'notes');
 
                     //Загруажем head заметок
                     $tpl->load_template('notes/head.tpl');
@@ -481,7 +481,7 @@ if (Registry::get('logged')) {
                         $tpl->set('[owner]', '');
                         $tpl->set('[/owner]', '');
                         $tpl->set_block("'\\[not-owner\\](.*?)\\[/not-owner\\]'si", "");
-                        $user_speedbar = 'У Вас <span id="notes_num">' . $owner['user_notes_num'] . '</span> ' . declWord($owner['user_notes_num'], 'notes');
+                        $user_speedbar = 'У Вас <span id="notes_num">' . $owner['user_notes_num'] . '</span> ' . declWord((int)$owner['user_notes_num'], 'notes');
                     } else {
                         $tpl->set('[not-owner]', '');
                         $tpl->set('[/not-owner]', '');

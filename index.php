@@ -24,15 +24,5 @@ try {
     throw new \RuntimeException("Please install composer");
 }
 
-$array = array(
-//    '0',
-    '1',
-    '2',
-    '5',
-//    '100',
-);
-echo declOfNum(5, $array);
-exit();
-
 /** Initialize */
 include_once ENGINE_DIR . '/init.php';

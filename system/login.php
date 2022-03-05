@@ -18,9 +18,9 @@ $db = Registry::get('db');
 $config = settings_get();
 
 if ($act == 'logout') {
-    set_cookie("user_id", "", 0);
-    set_cookie("password", "", 0);
-    set_cookie("hid", "", 0);
+    \Mozg\classes\Cookie::remove("user_id");
+    \Mozg\classes\Cookie::remove("password");
+    \Mozg\classes\Cookie::remove("hid");
     unset($_SESSION['user_id']);
     session_destroy();
     session_unset();
@@ -105,9 +105,9 @@ if (isset($_POST['log_in']) && !$logged) {
                 //Устанавливаем в сессию ИД юзера
                 $_SESSION['user_id'] = (int)$check_user['user_id'];
                 //Записываем COOKIE
-                set_cookie("user_id", (int)$check_user['user_id'], 365);
-                set_cookie("password", $password, 365);
-                set_cookie("hid", $hid, 365);
+                \Mozg\classes\Cookie::append("user_id", (int)$check_user['user_id'], 365);
+                \Mozg\classes\Cookie::append("password", $password, 365);
+                \Mozg\classes\Cookie::append("hid", $hid, 365);
                 //Вставляем лог в бд
                 $db->query("UPDATE `log` SET browser = '" . $_BROWSER . "', ip = '" . $_IP . "' WHERE uid = '" . $check_user['user_id'] . "'");
                 if ($config['temp'] != 'mobile') {

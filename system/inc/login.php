@@ -24,9 +24,9 @@ $_BROWSER = $_SERVER['HTTP_USER_AGENT'];
 
 //Если делаем выход
 if (isset($_GET['act']) && $_GET['act'] == 'logout') {
-    set_cookie("user_id", "", 0);
-    set_cookie("password", "", 0);
-    set_cookie("hid", "", 0);
+    \Mozg\classes\Cookie::remove("user_id");
+    \Mozg\classes\Cookie::remove("password");
+    \Mozg\classes\Cookie::remove("hid");
     unset($_SESSION['user_id']);
 //    session_destroy();
 //    session_unset();
@@ -117,10 +117,9 @@ if (isset($_POST['log_in']) && !isset($_SESSION['user_id'])) {
             $db->query("UPDATE `users` SET user_hid = '" . $hid . "' WHERE user_id = '" . $check_user['user_id'] . "'");
 
             //Записываем COOKIE
-            set_cookie("user_id", (int)$check_user['user_id'], 365);
-            set_cookie("password", $md5_pass, 365);
-            set_cookie("hid", $hid, 365);
-
+            \Mozg\classes\Cookie::append("user_id", (int)$check_user['user_id'], 365);
+            \Mozg\classes\Cookie::append("password", $md5_pass, 365);
+            \Mozg\classes\Cookie::append("hid", $hid, 365);
             header("Location: {$admin_link}");
         } else {
             $error_log = 'Доступ отключён!';

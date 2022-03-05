@@ -59,8 +59,7 @@ class TpLSite extends Templates
         $config = settings_get();
         $params = array();
         $metatags['title'] = $params['metatags']['title'] ?? $config['home'];
-        $checkLang = Registry::get('checkLang') ?? 'Russian';
-        $lang = require ROOT_DIR . '/lang/' . $checkLang . '/site.php';
+//        $lang = require ROOT_DIR . '/lang/' . getLangNew() . '/site.php';
 //        $params['speedbar'] = $user_speedbar ?? $lang['welcome'];
         $params['headers'] = '<title>' . $metatags['title'] . '</title>
     <meta name="generator" content="VII ENGINE" />
@@ -288,9 +287,8 @@ class TpLSite extends Templates
             $this->set('[/speedbar]', '');
         }
 //BUILD JS
-        $checkLang = Registry::get('checkLang');
         $this->set('{js}', '<script type="text/javascript" src="{theme}/js/jquery.lib.js"></script>
-<script type="text/javascript" src="{theme}/js/' . $checkLang . '/lang.js"></script>
+<script type="text/javascript" src="{theme}/js/' . getLang() . '/lang.js"></script>
 <script type="text/javascript" src="{theme}/js/main.js"></script>
 <script type="text/javascript" src="{theme}/js/profile.js"></script>');
 
@@ -313,8 +311,7 @@ class TpLSite extends Templates
             $this->set('{mobile-link}', '');
         }
 
-        $rMyLang = Registry::get('rMyLang');
-        $this->set('{lang}', $rMyLang);
+        $this->set('{lang}', getLangName());
         $this->compile('main');
         header('Content-type: text/html; charset=utf-8');
         $result = str_replace('{theme}', '/templates/' . $config['temp'], $this->result['main']);
