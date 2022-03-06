@@ -60,46 +60,46 @@ else {
 }
 $config = settings_get();
 //Делаем SQL Запрос в БД на вывод данных
-    if ($type == 1) { //Если критерий поиск "по людям"
-        $sql_query = "SELECT user_id, user_search_pref, user_photo, user_birthday, user_country_city_name, user_last_visit, user_logged_mobile FROM `users` {$where_sql_gen} {$sql_sort} ORDER by `user_rating` DESC LIMIT {$limit_page}, {$gcount}";
-        $sql_count = "SELECT COUNT(*) AS cnt FROM `users` {$where_sql_gen} {$sql_sort}";
-    } elseif ($type == 2 and $config['video_mod'] == 'yes' and $config['video_mod_search'] == 'yes') { //Если критерий поиск "по видеозаписям"
-        $sql_query = "SELECT id, photo, title, add_date, comm_num, owner_user_id FROM `videos` WHERE title LIKE '%{$query}%' AND privacy = 1 ORDER by `add_date` DESC LIMIT {$limit_page}, {$gcount}";
-        $sql_count = "SELECT COUNT(*) AS cnt FROM `videos` WHERE title LIKE '%{$query}%' AND privacy = 1";
-    } elseif ($type == 3) { //Если критерий поиск "по заметкам"
-        $sql_query = "SELECT notes.id, title, full_text, owner_user_id, date, comm_num, users.user_photo, user_search_pref FROM notes LEFT JOIN users ON notes.owner_user_id = users.user_id WHERE title LIKE '%{$query}%' OR full_text LIKE '%{$query}%' ORDER by `date` DESC LIMIT {$limit_page}, {$gcount}";
-        $sql_count = "SELECT COUNT(*) AS cnt FROM `notes` WHERE title LIKE '%{$query}%' OR full_text LIKE '%{$query}%'";
-    } elseif ($type == 4) { //Если критерий поиск "по сообщества"
-        $sql_query = "SELECT id, title, photo, traf, adres FROM `communities` WHERE title LIKE '%{$query}%' AND del = '0' AND ban = '0' ORDER by `traf` DESC, `photo` DESC LIMIT {$limit_page}, {$gcount}";
-        $sql_count = "SELECT COUNT(*) AS cnt FROM `communities` WHERE title LIKE '%{$query}%' AND del = '0' AND ban = '0'";
-    } elseif ($type == 5 and $config['audio_mod'] == 'yes' and $config['audio_mod_search'] == 'yes') { //Если критерий поиск "по аудиозаписи"
-        $sql_query = "SELECT audio.aid, url, artist, name, auser_id, users.user_search_pref FROM audio LEFT JOIN users ON audio.auser_id = users.user_id WHERE MATCH (name, artist) AGAINST ('%{$query}%') OR artist LIKE '%{$query}%' OR name LIKE '%{$query}%' ORDER by `adate` DESC LIMIT {$limit_page}, {$gcount}";
-        $sql_count = "SELECT COUNT(*) AS cnt FROM `audio` WHERE MATCH (name, artist) AGAINST ('%{$query}%') OR artist LIKE '%{$query}%' OR name LIKE '%{$query}%'";
-    } else {
-        $sql_query = false;
-        $sql_count = false;
-    }
+if ($type == 1) { //Если критерий поиск "по людям"
+    $sql_query = "SELECT user_id, user_search_pref, user_photo, user_birthday, user_country_city_name, user_last_visit, user_logged_mobile FROM `users` {$where_sql_gen} {$sql_sort} ORDER by `user_rating` DESC LIMIT {$limit_page}, {$gcount}";
+    $sql_count = "SELECT COUNT(*) AS cnt FROM `users` {$where_sql_gen} {$sql_sort}";
+} elseif ($type == 2 and $config['video_mod'] == 'yes' and $config['video_mod_search'] == 'yes') { //Если критерий поиск "по видеозаписям"
+    $sql_query = "SELECT id, photo, title, add_date, comm_num, owner_user_id FROM `videos` WHERE title LIKE '%{$query}%' AND privacy = 1 ORDER by `add_date` DESC LIMIT {$limit_page}, {$gcount}";
+    $sql_count = "SELECT COUNT(*) AS cnt FROM `videos` WHERE title LIKE '%{$query}%' AND privacy = 1";
+} elseif ($type == 3) { //Если критерий поиск "по заметкам"
+    $sql_query = "SELECT notes.id, title, full_text, owner_user_id, date, comm_num, users.user_photo, user_search_pref FROM notes LEFT JOIN users ON notes.owner_user_id = users.user_id WHERE title LIKE '%{$query}%' OR full_text LIKE '%{$query}%' ORDER by `date` DESC LIMIT {$limit_page}, {$gcount}";
+    $sql_count = "SELECT COUNT(*) AS cnt FROM `notes` WHERE title LIKE '%{$query}%' OR full_text LIKE '%{$query}%'";
+} elseif ($type == 4) { //Если критерий поиск "по сообщества"
+    $sql_query = "SELECT id, title, photo, traf, adres FROM `communities` WHERE title LIKE '%{$query}%' AND del = '0' AND ban = '0' ORDER by `traf` DESC, `photo` DESC LIMIT {$limit_page}, {$gcount}";
+    $sql_count = "SELECT COUNT(*) AS cnt FROM `communities` WHERE title LIKE '%{$query}%' AND del = '0' AND ban = '0'";
+} elseif ($type == 5 and $config['audio_mod'] == 'yes' and $config['audio_mod_search'] == 'yes') { //Если критерий поиск "по аудиозаписи"
+    $sql_query = "SELECT audio.aid, url, artist, name, auser_id, users.user_search_pref FROM audio LEFT JOIN users ON audio.auser_id = users.user_id WHERE MATCH (name, artist) AGAINST ('%{$query}%') OR artist LIKE '%{$query}%' OR name LIKE '%{$query}%' ORDER by `adate` DESC LIMIT {$limit_page}, {$gcount}";
+    $sql_count = "SELECT COUNT(*) AS cnt FROM `audio` WHERE MATCH (name, artist) AGAINST ('%{$query}%') OR artist LIKE '%{$query}%' OR name LIKE '%{$query}%'";
+} else {
+    $sql_query = false;
+    $sql_count = false;
+}
 
-    if ($sql_query) {
-        $sql_ = $db->super_query($sql_query, true);
-    } else {
-        $sql_ = null;
-    }
+if ($sql_query) {
+    $sql_ = $db->super_query($sql_query, true);
+} else {
+    $sql_ = null;
+}
 
-    //Считаем кол-во ответов из БД
+//Считаем кол-во ответов из БД
 if ($sql_count && $sql_) {
     $count = $db->super_query($sql_count);
 }
 
-    //Head поиска
-    $tpl->load_template('search/head.tpl');
+//Head поиска
+$tpl->load_template('search/head.tpl');
 if ($query) {
     $tpl->set('{query}', stripslashes(stripslashes(strtr($query, array('%' => ' ')))));
 } else {
     $tpl->set('{query}', 'Начните вводить любое слово или имя');
 }
 
-    $query = strip_data(urldecode(requestFilter('query')));
+$query = strip_data(urldecode(requestFilter('query')));
 if (isset($_GET['n']) && $_GET['n']) {
     $query = strip_data(urldecode(requestFilter('query')));
 }
@@ -141,9 +141,9 @@ if (isset($count['cnt']) && $count['cnt']) {
         $tpl->set('[/online]', '');
     } else {
         $tpl->set_block("'\\[online\\](.*?)\\[/online\\]'si", "");
-            $tpl->set('[no-online]', '');
-            $tpl->set('[/no-online]', '');
-        }
+        $tpl->set('[no-online]', '');
+        $tpl->set('[/no-online]', '');
+    }
 
     if ($type == 1) {
         $tpl->set('{count}', $count['cnt'] . ' ' . declWord($count['cnt'], 'fave'));
@@ -167,165 +167,162 @@ if ($type == 1) {
     $tpl->set_block("'\\[search_tab\\](.*?)\\[/search_tab\\]'si", "");
 }
 
-    //################## Загружаем Страны ##################//
-    $sql_country = $db->super_query("SELECT * FROM `country` ORDER by `name` ASC", true);
-    $all_country = '';
+//################## Загружаем Страны ##################//
+$sql_country = $db->super_query("SELECT * FROM `country` ORDER by `name` ASC", true);
+$all_country = '';
 foreach ($sql_country as $row_country) {
     $all_country .= '<option value="' . $row_country['id'] . '">' . stripslashes($row_country['name']) . '</option>';
 }
 
-    $tpl->set('{country}', installationSelected($country, $all_country));
+$tpl->set('{country}', installationSelected($country, $all_country));
 
-    //################## Загружаем Города ##################//
-    if ($type == 1) {
-        $sql_city = $db->super_query("SELECT id, name FROM `city` WHERE id_country = '{$country}' ORDER by `name` ASC", true);
-        $all_city = '';
-        foreach ($sql_city as $row2) {
-            $all_city .= '<option value="' . $row2['id'] . '">' . stripslashes($row2['name']) . '</option>';
-        }
-
-        $tpl->set('{city}', installationSelected($city, $all_city));
+//################## Загружаем Города ##################//
+if ($type == 1) {
+    $sql_city = $db->super_query("SELECT id, name FROM `city` WHERE id_country = '{$country}' ORDER by `name` ASC", true);
+    $all_city = '';
+    foreach ($sql_city as $row2) {
+        $all_city .= '<option value="' . $row2['id'] . '">' . stripslashes($row2['name']) . '</option>';
     }
 
-    $tpl->compile('info');
+    $tpl->set('{city}', installationSelected($city, $all_city));
+}
 
-    //Загружаем шаблон на вывод если он есть одного юзера и выводим
-    if ($sql_) {
-        //Если критерий поиск "по людям"
-        if ($type == 1) {
-            $tpl->load_template('search/result_people.tpl');
-            foreach ($sql_ as $row) {
-                $tpl->set('{user-id}', $row['user_id']);
-                $tpl->set('{name}', $row['user_search_pref']);
-                if ($row['user_photo']) {
-                    $tpl->set('{ava}', $config['home_url'] . 'uploads/users/' . $row['user_id'] . '/100_' . $row['user_photo']);
-                } else {
-                    $tpl->set('{ava}', '{theme}/images/100_no_ava.png');
-                }
-                //Возраст юзера
-                $user_birthday = explode('-', $row['user_birthday']);
+$tpl->compile('info');
 
-                if (!empty($user_birthday[0]) && !empty($user_birthday[1]) && !empty($user_birthday[2])) {
-                    $tpl->set('{age}', user_age($user_birthday[0], $user_birthday[1], $user_birthday[2]));
-                } else {
-                    $tpl->set('{age}', '');
-                }
-                $user_country_city_name = explode('|', $row['user_country_city_name']);
+//Загружаем шаблон на вывод если он есть одного юзера и выводим
+if ($sql_) {
+    //Если критерий поиск "по людям"
+    if ($type == 1) {
+        $tpl->load_template('search/result_people.tpl');
+        foreach ($sql_ as $row) {
+            $tpl->set('{user-id}', $row['user_id']);
+            $tpl->set('{name}', $row['user_search_pref']);
+            if ($row['user_photo']) {
+                $tpl->set('{ava}', $config['home_url'] . 'uploads/users/' . $row['user_id'] . '/100_' . $row['user_photo']);
+            } else {
+                $tpl->set('{ava}', '{theme}/images/100_no_ava.png');
+            }
+            //Возраст юзера
+            $user_birthday = explode('-', $row['user_birthday']);
+
+            if (!empty($user_birthday[0]) && !empty($user_birthday[1]) && !empty($user_birthday[2])) {
+                $tpl->set('{age}', user_age($user_birthday[0], $user_birthday[1], $user_birthday[2]));
+            } else {
+                $tpl->set('{age}', '');
+            }
+            $user_country_city_name = explode('|', $row['user_country_city_name']);
 //                $tpl->set('{country}', $user_country_city_name[0]);
 
-                if (!empty($user_country_city_name[0])) {
-                    $tpl->set('{country}', $user_country_city_name[0]);
-                } else {
-                    $tpl->set('{country}', '');
-                }
-
-                if (!empty($user_country_city_name[1])) {
-                    $tpl->set('{city}', ', ' . $user_country_city_name[1]);
-                } else {
-                    $tpl->set('{city}', '');
-                }
-
-                if ($row['user_id'] != $user_id) {
-                    $tpl->set('[owner]', '');
-                    $tpl->set('[/owner]', '');
-                } else {
-                    $tpl->set_block("'\\[owner\\](.*?)\\[/owner\\]'si", "");
-                }
-
-                OnlineTpl($row['user_last_visit'], $row['user_logged_mobile']);
-
-                $tpl->compile('content');
-            }
-            //Если критерий поиск "по видеозаписям"
-        } elseif ($type == 2) {
-            $tpl->load_template('search/result_video.tpl');
-            foreach ($sql_ as $row) {
-                $tpl->set('{photo}', $row['photo']);
-                $tpl->set('{title}', stripslashes($row['title']));
-                $tpl->set('{user-id}', $row['owner_user_id']);
-                $tpl->set('{id}', $row['id']);
-                $tpl->set('{close-link}', '/index.php?' . $query_string . '&page=' . $page);
-                $tpl->set('{comm}', $row['comm_num'] . ' ' . declWord($row['comm_num'], 'comments'));
-                $date_str = megaDate(strtotime($row['add_date']), 1, 1);
-                $tpl->set('{date}', $date_str);
-                $tpl->compile('content');
+            if (!empty($user_country_city_name[0])) {
+                $tpl->set('{country}', $user_country_city_name[0]);
+            } else {
+                $tpl->set('{country}', '');
             }
 
-            //Если критерий поиск "по заметкам"
-        } elseif ($type == 3) {
-            $tpl->load_template('search/result_note.tpl');
-            foreach ($sql_ as $row) {
-                if ($row['user_photo']) {
-                    $tpl->set('{ava}', $config['home_url'] . 'uploads/users/' . $row['owner_user_id'] . '/50_' . $row['user_photo']);
-                } else {
-                    $tpl->set('{ava}', '{theme}/images/no_ava_50.png');
-                }
-
-                $tpl->set('{user-id}', $row['owner_user_id']);
-                $tpl->set('{short-text}', stripslashes(strip_tags(iconv_substr($row['full_text'], 0, 200, 'utf-8'))) . '...');
-                $tpl->set('{title}', stripslashes($row['title']));
-                $tpl->set('{name}', $row['user_search_pref']);
-                $tpl->set('{note-id}', $row['id']);
-                $date_str = megaDate(strtotime($row['date']), 1, 1);
-                $tpl->set('{date}', $date_str);
-                if ($row['comm_num']) {
-                    $tpl->set('{comm-num}', $row['comm_num'] . ' ' . declWord($row['comm_num'], 'comments'));
-                } else {
-                    $tpl->set('{comm-num}', $lang['note_no_comments']);
-                }
-                $tpl->compile('content');
+            if (!empty($user_country_city_name[1])) {
+                $tpl->set('{city}', ', ' . $user_country_city_name[1]);
+            } else {
+                $tpl->set('{city}', '');
             }
 
-            //Если критерий поиск "по сообществам"
-        } elseif ($type == 4) {
-            $tpl->load_template('search/result_groups.tpl');
-            foreach ($sql_ as $row) {
-                if ($row['photo']) {
-                    $tpl->set('{ava}', '/uploads/groups/' . $row['id'] . '/100_' . $row['photo']);
-                } else {
-                    $tpl->set('{ava}', '{theme}/images/no_ava_groups_100.gif');
-                }
-
-                $tpl->set('{public-id}', $row['id']);
-                $tpl->set('{name}', stripslashes($row['title']));
-                $tpl->set('{note-id}', $row['id']);
-                $tpl->set('{traf}', $row['traf'] . ' ' . declWord($row['traf'], 'groups_users'));
-                if ($row['adres']) {
-                    $tpl->set('{adres}', $row['adres']);
-                } else {
-                    $tpl->set('{adres}', 'public' . $row['id']);
-                }
-                $tpl->compile('content');
+            if ($row['user_id'] != $user_id) {
+                $tpl->set('[owner]', '');
+                $tpl->set('[/owner]', '');
+            } else {
+                $tpl->set_block("'\\[owner\\](.*?)\\[/owner\\]'si", "");
             }
 
-            //Если критерий поиск "по аудиозаписям"
-        } elseif ($type == 5) {
-            $tpl->load_template('search/result_audio.tpl');
-            $jid = 0;
-            foreach ($sql_ as $row) {
-                $jid++;
-                $tpl->set('{jid}', $jid);
-                $tpl->set('{aid}', $row['aid']);
-                $tpl->set('{url}', $row['url']);
-                $tpl->set('{artist}', stripslashes($row['artist']));
-                $tpl->set('{name}', stripslashes($row['name']));
-                $tpl->set('{author-n}', iconv_substr($row['user_search_pref'], 0, 1, 'utf-8'));
-                $expName = explode(' ', $row['user_search_pref']);
-                $tpl->set('{author-f}', $expName[1]);
-                $tpl->set('{author-id}', $row['auser_id']);
-                $tpl->compile('content');
-            }
-        } else {
-            msgbox('', $lang['search_none'], 'info_2');
+            OnlineTpl($row['user_last_visit'], $row['user_logged_mobile']);
+
+            $tpl->compile('content');
+        }
+        //Если критерий поиск "по видеозаписям"
+    } elseif ($type == 2) {
+        $tpl->load_template('search/result_video.tpl');
+        foreach ($sql_ as $row) {
+            $tpl->set('{photo}', $row['photo']);
+            $tpl->set('{title}', stripslashes($row['title']));
+            $tpl->set('{user-id}', $row['owner_user_id']);
+            $tpl->set('{id}', $row['id']);
+            $tpl->set('{close-link}', '/index.php?' . $query_string . '&page=' . $page);
+            $tpl->set('{comm}', $row['comm_num'] . ' ' . declWord($row['comm_num'], 'comments'));
+            $date_str = megaDate(strtotime($row['add_date']), 1, 1);
+            $tpl->set('{date}', $date_str);
+            $tpl->compile('content');
         }
 
-        navigation($gcount, $count['cnt'], '/index.php?' . $query_string . '&page=');
+        //Если критерий поиск "по заметкам"
+    } elseif ($type == 3) {
+        $tpl->load_template('search/result_note.tpl');
+        foreach ($sql_ as $row) {
+            if ($row['user_photo']) {
+                $tpl->set('{ava}', $config['home_url'] . 'uploads/users/' . $row['owner_user_id'] . '/50_' . $row['user_photo']);
+            } else {
+                $tpl->set('{ava}', '{theme}/images/no_ava_50.png');
+            }
 
-        compile($tpl);
+            $tpl->set('{user-id}', $row['owner_user_id']);
+            $tpl->set('{short-text}', stripslashes(strip_tags(iconv_substr($row['full_text'], 0, 200, 'utf-8'))) . '...');
+            $tpl->set('{title}', stripslashes($row['title']));
+            $tpl->set('{name}', $row['user_search_pref']);
+            $tpl->set('{note-id}', $row['id']);
+            $date_str = megaDate(strtotime($row['date']), 1, 1);
+            $tpl->set('{date}', $date_str);
+            if ($row['comm_num']) {
+                $tpl->set('{comm-num}', $row['comm_num'] . ' ' . declWord($row['comm_num'], 'comments'));
+            } else {
+                $tpl->set('{comm-num}', $lang['note_no_comments']);
+            }
+            $tpl->compile('content');
+        }
+
+        //Если критерий поиск "по сообществам"
+    } elseif ($type == 4) {
+        $tpl->load_template('search/result_groups.tpl');
+        foreach ($sql_ as $row) {
+            if ($row['photo']) {
+                $tpl->set('{ava}', '/uploads/groups/' . $row['id'] . '/100_' . $row['photo']);
+            } else {
+                $tpl->set('{ava}', '{theme}/images/no_ava_groups_100.gif');
+            }
+
+            $tpl->set('{public-id}', $row['id']);
+            $tpl->set('{name}', stripslashes($row['title']));
+            $tpl->set('{note-id}', $row['id']);
+            $tpl->set('{traf}', $row['traf'] . ' ' . declWord($row['traf'], 'groups_users'));
+            if ($row['adres']) {
+                $tpl->set('{adres}', $row['adres']);
+            } else {
+                $tpl->set('{adres}', 'public' . $row['id']);
+            }
+            $tpl->compile('content');
+        }
+
+        //Если критерий поиск "по аудиозаписям"
+    } elseif ($type == 5) {
+        $tpl->load_template('search/result_audio.tpl');
+        $jid = 0;
+        foreach ($sql_ as $row) {
+            $jid++;
+            $tpl->set('{jid}', $jid);
+            $tpl->set('{aid}', $row['aid']);
+            $tpl->set('{url}', $row['url']);
+            $tpl->set('{artist}', stripslashes($row['artist']));
+            $tpl->set('{name}', stripslashes($row['name']));
+            $tpl->set('{author-n}', iconv_substr($row['user_search_pref'], 0, 1, 'utf-8'));
+            $expName = explode(' ', $row['user_search_pref']);
+            $tpl->set('{author-f}', $expName[1]);
+            $tpl->set('{author-id}', $row['auser_id']);
+            $tpl->compile('content');
+        }
     } else {
-        msgbox('', '', 'info_search');
-        compile($tpl);
+        msgbox('', $lang['search_none'], 'info_2');
     }
 
-//    $tpl->clear();
-//    $db->free();
+    navigation($gcount, $count['cnt'], '/index.php?' . $query_string . '&page=');
+
+    compile($tpl);
+} else {
+    msgbox('', '', 'info_search');
+    compile($tpl);
+}

@@ -340,4 +340,3 @@ if (Registry::get('logged')) {
     $db->free();
 
 }
-

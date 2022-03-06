@@ -57,5 +57,4 @@ class Declensions
         }
         return '';
     }
-
 }

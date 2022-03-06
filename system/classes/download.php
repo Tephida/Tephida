@@ -110,5 +110,4 @@ class download
 
         return true;
     }
-
 }

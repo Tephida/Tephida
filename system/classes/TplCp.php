@@ -78,5 +78,4 @@ class TplCp extends Templates
         echo $response;
         return true;
     }
-
 }

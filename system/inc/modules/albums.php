@@ -6,7 +6,6 @@
  *   file that was distributed with this source code.
  *
  */
-echoheader();
 
 $se_uid = intFilter('se_uid');
 if (!$se_uid) $se_uid = '';

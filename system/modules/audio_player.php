@@ -99,4 +99,3 @@ if (Registry::get('logged')) {
             AjaxTpl($tpl);
     }
 }
-

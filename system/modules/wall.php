@@ -929,7 +929,4 @@ if (Registry::get('logged')) {
                 }
             }
     }
-//    $tpl->clear();
-//    $db->free();
 }
-//    echo 'no_log';

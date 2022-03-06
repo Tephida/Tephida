@@ -129,6 +129,3 @@ if (Registry::get('logged')) {
             AjaxTpl($tpl);
     }
 }
-
-//$tpl->clear();
-//$db->free();

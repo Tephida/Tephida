@@ -170,4 +170,3 @@ if ($act == 'edit') {
     $tpl->compile('content');
     $tpl->render();
 }
-

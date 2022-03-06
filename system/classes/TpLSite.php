@@ -335,5 +335,4 @@ class TpLSite extends Templates
         $config = settings_get();
         return print(str_replace('{theme}', '/templates/' . $config['temp'], $this->result['info'] . $this->result['content']));
     }
-
 }

@@ -76,4 +76,3 @@ if (Registry::get('logged')) {
             }
     }
 }
-

@@ -102,6 +102,3 @@ switch ($act) {
         }
         compile($tpl);
 }
-
-//$tpl->clear();
-//$db->free();
