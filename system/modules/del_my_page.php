@@ -1,7 +1,6 @@
 <?php
 
-use FluffyDollop\Support\Filesystem;
-use FluffyDollop\Support\Registry;
+use FluffyDollop\Support\{Filesystem, Registry};
 
 NoAjaxQuery();
 if (Registry::get('logged')) {
