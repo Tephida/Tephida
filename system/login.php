@@ -8,6 +8,7 @@
  */
 
 use FluffyDollop\Support\Registry;
+use Mozg\classes\Cookie;
 use Mozg\classes\TpLSite;
 
 $_IP = $_SERVER['REMOTE_ADDR'];
@@ -18,9 +19,9 @@ $db = Registry::get('db');
 $config = settings_get();
 
 if ($act == 'logout') {
-    \Mozg\classes\Cookie::remove("user_id");
-    \Mozg\classes\Cookie::remove("password");
-    \Mozg\classes\Cookie::remove("hid");
+    Cookie::remove("user_id");
+    Cookie::remove("password");
+    Cookie::remove("hid");
     unset($_SESSION['user_id']);
     session_destroy();
     session_unset();
@@ -105,9 +106,9 @@ if (isset($_POST['log_in']) && !$logged) {
                 //Устанавливаем в сессию ИД юзера
                 $_SESSION['user_id'] = (int)$check_user['user_id'];
                 //Записываем COOKIE
-                \Mozg\classes\Cookie::append("user_id", (int)$check_user['user_id'], 365);
-                \Mozg\classes\Cookie::append("password", $password, 365);
-                \Mozg\classes\Cookie::append("hid", $hid, 365);
+                Cookie::append("user_id", (int)$check_user['user_id'], 365);
+                Cookie::append("password", $password, 365);
+                Cookie::append("hid", $hid, 365);
                 //Вставляем лог в бд
                 $db->query("UPDATE `log` SET browser = '" . $_BROWSER . "', ip = '" . $_IP . "' WHERE uid = '" . $check_user['user_id'] . "'");
                 if ($config['temp'] != 'mobile') {
