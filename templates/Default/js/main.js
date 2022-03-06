@@ -461,7 +461,7 @@ function langNumric(id, num, text1, text2, text3, text4, text5) {
 var trsn = {
     box: function () {
         $('.js_titleRemove').remove();
-        $.post('/index.php?go=lang', function (d) {
+        $.post('/langs/box', function (d) {
             Box.Show('lang', 400, 'Выбор языка', d, lang_box_cancel);
         });
     }

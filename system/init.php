@@ -7,6 +7,8 @@
  *
  */
 
+use Mozg\classes\Cookie;
+use Mozg\modules\Lang;
 use FluffyDollop\Support\{Registry, Router, Templates};
 
 try {
@@ -19,21 +21,10 @@ try {
 $db = require ENGINE_DIR . '/data/db.php';
 Registry::set('db', $db);
 
-//Смена языка
-if (requestFilter('act') == 'chage_lang') {
-    $lang_Id = intFilter('id');
-    $lang_list = require ENGINE_DIR . '/data/langs.php';
-    $lang_count = count($lang_list);
-    if ($lang_Id > 0 && $lang_Id <= $lang_count) {
-        //Меняем язык
-        \Mozg\classes\Cookie::append("lang", $lang_Id, 365);
-    }
-    $langReferer = $_SERVER['HTTP_REFERER'];
-    header("Location: {$langReferer}");
-}
+
 
 //lang
-$checkLang = getLang();
+$checkLang = Lang::getLang();
 
 $lang = include ROOT_DIR . '/lang/' . $checkLang . '/site.php';
 Registry::set('lang', $lang);
@@ -78,8 +69,9 @@ if (Registry::get('logged')) {
     }
     //Определяем устройство
     $device_user = isset($check_smartphone) ? 1 : 0;
-    if (empty($user_info['user_last_visit']))
+    if (empty($user_info['user_last_visit'])) {
         $user_info['user_last_visit'] = $server_time;
+    }
 
     if (($user_info['user_last_visit'] + 60) <= $server_time) {
         $db->query("UPDATE LOW_PRIORITY `users` SET user_logged_mobile = '{$device_user}', user_last_visit = '{$server_time}' {$sql_balance} WHERE user_id = '{$user_info['user_id']}'");
@@ -118,6 +110,9 @@ try {
 
         '/security/img' => 'Captcha@captcha',
         '/security/code' => 'Captcha@code',
+
+        '/langs/box' => 'Lang@main',
+        '/langs/change' => 'Lang@change',
     );
     $router->add($routers);
     try {

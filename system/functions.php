@@ -8,7 +8,9 @@
  */
 
 use FluffyDollop\Support\{Filesystem, Gzip, Registry, Templates};
+use Mozg\classes\Cookie;
 use Mozg\classes\Declensions;
+use Mozg\modules\Lang;
 
 /**
  * @throws JsonException
@@ -353,7 +355,7 @@ function user_age($user_year, $user_month, $user_day)
 
 function declWord(int $num, string $type): string
 {
-    $lang = getLang();
+    $lang = Lang::getLang();
     $decl_list = require ROOT_DIR . "/lang/{$lang}/declensions.php";
     return (new Declensions($decl_list))->makeWord($num, $type);
 }
@@ -951,7 +953,7 @@ function compileNoAjax($tpl, $params): int
 //BUILD JS
 //    $checkLang = Registry::get('checkLang');
     $tpl->set('{js}', '<script type="text/javascript" src="{theme}/js/jquery.lib.js"></script>
-<script type="text/javascript" src="{theme}/js/' . getLang() . '/lang.js"></script>
+<script type="text/javascript" src="{theme}/js/' . Lang::getLang() . '/lang.js"></script>
 <script type="text/javascript" src="{theme}/js/main.js"></script>
 <script type="text/javascript" src="{theme}/js/profile.js"></script>');
 
@@ -995,14 +997,6 @@ function tpl_init(): Templates
     $tpl->dir = ROOT_DIR . '/templates/' . $config['temp'];
     define('TEMPLATE_DIR', $tpl->dir);
     return $tpl;
-}
-
-function getLang()
-{
-    $lang_list = require ENGINE_DIR . '/data/langs.php';
-    $lang_count = count($lang_list);
-    $useLang = ((!empty($_COOKIE['lang'])) > 0 && (!empty($_COOKIE['lang'])) <= $lang_count) ? (int)$_COOKIE['lang'] : 0;
-    return $lang_list[$useLang]['key'];
 }
 
 function getLangName()
