@@ -39,9 +39,23 @@ if ($act == 'edit') {
                 }
 
                 $db->query("UPDATE `communities` SET title = '" . $title . "', descr = '" . $descr . "', comments = '" . $comments . "' " . $sql_line_del . " WHERE id = '" . $id . "'");
-                msgbox('Информация', 'Сообщество успешно отредактировано', '?mod=groups');
-            } else
-                msgbox('Ошибка', 'Заполните все поля', '?mod=groups&act=edit&id=' . $id);
+
+                $tpl = new TplCp(ADMIN_DIR . '/tpl/');
+                $tpl->load_template('info/info_red.tpl');
+                $tpl->set('{error}', 'Сообщество успешно отредактировано');
+                $tpl->set('{admin_link}', $admin_link ?? '');
+                $tpl->set('{title}', 'Информация');
+                $tpl->compile('content');
+                $tpl->render();
+            } else {
+                $tpl = new TplCp(ADMIN_DIR . '/tpl/');
+                $tpl->load_template('info/info_red.tpl');
+                $tpl->set('{error}', 'Заполните все поля');
+                $tpl->set('{admin_link}', $admin_link ?? '');
+                $tpl->set('{title}', 'Информация');
+                $tpl->compile('content');
+                $tpl->render();
+            }
         } else {
             $row['title'] = stripslashes($row['title']);
             $row['descr'] = stripslashes(myBrRn($row['descr']));
@@ -63,7 +77,13 @@ if ($act == 'edit') {
             $tpl->render();
         }
     } else {
-        msgbox('Ошибка', 'Сообщество не найдено', '?mod=groups');
+        $tpl = new TplCp(ADMIN_DIR . '/tpl/');
+        $tpl->load_template('info/info_red.tpl');
+        $tpl->set('{error}', 'Сообщество не найдено');
+        $tpl->set('{admin_link}', $admin_link ?? '');
+        $tpl->set('{title}', 'Информация');
+        $tpl->compile('content');
+        $tpl->render();
     }
 } else {
     $se_uid = intFilter('se_uid');
