@@ -19,7 +19,6 @@ class Lang extends Module
     {
         $lang_list = require ENGINE_DIR . '/data/langs.php';
         $lang_count = (count($lang_list) - 1);
-
         $lang_Id = isset($_COOKIE['lang']) ? (int)$_COOKIE['lang'] : 0;
         if ($lang_Id > $lang_count) {
             Cookie::append("lang", 0, 365);
