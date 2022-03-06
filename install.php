@@ -24,13 +24,12 @@ function main_print(): void
 создается аккаунт администратора, 
 а также прописываются основные настройки системы.
 </div>
-HTML;
-    echo <<<HTML
+
 <br /><br />
 Приятной Вам работы!
-HTML;
-    echo <<<HTML
 <input type="submit" class="inp fl_r" value="Начать установку" onClick="location.href='/install.php?act=files'" />
+<br />
+<br />
 HTML;
 }
 
@@ -210,15 +209,19 @@ switch ($act) {
                 if ($not_found_errors > 0) {
                     $status_report .= "<div style=\"color: red;\">Внимание!!!</div><br />Во время проверки обнаружены ошибки: <div style=\"font-weight: bold\">$not_found_errors</div>. Файлы не найдены!<br /><br /><div style=\"color: red;\"><div style=\"font-weight: bold\">Не рекомендуется</div></div> продолжать установку, пока не будут произведены изменения.<br />";
                 }
-                if (!isset($status_report))
+                if (!isset($status_report)) {
                     $status_report = '';
+                }
             }
 
             echo '
 		<div class="clr"></div>
 		<div style="background:lightyellow;padding:10px;margin-bottom:10px;margin-top:10px;border:1px dashed #ccc;margin-top:10px"><div style="margin-bottom:7px;"><div style=\"font-weight: bold\">Состояние проверки</div></div>' . $status_report . '</div>
 		<input type="submit" class="inp fl_r" value="Продолжить &raquo;" onClick="location.href=\'/install.php?act=system\'" />
-		';
+		
+		<br />
+        <br />
+        ';
         } else {
             main_print();
         }
@@ -227,38 +230,40 @@ switch ($act) {
         if (!check_install()) {
             echo "<div class=\"h1\">Системные требования</div>
 		<div style=\"font-weight: bold\"><div style=\"float:left;width:448px;padding:10px;border: 1px solid #ddd;background: #f7f7f7;\">Требования движка</div>
-		<div style=\"float:left;width:90px;text-align:center;padding:10px;border: 1px solid #ddd;background: #f7f7f7;\">Ваша версия</div>
-		<div style=\"float:left;width:195px;text-align:center;padding:10px;border: 1px solid #ddd;background: #f7f7f7;\">Статус</div>
+		<div style=\"float:left;width:110px;text-align:center;padding:10px;border: 1px solid #ddd;background: #f7f7f7;\">Ваша версия</div>
+		<div style=\"float:left;width:150px;text-align:center;padding:10px;border: 1px solid #ddd;background: #f7f7f7;\">Статус</div>
 		<div class=clear></div></div>";
             $status = version_compare(PHP_VERSION, '8.0.0') >= 0 ? '<div style="color: green;"><div style="font-weight: bold">Совместимо</div></div>' : '<div style="color: red;"><div style="font-weight: bold">Не совместимо</div></div>';
             echo "<div style=\"float:left;width:450px;padding:10px;border-bottom:1px dashed #ddd\"><div style=\"font-weight: bold\">PHP 8.0</div></div>
-		<div style=\"float:left;width:90px;text-align:center;padding:10px;border-bottom:1px dashed #ddd\">" . PHP_VERSION . "</div>
-		<div style=\"float:left;width:195px;text-align:center;padding:10px;border-bottom:1px dashed #ddd\">{$status}</div>
+		<div style=\"float:left;width:110px;text-align:center;padding:10px;border-bottom:1px dashed #ddd\">" . PHP_VERSION . "</div>
+		<div style=\"float:left;width:150px;text-align:center;padding:10px;border-bottom:1px dashed #ddd\">{$status}</div>
 		<div class=clear></div>";
             $status = function_exists('mysqli_connect') ? '<div style="color: green;"><div style="font-weight: bold">Совместимо</div></div>' : '<div style="color: red;"><div style="font-weight: bold">Не совместимо</div></div>';
             echo "<div style=\"float:left;width:450px;padding:10px;border-bottom:1px dashed #ddd\"><div style=\"font-weight: bold\">Поддержка MySQLi</div></div>
-		<div style=\"float:left;width:90px;text-align:center;padding:10px;border-bottom:1px dashed #ddd\">не определяется</div>
-		<div style=\"float:left;width:195px;text-align:center;padding:10px;border-bottom:1px dashed #ddd\">{$status}</div>
+		<div style=\"float:left;width:110px;text-align:center;padding:10px;border-bottom:1px dashed #ddd\"> </div>
+		<div style=\"float:left;width:150px;text-align:center;padding:10px;border-bottom:1px dashed #ddd\">{$status}</div>
 		<div class=clear></div>";
             $status = extension_loaded('zlib') ? '<div style="color: green;"><div style="font-weight: bold">Совместимо</div></div>' : '<div style="color: red;"><div style="font-weight: bold">Не совместимо</div></div>';
             echo "<div style=\"float:left;width:450px;padding:10px;border-bottom:1px dashed #ddd\"><div style=\"font-weight: bold\">Поддержка сжатия ZLib</div></div>
-		<div style=\"float:left;width:90px;text-align:center;padding:10px;border-bottom:1px dashed #ddd\">не определяется</div>
-		<div style=\"float:left;width:195px;text-align:center;padding:10px;border-bottom:1px dashed #ddd\">{$status}</div>
+		<div style=\"float:left;width:110px;text-align:center;padding:10px;border-bottom:1px dashed #ddd\"> </div>
+		<div style=\"float:left;width:150px;text-align:center;padding:10px;border-bottom:1px dashed #ddd\">{$status}</div>
 		<div class=clear></div>";
-            $status = extension_loaded('xml') ? '<div style="color: green;"><div style="font-weight: bold">Совместимо</div></div>' : '<div style="color: red;"><div style="font-weight: bold">Не совместимо</div></div>';
-            echo "<div style=\"float:left;width:450px;padding:10px;border-bottom:1px dashed #ddd\"><div style=\"font-weight: bold\">Поддержка XML</div></div>
-		<div style=\"float:left;width:90px;text-align:center;padding:10px;border-bottom:1px dashed #ddd\">не определяется</div>
-		<div style=\"float:left;width:195px;text-align:center;padding:10px;border-bottom:1px dashed #ddd\">{$status}</div>
+            $status = extension_loaded('gd') ? '<div style="color: green;"><div style="font-weight: bold">Совместимо</div></div>' : '<div style="color: red;"><div style="font-weight: bold">Не совместимо</div></div>';
+            echo "<div style=\"float:left;width:450px;padding:10px;border-bottom:1px dashed #ddd\"><div style=\"font-weight: bold\">Поддержка GD</div></div>
+		<div style=\"float:left;width:110px;text-align:center;padding:10px;border-bottom:1px dashed #ddd\"> </div>
+		<div style=\"float:left;width:150px;text-align:center;padding:10px;border-bottom:1px dashed #ddd\">{$status}</div>
 		<div class=clear></div>";
             $status = function_exists('iconv') ? '<div style="color: green;"><div style="font-weight: bold">Совместимо</div></div>' : '<div style="color: red;"><div style="font-weight: bold">Не совместимо</div></div>';
-            echo "<div style=\"float:left;width:450px;padding:10px;border-bottom:1px dashed #ddd\"><div style=\"font-weight: bold\">Поддержка iconv</div></div>
-		<div style=\"float:left;width:90px;text-align:center;padding:10px;border-bottom:1px dashed #ddd\">не определяется</div>
-		<div style=\"float:left;width:195px;text-align:center;padding:10px;border-bottom:1px dashed #ddd\">{$status}</div>
+            echo "<div style=\"float:left;width:450px;padding:10px;border-bottom:1px dashed #ddd\"><div style=\"font-weight: bold\">Поддержка ICONV</div></div>
+		<div style=\"float:left;width:110px;text-align:center;padding:10px;border-bottom:1px dashed #ddd\"> </div>
+		<div style=\"float:left;width:150px;text-align:center;padding:10px;border-bottom:1px dashed #ddd\">{$status}</div>
 		<div class=clear></div>";
             echo '
 		<div class="clr"></div>
 		<div style="background:lightyellow;padding:10px;margin-bottom:10px;margin-top:10px;border:1px dashed #ccc;"><div style="margin-bottom:7px;text-align: center;font-size: 12px;"><div style="font-weight: bold">Если любой из этих пунктов выделен красным, то выполните действия для исправления положения. <br />В случае несоблюдения минимальных требований скрипта возможна его некорректная работа в системе.</div></div></div>
 		<input type="submit" class="inp fl_r" value="Продолжить &raquo;" onClick="location.href=\'/install.php?act=server\'" />
+		<br />
+        <br />
 		';
         } else {
             main_print();
@@ -267,8 +272,8 @@ switch ($act) {
     case "server":
         if (!check_install()) {
             echo "<div class=\"h1\">Настройки сервера</div>
-		<div style=\"font-weight: bold\"><div style=\"float:left;width:388px;padding:10px;border: 1px solid #ddd;background: #f7f7f7;\">Рекомендуемые настройки</div>
-		<div style=\"float:left;width:150px;text-align:center;padding:10px;border: 1px solid #ddd;background: #f7f7f7;\">Рекомендуемое значение</div>
+		<div style=\"font-weight: bold\"><div style=\"float:left;width:360px;padding:10px;border: 1px solid #ddd;background: #f7f7f7;\">Рекомендуемые настройки</div>
+		<div style=\"float:left;width:175px;text-align:center;padding:10px;border: 1px solid #ddd;background: #f7f7f7;\">Рекомендуемое значение</div>
 		<div style=\"float:left;width:195px;text-align:center;padding:10px;border: 1px solid #ddd;background: #f7f7f7;\">Текущее значение</div>
 		<div class=clear></div></div>";
             $status = ini_get('file_uploads') ? '<div style="color: green;"><div style="font-weight: bold">Включено</div></div>' : '<div style="color: red;"><div style="font-weight: bold">Выключено</div></div>';
@@ -290,6 +295,8 @@ switch ($act) {
 		<div class="clr"></div>
 		<div style="background:lightyellow;padding:10px;margin-bottom:10px;margin-top:10px;border:1px dashed #ccc"><div style="margin-bottom:7px;text-align: center;font-size: 12px;"><div style="font-weight: bold">Данные настройки являются рекомендуемыми для полной совместимости, однако скрипт способен работать даже если рекомендуемые настройки не совпадают с текущими.</div></div></div>
 		<input type="submit" class="inp fl_r" value="Продолжить &raquo;" onClick="location.href=\'/install.php?act=settings\'" />
+		<br />
+        <br />
 		';
         } else {
             main_print();
@@ -302,7 +309,7 @@ switch ($act) {
 <form method="POST" action="/install.php?act=install">
 
 <div class="h1">Настройка конфигурации системы</div>
-<div class="fllogall">Адрес сайта:</div><input type="text" name="url" class="inpu" value="https://{$url}/" />&nbsp;&nbsp;<span style="color:#777">Укажите путь без имени файла, знак слеша <div color="red">/</div> на конце обязателен</span><div class="mgcler"></div>
+<div class="fllogall">Адрес сайта:</div><input type="text" name="url" class="inpu" value="https://{$url}/" />&nbsp;&nbsp;<span style="display:flex;color:#777">Укажите путь без имени файла, знак слеша <div style="color:red;"> / </div> на конце обязателен</span><div class="mgcler"></div>
 
 <div class="h1" style="margin-top:15px">Данные для доступа к MySQL серверу</div>
 <div class="fllogall">Сервер MySQL:</div><input type="text" name="mysql_server" class="inpu" value="localhost" /><div class="mgcler"></div>
@@ -318,6 +325,8 @@ switch ($act) {
 <div class="fllogall">Пароль:</div><input type="password" name="pass" class="inpu" /><div class="mgcler"></div>
 
 <input type="submit" class="inp fl_r" value="Завершить установку &raquo;" onClick="location.href=\'/install.php?act=settings\'" />
+<br />
+<br />
 </form>
 HTML;
         } else {
@@ -534,6 +543,8 @@ SET user_name = '{$_POST['name']}',
 а также прописываются основные настройки системы.</div>
 <br /><br />
 Приятной Вам работы!
+<br />
+<br />
 HTML;
 
             } else {
@@ -541,6 +552,8 @@ HTML;
 <div class="h1">Ошибка</div>
 Заполните необходимые поля!
 <input type="submit" class="inp fl_r" value="Назад" onClick="javascript:history.back()" />
+<br />
+<br />
 HTML;
             }
 
@@ -653,6 +666,8 @@ HTML;
 Данный мастер поможет вам установить скрипт всего за пару минут. 
 
 <input type="submit" class="inp fl_r" value="Начать установку" onClick="location.href='/install.php?act=files'" />
+<br />
+<br />
 HTML;
         } else {
             main_print();
@@ -675,7 +690,8 @@ HTML;
 <div style="width: 100%;height: 50px">
 <input type="submit" class="inp fl_r" value="Обновить" onClick="location.href='/install.php'" />
 </div>
-
+<br />
+<br />
 HTML;
         } else {
             main_print();
