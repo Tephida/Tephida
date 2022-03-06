@@ -1,6 +1,6 @@
 <?php
 /*
- *   (c) Semen Alekseev
+ * Copyright (c) 2022 Tephida
  *
  *  For the full copyright and license information, please view the LICENSE
  *   file that was distributed with this source code.
@@ -8,8 +8,7 @@
  */
 
 use FluffyDollop\Support\Registry;
-use Mozg\classes\Cookie;
-use Mozg\classes\TpLSite;
+use Mozg\classes\{Cookie, TpLSite};
 
 $_IP = $_SERVER['REMOTE_ADDR'];
 $_BROWSER = $_SERVER['HTTP_USER_AGENT'];

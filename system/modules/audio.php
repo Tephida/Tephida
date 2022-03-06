@@ -1,16 +1,13 @@
 <?php
 /*
- *   (c) Semen Alekseev
+ * Copyright (c) 2022 Tephida
  *
  *  For the full copyright and license information, please view the LICENSE
  *   file that was distributed with this source code.
  *
  */
 
-use FluffyDollop\Support\Filesystem;
-use FluffyDollop\Support\Id3v2;
-use FluffyDollop\Support\Registry;
-use FluffyDollop\Support\Status;
+use FluffyDollop\Support\{Filesystem, Id3v2, Registry, Status};
 
 NoAjaxQuery();
 

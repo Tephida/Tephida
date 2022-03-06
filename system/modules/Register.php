@@ -1,6 +1,6 @@
 <?php
 /*
- *   (c) Semen Alekseev
+ * Copyright (c) 2022 Tephida
  *
  *  For the full copyright and license information, please view the LICENSE
  *   file that was distributed with this source code.
@@ -9,13 +9,8 @@
 
 namespace Mozg\modules;
 
-use FluffyDollop\Support\Filesystem;
-use Mozg\classes\Cookie;
-use Mozg\classes\Module;
-use FluffyDollop\Support\Registry;
-use FluffyDollop\Support\Status;
-use Mozg\classes\TpLSite;
-use FluffyDollop\Support\ViiMail;
+use Mozg\classes\{Cookie, Module, TpLSite};
+use FluffyDollop\Support\{Filesystem, Registry, Status, ViiMail};
 
 class Register extends Module
 {

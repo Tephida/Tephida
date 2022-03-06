@@ -1,13 +1,12 @@
 <?php
 /*
- *   (c) Semen Alekseev
+ * Copyright (c) 2022 Tephida
  *
  *  For the full copyright and license information, please view the LICENSE
  *   file that was distributed with this source code.
  *
  */
 
-use Faker\Factory;
 use Mozg\classes\TplCp;
 
 $row = $db->super_query("SELECT COUNT(*) AS cnt FROM `report`");

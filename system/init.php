@@ -7,9 +7,7 @@
  *
  */
 
-use FluffyDollop\Support\Registry;
-use FluffyDollop\Support\Router;
-use FluffyDollop\Support\Templates;
+use FluffyDollop\Support\{Registry, Router, Templates};
 
 try {
     $config = settings_load();
@@ -17,7 +15,6 @@ try {
 } catch (Exception $e) {
     throw new InvalidArgumentException("Invalid config. Please run install.php");
 }
-
 
 $db = require ENGINE_DIR . '/data/db.php';
 Registry::set('db', $db);

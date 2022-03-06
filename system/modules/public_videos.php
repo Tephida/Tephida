@@ -1,14 +1,13 @@
 <?php
 /*
- *   (c) Semen Alekseev
+ * Copyright (c) 2022 Tephida
  *
- *  For the full copyright && license information, please view the LICENSE
+ *  For the full copyright and license information, please view the LICENSE
  *   file that was distributed with this source code.
  *
  */
 
-use FluffyDollop\Support\Filesystem;
-use FluffyDollop\Support\Registry;
+use FluffyDollop\Support\{Filesystem, Registry};
 
 if (Registry::get('logged')) {
     $db = Registry::get('db');
