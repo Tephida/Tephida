@@ -8,10 +8,15 @@
  */
 
 use FluffyDollop\Support\Filesystem;
+use FluffyDollop\Support\Registry;
+use Mozg\classes\TplCp;
+
+$db = Registry::get('db');
 
 //Редактирование
-if ($_GET['act'] == 'edit') {
-    $id = intval($_GET['id']);
+$act = requestFilter('act');
+if ($act == 'edit') {
+    $id = intFilter('id');
 
     //SQL Запрос на вывод информации
     $row = $db->super_query("SELECT title, descr, comments, photo FROM `communities` WHERE id = '" . $id . "'");
@@ -20,15 +25,18 @@ if ($_GET['act'] == 'edit') {
             $title = requestFilter('title', 25000, true);
             $descr = requestFilter('descr');
 
-            if (isset($title) and !empty($title) and isset($descr) and !empty($descr)) {
-                if ($_POST['comments'])
+            if (!empty($title) && !empty($descr)) {
+                if ($_POST['comments']) {
                     $comments = 1;
-                else
+                } else {
                     $comments = 0;
+                }
 
                 if ($_POST['del_photo']) {
                     Filesystem::delete(ROOT_DIR . '/uploads/groups/' . $id . '/' . $row['photo']);
                     $sql_line_del = ", photo = ''";
+                } else {
+                    $sql_line_del = '';
                 }
 
                 $db->query("UPDATE `communities` SET title = '" . $title . "', descr = '" . $descr . "', comments = '" . $comments . "' " . $sql_line_del . " WHERE id = '" . $id . "'");
@@ -39,207 +47,127 @@ if ($_GET['act'] == 'edit') {
             $row['title'] = stripslashes($row['title']);
             $row['descr'] = stripslashes(myBrRn($row['descr']));
 
-            if ($row['comments']) $checked = 'checked';
-
-            echoheader();
-            echohtmlstart('Редактирование сообщества');
-
-            echo <<<HTML
-<style type="text/css" media="all">
-.inpu{width:447px;}
-textarea{width:450px;height:100px;}
-</style>
-
-<form action="" method="POST">
-
-<input type="hidden" name="mod" value="notes" />
-
-<div class="fllogall" style="width:140px">Название:</div>
- <input type="text" name="title" class="inpu" value="{$row['title']}" />
-<div class="mgcler"></div>
-
-<div class="fllogall" style="width:140px">Описание:</div>
- <textarea name="descr" class="inpu">{$row['descr']}</textarea>
-<div class="mgcler"></div>
-
-<div class="fllogall" style="width:140px">Комментарии включены:</div>
- <input type="checkbox" name="comments" style="margin-bottom:10px" {$checked} />
-<div class="mgcler"></div>
-
-<div class="fllogall" style="width:140px">Удалить фото:</div>
- <input type="checkbox" name="del_photo" style="margin-bottom:10px" />
-<div class="mgcler"></div>
-
-<div class="fllogall" style="width:140px">&nbsp;</div>
- <input type="submit" value="Сохранить" class="inp" name="save" style="margin-top:0px" />
- <input type="submit" value="Назад" class="inp" style="margin-top:0px" onClick="history.go(-1); return false" />
-
-</form>
-HTML;
-            echohtmlend();
+            if ($row['comments']) {
+                $checked = 'checked';
+            } else {
+                $checked = '';
+            }
+            $tpl = new TplCp(ADMIN_DIR . '/tpl/');
+            $tpl->load_template('groups/edit.tpl');
+            $tpl->set('{title}', $row['title']);
+            $tpl->set('{descr}', $row['descr']);
+            $tpl->set('{checked}', $checked);
+            $tpl->set('{groups_num}', '');
+            $config = settings_load();
+            $tpl->set('{admin_index}', $config['admin_index']);
+            $tpl->compile('content');
+            $tpl->render();
         }
-    } else
+    } else {
         msgbox('Ошибка', 'Сообщество не найдено', '?mod=groups');
-
-    die();
-}
-
-echoheader();
-
-$se_uid = intval($_GET['se_uid']);
-if (!$se_uid) $se_uid = '';
-
-$se_user_id = intval($_GET['se_user_id']);
-if (!$se_user_id) $se_user_id = '';
-
-$sort = intval($_GET['sort']);
-$se_name = requestFilter('se_name', 25000, true);
-
-if ($se_uid or $sort or $se_name or $se_user_id or $_GET['ban'] or $_GET['delet']) {
-    if ($se_uid) $where_sql .= "AND id = '" . $se_uid . "' ";
-    if ($se_user_id) $where_sql .= "AND real_admin = '" . $se_user_id . "' ";
-    $query = strtr($se_name, array(' ' => '%')); //Замеянем пробелы на проценты чтоб тоиск был точнее
-    if ($se_name) $where_sql .= "AND title LIKE '%" . $query . "%' ";
-    if ($_GET['ban']) {
-        $where_sql .= "AND ban = 1 ";
-        $checked_ban = "checked";
     }
-    if ($_GET['delet']) {
-        $where_sql .= "AND del = 1 ";
-        $checked_delet = "checked";
+} else {
+    $se_uid = intFilter('se_uid');
+    $se_user_id = intFilter('se_user_id');
+    $sort = intFilter('sort');
+    $se_name = requestFilter('se_name', 25000, true);
+    $ban = requestFilter('ban');
+    $delete = requestFilter('delete');
+
+    $where_sql = '';
+    if ($se_uid || $sort || $se_name || $se_user_id || $ban || $delete) {
+        if ($se_uid) {
+            $where_sql .= "AND id = '" . $se_uid . "' ";
+        }
+        if ($se_user_id) {
+            $where_sql .= "AND real_admin = '" . $se_user_id . "' ";
+        }
+        $query = strtr($se_name, array(' ' => '%')); //Заменяем пробелы на проценты чтоб поиск был точнее
+        if ($se_name) {
+            $where_sql .= "AND title LIKE '%" . $query . "%' ";
+        }
+        if ($ban) {
+            $where_sql .= "AND ban = 1 ";
+            $checked_ban = "checked";
+        }
+        if ($delete) {
+            $where_sql .= "AND del = 1 ";
+            $checked_delete = "checked";
+        }
+        if ($sort == 5) {
+            $where_sql = "AND photo != '' ";
+        }
+        if ($sort == 1) {
+            $order_sql = "`title` ASC";
+        } else if ($sort == 2) {
+            $order_sql = "`date` ASC";
+        } else if ($sort == 3) {
+            $order_sql = "`traf` DESC";
+        } else if ($sort == 4) {
+            $order_sql = "`rec_num` DESC";
+        } else {
+            $order_sql = "`date` DESC";
+        }
+    } else {
+        $order_sql = "`date` DESC";
     }
-    if ($sort == 5) $where_sql = "AND photo != '' ";
-    if ($sort == 1) $order_sql = "`title` ASC";
-    else if ($sort == 2) $order_sql = "`date` ASC";
-    else if ($sort == 3) $order_sql = "`traf` DESC";
-    else if ($sort == 4) $order_sql = "`rec_num` DESC";
-    else $order_sql = "`date` DESC";
-} else
-    $order_sql = "`date` DESC";
 
-//Выводим список людей
-if ($_GET['page'] > 0) $page = intval($_GET['page']); else $page = 1;
-$gcount = 20;
-$limit_page = ($page - 1) * $gcount;
+    $checked_ban = $checked_ban ?? "checked";
+    $checked_delete = $checked_delete ?? "checked";
 
-$sql_ = $db->super_query("SELECT tb1.id, title, date, traf, real_admin, del, ban, rec_num, tb2.user_name FROM `communities` tb1, `users` tb2 WHERE tb1.real_admin = tb2.user_id {$where_sql} ORDER by {$order_sql} LIMIT {$limit_page}, {$gcount}", 1);
+    //Выводим список людей
+    $page = intFilter('page', 1);
+    $g_count = 20;
+    $limit_page = ($page - 1) * $g_count;
+
+    $sql_ = $db->super_query("SELECT tb1.id, title, date, traf, real_admin, del, ban, rec_num, tb2.user_name FROM `communities` tb1, `users` tb2 WHERE tb1.real_admin = tb2.user_id {$where_sql} ORDER by {$order_sql} LIMIT {$limit_page}, {$g_count}", 1);
 
 //Кол-во людей считаем
-$numRows = $db->super_query("SELECT COUNT(*) AS cnt FROM `communities` WHERE id != '' {$where_sql}");
+    $numRows = $db->super_query("SELECT COUNT(*) AS cnt FROM `communities` WHERE id != '' {$where_sql}");
 
-$selsorlist = installationSelected($sort, '<option value="1">по алфавиту</option><option value="2">по дате создания</option><option value="3">по количеству участников</option><option value="4">по количеству записей на стене</option><option value="5">только с фото</option>');
 
-echo <<<HTML
-<style type="text/css" media="all">
-.inpu{width:300px;}
-textarea{width:300px;height:100px;}
-</style>
+    $tpl = new TplCp(ADMIN_DIR . '/tpl/');
+    $tpl->load_template('groups/groups.tpl');
+    $users = '';
+    foreach ($sql_ as $row) {
+        $row['title'] = stripslashes($row['title']);
+        $row['date'] = langdate('j M Y в H:i', strtotime($row['date']));
 
-<form action="$admin_index" method="GET">
-
-<input type="hidden" name="mod" value="groups" />
-
-<div class="fllogall">Поиск по ID сообщества:</div>
- <input type="text" name="se_uid" class="inpu" value="{$se_uid}" />
-<div class="mgcler"></div>
-
-<div class="fllogall">Поиск по названию:</div>
- <input type="text" name="se_name" class="inpu" value="{$se_name}" />
-<div class="mgcler"></div>
-
-<div class="fllogall">Поиск по ID создателя:</div>
- <input type="text" name="se_user_id" class="inpu" value="{$se_user_id}" />
-<div class="mgcler"></div>
-
-<div class="fllogall">Бан:</div>
- <input type="checkbox" name="ban" style="margin-bottom:10px" {$checked_ban} />
-<div class="mgcler"></div>
-
-<div class="fllogall">Удалены:</div>
- <input type="checkbox" name="delet" style="margin-bottom:10px" {$checked_delet} />
-<div class="mgcler"></div>
-
-<div class="fllogall">Сортировка:</div>
- <select name="sort" class="inpu">
-  <option value="0"></option>
-  {$selsorlist}
- </select>
-<div class="mgcler"></div>
-
-<div class="fllogall">&nbsp;</div>
- <input type="submit" value="Найти" class="inp" style="margin-top:0px" />
-
-</form>
-HTML;
-
-echohtmlstart('Список сообществ (' . $numRows['cnt'] . ')');
-
-foreach ($sql_ as $row) {
-    $row['title'] = stripslashes($row['title']);
-    $row['date'] = langdate('j M Y в H:i', strtotime($row['date']));
-
-    if ($row['del'])
-        $color = 'color:red';
-    else if ($row['ban'])
-        $color = 'color:blue';
-    else
-        $color = '';
-
-    $users .= <<<HTML
-<div style="background:#fff;float:left;padding:5px;width:100px;text-align:center;"><a href="/u{$row['real_admin']}" target="_blank">{$row['user_name']}</a></div>
-<div style="background:#fff;float:left;padding:5px;width:243px;text-align:center;margin-left:1px"><a href="?mod=groups&act=edit&id={$row['id']}" title="Записей на стене: {$row['rec_num']}" style="{$color}">{$row['title']}</a></div>
-<div style="background:#fff;float:left;padding:5px;width:75px;text-align:center;margin-left:1px">{$row['traf']}</div>
-<div style="background:#fff;float:left;padding:5px;width:110px;text-align:center;margin-left:1px">{$row['date']}</div>
-<div style="background:#fff;float:left;padding:4px;width:20px;text-align:center;font-weight:bold;margin-left:1px"><input type="checkbox" name="massaction_list[]" style="float:right;" value="{$row['id']}" /></div>
-<div class="mgcler"></div>
-HTML;
-}
-
-echo <<<HTML
-<script language="text/javascript" type="text/javascript">
-function ckeck_uncheck_all() {
-    var frm = document.edit;
-    for (var i=0;i<frm.elements.length;i++) {
-        var elmnt = frm.elements[i];
-        if (elmnt.type=='checkbox') {
-            if(frm.master_box.checked == true){ elmnt.checked=false; }
-            else{ elmnt.checked=true; }
+        if ($row['del']) {
+            $color = 'color:red';
+        } else if ($row['ban']) {
+            $color = 'color:blue';
+        } else {
+            $color = '';
         }
+        $tpl->set('{real_admin}', $row['real_admin']);
+        $tpl->set('{user_name}', $row['user_name']);
+        $tpl->set('{id}', $row['id']);
+        $tpl->set('{rec_num}', $row['rec_num']);
+        $tpl->set('{traf}', $row['traf']);
+        $tpl->set('{date}', $row['date']);
+        $tpl->set('{title}', $row['title']);
+        $tpl->set('{color}', $color);
+
+        $tpl->compile('groups');
     }
-    if(frm.master_box.checked == true){ frm.master_box.checked = false; }
-    else{ frm.master_box.checked = true; }
+
+    $query_string = preg_replace("/&page=[0-9]+/i", '', $_SERVER['QUERY_STRING']);
+
+    $tpl->load_template('groups/main.tpl');
+    $tpl->set('{groups}', $tpl->result['groups'] ?? '');
+    $tpl->set('{navigation}', navigationNew($g_count, $numRows['cnt'], '?' . $query_string . '&page='));
+    $selsorlist = installationSelected($sort, '<option value="1">по алфавиту</option><option value="2">по дате создания</option><option value="3">по количеству участников</option><option value="4">по количеству записей на стене</option><option value="5">только с фото</option>');
+    $tpl->set('{selsorlist}', $selsorlist);
+    $tpl->set('{se_uid}', $se_uid);
+    $tpl->set('{se_name}', $se_name);
+    $tpl->set('{se_user_id}', $se_user_id);
+    $tpl->set('{checked_ban}', $checked_ban);
+    $tpl->set('{checked_delet}', $checked_delete);
+    $tpl->set('{groups_num}', $numRows['cnt']);
+    $config = settings_load();
+    $tpl->set('{admin_index}', $config['admin_index']);
+    $tpl->compile('content');
+    $tpl->render();
 }
-</script>
-<form action="?mod=massaction&act=groups" method="post" name="edit">
 
-<div style="background:#f0f0f0;float:left;padding:5px;width:100px;text-align:center;font-weight:bold;margin-top:-5px">Создатель</div>
-<div style="background:#f0f0f0;float:left;padding:5px;width:243px;text-align:center;font-weight:bold;margin-top:-5px;margin-left:1px">Сообщество</div>
-<div style="background:#f0f0f0;float:left;padding:5px;width:75px;text-align:center;font-weight:bold;margin-top:-5px;margin-left:1px">Участников</div>
-<div style="background:#f0f0f0;float:left;padding:5px;width:110px;text-align:center;font-weight:bold;margin-top:-5px;margin-left:1px">Дата создания</div>
-<div style="background:#f0f0f0;float:left;padding:4px;width:20px;text-align:center;font-weight:bold;margin-top:-5px;margin-left:1px"><input type="checkbox" name="master_box" title="Выбрать все" onclick="javascript:ckeck_uncheck_all()" style="float:right;"></div>
-<div class="clr"></div>
-{$users}
-<div style="float:left;font-size:10px">
-<font color="red">Удаленные сообщества помечены красным цветом</font><br />
-<font color="blue">Забаненые сообщества помечены синим цветом</font>
-</div>
-<div style="float:right">
-<select name="mass_type" class="inpu" style="width:260px">
- <option value="0">- Действие -</option>
- <option value="1">Удалить сообщества</option>
- <option value="2">Заблокировать сообщества</option>
- <option value="3">Воостановить сообщества</option>
- <option value="4">Разблокировать сообщества</option>
-</select>
-<input type="submit" value="Выолнить" class="inp" />
-</div>
-</form>
-<div class="clr"></div>
-HTML;
-
-$query_string = preg_replace("/&page=[0-9]+/i", '', $_SERVER['QUERY_STRING']);
-
-echo navigation($gcount, $numRows['cnt'], '?' . $query_string . '&page=');
-
-htmlclear();
-echohtmlend();

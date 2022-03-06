@@ -1059,11 +1059,3 @@ function compileAdmin($tpl): void
     }
 
 }
-
-function initAdminTpl(): Templates
-{
-    $tpl = new Templates();
-    $tpl->dir = ADMIN_DIR . '/tpl/';
-    define('TEMPLATE_DIR', $tpl->dir);
-    return $tpl;
-}

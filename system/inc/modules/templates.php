@@ -7,7 +7,9 @@
  *
  */
 
-$tpl = initAdminTpl();
+use Mozg\classes\TplCp;
+
+$tpl = new TplCp(ADMIN_DIR . '/tpl/');
 $directory = './templates';
 $scanned_directory = array_diff(scandir($directory), array('..', '.', '.htaccess'));
 $tpl->load_template('tpl/tpl.tpl');
@@ -25,4 +27,4 @@ foreach ($scanned_directory as $directory) {
 $tpl->load_template('/tpl/home.tpl');
 $tpl->set('{tpl}', $tpl->result['tpl']);
 $tpl->compile('content');
-compileAdmin($tpl);
+$tpl->render();

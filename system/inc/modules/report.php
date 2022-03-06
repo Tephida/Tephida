@@ -61,17 +61,14 @@ if ($_GET['action'] == 'obj') {
                     if ($attach_arr3[0])
                         Filesystem::delete(ROOT_DIR . '/uploads/attach/' . $row['author_user_id'] . '/' . $attach_arr3[0]);
                 }
-
                 $action_type = 1;
             }
-
             //Если удаляется комментарий к записи
             if ($row['fast_comm_id']) {
                 $db->query("UPDATE `wall` SET fasts_num = fasts_num-1 WHERE id = '{$row['fast_comm_id']}'");
                 $rid = $row['fast_comm_id'];
                 $action_type = 6;
             }
-
             //удаляем из ленты новостей
             $db->query("DELETE FROM `news` WHERE obj_id = '{$rid}' AND action_time = '{$row['add_date']}' AND action_type = {$action_type}");
         }

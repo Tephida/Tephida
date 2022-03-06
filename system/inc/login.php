@@ -8,6 +8,7 @@
  */
 
 use FluffyDollop\Support\Registry;
+use Mozg\classes\Cookie;
 use Mozg\classes\TplCp;
 
 header('Content-type: text/html; charset=utf-8');
@@ -24,9 +25,9 @@ $_BROWSER = $_SERVER['HTTP_USER_AGENT'];
 
 //Если делаем выход
 if (isset($_GET['act']) && $_GET['act'] == 'logout') {
-    \Mozg\classes\Cookie::remove("user_id");
-    \Mozg\classes\Cookie::remove("password");
-    \Mozg\classes\Cookie::remove("hid");
+    Cookie::remove("user_id");
+    Cookie::remove("password");
+    Cookie::remove("hid");
     unset($_SESSION['user_id']);
 //    session_destroy();
 //    session_unset();
@@ -117,9 +118,9 @@ if (isset($_POST['log_in']) && !isset($_SESSION['user_id'])) {
             $db->query("UPDATE `users` SET user_hid = '" . $hid . "' WHERE user_id = '" . $check_user['user_id'] . "'");
 
             //Записываем COOKIE
-            \Mozg\classes\Cookie::append("user_id", (int)$check_user['user_id'], 365);
-            \Mozg\classes\Cookie::append("password", $md5_pass, 365);
-            \Mozg\classes\Cookie::append("hid", $hid, 365);
+            Cookie::append("user_id", (int)$check_user['user_id'], 365);
+            Cookie::append("password", $md5_pass, 365);
+            Cookie::append("hid", $hid, 365);
             header("Location: {$admin_link}");
         } else {
             $error_log = 'Доступ отключён!';

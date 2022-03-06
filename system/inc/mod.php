@@ -38,6 +38,11 @@ switch ($mod) {
     case "system":
         include ADMIN_DIR . '/modules/system.php';
         break;
+
+    case "fake":
+        include ADMIN_DIR . '/modules/fake.php';
+        break;
+
     //Управление БД
 
     case "db":

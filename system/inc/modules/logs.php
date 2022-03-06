@@ -28,7 +28,7 @@ if ($browser_get) {
     $pref .= ', Браузер: ' . $browser_get;
 }
 
-if ($_GET['page'] > 0) $page = intval($_GET['page']); else $page = 1;
+if ($_GET['page'] > 0) $page = (int)$_GET['page']; else $page = 1;
 $gcount = 20;
 $limit_page = ($page - 1) * $gcount;
 
