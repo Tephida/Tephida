@@ -18,6 +18,7 @@
   },
   "require-dev": {
     "phpstan/phpstan": "^1.4",
+    "fakerphp/faker": "^1.19",
     "roave/security-advisories": "dev-latest"
   },
   "autoload": {
