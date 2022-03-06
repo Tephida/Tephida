@@ -14,6 +14,7 @@ use FluffyDollop\Support\Gzip;
 use FluffyDollop\Support\Registry;
 use FluffyDollop\Support\Templates;
 use JsonException;
+use Mozg\modules\Lang;
 
 class TpLSite extends Templates
 {
@@ -288,7 +289,7 @@ class TpLSite extends Templates
         }
 //BUILD JS
         $this->set('{js}', '<script type="text/javascript" src="{theme}/js/jquery.lib.js"></script>
-<script type="text/javascript" src="{theme}/js/' . getLang() . '/lang.js"></script>
+<script type="text/javascript" src="{theme}/js/' . Lang::getLang() . '/lang.js"></script>
 <script type="text/javascript" src="{theme}/js/main.js"></script>
 <script type="text/javascript" src="{theme}/js/profile.js"></script>');
 

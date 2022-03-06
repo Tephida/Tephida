@@ -20,8 +20,9 @@ $lang['online'] = $config['temp'] == 'mobile' ? '<img src="{theme}/images/monlin
 switch ($go) {
     /** Регистрация */
     case "main":
-    case "register":
-        include ENGINE_DIR . '/modules/register.php';
+//        include ENGINE_DIR . '/modules/register.php';
+        echo 'ttt';
+        exit();
         break;
 
     /** Редактирование моей страницы */
@@ -265,11 +266,6 @@ switch ($go) {
     /** Статистика сообществ */
     case "stats_groups":
         include ENGINE_DIR . '/modules/stats_groups.php';
-        break;
-
-    /** Выбор языка */
-    case "lang":
-        include ENGINE_DIR . '/modules/lang.php';
         break;
 
     /** Редирект */
