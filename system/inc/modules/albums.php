@@ -8,10 +8,14 @@
  */
 
 $se_uid = intFilter('se_uid');
-if (!$se_uid) $se_uid = '';
+if (!$se_uid) {
+    $se_uid = '';
+}
 
 $se_user_id = intFilter('se_user_id');
-if (!$se_user_id) $se_user_id = '';
+if (!$se_user_id) {
+    $se_user_id = '';
+}
 
 $se_name = requestFilter('se_name', 25000, true);
 
