@@ -1,50 +1,50 @@
 <?php
 /*
- *   (c) Semen Alekseev
+ * Copyright (c) 2022 Tephida
  *
  *  For the full copyright and license information, please view the LICENSE
  *   file that was distributed with this source code.
  *
  */
 
-/*
-	Appointment: Пользователи
-	File: users.php
- 
-*/
+use Mozg\classes\TplCp;
 
-//echoheader();
-
-
-$se_uid = isset($_GET['se_uid']) ? intval($_GET['se_uid']) : '';
-if (!$se_uid)
+$se_uid = intFilter('se_uid');
+if (!$se_uid) {
     $se_uid = '';
+}
 
-$sort = isset($_GET['sort']) ? intval($_GET['sort']) : null;
+$sort = intFilter('sort');
 //$se_name = $_GET['se_name'] ?? '';
 //$se_email = $_GET['se_email'] ?? '';
 
 $se_name = requestFilter('se_name', 25000, true);
 $se_email = requestFilter('se_email', 25000, true);
-$ban = $_GET['ban'] ?? null;
-$delet = $_GET['delet'] ?? null;
+$ban = requestFilter('ban');
+$delete = requestFilter('delete');
 
-$regdate = $_GET['regdate'] ?? null;
+$regdate = $_GET['regdate'] ?? null;//todo
 $where_sql = '';
 
-if ($se_uid or $sort or $se_name or $se_email or $ban or $delet or $regdate) {
-    $where_sql .= "WHERE user_email != ''";
-    if ($se_uid) $where_sql .= "AND user_id = '" . $se_uid . "' ";
-    if ($se_name) $where_sql .= "AND user_search_pref LIKE '%" . $se_name . "%' ";
-    if ($se_email) $where_sql .= "AND user_email LIKE '%" . $se_email . "%' ";
+if ($se_uid || $sort || $se_name || $se_email || $ban || $delete || $regdate) {
+    $where_sql .= " WHERE user_email != ''";
+    if ($se_uid) {
+        $where_sql .= " AND user_id = '" . $se_uid . "' ";
+    }
+    if ($se_name) {
+        $where_sql .= " AND user_search_pref LIKE '%" . $se_name . "%' ";
+    }
+    if ($se_email) {
+        $where_sql .= " AND user_email LIKE '%" . $se_email . "%' ";
+    }
     if ($ban) {
-        $where_sql .= "AND user_ban = 1 ";
+        $where_sql .= " AND user_ban = 1 ";
         $checked_ban = "checked";
     } else {
         $checked_ban = '';
     }
-    if ($delet) {
-        $where_sql .= "AND user_delet = 1 ";
+    if ($delete == 'on') {
+        $where_sql .= " AND user_delet = 1 ";
         $checked_delete = "checked";
     } else {
         $checked_delete = '';
@@ -56,15 +56,13 @@ if ($se_uid or $sort or $se_name or $se_email or $ban or $delet or $regdate) {
 } else {
     $checked_ban = $checked_delete = '';
 }
-    $order_sql = "`user_reg_date` DESC";
+$order_sql = "`user_reg_date` DESC";
 
 $selsorlist = installationSelected($sort, '<option value="1">по алфавиту</option><option value="2">по дате регистрации</option><option value="3">по дате посещения</option>');
 
 //Выводим список людей
-if (isset($_GET['page']) and $_GET['page'] > 0)
-    $page = intval($_GET['page']);
-else
-    $page = 1;
+$page = intFilter('page', 1);
+
 $gcount = 20;
 $limit_page = ($page - 1) * $gcount;
 
@@ -74,7 +72,7 @@ $sql_ = $db->super_query("SELECT user_group, user_search_pref, user_id, user_rea
 $numRows = $db->super_query("SELECT COUNT(*) AS cnt FROM `users` {$where_sql}");
 $admin_index = $admin_index ?? null;
 
-$tpl = initAdminTpl();
+$tpl = new TplCp(ADMIN_DIR . '/tpl/');
 //echohtmlstart('Список пользователей (' . $numRows['cnt'] . ')');
 $users = '';
 $toltip_num = 0;
@@ -130,7 +128,8 @@ HTML;
 $query_string = preg_replace("/&page=[0-9]+/i", '', $_SERVER['QUERY_STRING']);
 
 $tpl->load_template('users/main.tpl');
-$tpl->set('{admin_index}', $admin_index);
+$config = settings_load();
+$tpl->set('{admin_index}', $config['admin_index']);
 $tpl->set('{se_uid}', $se_uid);
 $tpl->set('{se_name}', $se_name);
 $tpl->set('{se_email}', $se_email);
@@ -141,4 +140,4 @@ $tpl->set('{selsorlist}', $selsorlist);
 $tpl->set('{users}', $users);
 $tpl->set('{navigation}', navigationNew($gcount, $numRows['cnt'], '?' . $query_string . '&page='));
 $tpl->compile('content');
-compileAdmin($tpl);
+$tpl->render();

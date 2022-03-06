@@ -7,9 +7,7 @@
  *
  */
 
-use FluffyDollop\Support\Registry;
-use FluffyDollop\Support\Router;
-use Mozg\classes\Templates;
+use FluffyDollop\Support\{Registry, Router, Templates};
 
 try {
     $config = settings_load();
@@ -18,57 +16,25 @@ try {
     throw new InvalidArgumentException("Invalid config. Please run install.php");
 }
 
-
 $db = require ENGINE_DIR . '/data/db.php';
 Registry::set('db', $db);
 
-//FUNC. COOKIES
-$domain_cookie = explode(".", clean_url($_SERVER['HTTP_HOST']));
-$domain_cookie_count = count($domain_cookie);
-$domain_allow_count = -2;
-if ($domain_cookie_count > 2) {
-    if (in_array($domain_cookie[$domain_cookie_count - 2], array('com', 'net', 'org'))) $domain_allow_count = -3;
-    if ($domain_cookie[$domain_cookie_count - 1] == 'ua') $domain_allow_count = -3;
-    $domain_cookie = array_slice($domain_cookie, $domain_allow_count);
-}
-$domain_cookie = "." . implode(".", $domain_cookie);
-define('DOMAIN', $domain_cookie);
-
 //Смена языка
 if (requestFilter('act') == 'chage_lang') {
-    $langId = intFilter('id');
-    $config['lang_list'] = nl2br($config['lang_list']);
-    $expLangList = explode('<br />', $config['lang_list']);
-    $numLangs = count($expLangList);
-    if ($langId > 0 and $langId <= $numLangs) {
+    $lang_Id = intFilter('id');
+    $lang_list = require ENGINE_DIR . '/data/langs.php';
+    $lang_count = count($lang_list);
+    if ($lang_Id > 0 && $lang_Id <= $lang_count) {
         //Меняем язык
-        set_cookie("lang", $langId, 365);
+        \Mozg\classes\Cookie::append("lang", $lang_Id, 365);
     }
     $langReferer = $_SERVER['HTTP_REFERER'];
     header("Location: {$langReferer}");
 }
+
 //lang
-$config['lang_list'] = nl2br($config['lang_list']);
-$expLangList = explode('<br />', $config['lang_list']);
-$numLangs = count($expLangList);
-$useLang = !empty($_COOKIE['lang']) > 0 ? intval($_COOKIE['lang']) : 0;
-if ($useLang <= 0)
-    $useLang = 1;
-$cil = 0;
-foreach ($expLangList as $expLangData) {
-    $cil++;
-    $expLangName = explode(' | ', $expLangData);
-    if ($cil == $useLang and $expLangName[0]) {
-        $rMyLang = $expLangName[0];
-        $checkLang = $expLangName[1];
-        Registry::set('rMyLang', $rMyLang);
-        Registry::set('checkLang', $checkLang);
-    }
-}
-if (!isset($checkLang)) {
-    $rMyLang = 'Русский';
-    $checkLang = 'Russian';
-}
+$checkLang = getLang();
+
 $lang = include ROOT_DIR . '/lang/' . $checkLang . '/site.php';
 Registry::set('lang', $lang);
 $langdate = include ROOT_DIR . '/lang/' . $checkLang . '/date.php';
@@ -77,8 +43,6 @@ $tpl = new Templates();
 $tpl->dir = ROOT_DIR . '/templates/' . $config['temp'];
 define('TEMPLATE_DIR', $tpl->dir);
 
-
-$_DOCUMENT_DATE = false;
 Registry::set('server_time', time());
 
 include_once ENGINE_DIR . '/login.php';
@@ -87,7 +51,7 @@ if ($config['offline'] == "yes") {
     include ENGINE_DIR . '/modules/offline.php';
 }
 
-if (isset($user_info['user_delet']) and $user_info['user_delet'] > 0) {
+if (isset($user_info['user_delet']) && $user_info['user_delet'] > 0) {
     include_once ENGINE_DIR . '/modules/profile_delet.php';
 }
 $sql_banned = $db->super_query("SELECT * FROM banned", true);
@@ -126,9 +90,7 @@ if (Registry::get('logged')) {
 $online_time = Registry::get('server_time') - $config['online_time'];
 
 try {
-
     $router = Router::fromGlobals();
-//        $this->get('path.base');
     $params = [];
     $routers = array(
         '/' => 'Register@main',
@@ -151,6 +113,7 @@ try {
         '/restore/send' => 'Restore@send',
         '/restore/prefinish' => 'Restore@preFinish',
 
+        '/wall:num' => 'WallPage@main',
         '/wall:num_:num' => 'WallPage@main',
 
         '/security/img' => 'Captcha@captcha',

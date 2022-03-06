@@ -1,6 +1,6 @@
 <?php
 /*
- *   (c) Semen Alekseev
+ * Copyright (c) 2022 Tephida
  *
  *  For the full copyright and license information, please view the LICENSE
  *   file that was distributed with this source code.
@@ -8,9 +8,7 @@
  */
 
 use FluffyDollop\Support\Filesystem;
-
-//echoheader();
-//echohtmlstart('Общая статистика сайта');
+use Mozg\classes\TplCp;
 
 $users = $db->super_query("SELECT COUNT(*) AS cnt FROM `users`");
 $albums = $db->super_query("SELECT COUNT(*) AS cnt FROM `albums`");
@@ -25,15 +23,16 @@ $videos = $db->super_query("SELECT COUNT(*) AS cnt FROM `videos`");
 $db->query("SHOW TABLE STATUS FROM `" . DBNAME . "`");
 $mysql_size = 0;
 while ($r = $db->get_array()) {
-    if (str_contains($r['Name'], ""))
+    if (str_contains($r['Name'], "")) {
         $mysql_size += $r['Data_length'] + $r['Index_length'];
+    }
 }
 $db->free();
-$mysql_size = formatsize($mysql_size);
+$mysql_size = Filesystem::formatsize($mysql_size);
 
-$cache_size = formatsize(Filesystem::dirSize("uploads"));
+$cache_size = Filesystem::formatsize(Filesystem::dirSize("uploads"));
 
-$tpl = initAdminTpl();
+$tpl = new TplCp(ADMIN_DIR . '/tpl/');
 $tpl->load_template('stats/main.tpl');
 $tpl->set('{cache_size}', $cache_size);
 $tpl->set('{mysql_size}', $mysql_size);
@@ -47,4 +46,4 @@ $tpl->set('{invites_cnt}', $invites['cnt']);
 $tpl->set('{notes_cnt}', $notes['cnt']);
 $tpl->set('{videos_cnt}', $users['cnt']);
 $tpl->compile('content');
-compileAdmin($tpl);
+$tpl->render();

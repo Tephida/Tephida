@@ -1,18 +1,21 @@
 <?php
 /*
- *   (c) Semen Alekseev
+ * Copyright (c) 2022 Tephida
  *
  *  For the full copyright and license information, please view the LICENSE
  *   file that was distributed with this source code.
  *
  */
-echoheader();
 
 $se_uid = intFilter('se_uid');
-if (!$se_uid) $se_uid = '';
+if (!$se_uid) {
+    $se_uid = '';
+}
 
 $se_user_id = intFilter('se_user_id');
-if (!$se_user_id) $se_user_id = '';
+if (!$se_user_id) {
+    $se_user_id = '';
+}
 
 $se_name = requestFilter('se_name', 25000, true);
 

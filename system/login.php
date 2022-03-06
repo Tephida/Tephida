@@ -1,6 +1,6 @@
 <?php
 /*
- *   (c) Semen Alekseev
+ * Copyright (c) 2022 Tephida
  *
  *  For the full copyright and license information, please view the LICENSE
  *   file that was distributed with this source code.
@@ -8,7 +8,7 @@
  */
 
 use FluffyDollop\Support\Registry;
-use Mozg\classes\TpLSite;
+use Mozg\classes\{Cookie, TpLSite};
 
 $_IP = $_SERVER['REMOTE_ADDR'];
 $_BROWSER = $_SERVER['HTTP_USER_AGENT'];
@@ -18,9 +18,9 @@ $db = Registry::get('db');
 $config = settings_get();
 
 if ($act == 'logout') {
-    set_cookie("user_id", "", 0);
-    set_cookie("password", "", 0);
-    set_cookie("hid", "", 0);
+    Cookie::remove("user_id");
+    Cookie::remove("password");
+    Cookie::remove("hid");
     unset($_SESSION['user_id']);
     session_destroy();
     session_unset();
@@ -105,9 +105,9 @@ if (isset($_POST['log_in']) && !$logged) {
                 //Устанавливаем в сессию ИД юзера
                 $_SESSION['user_id'] = (int)$check_user['user_id'];
                 //Записываем COOKIE
-                set_cookie("user_id", (int)$check_user['user_id'], 365);
-                set_cookie("password", $password, 365);
-                set_cookie("hid", $hid, 365);
+                Cookie::append("user_id", (int)$check_user['user_id'], 365);
+                Cookie::append("password", $password, 365);
+                Cookie::append("hid", $hid, 365);
                 //Вставляем лог в бд
                 $db->query("UPDATE `log` SET browser = '" . $_BROWSER . "', ip = '" . $_IP . "' WHERE uid = '" . $check_user['user_id'] . "'");
                 if ($config['temp'] != 'mobile') {

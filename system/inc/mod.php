@@ -1,6 +1,6 @@
 <?php
 /*
- *   (c) Semen Alekseev
+ * Copyright (c) 2022 Tephida
  *
  *  For the full copyright and license information, please view the LICENSE
  *   file that was distributed with this source code.
@@ -38,6 +38,11 @@ switch ($mod) {
     case "system":
         include ADMIN_DIR . '/modules/system.php';
         break;
+
+    case "fake":
+        include ADMIN_DIR . '/modules/fake.php';
+        break;
+
     //Управление БД
 
     case "db":

@@ -1,6 +1,6 @@
 <?php
 /*
- *   (c) Semen Alekseev
+ * Copyright (c) 2022 Tephida
  *
  *  For the full copyright and license information, please view the LICENSE
  *   file that was distributed with this source code.
@@ -11,39 +11,16 @@ NoAjaxQuery();
 
 $tpl->load_template('lang/main.tpl');
 
-$useLang = isset($_COOKIE['lang']) ? (int)$_COOKIE['lang'] : null;
-
-if($useLang <= 0) $useLang = 1;
-$config = settings_get();
-$config['lang_list'] = nl2br($config['lang_list']);
-$expLangList = explode('<br />', $config['lang_list']);
-$numLangs = count($expLangList);
-$cil = 0;
+$user_lang = isset($_COOKIE['lang']) ? (int)$_COOKIE['lang'] : 0;
+$lang_list = require ENGINE_DIR . '/data/langs.php';
 $langs = '';
-foreach($expLangList as $expLangData){
-	
-	$expLangName = explode(' | ', $expLangData);
-	
-	if($expLangName[0]){
-		
-		$cil++;
-		
-		if($cil == $useLang OR $numLangs == 1)
-		
-			$langs .= "<div class=\"lang_but lang_selected\">{$expLangName[0]}</div>";
-			
-		else
-		
-			$langs .= "<a href=\"/index.php?act=chage_lang&id={$cil}\" style=\"text-decoration:none\"><div class=\"lang_but\">{$expLangName[0]}</div></a>";
-		
-	}
-	
+foreach ($lang_list as $languages => $value) {
+    if ($languages == $user_lang) {
+        $langs .= "<div class=\"lang_but lang_selected\">{$value['name']}</div>";
+    } else {
+        $langs .= "<a href=\"/index.php?act=chage_lang&id={$languages}\" style=\"text-decoration:none\"><div class=\"lang_but\">{$value['name']}</div></a>";
+    }
 }
-
-if(!$checkLang) $checkLang = 'Russian';
-
 $tpl->set('{langs}', $langs);
-
 $tpl->compile('content');
-
 AjaxTpl($tpl);

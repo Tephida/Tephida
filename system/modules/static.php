@@ -23,11 +23,10 @@ if (Registry::get('logged')) {
         $tpl->set('{title}', stripslashes($row['title']));
         $tpl->set('{text}', stripslashes($row['text']));
         $tpl->compile('content');
-        compile($tpl);
     } else {
         msgbox('', 'Страница не найдена.', 'info_2');
-        compile($tpl);
     }
+    compile($tpl);
 
 //    $tpl->clear();
 //    $db->free();

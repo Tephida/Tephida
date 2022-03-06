@@ -1,6 +1,6 @@
 <?php
 /*
- *   (c) Semen Alekseev
+ * Copyright (c) 2022 Tephida
  *
  *  For the full copyright and license information, please view the LICENSE
  *   file that was distributed with this source code.
@@ -24,12 +24,6 @@ switch ($go) {
         include ENGINE_DIR . '/modules/register.php';
         break;
 
-//    /** Профиль пользователя */
-//    case "profile":
-//        $spBar = true;
-//        include ENGINE_DIR . '/modules/profile.php';
-//        break;
-
     /** Редактирование моей страницы */
     case "editprofile":
         $spBar = true;
@@ -44,9 +38,9 @@ switch ($go) {
     /** Альбомы */
     case "albums":
         $spBar = true;
-        if ($config['album_mod'] == 'yes')
+        if ($config['album_mod'] == 'yes') {
             include ENGINE_DIR . '/modules/albums.php';
-        else {
+        } else {
             $user_speedbar = 'Информация';
             msgbox('', 'Сервис отключен.', 'info');
             compile($tpl);
@@ -89,9 +83,9 @@ switch ($go) {
     /** Видео */
     case "videos":
         $spBar = true;
-        if ($config['video_mod'] == 'yes')
+        if ($config['video_mod'] == 'yes') {
             include ENGINE_DIR . '/modules/videos.php';
-        else {
+        } else {
             $user_speedbar = 'Информация';
             msgbox('', 'Сервис отключен.', 'info');
             compile($tpl);
@@ -161,12 +155,6 @@ switch ($go) {
         include ENGINE_DIR . '/modules/groups.php';
         break;
 
-    /** Сообщества -> Публичные страницы */
-    case "public":
-        $spBar = true;
-        include ENGINE_DIR . '/modules/public.php';
-        break;
-
     /** Сообщества -> Загрузка фото */
     case "attach_groups":
         include ENGINE_DIR . '/modules/attach_groups.php';
@@ -174,9 +162,9 @@ switch ($go) {
 
     /** Музыка */
     case "audio":
-        if ($config['audio_mod'] == 'yes')
+        if ($config['audio_mod'] == 'yes') {
             include ENGINE_DIR . '/modules/audio.php';
-        else {
+        } else {
             $spBar = true;
             $user_speedbar = 'Информация';
             msgbox('', 'Сервис отключен.', 'info');

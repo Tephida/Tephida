@@ -1,6 +1,6 @@
 <?php
 /*
- *   (c) Semen Alekseev
+ * Copyright (c) 2022 Tephida
  *
  *  For the full copyright and license information, please view the LICENSE
  *   file that was distributed with this source code.
@@ -11,12 +11,8 @@ namespace Mozg\modules;
 
 use ErrorException;
 use JsonException;
-use Mozg\classes\Module;
-use FluffyDollop\Support\Registry;
-use FluffyDollop\Support\Router;
-use FluffyDollop\Support\Status;
-use Mozg\classes\TpLSite;
-use FluffyDollop\Support\ViiMail;
+use Mozg\classes\{Module, TpLSite};
+use FluffyDollop\Support\{Registry, ViiMail, Status};
 
 class Restore extends Module
 {

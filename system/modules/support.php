@@ -1,6 +1,6 @@
 <?php
 /*
- *   (c) Semen Alekseev
+ * Copyright (c) 2022 Tephida
  *
  *  For the full copyright and license information, please view the LICENSE
  *   file that was distributed with this source code.
@@ -8,10 +8,12 @@
  */
 
 use FluffyDollop\Support\Registry;
+use Mozg\classes\{Flood, TpLSite};
 
 NoAjaxQuery();
 
 if (Registry::get('logged')) {
+    $lang = Registry::get('lang');
     $db = Registry::get('db');
     $act = requestFilter('act');
     $user_info = $user_info ?? Registry::get('user_info');
@@ -27,45 +29,64 @@ if (Registry::get('logged')) {
 
         //################### Страница создание нового вопроса  ###################//
         case "new":
+            $meta_tags['title'] = 'Новый вопрос';
+            $config = settings_get();
+            $tpl_dir_name = ROOT_DIR . '/templates/' . $config['temp'];
+            $tpl = new TpLSite($tpl_dir_name, $meta_tags);
+
             $mobile_speedbar = 'Новый вопрос';
             $tpl->load_template('support/new.tpl');
             $tpl->set('{uid}', $user_id);
             $tpl->compile('content');
 
-            compile($tpl);
+            $tpl->render();
             break;
 
         //################### Отправка нового вопроса  ###################//
         case "send":
             NoAjaxQuery();
-            $title = requestFilter('title', 25000, true);
-            $question = requestFilter('question');
-            $limitTime = $server_time - 3600;
-            $rowLast = $db->super_query("SELECT COUNT(*) AS cnt FROM `support` WHERE сdate > '{$limitTime}'");
-            if (!$rowLast['cnt'] and !empty($title) and !empty($question) and $user_info['user_group'] != 4) {
-                $question = preg_replace('`(http(?:s)?://\w+[^\s\[\]\<]+)`i', '<!--link:$1--><a href="$1" target="_blank">$1</a><!--/link-->', $question);
-                $db->query("INSERT INTO `support` SET title = '{$title}', question = '{$question}', suser_id = '{$user_id}', sfor_user_id = '{$user_id}', sdate = '{$server_time}', сdate = '{$server_time}'");
-                $dbid = $db->insert_id();
-                $row = $db->super_query("SELECT user_search_pref, user_photo FROM `users` WHERE user_id = '{$user_id}'");
-                $tpl->load_template('support/show.tpl');
-                $tpl->set('{title}', stripslashes($title));
-                $tpl->set('{question}', stripslashes($question));
-                $tpl->set('{qid}', $dbid);
-                $date_str = megaDate($server_time);
-                $tpl->set('{date}', $date_str);
-                $tpl->set('{status}', 'Вопрос ожидает обработки.');
-                $tpl->set('{name}', $row['user_search_pref']);
-                $tpl->set('{uid}', $user_id);
-                if ($row['user_photo'])
-                    $tpl->set('{ava}', '/uploads/users/' . $user_id . '/50_' . $row['user_photo']);
-                else
-                    $tpl->set('{ava}', '{theme}/images/no_ava_50.png');
-                $tpl->set('{answers}', '');
-                $tpl->compile('content');
-                AjaxTpl($tpl);
-                echo 'r|x' . $dbid;
-            } else
+            if (Flood::check('support')) {
                 echo 'limit';
+            } else {
+                $title = requestFilter('title', 25000, true);
+                $question = requestFilter('question');
+                $limitTime = $server_time - 3600;
+                $rowLast = $db->super_query("SELECT COUNT(*) AS cnt FROM `support` WHERE сdate > '{$limitTime}'");
+                if (!$rowLast['cnt'] and !empty($title) and !empty($question) and $user_info['user_group'] != 4) {
+                    Flood::LogInsert('support');
+                    $question = preg_replace('`(http(?:s)?://\w+[^\s\[\]\<]+)`i', '<!--link:$1--><a href="$1" target="_blank">$1</a><!--/link-->', $question);
+                    $db->query("INSERT INTO `support` SET title = '{$title}', question = '{$question}', suser_id = '{$user_id}', sfor_user_id = '{$user_id}', sdate = '{$server_time}', сdate = '{$server_time}'");
+                    $dbid = $db->insert_id();
+                    $row = $db->super_query("SELECT user_search_pref, user_photo FROM `users` WHERE user_id = '{$user_id}'");
+
+                    $meta_tags['title'] = 'Новый вопрос';
+                    $config = settings_get();
+                    $tpl_dir_name = ROOT_DIR . '/templates/' . $config['temp'];
+                    $tpl = new TpLSite($tpl_dir_name, $meta_tags);
+
+                    $tpl->load_template('support/show.tpl');
+                    $tpl->set('{title}', stripslashes($title));
+                    $tpl->set('{question}', stripslashes($question));
+                    $tpl->set('{qid}', $dbid);
+                    $date_str = megaDate($server_time);
+                    $tpl->set('{date}', $date_str);
+                    $tpl->set('{status}', 'Вопрос ожидает обработки.');
+                    $tpl->set('{name}', $row['user_search_pref']);
+                    $tpl->set('{uid}', $user_id);
+                    if ($row['user_photo']) {
+                        $tpl->set('{ava}', '/uploads/users/' . $user_id . '/50_' . $row['user_photo']);
+                    } else {
+                        $tpl->set('{ava}', '{theme}/images/no_ava_50.png');
+                    }
+                    $tpl->set('{answers}', '');
+                    $tpl->compile('content');
+                    AjaxTpl($tpl);
+                    echo 'r|x' . $dbid;
+                } else {
+                    echo 'limit';
+                }
+            }
+
 
             break;
 
@@ -74,7 +95,7 @@ if (Registry::get('logged')) {
             NoAjaxQuery();
             $qid = intFilter('qid');
             $row = $db->super_query("SELECT suser_id FROM `support` WHERE id = '{$qid}'");
-            if ($row['suser_id'] == $user_id or $user_info['user_group'] == 4) {
+            if ($row['suser_id'] == $user_id || $user_info['user_group'] == 4) {
                 $db->query("DELETE FROM `support` WHERE id = '{$qid}'");
                 $db->query("DELETE FROM `support_answers` WHERE qid = '{$qid}'");
             }
@@ -86,10 +107,10 @@ if (Registry::get('logged')) {
             NoAjaxQuery();
             $id = intFilter('id');
             $row = $db->super_query("SELECT auser_id FROM `support_answers` WHERE id = '{$id}'");
-            if ($row['auser_id'] == $user_id or $user_info['user_group'] == 4)
+            if ($row['auser_id'] == $user_id || $user_info['user_group'] == 4) {
                 $db->query("DELETE FROM `support_answers` WHERE id = '{$id}'");
+            }
 
-            die();
             break;
 
         //################### Закрытие вопроса  ###################//
@@ -98,8 +119,9 @@ if (Registry::get('logged')) {
             $qid = intFilter('qid');
             if ($user_info['user_group'] == 4) {
                 $row = $db->super_query("SELECT COUNT(*) AS cnt FROM `support` WHERE id = '{$qid}'");
-                if ($row['cnt'])
+                if ($row['cnt']) {
                     $db->query("UPDATE `support` SET sfor_user_id = 0 WHERE id = '{$qid}'");
+                }
             }
 
             break;
@@ -114,8 +136,9 @@ if (Registry::get('logged')) {
                 if ($user_info['user_group'] == 4) {
                     $auser_id = 0;
                     $db->query("UPDATE `users` SET user_support = user_support+1 WHERE user_id = '{$check['suser_id']}'");
-                } else
+                } else {
                     $auser_id = $user_id;
+                }
 
                 $answer = preg_replace('`(http(?:s)?://\w+[^\s\[\]\<]+)`i', '<!--link:$1--><a href="$1" target="_blank">$1</a><!--/link-->', $answer);
 
@@ -124,6 +147,11 @@ if (Registry::get('logged')) {
 
                 $row = $db->super_query("SELECT user_search_pref, user_photo FROM `users` WHERE user_id = '{$user_id}'");
 
+                $meta_tags['title'] = 'Новый вопрос';
+                $config = settings_get();
+                $tpl_dir_name = ROOT_DIR . '/templates/' . $config['temp'];
+                $tpl = new TpLSite($tpl_dir_name, $meta_tags);
+
                 $tpl->load_template('support/answer.tpl');
                 if (!$auser_id) {
                     $tpl->set('{name}', 'Агент поддержки');
@@ -131,20 +159,22 @@ if (Registry::get('logged')) {
                     $tpl->set_block("'\\[no-agent\\](.*?)\\[/no-agent\\]'si", "");
                 } else {
                     $tpl->set('{name}', $row['user_search_pref']);
-                    if ($row['user_photo'])
+                    if ($row['user_photo']) {
                         $tpl->set('{ava}', '/uploads/users/' . $user_id . '/50_' . $row['user_photo']);
-                    else
+                    } else {
                         $tpl->set('{ava}', '{theme}/images/no_ava_50.png');
+                    }
 
                     $tpl->set('[no-agent]', '');
                     $tpl->set('[/no-agent]', '');
                 }
 
-                if ($auser_id == $user_id or $user_info['user_group'] == 4) {
+                if ($auser_id == $user_id || $user_info['user_group'] == 4) {
                     $tpl->set('[owner]', '');
                     $tpl->set('[/owner]', '');
-                } else
+                } else {
                     $tpl->set_block("'\\[owner\\](.*?)\\[/owner\\]'si", "");
+                }
 
                 $tpl->set('{uid}', $user_id);
                 $tpl->set('{answer}', stripslashes($answer));
@@ -162,10 +192,16 @@ if (Registry::get('logged')) {
 
             $mobile_speedbar = 'Просмотр вопроса';
 
-            if ($user_info['user_group'] == 4)
+            $meta_tags['title'] = 'Просмотр вопроса';
+            $config = settings_get();
+            $tpl_dir_name = ROOT_DIR . '/templates/' . $config['temp'];
+            $tpl = new TpLSite($tpl_dir_name, $meta_tags);
+
+            if ($user_info['user_group'] == 4) {
                 $sql_where = "";
-            else
+            } else {
                 $sql_where = "AND tb1.suser_id = '{$user_id}'";
+            }
 
             $row = $db->super_query("SELECT tb1.id, title, question, sdate, sfor_user_id, suser_id, tb2.user_search_pref, user_photo FROM `support` tb1, `users` tb2 WHERE tb1.id = '{$qid}' AND tb1.suser_id = tb2.user_id {$sql_where}");
             if ($row) {
@@ -180,20 +216,22 @@ if (Registry::get('logged')) {
                         $tpl->set_block("'\\[no-agent\\](.*?)\\[/no-agent\\]'si", "");
                     } else {
                         $tpl->set('{name}', $row['user_search_pref']);
-                        if ($row['user_photo'])
+                        if ($row['user_photo']) {
                             $tpl->set('{ava}', '/uploads/users/' . $row['suser_id'] . '/50_' . $row['user_photo']);
-                        else
+                        } else {
                             $tpl->set('{ava}', '{theme}/images/no_ava_50.png');
+                        }
 
                         $tpl->set('[no-agent]', '');
                         $tpl->set('[/no-agent]', '');
                     }
 
-                    if ($row_answer['auser_id'] == $user_id or $user_info['user_group'] == 4) {
+                    if ($row_answer['auser_id'] == $user_id || $user_info['user_group'] == 4) {
                         $tpl->set('[owner]', '');
                         $tpl->set('[/owner]', '');
-                    } else
+                    } else {
                         $tpl->set_block("'\\[owner\\](.*?)\\[/owner\\]'si", "");
+                    }
 
                     $tpl->set('{id}', $row_answer['id']);
                     $tpl->set('{uid}', $user_id);
@@ -210,22 +248,25 @@ if (Registry::get('logged')) {
                 $date_str = megaDate($row['sdate']);
                 $tpl->set('{date}', $date_str);
 
-                if ($row['sfor_user_id'] == $row['suser_id'])
+                if ($row['sfor_user_id'] == $row['suser_id']) {
                     $tpl->set('{status}', 'Вопрос ожидает обработки.');
-                else
+                } else {
                     $tpl->set('{status}', 'Есть ответ.');
+                }
 
                 $tpl->set('{name}', $row['user_search_pref']);
 
-                if ($user_info['user_group'] == 4)
+                if ($user_info['user_group'] == 4) {
                     $tpl->set('{uid}', $row['suser_id']);
-                else
+                } else {
                     $tpl->set('{uid}', $user_id);
+                }
 
-                if ($row['user_photo'])
+                if ($row['user_photo']) {
                     $tpl->set('{ava}', '/uploads/users/' . $row['suser_id'] . '/50_' . $row['user_photo']);
-                else
+                } else {
                     $tpl->set('{ava}', '{theme}/images/no_ava_50.png');
+                }
 
                 $tpl->set('{answers}', $tpl->result['answers'] ?? '');
                 $tpl->compile('content');
@@ -240,8 +281,14 @@ if (Registry::get('logged')) {
         default:
             $mobile_speedbar = 'Помощь';
 
-            if ($user_info['user_support'] and $user_info['user_group'] != 4)
+            $meta_tags['title'] = 'Помощь';
+            $config = settings_get();
+            $tpl_dir_name = ROOT_DIR . '/templates/' . $config['temp'];
+            $tpl = new TpLSite($tpl_dir_name, $meta_tags);
+
+            if ($user_info['user_support'] and $user_info['user_group'] != 4) {
                 $db->query("UPDATE `users` SET user_support = 0 WHERE user_id = '{$user_id}'");
+            }
 
             if ($user_info['user_group'] == 4) {
                 $sql_where = "ORDER by `sdate` DESC";
@@ -253,17 +300,18 @@ if (Registry::get('logged')) {
 
             $sql_ = $db->super_query("SELECT tb1.id, title, suser_id, sfor_user_id, sdate, tb2.user_photo, user_search_pref FROM `support` tb1, `users` tb2 WHERE tb1.suser_id = tb2.user_id {$sql_where} LIMIT {$limit_page}, {$gcount}", true);
 
-            if ($sql_)
+            $tpl->load_template('support/head.tpl');
+            if ($sql_) {
                 $count = $db->super_query("SELECT COUNT(*) AS cnt FROM `support` {$sql_where_cnt}");
 
-            $tpl->load_template('support/head.tpl');
-            if ($sql_)
-                if ($user_info['user_group'] == 4)
-                    $tpl->set('{cnt}', $count['cnt'] . ' ' . gram_record($count['cnt'], 'questions'));
-                else
-                    $tpl->set('{cnt}', 'Вы задали ' . $count['cnt'] . ' ' . gram_record($count['cnt'], 'questions'));
-            else
+                if ($user_info['user_group'] == 4) {
+                    $tpl->set('{cnt}', $count['cnt'] . ' ' . declWord($count['cnt'], 'questions'));
+                } else {
+                    $tpl->set('{cnt}', 'Вы задали ' . $count['cnt'] . ' ' . declWord($count['cnt'], 'questions'));
+                }
+            } else {
                 $tpl->set('{cnt}', '');
+            }
 
             $tpl->compile('info');
 
@@ -274,16 +322,18 @@ if (Registry::get('logged')) {
                     $date_str = megaDate($row['sdate']);
                     $tpl->set('{date}', $date_str);
                     if ($row['sfor_user_id'] == $row['suser_id'] or $user_info['user_group'] == 4) {
-                        if ($row['sfor_user_id'] == $row['suser_id'])
+                        if ($row['sfor_user_id'] == $row['suser_id']) {
                             $tpl->set('{status}', 'Вопрос ожидает обработки.');
-                        else
+                        } else {
                             $tpl->set('{status}', 'Есть ответ.');
+                        }
                         $tpl->set('{name}', $row['user_search_pref']);
                         $tpl->set('{answer}', '');
-                        if ($row['user_photo'])
+                        if ($row['user_photo']) {
                             $tpl->set('{ava}', '/uploads/users/' . $row['suser_id'] . '/50_' . $row['user_photo']);
-                        else
+                        } else {
                             $tpl->set('{ava}', '{theme}/images/no_ava_50.png');
+                        }
                     } else {
                         $tpl->set('{name}', 'Агент поддержки');
                         $tpl->set('{status}', 'Есть ответ.');
@@ -295,15 +345,13 @@ if (Registry::get('logged')) {
                 }
                 navigation($gcount, $count['cnt'], '/support?page=');
 
-                compile($tpl);
+//                compile($tpl);
+            } else if ($user_info['user_group'] == 4) {
+                msgbox('', $lang['support_no_quest3'], 'info_2');
             } else {
-                if ($user_info['user_group'] == 4)
-                    msgbox('', $lang['support_no_quest3'], 'info_2');
-                else
-                    msgbox('', $lang['support_no_quest2'], 'info_2');
-
-                compile($tpl);
+                msgbox('', $lang['support_no_quest2'], 'info_2');
             }
+            $tpl->render();
     }
 //    $tpl->clear();
 //    $db->free();

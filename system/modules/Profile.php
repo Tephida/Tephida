@@ -1,6 +1,6 @@
 <?php
 /*
- *   (c) Semen Alekseev
+ * Copyright (c) 2022 Tephida
  *
  *  For the full copyright and license information, please view the LICENSE
  *   file that was distributed with this source code.
@@ -150,7 +150,7 @@ class Profile extends Module
                         foreach ($sql_notes as $row_notes) {
                             $tpl->set('{id}', $row_notes['id']);
                             $tpl->set('{title}', stripslashes($row_notes['title']));
-                            $tpl->set('{comm-num}', $row_notes['comm_num'] . ' ' . gram_record($row_notes['comm_num'], 'comments'));
+                            $tpl->set('{comm-num}', $row_notes['comm_num'] . ' ' . declWord($row_notes['comm_num'], 'comments'));
                             $date_str = megaDate(strtotime($row_notes['date']), 'no_year');
                             $tpl->set('{date}', $date_str);
                             $tpl->compile('notes');
@@ -186,7 +186,7 @@ class Profile extends Module
                         $tpl->set('{id}', $row_videos['id']);
                         $tpl->set('{user-id}', $id);
                         $tpl->set('{title}', stripslashes($row_videos['title']));
-                        $tpl->set('{comm-num}', $row_videos['comm_num'] . ' ' . gram_record($row_videos['comm_num'], 'comments'));
+                        $tpl->set('{comm-num}', $row_videos['comm_num'] . ' ' . declWord($row_videos['comm_num'], 'comments'));
                         $date_str = megaDate(strtotime($row_videos['add_date']), '');
                         $tpl->set('{date}', $date_str);
                         $tpl->compile('videos');
@@ -549,7 +549,7 @@ class Profile extends Module
                     foreach ($sql_albums as $row_albums) {
                         $row_albums['name'] = stripslashes($row_albums['name']);
                         $album_date = megaDate(strtotime($row_albums['adate']));
-                        $albums_photonums = gram_record($row_albums['photo_num'], 'photos');
+                        $albums_photonums = declWord($row_albums['photo_num'], 'photos');
                         if ($row_albums['cover'])
                             $album_cover = "/uploads/users/{$id}/albums/{$row_albums['aid']}/c_{$row_albums['cover']}";
                         else
@@ -860,7 +860,7 @@ class Profile extends Module
                     $tpl->set('[gifts]', '');
                     $tpl->set('[/gifts]', '');
                     $tpl->set('{gifts}', $gifts);
-                    $tpl->set('{gifts-text}', $row['user_gifts'] . ' ' . gram_record($row['user_gifts'], 'gifts'));
+                    $tpl->set('{gifts-text}', $row['user_gifts'] . ' ' . declWord($row['user_gifts'], 'gifts'));
                 } else {
                     $tpl->set_block("'\\[gifts\\](.*?)\\[/gifts\\]'si", "");
                 }
@@ -891,7 +891,7 @@ class Profile extends Module
                     $tpl->set('[audios]', '');
                     $tpl->set('[/audios]', '');
                     $tpl->set('{audios}', $tpl->result['audios'] ?? '');
-                    $tpl->set('{audios-num}', $row['user_audio'] . ' ' . gram_record($row['user_audio'], 'audio'));
+                    $tpl->set('{audios-num}', $row['user_audio'] . ' ' . declWord($row['user_audio'], 'audio'));
                 } else {
                     $tpl->set_block("'\\[audios\\](.*?)\\[/audios\\]'si", "");
                 }

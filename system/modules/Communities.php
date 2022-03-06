@@ -1,6 +1,6 @@
 <?php
 /*
- *   (c) Semen Alekseev
+ * Copyright (c) 2022 Tephida
  *
  *  For the full copyright and license information, please view the LICENSE
  *   file that was distributed with this source code.
@@ -9,10 +9,8 @@
 
 namespace Mozg\modules;
 
-use Mozg\classes\Module;
 use FluffyDollop\Support\Registry;
-use Mozg\classes\TpLSite;
-use Mozg\classes\WallPublic;
+use Mozg\classes\{Module, TpLSite, WallPublic};
 
 class Communities extends Module
 {
@@ -138,9 +136,9 @@ class Communities extends Module
 
                 $tpl->set('{descr}', stripslashes($row['descr']));
 
-                $tpl->set('{num}', '<span id="traf">' . $row['traf'] . '</span> ' . gram_record($row['traf'], 'subscribers'));
+                $tpl->set('{num}', '<span id="traf">' . $row['traf'] . '</span> ' . declWord($row['traf'], 'subscribers'));
                 if ($row['traf']) {
-                    $tpl->set('{num-2}', '<a href="/public' . $row['id'] . '" onClick="groups.all_people(\'' . $row['id'] . '\'); return false">' . gram_record($row['traf'], 'subscribers2') . '</a>');
+                    $tpl->set('{num-2}', '<a href="/public' . $row['id'] . '" onClick="groups.all_people(\'' . $row['id'] . '\'); return false">' . declWord($row['traf'], 'subscribers2') . ' ' . $row['traf'] . ' ' . declWord($row['traf'], 'subscribers3') . '</a>');
                     $tpl->set('{no-users}', '');
                 } else {
                     $tpl->set('{num-2}', '<span class="color777">Вы будете первым.</span>');
@@ -169,7 +167,7 @@ class Communities extends Module
                     $tpl->set('[yes]', '');
                     $tpl->set('[/yes]', '');
                     $tpl->set_block("'\\[no\\](.*?)\\[/no\\]'si", "");
-                    $tpl->set('{num-feedback}', '<span id="fnumu">' . $row['feedback'] . '</span> ' . gram_record($row['feedback'], 'feedback'));
+                    $tpl->set('{num-feedback}', '<span id="fnumu">' . $row['feedback'] . '</span> ' . declWord($row['feedback'], 'feedback'));
                     $sql_feedbackusers = $db->super_query("SELECT tb1.fuser_id, office, tb2.user_search_pref, user_photo FROM `communities_feedback` tb1, `users` tb2 WHERE tb1.cid = '{$row['id']}' AND tb1.fuser_id = tb2.user_id ORDER by `fdate` ASC LIMIT 0, 5", true);
                     $feedback_users = '';
                     foreach ($sql_feedbackusers as $row_feedbackusers) {
@@ -242,7 +240,7 @@ class Communities extends Module
                     $tpl->set('{wall-page-display}', 'no_display');
 
                 if ($row['rec_num'])
-                    $tpl->set('{rec-num}', '<b id="rec_num">' . $row['rec_num'] . '</b> ' . gram_record($row['rec_num'], 'rec'));
+                    $tpl->set('{rec-num}', '<b id="rec_num">' . $row['rec_num'] . '</b> ' . declWord($row['rec_num'], 'rec'));
                 else {
                     $tpl->set('{rec-num}', '<b id="rec_num">Нет записей</b>');
                     if ($public_admin)
@@ -324,7 +322,7 @@ class Communities extends Module
 
                         $row_forum['title'] = stripslashes($row_forum['title']);
 
-                        $msg_num = $row_forum['msg_num'] . ' ' . gram_record($row_forum['msg_num'], 'msg');
+                        $msg_num = $row_forum['msg_num'] . ' ' . declWord($row_forum['msg_num'], 'msg');
 
                         $last_date = megaDate($row_forum['lastdate']);
 
@@ -374,7 +372,7 @@ class Communities extends Module
 
                         $row_video['title'] = stripslashes($row_video['title']);
                         $date_video = megaDate(strtotime($row_video['add_date']));
-                        $comm_num = $row_video['comm_num'] . ' ' . gram_record($row_video['comm_num'], 'comments');
+                        $comm_num = $row_video['comm_num'] . ' ' . declWord($row_video['comm_num'], 'comments');
 
                         $videos .= "
 <div class=\"profile_one_video\"><a href=\"/video{$row_video['owner_user_id']}_{$row_video['id']}\" onClick=\"videos.show({$row_video['id']}, this.href, '/{$row['adres']}'); return false\"><img src=\"{$row_video['photo']}\" alt=\"\" width=\"185\" /></a><div class=\"video_profile_title\"><a href=\"/video{$row_video['owner_user_id']}_{$row_video['id']}\" onClick=\"videos.show({$row_video['id']}, this.href, '/{$row['adres']}'); return false\">{$row_video['title']}</a></div><div class=\"nesubscriptstatus\">{$date_video} - <a href=\"/video{$row_video['owner_user_id']}_{$row_video['id']}\" onClick=\"videos.show({$row_video['id']}, this.href, '/{$row['adres']}'); return false\">{$comm_num}</a></div></div>

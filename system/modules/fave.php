@@ -1,6 +1,6 @@
 <?php
 /*
- *   (c) Semen Alekseev
+ * Copyright (c) 2022 Tephida
  *
  *  For the full copyright and license information, please view the LICENSE
  *   file that was distributed with this source code.
@@ -31,17 +31,19 @@ if (Registry::get('logged')) {
             $fave_id = intFilter('fave_id');
             //Проверяем на факт существования юзера которого добавляем в закладки
             $row = $db->super_query("SELECT `user_id` FROM `users` WHERE user_id = '{$fave_id}'");
-            if ($row and $user_id != $fave_id) {
+            if ($row && $user_id != $fave_id) {
 
                 //Проверяем на факт существование этого юзера в закладках, если нет то пропускаем
                 $db->query("SELECT `user_id` FROM `fave` WHERE user_id = '{$user_id}' AND fave_id = '{$fave_id}'");
                 if (!$db->num_rows()) {
                     $db->query("INSERT INTO `fave` SET user_id = '{$user_id}', fave_id = '{$fave_id}', date = NOW()");
                     $db->query("UPDATE `users` SET user_fave_num = user_fave_num+1 WHERE user_id = '{$user_id}'");
-                } else
+                } else {
                     echo 'yes_user';
-            } else
+                }
+            } else {
                 echo 'no_user';
+            }
 
             break;
 
@@ -55,8 +57,9 @@ if (Registry::get('logged')) {
             if ($row) {
                 $db->query("DELETE FROM `fave` WHERE user_id = '{$user_id}' AND fave_id = '{$fave_id}'");
                 $db->query("UPDATE `users` SET user_fave_num = user_fave_num-1 WHERE user_id = '{$user_id}'");
-            } else
+            } else {
                 echo 'yes_user';
+            }
 
             break;
 
@@ -71,7 +74,7 @@ if (Registry::get('logged')) {
             //Если кто-то есть в закладках то выводим
             if ($user['user_fave_num']) {
 
-                $user_speedbar = '<span id="fave_num">' . $user['user_fave_num'] . '</span> ' . gram_record($user['user_fave_num'], 'fave');
+                $user_speedbar = '<span id="fave_num">' . $user['user_fave_num'] . '</span> ' . declWord($user['user_fave_num'], 'fave');
 
                 //Загружаем поиск на странице
                 $tpl->load_template('fave_search.tpl');
@@ -83,10 +86,11 @@ if (Registry::get('logged')) {
                 $tpl->result['content'] .= '<table class="food_planner" id="fave_users">';
                 foreach ($sql_ as $row) {
                     $config = settings_get();
-                    if ($row['user_photo'])
+                    if ($row['user_photo']) {
                         $tpl->set('{ava}', $config['home_url'] . 'uploads/users/' . $row['fave_id'] . '/100_' . $row['user_photo']);
-                    else
+                    } else {
                         $tpl->set('{ava}', '{theme}/images/100_no_ava.png');
+                    }
 
                     $tpl->set('{name}', $row['user_search_pref']);
                     $tpl->set('{user-id}', $row['fave_id']);

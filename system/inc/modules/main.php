@@ -1,11 +1,13 @@
 <?php
 /*
- *   (c) Semen Alekseev
+ * Copyright (c) 2022 Tephida
  *
  *  For the full copyright and license information, please view the LICENSE
  *   file that was distributed with this source code.
  *
  */
+
+use Mozg\classes\TplCp;
 
 $row = $db->super_query("SELECT COUNT(*) AS cnt FROM `report`");
 if ($row['cnt']) {
@@ -21,7 +23,7 @@ if ($row_reviews['cnt']) {
     $new_reviews = '';
 }
 
-$tpl = initAdminTpl();
+$tpl = new TplCp(ADMIN_DIR . '/tpl/');
 $modules = array(
     'Настройка системы' => array(
         'description' => 'Настройка общих параметров скрипта, а также настройка системы безопасности скрипта',
@@ -43,6 +45,7 @@ $modules = array(
         'link' => 'templates',
         'icon' => 'folder_open',
     ),
+
 //    'Видео' => array(
 //        'description' => 'Управление видеозаписями, редактирование и удаление',
 //        'link' => 'videos',
@@ -68,11 +71,11 @@ $modules = array(
 //        'link' => 'gifts',
 //        'icon' => 'gifts',
 //    ),
-//    'Сообщества' => array(
-//        'description' => 'Управление сообществами, редактирование и удаление',
-//        'link' => 'groups',
-//        'icon' => 'groups',
-//    ),
+    'Сообщества' => array(
+        'description' => 'Управление сообществами, редактирование и удаление',
+        'link' => 'groups',
+        'icon' => 'groups',
+    ),
 //    'Жалобы' => array(
 //        'description' => $new_report . 'Список жалоб, поступивших от посетителей сайта на фотографии, записи, видеозаписи или заметки',
 //        'link' => 'report',
@@ -130,6 +133,17 @@ $modules = array(
 //    ),
 );
 
+if (class_exists('Faker\Factory') && file_exists(ENGINE_DIR . '/inc/modules/fake.php')) {
+    $modules2 = array(
+        'Fake' => array(
+            'description' => 'Фейковые данные',
+            'link' => 'fake',
+            'icon' => 'settings',
+        ),
+    );
+    $modules = array_merge($modules, $modules2);
+}
+
 $tpl->load_template('modules.tpl');
 $config = settings_load();
 $admin_link = $config['home_url'] . $config['admin_index'];
@@ -147,4 +161,4 @@ foreach ($modules as $key => $module) {
 $tpl->load_template('home.tpl');
 $tpl->set('{modules}', $tpl->result['modules']);
 $tpl->compile('content');
-compileAdmin($tpl);
+$tpl->render();

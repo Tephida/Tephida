@@ -1,7 +1,13 @@
 <?php
+/*
+ * Copyright (c) 2022 Tephida
+ *
+ *  For the full copyright and license information, please view the LICENSE
+ *   file that was distributed with this source code.
+ *
+ */
 
-use FluffyDollop\Support\Filesystem;
-use FluffyDollop\Support\Registry;
+use FluffyDollop\Support\{Filesystem, Registry};
 
 NoAjaxQuery();
 if (Registry::get('logged')) {
@@ -16,6 +22,8 @@ if (Registry::get('logged')) {
             $update_wall = ", user_wall_num = user_wall_num-1";
             $db->query("DELETE FROM `wall` WHERE id = '" . $row['user_wall_id'] . "'");
             $db->query("DELETE FROM `news` WHERE obj_id = '" . $row['user_wall_id'] . "'");
+        } else {
+            $update_wall = '';
         }
         $db->query("UPDATE `users` SET user_delet = 1, user_photo = '', user_wall_id = '' " . $update_wall . " WHERE user_id = '" . $user_id . "'");
         Filesystem::delete($uploaddir . $row['user_photo']);

@@ -1,19 +1,17 @@
 <?php
 /*
- *   (c) Semen Alekseev
+ * Copyright (c) 2022 Tephida
  *
  *  For the full copyright and license information, please view the LICENSE
  *   file that was distributed with this source code.
  *
  */
 
-$tpl = initAdminTpl();
+use Mozg\classes\TplCp;
 
+$tpl = new TplCp(ADMIN_DIR . '/tpl/');
 $directory = './templates';
-
-
 $scanned_directory = array_diff(scandir($directory), array('..', '.', '.htaccess'));
-
 $tpl->load_template('tpl/tpl.tpl');
 foreach ($scanned_directory as $directory) {
     $tpl->set('{dir}', $directory);
@@ -26,11 +24,7 @@ foreach ($scanned_directory as $directory) {
 
     $tpl->compile('tpl');
 }
-
-
 $tpl->load_template('/tpl/home.tpl');
-
-
 $tpl->set('{tpl}', $tpl->result['tpl']);
 $tpl->compile('content');
-compileAdmin($tpl);
+$tpl->render();

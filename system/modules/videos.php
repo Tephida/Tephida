@@ -1,14 +1,13 @@
 <?php
 /*
- *   (c) Semen Alekseev
+ * Copyright (c) 2022 Tephida
  *
  *  For the full copyright and license information, please view the LICENSE
  *   file that was distributed with this source code.
  *
  */
 
-use FluffyDollop\Support\Filesystem;
-use FluffyDollop\Support\Registry;
+use FluffyDollop\Support\{Filesystem, Registry, Thumbnail};
 
 NoAjaxQuery();
 
@@ -39,7 +38,9 @@ if (Registry::get('logged')) {
                 $title = requestFilter('title', 25000, true);
                 $descr = requestFilter('descr', 3000);
                 $privacy = intFilter('privacy');
-                if ($privacy <= 0 or $privacy > 3) $privacy = 1;
+                if ($privacy <= 0 || $privacy > 3) {
+                    $privacy = 1;
+                }
 
                 //Если youtube то добавляем префикс src=" и составляем ответ для скрипта, для вставки в БД
                 if (preg_match("/src=\"https:\/\/www.youtube.com|src=\"https:\/\/youtube.com/i", 'src="' . $good_video_lnk)) {
@@ -68,7 +69,7 @@ if (Registry::get('logged')) {
                 $allowed_files = array('jpg', 'jpeg', 'jpe', 'png', 'gif');
 
                 //Загружаем картинку на сайт
-                if (in_array(strtolower($img_format), $allowed_files) and preg_match("/https:\/\//i", $photo) and $result_video_lnk) {
+                if (in_array(strtolower($img_format), $allowed_files) && preg_match("/https:\/\//i", $photo) && $result_video_lnk) {
 
                     //Директория загрузки фото
                     $upload_dir = ROOT_DIR . '/uploads/videos/' . $user_id;
@@ -97,7 +98,7 @@ if (Registry::get('logged')) {
                     $tmb->save($upload_dir . '/' . $image_name . '.' . $img_format);
                 }
 
-                if ($result_video_lnk and $title) {
+                if ($result_video_lnk && $title) {
                     $photo = $config['home_url'] . 'uploads/videos/' . $user_id . '/' . $image_name . '.' . $img_format;
                     $db->query("INSERT INTO `videos` SET owner_user_id = '{$user_id}', video = '{$result_video_lnk}', photo = '{$photo}', title = '{$title}', descr = '{$descr}', add_date = NOW(), privacy = '{$privacy}'");
                     $dbid = $db->insert_id();
@@ -109,19 +110,22 @@ if (Registry::get('logged')) {
                     //Добавляем действия в ленту новостей
                     $generateLastTime = $server_time - 10800;
                     $row = $db->super_query("SELECT ac_id, action_text FROM `news` WHERE action_time > '{$generateLastTime}' AND action_type = 2 AND ac_user_id = '{$user_id}'");
-                    if ($row)
+                    if ($row) {
                         $db->query("UPDATE `news` SET action_text = '{$dbid}|{$photo}||{$row['action_text']}', action_time = '{$server_time}' WHERE ac_id = '{$row['ac_id']}'");
-                    else
+                    } else {
                         $db->query("INSERT INTO `news` SET ac_user_id = '{$user_id}', action_type = 2, action_text = '{$dbid}|{$photo}', action_time = '{$server_time}'");
+                    }
 
                     //Чистим кеш
                     mozg_mass_clear_cache_file("user_{$user_id}/page_videos_user|user_{$user_id}/page_videos_user_friends|user_{$user_id}/page_videos_user_all|user_{$user_id}/profile_{$user_id}|user_{$user_id}/videos_num_all|user_{$user_id}/videos_num_friends");
 
-                    if (intFilter('notes') == 1)
+                    if (intFilter('notes') == 1) {
                         echo "{$photo}|{$user_id}|{$dbid}";
+                    }
                 }
-            } else
+            } else {
                 echo 'error';
+            }
 
             break;
 
@@ -203,13 +207,15 @@ if (Registry::get('logged')) {
                     $result_title = trim(strip_tags(strtr($res_title, array('&#39;' => "'", '&quot;' => '"', '&iqu;' => '[', '&iqu2;' => ']'))));
                     $result_descr = trim(strip_tags($res_descr));
 
-                    if ($result_img && $result_title)
+                    if ($result_img && $result_title) {
                         echo "{$result_img}:|:{$result_title}:|:{$result_descr}";
-                    else
+                    } else {
                         echo 'no_serviece';
+                    }
                 }
-            } else
+            } else {
                 echo 'no_serviece';
+            }
 
             break;
 
@@ -265,19 +271,19 @@ if (Registry::get('logged')) {
                 $title = requestFilter('title', 25000, true);
                 $descr = requestFilter('descr', 3000);
                 $privacy = intFilter('privacy');
-                if ($privacy <= 0 or $privacy > 3) $privacy = 1;
+                if ($privacy <= 0 || $privacy > 3) {
+                    $privacy = 1;
+                }
 
                 //Проверка на существования записи
                 $row = $db->super_query("SELECT owner_user_id, public_id FROM `videos` WHERE id = '{$vid}'");
-                if ($row['owner_user_id'] == $user_id and !$row['public_id']) {
+                if ($row['owner_user_id'] == $user_id && !$row['public_id']) {
                     $db->query("UPDATE `videos` SET title = '{$title}', descr = '{$descr}', privacy = '{$privacy}' WHERe id = '{$vid}'");
                     echo stripslashes($descr);
-
                     //Чистим кеш
                     mozg_mass_clear_cache_file("user_{$row['owner_user_id']}/page_videos_user|user_{$row['owner_user_id']}/page_videos_user_friends|user_{$row['owner_user_id']}/page_videos_user_all|user_{$row['owner_user_id']}/videos_num_all|user_{$row['owner_user_id']}/videos_num_friends|wall/video{$vid}");
                 }
             }
-
             break;
 
         //################### Просмотр видео ###################//
@@ -295,9 +301,9 @@ if (Registry::get('logged')) {
 
             if ($row) {
                 //Проверка есть ли запрашиваемый юзер в друзьях у юзера который смотрит стр
-                if ($user_id != $get_user_id)
+                if ($user_id !== $get_user_id) {
                     $check_friend = CheckFriends($row['owner_user_id']);
-                else {
+                } else {
                     $check_friend = null;
                 }
 
@@ -305,38 +311,35 @@ if (Registry::get('logged')) {
                 $CheckBlackList = CheckBlackList($row['owner_user_id']);
 
                 //Приватность
-                if (!$CheckBlackList and $row['privacy'] == 1 or $row['privacy'] == 2 and $check_friend or $user_info['user_id'] == $row['owner_user_id'])
+                if ((!$CheckBlackList && $row['privacy'] == 1 && $row['privacy'] == 2 && $check_friend) || $user_info['user_id'] == $row['owner_user_id']) {
                     $privacy = true;
-                else
+                } else {
                     $privacy = false;
+                }
 
                 if ($privacy) {
                     $config = settings_get();
                     //Выводим комментарии если они есть
-                    if ($row['comm_num'] and $config['video_mod_comm'] == 'yes') {
-
+                    if ($row['comm_num'] && $config['video_mod_comm'] == 'yes') {
                         if ($row['public_id']) {
-
                             $infoGroup = $db->super_query("SELECT admin FROM `communities` WHERE id = '{$row['public_id']}'");
-
-                            if (str_contains($infoGroup['admin'], "u{$user_id}|")) $public_admin = true;
-                            else $public_admin = false;
-
+                            if (str_contains($infoGroup['admin'], "u{$user_id}|")) {
+                                $public_admin = true;
+                            } else {
+                                $public_admin = false;
+                            }
                         } else {
                             $public_admin = false;
                         }
-
-                        if ($row['comm_num'] > 3)
+                        if ($row['comm_num'] > 3) {
                             $limit_comm = $row['comm_num'] - 3;
-                        else
+                        } else {
                             $limit_comm = 0;
-
+                        }
                         $sql_comm = $db->super_query("SELECT tb1.id, author_user_id, text, add_date, tb2.user_search_pref, user_photo, user_last_visit, user_logged_mobile FROM `videos_comments` tb1, `users` tb2 WHERE tb1.video_id = '{$vid}' AND tb1.author_user_id = tb2.user_id ORDER by `add_date` ASC LIMIT {$limit_comm}, {$row['comm_num']}", true);
                         $tpl->load_template('videos/comment.tpl');
                         foreach ($sql_comm as $row_comm) {
-
                             OnlineTpl($row_comm['user_last_visit'], $row_comm['user_logged_mobile']);
-
                             $tpl->set('{uid}', $row_comm['author_user_id']);
                             $tpl->set('{author}', $row_comm['user_search_pref']);
                             $tpl->set('{comment}', stripslashes($row_comm['text']));
@@ -346,13 +349,14 @@ if (Registry::get('logged')) {
                             if ($row_comm['author_user_id'] == $user_id || $row['owner_user_id'] == $user_id || $public_admin) {
                                 $tpl->set('[owner]', '');
                                 $tpl->set('[/owner]', '');
-                            } else
+                            } else {
                                 $tpl->set_block("'\\[owner\\](.*?)\\[/owner\\]'si", "");
-
-                            if ($row_comm['user_photo'])
+                            }
+                            if ($row_comm['user_photo']) {
                                 $tpl->set('{ava}', $config['home_url'] . 'uploads/users/' . $row_comm['author_user_id'] . '/50_' . $row_comm['user_photo']);
-                            else
+                            } else {
                                 $tpl->set('{ava}', '{theme}/images/no_ava_50.png');
+                            }
                             $tpl->compile('comments');
                         }
                     }
@@ -360,10 +364,11 @@ if (Registry::get('logged')) {
                     $tpl->load_template('videos/full.tpl');
                     $tpl->set('{vid}', $vid);
                     $tpl->set('{video}', $row['video']);
-                    if ($row['views'])
-                        $tpl->set('{views}', $row['views'] . ' ' . gram_record($row['views'], 'video_views') . '<br /><br />');
-                    else
+                    if ($row['views']) {
+                        $tpl->set('{views}', $row['views'] . ' ' . declWord($row['views'], 'video_views') . '<br /><br />');
+                    } else {
                         $tpl->set('{views}', '');
+                    }
                     $tpl->set('{title}', stripslashes($row['title']));
                     $tpl->set('{descr}', stripslashes($row['descr']));
                     $tpl->set('{author}', $row['user_search_pref']);
@@ -383,43 +388,39 @@ if (Registry::get('logged')) {
                         $tpl->set('[not-owner]', '');
                         $tpl->set('[/not-owner]', '');
                     }
-
                     if ($row['public_id']) {
-
                         $tpl->set_block("'\\[public\\](.*?)\\[/public\\]'si", "");
-
                     } else {
-
                         $tpl->set('[public]', '');
                         $tpl->set('[/public]', '');
-
                     }
-
-                    if ($config['video_mod_add_my'] == 'no')
+                    if ($config['video_mod_add_my'] == 'no') {
                         $tpl->set_block("'\\[not-owner\\](.*?)\\[/not-owner\\]'si", "");
-
-                    $tpl->set('{prev-text-comm}', gram_record(($row['comm_num'] - 3), 'prev') . ' ' . ($row['comm_num'] - 3) . ' ' . gram_record(($row['comm_num'] - 3), 'comments'));
-                    if ($row['comm_num'] < 4)
+                    }
+                    $tpl->set('{prev-text-comm}', declWord(($row['comm_num'] - 3), 'prev') . ' ' . ($row['comm_num'] - 3) . ' ' . declWord(($row['comm_num'] - 3), 'comments'));
+                    if ($row['comm_num'] < 4) {
                         $tpl->set_block("'\\[all-comm\\](.*?)\\[/all-comm\\]'si", "");
-                    else {
+                    } else {
                         $tpl->set('[all-comm]', '');
                         $tpl->set('[/all-comm]', '');
                     }
-
                     if ($config['video_mod_comm'] == 'yes') {
                         $tpl->set('[admin-comments]', '');
                         $tpl->set('[/admin-comments]', '');
-                    } else
+                    } else {
                         $tpl->set_block("'\\[admin-comments\\](.*?)\\[/admin-comments\\]'si", "");
+                    }
 
                     $tpl->compile('content');
                     AjaxTpl($tpl);
 
                     $db->query("UPDATE LOW_PRIORITY `videos` SET views = views+1 WHERE id = '" . $vid . "'");
-                } else
+                } else {
                     echo 'err_privacy';
-            } else
+                }
+            } else {
                 echo 'no_video';
+            }
 
             break;
 
@@ -437,7 +438,7 @@ if (Registry::get('logged')) {
                 //ЧС
                 $CheckBlackList = CheckBlackList($check_video['owner_user_id']);
                 if (!$CheckBlackList) {
-                    if ($check_video and isset($comment) and !empty($comment)) {
+                    if ($check_video && empty($comment)) {
                         $db->query("INSERT INTO `videos_comments` SET author_user_id = '{$user_id}', video_id = '{$vid}', text = '{$comment}', add_date = NOW()");
                         $id = $db->insert_id();
                         $db->query("UPDATE `videos` SET comm_num = comm_num+1 WHERE id = '{$vid}'");
@@ -451,14 +452,13 @@ if (Registry::get('logged')) {
                         $tpl->set('[/owner]', '');
                         $tpl->set('{id}', $id);
                         $tpl->set('{date}', langdate('сегодня в H:i', time()));
-                        if ($user_info['user_photo'])
+                        if ($user_info['user_photo']) {
                             $tpl->set('{ava}', $config['home_url'] . 'uploads/users/' . $user_id . '/50_' . $user_info['user_photo']);
-                        else
+                        } else {
                             $tpl->set('{ava}', '{theme}/images/no_ava_50.png');
+                        }
                         $tpl->compile('content');
-
                         if (!$check_video['public_id']) {
-
                             //Добавляем действие в ленту новостей "ответы" владельцу фотографии
                             if ($user_id != $check_video['owner_user_id']) {
                                 $check_video['photo'] = str_replace($config['home_url'], '/', $check_video['photo']);
@@ -470,25 +470,19 @@ if (Registry::get('logged')) {
                                 $update_time = $server_time - 70;
 
                                 if ($row_userOW['user_last_visit'] >= $update_time) {
-
                                     $db->query("INSERT INTO `updates` SET for_user_id = '{$check_video['owner_user_id']}', from_user_id = '{$user_id}', type = '3', date = '{$server_time}', text = '{$comment}', user_photo = '{$user_info['user_photo']}', user_search_pref = '{$user_info['user_search_pref']}', lnk = '/video{$check_video['owner_user_id']}_{$vid}'");
-
                                     mozg_create_cache("user_{$check_video['owner_user_id']}/updates", 1);
-
                                     //ИНАЧЕ Добавляем +1 юзеру для оповещения
                                 } else {
-
                                     $cntCacheNews = mozg_cache('user_' . $check_video['owner_user_id'] . '/new_news');
                                     mozg_create_cache('user_' . $check_video['owner_user_id'] . '/new_news', ($cntCacheNews + 1));
-
                                 }
 
                                 //Отправка уведомления на E-mail
                                 if ($config['news_mail_3'] == 'yes') {
                                     $rowUserEmail = $db->super_query("SELECT user_name, user_email FROM `users` WHERE user_id = '" . $check_video['owner_user_id'] . "'");
                                     if ($rowUserEmail['user_email']) {
-                                        include_once ENGINE_DIR . '/classes/mail.php';
-                                        $mail = new vii_mail($config);
+                                        $mail = new \FluffyDollop\Support\ViiMail($config);
                                         $rowMyInfo = $db->super_query("SELECT user_search_pref FROM `users` WHERE user_id = '" . $user_id . "'");
                                         $rowEmailTpl = $db->super_query("SELECT text FROM `mail_tpl` WHERE id = '3'");
                                         $rowEmailTpl['text'] = str_replace('{%user%}', $rowUserEmail['user_name'], $rowEmailTpl['text']);
@@ -498,20 +492,17 @@ if (Registry::get('logged')) {
                                     }
                                 }
                             }
-
                             //Чистим кеш
                             mozg_mass_clear_cache_file("user_{$check_video['owner_user_id']}/page_videos_user|user_{$check_video['owner_user_id']}/page_videos_user_friends|user_{$check_video['owner_user_id']}/page_videos_user_all");
-
-                        } else
+                        } else {
                             mozg_clear_cache_file("groups/video{$check_video['public_id']}");
-
+                        }
                         AjaxTpl($tpl);
-
                     }
                 }
-            } else
+            } else {
                 echo 'error';
-
+            }
             break;
 
         //################### Удаления комментария ###################//
@@ -519,42 +510,29 @@ if (Registry::get('logged')) {
 
             NoAjaxQuery();
             $comm_id = intFilter('comm_id');
-
             //Проверка на существования комментария, и выводим ИД владельца видео
             $row = $db->super_query("SELECT tb1.video_id, author_user_id, tb2.owner_user_id, public_id FROM `videos_comments` tb1, `videos` tb2 WHERE tb1.id = '{$comm_id}' AND tb1.video_id = tb2.id");
-
             if ($row['public_id']) {
-
                 $infoGroup = $db->super_query("SELECT admin FROM `communities` WHERE id = '{$row['public_id']}'");
-
-                if (str_contains($infoGroup['admin'], "u{$user_id}|"))
+                if (str_contains($infoGroup['admin'], "u{$user_id}|")) {
                     $public_admin = true;
-                else
+                } else {
                     $public_admin = false;
+                }
 
-                if ($public_admin and $row) {
-
+                if ($public_admin && $row) {
                     $db->query("DELETE FROM `videos_comments` WHERE id = '{$comm_id}'");
                     $db->query("DELETE FROM `news` WHERE obj_id = '{$comm_id}' AND action_type = 9");
                     $db->query("UPDATE `videos` SET comm_num = comm_num-1 WHERE id = '{$row['video_id']}'");
-
                     mozg_clear_cache_file("groups/video{$row['public_id']}");
-
                 }
 
-            } else {
-
-                if ($row['author_user_id'] == $user_id or $row['owner_user_id'] == $user_id) {
-
-                    $db->query("DELETE FROM `videos_comments` WHERE id = '{$comm_id}'");
-                    $db->query("DELETE FROM `news` WHERE obj_id = '{$comm_id}' AND action_type = 9");
-                    $db->query("UPDATE `videos` SET comm_num = comm_num-1 WHERE id = '{$row['video_id']}'");
-
-                    //Чистим кеш
-                    mozg_mass_clear_cache_file("user_{$row['owner_user_id']}/page_videos_user|user_{$row['owner_user_id']}/page_videos_user_friends|user_{$row['owner_user_id']}/page_videos_user_all");
-
-                }
-
+            } else if ($row['author_user_id'] == $user_id || $row['owner_user_id'] == $user_id) {
+                $db->query("DELETE FROM `videos_comments` WHERE id = '{$comm_id}'");
+                $db->query("DELETE FROM `news` WHERE obj_id = '{$comm_id}' AND action_type = 9");
+                $db->query("UPDATE `videos` SET comm_num = comm_num-1 WHERE id = '{$row['video_id']}'");
+                //Чистим кеш
+                mozg_mass_clear_cache_file("user_{$row['owner_user_id']}/page_videos_user|user_{$row['owner_user_id']}/page_videos_user_friends|user_{$row['owner_user_id']}/page_videos_user_all");
             }
 
             break;
@@ -565,31 +543,23 @@ if (Registry::get('logged')) {
             $vid = intFilter('vid');
             $comm_num = intFilter('num');
             $owner_id = intFilter('owner_id');
-
-
             $row = $db->super_query("SELECT public_id FROM `videos` WHERE id = '{$vid}'");
-
             if ($row['public_id']) {
-
                 $infoGroup = $db->super_query("SELECT admin FROM `communities` WHERE id = '{$row['public_id']}'");
-
-                if (str_contains($infoGroup['admin'], "u{$user_id}|"))
+                if (str_contains($infoGroup['admin'], "u{$user_id}|")) {
                     $public_admin = true;
-                else
+                } else {
                     $public_admin = false;
+                }
 
             } else {
                 $public_admin = false;
             }
 
-            if ($comm_num > 3 and $vid and $owner_id) {
-
+            if ($comm_num > 3 && $vid && $owner_id) {
                 $limit_comm = $comm_num - 3;
-
                 $sql_comm = $db->super_query("SELECT tb1.id, author_user_id, text, add_date, tb2.user_search_pref, user_photo, user_last_visit, user_logged_mobile FROM `videos_comments` tb1, `users` tb2 WHERE tb1.video_id = '{$vid}' AND tb1.author_user_id = tb2.user_id ORDER by `add_date` ASC LIMIT 0, {$limit_comm}", true);
-
                 $tpl->load_template('videos/comment.tpl');
-
                 foreach ($sql_comm as $row_comm) {
 
                     $tpl->set('{uid}', $row_comm['author_user_id']);
@@ -599,27 +569,22 @@ if (Registry::get('logged')) {
                     OnlineTpl($row_comm['user_last_visit'], $row_comm['user_logged_mobile']);
                     $date_str = megaDate(strtotime($row_comm['add_date']));
                     $tpl->set('{date}', $date_str);
-                    if ($row_comm['author_user_id'] == $user_id or $owner_id == $user_id or $public_admin) {
-
+                    if ($row_comm['author_user_id'] == $user_id && $owner_id == $user_id && $public_admin) {
                         $tpl->set('[owner]', '');
                         $tpl->set('[/owner]', '');
-
-                    } else
-
+                    } else {
                         $tpl->set_block("'\\[owner\\](.*?)\\[/owner\\]'si", "");
+                    }
                     $config = settings_get();
-                    if ($row_comm['user_photo'])
+                    if ($row_comm['user_photo']) {
                         $tpl->set('{ava}', $config['home_url'] . 'uploads/users/' . $row_comm['author_user_id'] . '/50_' . $row_comm['user_photo']);
-                    else
+                    } else {
                         $tpl->set('{ava}', '{theme}/images/no_ava_50.png');
+                    }
                     $tpl->compile('content');
-
                 }
-
             }
-
             AjaxTpl($tpl);
-
             break;
 
         //################### Страница всех видео юзера, для прикрепления видео кому-то на стену ###################//
@@ -639,22 +604,24 @@ if (Registry::get('logged')) {
             $count = $db->super_query("SELECT user_videos_num FROM `users` WHERE user_id = '{$user_id}'");
 
             if ($count['user_videos_num']) {
-                if ($notes)
+                if ($notes) {
                     $tpl->load_template('videos/box_all_video_notes_top.tpl');
-                else
+                } else {
                     $tpl->load_template('videos/box_all_video_top.tpl');
+                }
 
                 $tpl->set('[top]', '');
                 $tpl->set('[/top]', '');
-                $tpl->set('{photo-num}', $count['user_videos_num'] . ' ' . gram_record($count['user_videos_num'], 'videos'));
+                $tpl->set('{photo-num}', $count['user_videos_num'] . ' ' . declWord($count['user_videos_num'], 'videos'));
                 $tpl->set_block("'\\[bottom\\](.*?)\\[/bottom\\]'si", "");
                 $tpl->compile('content');
 
                 //Выводим циклом видео
-                if (!$notes)
+                if (!$notes) {
                     $tpl->load_template('videos/box_all_video.tpl');
-                else
+                } else {
                     $tpl->load_template('videos/box_all_video_notes.tpl');
+                }
 
                 foreach ($sql_ as $row) {
                     $tpl->set('{photo}', $row['photo']);
@@ -671,98 +638,82 @@ if (Registry::get('logged')) {
                 $tpl->set_block("'\\[top\\](.*?)\\[/top\\]'si", "");
                 $tpl->compile('content');
             } else
-                if ($notes)
+                if ($notes) {
                     echo $lang['videos_box_none'] . '<div class="button_div_gray fl_l" style="margin-left:210px;margin-top:20px"><button onClick="videos.add(1)">Добавить новый видеоролик</button></div>';
-                else
+                } else {
                     echo $lang['videos_box_none'];
-
+                }
             AjaxTpl($tpl);
-
             break;
 
         //################### Страница всех видео юзера, для прикрепления видео в сообщество ###################//
         case "all_videos_public":
-
             NoAjaxQuery();
-
             $pid = intFilter('pid');
-
             //Для навигатор
             $page = intFilter('page', 1);
             $gcount = 24;
             $limit_page = ($page - 1) * $gcount;
-
             //Делаем SQL запрос на вывод
             $sql_ = $db->super_query("SELECT id, photo, title FROM `videos` WHERE public_id = '{$pid}' ORDER by `add_date` DESC LIMIT {$limit_page}, {$gcount}", true);
-
             //Выводим кол-во видео
             $count = $db->super_query("SELECT videos_num FROM `communities` WHERE id = '{$pid}'");
-
             if ($count['videos_num']) {
-
                 $tpl->load_template('videos/box_all_video_top.tpl');
-
                 $tpl->set('[top]', '');
                 $tpl->set('[/top]', '');
-                $tpl->set('{photo-num}', $count['videos_num'] . ' ' . gram_record($count['videos_num'], 'videos'));
+                $tpl->set('{photo-num}', $count['videos_num'] . ' ' . declWord($count['videos_num'], 'videos'));
                 $tpl->set_block("'\\[bottom\\](.*?)\\[/bottom\\]'si", "");
                 $tpl->compile('content');
-
                 //Выводим циклом видео
                 $tpl->load_template('videos/box_all_video.tpl');
-
                 foreach ($sql_ as $row) {
-
                     $tpl->set('{photo}', $row['photo']);
                     $tpl->set('{title}', stripslashes($row['title']));
                     $tpl->set('{video-id}', $row['id']);
                     $tpl->set('{user-id}', $user_id);
                     $tpl->compile('content');
-
                 }
-
                 box_navigation($gcount, $count['videos_num'], $page, 'wall.attach_addvideo_public', $pid);
-
                 $tpl->load_template('albums_editcover.tpl');
                 $tpl->set('[bottom]', '');
                 $tpl->set('[/bottom]', '');
                 $tpl->set_block("'\\[top\\](.*?)\\[/top\\]'si", "");
                 $tpl->compile('content');
-
-            } else
-
+            } else {
                 echo '<div class="info_center" style="padding-top:170px">Нет ни одной видеозаписи.</div>';
-
+            }
             AjaxTpl($tpl);
-
             break;
 
         //################### Бесконечная подгрузка видео из БД ###################//
         case "page":
             NoAjaxQuery();
-
             $get_user_id = intFilter('get_user_id');
             $last_id = intFilter('last_id');
-            if (!$get_user_id)
+            if (!$get_user_id) {
                 $get_user_id = $user_id;
+            }
 
             //ЧС
             $CheckBlackList = CheckBlackList($get_user_id);
             if (!$CheckBlackList) {
                 if ($last_id) {
-                    if ($user_id != $get_user_id)
-                        //Проверка есть ли запрашиваемый юзер в друзьях у юзера который смотрит стр
+                    //Проверка есть ли запрашиваемый юзер в друзьях у юзера который смотрит стр
+                    if ($user_id != $get_user_id) {
                         $check_friend = CheckFriends($get_user_id);
+                    }
 
                     $check_friend = $check_friend ?? null;
 
                     //Настройки приватности
-                    if ($user_id == $get_user_id)
+                    if ($user_id == $get_user_id) {
                         $sql_privacy = "";
-                    elseif ($check_friend)
+                    } elseif ($check_friend) {
                         $sql_privacy = "AND privacy regexp '[[:<:]](1|2)[[:>:]]'";
-                    else
+                    } else {
                         $sql_privacy = "AND privacy = 1";
+                    }
 
                     //SQL Запрос
                     $sql_ = $db->super_query("SELECT id, title, photo, comm_num, add_date, SUBSTRING(descr, 1, 180) AS descr FROM `videos` WHERE owner_user_id = '{$get_user_id}' AND id < '{$last_id}' {$sql_privacy} AND public_id = '0' ORDER by `add_date` DESC LIMIT 0, {$limit_vieos}", true);
@@ -775,18 +726,20 @@ if (Registry::get('logged')) {
                             $tpl->set('{title}', stripslashes($row['title']));
                             $tpl->set('{id}', $row['id']);
                             $tpl->set('{user-id}', $get_user_id);
-                            if ($row['descr'])
+                            if ($row['descr']) {
                                 $tpl->set('{descr}', stripslashes($row['descr']) . '...');
-                            else
+                            } else {
                                 $tpl->set('{descr}', '');
-                            $tpl->set('{comm}', $row['comm_num'] . ' ' . gram_record($row['comm_num'], 'comments'));
+                            }
+                            $tpl->set('{comm}', $row['comm_num'] . ' ' . declWord($row['comm_num'], 'comments'));
                             $date_str = megaDate(strtotime($row['add_date']));
                             $tpl->set('{date}', $date_str);
                             if ($get_user_id == $user_id) {
                                 $tpl->set('[owner]', '');
                                 $tpl->set('[/owner]', '');
-                            } else
+                            } else {
                                 $tpl->set_block("'\\[owner\\](.*?)\\[/owner\\]'si", "");
+                            }
                             $tpl->compile('content');
                         }
                     }
@@ -802,7 +755,7 @@ if (Registry::get('logged')) {
             $vid = intFilter('vid');
             $row = $db->super_query("SELECT video, photo, title, descr FROM `videos` WHERE id = '{$vid}'");
             $config = settings_get();
-            if ($row and $config['video_mod_add_my'] == 'yes') {
+            if ($row && $config['video_mod_add_my'] == 'yes') {
                 //Директория загрузки фото
                 $upload_dir = ROOT_DIR . '/uploads/videos/' . $user_id;
 
@@ -826,8 +779,9 @@ if (Registry::get('logged')) {
 
             //################### Вывод всех видео ###################//
             $get_user_id = intFilter('get_user_id');
-            if (!$get_user_id)
+            if (!$get_user_id) {
                 $get_user_id = $user_id;
+            }
 
             //ЧС
             $CheckBlackList = CheckBlackList($get_user_id);
@@ -838,12 +792,12 @@ if (Registry::get('logged')) {
                 if ($owner) {
                     $name_info = explode(' ', $owner['user_search_pref']);
                     $metatags['title'] = $lang['videos'] . ' ' . gramatikName($name_info[0]) . ' ' . gramatikName($name_info[1]);
-
-                    if ($user_id != $get_user_id)
-                        //Проверка естьли запрашиваемый юзер в друзьях у юзера который смотрит стр
+//Проверка естьли запрашиваемый юзер в друзьях у юзера который смотрит стр
+                    if ($user_id != $get_user_id) {
                         $check_friend = CheckFriends($get_user_id);
-                    else
+                    } else {
                         $check_friend = null;
+                    }
 
                     //Настройки приватности
                     if ($user_id == $get_user_id) {
@@ -863,11 +817,11 @@ if (Registry::get('logged')) {
                         $owner['user_videos_num'] = $video_cnt['cnt'];
                     }
 
-                    if ($get_user_id == $user_id)
-                        $user_speedbar = 'У Вас <span id="nums">' . ($owner['user_videos_num'] ? $owner['user_videos_num'] : false) . '</span> ' . gram_record($owner['user_videos_num'], 'videos');
-                    else
-                        $user_speedbar = 'У ' . gramatikName($name_info[0]) . ' ' . ($owner['user_videos_num'] ? $owner['user_videos_num'] : false) . ' ' . gram_record($owner['user_videos_num'], 'videos');
-
+                    if ($get_user_id == $user_id) {
+                        $user_speedbar = 'У Вас <span id="nums">' . ($owner['user_videos_num'] ? $owner['user_videos_num'] : false) . '</span> ' . declWord($owner['user_videos_num'], 'videos');
+                    } else {
+                        $user_speedbar = 'У ' . gramatikName($name_info[0]) . ' ' . ($owner['user_videos_num'] ? $owner['user_videos_num'] : false) . ' ' . declWord($owner['user_videos_num'], 'videos');
+                    }
                     if ($owner['user_videos_num']) {
 
                         //SQL Запрос
@@ -891,8 +845,9 @@ if (Registry::get('logged')) {
                         if ($config['video_mod_add'] == 'yes') {
                             $tpl->set('[admin-video-add]', '');
                             $tpl->set('[/admin-video-add]', '');
-                        } else
+                        } else {
                             $tpl->set_block("'\\[admin-video-add\\](.*?)\\[/admin-video-add\\]'si", "");
+                        }
 
                         $tpl->compile('info');
 
@@ -904,33 +859,37 @@ if (Registry::get('logged')) {
                                 $tpl->set('{title}', stripslashes($row['title']));
                                 $tpl->set('{user-id}', $get_user_id);
                                 $tpl->set('{id}', $row['id']);
-                                if ($row['descr'])
+                                if ($row['descr']) {
                                     $tpl->set('{descr}', stripslashes($row['descr']) . '...');
-                                else
+                                } else {
                                     $tpl->set('{descr}', '');
-                                $tpl->set('{comm}', $row['comm_num'] . ' ' . gram_record($row['comm_num'], 'comments'));
+                                }
+                                $tpl->set('{comm}', $row['comm_num'] . ' ' . declWord($row['comm_num'], 'comments'));
                                 $date_str = megaDate(strtotime($row['add_date']));
                                 $tpl->set('{date}', $date_str);
                                 if ($get_user_id == $user_id) {
                                     $tpl->set('[owner]', '');
                                     $tpl->set('[/owner]', '');
-                                } else
+                                } else {
                                     $tpl->set_block("'\\[owner\\](.*?)\\[/owner\\]'si", "");
+                                }
                                 $tpl->compile('content');
                             }
                             $tpl->result['content'] .= '</span>';
 
-                        } else
+                        } else {
                             msgbox('', $lang['videos_nones_videos_user'], 'info_2');
+                        }
                     } else {
-                        if ($get_user_id == $user_id)
+                        if ($get_user_id == $user_id) {
                             msgbox('', $lang['videos_nones_videos_user'], 'info_2');
-                        else
+                        } else {
                             msgbox('', $owner['user_search_pref'] . ' ' . $lang['videos_none'], 'info_2');
+                        }
                     }
-                } else
+                } else {
                     Hacking();
-
+                }
                 compile($tpl);
             } else {
                 $user_speedbar = $lang['error'];

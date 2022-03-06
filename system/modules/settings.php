@@ -1,6 +1,6 @@
 <?php
 /*
- *   (c) Semen Alekseev
+ * Copyright (c) 2022 Tephida
  *
  *  For the full copyright and license information, please view the LICENSE
  *   file that was distributed with this source code.
@@ -8,6 +8,7 @@
  */
 
 use FluffyDollop\Support\Registry;
+use Mozg\classes\TpLSite;
 
 NoAjaxQuery();
 
@@ -32,9 +33,14 @@ if (Registry::get('logged')) {
             //Выводим текущий пароль
             $row = $db->super_query("SELECT user_password FROM `users` WHERE user_id = '{$user_id}'");
             if ($row['user_password'] == $old_pass) {
-                if ($new_pass == $new_pass2) $db->query("UPDATE `users` SET user_password = '{$new_pass2}' WHERE user_id = '{$user_id}'");
-                else echo '2';
-            } else echo '1';
+                if ($new_pass == $new_pass2) {
+                    $db->query("UPDATE `users` SET user_password = '{$new_pass2}' WHERE user_id = '{$user_id}'");
+                } else {
+                    echo '2';
+                }
+            } else {
+                echo '1';
+            }
 
             break;
 
@@ -46,15 +52,27 @@ if (Registry::get('logged')) {
             //Проверка имени
             if (isset($user_name)) {
                 if (strlen($user_name) >= 2) {
-                    if (!preg_match("/^[a-zA-Zа-яА-Я]+$/iu", $user_name)) $errors = 3;
-                } else $errors = 2;
-            } else $errors = 1;
+                    if (!preg_match("/^[a-zA-Zа-яА-Я]+$/iu", $user_name)) {
+                        $errors = 3;
+                    }
+                } else {
+                    $errors = 2;
+                }
+            } else {
+                $errors = 1;
+            }
             //Проверка фамилии
             if (!empty($user_lastname)) {
                 if (strlen($user_lastname) >= 2) {
-                    if (!preg_match("/^[a-zA-Zа-яА-Я]+$/iu", $user_lastname)) $errors_lastname = 3;
-                } else $errors_lastname = 2;
-            } else $errors_lastname = 1;
+                    if (!preg_match("/^[a-zA-Zа-яА-Я]+$/iu", $user_lastname)) {
+                        $errors_lastname = 3;
+                    }
+                } else {
+                    $errors_lastname = 2;
+                }
+            } else {
+                $errors_lastname = 1;
+            }
 
             if (!isset($errors)) {
                 if (!isset($errors_lastname)) {
@@ -64,7 +82,9 @@ if (Registry::get('logged')) {
                     mozg_clear_cache_file('user_' . $user_id . '/profile_' . $user_id);
                     mozg_clear_cache();
                 }
-            } else echo $errors;
+            } else {
+                echo $errors;
+            }
 
             break;
 
@@ -76,11 +96,11 @@ if (Registry::get('logged')) {
             $val_wall2 = intFilter('val_wall2');
             $val_wall3 = intFilter('val_wall3');
             $val_info = intFilter('val_info');
-            if ($val_msg <= 0 or $val_msg > 3) $val_msg = 1;
-            if ($val_wall1 <= 0 or $val_wall1 > 3) $val_wall1 = 1;
-            if ($val_wall2 <= 0 or $val_wall2 > 3) $val_wall2 = 1;
-            if ($val_wall3 <= 0 or $val_wall3 > 3) $val_wall3 = 1;
-            if ($val_info <= 0 or $val_info > 3) $val_info = 1;
+            if ($val_msg <= 0 || $val_msg > 3) $val_msg = 1;
+            if ($val_wall1 <= 0 || $val_wall1 > 3) $val_wall1 = 1;
+            if ($val_wall2 <= 0 || $val_wall2 > 3) $val_wall2 = 1;
+            if ($val_wall3 <= 0 || $val_wall3 > 3) $val_wall3 = 1;
+            if ($val_info <= 0 || $val_info > 3) $val_info = 1;
             $user_privacy = "val_msg|{$val_msg}||val_wall1|{$val_wall1}||val_wall2|{$val_wall2}||val_wall3|{$val_wall3}||val_info|{$val_info}||";
             $db->query("UPDATE `users` SET user_privacy = '{$user_privacy}' WHERE user_id = '{$user_id}'");
             mozg_clear_cache_file('user_' . $user_id . '/profile_' . $user_id);
@@ -91,6 +111,12 @@ if (Registry::get('logged')) {
         case "privacy":
             $sql_ = $db->super_query("SELECT user_privacy FROM `users` WHERE user_id = '{$user_id}'");
             $row = xfieldsdataload($sql_['user_privacy']);
+
+            $meta_tags['title'] = 'Приватность настройки';
+            $config = settings_get();
+            $tpl_dir_name = ROOT_DIR . '/templates/' . $config['temp'];
+            $tpl = new TpLSite($tpl_dir_name, $meta_tags);
+
             $tpl->load_template('settings/privacy.tpl');
             $tpl->set('{val_msg}', $row['val_msg']);
             $tpl->set('{val_msg_text}', strtr($row['val_msg'], array('1' => 'Все пользователи', '2' => 'Только друзья', '3' => 'Никто')));
@@ -104,7 +130,7 @@ if (Registry::get('logged')) {
             $tpl->set('{val_info_text}', strtr($row['val_info'], array('1' => 'Все пользователи', '2' => 'Только друзья', '3' => 'Только я')));
             $tpl->compile('info');
 
-            compile($tpl);
+            $tpl->render();
             break;
 
         /** Добавление в черный список */
@@ -163,9 +189,14 @@ if (Registry::get('logged')) {
 
         /** Черный список */
         case "blacklist":
+            $meta_tags['title'] = 'Черный список';
+            $config = settings_get();
+            $tpl_dir_name = ROOT_DIR . '/templates/' . $config['temp'];
+            $tpl = new TpLSite($tpl_dir_name, $meta_tags);
+
             $row = $db->super_query("SELECT user_blacklist, user_blacklist_num FROM `users` WHERE user_id = '{$user_id}'");
             $tpl->load_template('settings/blacklist.tpl');
-            $tpl->set('{cnt}', '<span id="badlistnum">' . $row['user_blacklist_num'] . '</span> ' . gram_record($row['user_blacklist_num'], 'fave'));
+            $tpl->set('{cnt}', '<span id="badlistnum">' . $row['user_blacklist_num'] . '</span> ' . declWord($row['user_blacklist_num'], 'fave'));
             if ($row['user_blacklist_num']) {
                 $tpl->set('[yes-users]', '');
                 $tpl->set('[/yes-users]', '');
@@ -186,7 +217,7 @@ if (Registry::get('logged')) {
                 }
             } else msgbox('', $lang['settings_nobaduser'], 'info_2');
 
-            compile($tpl);
+            $tpl->render();
             break;
 
         /** Смена e-mail */
@@ -194,7 +225,7 @@ if (Registry::get('logged')) {
             //Отправляем письмо на обе почты
             include_once ENGINE_DIR . '/classes/mail.php';
             $config = settings_get();
-            $mail = new vii_mail($config);
+            $mail = new \FluffyDollop\Support\ViiMail($config);
             $email = requestFilter('email', 25000, true);
             //Проверка E-mail
             if (filter_var($email, FILTER_VALIDATE_EMAIL))
@@ -209,9 +240,9 @@ if (Registry::get('logged')) {
                 $salt = "abchefghjkmnpqrstuvwxyz0123456789";
                 $rand_lost = '';
                 for ($i = 0; $i < 15; $i++) {
-                    $rand_lost .= $salt[rand(0, 33)];
+                    $rand_lost .= $salt[random_int(0, 33)];
                 }
-                $hash = md5($server_time . $row['user_email'] . rand(0, 100000) . $rand_lost);
+                $hash = md5($server_time . $row['user_email'] . random_int(0, 100000) . $rand_lost);
                 $message = <<<HTML
 Вы получили это письмо, так как зарегистрированы на сайте
 {$config['home_url']} и хотите изменить основной почтовый адрес.
@@ -232,9 +263,9 @@ HTML;
                 $db->query("INSERT INTO `restore` SET email = '{$email}', hash = '{$hash}', ip = '{$_IP}'");
                 $salt = "abchefghjkmnpqrstuvwxyz0123456789";
                 for ($i = 0; $i < 15; $i++) {
-                    $rand_lost .= $salt[rand(0, 33)];
+                    $rand_lost .= $salt[random_int(0, 33)];
                 }
-                $hash = md5($server_time . $row['user_email'] . rand(0, 300000) . $rand_lost);
+                $hash = md5($server_time . $row['user_email'] . random_int(0, 300000) . $rand_lost);
                 $message = <<<HTML
 Вы получили это письмо, так как зарегистрированы на сайте
 {$config['home_url']} и хотите изменить основной почтовый адрес.
@@ -253,8 +284,9 @@ HTML;
                 $mail->send($email, 'Изменение почтового адреса', $message);
                 //Вставляем в БД код 2
                 $db->query("INSERT INTO `restore` SET email = '{$email}', hash = '{$hash}', ip = '{$_IP}'");
-            } else
+            } else {
                 echo '1';
+            }
 
             break;
 
@@ -262,6 +294,11 @@ HTML;
 
         default:
             $mobile_speedbar = 'Общие настройки';
+            $meta_tags['title'] = 'Общие настройки';
+            $config = settings_get();
+            $tpl_dir_name = ROOT_DIR . '/templates/' . $config['temp'];
+            $tpl = new TpLSite($tpl_dir_name, $meta_tags);
+
             $row = $db->super_query("SELECT user_name, user_lastname, user_email FROM `users` WHERE user_id = '{$user_id}'");
             //Загружаем вверх
             $tpl->load_template('settings/general.tpl');
@@ -294,8 +331,9 @@ HTML;
                 $check_code2 = $db->super_query("SELECT email FROM `restore` WHERE hash = '{$code2}' AND ip = '{$_IP}'");
                 if ($check_code2['email']) {
                     $check_code1 = $db->super_query("SELECT COUNT(*) AS cnt FROM `restore` WHERE hash != '{$code2}' AND email = '{$check_code2['email']}' AND ip = '{$_IP}'");
-                    if ($check_code1['cnt']) $tpl->set('{code-2}', '');
-                    else {
+                    if ($check_code1['cnt']) {
+                        $tpl->set('{code-2}', '');
+                    } else {
                         $tpl->set('{code-2}', 'no_display');
                         $tpl->set('{code-3}', '');
                         //Меняем
@@ -311,7 +349,7 @@ HTML;
             $tpl->set('{email}', $substre . '*******@' . $epx1[1]);
             $tpl->compile('info');
 
-            compile($tpl);
+            $tpl->render();
     }
 //    $tpl->clear();
 //    $db->free();

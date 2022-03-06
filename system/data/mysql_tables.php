@@ -38,6 +38,7 @@ $table_Chema[] = "CREATE TABLE IF NOT EXISTS `albums` (
   `cover` varchar(25) NOT NULL,
   `position` smallint(6) unsigned NOT NULL,
   `privacy` varchar(3) NOT NULL,
+  `system` int(11) UNSIGNED NOT NULL DEFAULT '0',  
   PRIMARY KEY (`aid`),
   KEY `user_id` (`user_id`),
   KEY `photo_num` (`photo_num`),

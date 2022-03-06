@@ -1,39 +1,40 @@
 <?php
 /*
- *   (c) Semen Alekseev
+ * Copyright (c) 2022 Tephida
  *
  *  For the full copyright and license information, please view the LICENSE
  *   file that was distributed with this source code.
  *
  */
 
-use FluffyDollop\Support\Filesystem;
+use FluffyDollop\Support\{Filesystem, Registry};
+use Mozg\classes\TplCp;
 
 $act = $_GET['act'];
 
 switch ($act) {
 
-    //################### Масовые действия с юзерами ###################//
+    //################### Массовые действия с юзерами ###################//
     case "users":
+        $db = Registry::get('db');
         $massaction_users = $_POST['massaction_users'];
-        $mass_type = $_POST['mass_type'];
-        $ban_date = intval($_POST['ban_date']);
+        $mass_type = intFilter('mass_type');
+        $ban_date = intFilter('ban_date');
         if ($massaction_users) {
-            if ($mass_type <= 19 and $mass_type >= 1) {
+            if ($mass_type <= 19 && $mass_type >= 1) {
                 $inputUlist = '';
                 foreach ($massaction_users as $user_id) {
-                    $user_id = intval($user_id);
+                    $user_id = (int)$user_id;
 
                     if ($user_id == 1) {
-                        if ($mass_type == 1 or $mass_type == 8 or $mass_type == 16 or $mass_type == 17) {
-                            msgbox('Ошибка', 'Данное действие нельзя применить к администратору!', '?mod=users');
+                        if ($mass_type == 1 || $mass_type == 8 || $mass_type == 16 || $mass_type == 17) {
+                            msgbox('Ошибка', 'Данное действие нельзя применить к администратору!', '?mod=users');//fixme
                             exit;
                         }
                     }
-
                     //Удаление пользователей
                     if ($mass_type == 1) {
-                        $uploaddir = ROOT_DIR . '/uploads/users/' . $user_id . '/';
+                        $upload_dir = ROOT_DIR . '/uploads/users/' . $user_id . '/';
                         $row = $db->super_query("SELECT user_photo, user_wall_id FROM `users` WHERE user_id = '" . $user_id . "'");
                         if ($row['user_photo']) {
                             $check_wall_rec = $db->super_query("SELECT COUNT(*) AS cnt FROM `wall` WHERE id = '" . $row['user_wall_id'] . "'");
@@ -41,37 +42,34 @@ switch ($act) {
                                 $update_wall = ", user_wall_num = user_wall_num-1";
                                 $db->query("DELETE FROM `wall` WHERE id = '" . $row['user_wall_id'] . "'");
                                 $db->query("DELETE FROM `news` WHERE obj_id = '" . $row['user_wall_id'] . "'");
+                            } else {
+                                $update_wall = "";
                             }
-
                             $db->query("UPDATE `users` SET user_delet = 1, user_photo = '',  user_active = 1, user_wall_id = '' " . $update_wall . " WHERE user_id = '" . $user_id . "'");
-
-                            Filesystem::delete($uploaddir . $row['user_photo']);
-                            Filesystem::delete($uploaddir . '50_' . $row['user_photo']);
-                            Filesystem::delete($uploaddir . '100_' . $row['user_photo']);
-                            Filesystem::delete($uploaddir . 'o_' . $row['user_photo']);
-                            Filesystem::delete($uploaddir . 'c_' . $row['user_photo']);
-                        } else
+                            Filesystem::delete($upload_dir . $row['user_photo']);
+                            Filesystem::delete($upload_dir . '50_' . $row['user_photo']);
+                            Filesystem::delete($upload_dir . '100_' . $row['user_photo']);
+                            Filesystem::delete($upload_dir . 'o_' . $row['user_photo']);
+                            Filesystem::delete($upload_dir . 'c_' . $row['user_photo']);
+                        } else {
                             $db->query("UPDATE `users` SET user_delet = 1,  user_active = 1, user_photo = '' WHERE user_id = '" . $user_id . "'");
+                        }
 
                         mozg_clear_cache_file('user_' . $user_id . '/profile_' . $user_id);
-                    }
-                    else if ($mass_type == 7) {
+                    } else if ($mass_type == 7) {
                         //Восстановление пользователей
                         $db->query("UPDATE `users` SET user_delet = 0 WHERE user_id = '" . $user_id . "'");
                         mozg_clear_cache_file('user_' . $user_id . '/profile_' . $user_id);
-                    }
-                    else if ($mass_type == 8) {
+                    } else if ($mass_type == 8) {
                         //Блокировка пользователей
-                        $this_time = $ban_date ? Registry::get('server_time') + ($ban_date * 60 * 60 * 24) : 0;
+                        $this_time = $ban_date ? time() + ($ban_date * 60 * 60 * 24) : 0;
                         $db->query("UPDATE `users` SET user_ban = 1, user_active = 1, user_ban_date = '" . $this_time . "' WHERE user_id = '" . $user_id . "'");
                         mozg_clear_cache_file('user_' . $user_id . '/profile_' . $user_id);
-                    }
-                    else if ($mass_type == 9) {
+                    } else if ($mass_type == 9) {
                         //Разблокировка пользователей
                         $db->query("UPDATE `users` SET user_ban = 0, user_ban_date = '' WHERE user_id = '" . $user_id . "'");
                         mozg_clear_cache_file('user_' . $user_id . '/profile_' . $user_id);
-                    }
-                    else if ($mass_type == 3) {
+                    } else if ($mass_type == 3) {
                         //Удаление отправленных сообщений юзерам
                         $sql_msg = $db->super_query("SELECT SQL_CALC_FOUND_ROWS from_user_id FROM `messages` WHERE folder = 'outbox' AND for_user_id = '" . $user_id . "' GROUP by `from_user_id`", true);
                         foreach ($sql_msg as $row_msg) {
@@ -91,8 +89,7 @@ switch ($act) {
 
                         $db->query("DELETE FROM `messages` WHERE history_user_id = '" . $user_id . "'");
 
-                    }
-                    else if ($mass_type == 4) {
+                    } else if ($mass_type == 4) {
                         //Удаление оставленных комментариев к фото
                         $sql_pc = $db->super_query("SELECT SQL_CALC_FOUND_ROWS pid, album_id FROM `photos_comments` WHERE user_id = '" . $user_id . "' GROUP by `pid`", true);
                         foreach ($sql_pc as $row_pc) {
@@ -105,8 +102,7 @@ switch ($act) {
 
                         $db->query("DELETE FROM `photos_comments` WHERE user_id = '" . $user_id . "'");
 
-                    }
-                    else if ($mass_type == 5) {
+                    } else if ($mass_type == 5) {
                         //Удаление оставленных комментариев к видео
                         $sql_pc = $db->super_query("SELECT SQL_CALC_FOUND_ROWS video_id FROM `videos_comments` WHERE author_user_id = '" . $user_id . "' GROUP by `video_id`", true);
                         foreach ($sql_pc as $row_pc) {
@@ -122,8 +118,7 @@ switch ($act) {
 
                         $db->query("DELETE FROM `videos_comments` WHERE author_user_id = '" . $user_id . "'");
 
-                    }
-                    else if ($mass_type == 11) {
+                    } else if ($mass_type == 11) {
                         //Удаление оставленных комментариев к заметкам
                         $sql_pc = $db->super_query("SELECT SQL_CALC_FOUND_ROWS note_id FROM `notes_comments` WHERE from_user_id = '" . $user_id . "' GROUP by `note_id`", true);
                         foreach ($sql_pc as $row_pc) {
@@ -139,8 +134,7 @@ switch ($act) {
 
                         $db->query("DELETE FROM `notes_comments` WHERE from_user_id = '" . $user_id . "'");
 
-                    }
-                    else if ($mass_type == 6) {
+                    } else if ($mass_type == 6) {
                         //Удаление оставленных записей на стенах
                         $sql_pc = $db->super_query("SELECT SQL_CALC_FOUND_ROWS for_user_id FROM `wall` WHERE author_user_id = '" . $user_id . "' AND for_user_id != '" . $user_id . "' AND fast_comm_id = '0' GROUP by `for_user_id`", 1);
                         foreach ($sql_pc as $row_pc) {
@@ -156,55 +150,63 @@ switch ($act) {
 
                     } //Начисление голосов
                     else if ($mass_type == 14) {
-                        $db->query("UPDATE `users` SET user_balance = user_balance+" . intval($_POST['voices']) . " WHERE user_id = '" . $user_id . "'");
+                        $db->query("UPDATE `users` SET user_balance = user_balance+" . (int)$_POST['voices'] . " WHERE user_id = '" . $user_id . "'");
                     } //Отчисление голосов
-                    else if ($mass_type == 15)
-                        $db->query("UPDATE `users` SET user_balance = user_balance-" . intval($_POST['voices']) . " WHERE user_id = '" . $user_id . "'");
-
-                    //Перевод в группу поддержки
-                    else if ($mass_type == 16)
+                    else if ($mass_type == 15) {
+                        $db->query("UPDATE `users` SET user_balance = user_balance-" . (int)$_POST['voices'] . " WHERE user_id = '" . $user_id . "'");
+                    } //Перевод в группу поддержки
+                    else if ($mass_type == 16) {
                         $db->query("UPDATE `users` SET user_group = '4' WHERE user_id = '" . $user_id . "'");
-
-                    //Перевод в группу пользователи
-                    else if ($mass_type == 17)
+                    } //Перевод в группу пользователи
+                    else if ($mass_type == 17) {
                         $db->query("UPDATE `users` SET user_group = '5' WHERE user_id = '" . $user_id . "'");
-
-                    //Перевод в группу проверенный пользователь
-                    else if ($mass_type == 18)
+                    } //Перевод в группу проверенный пользователь
+                    else if ($mass_type == 18) {
                         $db->query("UPDATE `users` SET user_real = '1' WHERE user_id = '" . $user_id . "'");
-
-                    //Перевод в группу не проверенный пользователь
-                    else if ($mass_type == 19)
+                    } //Перевод в группу не проверенный пользователь
+                    else if ($mass_type == 19) {
                         $db->query("UPDATE `users` SET user_real = '0' WHERE user_id = '" . $user_id . "'");
-
+                    }
                     //Опять составляем список выделеных юеров для блокировки
                     $inputUlist .= '<input type="hidden" name="massaction_users[]" value="' . $user_id . '" />';
                 }
 
                 //Удаление пользователей
-                if ($mass_type == 1)
-                    msgbox('Информация', 'Пользователи успешно удалены', '?mod=users');
-                else if ($mass_type == 7)
+                if ($mass_type == 1) {
+//                    $response = array('info' => 'Пользователи успешно удалены');
+//                    _e_json($response);
+//                    die();
+
+                    $tpl = new TplCp(ADMIN_DIR . '/tpl/');
+                    $tpl->load_template('info/info_red.tpl');
+                    $tpl->set('{error}', 'Пользователи успешно удалены');
+                    $tpl->set('{admin_link}', $admin_link ?? '');
+                    $tpl->set('{title}', 'Информация');
+                    $tpl->compile('content');
+                    $tpl->render();
+
+//                    msgbox('Информация', 'Пользователи успешно удалены', '?mod=users');
+                } else if ($mass_type == 7) {
                     msgbox('Информация', 'Пользователи успешно восстановлены', '?mod=users');
-                //Подготовка блокировки пользователей
+                } //Подготовка блокировки пользователей
                 else if ($mass_type == 2) {
                     msgbox('Бан пользователей', '<form method="POST" action="?mod=massaction&act=users">Количество дней блокировки: <input type="text" value="0" class="inpu" name="ban_date" /> <input type="submit" value="Забанить" class="inp" /><br />Оставьте <b>0</b>, если срок блокировки неограничен по времени.<br /><input type="hidden" value="8" name="mass_type" />' . $inputUlist . '</form>', '?mod=users');
                     //Информация об усешной блокировки пользователей
-                } else if ($mass_type == 8)
+                } else if ($mass_type == 8) {
                     msgbox('Бан пользователей', 'Пользователи успешно забанены', '?mod=users');
-                //Информация об усешной РАЗблокировка пользователей
-                else if ($mass_type == 9)
+                } //Информация об усешной РАЗблокировка пользователей
+                else if ($mass_type == 9) {
                     msgbox('Разблокировка пользователей', 'Пользователи успешно разблокированы', '?mod=users');
-                //Информация об усешной удалении сообщений
-                else if ($mass_type == 3)
+                } //Информация об усешной удалении сообщений
+                else if ($mass_type == 3) {
                     msgbox('Сообщения удалены', 'Все отправленные сообщение пользователем были удалены', '?mod=users');
-                //Информация об усешной удалении комментов к фото
-                else if ($mass_type == 4)
+                } //Информация об усешной удалении комментов к фото
+                else if ($mass_type == 4) {
                     msgbox('Комментарии удалены', 'Все оставленные комментарии к фото были удалены', '?mod=users');
-                //Информация об усешной удалении комментов к фото
-                else if ($mass_type == 5)
+                } //Информация об усешной удалении комментов к фото
+                else if ($mass_type == 5) {
                     msgbox('Комментарии удалены', 'Все оставленные комментарии к видео были удалены', '?mod=users');
-                //Информация об усешной удалении комментов к заметкам
+                } //Информация об усешной удалении комментов к заметкам
                 else if ($mass_type == 11)
                     msgbox('Комментарии удалены', 'Все оставленные комментарии к заметкам были удалены', '?mod=users');
                 else if ($mass_type == 6)
@@ -245,14 +247,15 @@ switch ($act) {
 
     //################### Масовые действия с заметками ###################//
     case "notes":
+        $db = Registry::get('db');
         $massaction_note = $_POST['massaction_note'];
         $mass_type = $_POST['mass_type'];
         if ($massaction_note) {
-            if ($mass_type <= 2 and $mass_type >= 1) {
+            if ($mass_type <= 2 && $mass_type >= 1) {
                 //Если удаляем
                 if ($mass_type == 1) {
                     foreach ($massaction_note as $note_id) {
-                        $note_id = intval($note_id);
+                        $note_id = (int)$note_id;
 
                         //Проверка на существование заметки и выводим ИД владельца заметки
                         $row = $db->super_query("SELECT owner_user_id FROM `notes` WHERE id = '" . $note_id . "'");
@@ -272,7 +275,7 @@ switch ($act) {
                 //Если чистим комментарии
                 if ($mass_type == 2) {
                     foreach ($massaction_note as $note_id) {
-                        $note_id = intval($note_id);
+                        $note_id = (int)$note_id;
 
                         //Проверка на существование заметки и выводим ИД владельца заметки
                         $row = $db->super_query("SELECT owner_user_id FROM `notes` WHERE id = '" . $note_id . "'");
@@ -295,19 +298,21 @@ switch ($act) {
 
     //################### Масовые действия с сообещствами ###################//
     case "groups":
+        $db = Registry::get('db');
         $massaction_list = $_POST['massaction_list'];
         $mass_type = $_POST['mass_type'];
         if ($massaction_list) {
-            if ($mass_type <= 10 and $mass_type >= 1) {
+            if ($mass_type <= 10 && $mass_type >= 1) {
                 //Если удаляем
                 if ($mass_type == 1) {
                     foreach ($massaction_list as $id) {
-                        $id = intval($id);
+                        $id = (int)$id;
                         $row = $db->super_query("SELECT real_admin, photo FROM `communities` WHERE id = '" . $id . "'");
                         if ($row) {
                             $db->query("UPDATE `communities` SET del = '1', photo = '' WHERE id = '" . $id . "'");
-                            if ($row['photo'])
+                            if ($row['photo']) {
                                 Filesystem::delete(ROOT_DIR . '/uploads/groups/' . $row['real_admin'] . '/' . $row['photo']);
+                            }
                         }
                     }
                     msgbox('Информация', 'Выбранные сообщества успешно удалены', '?mod=groups');
@@ -316,12 +321,13 @@ switch ($act) {
                 //Если баним
                 if ($mass_type == 2) {
                     foreach ($massaction_list as $id) {
-                        $id = intval($id);
+                        $id = (int)$id;
                         $row = $db->super_query("SELECT real_admin, photo FROM `communities` WHERE id = '" . $id . "'");
                         if ($row) {
                             $db->query("UPDATE `communities` SET ban = '1', photo = '' WHERE id = '" . $id . "'");
-                            if ($row['photo'])
+                            if ($row['photo']) {
                                 Filesystem::delete(ROOT_DIR . '/uploads/groups/' . $row['real_admin'] . '/' . $row['photo']);
+                            }
                         }
                     }
                     msgbox('Информация', 'Выбранные сообщества успешно заблокированы', '?mod=groups');
@@ -330,7 +336,7 @@ switch ($act) {
                 //Если воостанавливаем
                 if ($mass_type == 3) {
                     foreach ($massaction_list as $id) {
-                        $id = intval($id);
+                        $id = (int)$id;
                         $db->query("UPDATE `communities` SET del = '0' WHERE id = '" . $id . "'");
                     }
                     msgbox('Информация', 'Выбранные сообщества успешно воостановлены', '?mod=groups');
@@ -338,55 +344,55 @@ switch ($act) {
                 //Установка отметки
                 if ($mass_type == 5) {
                     foreach ($massaction_list as $id) {
-                        $id = intval($id);
-                        $db->query("UPDATE `communities` SET real_communities = '1' WHERE id = '" . $id . "'");
+                        $id = (int)$id;
+                        $db->query("UPDATE `communities` SET real_communities = '1' WHERE id = '" . $id . "'");//fixme bug
                     }
                     msgbox('Информация', 'Отметка установлена', '?mod=groups');
                 }
                 //Удаление отметки
                 if ($mass_type == 6) {
                     foreach ($massaction_list as $id) {
-                        $id = intval($id);
-                        $db->query("UPDATE `communities` SET real_communities = '0' WHERE id = '" . $id . "'");
+                        $id = (int)$id;
+                        $db->query("UPDATE `communities` SET real_communities = '0' WHERE id = '" . $id . "'");//fixme bug
                     }
                     msgbox('Информация', 'Отметка удалена', '?mod=groups');
                 }
                 //Занесение в реестр
                 if ($mass_type == 7) {
                     foreach ($massaction_list as $id) {
-                        $id = intval($id);
-                        $db->query("UPDATE `communities` SET badpublic = '1' WHERE id = '" . $id . "'");
+                        $id = (int)$id;
+                        $db->query("UPDATE `communities` SET badpublic = '1' WHERE id = '" . $id . "'");//fixme bug
                     }
                     msgbox('Информация', 'Страница занесена в реестр', '?mod=groups');
                 }
                 //Удаление с реестра
                 if ($mass_type == 8) {
                     foreach ($massaction_list as $id) {
-                        $id = intval($id);
-                        $db->query("UPDATE `communities` SET badpublic = '0' WHERE id = '" . $id . "'");
+                        $id = (int)$id;
+                        $db->query("UPDATE `communities` SET badpublic = '0' WHERE id = '" . $id . "'");//fixme bug
                     }
                     msgbox('Информация', 'Страница удалена из реестра', '?mod=groups');
                 }
                 //Добавление в рекомендуемые
                 if ($mass_type == 9) {
                     foreach ($massaction_list as $id) {
-                        $id = intval($id);
-                        $db->query("UPDATE `communities` SET recommendation = '1' WHERE id = '" . $id . "'");
+                        $id = (int)$id;
+                        $db->query("UPDATE `communities` SET recommendation = '1' WHERE id = '" . $id . "'");//fixme bug
                     }
                     msgbox('Информация', 'Страница добавлена в рекомендуемые', '?mod=groups');
                 }
                 //Удаление с рекомендуемых
                 if ($mass_type == 10) {
                     foreach ($massaction_list as $id) {
-                        $id = intval($id);
-                        $db->query("UPDATE `communities` SET recommendation = '0' WHERE id = '" . $id . "'");
+                        $id = (int)$id;
+                        $db->query("UPDATE `communities` SET recommendation = '0' WHERE id = '" . $id . "'");//fixme bug
                     }
                     msgbox('Информация', 'Страница удалена из рекомендуемых', '?mod=groups');
                 }
                 //Если разблокируем
                 if ($mass_type == 4) {
                     foreach ($massaction_list as $id) {
-                        $id = intval($id);
+                        $id = (int)$id;
                         $db->query("UPDATE `communities` SET ban = '0' WHERE id = '" . $id . "'");
                     }
                     msgbox('Информация', 'Выбранные сообщества успешно разблокированы', '?mod=groups');
@@ -399,6 +405,7 @@ switch ($act) {
 
     //################### Масовые действия с видеозаписям ###################//
     case "videos":
+        $db = Registry::get('db');
         $massaction_list = $_POST['massaction_list'];
         $mass_type = $_POST['mass_type'];
         if ($massaction_list) {
@@ -406,7 +413,7 @@ switch ($act) {
                 //Если удаляем
                 if ($mass_type == 1) {
                     foreach ($massaction_list as $id) {
-                        $vid = intval($id);
+                        $vid = (int)$id;
                         $row = $db->super_query("SELECT owner_user_id, photo FROM `videos` WHERE id = '" . $vid . "'");
                         if ($row) {
                             $db->query("DELETE FROM `videos` WHERE id = '" . $vid . "'");
@@ -428,10 +435,11 @@ switch ($act) {
                 //Если чистим комменты
                 if ($mass_type == 2) {
                     foreach ($massaction_list as $id) {
-                        $vid = intval($id);
+                        $vid = (int)$id;
                         $row = $db->super_query("SELECT owner_user_id FROM `videos` WHERE id = '" . $vid . "'");
                         if ($row) {
                             $db->query("DELETE FROM `videos_comments` WHERE video_id = '" . $vid . "'");
+                            //fixme bug $photo undefined
                             $db->query("DELETE FROM `news` WHERE action_text LIKE '%" . $photo . "|" . $vid . "%' AND action_type = '9' AND for_user_id = '" . $row['owner_user_id'] . "'");
                             $db->query("UPDATE `videos` SET comm_num = '0' WHERE id = '" . $vid . "'");
 
@@ -445,7 +453,7 @@ switch ($act) {
                 //Если чистим просмотры
                 if ($mass_type == 3) {
                     foreach ($massaction_list as $id) {
-                        $vid = intval($id);
+                        $vid = (int)$id;
                         $db->query("UPDATE `videos` SET views = '0' WHERE id = '" . $vid . "'");
                     }
                     msgbox('Информация', 'Просмотры к выбраным видео очищены', '?mod=videos');
@@ -458,12 +466,13 @@ switch ($act) {
 
     //################### Масовые действия с аудиозаписями ###################//
     case "musics":
+        $db = Registry::get('db');
         $massaction_list = $_POST['massaction_list'];
         $mass_type = $_POST['mass_type'];
         if ($massaction_list) {
             if ($mass_type == 1) {
                 foreach ($massaction_list as $id) {
-                    $aid = intval($id);
+                    $aid = (int)$id;
                     $check = $db->super_query("SELECT auser_id FROM `audio` WHERE aid = '" . $aid . "'");
                     if ($check) {
                         $db->query("DELETE FROM `audio` WHERE aid = '" . $aid . "'");
@@ -480,13 +489,14 @@ switch ($act) {
 
     //################### Масовые действия с альбомами ###################//
     case "albums":
+        $db = Registry::get('db');
         $massaction_list = $_POST['massaction_list'];
         $mass_type = $_POST['mass_type'];
         if ($massaction_list) {
             //Удаление
             if ($mass_type == 1) {
                 foreach ($massaction_list as $id) {
-                    $aid = intval($id);
+                    $aid = (int)$id;
                     $row = $db->super_query("SELECT user_id, photo_num FROM `albums` WHERE aid = '" . $aid . "'");
                     if ($row) {
                         //Удаляем альбом
@@ -502,8 +512,9 @@ switch ($act) {
 
                             //Удаляем фотки из папки на сервере
                             $fdir = opendir(ROOT_DIR . '/uploads/users/' . $row['user_id'] . '/albums/' . $aid);
-                            while ($file = readdir($fdir))
+                            while ($file = readdir($fdir)) {
                                 Filesystem::delete(ROOT_DIR . '/uploads/users/' . $row['user_id'] . '/albums/' . $aid . '/' . $file);
+                            }
 
                             Filesystem::delete(ROOT_DIR . '/uploads/users/' . $row['user_id'] . '/albums/' . $aid);
                         }

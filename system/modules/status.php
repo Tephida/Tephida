@@ -1,6 +1,6 @@
 <?php
 /*
- *   (c) Semen Alekseev
+ * Copyright (c) 2022 Tephida
  *
  *  For the full copyright and license information, please view the LICENSE
  *   file that was distributed with this source code.
@@ -20,26 +20,17 @@ if (Registry::get('logged')) {
 
     //Если обновляем статус группы
     if (requestFilter('act') == 'public') {
-
         $row = $db->super_query("SELECT admin FROM `communities` WHERE id = '{$public_id}'");
-
         if (stripos($row['admin'], "u{$user_id}|") !== false) {
-
             $db->query("UPDATE `communities` SET status_text = '{$text}' WHERE id = '{$public_id}'");
             mozg_clear_cache_folder('groups');
-
         }
-
         //Если пользователь
     } else {
-
         $db->query("UPDATE `users` SET user_status = '{$text}' WHERE user_id = '{$user_id}'");
-
         //Чистим кеш
         mozg_clear_cache_file('user_' . $user_id . '/profile_' . $user_id);
         mozg_clear_cache();
-
     }
-
     echo requestFilter('text');
 }

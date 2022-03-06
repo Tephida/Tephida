@@ -1,6 +1,6 @@
 <?php
 /*
- *   (c) Semen Alekseev
+ * Copyright (c) 2022 Tephida
  *
  *  For the full copyright and license information, please view the LICENSE
  *   file that was distributed with this source code.
@@ -376,7 +376,7 @@ if (Registry::get('logged')) {
                         $tpl->set_block("'\\[owner\\](.*?)\\[/owner\\]'si", "");
 
                     if ($row['comm_num'])
-                        $tpl->set('{comm-num}', $row['comm_num'] . ' ' . gram_record($row['comm_num'], 'comments'));
+                        $tpl->set('{comm-num}', $row['comm_num'] . ' ' . declWord($row['comm_num'], 'comments'));
                     else
                         $tpl->set('{comm-num}', $lang['note_no_comments']);
 
@@ -386,7 +386,7 @@ if (Registry::get('logged')) {
                     } else
                         $tpl->set_block("'\\[all-comm\\](.*?)\\[/all-comm\\]'si", "");
 
-                    $tpl->set('{prev-text-comm}', gram_record(($row['comm_num'] - 10), 'prev') . ' ' . ($row['comm_num'] - 10) . ' ' . gram_record(($row['comm_num'] - 10), 'comments'));
+                    $tpl->set('{prev-text-comm}', declWord(($row['comm_num'] - 10), 'prev') . ' ' . ($row['comm_num'] - 10) . ' ' . declWord(($row['comm_num'] - 10), 'comments'));
                     $tpl->set('{num}', $row['comm_num']);
 
                     $tpl->compile('content');
@@ -470,7 +470,7 @@ if (Registry::get('logged')) {
                     //Формирование мета титле и спидбара
                     $author_info = explode(' ', $owner['user_search_pref']);
                     $metatags['title'] = $lang['title_notes'] . ' ' . gramatikName($author_info[0]) . ' ' . gramatikName($author_info[1]);
-                    $user_speedbar = 'У ' . gramatikName($author_info[0]) . ' <span id="notes_num">' . $owner['user_notes_num'] . '</span> ' . gram_record($owner['user_notes_num'], 'notes');;
+                    $user_speedbar = 'У ' . gramatikName($author_info[0]) . ' <span id="notes_num">' . $owner['user_notes_num'] . '</span> ' . declWord((int)$owner['user_notes_num'], 'notes');
 
                     //Загруажем head заметок
                     $tpl->load_template('notes/head.tpl');
@@ -481,7 +481,7 @@ if (Registry::get('logged')) {
                         $tpl->set('[owner]', '');
                         $tpl->set('[/owner]', '');
                         $tpl->set_block("'\\[not-owner\\](.*?)\\[/not-owner\\]'si", "");
-                        $user_speedbar = 'У Вас <span id="notes_num">' . $owner['user_notes_num'] . '</span> ' . gram_record($owner['user_notes_num'], 'notes');
+                        $user_speedbar = 'У Вас <span id="notes_num">' . $owner['user_notes_num'] . '</span> ' . declWord((int)$owner['user_notes_num'], 'notes');
                     } else {
                         $tpl->set('[not-owner]', '');
                         $tpl->set('[/not-owner]', '');
@@ -520,7 +520,7 @@ if (Registry::get('logged')) {
                                 $tpl->set_block("'\\[owner\\](.*?)\\[/owner\\]'si", "");
 
                             if ($row['comm_num'])
-                                $tpl->set('{comm-num}', $row['comm_num'] . ' ' . gram_record($row['comm_num'], 'comments'));
+                                $tpl->set('{comm-num}', $row['comm_num'] . ' ' . declWord($row['comm_num'], 'comments'));
                             else
                                 $tpl->set('{comm-num}', $lang['note_no_comments']);
 

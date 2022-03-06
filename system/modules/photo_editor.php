@@ -1,14 +1,13 @@
 <?php
 /*
- *   (c) Semen Alekseev
+ * Copyright (c) 2022 Tephida
  *
  *  For the full copyright and license information, please view the LICENSE
  *   file that was distributed with this source code.
  *
  */
 
-use FluffyDollop\Support\Filesystem;
-use FluffyDollop\Support\Registry;
+use FluffyDollop\Support\{Filesystem, Registry, Thumbnail};
 
 if (Registry::get('logged')) {
 
@@ -43,13 +42,13 @@ if (Registry::get('logged')) {
             $format = end($array);
             $pid = intFilter('pid');
 
-            if (stripos($_SERVER['HTTP_REFERER'], 'pixlr.com') !== false and $pid and $format) {
+            if (stripos($_SERVER['HTTP_REFERER'], 'pixlr.com') !== false && $pid && $format) {
 
                 //Выводим информацию о фото
                 $row = $db->super_query("SELECT photo_name, album_id FROM `photos` WHERE user_id = '{$user_id}' AND id = '{$pid}'");
 
                 //Проверяем если, формат верный то пропускаем
-                if (in_array(strtolower($format), $allowed_files) and $row['photo_name']) {
+                if (in_array(strtolower($format), $allowed_files) && $row['photo_name']) {
 
                     Filesystem::copy($res_image, ROOT_DIR . "/uploads/users/{$user_id}/albums/{$row['album_id']}/{$row['photo_name']}");
 
@@ -68,16 +67,10 @@ if (Registry::get('logged')) {
                     $tpl->load_template('photos/editor.tpl');
                     $tpl->set('{photo}', "/uploads/users/{$user_id}/albums/{$row['album_id']}/{$row['photo_name']}?{$server_time}");
                     $tpl->compile('content');
-
                     AjaxTpl($tpl);
-
                 }
-
             } else {
                 echo 'Hacking attempt!';
             }
-
     }
-
 }
-
