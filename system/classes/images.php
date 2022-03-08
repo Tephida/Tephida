@@ -54,20 +54,19 @@ class thumbnail
         $size = explode("x", $size);
 
         if ($jqCrop) {
-            return $this->jqCrop(intval($size[0]), intval($size[1]), $jqCrop);
+            return $this->jqCrop((int)$size[0], (int)$size[1], $jqCrop);
         } else if (count($size) == 2) {
-            $size[0] = intval($size[0]);
-            $size[1] = intval($size[1]);
-            return $this->crop(intval($size[0]), intval($size[1]));
+            $size[0] = (int)$size[0];
+            $size[1] = (int)$size[1];
+            return $this->crop(($size[0]), ($size[1]));
         } else {
-            $size[0] = intval($size[0]);
-            return $this->scale(intval($size[0]), $site);
+            $size[0] = (int)$size[0];
+            return $this->scale(($size[0]), $site);
         }
     }
 
     private function crop(int $nw, int $nh): int
     {
-
         $w = $this->img['lebar'];
         $h = $this->img['tinggi'];
 
@@ -106,11 +105,19 @@ class thumbnail
         $left = $cropDataExp[0];
         $top = $cropDataExp[1];
 
-        if (!$left or $left <= 0) $left = 0;
-        if (!$top or $top <= 0) $top = 0;
+        if (!$left || $left <= 0) {
+            $left = 0;
+        }
+        if (!$top || $top <= 0) {
+            $top = 0;
+        }
 
-        if ($nw < 100) $nw = 100;
-        if ($nh < 100) $nh = 100;
+        if ($nw < 100) {
+            $nw = 100;
+        }
+        if ($nh < 100) {
+            $nh = 100;
+        }
 
         $w = $this->img['lebar'];
         $h = $this->img['tinggi'];
@@ -126,8 +133,9 @@ class thumbnail
 
         $size_ratio = max($nw / $w, $nh / $h);
 
-        $src_w = ceil($nw / $size_ratio);
-        $src_h = ceil($nh / $size_ratio);
+        //not used
+//        $src_w = ceil($nw / $size_ratio);
+//        $src_h = ceil($nh / $size_ratio);
 
         $this->img['des'] = imagecreatetruecolor($nw, $nh);
 
@@ -145,9 +153,9 @@ class thumbnail
 
     private function scale($size = 100, $site = 0): int
     {
-        $site = intval($site);
+        $site = (int)$site;
 
-        if ($this->img['lebar'] <= $size and $this->img['tinggi'] <= $size) {
+        if ($this->img['lebar'] <= $size && $this->img['tinggi'] <= $size) {
             $this->img['lebar_thumb'] = $this->img['lebar'];
             $this->img['tinggi_thumb'] = $this->img['tinggi'];
             return 0;
@@ -158,10 +166,9 @@ class thumbnail
                     $this->img['lebar_thumb'] = $this->img['lebar'];
                     $this->img['tinggi_thumb'] = $this->img['tinggi'];
                     return 0;
-                } else {
-                    $this->img['lebar_thumb'] = $size;
-                    $this->img['tinggi_thumb'] = ($this->img['lebar_thumb'] / $this->img['lebar']) * $this->img['tinggi'];
                 }
+                $this->img['lebar_thumb'] = $size;
+                $this->img['tinggi_thumb'] = ($this->img['lebar_thumb'] / $this->img['lebar']) * $this->img['tinggi'];
                 break;
 
             case "2" :
@@ -169,10 +176,9 @@ class thumbnail
                     $this->img['lebar_thumb'] = $this->img['lebar'];
                     $this->img['tinggi_thumb'] = $this->img['tinggi'];
                     return 0;
-                } else {
-                    $this->img['tinggi_thumb'] = $size;
-                    $this->img['lebar_thumb'] = ($this->img['tinggi_thumb'] / $this->img['tinggi']) * $this->img['lebar'];
                 }
+                $this->img['tinggi_thumb'] = $size;
+                $this->img['lebar_thumb'] = ($this->img['tinggi_thumb'] / $this->img['tinggi']) * $this->img['lebar'];
                 break;
 
             default :
@@ -188,8 +194,12 @@ class thumbnail
                 break;
         }
 
-        if ($this->img['lebar_thumb'] < 1) $this->img['lebar_thumb'] = 1;
-        if ($this->img['tinggi_thumb'] < 1) $this->img['tinggi_thumb'] = 1;
+        if ($this->img['lebar_thumb'] < 1) {
+            $this->img['lebar_thumb'] = 1;
+        }
+        if ($this->img['tinggi_thumb'] < 1) {
+            $this->img['tinggi_thumb'] = 1;
+        }
 
         $this->img['des'] = imagecreatetruecolor($this->img['lebar_thumb'], $this->img['tinggi_thumb']);
 
@@ -223,7 +233,6 @@ class thumbnail
         }
         imagedestroy($this->img['src']);
     }
-
 
     /**
      * NOT USED
