@@ -74,7 +74,7 @@ class Router
         } elseif (!empty($config['home_url'])) {
             $uri_data = $config['home_url'];
         } else {
-            throw new Exception('err');
+            throw new Error('err');
 //            $uri_data = '';
 //            echo 'error: non url';
         }
