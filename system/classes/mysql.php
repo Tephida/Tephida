@@ -1,4 +1,12 @@
 <?php
+/*
+ * Copyright (c) 2022 Tephida
+ *
+ *  For the full copyright and license information, please view the LICENSE
+ *   file that was distributed with this source code.
+ *
+ */
+
 declare(strict_types=1);
 
 /*
@@ -11,8 +19,13 @@ declare(strict_types=1);
 
 use JetBrains\PhpStorm\NoReturn;
 
-if (!defined('MOZG')) die('Hacking attempt!');
+if (!defined('MOZG')) {
+    die('Hacking attempt!');
+}
 
+/**
+ * TODO сделать класс-одиночка
+ */
 class db
 {
     public false|mysqli|null $db_id = false;
@@ -21,15 +34,12 @@ class db
     public array $query_errors_list = array();
     public string $mysql_error = '';
     public int $mysql_error_num = 0;
-    public bool|mysqli_result $query_id = false;
-
+    public bool|mysqli_result|string $query_id = false;
 
     public function connect(?string $db_user, ?string $db_pass, ?string $db_name, ?string $db_location = 'localhost', $show_error = 1): bool
     {
         $db_location = explode(":", $db_location);
-
         mysqli_report(MYSQLI_REPORT_OFF);
-
         if (isset($db_location[1])) {
             $this->db_id = mysqli_connect($db_location[0], $db_user, $db_pass, $db_name, $db_location[1]);
         } else {
@@ -59,8 +69,9 @@ class db
 
     public function query(string $query, bool $show_error = true,): mysqli_result|bool
     {
-        if (!$this->db_id)
+        if (!$this->db_id) {
             $this->connect(DBUSER, DBPASS, DBNAME, DBHOST);
+        }
 
         if (!($this->query_id = mysqli_query($this->db_id, $query))) {
 
@@ -68,13 +79,9 @@ class db
             $this->mysql_error_num = mysqli_errno($this->db_id);
 
             if ($show_error) {
-
                 $this->display_error($this->mysql_error, $this->mysql_error_num, $query);
-
             } else {
-
                 $this->query_errors_list[] = array('query' => $query, 'error' => $this->mysql_error);
-
             }
         }
         $this->query_num++;
@@ -90,7 +97,9 @@ class db
     public function multi_query(string $query, bool $show_error = true): void
     {
 
-        if (!$this->db_id) $this->connect(DBUSER, DBPASS, DBNAME, DBHOST);
+        if (!$this->db_id) {
+            $this->connect(DBUSER, DBPASS, DBNAME, DBHOST);
+        }
 
         if (mysqli_multi_query($this->db_id, $query)) {
             while (mysqli_more_results($this->db_id) && mysqli_next_result($this->db_id)) {
@@ -119,8 +128,9 @@ class db
     /** 1 used */
     public function get_row(mysqli_result|string $query_id = ''): array|bool|null|string
     {
-        if ($query_id == '')
+        if ($query_id == '') {
             $query_id = $this->query_id;
+        }
 
         return mysqli_fetch_assoc($query_id);
     }
@@ -137,8 +147,9 @@ class db
     /** 2 used */
     function get_array(mysqli_result|string $query_id = ''): bool|array|null
     {
-        if ($query_id == '')
+        if ($query_id == '') {
             $query_id = $this->query_id;
+        }
 
         return mysqli_fetch_array($query_id);
     }
@@ -171,8 +182,9 @@ class db
     /** 1 used */
     function num_rows(mysqli_result|string $query_id = ''): int|string
     {
-        if ($query_id == '')
+        if ($query_id == '') {
             $query_id = $this->query_id;
+        }
 
         return mysqli_num_rows($query_id);
     }
@@ -202,8 +214,9 @@ class db
     public function free(mysqli_result|string $query_id = ''): void
     {
 
-        if ($query_id == '')
+        if ($query_id == '') {
             $query_id = $this->query_id;
+        }
 
         if ($query_id) {
             mysqli_free_result($query_id);
@@ -213,44 +226,40 @@ class db
 
     public function close(): void
     {
-        if ($this->db_id)
+        if ($this->db_id) {
             mysqli_close($this->db_id);
+        }
         $this->db_id = false;
     }
 
     private function sql_mode(): void
     {
         $remove_modes = array('STRICT_TRANS_TABLES', 'STRICT_ALL_TABLES', 'ONLY_FULL_GROUP_BY', 'NO_ZERO_DATE', 'NO_ZERO_IN_DATE', 'TRADITIONAL');
-
         $this->query("SELECT @@SESSION.sql_mode", false, false);
-
         $row = $this->get_array();
-
         if (!$row[0]) {
             return;
         }
-
         $modes_array = explode(',', $row[0]);
         $modes_array = array_change_key_case($modes_array, CASE_UPPER);
-
         foreach ($modes_array as $key => $value) {
-            if (in_array($value, $remove_modes)) {
+            if (in_array($value, $remove_modes, true)) {
                 unset($modes_array[$key]);
             }
         }
-
         $mode_list = implode(',', $modes_array);
-
-        if ($row[0] != $mode_list) {
+        if ($row[0] !== $mode_list) {
             $this->query("SET SESSION sql_mode='{$mode_list}'", false, false);
         }
 
     }
 
-    function __destruct()
+    function __destruct(): void
     {
 
-        if ($this->db_id) mysqli_close($this->db_id);
+        if ($this->db_id) {
+            mysqli_close($this->db_id);
+        }
 
         $this->db_id = false;
     }
@@ -264,10 +273,12 @@ class db
         $trace = debug_backtrace();
 
         $level = 0;
-        if (isset($trace[1]['function']) and $trace[1]['function'] == "query")
+        if (isset($trace[1]['function']) && $trace[1]['function'] == "query") {
             $level = 1;
-        if (isset($trace[1]['function']) and $trace[2]['function'] == "super_query")
+        }
+        if (isset($trace[1]['function']) && $trace[2]['function'] == "super_query") {
             $level = 2;
+        }
 
         $trace[$level]['file'] = str_replace(ROOT_DIR, "", $trace[$level]['file']);
 
