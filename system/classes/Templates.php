@@ -1,4 +1,12 @@
 <?php
+/*
+ * Copyright (c) 2022 Tephida
+ *
+ *  For the full copyright and license information, please view the LICENSE
+ *   file that was distributed with this source code.
+ *
+ */
+
 declare(strict_types=1);
 /*
  *   (c) Semen Alekseev
@@ -23,7 +31,9 @@ class Templates
             foreach ($var as $key => $key_var) {
                 $this->set($key, $key_var);
             }
-        } else $this->data[$name] = $var;
+        } else {
+            $this->data[$name] = $var;
+        }
     }
 
     public function set_block(string $name, array|string|int $var): void
@@ -32,7 +42,9 @@ class Templates
             foreach ($var as $key => $key_var) {
                 $this->set_block($key, $key_var);
             }
-        } else $this->block_data[$name] = $var;
+        } else {
+            $this->block_data[$name] = $var;
+        }
     }
 
     /**
@@ -40,7 +52,7 @@ class Templates
      */
     public function load_template(string $tpl_name): false|string
     {
-        if ($tpl_name == '' || !file_exists($this->dir . DIRECTORY_SEPARATOR . $tpl_name)) {
+        if (!file_exists($this->dir . DIRECTORY_SEPARATOR . $tpl_name)) {
             throw new ErrorException("Невозможно загрузить шаблон: " . $tpl_name, 0, 0, 'null', 0);
         }
         $this->template = file_get_contents($this->dir . DIRECTORY_SEPARATOR . $tpl_name);
@@ -82,14 +94,16 @@ class Templates
         $aviable = explode('|', $aviable);
         $block = str_replace('\"', '"', $block);
         if ($action) {
-            if (!(in_array($mozg_module, $aviable)) and ($aviable[0] != "global"))
+            if (!(in_array($mozg_module, $aviable)) && ($aviable[0] != "global")) {
                 return "";
-            else
+            } else {
                 return $block;
+            }
         } else {
-            if ((in_array($mozg_module, $aviable)))
+            if ((in_array($mozg_module, $aviable, true))) {
                 return "";
-            else return $block;
+            }
+            return $block;
         }
     }
 
@@ -98,11 +112,13 @@ class Templates
         $user_info = Registry::get('user_info');
         $groups = explode(',', $groups);
         if ($action) {
-            if (!in_array($user_info['user_group'], $groups))
+            if (!in_array($user_info['user_group'], $groups, true)) {
                 return "";
+            }
         } else {
-            if (in_array($user_info['user_group'], $groups))
+            if (in_array($user_info['user_group'], $groups, true)) {
                 return "";
+            }
         }
         return str_replace('\"', '"', $block);
     }
@@ -165,10 +181,11 @@ class Templates
 
         $this->copy_template = str_replace(array("_&#123;_", "_&#91;_"), array("{", "["), $this->copy_template);
 
-        if (isset($this->result[$tpl]))
+        if (isset($this->result[$tpl])) {
             $this->result[$tpl] .= $this->copy_template;
-        else
+        } else {
             $this->result[$tpl] = $this->copy_template;
+        }
 
         $this->_clear();
     }
