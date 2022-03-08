@@ -36,7 +36,7 @@ if (isset($_GET['act']) and $_GET['act'] == 'logout') {
 if (isset($_SESSION['user_id']) > 0) {
     $logged = true;
     Registry::set('logged', true);
-    $logged_user_id = intval($_SESSION['user_id']);
+    $logged_user_id = (int)$_SESSION['user_id'];
     $user_info = $db->super_query("SELECT user_id, user_email, user_group, user_password FROM `users` WHERE user_id = '" . $logged_user_id . "'");
 
     //Если есть данные о сесии, но нет инфы о юзере, то выкидываем его
@@ -45,7 +45,7 @@ if (isset($_SESSION['user_id']) > 0) {
 
 //Если есть данные о COOKIE то проверяем
 } elseif (isset($_COOKIE['user_id']) > 0 and $_COOKIE['password'] and $_COOKIE['hid']) {
-    $cookie_user_id = intval($_COOKIE['user_id']);
+    $cookie_user_id = (int)$_COOKIE['user_id'];
     $user_info = $db->super_query("SELECT user_id, user_email, user_group, user_password, user_hid FROM `users` WHERE user_id = '" . $cookie_user_id . "' AND user_group = '1'");
 
     //Если пароль и HID совпадает то пропускаем
@@ -91,21 +91,23 @@ if (isset($_POST['log_in']) and !isset($_SESSION['user_id'])) {
                 $hid = $md5_pass . md5(md5($_IP));
 
                 //Устанавливаем в сессию ИД юзера
-                $_SESSION['user_id'] = intval($check_user['user_id']);
+                $_SESSION['user_id'] = (int)$check_user['user_id'];
 
                 //Обновляем хэш входа
                 $db->query("UPDATE `users` SET user_hid = '" . $hid . "' WHERE user_id = '" . $check_user['user_id'] . "'");
 
                 //Записываем COOKIE
-                set_cookie("user_id", intval($check_user['user_id']), 365);
+                set_cookie("user_id", (int)$check_user['user_id'], 365);
                 set_cookie("password", $md5_pass, 365);
                 set_cookie("hid", $hid, 365);
 
                 header("Location: {$admin_link}");
-            } else
+            } else {
                 $error_log = 'Доступ отключён!';
-        } else
+            }
+        } else {
             $error_log = 'Доступ отключён!';
+        }
     }
 }
 
@@ -124,8 +126,9 @@ if (!$logged) {
 HTML;
     echohtmlend();
 } else {
-    if ($user_info['user_group'] == 1)
+    if ($user_info['user_group'] == 1) {
         include ADMIN_DIR . '/mod.php';
-    else
+    } else {
         msgbox('Информация', 'У вас недостаточно прав для просмотра этого раздела. <a href="' . $admin_link . '?act=logout">Выйти</a>', '');
+    }
 }
