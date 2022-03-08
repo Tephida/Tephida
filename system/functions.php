@@ -486,9 +486,11 @@ function profileload() {
  */
 function NoAjaxQuery() : void
 {
-    if (!empty($_POST['ajax']) and $_POST['ajax'] == 'yes')
-        if (clean_url($_SERVER['HTTP_REFERER']) != clean_url($_SERVER['HTTP_HOST']) and $_SERVER['REQUEST_METHOD'] != 'POST')
+    if (!empty($_POST['ajax']) && $_POST['ajax'] == 'yes') {
+        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
             header('Location: /index.php?go=none');
+        }
+    }
 }
 
 /**
@@ -1048,10 +1050,11 @@ function check_ip($ips) {
 
 /**
  * @param $source
- * @param $encode
+ * @param bool $encode
  * @return array|mixed|string|string[]|null
  */
-function word_filter($source, $encode = true) {
+function word_filter($source, bool $encode = true)
+{
     global $config;
     $safe_mode = false;
     if ($encode) {
@@ -1061,7 +1064,7 @@ function word_filter($source, $encode = true) {
         if (!$all_words or !count($all_words)) return $source;
         foreach ($all_words as $word_line) {
             $word_arr = explode("|", $word_line);
-            if (function_exists("get_magic_quotes_gpc") AND get_magic_quotes_gpc()) {
+            if (function_exists("get_magic_quotes_gpc") and get_magic_quotes_gpc()) {
                 $word_arr[1] = addslashes($word_arr[1]);
             }
             if ($word_arr[4]) {
@@ -1093,15 +1096,16 @@ function word_filter($source, $encode = true) {
         }
         if (!count($find)) return $source;
         $source = preg_split('((>)|(<))', $source, -1, PREG_SPLIT_DELIM_CAPTURE);
-        $count = count($source);
-        for ($i = 0;$i < $count;$i++) {
-            if ($source[$i] == "<" or $source[$i] == "[") {
+        foreach ($source as $i => $iValue) {
+            if ($iValue == "<" || $iValue == "[") {
                 $i++;
                 continue;
             }
-            if ($source[$i] != "") $source[$i] = preg_replace($find, $replace, $source[$i]);
+            if ($iValue !== "") {
+                $source[$i] = preg_replace($find, $replace, $iValue);
+            }
         }
-        $source = join("", $source);
+        $source = implode("", $source);
     } else {
         $source = preg_replace("#<!--filter:(.+?)-->(.+?)<!--/filter-->#", "\\1", $source);
     }
@@ -1341,28 +1345,25 @@ function cleanPath($path): string
 
 function clean_url($url)
 {
-    $url = str_replace("http://", "", strtolower($url));
-    $url = str_replace("https://", "", $url);
-    if (str_starts_with($url, 'www.'))
+    $url = str_replace(array("http://", "https://"), "", strtolower($url));
+    if (str_starts_with($url, 'www.')) {
         $url = substr($url, 4);
+    }
     $url = explode('/', $url);
     $url = reset($url);
     $url = explode(':', $url);
     return reset($url);
 }
 
-function set_cookie($name, $value, $expires)
+function set_cookie($name, $value, $expires): void
 {
+    $domain = ($_SERVER['HTTP_HOST'] !== 'localhost') ? $_SERVER['HTTP_HOST'] : false;
     if ($expires) {
         $expires = time() + ($expires * 86400);
     } else {
-        $expires = FALSE;
+        $expires = false;
     }
-    if (PHP_VERSION < 5.2) {
-        setcookie($name, $value, $expires, "/", DOMAIN . "; HttpOnly");
-    } else {
-        setcookie($name, $value, $expires, "/", DOMAIN, NULL, TRUE);
-    }
+    setcookie($name, $value, $expires, "/", $domain, true, true);
 }
 
 function settings_get(): array
@@ -1437,7 +1438,9 @@ function compile($tpl, array $params = array()): int
         $user_pm_num = $user_info['user_pm_num'];
         if ($user_pm_num) {
             $params['user_pm_num'] = "<div class=\"headm_newac\" style=\"margin-left:37px\">{$user_pm_num}</div>";
-        } else $params['user_pm_num'] = '';
+        } else {
+            $params['user_pm_num'] = '';
+        }
 //Новые друзья
         $user_friends_demands = $user_info['user_friends_demands'];
         if ($user_friends_demands) {
@@ -1490,15 +1493,15 @@ function compile($tpl, array $params = array()): int
     //Если включен AJAX, то загружаем стр.
     if (requestFilter('ajax') == 'yes') {
         return compileAjax($tpl, $params);
-    } else {
-        return compileNoAjax($tpl, $params);
     }
+    return compileNoAjax($tpl, $params);
 }
 
 /**
  * @param $tpl
  * @param $params
  * @return int
+ * @throws JsonException
  */
 function compileAjax($tpl, $params): int
 {
@@ -1654,10 +1657,11 @@ function compileNoAjax($tpl, $params): int
     $config = settings_get();
     if ($config['temp'] == 'mobile') {
         $tpl->result['content'] = str_replace('onClick="Page.Go(this.href); return false"', '', $tpl->result['content']);
-        if ($user_info['user_status'])
+        if ($user_info['user_status']) {
             $tpl->set('{status-mobile}', '<span style="font-size:11px;color:#000">' . $user_info['user_status'] . '</span>');
-        else
+        } else {
             $tpl->set('{status-mobile}', '<span style="font-size:11px;color:#999">установить статус</span>');
+        }
 
         $user_friends_demands = $user_friends_demands ?? null;
         $user_support = $user_support ?? null;
@@ -1686,7 +1690,7 @@ function compileNoAjax($tpl, $params): int
 <script type="text/javascript" src="{theme}/js/profile.js"></script>');
 
 // FOR MOBILE VERSION 1.0
-    if (isset($user_info['user_photo']) and $user_info['user_photo']) {
+    if (isset($user_info['user_photo']) && $user_info['user_photo']) {
         $tpl->set('{my-ava}', "/uploads/users/{$user_info['user_id']}/50_{$user_info['user_photo']}");
     } else {
         $tpl->set('{my-ava}', "{theme}/images/no_ava_50.png");
