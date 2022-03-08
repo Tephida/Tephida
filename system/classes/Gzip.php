@@ -18,12 +18,15 @@ class Gzip
 
     public function CheckCanGzip(): false|string
     {
-        if (headers_sent() or connection_aborted() or !function_exists('ob_gzhandler') or ini_get('zlib.output_compression'))
+        if (headers_sent() || connection_aborted() || !function_exists('ob_gzhandler') || ini_get('zlib.output_compression')) {
             return false;
-        if (str_contains($_SERVER['HTTP_ACCEPT_ENCODING'], 'x-gzip'))
+        }
+        if (str_contains($_SERVER['HTTP_ACCEPT_ENCODING'], 'x-gzip')) {
             return "x-gzip";
-        if (str_contains($_SERVER['HTTP_ACCEPT_ENCODING'], 'gzip'))
+        }
+        if (str_contains($_SERVER['HTTP_ACCEPT_ENCODING'], 'gzip')) {
             return "gzip";
+        }
         return false;
     }
 
@@ -39,8 +42,7 @@ class Gzip
         $ENCODING = $this->CheckCanGzip();
 
         if ($ENCODING) {
-            $Contents = ob_get_contents();
-            ob_end_clean();
+            $Contents = ob_get_clean();
 
             if ($this->debug) {
                 $s = $s ?? '';
@@ -54,9 +56,8 @@ class Gzip
             header("Content-Encoding: $ENCODING");
             $Contents = gzencode($Contents, 1, FORCE_GZIP);
             return print($Contents);
-        } else {
-            ob_end_flush();
-            return print('');
         }
+        ob_end_flush();
+        return print('');
     }
 }
