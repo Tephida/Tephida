@@ -6,6 +6,7 @@
  *   file that was distributed with this source code.
  *
  */
+
 if(!defined('MOZG'))
 	die("Hacking attempt!");
 $user_info = $user_info ?? Registry::get('user_info');

@@ -1,9 +1,15 @@
 <?php
+/*
+ * Copyright (c) 2022 Tephida
+ *
+ *  For the full copyright and license information, please view the LICENSE
+ *   file that was distributed with this source code.
+ *
+ */
 
 @setlocale(LC_ALL, "ru");
 
 return array(
-
     'welcome' => 'Добро пожаловать',
     'meta_tegtitle' => 'Регистрация',
     'code_none' => '<li><span>Код безопасности не соответствует отображённому</span></li>',

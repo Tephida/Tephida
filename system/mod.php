@@ -17,6 +17,7 @@ check_xss();
 $config = $config ?? settings_get();
 $lang['online'] = $config['temp'] == 'mobile' ? '<img src="{theme}/images/monline.gif" />' : '';
 
+//TODO заменить на if()
 switch ($go) {
     /** Регистрация */
     case "main":
@@ -44,9 +45,9 @@ switch ($go) {
     /** Альбомы */
     case "albums":
         $spBar = true;
-        if ($config['album_mod'] == 'yes')
+        if ($config['album_mod'] == 'yes') {
             include ENGINE_DIR . '/modules/albums.php';
-        else {
+        } else {
             $user_speedbar = 'Информация';
             msgbox('', 'Сервис отключен.', 'info');
             compile($tpl);
@@ -89,9 +90,9 @@ switch ($go) {
     /** Видео */
     case "videos":
         $spBar = true;
-        if ($config['video_mod'] == 'yes')
+        if ($config['video_mod'] == 'yes') {
             include ENGINE_DIR . '/modules/videos.php';
-        else {
+        } else {
             $user_speedbar = 'Информация';
             msgbox('', 'Сервис отключен.', 'info');
             compile($tpl);
@@ -174,9 +175,9 @@ switch ($go) {
 
     /** Музыка */
     case "audio":
-        if ($config['audio_mod'] == 'yes')
+        if ($config['audio_mod'] == 'yes') {
             include ENGINE_DIR . '/modules/audio.php';
-        else {
+        } else {
             $spBar = true;
             $user_speedbar = 'Информация';
             msgbox('', 'Сервис отключен.', 'info');

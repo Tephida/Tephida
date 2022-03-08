@@ -10,19 +10,16 @@
 
 function clean_url(string $url)
 {
-    $url = str_replace("http://", "", strtolower($url));
-    $url = str_replace("https://", "", $url);
-    if (str_starts_with($url, 'www.'))
+    $url = str_replace(array("http://", "https://"), "", strtolower($url));
+    if (str_starts_with($url, 'www.')) {
         $url = substr($url, 4);
+    }
     $url = explode('/', $url);
     $url = reset($url);
     $url = explode(':', $url);
     return reset($url);
 }
 
-if(clean_url($_SERVER['HTTP_REFERER']) != clean_url($_SERVER['HTTP_HOST'])) 
-	die("Hacking attempt!");
-	
 $width = 120;				//Ширина изображения
 $height = 50;				//Высота изображения
 $font_size = 16;   			//Размер шрифта

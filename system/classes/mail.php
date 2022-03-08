@@ -36,21 +36,21 @@ class vii_mail {
     public $mail_method = 'php';
 	
 	function __construct($config, $is_html = false) {
-		$this->mail_method = $config['mail_metod'];
-		
-		$this->from = $config['admin_mail'];
-		$this->charset = $config['charset'];
-		$this->site_name = $config['home'];
-		$this->additional_parameters = trim($config['mail_additional']) ? trim($config['mail_additional']) : null;
-		$this->smtp_mail = trim($config['smtp_mail']) ? trim($config['smtp_mail']) : '';
-		
-		$this->smtp_host = $config['smtp_host'];
-		$this->smtp_port = intval( $config['smtp_port'] );
-		$this->smtp_user = $config['smtp_user'];
-		$this->smtp_pass = $config['smtp_pass'];
-		
-		$this->html_mail = $is_html;
-	}
+        $this->mail_method = $config['mail_metod'];
+
+        $this->from = $config['admin_mail'];
+        $this->charset = $config['charset'];
+        $this->site_name = $config['home'];
+        $this->additional_parameters = trim($config['mail_additional']) ?: null;
+        $this->smtp_mail = trim($config['smtp_mail']) ?: '';
+
+        $this->smtp_host = $config['smtp_host'];
+        $this->smtp_port = (int)$config['smtp_port'];
+        $this->smtp_user = $config['smtp_user'];
+        $this->smtp_pass = $config['smtp_pass'];
+
+        $this->html_mail = $is_html;
+    }
 	
 	function compile_headers() {
 		
@@ -66,71 +66,52 @@ class vii_mail {
 		}
 		
 		if( $this->mail_method != 'smtp' ) {
-			
 			if( count( $this->bcc ) ) {
 				$this->mail_headers .= "Bcc: " . implode( ",", $this->bcc ) . $this->eol;
 			}
-		
 		} else {
-			
 			$this->mail_headers .= "Subject: " . $this->subject . $this->eol;
-			
 			if( $this->to ) {
-				
 				$this->mail_headers .= "To: " . $this->to . $this->eol;
 			}
-		
 		}
 		
 		$this->mail_headers .= "From: \"" . $from . "\" <" . $this->from . ">" . $this->eol;
-		
 		$this->mail_headers .= "Return-Path: <" . $this->from . ">" . $this->eol;
 		$this->mail_headers .= "X-Priority: 3" . $this->eol;
 		$this->mail_headers .= "X-MSMail-Priority: Normal" . $this->eol;
 		$this->mail_headers .= "X-Mailer: VII PHP" . $this->eol;
-	
 	}
 	
-	function send($to, $subject, $message) {
-		$this->to = preg_replace( "/[ \t]+/", "", $to );
-		$this->from = preg_replace( "/[ \t]+/", "", $this->from );
-		
-		$this->to = preg_replace( "/,,/", ",", $this->to );
-		$this->from = preg_replace( "/,,/", ",", $this->from );
-		
-		if( $this->mail_method != 'smtp' )
-			$this->to = preg_replace( "#\#\[\]'\"\(\):;/\$!Ј%\^&\*\{\}#", "", $this->to );
-		else
-			$this->to = '<' . preg_replace( "#\#\[\]'\"\(\):;/\$!Ј%\^&\*\{\}#", "", $this->to ) . '>';
+	function send($to, $subject, $message)
+    {
+        $this->to = preg_replace("/[ \t]+/", "", $to);
+        $this->from = preg_replace("/[ \t]+/", "", $this->from);
 
+        $this->to = preg_replace("/,,/", ",", $this->to);
+        $this->from = preg_replace("/,,/", ",", $this->from);
 
-		$this->from = preg_replace( "#\#\[\]'\"\(\):;/\$!Ј%\^&\*\{\}#", "", $this->from );
-		
-		$this->subject = $subject;
-		$this->message = $message;
-		
-		$this->message = str_replace( "\r", "", $this->message );
-		
-		$this->compile_headers();
-		
-		if( ($this->to) and ($this->from) and ($this->subject) ) {
-			if( $this->mail_method != 'smtp' ) {
+        if ($this->mail_method != 'smtp') {
+            $this->to = preg_replace("#\#\[\]'\"\(\):;/\$!Ј%\^&\*\{\}#", "", $this->to);
+        } else {
+            $this->to = '<' . preg_replace("#\#\[\]'\"\(\):;/\$!Ј%\^&\*\{\}#", "", $this->to) . '>';
+        }
+        $this->from = preg_replace("#\#\[\]'\"\(\):;/\$!Ј%\^&\*\{\}#", "", $this->from);
+        $this->subject = $subject;
+        $this->message = $message;
+        $this->message = str_replace("\r", "", $this->message);
+        $this->compile_headers();
 
-				if (!mail($this->to, $this->subject, $this->message, $this->mail_headers, $this->additional_parameters)) {
-
-                    if (!mail($this->to, $this->subject, $this->message, $this->mail_headers)) {
-
-                        $this->smtp_msg = "PHP Mail Error.";
-                        $this->send_error = true;
-
-                    }
-
+        if (($this->to) and ($this->from) and ($this->subject)) {
+            if ($this->mail_method != 'smtp') {
+                if (!mail($this->to, $this->subject, $this->message, $this->mail_headers, $this->additional_parameters) && !mail($this->to, $this->subject, $this->message, $this->mail_headers)) {
+                    $this->smtp_msg = "PHP Mail Error.";
+                    $this->send_error = true;
                 }
-			
-			} else {
+
+            } else {
 				$this->smtp_send();
 			}
-		
 		}
 		
 		$this->mail_headers = "";
@@ -139,10 +120,8 @@ class vii_mail {
 	
 	function smtp_get_line() {
 		$this->smtp_msg = "";
-		
 		while ( $line = fgets( $this->smtp_fp, 515 ) ) {
 			$this->smtp_msg .= $line;
-			
 			if( substr( $line, 3, 1 ) == " " ) {
 				break;
 			}
@@ -150,17 +129,13 @@ class vii_mail {
 	}
 	
 	function smtp_send() {
-        $this->smtp_fp = fsockopen($this->smtp_host, intval($this->smtp_port), $errno, $errstr, 30);
-		
+        $this->smtp_fp = fsockopen($this->smtp_host, (int)$this->smtp_port, $errno, $errstr, 30);
 		if( ! $this->smtp_fp ) {
 			$this->smtp_error( "Could not open a socket to the SMTP server" );
 			return;
 		}
-		
 		$this->smtp_get_line();
-		
 		$this->smtp_code = substr( $this->smtp_msg, 0, 3 );
-		
 		if( $this->smtp_code == 220 ) {
 			$data = $this->smtp_crlf_encode( $this->mail_headers . "\n" . $this->message );
 			
@@ -256,13 +231,9 @@ class vii_mail {
 	function smtp_send_cmd($cmd) {
 		$this->smtp_msg = "";
 		$this->smtp_code = "";
-		
 		fputs( $this->smtp_fp, $cmd . "\r\n" );
-		
 		$this->smtp_get_line();
-		
 		$this->smtp_code = substr( $this->smtp_msg, 0, 3 );
-		
 		return !($this->smtp_code == "");
 	}
 	
