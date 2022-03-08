@@ -21,9 +21,6 @@ function clean_url(string $url)
 
 }
 
-if(clean_url($_SERVER['HTTP_REFERER']) != clean_url($_SERVER['HTTP_HOST'])) 
-	die("Hacking attempt!");
-
 $user_code = $_GET['user_code'];
 
 if($user_code == $_SESSION['sec_code']){
