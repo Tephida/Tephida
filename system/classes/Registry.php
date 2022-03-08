@@ -41,7 +41,7 @@ class Registry
      */
     public static function get(mixed $name): string|bool|null|array|db
     {
-        return (isset(self::$store[$name])) ? self::$store[$name] : null;
+        return self::$store[$name] ?? null;
     }
 
     /**
