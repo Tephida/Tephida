@@ -1,4 +1,12 @@
 <?php
+/*
+ * Copyright (c) 2022 Tephida
+ *
+ *  For the full copyright and license information, please view the LICENSE
+ *   file that was distributed with this source code.
+ *
+ */
+
 declare(strict_types=1);
 /*
  *   (c) Semen Alekseev
@@ -10,7 +18,6 @@ declare(strict_types=1);
 
 class wall
 {
-
     public $tpl;
     public array|bool|null $query = false;
     public false|string $template = false;
