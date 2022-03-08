@@ -17,11 +17,7 @@ class Filesystem
      */
     public static function createDir(string $dir, int $mode = 0777): bool
     {
-        if (!is_dir($dir) && !mkdir($dir, $mode, true) && !is_dir($dir)) { // @ - dir may already exist
-//            throw new InvalidArgumentException("Unable to create directory '$dir' with mode ");
-            return false;
-        } else
-            return true;
+        return !(!is_dir($dir) && !mkdir($dir, $mode, true) && !is_dir($dir));
     }
 
     /**
@@ -46,14 +42,14 @@ class Filesystem
             if (is_dir($file)) {
                 rmdir($file);
                 return true;
-            } else
-                return false;
-        } elseif (is_file($file)) {
-            unlink($file);
-            return true;
-        } else {
+            }
             return false;
         }
+        if (is_file($file)) {
+            unlink($file);
+            return true;
+        }
+        return false;
     }
 
     /**
@@ -63,39 +59,44 @@ class Filesystem
      */
     public static function check(string $file): bool
     {
-        if (is_file($file))
+        if (is_file($file)) {
             return true;
-        elseif (is_dir($file))
+        }
+        if (is_dir($file)) {
             return true;
-        else
-            return false;
+        }
+        return false;
     }
 
     public static function copy($from, $to)
     {
-        if (is_file($from) and !is_file($to))
+        if (is_file($from) && !is_file($to)) {
             copy($from, $to);
-        else
-            return false;
+            return true;
+        }
+        return false;
     }
 
     public static function dirSize($directory): bool|int
     {
-        if (!is_dir($directory))
+        if (!is_dir($directory)) {
             return -1;
+        }
         $size = 0;
         if ($DIR = opendir($directory)) {
             while (($dirfile = readdir($DIR)) !== false) {
-                if (is_link($directory . '/' . $dirfile) || $dirfile == '.' || $dirfile == '..')
+                if (is_link($directory . '/' . $dirfile) || $dirfile == '.' || $dirfile == '..') {
                     continue;
-                if (is_file($directory . '/' . $dirfile))
+                }
+                if (is_file($directory . '/' . $dirfile)) {
                     $size += filesize($directory . '/' . $dirfile);
-                else if (is_dir($directory . '/' . $dirfile)) {
+                } else if (is_dir($directory . '/' . $dirfile)) {
                     $dirSize = self::dirSize($directory . '/' . $dirfile);
-                    if ($dirSize >= 0)
+                    if ($dirSize >= 0) {
                         $size += $dirSize;
-                    else
+                    } else {
                         return -1;
+                    }
                 }
             }
             closedir($DIR);
