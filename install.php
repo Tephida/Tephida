@@ -6,9 +6,10 @@
  *   file that was distributed with this source code.
  *
  */
+
 header('Content-type: text/html; charset=utf-8');
 const MOZG = true;
-define('ROOT_DIR', dirname(__FILE__));
+const ROOT_DIR = __DIR__;
 const ENGINE_DIR = ROOT_DIR . '/system';
 
 include './system/classes/Filesystem.php';
@@ -123,7 +124,7 @@ if (!file_exists(ENGINE_DIR . '/data/config.php') or !file_exists(ENGINE_DIR . '
                 if (is_writable($file)) {
                     $file_status = "<div style=\"color: green;\">разрешено</div>";
                 } else {
-                    @chmod("$file", 0755);
+                    @chmod((string)$file, 0755);
                     if (is_writable($file)) {
                         $file_status = "<div style=\"color: green;\">разрешено</div>";
                     } else {
@@ -138,7 +139,7 @@ if (!file_exists(ENGINE_DIR . '/data/config.php') or !file_exists(ENGINE_DIR . '
 			<div style=\"float:left;width:195px;text-align:center;padding:10px;border-bottom:1px dashed #ddd\">{$file_status}</div>
 			<div class=clear></div>";
         }
-        if ($chmod_errors == 0 and $not_found_errors == 0) {
+        if ($chmod_errors == 0 && $not_found_errors == 0) {
             $status_report = 'Проверка успешно завершена! Можете продолжить установку!';
         } else {
             $status_report = '';
@@ -443,7 +444,7 @@ HTML;
             fclose($con_file);
             @chmod("system/data/config.php", 0666);
             include ENGINE_DIR . '/classes/mysql.php';
-            $db = require_once ENGINE_DIR . '/data/db.php';
+            $db = require ENGINE_DIR . '/data/db.php';
 
             $_POST['name'] = strip_tags($_POST['name']);
             $_POST['lastname'] = strip_tags($_POST['lastname']);
@@ -476,8 +477,9 @@ SET user_name = '{$_POST['name']}',
     user_lastupdate = '{$server_time}',   
     user_reg_date = '{$server_time}'";
             $table_Chema[] = "INSERT INTO `log` SET uid = '1', browser = '', ip = ''";
-            foreach ($table_Chema as $query)
+            foreach ($table_Chema as $query) {
                 $db->query($query);
+            }
             echo <<<HTML
 <div class="h1">Установка успешно завершена</div>
 Поздравляем Вас, Vii Engine был успешно установлен на Ваш сервер. Вы можете просмотреть теперь главную <a href="/">страницу вашего сайта</a> и посмотреть возможности скрипта. Либо Вы можете <a href="/{$admin_index}">зайти</a> в панель управления Vii Engine и изменить другие настройки системы. 
@@ -488,12 +490,13 @@ SET user_name = '{$_POST['name']}',
 Приятной Вам работы!
 HTML;
 
-        } else
+        } else {
             echo <<<HTML
 <div class="h1">Ошибка</div>
 Заполните необходимые поля!
 <input type="submit" class="inp fl_r" value="Назад" onClick="javascript:history.back()" />
 HTML;
+        }
         die();
     } elseif ($act == 'remove_installer') {
         Filesystem::delete('./install.php');
@@ -543,7 +546,7 @@ HTML;
         Filesystem::delete(ROOT_DIR . '/adminpanel.php');
 
         include ENGINE_DIR . '/classes/mysql.php';
-        $db = require_once ENGINE_DIR . '/data/db.php';
+        $db = require ENGINE_DIR . '/data/db.php';
 
         $table_Chema = array();
         $table_Chema[] = "DROP TABLE IF EXISTS `room`";
@@ -604,8 +607,9 @@ HTML;
         $table_Chema[] = "DROP TABLE IF EXISTS `votes_result`";
         $table_Chema[] = "DROP TABLE IF EXISTS `wall`";
         $table_Chema[] = "DROP TABLE IF EXISTS `wall_like`";
-        foreach ($table_Chema as $query)
+        foreach ($table_Chema as $query) {
             $db->query($query);
+        }
 
         Filesystem::delete(ENGINE_DIR . '/data/config.php');
         Filesystem::delete(ENGINE_DIR . '/data/db.php');
@@ -614,8 +618,7 @@ HTML;
 Добро пожаловать в мастер установки Vii Engine. 
 <br /><br />
 Данный мастер поможет вам установить скрипт всего за пару минут. 
-HTML;
-        echo <<<HTML
+
 <input type="submit" class="inp fl_r" value="Начать установку" onClick="location.href='/install.php?act=files'" />
 HTML;
 
@@ -623,30 +626,21 @@ HTML;
         echo <<<HTML
 <div class="h1">Установка скрипта автоматически заблокирована</div>
 Внимание, на сервере обнаружена уже установленная копия Vii Engine. 
-HTML;
 
-        echo <<<HTML
 <div style=" display: flex">
 <input type="submit" class="inp fl_r" style="background: #f44336; margin: 10px" value="Очистить VII Engine" onClick="location.href='/install.php?act=clean'" />
 <input type="submit" class="inp fl_r" style="background: #f44336; margin: 10px" value="Удалить инсталятор" onClick="location.href='/install.php?act=remove_installer'" />
 </div>
 
-HTML;
-
-        echo <<<HTML
 <div style="width: 100%;height: 50px">
 <input type="submit" class="inp fl_r" value="Обновить" onClick="location.href='/install.php'" />
 </div>
 
 HTML;
-
-
     }
 }
-
 echo <<<HTML
 </div>
 </body>
 </html>
 HTML;
-

@@ -6,41 +6,28 @@
  *   file that was distributed with this source code.
  *
  */
-if (!defined('MOZG')) die('Hacking attempt!');
-
-
+if (!defined('MOZG')) {
+    die('Hacking attempt!');
+}
 try {
     $config = settings_load();
     Registry::set('config', $config);
 } catch (Exception $e) {
     throw new InvalidArgumentException("Invalid config. Please run install.php");
 }
-
-
-$db = require_once ENGINE_DIR . '/data/db.php';
+$db = require ENGINE_DIR . '/data/db.php';
 Registry::set('db', $db);
 
-if ($config['gzip'] == 'yes')
+if ($config['gzip'] == 'yes') {
     include_once ENGINE_DIR . '/modules/gzip.php';
-//FUNC. COOKIES
-$domain_cookie = explode(".", clean_url($_SERVER['HTTP_HOST']));
-$domain_cookie_count = count($domain_cookie);
-$domain_allow_count = -2;
-if ($domain_cookie_count > 2) {
-    if (in_array($domain_cookie[$domain_cookie_count - 2], array('com', 'net', 'org'))) $domain_allow_count = -3;
-    if ($domain_cookie[$domain_cookie_count - 1] == 'ua') $domain_allow_count = -3;
-    $domain_cookie = array_slice($domain_cookie, $domain_allow_count);
 }
-$domain_cookie = "." . implode(".", $domain_cookie);
-define('DOMAIN', $domain_cookie);
-
 //Смена языка
 if (requestFilter('act') == 'chage_lang') {
     $langId = intFilter('id');
     $config['lang_list'] = nl2br($config['lang_list']);
     $expLangList = explode('<br />', $config['lang_list']);
     $numLangs = count($expLangList);
-    if ($langId > 0 and $langId <= $numLangs) {
+    if ($langId > 0 && $langId <= $numLangs) {
         //Меняем язык
         set_cookie("lang", $langId, 365);
     }
@@ -51,14 +38,15 @@ if (requestFilter('act') == 'chage_lang') {
 $config['lang_list'] = nl2br($config['lang_list']);
 $expLangList = explode('<br />', $config['lang_list']);
 $numLangs = count($expLangList);
-$useLang = !empty($_COOKIE['lang']) > 0 ? intval($_COOKIE['lang']) : 0;
-if ($useLang <= 0)
+$useLang = (!empty($_COOKIE['lang'])) > 0 ? (int)$_COOKIE['lang'] : 0;
+if ($useLang <= 0) {
     $useLang = 1;
+}
 $cil = 0;
 foreach ($expLangList as $expLangData) {
     $cil++;
     $expLangName = explode(' | ', $expLangData);
-    if ($cil == $useLang and $expLangName[0]) {
+    if ($cil == $useLang && $expLangName[0]) {
         $rMyLang = $expLangName[0];
         $checkLang = $expLangName[1];
         Registry::set('rMyLang', $rMyLang);
@@ -69,8 +57,8 @@ if (!isset($checkLang)) {
     $rMyLang = 'Русский';
     $checkLang = 'Russian';
 }
-$lang = include_once ROOT_DIR . '/lang/' . $checkLang . '/site.php';
-$langdate = include_once ROOT_DIR . '/lang/' . $checkLang . '/date.php';
+$lang = include ROOT_DIR . '/lang/' . $checkLang . '/site.php';
+$langdate = include ROOT_DIR . '/lang/' . $checkLang . '/date.php';
 
 $tpl = new Templates();
 $tpl->dir = ROOT_DIR . '/templates/' . $config['temp'];
@@ -80,17 +68,22 @@ Registry::set('server_time', time());
 
 include_once ENGINE_DIR . '/login.php';
 
-if ($config['offline'] == "yes") include ENGINE_DIR . '/modules/offline.php';
+if ($config['offline'] == "yes") {
+    include ENGINE_DIR . '/modules/offline.php';
+}
 
-if (isset($user_info['user_delet']) and $user_info['user_delet'] > 0)
+if (isset($user_info['user_delet']) and $user_info['user_delet'] > 0) {
     include_once ENGINE_DIR . '/modules/profile_delet.php';
+}
 $sql_banned = $db->super_query("SELECT * FROM banned", true);
-if (isset($sql_banned))
+if (isset($sql_banned)) {
     $blockip = check_ip($sql_banned);
-else
+} else {
     $blockip = false;
-if (isset($user_info['user_ban_date']) and $user_info['user_ban_date'] >= Registry::get('server_time') or isset($user_info['user_ban_date']) and $user_info['user_ban_date'] == '0' or $blockip)
+}
+if ((isset($user_info['user_ban_date']) && $user_info['user_ban_date'] >= Registry::get('server_time')) || (isset($user_info['user_ban_date']) && $user_info['user_ban_date'] == '0') || $blockip) {
     include_once ENGINE_DIR . '/modules/profile_ban.php';
+}
 //Если юзер авторизован, то обновляем последнюю дату посещения в таблице друзей и на личной стр
 if (Registry::get('logged')) {
     //Начисления 1 убм.
@@ -106,8 +99,9 @@ if (Registry::get('logged')) {
     //Определяем устройство
     $device_user = isset($check_smartphone) ? 1 : 0;
 //    echo $user_info['user_last_visit'];
-    if (empty($user_info['user_last_visit']))
+    if (empty($user_info['user_last_visit'])) {
         $user_info['user_last_visit'] = $server_time;
+    }
 
     if (($user_info['user_last_visit'] + 60) <= $server_time) {
         $db->query("UPDATE LOW_PRIORITY `users` SET user_logged_mobile = '{$device_user}', user_last_visit = '{$server_time}' {$sql_balance} WHERE user_id = '{$user_info['user_id']}'");
@@ -139,7 +133,7 @@ try {
             $go = isset($_GET['go']) ? htmlspecialchars(strip_tags(stripslashes(trim(urldecode($_GET['go']))))) : "main";
             $action = requestFilter('act');
             $class = ucfirst($go);
-            if (!class_exists($class) or $action == '' or $class == 'Wall') {
+            if (!class_exists($class) || $action == '' || $class == 'Wall') {
                 include_once ENGINE_DIR . '/mod.php';
             } else {
                 $controller = new $class();

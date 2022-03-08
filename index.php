@@ -16,7 +16,7 @@ session_start();
 ob_start();
 ob_implicit_flush(0);
 const MOZG = true;
-define("ROOT_DIR", dirname(__FILE__));
+define("ROOT_DIR", __DIR__);
 const ENGINE_DIR = ROOT_DIR . '/system';
 include_once ENGINE_DIR . '/functions.php';
 include_once ENGINE_DIR . '/classes/Registry.php';
