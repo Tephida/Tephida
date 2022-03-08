@@ -9,6 +9,9 @@
 
 class Register extends Module
 {
+    /**
+     * @throws JsonException
+     */
     public function send()
     {
         require ENGINE_DIR . '/classes/Status.php';
@@ -19,7 +22,7 @@ class Register extends Module
 //    NoAjaxQuery();
                 //Код безопасности
                 $session_sec_code = $_SESSION['sec_code'] ?? null;
-                $sec_code = requestFilter('sec_code') ?? null;
+                $sec_code = requestFilter('sec_code');
                 //Если код введные юзером совпадает, то пропускаем, иначе выводим ошибку
                 if ($sec_code == $session_sec_code) {
                     //Входные POST Данные
@@ -30,25 +33,25 @@ class Register extends Module
                     $user_name = ucfirst($user_name);
                     $user_lastname = ucfirst($user_lastname);
                     $user_sex = intFilter('sex');
-                    if ($user_sex < 0 or $user_sex > 2)
+                    if ($user_sex < 0 || $user_sex > 2)
                         $user_sex = 0;
                     $user_day = intFilter('day');
-                    if ($user_day < 0 or $user_day > 31)
+                    if ($user_day < 0 || $user_day > 31)
                         $user_day = 0;
                     $user_month = intFilter('month');
-                    if ($user_month < 0 or $user_month > 12)
+                    if ($user_month < 0 || $user_month > 12)
                         $user_month = 0;
                     $user_year = intFilter('year');
-                    if ($user_year < 1930 or $user_year > 2007)
+                    if ($user_year < 1930 || $user_year > 2007)
                         $user_year = 0;
                     $user_country = intFilter('country');
-                    if ($user_country < 0 or $user_country > 10)
+                    if ($user_country < 0 || $user_country > 10)
                         $user_country = 0;
                     $user_city = intFilter('city');
-                    if ($user_city < 0 or $user_city > 1587)
+                    if ($user_city < 0 || $user_city > 1587)
                         $user_city = 0;
-                    $password_first = requestFilter('password_first') ?? null;
-                    $password_second = requestFilter('password_second') ?? null;
+                    $password_first = requestFilter('password_first');
+                    $password_second = requestFilter('password_second');
 
                     $user_birthday = $user_year . '-' . $user_month . '-' . $user_day;
 
@@ -59,25 +62,25 @@ class Register extends Module
                     if (strlen($user_name) >= 2) {
                         $errors[] = 0;
                     } else {
-                        $err_str .= 'no_name|' . $user_name . '|';
+//                        $err_str .= 'no_name|' . $user_name . '|';
                     }
                     //Проверка фамилии
                     if (strlen($user_lastname) >= 2) {
                         $errors[] = 0;
                     } else {
-                        $err_str .= 'no_lastname|' . $user_lastname . '|';
+//                        $err_str .= 'no_lastname|' . $user_lastname . '|';
                     }
                     //Проверка E-mail
                     if (filter_var($user_email, FILTER_VALIDATE_EMAIL)) {
                         $errors[] = 0;
                     } else {
-                        $err_str .= 'no_email|' . $user_email . '|';
+//                        $err_str .= 'no_email|' . $user_email . '|';
                     }
                     //Проверка Паролей
-                    if (strlen($password_first) >= 6 and $password_first == $password_second) {
+                    if (strlen($password_first) >= 6 && $password_first == $password_second) {
                         $errors[] = 0;
                     } else {
-                        $err_str .= 'no_password|' . $password_first . ' ' . $password_second . '|';
+//                        $err_str .= 'no_password|' . $password_first . ' ' . $password_second . '|';
                     }
                     $allEr = count($errors);
 
@@ -87,7 +90,7 @@ class Register extends Module
                         if (!$check_email['cnt']) {
                             $md5_pass = md5(md5($password_first));
                             $user_group = '5';
-                            if ($user_country > 0 or $user_city > 0) {
+                            if ($user_country > 0 || $user_city > 0) {
                                 $country_info = $db->super_query("SELECT name FROM `country` WHERE id = '" . $user_country . "'");
                                 $city_info = $db->super_query("SELECT name FROM `city` WHERE id = '" . $user_city . "'");
                                 $user_country_city_name = $country_info['name'] . '|' . $city_info['name'];
@@ -121,7 +124,7 @@ class Register extends Module
                                 //Проверяем на накрутку убм, что юзер не сам регистрирует анкеты
                                 $check_ref = $db->super_query("SELECT COUNT(*) AS cnt FROM `log` WHERE ip = '{$_IP}'");
                                 if (!$check_ref['cnt']) {
-                                    $ref_id = intval($ref_id);
+                                    $ref_id = (int)$ref_id;
                                     //Даём +10 убм
                                     $db->query("UPDATE `users` SET user_balance = user_balance+10 WHERE user_id = '{$ref_id}'");
                                     //Вставляем ид регистратора
@@ -179,11 +182,10 @@ class Register extends Module
 //################## Загружаем Страны ##################//
         $sql_country = $db->super_query("SELECT * FROM `country` ORDER by `name` ASC", true);
         $all_country = '';
-        foreach ($sql_country as $row_country)
+        foreach ($sql_country as $row_country) {
             $all_country .= '<option value="' . $row_country['id'] . '">' . stripslashes($row_country['name']) . '</option>';
-
+        }
         $tpl->set('{country}', $all_country);
-
         $tpl->compile('content');
         compile($tpl);
     }
