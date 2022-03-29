@@ -9,8 +9,6 @@
 Install VII Engine with Composer.
 
 1. install [composer](https://getcomposer.org/)
-   ([linux/Unix/macOS/Windows](https://getcomposer.org/doc/00-intro.md))
-   ([OpenServer](https://ospanel.io/docs/#rabota-s-composer))
 
 2. Please run install.php
 

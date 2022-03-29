@@ -11,7 +11,7 @@
     <a href="/" style="font-weight:normal" onClick="imRoom.createBox(this); return false">Создать беседу</a>
     <div class="clear"></div>
     <span id="updateDialogs"></span>
-    <div id="alldialogs">{dialogs}</div>
+    <div id="alldialogs" class="d-flex flex-column">{dialogs}</div>
     <div class="clear"></div>
 </div>
 <div class="im_head fl_l" id="imViewMsg">

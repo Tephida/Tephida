@@ -2802,7 +2802,7 @@ var im = {
             if (count) {
                 var msg_num = parseInt($('#new_msg').text().replace(')', '').replace('(', '')),
                     new_count = msg_num - count;
-                if (new_count) $('#new_msg').html("<div class=\"headm_newac\" style=\"margin-left:37px\">" + new_count + "</div>");
+                if (new_count) $('#new_msg').html("<div class=\"ic_newAct\" style=\"margin-left:37px\">" + new_count + "</div>");
                 else $('#new_msg').html("");
                 $('#msg_num' + uid).text('').hide();
             }
@@ -2817,7 +2817,7 @@ var im = {
                 msg_id: msg_id
             }, function () {
                 imrearstart = 1;
-                if (msg_num > 0) $('#new_msg').html("<div class=\"headm_newac\" style=\"margin-left:37px\">" + msg_num + "</div>");
+                if (msg_num > 0) $('#new_msg').html("<div class=\"ic_newAct\" style=\"margin-left:37px\">" + msg_num + "</div>");
                 else $('#new_msg').html('');
                 updateNum('#msg_num' + auth_id);
                 if ($('#msg_num' + auth_id).text() <= 0) $('#msg_num' + auth_id).hide();

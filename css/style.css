@@ -19,10 +19,15 @@
     rounded
 }
 
-.d-flex{
+.d-flex {
     @apply flex
 }
-.justify-content-start{
+
+.flex-column {
+    flex-direction: column !important;
+}
+
+.justify-content-start {
     @apply justify-start
 }
 .justify-content-between{

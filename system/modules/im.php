@@ -1216,7 +1216,7 @@ HTML;
                     $res .= '$("#upNewMsg' . ($row['room_id'] ? 'c' . $row['room_id'] : $row['im_user_id']) . '").html(\'<div class="im_new fl_l" id="msg_num' . ($row['room_id'] ? 'c' . $row['room_id'] : $row['im_user_id']) . '">' . $row['msg_num'] . '</div>\').show();';
                 }
                 if ($user_info['user_pm_num']) {
-                    $user_pm_num_2 = "<div class=\"headm_newac\" style=\"margin-left:37px\">+{$user_info['user_pm_num']}</div>";
+                    $user_pm_num_2 = "<div class=\"ic_newAct\" style=\"margin-left:37px\">+{$user_info['user_pm_num']}</div>";
                     $doc_title = 'document.title = \'(' . $user_info['user_pm_num'] . ') Новые сообщения\';';
                 } else {
                     $doc_title = 'document.title = \'Диалоги\';';

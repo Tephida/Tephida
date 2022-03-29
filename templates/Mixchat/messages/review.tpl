@@ -2,7 +2,7 @@
     [new]
     var msg_num = parseInt($('#new_msg').text().replace(')', '').replace('(', '')) - 1;
     if (msg_num > 0)
-        $('#new_msg').html("<div class=\"headm_newac\" style=\"margin-left:37px\">" + msg_num + "</div>");
+        $('#new_msg').html("<div class=\"ic_newAct\" style=\"margin-left:37px\">" + msg_num + "</div>");
     else
         $('#new_msg').html('');
     [/new]

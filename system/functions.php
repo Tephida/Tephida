@@ -691,7 +691,7 @@ function compile($tpl, array $params = array()): int
         //Загружаем кол-во новых новостей
         $CacheNews = mozg_cache('user_' . $user_info['user_id'] . '/new_news');
         if ($CacheNews) {
-            $params['new_news'] = "<div class=\"headm_newac\" style=\"margin-left:18px\">{$CacheNews}</div>";
+            $params['new_news'] = "<div class=\"ic_newAct\" style=\"margin-left:18px\">{$CacheNews}</div>";
             $params['news_link'] = '/notifications';
         } else {
             $params['new_news'] = '';
@@ -700,7 +700,7 @@ function compile($tpl, array $params = array()): int
 //Загружаем кол-во новых подарков
         $CacheGift = mozg_cache("user_{$user_info['user_id']}/new_gift");
         if ($CacheGift) {
-            $params['new_ubm'] = "<div class=\"headm_newac\" style=\"margin-left:20px\">{$CacheGift}</div>";
+            $params['new_ubm'] = "<div class=\"ic_newAct\" style=\"margin-left:20px\">{$CacheGift}</div>";
             $params['gifts_link'] = "/gifts{$user_info['user_id']}?new=1";
         } else {
             $params['new_ubm'] = '';
@@ -709,12 +709,12 @@ function compile($tpl, array $params = array()): int
 //Новые сообщения
         $user_pm_num = $user_info['user_pm_num'];
         if ($user_pm_num) {
-            $params['user_pm_num'] = "<div class=\"headm_newac\" style=\"margin-left:37px\">{$user_pm_num}</div>";
+            $params['user_pm_num'] = "<div class=\"ic_newAct\" style=\"margin-left:37px\">{$user_pm_num}</div>";
         } else $params['user_pm_num'] = '';
 //Новые друзья
         $user_friends_demands = $user_info['user_friends_demands'];
         if ($user_friends_demands) {
-            $params['demands'] = "<div class=\"headm_newac\">{$user_friends_demands}</div>";
+            $params['demands'] = "<div class=\"ic_newAct\">{$user_friends_demands}</div>";
             $params['requests_link'] = '/requests';
         } else {
             $params['demands'] = '';
@@ -723,21 +723,21 @@ function compile($tpl, array $params = array()): int
 //ТП
         $user_support = $user_info['user_support'];
         if ($user_support) {
-            $params['support'] = "<div class=\"headm_newac\" style=\"margin-left:26px\">{$user_support}</div>";
+            $params['support'] = "<div class=\"ic_newAct\" style=\"margin-left:26px\">{$user_support}</div>";
         } else {
             $params['support'] = '';
         }
 //Отметки на фото
         if ($user_info['user_new_mark_photos']) {
             $params['new_photos_link'] = 'newphotos';
-            $params['new_photos'] = "<div class=\"headm_newac\" style=\"margin-left:22px\">" . $user_info['user_new_mark_photos'] . "</div>";
+            $params['new_photos'] = "<div class=\"ic_newAct\" style=\"margin-left:22px\">" . $user_info['user_new_mark_photos'] . "</div>";
         } else {
             $params['new_photos'] = '';
             $params['new_photos_link'] = $user_info['user_id'];
         }
 //Приглашения в сообщества
         if ($user_info['invties_pub_num']) {
-            $params['new_groups'] = "<div class=\"headm_newac\" style=\"margin-left:26px\">" . $user_info['invties_pub_num'] . "</div>";
+            $params['new_groups'] = "<div class=\"ic_newAct\" style=\"margin-left:26px\">" . $user_info['invties_pub_num'] . "</div>";
             $params['new_groups_lnk'] = '/groups?act=invites';
         } else {
             $params['new_groups'] = '';
@@ -945,7 +945,7 @@ function compileNoAjax($tpl, $params): int
 
         $new_actions = $user_friends_demands + $user_support + $CacheNews + $CacheGift + $user_info['user_pm_num'];
         if ($new_actions) {
-            $tpl->set('{new-actions}', "<div class=\"headm_newac\" style=\"margin-top:5px;margin-left:30px\">+{$new_actions}</div>");
+            $tpl->set('{new-actions}', "<div class=\"ic_newAct\" style=\"margin-top:5px;margin-left:30px\">+{$new_actions}</div>");
         } else {
             $tpl->set('{new-actions}', "");
         }
@@ -1091,4 +1091,14 @@ function get_device(): array
         'device ' => $user_device->getName(),
         'language ' => $language->getLanguage(),
     ];
+}
+
+function notify_ico(): string
+{
+
+    return "<div class=\"ic_msg\" id=\"myprof2\" onmouseout=\"$('.js_titleRemove').remove();\">
+         <div id=\"new_msg\">
+            <div class=\"ic_newAct\">4</div>
+         </div>
+     </div>";
 }

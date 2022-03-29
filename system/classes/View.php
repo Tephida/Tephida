@@ -4,10 +4,7 @@ declare(strict_types=1);
 namespace Mozg\classes;
 
 use ErrorException;
-use FluffyDollop\Support\Gzip;
-use FluffyDollop\Support\Mysql;
 use FluffyDollop\Support\Registry;
-use JsonException;
 use Mozg\modules\Lang;
 use Tephida\View\myView;
 
@@ -69,46 +66,46 @@ class View
             //Загружаем кол-во новых новостей
             $cache_news = mozg_cache('user_' . $user_info['user_id'] . '/new_news');
             if ($cache_news) {
-                $this->notify['new_news'] = "<div class=\"headm_newac\" style=\"margin-left:18px\">{$cache_news}</div>";
+                $this->notify['new_news'] = "<div class=\"ic_newAct\">{$cache_news}</div>";
                 $this->notify['news_link'] = '/notifications';
             }
             /** Загружаем кол-во новых подарков */
             $cache_gift = mozg_cache("user_{$user_info['user_id']}/new_gift");
             if ($cache_gift) {
-                $this->notify['new_ubm'] = "<div class=\"headm_newac\" style=\"margin-left:20px\">{$cache_gift}</div>";
+                $this->notify['new_ubm'] = "<div class=\"ic_newAct\">{$cache_gift}</div>";
                 $this->notify['gifts_link'] = "/gifts{$user_info['user_id']}?new=1";
             }
 
             /** Новые сообщения */
             $user_pm_num = $user_info['user_pm_num'];
             if ($user_pm_num) {
-                $this->notify['user_pm_num'] = "<div class=\"headm_newac\" style=\"margin-left:37px\">{$user_pm_num}</div>";
+                $this->notify['user_pm_num'] = "<div class=\"ic_newAct\">{$user_pm_num}</div>";
             }
 
             /** Новые друзья */
             $friends_demands = $user_info['user_friends_demands'];
             if ($friends_demands) {
-                $this->notify['demands'] = "<div class=\"headm_newac\">{$friends_demands}</div>";
+                $this->notify['demands'] = "<div class=\"ic_newAct\">{$friends_demands}</div>";
                 $this->notify['requests_link'] = '/requests';
             }
 
             /** ТП */
             $user_support = $user_info['user_support'];
             if ($user_support) {
-                $this->notify['support'] = "<div class=\"headm_newac\" style=\"margin-left:26px\">{$user_support}</div>";
+                $this->notify['support'] = "<div class=\"ic_newAct\">{$user_support}</div>";
             }
 
             /** Отметки на фото */
             if ($user_info['user_new_mark_photos']) {
                 $this->notify['new_photos_link'] = 'newphotos';
-                $this->notify['new_photos'] = "<div class=\"headm_newac\" style=\"margin-left:22px\">" . $user_info['user_new_mark_photos'] . "</div>";
+                $this->notify['new_photos'] = "<div class=\"ic_newAct\">" . $user_info['user_new_mark_photos'] . "</div>";
             } else {
                 $this->notify['new_photos_link'] = $user_info['user_id'];
             }
 
             /** Приглашения в сообщества */
             if ($user_info['invties_pub_num']) {
-                $this->notify['new_groups'] = "<div class=\"headm_newac\" style=\"margin-left:26px\">" . $user_info['invties_pub_num'] . "</div>";
+                $this->notify['new_groups'] = "<div class=\"ic_newAct\">" . $user_info['invties_pub_num'] . "</div>";
                 $this->notify['new_groups_lnk'] = '/groups?act=invites';
             }
             if (requestFilter('ajax') !== 'yes'){
@@ -125,8 +122,8 @@ class View
                 $variables['new_news'] = $this->notify['new_news'];
             }
         }
-        $views = ROOT_DIR . '/templates/'.$config['temp'].'';
-        $cache =  ENGINE_DIR.'/cache/views';
+        $views = ROOT_DIR . '/templates/' . $config['temp'];
+        $cache = ENGINE_DIR . '/cache/views';
         $blade = new myView($views, $cache, \Tephida\View\View::MODE_AUTO); // MODE_DEBUG allows pinpointing troubles.
         $blade::$dictionary = Lang::dictionary();
         if (requestFilter('ajax') === 'yes') {

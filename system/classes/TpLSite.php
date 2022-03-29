@@ -69,7 +69,6 @@ class TpLSite extends Templates
     <meta name="generator" content="VII ENGINE" />
     <meta http-equiv="content-type" content="text/html; charset=utf-8" />';
 
-
         $user_info = Registry::get('user_info');
         //Если юзер перешел по реферальной ссылке, то добавляем ид реферала в сессию
         if (isset($_GET['reg'])) {
@@ -80,46 +79,46 @@ class TpLSite extends Templates
             //Загружаем кол-во новых новостей
             $CacheNews = mozg_cache('user_' . $user_info['user_id'] . '/new_news');
             if ($CacheNews) {
-                $this->notify['new_news'] = "<div class=\"headm_newac\" style=\"margin-left:18px\">{$CacheNews}</div>";
+                $this->notify['new_news'] = "<div class=\"ic_newAct\">{$CacheNews}</div>";
                 $this->notify['news_link'] = '/notifications';
             }
             /** Загружаем кол-во новых подарков */
             $CacheGift = mozg_cache("user_{$user_info['user_id']}/new_gift");
             if ($CacheGift) {
-                $this->notify['new_ubm'] = "<div class=\"headm_newac\" style=\"margin-left:20px\">{$CacheGift}</div>";
+                $this->notify['new_ubm'] = "<div class=\"ic_newAct\">{$CacheGift}</div>";
                 $this->notify['gifts_link'] = "/gifts{$user_info['user_id']}?new=1";
             }
 
             /** Новые сообщения */
             $user_pm_num = $user_info['user_pm_num'];
             if ($user_pm_num) {
-                $this->notify['user_pm_num'] = "<div class=\"headm_newac\" style=\"margin-left:37px\">{$user_pm_num}</div>";
+                $this->notify['user_pm_num'] = "<div class=\"ic_newAct\">{$user_pm_num}</div>";
             }
 
             /** Новые друзья */
             $user_friends_demands = $user_info['user_friends_demands'];
             if ($user_friends_demands) {
-                $this->notify['demands'] = "<div class=\"headm_newac\">{$user_friends_demands}</div>";
+                $this->notify['demands'] = "<div class=\"ic_newAct\">{$user_friends_demands}</div>";
                 $this->notify['requests_link'] = '/requests';
             }
 
             /** ТП */
             $user_support = $user_info['user_support'];
             if ($user_support) {
-                $this->notify['support'] = "<div class=\"headm_newac\" style=\"margin-left:26px\">{$user_support}</div>";
+                $this->notify['support'] = "<div class=\"ic_newAct\">{$user_support}</div>";
             }
 
             /** Отметки на фото */
             if ($user_info['user_new_mark_photos']) {
                 $this->notify['new_photos_link'] = 'newphotos';
-                $this->notify['new_photos'] = "<div class=\"headm_newac\" style=\"margin-left:22px\">" . $user_info['user_new_mark_photos'] . "</div>";
+                $this->notify['new_photos'] = "<div class=\"ic_newAct\">" . $user_info['user_new_mark_photos'] . "</div>";
             } else {
                 $this->notify['new_photos_link'] = $user_info['user_id'];
             }
 
             /** Приглашения в сообщества */
             if ($user_info['invties_pub_num']) {
-                $this->notify['new_groups'] = "<div class=\"headm_newac\" style=\"margin-left:26px\">" . $user_info['invties_pub_num'] . "</div>";
+                $this->notify['new_groups'] = "<div class=\"ic_newAct\">" . $user_info['invties_pub_num'] . "</div>";
                 $this->notify['new_groups_lnk'] = '/groups?act=invites';
             } else {
                 $this->notify['new_groups_lnk'] = '/groups';
@@ -276,7 +275,7 @@ class TpLSite extends Templates
 
             $new_actions = $user_friends_demands + $user_support + $CacheNews + $CacheGift + $user_info['user_pm_num'];
             if ($new_actions) {
-                $this->set('{new-actions}', "<div class=\"headm_newac\" style=\"margin-top:5px;margin-left:30px\">+{$new_actions}</div>");
+                $this->set('{new-actions}', "<div class=\"ic_newAct\" style=\"margin-top:5px;margin-left:30px\">+{$new_actions}</div>");
             } else {
                 $this->set('{new-actions}', "");
             }

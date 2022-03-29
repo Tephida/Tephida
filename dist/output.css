@@ -491,6 +491,10 @@ Ensure the default browser behavior of the `hidden` attribute.
   display: flex;
 }
 
+.flex-column {
+  flex-direction: column !important;
+}
+
 .justify-content-start {
   justify-content: flex-start;
 }
@@ -4365,7 +4369,7 @@ ul.listing li span {
 
 .payment_title {
   background: #F2F2F2;
-  padding: 16px 5px 16px 25px;
+  padding: 16px 5px 25px 25px;
   line-height: 180%;
   font-size: 11px;
   margin: -20px -20px 15px;

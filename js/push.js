@@ -51,7 +51,7 @@ $(document).ready(function () {
                     if (!sli[2] && tURL[0] == 'messages') return false;
                     if ($('#new_msg').text()) msg_num = parseInt($('#new_msg').text().replace(')', '').replace('(', '')) + 1;
                     else msg_num = 1;
-                    $('#new_msg').html("<div class=\"headm_newac\" style=\"margin-left:37px\">" + msg_num + "</div>");
+                    $('#new_msg').html("<div class=\"ic_newAct\" style=\"margin-left:37px\">" + msg_num + "</div>");
                 }
                 temp = '<div class="update_box cursor_pointer" id="event' + row[4] + '" onClick="GoPage(event, \'' + row[6] + '\'); upClose(' + row[4] + ')"><div class="update_box_margin"><div style="height:19px"><span>' + uTitle + '</span><div class="update_close fl_r no_display" id="update_close" onMouseDown="upClose(' + row[4] + ')"><div class="update_close_ic" id="update_close2"></div></div></div><div class="clear"></div><div class="update_inpad"><a href="/u' + row[2] + '" onClick="Page.Go(this.href); return false"><div class="update_box_marginimg"><img src="' + row[5] + '" id="no_ev" /></div></a><div class="update_data"><a id="no_ev" href="/u' + row[2] + '" onClick="Page.Go(this.href); return false">' + row[1] + '</a>&nbsp;&nbsp;' + row[3] + '</div></div><div class="clear"></div></div></div>';
                 $('#updates').html($('#updates').html() + temp);

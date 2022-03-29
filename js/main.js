@@ -51,11 +51,14 @@ if (CheckRequestVideo(req_href)) {
         var video_id = req_href.split('_');
         var section = req_href.split('sec=');
         var fuser = req_href.split('wall/fuser=');
-        if (fuser[1]) var close_link = '/u' + fuser[1];
-        else var close_link = '';
+        if (fuser[1])
+            var close_link = '/u' + fuser[1];
+        else
+            var close_link = '';
         if (section[1]) {
             var xSection = section[1].split('/');
-            if (xSection[0] == 'news') var close_link = 'news';
+            if (xSection[0] == 'news')
+                var close_link = 'news';
             if (xSection[0] == 'msg') {
                 var msg_id = xSection[1].split('id=');
                 var close_link = '/messages/show/' + msg_id[1];
@@ -123,7 +126,9 @@ class PageTools {
             let result = await response.json();
             $('#page').html(result.content);
             $('html, body').scrollTop(0);
-            if(window.audio_player && !audio_player.pause) audio_player.command('play', {style_only: true});
+            if (window.audio_player && !audio_player.pause) {
+                audio_player.command('play', {style_only: true});
+            }
             $('#addStyleClass').remove();
             $('.photo_view, .box_pos, .box_info, .video_view').remove();
             document.title = result.title;
