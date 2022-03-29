@@ -7,7 +7,7 @@
  *
  */
 
-use FluffyDollop\Support\{Filesystem, Registry, Thumbnail};
+use FluffyDollop\Support\{Filesystem, Registry, Status, Thumbnail};
 
 NoAjaxQuery();
 
@@ -146,20 +146,29 @@ if (Registry::get('logged')) {
                         //Обновляем имя фотки в бд
                         $db->query("UPDATE `users` SET user_photo = '{$image_rename}{$res_type}', user_wall_id = '{$dbid}' WHERE user_id = '{$user_id}'");
                         $config = settings_get();
-                        echo $config['home_url'] . 'uploads/users/' . $user_id . '/' . $image_rename . $res_type;
+                        $photo = $config['home_url'] . 'uploads/users/' . $user_id . '/' . $image_rename . $res_type;
 
                         mozg_clear_cache_file('user_' . $user_id . '/profile_' . $user_id);
                         mozg_clear_cache();
+                        $status = Status::OK;
                     } else {
-                        echo 'bad';
+                        $photo = '';
+                        $status = Status::BAD;
                     }
                 } else {
-                    echo 'big_size';
+                    $photo = '';
+                    $status = Status::BIG_SIZE;
                 }
             } else {
-                echo 'bad_format';
+                $photo = '';
+                $status = Status::BAD_FORMAT;
             }
 
+            $response = [
+                'status' => $status,
+                'photo' => $photo,
+            ];
+            _e_json($response);
             break;
 
         //Удаление фотографии
@@ -392,7 +401,7 @@ if (Registry::get('logged')) {
 
             if ($row['user_photo'] and $i_width >= 100 and $i_height >= 100 and $i_left >= 0) {
                 $tmb = new Thumbnail(ROOT_DIR . "/uploads/users/{$user_info['user_id']}/{$row['user_photo']}");
-                $tmb->size_auto($i_width . "x" . $i_height, 0, "{$i_left}|{$i_top}");
+                $tmb->size_auto($i_width . 'x' . $i_height, 0, "{$i_left}|{$i_top}");
                 $tmb->jpeg_quality(100);
                 $tmb->save(ROOT_DIR . "/uploads/users/{$user_info['user_id']}/100_{$row['user_photo']}");
 

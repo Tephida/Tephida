@@ -71,7 +71,7 @@
                     else
                         showTooltip(item.pageX, item.pageY, '<b>' + y + ' <span id="gram_num' + item.dataIndex + '">уникальных посетителей</span></b><br /><small>' + item.dataIndex + ' ' + $('#tek_month').val() + '</small>');
 
-                    langNumric('gram_num' + item.dataIndex, y, 'уникальный посетитель', 'уникальных посетителя', 'уникальных посетителей', 'уникальных посетителей');
+                    Page.langNumric('gram_num' + item.dataIndex, y, 'уникальный посетитель', 'уникальных посетителя', 'уникальных посетителей', 'уникальных посетителей');
                 }
             } else {
                 $('#tooltip_1').remove();
@@ -136,7 +136,7 @@
                     else
                         showTooltip(item.pageX, item.pageY, '<b>' + y + ' <span id="1gram_num' + item.dataIndex + '">просмотров</span></b><br /><small>' + item.dataIndex + ' ' + $('#tek_month').val() + '</small>');
 
-                    langNumric('1gram_num' + item.dataIndex, y, 'просмотр', 'просмотра', 'просмотров', 'просмотров');
+                    Page.langNumric('1gram_num' + item.dataIndex, y, 'просмотр', 'просмотра', 'просмотров', 'просмотров');
                 }
             } else {
                 $('#tooltip_1').remove();

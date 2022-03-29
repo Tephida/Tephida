@@ -9,6 +9,26 @@
 
 $table_Chema = $table_Chema ?? array();
 
+$tableSchema[] = "CREATE TABLE `bugs` (
+  `id` int(11) UNSIGNED NOT NULL,
+  `uids` int(11) UNSIGNED NOT NULL,
+  `title` text NOT NULL,
+  `text` text NOT NULL,
+  `images` varchar(40) NOT NULL,
+  `status` int(11) NOT NULL DEFAULT '1',
+  `date` varchar(15) NOT NULL,
+  `add_date` varchar(15) NOT NULL,
+  `admin_text` text NOT NULL,
+  `admin_id` int(11) NOT NULL DEFAULT '693'
+) ENGINE=InnoDB DEFAULT CHARSET=utf8";
+$tableSchema[] = "CREATE TABLE `bugs_comments` (
+  `id` int(11) NOT NULL,
+  `author_user_id` int(11) NOT NULL,
+  `bug_id` int(11) NOT NULL,
+  `text` varchar(255) NOT NULL,
+  `add_date` datetime NOT NULL,
+  `status` int(11) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8";
 $table_Chema[] = "CREATE TABLE IF NOT EXISTS `room` (
   `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT,
   `title` varchar(100) NOT NULL DEFAULT '',
@@ -3784,22 +3804,24 @@ $table_Chema[] = "CREATE TABLE IF NOT EXISTS `im` (
   KEY `im_user_id` (`im_user_id`),
   KEY `idate` (`idate`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1;";
-$table_Chema[] = "CREATE TABLE IF NOT EXISTS `invites` (
+$table_Chema[] = 'CREATE TABLE IF NOT EXISTS `invites` (
+  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
   `uid` int(11) NOT NULL,
   `ruid` int(11) NOT NULL,
   KEY `uid` (`uid`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;";
-$table_Chema[] = "CREATE TABLE IF NOT EXISTS `log` (
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;';
+$table_Chema[] = 'CREATE TABLE IF NOT EXISTS `log` (
   `uid` int(11) NOT NULL,
   `browser` text NOT NULL,
   `ip` varchar(15) NOT NULL,
+  `device` varchar(255) NOT NULL,
   KEY `uid` (`uid`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;";
-$table_Chema[] = "CREATE TABLE IF NOT EXISTS `mail_tpl` (
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;';
+$table_Chema[] = 'CREATE TABLE IF NOT EXISTS `mail_tpl` (
   `id` mediumint(8) NOT NULL AUTO_INCREMENT,
   `text` text NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;";
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;';
 
 
 $table_Chema[] = "INSERT INTO `mail_tpl` (`id`, `text`) VALUES
@@ -3842,7 +3864,7 @@ $table_Chema[] = "CREATE TABLE IF NOT EXISTS `messages` (
   KEY `history_user_id` (`history_user_id`),
   KEY `folder` (`folder`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;";
-$table_Chema[] = "CREATE TABLE IF NOT EXISTS `news` (
+$table_Chema[] = 'CREATE TABLE IF NOT EXISTS `news` (
   `ac_id` int(11) unsigned NOT NULL AUTO_INCREMENT,
   `ac_user_id` int(11) unsigned NOT NULL,
   `action_type` tinyint(4) unsigned NOT NULL,
@@ -3858,7 +3880,7 @@ $table_Chema[] = "CREATE TABLE IF NOT EXISTS `news` (
   KEY `for_user_id` (`for_user_id`),
   KEY `obj_id` (`obj_id`),
   KEY `action_time` (`action_time`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;";
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;';
 $table_Chema[] = "CREATE TABLE IF NOT EXISTS `notes` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
   `owner_user_id` int(11) unsigned NOT NULL,
@@ -4091,6 +4113,7 @@ $table_Chema[] = "CREATE TABLE IF NOT EXISTS `users` (
   `invties_pub_num` smallint(6) NOT NULL,
   `user_real` int(11) NOT NULL,
   `user_active` int(11) NOT NULL,
+    `notify` varchar(255) NOT NULL,
   PRIMARY KEY (`user_id`),
   KEY `user_logged_hash` (`user_hid`),
   KEY `user_password` (`user_password`),

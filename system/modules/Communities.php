@@ -256,42 +256,70 @@ class Communities extends Module
                 $tpl->set('{adres}', $row['adres']);
 
                 //Аудиозаписи
-                if ($row['audio_num']) {
-                    $sql_audios = $db->super_query("SELECT url, artist, name FROM `communities_audio` WHERE public_id = '{$row['id']}' ORDER by `adate` DESC LIMIT 0, 3", true);
-                    $jid = 0;
-                    $audios = '';
-                    foreach ($sql_audios as $row_audios) {
-                        $jid++;
-
-                        $row_audios['artist'] = stripslashes($row_audios['artist']);
-                        $row_audios['name'] = stripslashes($row_audios['name']);
-
-                        $audios .= "<div class=\"audio_onetrack\"><div class=\"audio_playic cursor_pointer fl_l\" onClick=\"music.newStartPlay('{$jid}')\" id=\"icPlay_{$jid}\"></div><span id=\"music_{$jid}\" data=\"{$row_audios['url']}\"><a href=\"/?go=search&query={$row_audios['artist']}&type=5\" onClick=\"Page.Go(this.href); return false\"><b><span id=\"artis{aid}\">{$row_audios['artist']}</span></b></a> &ndash; <span id=\"name{aid}\">{$row_audios['name']}</span></span><div id=\"play_time{$jid}\" class=\"color777 fl_r no_display\" style=\"margin-top:2px;margin-right:5px\"></div> <div class=\"clear\"></div><div class=\"player_mini_mbar fl_l no_display\" id=\"ppbarPro{$jid}\" style=\"width:178px\"></div> </div>";
-
+                if($row['audio_num']){
+                    $sql_audios = $db->super_query("SELECT id, url, artist, title, duration FROM `audio` WHERE oid = '{$row['id']}' and public = '1' ORDER by `id` DESC LIMIT 0, 3", 1);
+                    foreach($sql_audios as $row_audio){
+                        $stime = gmdate('i:s', $row_audio['duration']);
+                        if(!$row_audio['artist']) {
+                            $row_audio['artist'] = 'Неизвестный исполнитель';
+                        }
+                        if(!$row_audio['title']) {
+                            $row_audio['title'] = 'Без названия';
+                        }
+                        $search_artist = urlencode($row_audio['artist']);
+                        $plname = 'publicaudios'.$row['id'];
+                        $audios .= <<<HTML
+<div class="audioPage audioElem" id="audio_{$row_audio['id']}_{$row['id']}_{$plname}" onclick="playNewAudio('{$row_audio['id']}_{$row['id']}_{$plname}', event);">
+<div class="area">
+<table cellspacing="0" cellpadding="0" width="100%">
+<tbody>
+<tr>
+<td>
+<div class="audioPlayBut new_play_btn"><div class="bl"><div class="figure"></div></div></div>
+<input type="hidden" value="{$row_audio['url']},{$row_audio['duration']},page" id="audio_url_{$row_audio['id']}_{$row['id']}_{$plname}">
+</td>
+<td class="info">
+<div class="audioNames"><b class="author" onclick="Page.Go('/?go=search&query={$search_artist}&type=5&n=1'); return false;" id="artist">{$row_audio['artist']}</b>  –  <span class="name" id="name">{$row_audio['title']}</span> <div class="clear"></div></div>
+<div class="audioElTime" id="audio_time_{$row_audio['id']}_{$row['id']}_{$plname}">{$stime}</div>
+</td>
+</tr>
+</tbody>
+</table>
+<div id="player{$row_audio['id']}_{$row['id']}_{$plname}" class="audioPlayer" border="0" cellpadding="0">
+<table cellspacing="0" cellpadding="0" width="100%">
+<tbody>
+<tr>
+<td style="width: 100%;">
+<div class="progressBar fl_l" style="width: 100%;" onclick="cancelEvent(event);" onmousedown="audio_player.progressDown(event, this);" id="no_play" onmousemove="audio_player.playerPrMove(event, this)" onmouseout="audio_player.playerPrOut()">
+<div class="audioTimesAP" id="main_timeView"><div class="audioTAP_strlka">100%</div></div>
+<div class="audioBGProgress"></div>
+<div class="audioLoadProgress"></div>
+<div class="audioPlayProgress" id="playerPlayLine"><div class="audioSlider"></div></div>
+</div>
+</td>
+<td>
+<div class="audioVolumeBar fl_l" onclick="cancelEvent(event);" onmousedown="audio_player.volumeDown(event, this);" id="no_play">
+<div class="audioTimesAP"><div class="audioTAP_strlka">100%</div></div>
+<div class="audioBGProgress"></div>
+<div class="audioPlayProgress" id="playerVolumeBar"><div class="audioSlider"></div></div>
+</div>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+HTML;
                     }
-
-                    $tpl->set('{audios}', $audios);
-                    $tpl->set('{audio-num}', $row['audio_num']);
-                    $tpl->set('[audios]', '');
-                    $tpl->set('[/audios]', '');
-                    $tpl->set('[yesaudio]', '');
-                    $tpl->set('[/yesaudio]', '');
-                    $tpl->set_block("'\\[noaudio\\](.*?)\\[/noaudio\\]'si", "");
-
+                    $tpl->set(false, ['{audios}' => $audios,'{audio-num}' => $row['audio_num'],'[audios]' => '','[/audios]' => '','[yesaudio]' => '','[/yesaudio]' => '']);
+                    $tpl->set_block("'\\[noaudio\\](.*?)\\[/noaudio\\]'si", '');
                 } else {
-
-                    $tpl->set('{audios}', '');
-                    $tpl->set('[noaudio]', '');
-                    $tpl->set('[/noaudio]', '');
-                    $tpl->set_block("'\\[yesaudio\\](.*?)\\[/yesaudio\\]'si", "");
-
-                    if ($public_admin) {
-                        $tpl->set('[audios]', '');
-                        $tpl->set('[/audios]', '');
-                    } else
-                        $tpl->set_block("'\\[audios\\](.*?)\\[/audios\\]'si", "");
-
+                    $tpl->set_block("'\\[yesaudio\\](.*?)\\[/yesaudio\\]'si", '');
+                    $tpl->set(false, ['{audios}' => '','[noaudio]' => '','[/noaudio]' => '']);
+                    $tpl->set_block("'\\[audios\\](.*?)\\[/audios\\]'si", '');
                 }
+
 
                 //Обсуждения
                 if ($row['discussion']) {

@@ -95,7 +95,7 @@ switch ($act) {
         $tpl->set('{for_select_offline}', $for_select_offline);
         $config['offline_msg'] = stripslashes($config['offline_msg']);
         $tpl->set('{config_offline_msg}', $config['offline_msg']);
-        $tpl->set('{config_lang_list}', $config['lang_list']);
+//        $tpl->set('{config_lang_list}', $config['lang_list']);
         $tpl->set('{config_bonus_rate}', $config['bonus_rate']);
         $tpl->set('{config_cost_balance}', $config['cost_balance']);
 

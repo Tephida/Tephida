@@ -27,7 +27,7 @@ while ($r = $db->get_array()) {
         $mysql_size += $r['Data_length'] + $r['Index_length'];
     }
 }
-$db->free();
+//$db->free();
 $mysql_size = Filesystem::formatsize($mysql_size);
 
 $cache_size = Filesystem::formatsize(Filesystem::dirSize("uploads"));

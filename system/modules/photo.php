@@ -622,7 +622,7 @@ if (Registry::get('logged')) {
                                 }
                                 if ($row_mark['muser_id'] && $row_mark['mphoto_name'] == '') {
                                     if ($row['user_id'] == $user_info['user_id'] || $user_info['user_id'] == $row_mark['muser_id'] || $user_info['user_id'] == $row_mark['mmark_user_id']) {
-                                        $del_mark_link = '<div class="fl_l"><img src="/templates/Default/images/hide_lef.gif" class="distin_del_user" title="Удалить отметку" onclick="Distinguish.DeletUser(' . $row_mark['muser_id'] . ', ' . $photo_id . ')"/></div>';
+                                        $del_mark_link = '<div class="fl_l"><img src="/images/hide_lef.gif" class="distin_del_user" title="Удалить отметку" onclick="Distinguish.DeletUser(' . $row_mark['muser_id'] . ', ' . $photo_id . ')"/></div>';
                                     } else {
                                         $del_mark_link = '';
                                     }
@@ -637,7 +637,7 @@ if (Registry::get('logged')) {
                                     $mark_peoples .= '<span id="selectedDivIser' . $row_mark['muser_id'] . $photo_id . '"><div class="fl_l" style="margin-right:4px">' . $comma . '</div><div class="fl_l"> ' . $user_link . $row_user['user_search_pref'] . $user_link_end . '</div>' . $del_mark_link . '</span>';
                                 } else {
                                     if ($row['user_id'] == $user_info['user_id'] || $user_info['user_id'] == $row_mark['mmark_user_id']) {
-                                        $del_mark_link = '<div class="fl_l"><img src="/templates/Default/images/hide_lef.gif" class="distin_del_user" title="Удалить отметку" onclick="Distinguish.DeletUser(' . $row_mark['muser_id'] . ', ' . $photo_id . ', \'' . $row_mark['mphoto_name'] . '\')"/></div>';
+                                        $del_mark_link = '<div class="fl_l"><img src="/images/hide_lef.gif" class="distin_del_user" title="Удалить отметку" onclick="Distinguish.DeletUser(' . $row_mark['muser_id'] . ', ' . $photo_id . ', \'' . $row_mark['mphoto_name'] . '\')"/></div>';
                                     } else {
                                         $del_mark_link = '';
                                     }

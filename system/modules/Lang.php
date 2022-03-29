@@ -7,28 +7,68 @@
  *
  */
 
+declare(strict_types=1);
+
 namespace Mozg\modules;
 
 use Mozg\classes\Cookie;
 use Mozg\classes\Module;
 use Mozg\classes\TpLSite;
+use Sinergi\BrowserDetector\Language;
 
 class Lang extends Module
 {
+    public const EN = '1';
+    public const RU = '2';
+
+    /**
+     * get lang number
+     * @return string
+     */
     public static function getLang(): string
     {
-        $lang_list = require ENGINE_DIR . '/data/langs.php';
-        $lang_count = (count($lang_list) - 1);
-        $lang_Id = isset($_COOKIE['lang']) ? (int)$_COOKIE['lang'] : 0;
+        $lang_list = self::langList();
+        $lang_count = \count($lang_list);
+//        $lang_Id = isset($_COOKIE['lang']) ? (int)$_COOKIE['lang'] : 0;
+        $lang_Id = (int)(Cookie::get('lang'));
         if ($lang_Id > $lang_count) {
-            Cookie::append("lang", 0, 365);
-            $useLang = 0;
-        } elseif ((!empty($lang_Id)) && $lang_Id > 0) {
-            $useLang = (int)$_COOKIE['lang'];
+            Cookie::append('lang', self::EN, 365);
+            $use_lang = self::EN;
+        } elseif (!empty($lang_Id)) {
+            $use_lang = $lang_Id;
         } else {
-            $useLang = 0;
+            $language = new Language();
+            if ($language->getLanguage() === 'en') {
+                Cookie::append('lang', self::EN, 365);
+                $use_lang = self::EN;
+            }elseif($language->getLanguage() === 'ru'){
+                Cookie::append('lang', self::RU, 365);
+                $use_lang = self::RU;
+            }else{
+                Cookie::append('lang', self::EN, 365);
+                $use_lang = self::EN;
+            }
         }
-        return $lang_list[$useLang]['key'];
+//        $use_lang = ($use_lang == 0) ? self::EN : $use_lang;
+        return $lang_list[$use_lang]['key'];
+    }
+
+    /**
+     * Language dictionary
+     * @return array dictionary list
+     */
+    public static function dictionary(): array
+    {
+        return require ROOT_DIR . '/lang/'.self::getLang().'/site.php';
+    }
+
+    /**
+     * languages list
+     * @return array
+     */
+    public static function langList(): array
+    {
+        return require ENGINE_DIR . '/data/langs.php';
     }
 
     /**
@@ -37,39 +77,32 @@ class Lang extends Module
      */
     final public function change(): void
     {
-        $lang_Id = intFilter('id');
-        $lang_list = require ENGINE_DIR . '/data/langs.php';
-        $lang_count = (count($lang_list) - 1);
+        $lang_Id = intFilter('id', 1);
+        $lang_list = self::langList();
+        $lang_count = \count($lang_list);
         if ($lang_Id > $lang_count) {
-            Cookie::append("lang", 0, 365);
-        } elseif ($lang_Id > 0) {
-            //Меняем язык
-            Cookie::append("lang", $lang_Id, 365);
-        } else {
-            Cookie::append("lang", 0, 365);
+            Cookie::append('lang', self::EN, 365);
+        } else{
+            Cookie::append('lang', (string)$lang_Id, 365);
         }
-        $langReferer = !empty($_SERVER['HTTP_REFERER']) ? $_SERVER['HTTP_REFERER'] : '/';
-        header("Location: {$langReferer}");
+        $lang_referer = !empty($_SERVER['HTTP_REFERER']) ? $_SERVER['HTTP_REFERER'] : '/';
+        header("Location: {$lang_referer}");
 
     }
 
+    /**
+     * language box
+     * @throws \ErrorException|\JsonException
+     */
     final public function main(): void
     {
-        $meta_tags['title'] = 'Langs';
-        $tpl = new TpLSite($this->tpl_dir_name, $meta_tags);
-        $tpl->load_template('lang/main.tpl');
         $user_lang = isset($_COOKIE['lang']) ? (int)$_COOKIE['lang'] : 0;
-        $lang_list = require ENGINE_DIR . '/data/langs.php';
-        $langs = '';
-        foreach ($lang_list as $languages => $value) {
-            if ($languages === $user_lang) {
-                $langs .= "<div class=\"lang_but lang_selected\">{$value['name']}</div>";
-            } else {
-                $langs .= "<a href=\"/langs/change?id={$languages}\" style=\"text-decoration:none\"><div class=\"lang_but\">{$value['name']}</div></a>";
-            }
-        }
-        $tpl->set('{langs}', $langs);
-        $tpl->compile('content');
-        AjaxTpl($tpl);
+        $lang_list = self::langList();
+        $params = [
+            'title' => 'Langs',//todo
+            'user_lang' => $user_lang,
+            'lang_list' => $lang_list,
+        ];
+        view('lang.lang', $params);
     }
 }

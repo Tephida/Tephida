@@ -13,11 +13,12 @@ namespace Mozg\classes;
 
 use ErrorException;
 use FluffyDollop\Support\Registry;
+use FluffyDollop\Support\Templates;
 use JsonException;
 
 class WallProfile
 {
-    public \FluffyDollop\Support\Templates|TpLSite $tpl;
+    public Templates|TpLSite $tpl;
     public array|bool|null $query = false;
     public false|string $template = false;
     public false|string $compile = false;
@@ -25,11 +26,18 @@ class WallProfile
     public false|string $comm_template = false;
     public false|string $comm_compile = false;
 
+    /**
+     * @param $tpl
+     */
     public function __construct($tpl)
     {
         $this->tpl = $tpl;
     }
 
+    /**
+     * @param $query
+     * @return void
+     */
     function query($query): void
     {
         $db = Registry::get('db');
@@ -165,7 +173,7 @@ class WallProfile
                         $resLinkTitle = '';
 
                         //Если ссылка
-                    } elseif ($attach_type[0] == 'link' and preg_match('/http:\/\/(.*?)+$/i', $attach_type[1]) and $cnt_attach_link == 1 and stripos(str_replace('http://www.', 'http://', $attach_type[1]), $config['home_url']) === false) {
+                    } elseif ($attach_type[0] == 'link' and preg_match('/http:\/\/(.*?)+$/i', $attach_type[1]) and $cnt_attach_link == 1 and stripos(str_replace('https://www.', 'https://', $attach_type[1]), $config['home_url']) === false) {
                         $count_num = count($attach_type);
                         $domain_url_name = explode('/', $attach_type[1]);
                         $rdomain_url_name = str_replace('https://', '', $domain_url_name[2]);
@@ -361,7 +369,7 @@ HTML;
 
             if ($row_wall['likes_num']) {
                 $this->tpl->set('{likes}', $row_wall['likes_num']);
-                $this->tpl->set('{likes-text}', '<span id="like_text_num' . $row_wall['id'] . '">' . $row_wall['likes_num'] . '</span> ' . declWord($row_wall['likes_num'], 'like'));
+                $this->tpl->set('{likes-text}', '<span id="like_text_num' . $row_wall['id'] . '">' . $row_wall['likes_num'] . '</span> ' . declWord((int)$row_wall['likes_num'], 'like'));
             } else {
                 $this->tpl->set('{likes}', '');
                 $this->tpl->set('{likes-text}', '<span id="like_text_num' . $row_wall['id'] . '">0</span> человеку');
@@ -650,10 +658,7 @@ HTML;
      */
     public function render()
     {
-
-        var_dump($this->tpl);
-
-
-//        $this->tpl->render();
+//        var_dump($this->tpl);
+        $this->tpl->render();
     }
 }

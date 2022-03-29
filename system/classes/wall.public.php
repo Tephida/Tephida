@@ -161,10 +161,11 @@ class wall
                         $resLinkTitle = '';
 
                         //Если ссылка
-                    } elseif ($attach_type[0] == 'link' and preg_match('/http:\/\/(.*?)+$/i', $attach_type[1]) and $cnt_attach_link == 1 and stripos(str_replace('http://www.', 'http://', $attach_type[1]), $config['home_url']) === false) {
+                    } elseif ($attach_type[0] == 'link' and preg_match('/https:\/\/(.*?)+$/i', $attach_type[1])
+                        and $cnt_attach_link == 1 and stripos(str_replace('https://www.', 'https://', $attach_type[1]), $config['home_url']) === false) {
                         $count_num = count($attach_type);
                         $domain_url_name = explode('/', $attach_type[1]);
-                        $rdomain_url_name = str_replace('http://', '', $domain_url_name[2]);
+                        $rdomain_url_name = str_replace('https://', '', $domain_url_name[2]);
 
                         $attach_type[3] = stripslashes($attach_type[3]);
                         $attach_type[3] = iconv_substr($attach_type[3], 0, 200, 'utf-8');

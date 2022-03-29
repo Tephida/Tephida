@@ -38,11 +38,12 @@ class Dialog
      */
     final public function send(int $for_user_id, int $room_id, string $msg, string $attach_files): array
     {
+        /** @var array $user_info */
         $user_info = $this->db->super_query("SELECT user_id, user_photo, user_search_pref FROM `users` WHERE user_id = '{$this->user_id}'");
         if (Flood::check('messages')) {
-            return array(
+            return [
                 'status' => Status::LIMIT
-            );
+            ];
         }
         if ($room_id) {
             $for_user_id = 0;
@@ -56,8 +57,10 @@ class Dialog
 
         if (!empty($msg) || !empty($attach_files)) {
             if ($room_id == 0) {
+                /** @var array $row */
                 $row = $this->db->super_query("SELECT user_privacy FROM `users` WHERE user_id = '" . $for_user_id . "'");
             } else {
+                /** @var array $row */
                 $row = $this->db->super_query("SELECT id FROM `room_users` WHERE room_id = '" . $room_id . "' and oid2 = '" . $this->user_id . "' and type = 0");
             }
             if ($row) {
@@ -101,6 +104,7 @@ class Dialog
                         } else {
                             $this->db->query("UPDATE im  SET idate = '" . time() . "', msg_num = msg_num+1, all_msg_num = all_msg_num+1 WHERE id = '" . $check_im_2['id'] . "'");
                         }
+                        /** @var array $check2 */
                         $check2 = $this->db->super_query("SELECT user_last_visit FROM `users` WHERE user_id = '{$v}'");
                         $update_time = time() - 70;
                         if ($check2['user_last_visit'] >= $update_time) {
@@ -118,25 +122,25 @@ class Dialog
                     } else {
                         $this->db->query("UPDATE im  SET idate = '" . time() . "', all_msg_num = all_msg_num+1 WHERE id = '" . $check_im['id'] . "'");
                     }
-                    return array(
+                    return [
                         'status' => Status::OK,
                         'id' => $dbid,
                         'user_photo' => $user_info['user_photo'],
                         'user_name' => $user_info['user_search_pref']
-                    );
+                    ];
                 }
-                return array(
+                return [
                     'status' => Status::PRIVACY
-                );
+                ];
             }
-            return array(
+            return [
                 'status' => Status::NOT_USER
-            );
+            ];
         }
 
-        return array(
+        return [
             'status' => Status::NOT_VALID
-        );
+        ];
 
     }
 

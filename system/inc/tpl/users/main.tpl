@@ -43,7 +43,7 @@
                 saveconf: '',
             }, function (response) {
                 // addAllErr(data.info);
-                addAllErr(response.info);
+                Page.addAllErr(response.info);
             });
         }
     }

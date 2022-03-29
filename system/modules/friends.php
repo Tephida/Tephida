@@ -683,8 +683,12 @@ if (Registry::get('logged')) {
                             if ($row['user_birthday'] == '0-0-0') {
                                 $tpl->set('{age}', '');
                             } else {
-                                $user_birthday = explode('-', $row['user_birthday']);
-                                $tpl->set('{age}', user_age($user_birthday[0], $user_birthday[1], $user_birthday[2]));
+                                if (!empty($row['user_birthday'])){//fixme null
+                                    $user_birthday = explode('-', $row['user_birthday']);
+                                    $tpl->set('{age}', user_age($user_birthday[0], $user_birthday[1], $user_birthday[2]));
+                                }else{
+                                    $tpl->set('{age}', '');
+                                }
                             }
 
                             if ($get_user_id == $user_info['user_id']) {

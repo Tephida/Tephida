@@ -22,15 +22,13 @@ if (Registry::get('logged')) {
 
     switch ($act) {
         /** Изменение пароля */
-        case "newpass":
+        case 'newpass':
             NoAjaxQuery();
-//            $_POST['old_pass'] = $_POST['old_pass'];
-//            $_POST['new_pass'] = $_POST['new_pass'];
-//            $_POST['new_pass2'] = $_POST['new_pass2'];
             $old_pass = md5(md5(requestFilter('old_pass')));
             $new_pass = md5(md5(requestFilter('new_pass')));
             $new_pass2 = md5(md5(requestFilter('new_pass2')));
             //Выводим текущий пароль
+            /** @var array $row */
             $row = $db->super_query("SELECT user_password FROM `users` WHERE user_id = '{$user_id}'");
             if ($row['user_password'] == $old_pass) {
                 if ($new_pass == $new_pass2) {
@@ -50,7 +48,7 @@ if (Registry::get('logged')) {
             $user_name = requestFilter('name');
             $user_lastname = ucfirst(requestFilter('lastname'));
             //Проверка имени
-            if (isset($user_name)) {
+            if (!empty($user_name)) {
                 if (strlen($user_name) >= 2) {
                     if (!preg_match("/^[a-zA-Zа-яА-Я]+$/iu", $user_name)) {
                         $errors = 3;
@@ -73,7 +71,6 @@ if (Registry::get('logged')) {
             } else {
                 $errors_lastname = 1;
             }
-
             if (!isset($errors)) {
                 if (!isset($errors_lastname)) {
                     $user_name = ucfirst($user_name);
@@ -85,7 +82,6 @@ if (Registry::get('logged')) {
             } else {
                 echo $errors;
             }
-
             break;
 
         /** Сохранение настроек приватности */
@@ -290,6 +286,31 @@ HTML;
 
             break;
 
+        //################### Оповещения ###################//
+        case 'notify':
+            $meta_tags['title'] = 'Общие настройки';
+            $config = settings_get();
+            $tpl_dir_name = ROOT_DIR . '/templates/' . $config['temp'];
+            $tpl = new TpLSite($tpl_dir_name, $meta_tags);
+
+            /** @var array $row */
+            $row = $db->super_query("SELECT notify FROM `users` WHERE user_id = '{$user_id}'");
+            $tpl->load_template('settings/notify.tpl');
+//            $block_data = xfieldsdataload($row['notify']);
+            $arrlist = ['n_friends', 'n_wall', 'n_comm', 'n_comm_ph', 'n_comm_note', 'n_gifts', 'n_rec', 'n_im'];
+            foreach($arrlist as $p){
+//                if($block_data[$p]) {
+//                    $tpl->set("{{$p}}", $p);
+//                }
+//                else {
+//                    $tpl->set("{{$p}}", '0');
+//                }
+            }
+            $tpl->compile('content');
+            $tpl->render();
+            echo 'ttt';
+            break;
+
         /** Общие настройки */
 
         default:
@@ -351,8 +372,6 @@ HTML;
 
             $tpl->render();
     }
-//    $tpl->clear();
-//    $db->free();
 } else {
     $user_speedbar = $lang['no_infooo'];
     msgbox('', $lang['not_logged'], 'info');

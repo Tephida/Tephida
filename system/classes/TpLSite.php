@@ -16,15 +16,18 @@ use FluffyDollop\Support\Templates;
 use JsonException;
 use Mozg\modules\Lang;
 
+/**
+ * Compile template
+ */
 class TpLSite extends Templates
 {
-    public array $meta_tags = array(
+    public array $metaTags = [
         'title' => 'Social network',
         'generator' => '<meta name="generator" content="VII ENGINE" />',
         'charset' => '<meta http-equiv="content-type" content="text/html; charset=utf-8" />',
-    );
+    ];
 
-    public array $notify = array(
+    public array $notify = [
         'user_pm_num' => '',
         'new_news' => '',
         'news_link' => '',
@@ -37,13 +40,13 @@ class TpLSite extends Templates
         'new_photos_link' => '',
         'new_groups_lnk' => '/groups',
         'new_groups' => '',
-    );
+    ];
 
     public function __construct(string $dir = '.', array $meta_tags = array())
     {
         $this->dir = $dir;
         if (!empty($meta_tags['title'])) {
-            $this->meta_tags['title'] = $meta_tags['title'];
+            $this->metaTags['title'] = $meta_tags['title'];
         }
         if (!defined('TEMPLATE_DIR')) {
             define('TEMPLATE_DIR', $dir);
@@ -66,7 +69,6 @@ class TpLSite extends Templates
     <meta name="generator" content="VII ENGINE" />
     <meta http-equiv="content-type" content="text/html; charset=utf-8" />';
 
-
         $user_info = Registry::get('user_info');
         //Если юзер перешел по реферальной ссылке, то добавляем ид реферала в сессию
         if (isset($_GET['reg'])) {
@@ -77,46 +79,46 @@ class TpLSite extends Templates
             //Загружаем кол-во новых новостей
             $CacheNews = mozg_cache('user_' . $user_info['user_id'] . '/new_news');
             if ($CacheNews) {
-                $this->notify['new_news'] = "<div class=\"headm_newac\" style=\"margin-left:18px\">{$CacheNews}</div>";
+                $this->notify['new_news'] = "<div class=\"ic_newAct\">{$CacheNews}</div>";
                 $this->notify['news_link'] = '/notifications';
             }
             /** Загружаем кол-во новых подарков */
             $CacheGift = mozg_cache("user_{$user_info['user_id']}/new_gift");
             if ($CacheGift) {
-                $this->notify['new_ubm'] = "<div class=\"headm_newac\" style=\"margin-left:20px\">{$CacheGift}</div>";
+                $this->notify['new_ubm'] = "<div class=\"ic_newAct\">{$CacheGift}</div>";
                 $this->notify['gifts_link'] = "/gifts{$user_info['user_id']}?new=1";
             }
 
             /** Новые сообщения */
             $user_pm_num = $user_info['user_pm_num'];
             if ($user_pm_num) {
-                $this->notify['user_pm_num'] = "<div class=\"headm_newac\" style=\"margin-left:37px\">{$user_pm_num}</div>";
+                $this->notify['user_pm_num'] = "<div class=\"ic_newAct\">{$user_pm_num}</div>";
             }
 
             /** Новые друзья */
             $user_friends_demands = $user_info['user_friends_demands'];
             if ($user_friends_demands) {
-                $this->notify['demands'] = "<div class=\"headm_newac\">{$user_friends_demands}</div>";
+                $this->notify['demands'] = "<div class=\"ic_newAct\">{$user_friends_demands}</div>";
                 $this->notify['requests_link'] = '/requests';
             }
 
             /** ТП */
             $user_support = $user_info['user_support'];
             if ($user_support) {
-                $this->notify['support'] = "<div class=\"headm_newac\" style=\"margin-left:26px\">{$user_support}</div>";
+                $this->notify['support'] = "<div class=\"ic_newAct\">{$user_support}</div>";
             }
 
             /** Отметки на фото */
             if ($user_info['user_new_mark_photos']) {
                 $this->notify['new_photos_link'] = 'newphotos';
-                $this->notify['new_photos'] = "<div class=\"headm_newac\" style=\"margin-left:22px\">" . $user_info['user_new_mark_photos'] . "</div>";
+                $this->notify['new_photos'] = "<div class=\"ic_newAct\">" . $user_info['user_new_mark_photos'] . "</div>";
             } else {
                 $this->notify['new_photos_link'] = $user_info['user_id'];
             }
 
             /** Приглашения в сообщества */
             if ($user_info['invties_pub_num']) {
-                $this->notify['new_groups'] = "<div class=\"headm_newac\" style=\"margin-left:26px\">" . $user_info['invties_pub_num'] . "</div>";
+                $this->notify['new_groups'] = "<div class=\"ic_newAct\">" . $user_info['invties_pub_num'] . "</div>";
                 $this->notify['new_groups_lnk'] = '/groups?act=invites';
             } else {
                 $this->notify['new_groups_lnk'] = '/groups';
@@ -145,7 +147,7 @@ class TpLSite extends Templates
         $speedbar = $spBar = null;//FIXME
 
 //        $metatags['title'] = $metatags['title'] ?? $config['home'];
-        $title = $this->meta_tags['title'];//TODO default to config
+        $title = $this->metaTags['title'];//TODO default to config
 
 //    if (isset($spBar) and $spBar)
 //        $ajaxSpBar = "$('#speedbar').show().html('{$speedbar}')";
@@ -172,10 +174,10 @@ class TpLSite extends Templates
             );
 
         } else {
-            $result_ajax = array(
+            $result_ajax = [
                 'title' => $title,
                 'content' => $this->result['info'] . $this->result['content']
-            );
+            ];
         }
         $res = str_replace('{theme}', '/templates/' . $config['temp'], $result_ajax);
 
@@ -246,8 +248,8 @@ class TpLSite extends Templates
             $this->set('{my-page-link}', '');
         }
         $mobile_speedbar = '';//fixme
-        $this->meta_tags['title'] = '<title>' . $this->meta_tags['title'] . '</title>';
-        $headers = implode('', $this->meta_tags);
+        $this->metaTags['title'] = '<title>' . $this->metaTags['title'] . '</title>';
+        $headers = implode('', $this->metaTags);
 
 //        $speedbar = '';//fixme
 
@@ -273,7 +275,7 @@ class TpLSite extends Templates
 
             $new_actions = $user_friends_demands + $user_support + $CacheNews + $CacheGift + $user_info['user_pm_num'];
             if ($new_actions) {
-                $this->set('{new-actions}', "<div class=\"headm_newac\" style=\"margin-top:5px;margin-left:30px\">+{$new_actions}</div>");
+                $this->set('{new-actions}', "<div class=\"ic_newAct\" style=\"margin-top:5px;margin-left:30px\">+{$new_actions}</div>");
             } else {
                 $this->set('{new-actions}', "");
             }
@@ -287,17 +289,23 @@ class TpLSite extends Templates
             $this->set('[speedbar]', '');
             $this->set('[/speedbar]', '');
         }
+
+        $version = 13;
+
 //BUILD JS
-        $this->set('{js}', '<script type="text/javascript" src="{theme}/js/jquery.lib.js"></script>
-<script type="text/javascript" src="{theme}/js/' . Lang::getLang() . '/lang.js"></script>
-<script type="text/javascript" src="{theme}/js/main.js"></script>
-<script type="text/javascript" src="{theme}/js/profile.js"></script>');
+        $this->set('{js}', '<script type="text/javascript" src="/js/jquery.lib.js?v='.$version.'"></script>
+<script type="text/javascript" src="/js/' . Lang::getLang() . '/lang.js?v='.$version.'"></script>
+<script type="text/javascript" src="/js/main.js?v='.$version.'"></script>
+<script type="text/javascript" src="/js/audio.js?v='.$version.'"></script>
+<script type="text/javascript" src="/js/payment.js?v='.$version.'"></script>
+<script type="text/javascript" src="/js/payment.js?v='.$version.'"></script>
+<script type="text/javascript" src="/js/profile.js?v='.$version.'"></script>');
 
 // FOR MOBILE VERSION 1.0
         if (isset($user_info['user_photo']) && $user_info['user_photo']) {
             $this->set('{my-ava}', "/uploads/users/{$user_info['user_id']}/50_{$user_info['user_photo']}");
         } else {
-            $this->set('{my-ava}', "{theme}/images/no_ava_50.png");
+            $this->set('{my-ava}', '/images/no_ava_50.png');
         }
 
         if (isset($user_info['user_search_pref'])) {
@@ -312,7 +320,7 @@ class TpLSite extends Templates
             $this->set('{mobile-link}', '');
         }
 
-        $this->set('{lang}', getLangName());
+        $this->set('{lang}', Lang::getLang());
         $this->compile('main');
         header('Content-type: text/html; charset=utf-8');
         $result = str_replace('{theme}', '/templates/' . $config['temp'], $this->result['main']);
@@ -320,6 +328,9 @@ class TpLSite extends Templates
         return $this->renderEnd();
     }
 
+    /**
+     * @return int
+     */
     private function renderEnd(): int
     {
         $config = settings_get();
@@ -331,6 +342,9 @@ class TpLSite extends Templates
         return 1;
     }
 
+    /**
+     * @return string
+     */
     public function renderAjax(): string
     {
         $config = settings_get();

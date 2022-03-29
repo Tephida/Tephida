@@ -1,1 +1,0 @@
-<div class="infobl" style="display:block;margin-top:10px">{error}</div>

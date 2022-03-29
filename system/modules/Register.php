@@ -9,8 +9,10 @@
 
 namespace Mozg\modules;
 
-use Mozg\classes\{Cookie, Module, TpLSite};
+use Mozg\classes\{Cookie, Email, Module, TpLSite, ViewEmail};
 use FluffyDollop\Support\{Filesystem, Registry, Status, ViiMail};
+use JetBrains\PhpStorm\NoReturn;
+use Tephida\View\myView;
 
 class Register extends Module
 {
@@ -160,8 +162,6 @@ class Register extends Module
             $status = Status::LOGGED;
             $id = 0;
         }
-
-
         $response = array(
             'status' => $status,
             'user_id' => $id,
@@ -170,14 +170,19 @@ class Register extends Module
     }
 
     /**
-     * @throws \ErrorException
+     * @throws \ErrorException|\JsonException
      */
-    public function login()
+    public function login(): void
     {
-        $tpl = new TpLSite($this->tpl_dir_name);
-        $tpl->load_template('login.tpl');
-        $tpl->compile('content');
-        $tpl->renderAjax();
+        $params = [
+            'title' => 'Login',
+        ];
+        view('auth.login', $params);
+
+//        $tpl = new TpLSite($this->tpl_dir_name);
+//        $tpl->load_template('login.tpl');
+//        $tpl->compile('content');
+//        $tpl->renderAjax();
     }
 
     public function rules()
@@ -208,7 +213,7 @@ class Register extends Module
         $session_sec_code = $_SESSION['sec_code'];
         $sec_code = $_POST['sec_code'];
 
-        if ($sec_code == $session_sec_code) {
+        if ($sec_code === $session_sec_code) {
 
             //POST данные
             $user_email = requestFilter('email');
@@ -221,29 +226,40 @@ class Register extends Module
 //                $ok_email = false;
 //            }
 
+            //todo
             if (true) {
                 //Проверка на блок email сервиса
-                $exp_user_email = explode('@', $user_email);
+/*                $exp_user_email = explode('@', $user_email);
                 $config = settings_get();
-                $bad_server = explode(', ', $config['bad_email']);
-                if ($config['bad_email']) {
-                    foreach ($bad_server as $serv) {
-                        if ($exp_user_email[1] == $serv) {
-                            $bad = true;
+                try {
+                    if (isset($config['bad_email'])){
+                        $bad_server = explode(', ', $config['bad_email']);
+                        if ($config['bad_email']) {
+                            foreach ($bad_server as $serv) {
+                                if ($exp_user_email[1] == $serv) {
+                                    $bad = true;
+                                }
+                            }
+                        }
+                        $bad = $bad ?? false;
+                        if ($bad) {
+                            echo '4';
+                            exit;
                         }
                     }
-                }
-                $bad = $bad ?? false;
-                if ($bad) {
-                    echo '4';
-                    exit;
-                }
-                $check_email = $db->super_query("SELECT COUNT(*) AS cnt FROM `users` WHERE user_email = '{$user_email}'");
 
-                if (!$check_email['cnt']) {
+                }catch (\Error){
+
+                }*/
+
+                /** @var array $check_email */
+                $check_email = $db->super_query("SELECT COUNT(*) AS cnt FROM `users` WHERE user_email = '{$user_email}'");
+                if ($check_email['cnt']) {
+                    echo '3';
+                } else {
                     //Удаляем все предыдущие запросы на регистрацию этого email
                     $db->query("DELETE FROM `restore` WHERE email = '{$user_email}'");
-                    $salt = "abchefghjkmnpqrstuvwxyz0123456789";
+                    $salt = 'abchefghjkmnpqrstuvwxyz0123456789';
                     $rand_lost = '';
                     for ($i = 0; $i < 15; $i++) {
                         $rand_lost .= $salt[random_int(0, 33)];
@@ -253,25 +269,16 @@ class Register extends Module
                     //Вставляем в базу
                     $db->query("INSERT INTO `restore` SET email = '{$user_email}', hash = '{$hash}', ip = '{$_IP}'");
                     //Отправляем письмо на почту для восстановления
-                    $mail = new ViiMail($config);
-                    $message = <<<HTML
-Благодарим Вас за регистрацию.
-Мы требуем от Вас подтверждения Вашей регистрации, для проверки того, что введённый Вами e-mail адрес - реальный. Это требуется для защиты от нежелательных злоупотреблений и спама.
-
-Для активации Вашего аккаунта, зайдите по следующей ссылке:
-
-{$config['home_url']}register/activate?hash={$hash}
-
-Если и при этих действиях ничего не получилось, возможно Ваш аккаунт удалён. В этом случае обратитесь к Администратору, для разрешения проблемы.
-
-С уважением,
-
-Администрация {$config['home_url']}.
-HTML;
-                    $mail->send($user_email, 'Благодарим Вас за регистрацию', $message);
-                    echo "{$config['home_url']}register/activate?hash={$hash}";
-                } else {
-                    echo '3';
+                    /** @var array $dictionary */
+                    $dictionary = $this->lang;
+                    $config = settings_get() ?? settings_load();
+                    $variables = [
+                        'home_url' => $config['home_url'],
+                        'hash' => $hash,
+                    ];
+                    $message = (new ViewEmail('register.email', $variables))->run();
+                    Email::send($user_email, $dictionary['thanks_reg'], $message);
+//                    echo "{$config['home_url']}register/activate?hash={$hash}";
                 }
             } else {
                 echo '2';
@@ -286,40 +293,44 @@ HTML;
      */
     public function activate()
     {
+        try {
+            $db = Registry::get('db');
+            $hash = strip_data($_GET['hash']);
 
-        $db = Registry::get('db');
-        $hash = strip_data($_GET['hash']);
+            $_IP = '';
+            $row = $db->super_query("SELECT email FROM `restore` WHERE hash = '{$hash}' AND ip = '{$_IP}'");
 
-        $_IP = '';
-        $row = $db->super_query("SELECT email FROM `restore` WHERE hash = '{$hash}' AND ip = '{$_IP}'");
-
-        if ($row) {
             $tpl = new TpLSite($this->tpl_dir_name);
-            $tpl->load_template('register/step3.tpl');
+            if ($row) {
+                $tpl->load_template('register/step3.tpl');
 
-            $salt = "abchefghjkmnpqrstuvwxyz0123456789";
-            $rand_lost = '';
-            for ($i = 0; $i < 15; $i++) {
-                $rand_lost .= $salt[random_int(0, 33)];
-            }
-            $new_hash = md5(time() . $row['email'] . random_int(0, 100000) . $rand_lost);
-            $tpl->set('{hash}', $new_hash);
-            $db->query("UPDATE `restore` SET hash = '{$new_hash}' WHERE email = '{$row['email']}'");
+                $salt = 'abchefghjkmnpqrstuvwxyz0123456789';
+                $rand_lost = '';
+                for ($max_var = 0; $max_var < 15; $max_var++) {
+                    $rand_lost .= $salt[random_int(0, 33)];
+                }
+                $new_hash = md5(time() . $row['email'] . random_int(0, 100000) . $rand_lost);
+                $tpl->set('{hash}', $new_hash);
+                $db->query("UPDATE `restore` SET hash = '{$new_hash}' WHERE email = '{$row['email']}'");
 
-            $tpl->compile('content');
-            $tpl->render();
-        } else {
+            } else {
 //            echo 'Эта ссылка на регистрацию устарела. Пройдите процесс получения ссылки еще раз.';
 //            msgbox('', 'Эта ссылка на регистрацию устарела. Пройдите процесс получения ссылки еще раз.', 'info');
 
-            $tpl = new TpLSite($this->tpl_dir_name);
-            $tpl->load_template('info.tpl');
-            $tpl->set('{error}', 'Эта ссылка на регистрацию устарела. Пройдите процесс получения ссылки еще раз.');
+                $tpl->load_template('info.tpl');
+                $tpl->set('{error}', 'Эта ссылка на регистрацию устарела. Пройдите процесс получения ссылки еще раз.');
+            }
             $tpl->compile('content');
             $tpl->render();
+        }catch (\Error $error){
+//            var_dump($error);
         }
+
     }
 
+    /**
+     * @throws \Exception
+     */
     public function finish(): void
     {
         $db = Registry::get('db');
@@ -327,6 +338,7 @@ HTML;
         $hash = strip_data($_POST['hash']);
 
         $_IP = '';
+        /** @var array $row */
         $row = $db->super_query("SELECT email FROM `restore` WHERE hash = '{$hash}' AND ip = '{$_IP}'");
 
         if ($row['email']) {
@@ -341,21 +353,27 @@ HTML;
             $password_first = $_POST['reg_pass1'];
             $password_second = $_POST['reg_pass2'];
 
-            $errors = array();
+            $errors = [];
 
             //Проверка имени
-            if (preg_match("/^[a-zA-Zа-яА-Я]+$/iu", $user_name) && strlen($user_name) >= 2) $errors[] = 0;
+            if (!empty($user_name)) {
+                $errors[] = 0;
+            }
 
             //Проверка фамилии
-            if (preg_match("/^[a-zA-Zа-яА-Я]+$/iu", $user_lastname) && strlen($user_lastname) >= 2) $errors[] = 0;
+            if (!empty($user_lastname)) {
+                $errors[] = 0;
+            }
 
             //Проверка Паролей
-            if (strlen($password_first) >= 6 && $password_first == $password_second) $errors[] = 0;
+            if (strlen($password_first) >= 6 && $password_first == $password_second) {
+                $errors[] = 0;
+            }
 
-            $allEr = count($errors);
+            $all_err = \count($errors);
 
             //Если нет ошибок, то пропускаем и добавляем в базу
-            if ($allEr == 3) {
+            if ($all_err === 3) {
 
                 //Login hash ID
                 $hid = md5(md5($_IP));
@@ -375,27 +393,27 @@ HTML;
                         user_privacy = 'val_msg|2||val_wall1|2||val_wall2|2||val_wall3|2||val_info|2||', 
                         user_active = '1'"
                 );
-                $id = $db->insert_id();
+                $reg_user_id = $db->insert_id();
 
                 //Если юзер добавился в базу, то входим на сайт
-                if ($id) {
+                if ($reg_user_id) {
 
                     //Устанавливаем в сессию ИД юзера
-                    $_SESSION['user_id'] = $id;
+                    $_SESSION['user_id'] = $reg_user_id;
 
                     //Записываем COOKIE
-                    Cookie::append("user_id", $id, 365);
-                    Cookie::append("password", md5(md5($password_first)), 365);
-                    Cookie::append("hid", $hid, 365);
+                    Cookie::append('user_id', $reg_user_id, 365);
+                    Cookie::append('password', md5(md5($password_first)), 365);
+                    Cookie::append('hid', $hid, 365);
 
                     //Создаём папку юзера в кеше
-                    mozg_create_folder_cache("user_{$id}");
+                    mozg_create_folder_cache("user_{$reg_user_id}");
 
                     //Директория юзеров
                     $upload_dir = ROOT_DIR . '/uploads/users/';
 
-                    Filesystem::createDir($upload_dir . $id);
-                    Filesystem::createDir($upload_dir . $id . '/albums');
+                    Filesystem::createDir($upload_dir . $reg_user_id);
+                    Filesystem::createDir($upload_dir . $reg_user_id . '/albums');
 
                     //Выдача бонуса рефералу
                     /*                    $bonus = false;
@@ -430,17 +448,15 @@ HTML;
 
                     //Вставляем лог в бд
                     $_BROWSER = '';
-                    $db->query("INSERT INTO `log` SET uid = '{$id}', browser = '{$_BROWSER}', ip = '{$_IP}'");
+                    $db->query("INSERT INTO `log` SET uid = '{$reg_user_id}', browser = '{$_BROWSER}', ip = '{$_IP}'");
 
                     //Удаляем ссылку регистрации на этот email
                     $db->query("DELETE FROM `restore` WHERE email = '{$row['email']}'");
-
 //                    $db->query("INSERT INTO `users_param` SET user_id = '{$id}'");
-
                 }
-
-            } else
+            } else {
                 echo '2';
+            }
 
         } else {
             echo '1';
@@ -448,24 +464,17 @@ HTML;
     }
 
     /**
-     * @throws \ErrorException
-     * @throws \JsonException
+     * @throws \ErrorException|\JsonException
      */
-    public function main()
+    #[NoReturn] public function main(): void
     {
         $config = settings_get();
-        $meta_tags['title'] = $config['home'];
-        $tpl = new TpLSite($this->tpl_dir_name, $meta_tags);
-        $tpl->load_template('reg.tpl');
-        $db = Registry::get('db');
-//################## Загружаем Страны ##################//
-        $sql_country = $db->super_query("SELECT * FROM `country` ORDER by `name` ASC", true);
-        $all_country = '';
-        foreach ($sql_country as $row_country) {
-            $all_country .= '<option value="' . $row_country['id'] . '">' . stripslashes($row_country['name']) . '</option>';
-        }
-        $tpl->set('{country}', $all_country);
-        $tpl->compile('content');
-        $tpl->render();
+
+        $params = [
+            'title' => $config['home'],
+            'available' => 'main'
+        ];
+
+        view('reg', $params);
     }
 }
