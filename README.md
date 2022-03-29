@@ -1,6 +1,6 @@
 # VII Engine
 
-![vii engine](https://raw.githubusercontent.com/Semyon492/vii/master/images/app.gif)
+![vii engine](https://raw.githubusercontent.com/Tephida/vii/master/images/app.gif)
 
 <a name="installation"></a>
 
