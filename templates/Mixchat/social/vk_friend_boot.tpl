@@ -1,0 +1,2 @@
+<div id="vk_friend_page"></div>
+<div class="cursor_pointer clear" onClick="vk.prev_friends('{vk_uid}'); return false" id="vk_prev_friend"><div class="public_wall_all_comm profile_hide_opne" id="vk_prev_friend_load" style="margin-top:0px;width:752px">Показать больше друзей</div></div>

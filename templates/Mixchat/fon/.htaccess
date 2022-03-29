@@ -1,0 +1,5 @@
+RewriteEngine on
+<FilesMatch "\.tpl$"> 
+order deny,allow 
+deny from all
+</FilesMatch> 

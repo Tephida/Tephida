@@ -63,7 +63,7 @@
                 saveconf: '',
             }, function (response) {
                 // addAllErr(data.info);
-                addAllErr(response.info);
+                Page.addAllErr(response.info);
             });
         }
     }
@@ -108,11 +108,6 @@
 
     <div class="fllogall">Причина отключения сайта:</div>
     <textarea class="inpu" name="save[offline_msg]" id="offline_msg">{config_offline_msg}</textarea>
-
-    <div class="fllogall">Список используемых языков (название папок): <br/>
-        <br/>пример: <b>Русский | Russian</b>
-    </div>
-    <textarea class="inpu" name="save[lang_list]" id="lang_list">{config_lang_list}</textarea>
 
     <div class="fllogall">Бонусный рейтинг за подарок (цена подарка):</div>
     <input type="text" name="save[bonus_rate]" id="bonus_rate" class="inpu" value="{config_bonus_rate}"/>

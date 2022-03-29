@@ -1,0 +1,7 @@
+RewriteEngine on
+RewriteRule ^/(.*\.)v[0-9.]+\.(css|js|gif|png|jpg)$ /$1$2   [L]
+
+<FilesMatch "\.tpl$"> 
+order deny,allow 
+deny from all 
+</FilesMatch> 

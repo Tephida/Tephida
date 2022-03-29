@@ -105,7 +105,8 @@ RewriteEngine On
 	RewriteRule ^settings(/?)+$ index.php?go=settings [L]
 	RewriteRule ^settings/privacy(/?)+$ index.php?go=settings&act=privacy [L]
 	RewriteRule ^settings/blacklist(/?)+$ index.php?go=settings&act=blacklist [L]
-	
+	RewriteRule ^settings/notify(/?)+$ index.php?go=settings&act=notify [L]
+
 # Помощь
 	RewriteCond %{QUERY_STRING} ^act=([a-z]+)
 	RewriteRule ^(.*)support $1index.php?go=support [QSA,L]
@@ -159,8 +160,10 @@ RewriteEngine On
 	RewriteRule ^wallgroups([0-9]+)_([0-9]+)(/?)+$ index.php?go=groups&act=wallgroups&pid=$1&id=$2 [L]
 	
 # Музыка
-	RewriteRule ^audio(/?)+$ index.php?go=audio [L]
-	RewriteRule ^audio([0-9]+)(/?)+$ index.php?go=audio&uid=$1 [L]
+RewriteRule ^audio(/?)+$ index.php?go=audio [L,QSA]
+RewriteRule ^audio([0-9]+)(/?)+$ index.php?go=audio&uid=$1 [L,QSA]
+RewriteRule ^public/audio([0-9]+)(/?)+$ index.php?go=public_audio&pid=$1 [L,QSA]
+
 
 # Документы
 	RewriteRule ^docs(/?)+$ index.php?go=doc&act=list [L]

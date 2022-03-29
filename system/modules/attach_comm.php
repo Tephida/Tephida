@@ -328,15 +328,11 @@ if (Registry::get('logged')) {
                     $tpl->set('{author-info}', $author_info[0] . ', ' . $author_info[1] . '<br />');
                 }
 
-                $tpl->set('{comments}', $tpl->result['comments']);
+                $tpl->set('{comments}', $tpl->result['comments'] ?? '');
                 $tpl->compile('content');
 
                 AjaxTpl($tpl);
 
             }
     }
-
-    $tpl->clear();
-    $db->free();
-
 }

@@ -11,7 +11,7 @@ namespace Mozg\modules;
 
 use ErrorException;
 use JsonException;
-use Mozg\classes\{Module, TpLSite};
+use Mozg\classes\{Email, Module, TpLSite, ViewEmail};
 use FluffyDollop\Support\{Registry, ViiMail, Status};
 
 class Restore extends Module
@@ -59,18 +59,19 @@ class Restore extends Module
     /**
      * @throws \Exception
      */
-    public function send()
+    public function send(): void
     {
         NoAjaxQuery();
         $db = $this->db;
         $server_time = time();
         $email = requestFilter('email');
+        /** @var array $check */
         $check = $db->super_query("SELECT user_name FROM `users` WHERE user_email = '{$email}'");
         if ($check) {
-            //Удаляем все предыдущие запросы на воостановление
+            //Удаляем все предыдущие запросы на восстановление
             $db->query("DELETE FROM `restore` WHERE email = '{$email}'");
 
-            $salt = "abchefghjkmnpqrstuvwxyz0123456789";
+            $salt = 'abchefghjkmnpqrstuvwxyz0123456789';
             $rand_lost = '';
             for ($i = 0; $i < 15; $i++) {
                 $rand_lost .= $salt[random_int(0, 33)];
@@ -82,20 +83,18 @@ class Restore extends Module
             $db->query("INSERT INTO `restore` SET email = '{$email}', hash = '{$hash}', ip = '{$_IP}'");
 
             //Отправляем письмо на почту для восстановления
-            $config = settings_get();
-            $mail = new ViiMail($config);
-            $message = <<<HTML
-Здравствуйте, {$check['user_name']}.
+            $config = settings_load();
 
-Чтобы сменить ваш пароль, пройдите по этой ссылке:
-{$config['home_url']}restore/prefinish?h={$hash}
-
-Мы благодарим Вас за участие в жизни нашего сайта.
-
-{$config['home_url']}
-HTML;
-            $lang = $this->lang;
-            $mail->send($email, $lang['lost_subj'], $message);
+            /** @var array $lang */
+            $dictionary = $this->lang;
+            $variables = [
+                'user_name' => $check['user_name'],
+                'home_url' => $config['home_url'],
+                'hash' => $hash,
+            ];
+            $message = (new ViewEmail('restore.email', $variables))->run();
+            /** @var ?string $dictionary['lost_subj'] */
+            Email::send($email, $dictionary['lost_subj'], $message);
         }
     }
 

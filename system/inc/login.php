@@ -10,6 +10,7 @@
 use FluffyDollop\Support\Registry;
 use Mozg\classes\Cookie;
 use Mozg\classes\TplCp;
+use Mozg\classes\Users;
 
 header('Content-type: text/html; charset=utf-8');
 
@@ -24,11 +25,14 @@ $_IP = $_SERVER['REMOTE_ADDR'];
 $_BROWSER = $_SERVER['HTTP_USER_AGENT'];
 
 //Если делаем выход
-if (isset($_GET['act']) && $_GET['act'] == 'logout') {
-    Cookie::remove("user_id");
-    Cookie::remove("password");
-    Cookie::remove("hid");
+if (isset($_GET['act']) && $_GET['act'] === 'logout') {
+    Cookie::remove('user_id');
+    Cookie::remove('password');
+    Cookie::remove('hid');
     unset($_SESSION['user_id']);
+    session_destroy();
+    session_unset();
+    header('Location: /');
 //    session_destroy();
 //    session_unset();
 //    $logged = false;
@@ -53,8 +57,8 @@ if (isset($_SESSION['user_id']) > 0) {
     $logged = true;
     Registry::set('logged', true);
     $logged_user_id = (int)$_SESSION['user_id'];
-    $user_info = $db->super_query("SELECT user_id, user_email, user_group, user_password FROM `users` WHERE user_id = '" . $logged_user_id . "'");
-
+//    $user_info = $db->super_query("SELECT user_id, user_email, user_group, user_password FROM `users` WHERE user_id = '" . $logged_user_id . "'");
+    $user_info = Users::login($logged_user_id, 'control_panel');
     //Если есть данные о сесии, но нет инфы о юзере, то выкидываем его
     if (!$user_info['user_id']) {
 
@@ -71,9 +75,9 @@ if (isset($_SESSION['user_id']) > 0) {
 } elseif (isset($_COOKIE['user_id']) > 0 && $_COOKIE['password'] && $_COOKIE['hid']) {
     $cookie_user_id = (int)$_COOKIE['user_id'];
     $user_info = $db->super_query("SELECT user_id, user_email, user_group, user_password, user_hid FROM `users` WHERE user_id = '" . $cookie_user_id . "' AND user_group = '1'");
-
+    $user_info = Users::login($cookie_user_id, 'control_panel');
     //Если пароль и HID совпадает то пропускаем
-    if (($user_info['user_password'] == $_COOKIE['password']) && ($user_info['user_hid'] == $_COOKIE['password'] . md5(md5($_IP)))) {
+    if (($user_info['user_password'] === $_COOKIE['password']) && ($user_info['user_hid'] === $_COOKIE['password'] . md5(md5($_IP)))) {
         $_SESSION['user_id'] = $user_info['user_id'];
 
         //Вставляем лог в бд
@@ -82,12 +86,12 @@ if (isset($_SESSION['user_id']) > 0) {
         $logged = true;
         Registry::set('logged', true);
     } else {
-        $user_info = array();
+        $user_info = [];
         $logged = false;
         Registry::set('logged', false);
     }
 } else {
-    $user_info = array();
+    $user_info = [];
     $logged = false;
     Registry::set('logged', false);
 }
@@ -118,9 +122,9 @@ if (isset($_POST['log_in']) && !isset($_SESSION['user_id'])) {
             $db->query("UPDATE `users` SET user_hid = '" . $hid . "' WHERE user_id = '" . $check_user['user_id'] . "'");
 
             //Записываем COOKIE
-            Cookie::append("user_id", (int)$check_user['user_id'], 365);
-            Cookie::append("password", $md5_pass, 365);
-            Cookie::append("hid", $hid, 365);
+            Cookie::append('user_id', (int)$check_user['user_id'], 365);
+            Cookie::append('password', $md5_pass, 365);
+            Cookie::append('hid', $hid, 365);
             header("Location: {$admin_link}");
         } else {
             $error_log = 'Доступ отключён!';

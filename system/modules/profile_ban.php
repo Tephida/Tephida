@@ -8,7 +8,7 @@
  */
 
 use FluffyDollop\Support\Registry;
-
+/** @var array $user_info */
 $user_info = $user_info ?? Registry::get('user_info');
 if ($user_info['user_group'] !== '1') {
     $tpl->load_template('profile_baned.tpl');

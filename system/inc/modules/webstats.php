@@ -113,14 +113,15 @@ echo <<<HTML
 
 
 </style>
-<script type="text/javascript" src="/templates/Default/js/jquery.lib.js"></script>
-<script type="text/javascript" src="/templates/Default/js/main.js"></script>
+<script type="text/javascript" src="/js/jquery.lib.js"></script>
+<script type="text/javascript" src="/js/main.js"></script>
+<script type="text/javascript" src="/js/audio.js"></script>
 HTML;
 
 
 //$db = Registry::get('db');
 //$user_info = $user_info ?? Registry::get('user_info');
-$user_info['user_id'] = 0;
+//$user_info['user_id'] = 0;
 $server_time = time();
 $month = intFilter('m');
 if ($month and $month <= 0 or $month > 12) $month = 1;
@@ -213,7 +214,7 @@ $tickSize = $rNum;
 //Выводим максимальное кол-во просмотров за этот месяц
 //$row_max_hits = $db->super_query("SELECT views FROM `users_stats` WHERE user_id = '{$user_info['user_id']}' AND date_x = '{$stat_date}' ORDER by `views` DESC");
 $row = $db->super_query("SELECT views FROM `users_stats` WHERE date_x = '{$stat_date}' ORDER by `views` DESC", true);
-$db->free();
+//$db->free();
 $row_max_hits['views'] = 0;
 
 foreach ($row as $item) {

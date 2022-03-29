@@ -1,0 +1,60 @@
+@charset "utf-8";
+/* Style for blue style */
+
+body {
+	background-color: #0a141d;
+	color: #FFF;
+}
+
+.days,.hours,.mins,.secs {
+	text-shadow: 1px 0 3px #000;
+}
+
+.days {
+	border: 1px solid rgba(27,65,81,1) 0 : 1px 1px 10px 1px rgba(27,65,81,0.3);
+	-webkit-box-shadow: 1px 1px 10px 1px rgba(27,65,81,0.3);
+	box-shadow: 1px 1px 10px 1px rgba(27,65,81,0.3);
+	background: rgba(27,65,81,0.6);
+}
+
+.hours {
+	border: 1px solid rgba(19,43,56,1);
+	-moz-box-shadow: 1px 1px 10px 1px rgba(19,43,56,0.3);
+	-webkit-box-shadow: 1px 1px 10px 1px rgba(19,43,56,0.3);
+	box-shadow: 1px 1px 10px 1px rgba(19,43,56,0.3);
+	background: rgba(19,43,56,0.6);
+}
+
+.mins {
+	border: 1px solid rgba(22,53,67,1);
+	-moz-box-shadow: 1px 1px 10px 1px rgba(22,53,67,0.3);
+	-webkit-box-shadow: 1px 1px 10px 1px rgba(22,53,67,0.3);
+	box-shadow: 1px 1px 10px 1px rgba(22,53,67,0.3);
+	background: rgba(22,53,67,0.6);
+}
+
+.secs {
+	border: 1px solid rgba(33,81,98,1);
+	-moz-box-shadow: 1px 1px 10px 1px rgba(33,81,98,0.3);
+	-webkit-box-shadow: 1px 1px 10px 1px rgba(33,81,98,0.3);
+	box-shadow: 1px 1px 10px 1px rgba(33,81,98,0.3);
+	background: rgba(33,81,98,0.6);
+}
+
+#logo {
+	text-shadow: 1px 0 3px #000;
+	color:#FFF;
+}
+
+.input {
+	background: #FFF;
+	border: 1px solid rgba(0,0,0,0.1);
+}
+
+.resPonse {
+	color: #3CF;
+}
+
+.send {
+	background-image:url(../images/send_blue.png);
+}

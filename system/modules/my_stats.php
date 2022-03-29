@@ -131,7 +131,7 @@ if (Registry::get('logged')) {
     $tpl->compile('content');
 
     $tpl->clear();
-    $db->free();
+//    $db->free();
 
     compile($tpl);
 

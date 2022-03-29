@@ -1,0 +1,1 @@
+<div class="margin_top_10"></div><div class="allbar_title" style="margin-bottom:0px;border-bottom:0px">{msg-text}</div>

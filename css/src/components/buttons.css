@@ -1,0 +1,98 @@
+/* BUTTONS */
+.button {
+    font-size: 15px;
+    cursor: pointer;
+    padding: 10px 17px 10px 17px;
+    border: 0;
+    background: #db552d;
+    color: #fff;
+    border-radius: 5px;
+}
+
+.button:hover {
+    background: #e8633b
+}
+
+.button:active {
+    background: #ce4820;
+    position: relative;
+    outline: none;
+    box-shadow: inset 0 1px 4px 0 #62130e;
+}
+
+.button_div {
+    display: block
+}
+
+.button_div button, .button_div input[type=submit] {
+    background: #d44b28;
+    color: #fff;
+    font-size: 14px;
+    font-family: Tahoma;
+    border: 0;
+    padding: 6px 10px 6px 10px;
+    cursor: pointer;
+    margin: 0;
+    border-radius: 5px;
+}
+
+.button_div button:hover, .button_div input[type=submit]:hover {
+    background: #e8633b
+}
+
+.button_div button:active, .button_div input[type=submit]:active {
+    background: #ce4820;
+    position: relative;
+    outline: none;
+    box-shadow: inset 0 1px 4px 0 #62130e;
+}
+
+.button_div .button_div {
+    border: 0
+}
+
+.button_div_gray {
+    display: block
+}
+
+.button_div_gray button {
+    background: #dadada;
+    color: #555;
+    font-size: 14px;
+    font-family: Tahoma;
+    border: 0;
+    padding: 6px 10px 6px 10px;
+    cursor: pointer;
+    margin: 0;
+    border-radius: 5px;
+}
+
+.button_div_gray button:hover {
+    background: #e5e5e5 repeat-x
+}
+
+.button_div_gray button:active {
+    background: #e0e0e0;
+    position: relative;
+    outline: none;
+    box-shadow: inset 0 1px 4px 0 #ccc;
+}
+
+.button_div_nostl {
+    display: block
+}
+
+.button_div_nostl button {
+    background: #f6f6f6;
+    color: #0084b4;
+    font-size: 11px;
+    font-family: Tahoma, Verdana, Arial, sans-serif, Lucida Sans;
+    border: 0;
+    padding: 5px 15px 5px 15px;
+    cursor: pointer;
+    margin: 0
+}
+
+.button_div_nostl button:hover {
+    background: #e6e9ed
+}

@@ -55,6 +55,8 @@ switch ($act) {
                             $db->query("UPDATE `users` SET user_delet = 1,  user_active = 1, user_photo = '' WHERE user_id = '" . $user_id . "'");
                         }
 
+                        $db->query("UPDATE `users` SET user_search_pref = '' WHERE user_id = '" . $user_id . "'");
+
                         mozg_clear_cache_file('user_' . $user_id . '/profile_' . $user_id);
                     } else if ($mass_type == 7) {
                         //Восстановление пользователей
@@ -190,7 +192,14 @@ switch ($act) {
                     msgbox('Информация', 'Пользователи успешно восстановлены', '?mod=users');
                 } //Подготовка блокировки пользователей
                 else if ($mass_type == 2) {
-                    msgbox('Бан пользователей', '<form method="POST" action="?mod=massaction&act=users">Количество дней блокировки: <input type="text" value="0" class="inpu" name="ban_date" /> <input type="submit" value="Забанить" class="inp" /><br />Оставьте <b>0</b>, если срок блокировки неограничен по времени.<br /><input type="hidden" value="8" name="mass_type" />' . $inputUlist . '</form>', '?mod=users');
+                    $tpl = new TplCp(ADMIN_DIR . '/tpl/');
+                    $tpl->load_template('info/info_red.tpl');
+                    $tpl->set('{error}', '<form method="POST" action="?mod=massaction&act=users">Количество дней блокировки: <input type="text" value="0" class="inpu" name="ban_date" /> <input type="submit" value="Забанить" class="inp" /><br />Оставьте <b>0</b>, если срок блокировки неограничен по времени.<br /><input type="hidden" value="8" name="mass_type" />' . $inputUlist . '</form>');
+                    $tpl->set('{admin_link}', $admin_link ?? '');
+                    $tpl->set('{title}', 'Бан пользователей');
+                    $tpl->compile('content');
+                    $tpl->render();
+//                    msgbox('Бан пользователей', '<form method="POST" action="?mod=massaction&act=users">Количество дней блокировки: <input type="text" value="0" class="inpu" name="ban_date" /> <input type="submit" value="Забанить" class="inp" /><br />Оставьте <b>0</b>, если срок блокировки неограничен по времени.<br /><input type="hidden" value="8" name="mass_type" />' . $inputUlist . '</form>', '?mod=users');
                     //Информация об усешной блокировки пользователей
                 } else if ($mass_type == 8) {
                     msgbox('Бан пользователей', 'Пользователи успешно забанены', '?mod=users');

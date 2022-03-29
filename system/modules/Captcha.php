@@ -52,13 +52,13 @@ class Captcha
         }
 
 //набор символов
-        $letters = array('1', '2', '3', '4', '5', '6', '7', '8', '9', '0');
+        $letters = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '0'];
 
 //Цвета для фона
-        $background_color = array(random_int(200, 255), random_int(200, 255), random_int(200, 255));
+        $background_color = [random_int(200, 255), random_int(200, 255), random_int(200, 255)];
 
 //Цвета для обводки
-        $foreground_color = array(random_int(0, 100), random_int(0, 100), random_int(0, 100));
+        $foreground_color = [random_int(0, 100), random_int(0, 100), random_int(0, 100)];
 
         $src = imagecreatetruecolor($width, $height); //создаем изображение
 
@@ -86,9 +86,9 @@ class Captcha
 
         $cod = $cod ?? null;
 
-        $cod = implode("", $cod); //переводим код в строку
+        $cod = implode('', $cod); //переводим код в строку
 
-        header("Content-type: image/gif"); //выводим готовую картинку
+        header('Content-type: image/gif'); //выводим готовую картинку
 
         imagegif($src);
 
@@ -102,9 +102,7 @@ class Captcha
     {
         if (self::clean_url($_SERVER['HTTP_REFERER']) != self::clean_url($_SERVER['HTTP_HOST'])) {
             $status = Status::BAD;
-            $response = array(
-                'status' => $status,
-            );
+            $response = ['status' => $status];
             _e_json($response);
             exit();
         }
@@ -116,9 +114,7 @@ class Captcha
         } else {
             $status = Status::BAD;
         }
-        $response = array(
-            'status' => $status,
-        );
+        $response = ['status' => $status];
 
         _e_json($response);
     }

@@ -15,13 +15,11 @@ try {
     $config = settings_load();
     Registry::set('config', $config);
 } catch (Exception $e) {
-    throw new InvalidArgumentException("Invalid config. Please run install.php");
+    throw new InvalidArgumentException('Invalid config. Please run install.php');
 }
 
 $db = require ENGINE_DIR . '/data/db.php';
 Registry::set('db', $db);
-
-
 
 //lang
 $checkLang = Lang::getLang();
@@ -38,21 +36,17 @@ Registry::set('server_time', time());
 
 include_once ENGINE_DIR . '/login.php';
 
-if ($config['offline'] == "yes") {
+if ($config['offline'] === 'yes') {
     include ENGINE_DIR . '/modules/offline.php';
 }
+/** @var array $user_info */
+$user_info = $user_info ?? Registry::get('user_info');
 
-if (isset($user_info['user_delet']) && $user_info['user_delet'] > 0) {
+if ($user_info['user_delet'] > 0) {
     include_once ENGINE_DIR . '/modules/profile_delet.php';
 }
-$sql_banned = $db->super_query("SELECT * FROM banned", true);
-if (isset($sql_banned)) {
-    $blockip = check_ip($sql_banned);
-} else {
-    $blockip = false;
-}
 if ((isset($user_info['user_ban_date']) && $user_info['user_ban_date'] >= Registry::get('server_time')) ||
-    (isset($user_info['user_ban_date']) && $user_info['user_ban_date'] == '0') || $blockip) {
+    (isset($user_info['user_ban_date']) && $user_info['user_ban_date'] === '0')) {
     include_once ENGINE_DIR . '/modules/profile_ban.php';
 }
 //Если юзер авторизован, то обновляем последнюю дату посещения в таблице друзей и на личной стр
@@ -81,59 +75,94 @@ if (Registry::get('logged')) {
 //Время онлайн
 $online_time = Registry::get('server_time') - $config['online_time'];
 
+$router = Router::fromGlobals();
+$params = [];
+$routers = [
+    '/' => 'Register@main',
+
+    '/register/send' => 'Register@send',
+    '/register/rules' => 'Register@rules',
+    '/register/step2' => 'Register@step2',
+    '/register/step3' => 'Register@step3',
+    '/register/activate' => 'Register@activate',
+    '/register/finish' => 'Register@finish',
+    '/login' => 'Register@login',
+
+    '/u:num' => 'Profile@main',
+    '/u:numafter' => 'Profile@main',
+    '/public:num' => 'Communities@main',
+    //restore
+    '/restore' => 'Restore@main',
+    '/restore/next' => 'Restore@next',
+    '/restore/next/' => 'Restore@next',
+    '/restore/send' => 'Restore@send',
+    '/restore/prefinish' => 'Restore@preFinish',
+
+    '/wall:num' => 'WallPage@main',
+    '/wall:num_:num' => 'WallPage@main',
+
+    '/security/img' => 'Captcha@captcha',
+    '/security/code' => 'Captcha@code',
+
+    '/langs/box' => 'Lang@main',
+    '/langs/change' => 'Lang@change',
+
+    '/bugs/' => 'Bugs@Index',
+    '/bugs/:num' => 'Bugs@view_page',
+    '/bugs/load_img/' => 'Bugs@load_img',
+    '/bugs/add_box/' => 'Bugs@add_box',
+    '/bugs/create/' => 'Bugs@create',
+    '/bugs/comments/create/' => 'Bugs@create_comment',
+    '/bugs/delete/' => 'Bugs@delete',
+    '/bugs/open/' => 'Bugs@open',
+    '/bugs/complete/' => 'Bugs@complete',
+    '/bugs/close/' => 'Bugs@close',
+    '/bugs/my/' => 'Bugs@my',
+    '/bugs/view/' => 'Bugs@view',
+
+    '/balance' => 'Balance@main',
+
+    '/balance/payment_2' => 'Balance@payment_2',
+    '/balance/ok_payment' => 'Balance@ok_payment',
+
+    '/balance/payment' => 'Balance@createOrderBox',//1
+    '/pay/test/create/' => 'Balance@payCreateTest',//2
+    '/pay/fkw/create/' => 'Balance@payCreateFkw',//2
+    '/pay/test/' => 'Balance@payMain',//3
+    '/pay/test/success/' => 'Balance@payTestSuccess',//4
+
+    '/pay/fw/check/' => 'Balance@checkFWKassa',
+
+    '/pay/fw/success/' => 'Balance@main',//4
+    '/pay/fkw/success/' => 'Balance@main',//4
+    '/pay/fw/bad/' => 'Balance@main',//4
+    '/pay/fkw/bad/' => 'Balance@main',//4
+];
+$router->add($routers);
 try {
-    $router = Router::fromGlobals();
-    $params = [];
-    $routers = array(
-        '/' => 'Register@main',
-
-        '/register/send' => 'Register@send',
-        '/register/rules' => 'Register@rules',
-        '/register/step2' => 'Register@step2',
-        '/register/step3' => 'Register@step3',
-        '/register/activate' => 'Register@activate',
-        '/register/finish' => 'Register@finish',
-        '/login' => 'Register@login',
-
-        '/u:num' => 'Profile@main',
-        '/u:numafter' => 'Profile@main',
-        '/public:num' => 'Communities@main',
-        //restore
-        '/restore' => 'Restore@main',
-        '/restore/next' => 'Restore@next',
-        '/restore/next/' => 'Restore@next',
-        '/restore/send' => 'Restore@send',
-        '/restore/prefinish' => 'Restore@preFinish',
-
-        '/wall:num' => 'WallPage@main',
-        '/wall:num_:num' => 'WallPage@main',
-
-        '/security/img' => 'Captcha@captcha',
-        '/security/code' => 'Captcha@code',
-
-        '/langs/box' => 'Lang@main',
-        '/langs/change' => 'Lang@change',
-    );
-    $router->add($routers);
-    try {
-        if ($router->isFound()) {
-            $router->executeHandler($router::getRequestHandler(), $params);
+    if ($router->isFound()) {
+        $router->executeHandler($router::getRequestHandler(), $params);
+    } else {
+        $module = isset($_GET['go']) ? htmlspecialchars(strip_tags(stripslashes(trim(urldecode($_GET['go']))))) : 'main';
+        $action = requestFilter('act');
+        $class = ucfirst($module);
+        if (!class_exists($class) || $action === '' || $class === 'Wall') {
+            include_once ENGINE_DIR . '/mod.php';
         } else {
-            $go = isset($_GET['go']) ? htmlspecialchars(strip_tags(stripslashes(trim(urldecode($_GET['go']))))) : "main";
-            $action = requestFilter('act');
-            $class = ucfirst($go);
-            if (!class_exists($class) || $action == '' || $class == 'Wall') {
-                include_once ENGINE_DIR . '/mod.php';
-            } else {
-                $controller = new $class();
-                $params['params'] = '';
-                $params = [$params];
+            $controller = new $class();
+            $params['params'] = '';
+            $params = [$params];
+            try {
                 return call_user_func_array([$controller, $action], $params);
+            } catch (Error $error) {
+                var_dump($error);
             }
         }
-    } catch (Exception) {
-        include_once ENGINE_DIR . '/mod.php';
     }
-} catch (Exception $e) {
+} catch (Error $error) {
+    if ($user_info['user_group'] === 1) {
+        var_dump($error);
+        exit();
+    }
     include_once ENGINE_DIR . '/mod.php';
 }

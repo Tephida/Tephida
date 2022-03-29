@@ -15,6 +15,7 @@ $user_info = (isset($user_info)) ? $user_info : Registry::get('user_info');
 $metatags['title'] = $lang['search'];
 $db = Registry::get('db');
 $mobile_speedbar = 'Поиск';
+$config = settings_load();
 
 $_SERVER['QUERY_STRING'] = strip_tags($_SERVER['QUERY_STRING']);
 $query_string = preg_replace("/&page=[0-9]+/i", '', $_SERVER['QUERY_STRING']);
@@ -28,7 +29,7 @@ $limit_page = ($page - 1) * $gcount;
 $query = strip_data(urldecode(requestFilter('query')));
 if (isset($_GET['n']))
     $query = strip_data(urldecode(requestFilter('query')));
-$query = strtr($query, array(' ' => '%')); //Заменяем пробелы на проценты чтоб поиск был точнее
+$query = strtr($query, [' ' => '%']); //Заменяем пробелы на проценты чтоб поиск был точнее
 
 $type = intFilter('type', 1);
 $sex = intFilter('sex');
@@ -49,7 +50,7 @@ if ($month) $sql_sort .= "AND user_month = '{$month}'";
 if ($year) $sql_sort .= "AND user_year = '{$year}'";
 if ($country) $sql_sort .= "AND user_country = '{$country}'";
 if ($city) $sql_sort .= "AND user_city = '{$city}'";
-$online_time = $online_time ?? time();//FIXME
+$online_time = time() - $config['online_time'];
 if ($online) $sql_sort .= "AND user_last_visit >= '{$online_time}'";
 if ($user_photo) $sql_sort .= "AND user_photo != ''";
 if ($sp) $sql_sort .= "AND SUBSTRING(user_sp, 1, 1) regexp '[[:<:]]({$sp})[[:>:]]'";
@@ -61,7 +62,7 @@ else {
 $config = settings_get();
 //Делаем SQL Запрос в БД на вывод данных
 if ($type == 1) { //Если критерий поиск "по людям"
-    $sql_query = "SELECT user_id, user_search_pref, user_photo, user_birthday, user_country_city_name, user_last_visit, user_logged_mobile FROM `users` {$where_sql_gen} {$sql_sort} ORDER by `user_rating` DESC LIMIT {$limit_page}, {$gcount}";
+    $sql_query = "SELECT user_id, user_search_pref, user_photo, user_birthday, user_country_city_name, user_last_visit, user_logged_mobile FROM `users` {$where_sql_gen} {$sql_sort} ORDER by `user_rating` DESC, `user_photo` DESC LIMIT {$limit_page}, {$gcount}";
     $sql_count = "SELECT COUNT(*) AS cnt FROM `users` {$where_sql_gen} {$sql_sort}";
 } elseif ($type == 2 and $config['video_mod'] == 'yes' and $config['video_mod_search'] == 'yes') { //Если критерий поиск "по видеозаписям"
     $sql_query = "SELECT id, photo, title, add_date, comm_num, owner_user_id FROM `videos` WHERE title LIKE '%{$query}%' AND privacy = 1 ORDER by `add_date` DESC LIMIT {$limit_page}, {$gcount}";
@@ -73,8 +74,9 @@ if ($type == 1) { //Если критерий поиск "по людям"
     $sql_query = "SELECT id, title, photo, traf, adres FROM `communities` WHERE title LIKE '%{$query}%' AND del = '0' AND ban = '0' ORDER by `traf` DESC, `photo` DESC LIMIT {$limit_page}, {$gcount}";
     $sql_count = "SELECT COUNT(*) AS cnt FROM `communities` WHERE title LIKE '%{$query}%' AND del = '0' AND ban = '0'";
 } elseif ($type == 5 and $config['audio_mod'] == 'yes' and $config['audio_mod_search'] == 'yes') { //Если критерий поиск "по аудиозаписи"
-    $sql_query = "SELECT audio.aid, url, artist, name, auser_id, users.user_search_pref FROM audio LEFT JOIN users ON audio.auser_id = users.user_id WHERE MATCH (name, artist) AGAINST ('%{$query}%') OR artist LIKE '%{$query}%' OR name LIKE '%{$query}%' ORDER by `adate` DESC LIMIT {$limit_page}, {$gcount}";
-    $sql_count = "SELECT COUNT(*) AS cnt FROM `audio` WHERE MATCH (name, artist) AGAINST ('%{$query}%') OR artist LIKE '%{$query}%' OR name LIKE '%{$query}%'";
+    $sql_query = "SELECT audio.id, url, artist, title, oid, duration, users.user_search_pref FROM audio LEFT JOIN users ON audio.oid = users.user_id WHERE MATCH (title, artist) AGAINST ('%{$query}%') OR artist LIKE '%{$query}%' OR title LIKE '%{$query}%' ORDER by `add_count` DESC LIMIT {$limit_page}, {$gcount}";
+    $sql_count = "SELECT COUNT(*) AS cnt FROM `audio` WHERE MATCH (title, artist) AGAINST ('%{$query}%') OR artist LIKE '%{$query}%' OR title LIKE '%{$query}%'";
+
 } else {
     $sql_query = false;
     $sql_count = false;
@@ -102,6 +104,18 @@ if ($query) {
 $query = strip_data(urldecode(requestFilter('query')));
 if (isset($_GET['n']) && $_GET['n']) {
     $query = strip_data(urldecode(requestFilter('query')));
+}
+
+if ($type == 1) {
+    $tpl->set('{block_id}', '.friends_onefriend');
+} else if ($type == 2) {
+    $tpl->set('{block_id}', '.onevideo');
+} else if ($type == 3) {
+    $tpl->set('{block_id}', '.note_search');
+} else if ($type == 4) {
+    $tpl->set('{block_id}', '.friends_onefriend');
+} else if ($type == 5) {
+    $tpl->set('{block_id}', '.audio_onetrack');
 }
 
 $tpl->set('{query-people}', str_replace(array('&type=2', '&type=3', '&type=4', '&type=5'), '&type=1', $_SERVER['QUERY_STRING']));
@@ -159,6 +173,9 @@ if (isset($count['cnt']) && $count['cnt']) {
 } else {
     $tpl->set_block("'\\[yes\\](.*?)\\[/yes\\]'si", "");
 }
+
+$tpl->set('[search_js]', '');
+$tpl->set('[/search_js]', '');
 
 if ($type == 1) {
     $tpl->set('[search_tab]', '');
@@ -300,22 +317,67 @@ if ($sql_) {
 
         //Если критерий поиск "по аудиозаписям"
     } elseif ($type == 5) {
-        $tpl->load_template('search/result_audio.tpl');
-        $jid = 0;
-        foreach ($sql_ as $row) {
-            $jid++;
-            $tpl->set('{jid}', $jid);
-            $tpl->set('{aid}', $row['aid']);
-            $tpl->set('{url}', $row['url']);
-            $tpl->set('{artist}', stripslashes($row['artist']));
-            $tpl->set('{name}', stripslashes($row['name']));
-            $tpl->set('{author-n}', iconv_substr($row['user_search_pref'], 0, 1, 'utf-8'));
-            $expName = explode(' ', $row['user_search_pref']);
-            $tpl->set('{author-f}', $expName[1]);
-            $tpl->set('{author-id}', $row['auser_id']);
-            $tpl->compile('content');
+        foreach($sql_ as $row){
+            $stime = gmdate("i:s", $row['duration']);
+            if(!$row['artist']) $row['artist'] = 'Неизвестный исполнитель';
+            if(!$row['title']) $row['title'] = 'Без названия';
+            $plname = 'search';
+            $tpl->result['content'] .= <<<HTML
+<div class="audioPage audioElem search search_item" id="audio_{$row['id']}_{$row['oid']}_{$plname}" onclick="playNewAudio('{$row['id']}_{$row['oid']}_{$plname}', event);">
+<div class="area">
+<table cellspacing="0" cellpadding="0" width="100%">
+<tbody>
+<tr>
+<td>
+<div class="audioPlayBut new_play_btn"><div class="bl"><div class="figure"></div></div></div>
+<input type="hidden" value="{$row['url']},{$row['duration']},page" id="audio_url_{$row['id']}_{$row['oid']}_{$plname}">
+</td>
+<td class="info">
+<div class="audioNames"><b class="author" onclick="Page.Go('/?go=search&query=&type=5&q='+this.innerHTML);" id="artist">{$row['artist']}</b>  –  <span class="name" id="name">{$row['title']}</span> <div class="clear"></div></div>
+<div class="audioElTime" id="audio_time_{$row['id']}_{$row['oid']}_{$plname}">{$stime}</div>
+<div class="vk_audio_dl_btn cursor_pointer fl_l" href="{$row['url']}" style="
+    position: absolute;
+    right: 28px;
+    top: 9px;
+    display: none;
+" onclick="vkDownloadFile(this,'{$row['artist']} - {$row['title']} - kalibri.co.ua'); cancelEvent(event);" onMouseOver="myhtml.title('{$row['id']}', 'Скачать песню', 'ddtrack_', 4)" id="ddtrack_{$row['id']}"></div>
+
+<div class="audioSettingsBut"><li class="icon-plus-6" onClick="gSearch.addAudio('{$row['id']}_{$row['oid']}_{$plname}')" onmouseover="showTooltip(this, {text: 'Добавить в мой список', shift: [6,5,0]});" id="no_play"></li><div class="clear"></div></div>
+</td>
+</tr>
+</tbody>
+</table>
+
+<div id="player{$row['id']}_{$row['oid']}_{$plname}" class="audioPlayer" border="0" cellpadding="0">
+<table cellspacing="0" cellpadding="0" width="100%">
+<tbody>
+<tr>
+<td style="width: 100%;">
+<div class="progressBar fl_l" style="width: 100%;" onclick="cancelEvent(event);" onmousedown="audio_player.progressDown(event, this);" id="no_play" onmousemove="audio_player.playerPrMove(event, this)" onmouseout="audio_player.playerPrOut()">
+<div class="audioTimesAP" id="main_timeView"><div class="audioTAP_strlka">100%</div></div>
+<div class="audioBGProgress"></div>
+<div class="audioLoadProgress"></div>
+<div class="audioPlayProgress" id="playerPlayLine"><div class="audioSlider"></div></div>
+</div>
+</td>
+<td>
+<div class="audioVolumeBar fl_l" onclick="cancelEvent(event);" onmousedown="audio_player.volumeDown(event, this);" id="no_play">
+<div class="audioTimesAP"><div class="audioTAP_strlka">100%</div></div>
+<div class="audioBGProgress"></div>
+<div class="audioPlayProgress" id="playerVolumeBar"><div class="audioSlider"></div></div>
+</div>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+HTML;
         }
+
     } else {
+        $tpl->set_block("'\\[search_js\\](.*?)\\[/search_js\\]'si", "");
         msgbox('', $lang['search_none'], 'info_2');
     }
 

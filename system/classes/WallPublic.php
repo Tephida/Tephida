@@ -157,14 +157,28 @@ class WallPublic
 
                         //Музыка
                     } elseif ($attach_type[0] == 'audio') {
-                        $audioId = intval($attach_type[1]);
-                        $audioInfo = $db->super_query("SELECT artist, name, url FROM `audio` WHERE aid = '" . $audioId . "'");
-                        if ($audioInfo) {
-                            $jid++;
-                            $attach_result .= '<div class="audioForSize' . $row_wall['id'] . '" id="audioForSize"><div class="audio_onetrack audio_wall_onemus"><div class="audio_playic cursor_pointer fl_l" onClick="music.newStartPlay(\'' . $jid . '\', ' . $row_wall['id'] . ')" id="icPlay_' . $row_wall['id'] . $jid . '"></div><div id="music_' . $row_wall['id'] . $jid . '" data="' . $audioInfo['url'] . '" class="fl_l" style="margin-top:-1px"><a href="/?go=search&type=5&query=' . $audioInfo['artist'] . '&n=1" onClick="Page.Go(this.href); return false"><b>' . stripslashes($audioInfo['artist']) . '</b></a> &ndash; ' . stripslashes($audioInfo['name']) . '</div><div id="play_time' . $row_wall['id'] . $jid . '" class="color777 fl_r no_display" style="margin-top:2px;margin-right:5px">00:00</div><div class="player_mini_mbar fl_l no_display player_mini_mbar_wall" id="ppbarPro' . $row_wall['id'] . $jid . '"></div></div></div>';
-                        }
+                        $data = explode('_', $attach_type[1]);
+                        $audioId = intval($data[0]);
 
+                        $row_audio = $db->super_query("SELECT id, oid, artist, title, url, duration FROM `audio` WHERE id = '{$audioId}'");
+                        if($row_audio){
+                            $stime = gmdate("i:s", $row_audio['duration']);
+                            if(!$row_audio['artist']) $row_audio['artist'] = 'Неизвестный исполнитель';
+                            if(!$row_audio['title']) $row_audio['title'] = 'Без названия';
+                            $plname = 'wall';
+                            if($row_audio['oid'] != $user_info['user_id']) $q_s = <<<HTML
+<div class="audioSettingsBut"><li class="icon-plus-6" onClick="gSearch.addAudio('{$row_audio['id']}_{$row_audio['oid']}_{$plname}')" onmouseover="showTooltip(this, {text: 'Добавить в мой список', shift: [6,5,0]});" id="no_play"></li><div class="clear"></div></div>
+HTML;
+                            else $q_s = '';
+
+
+                            $qauido = "<div class=\"audioPage audioElem search search_item\" id=\"audio_{$row_audio['id']}_{$row_audio['oid']}_{$plname}\" onclick=\"playNewAudio('{$row_audio['id']}_{$row_audio['oid']}_{$plname}', event);\"><div class=\"area\"><table cellspacing=\"0\" cellpadding=\"0\" width=\"100%\"><tbody><tr><td><div class=\"audioPlayBut new_play_btn\"><div class=\"bl\"><div class=\"figure\"></div></div></div><input type=\"hidden\" value=\"{$row_audio['url']},{$row_audio['duration']},page\" id=\"audio_url_{$row_audio['id']}_{$row_audio['oid']}_{$plname}\"></td><td class=\"info\"><div class=\"audioNames\" style=\"width: 275px;\"><b class=\"author\" onclick=\"Page.Go('/?go=search&query=&type=5&q='+this.innerHTML);\" id=\"artist\">{$row_audio['artist']}</b>  –  <span class=\"name\" id=\"name\">{$row_audio['title']}</span> <div class=\"clear\"></div></div><div class=\"audioElTime\" id=\"audio_time_{$row_audio['id']}_{$row_audio['oid']}_{$plname}\">{$stime}</div>{$q_s}</td></tr></tbody></table><div id=\"player{$row_audio['id']}_{$row_audio['oid']}_{$plname}\" class=\"audioPlayer player{$row_audio['id']}_{$row_audio['oid']}_{$plname}\" border=\"0\" cellpadding=\"0\"><table cellspacing=\"0\" cellpadding=\"0\" width=\"100%\"><tbody><tr><td style=\"width: 100%;\"><div class=\"progressBar fl_l\" style=\"width: 100%;\" onclick=\"cancelEvent(event);\" onmousedown=\"audio_player.progressDown(event, this);\" id=\"no_play\" onmousemove=\"audio_player.playerPrMove(event, this)\" onmouseout=\"audio_player.playerPrOut()\"><div class=\"audioTimesAP\" id=\"main_timeView\"><div class=\"audioTAP_strlka\">100%</div></div><div class=\"audioBGProgress\"></div><div class=\"audioLoadProgress\"></div><div class=\"audioPlayProgress\" id=\"playerPlayLine\"><div class=\"audioSlider\"></div></div></div></td><td><div class=\"audioVolumeBar fl_l\" onclick=\"cancelEvent(event);\" onmousedown=\"audio_player.volumeDown(event, this);\" id=\"no_play\"><div class=\"audioTimesAP\"><div class=\"audioTAP_strlka\">100%</div></div><div class=\"audioBGProgress\"></div><div class=\"audioPlayProgress\" id=\"playerVolumeBar\"><div class=\"audioSlider\"></div></div></div>  </td></tr></tbody></table></div></div></div>";
+                            $attach_result .= $qauido;
+
+
+                        }
                         $resLinkTitle = '';
+
                         //Смайлик
                     } elseif ($attach_type[0] == 'smile' and file_exists(ROOT_DIR . "/uploads/smiles/{$attach_type[1]}")) {
                         $attach_result .= '<img src=\"/uploads/smiles/' . $attach_type[1] . '\" style="margin-right:5px" />';
@@ -172,10 +186,11 @@ class WallPublic
                         $resLinkTitle = '';
 
                         //Если ссылка
-                    } elseif ($attach_type[0] == 'link' and preg_match('/http:\/\/(.*?)+$/i', $attach_type[1]) and $cnt_attach_link == 1 and stripos(str_replace('http://www.', 'http://', $attach_type[1]), $config['home_url']) === false) {
+                    } elseif ($attach_type[0] == 'link' and preg_match('/https:\/\/(.*?)+$/i', $attach_type[1])
+                        and $cnt_attach_link == 1 and stripos(str_replace('https://www.', 'https://', $attach_type[1]), $config['home_url']) === false) {
                         $count_num = count($attach_type);
                         $domain_url_name = explode('/', $attach_type[1]);
-                        $rdomain_url_name = str_replace('http://', '', $domain_url_name[2]);
+                        $rdomain_url_name = str_replace('https://', '', $domain_url_name[2]);
 
                         $attach_type[3] = stripslashes($attach_type[3]);
                         $attach_type[3] = iconv_substr($attach_type[3], 0, 200, 'utf-8');

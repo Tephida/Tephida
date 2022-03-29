@@ -1,5 +1,6 @@
 <?php
-return array(
-    0 => array('key' => 'English', 'name' => 'English'),
-    1 => array('key' => 'Russian', 'name' => 'Русский'),
-);
+declare(strict_types=1);
+return [
+    1 => ['key' => 'en', 'name' => 'English'],
+    2 => ['key' => 'ru', 'name' => 'Русский'],
+];

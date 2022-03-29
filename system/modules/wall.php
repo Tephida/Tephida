@@ -579,40 +579,40 @@ if (Registry::get('logged')) {
          * Показ предыдущих записей
          */
         case "page":
-            NoAjaxQuery();
-            $wall = new wall($tpl);
-            $last_id = intFilter('last_id');
-            $for_user_id = intFilter('for_user_id');
-
-            //ЧС
-            $CheckBlackList = CheckBlackList($for_user_id);
-
-            if (!$CheckBlackList && $for_user_id && $last_id) {
-
-                //Проверка на существование получателя
-                $row = $db->super_query("SELECT user_privacy FROM `users` WHERE user_id = '{$for_user_id}'");
-
-                if ($row) {
-                    //Приватность
-                    $user_privacy = xfieldsdataload($row['user_privacy']);
-
-                    //Если приватность "Только друзья", то Проверка есть ли запрашиваемый юзер в друзьях у юзера который смотрит стр
-                    if ($user_privacy['val_wall1'] == 2 && $user_id != $for_user_id)
-                        $check_friend = $db->super_query("SELECT user_id FROM `friends` WHERE user_id = '{$user_id}' AND friend_id = '{$for_user_id}' AND subscriptions = 0");
-                    else
-                        $check_friend = null;
-                    if ($user_privacy['val_wall1'] == 1 || $user_privacy['val_wall1'] == 2 && $check_friend || $user_id == $for_user_id)
-                        $wall->query("SELECT tb1.id, author_user_id, text, add_date, fasts_num, likes_num, likes_users, type, tell_uid, tell_date, public, attach, tell_comm, tb2.user_photo, user_search_pref, user_last_visit, user_logged_mobile FROM `wall` tb1, `users` tb2 WHERE tb1.id < '{$last_id}' AND for_user_id = '{$for_user_id}' AND tb1.author_user_id = tb2.user_id AND tb1.fast_comm_id = '0' ORDER by `add_date` DESC LIMIT 0, {$limit_select}");
-                    else
-                        $wall->query("SELECT tb1.id, author_user_id, text, add_date, fasts_num, likes_num, likes_users, type, tell_uid, tell_date, public, attach, tell_comm, tb2.user_photo, user_search_pref, user_last_visit, user_logged_mobile FROM `wall` tb1, `users` tb2 WHERE tb1.id < '{$last_id}' AND for_user_id = '{$for_user_id}' AND tb1.author_user_id = tb2.user_id AND tb1.fast_comm_id = '0' AND tb1.author_user_id = '{$for_user_id}' ORDER by `add_date` DESC LIMIT 0, {$limit_select}");
-
-                    $wall->template('wall/record.tpl');
-                    $wall->compile('content');
-                    $config = settings_get();
-                    $wall->select($config, $id, $for_user_id, $user_privacy, $check_friend, $user_info);
-                    AjaxTpl($tpl);
-                }
-            }
+//            NoAjaxQuery();
+//            $wall = new wall($tpl);
+//            $last_id = intFilter('last_id');
+//            $for_user_id = intFilter('for_user_id');
+//
+//            //ЧС
+//            $CheckBlackList = CheckBlackList($for_user_id);
+//
+//            if (!$CheckBlackList && $for_user_id && $last_id) {
+//
+//                //Проверка на существование получателя
+//                $row = $db->super_query("SELECT user_privacy FROM `users` WHERE user_id = '{$for_user_id}'");
+//
+//                if ($row) {
+//                    //Приватность
+//                    $user_privacy = xfieldsdataload($row['user_privacy']);
+//
+//                    //Если приватность "Только друзья", то Проверка есть ли запрашиваемый юзер в друзьях у юзера который смотрит стр
+//                    if ($user_privacy['val_wall1'] == 2 && $user_id != $for_user_id)
+//                        $check_friend = $db->super_query("SELECT user_id FROM `friends` WHERE user_id = '{$user_id}' AND friend_id = '{$for_user_id}' AND subscriptions = 0");
+//                    else
+//                        $check_friend = null;
+//                    if ($user_privacy['val_wall1'] == 1 || $user_privacy['val_wall1'] == 2 && $check_friend || $user_id == $for_user_id)
+//                        $wall->query("SELECT tb1.id, author_user_id, text, add_date, fasts_num, likes_num, likes_users, type, tell_uid, tell_date, public, attach, tell_comm, tb2.user_photo, user_search_pref, user_last_visit, user_logged_mobile FROM `wall` tb1, `users` tb2 WHERE tb1.id < '{$last_id}' AND for_user_id = '{$for_user_id}' AND tb1.author_user_id = tb2.user_id AND tb1.fast_comm_id = '0' ORDER by `add_date` DESC LIMIT 0, {$limit_select}");
+//                    else
+//                        $wall->query("SELECT tb1.id, author_user_id, text, add_date, fasts_num, likes_num, likes_users, type, tell_uid, tell_date, public, attach, tell_comm, tb2.user_photo, user_search_pref, user_last_visit, user_logged_mobile FROM `wall` tb1, `users` tb2 WHERE tb1.id < '{$last_id}' AND for_user_id = '{$for_user_id}' AND tb1.author_user_id = tb2.user_id AND tb1.fast_comm_id = '0' AND tb1.author_user_id = '{$for_user_id}' ORDER by `add_date` DESC LIMIT 0, {$limit_select}");
+//
+//                    $wall->template('wall/record.tpl');
+//                    $wall->compile('content');
+//                    $config = settings_get();
+//                    $wall->select($config, $id, $for_user_id, $user_privacy, $check_friend, $user_info);
+//                    AjaxTpl($tpl);
+//                }
+//            }
 
             break;
 
@@ -765,7 +765,7 @@ if (Registry::get('logged')) {
         default:
 
             if (requestFilter('uid')) {
-                $meta_tags['title'] = 'wall';
+                $meta_tags['title'] = 'walls';
 
                 $tpl = new TpLSite(ROOT_DIR . '/templates/' . $config['temp'], $meta_tags);
             }
@@ -867,8 +867,6 @@ if (Registry::get('logged')) {
             $id = $id ?? null;
 
             if (!$CheckBlackList) {
-
-
                 $where_sql = $where_sql ?? null;
 
                 if ($user_privacy['val_wall1'] == 1 || ($user_privacy['val_wall1'] == 2 && $check_friend) || $user_id == $id) {

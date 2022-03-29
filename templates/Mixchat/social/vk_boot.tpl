@@ -1,0 +1,2 @@
+<div id="vk_page_news_app"></div>
+<div class="cursor_pointer" onClick="vk.prev_news('{next_page_id}', '{offset}'); return false" id="vk_prev_news"><div class="public_wall_all_comm profile_hide_opne" id="vk_prev_load" style="margin-top:0px;width:752px">Показать предыдущие новости</div></div>

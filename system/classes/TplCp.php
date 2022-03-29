@@ -38,7 +38,7 @@ class TplCp extends Templates
         $admin_link = $config['home_url'] . $config['admin_index'];
         if (Registry::get('logged')) {
             $stat_lnk = "<a href=\"{$admin_link}?mod=stats\" onclick=\"Page.Go(this.href); return false;\" style=\"margin-right:10px\">статистика</a>";
-            $exit_lnk = "<a href=\"{$admin_link}?act=logout\" onclick=\"Page.Go(this.href); return false;\">выйти</a>";
+            $exit_lnk = "<a href=\"{$admin_link}?act=logout\">выйти</a>";
         } else {
             $stat_lnk = '';
             $exit_lnk = '';

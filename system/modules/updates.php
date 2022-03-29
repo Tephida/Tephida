@@ -24,7 +24,7 @@ if (Registry::get('logged')) {
             if ($row['user_photo']) {
                 $ava = "/uploads/users/{$row['from_user_id']}/50_{$row['user_photo']}";
             } else {
-                $ava = "/templates/Default/images/no_ava_50.png";
+                $ava = "/images/no_ava_50.png";
             }
             $row['text'] = str_replace("|", "&#124;", $row['text']);
             echo $row['type'] . '|' . $row['user_search_pref'] . '|' . $row['from_user_id'] . '|' . stripslashes($row['text']) . '|' . $server_time . '|' . $ava . '|' . $row['lnk'];

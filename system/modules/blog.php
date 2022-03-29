@@ -215,7 +215,7 @@ if (Registry::get('logged')) {
     $tpl->set('{title}', '');
     $tpl->compile('content');
     $tpl->clear();
-    $db->free();
+//    $db->free();
     compile($tpl);
 //	msgbox('', $lang['not_logged'], 'info');
 }

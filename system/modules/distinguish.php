@@ -158,7 +158,7 @@ HTML;
             break;
     }
     $tpl->clear();
-    $db->free();
+//    $db->free();
 } else {
     echo 'no_log';
 }

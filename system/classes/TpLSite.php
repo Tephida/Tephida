@@ -16,15 +16,18 @@ use FluffyDollop\Support\Templates;
 use JsonException;
 use Mozg\modules\Lang;
 
+/**
+ * Compile template
+ */
 class TpLSite extends Templates
 {
-    public array $meta_tags = array(
+    public array $metaTags = [
         'title' => 'Social network',
         'generator' => '<meta name="generator" content="VII ENGINE" />',
         'charset' => '<meta http-equiv="content-type" content="text/html; charset=utf-8" />',
-    );
+    ];
 
-    public array $notify = array(
+    public array $notify = [
         'user_pm_num' => '',
         'new_news' => '',
         'news_link' => '',
@@ -37,13 +40,13 @@ class TpLSite extends Templates
         'new_photos_link' => '',
         'new_groups_lnk' => '/groups',
         'new_groups' => '',
-    );
+    ];
 
     public function __construct(string $dir = '.', array $meta_tags = array())
     {
         $this->dir = $dir;
         if (!empty($meta_tags['title'])) {
-            $this->meta_tags['title'] = $meta_tags['title'];
+            $this->metaTags['title'] = $meta_tags['title'];
         }
         if (!defined('TEMPLATE_DIR')) {
             define('TEMPLATE_DIR', $dir);
@@ -145,7 +148,7 @@ class TpLSite extends Templates
         $speedbar = $spBar = null;//FIXME
 
 //        $metatags['title'] = $metatags['title'] ?? $config['home'];
-        $title = $this->meta_tags['title'];//TODO default to config
+        $title = $this->metaTags['title'];//TODO default to config
 
 //    if (isset($spBar) and $spBar)
 //        $ajaxSpBar = "$('#speedbar').show().html('{$speedbar}')";
@@ -172,10 +175,10 @@ class TpLSite extends Templates
             );
 
         } else {
-            $result_ajax = array(
+            $result_ajax = [
                 'title' => $title,
                 'content' => $this->result['info'] . $this->result['content']
-            );
+            ];
         }
         $res = str_replace('{theme}', '/templates/' . $config['temp'], $result_ajax);
 
@@ -246,8 +249,8 @@ class TpLSite extends Templates
             $this->set('{my-page-link}', '');
         }
         $mobile_speedbar = '';//fixme
-        $this->meta_tags['title'] = '<title>' . $this->meta_tags['title'] . '</title>';
-        $headers = implode('', $this->meta_tags);
+        $this->metaTags['title'] = '<title>' . $this->metaTags['title'] . '</title>';
+        $headers = implode('', $this->metaTags);
 
 //        $speedbar = '';//fixme
 
@@ -287,17 +290,23 @@ class TpLSite extends Templates
             $this->set('[speedbar]', '');
             $this->set('[/speedbar]', '');
         }
+
+        $version = 13;
+
 //BUILD JS
-        $this->set('{js}', '<script type="text/javascript" src="{theme}/js/jquery.lib.js"></script>
-<script type="text/javascript" src="{theme}/js/' . Lang::getLang() . '/lang.js"></script>
-<script type="text/javascript" src="{theme}/js/main.js"></script>
-<script type="text/javascript" src="{theme}/js/profile.js"></script>');
+        $this->set('{js}', '<script type="text/javascript" src="/js/jquery.lib.js?v='.$version.'"></script>
+<script type="text/javascript" src="/js/' . Lang::getLang() . '/lang.js?v='.$version.'"></script>
+<script type="text/javascript" src="/js/main.js?v='.$version.'"></script>
+<script type="text/javascript" src="/js/audio.js?v='.$version.'"></script>
+<script type="text/javascript" src="/js/payment.js?v='.$version.'"></script>
+<script type="text/javascript" src="/js/payment.js?v='.$version.'"></script>
+<script type="text/javascript" src="/js/profile.js?v='.$version.'"></script>');
 
 // FOR MOBILE VERSION 1.0
         if (isset($user_info['user_photo']) && $user_info['user_photo']) {
             $this->set('{my-ava}', "/uploads/users/{$user_info['user_id']}/50_{$user_info['user_photo']}");
         } else {
-            $this->set('{my-ava}', "{theme}/images/no_ava_50.png");
+            $this->set('{my-ava}', '/images/no_ava_50.png');
         }
 
         if (isset($user_info['user_search_pref'])) {
@@ -312,7 +321,7 @@ class TpLSite extends Templates
             $this->set('{mobile-link}', '');
         }
 
-        $this->set('{lang}', getLangName());
+        $this->set('{lang}', Lang::getLang());
         $this->compile('main');
         header('Content-type: text/html; charset=utf-8');
         $result = str_replace('{theme}', '/templates/' . $config['temp'], $this->result['main']);
@@ -320,6 +329,9 @@ class TpLSite extends Templates
         return $this->renderEnd();
     }
 
+    /**
+     * @return int
+     */
     private function renderEnd(): int
     {
         $config = settings_get();
@@ -331,6 +343,9 @@ class TpLSite extends Templates
         return 1;
     }
 
+    /**
+     * @return string
+     */
     public function renderAjax(): string
     {
         $config = settings_get();

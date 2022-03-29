@@ -171,7 +171,7 @@ if (Registry::get('logged')) {
             if ($sql_) {
 
                 if (!$page_cnt) {
-                    $tpl->result['content'] .= "<script>langNumric('langNumric', '{$row_count['cnt']}', 'видеозапись', 'видеозаписи', 'видеозаписей', 'видеозапись', 'видеозаписей');</script><div class=\"allbar_title\" style=\"margin-bottom:0;border-bottom:0\">В поиске найдено <span id=\"seAudioNum\">{$row_count['cnt']}</span> <span id=\"langNumric\"></span>  |  <a href=\"/{$adres}\" onClick=\"Page.Go(this.href); return false\" style=\"font-weight:normal\">К сообществу</a>  |  <a href=\"/public/videos{$pid}\" onClick=\"Page.Go(location.href); return false\" style=\"font-weight:normal\">Все видеозаписи</a></div>";
+                    $tpl->result['content'] .= "<script>Page.langNumric('langNumric', '{$row_count['cnt']}', 'видеозапись', 'видеозаписи', 'видеозаписей', 'видеозапись', 'видеозаписей');</script><div class=\"allbar_title\" style=\"margin-bottom:0;border-bottom:0\">В поиске найдено <span id=\"seAudioNum\">{$row_count['cnt']}</span> <span id=\"langNumric\"></span>  |  <a href=\"/{$adres}\" onClick=\"Page.Go(this.href); return false\" style=\"font-weight:normal\">К сообществу</a>  |  <a href=\"/public/videos{$pid}\" onClick=\"Page.Go(location.href); return false\" style=\"font-weight:normal\">Все видеозаписи</a></div>";
                 }
 
                 foreach ($sql_ as $row) {

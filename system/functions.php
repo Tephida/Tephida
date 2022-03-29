@@ -8,6 +8,7 @@
  */
 
 use FluffyDollop\Support\{Filesystem, Gzip, Registry, Templates};
+use JetBrains\PhpStorm\ArrayShape;
 use Mozg\classes\Cookie;
 use Mozg\classes\Declensions;
 use Mozg\modules\Lang;
@@ -435,29 +436,23 @@ function GenerateAlbumPhotosPosition($uid, $aid = false)
 function CheckFriends($friendId): bool
 {
     $user_info = Registry::get('user_info');
-    $openMyList = mozg_cache("user_{$user_info['user_id']}/friends");
-    if (stripos($openMyList, "u{$friendId}|") !== false)
-        return true;
-    else
-        return false;
+    /** @var string $user_info['user_id'] */
+    $open_my_list = mozg_cache("user_{$user_info['user_id']}/friends");
+    return stripos($open_my_list, "u{$friendId}|") !== false;
 }
 function CheckBlackList($userId): bool
 {
     $user_info = Registry::get('user_info');
-    $openMyList = mozg_cache("user_{$userId}/blacklist");
-    if (stripos($openMyList, "|{$user_info['user_id']}|") !== false)
-        return true;
-    else
-        return false;
+    $open_my_list = mozg_cache("user_{$userId}/blacklist");
+    /** @var string $user_info['user_id'] */
+    return stripos($open_my_list, "|{$user_info['user_id']}|") !== false;
 }
 function MyCheckBlackList($userId): bool
 {
     $user_info = Registry::get('user_info');
-    $openMyList = mozg_cache("user_{$user_info['user_id']}/blacklist");
-    if (stripos($openMyList, "|{$userId}|") !== false)
-        return true;
-    else
-        return false;
+    /** @var string $user_info['user_id'] */
+    $open_my_list = mozg_cache("user_{$user_info['user_id']}/blacklist");
+    return stripos($open_my_list, "|{$userId}|") !== false;
 }
 
 /**
@@ -642,15 +637,28 @@ function cleanPath($path): string
 
 function settings_get(): array
 {
-    return Registry::get('config');
+    if (Registry::exists('config')) {
+        return Registry::get('config');
+    }
+    if (file_exists(ENGINE_DIR . '/data/config.php')) {
+        $config = require ENGINE_DIR . '/data/config.php';
+        Registry::set('config', $config);
+        return $config;
+    }
+    die("Vii Engine not installed. Please run install.php");//todo
 }
 
 function settings_load(): array
 {
-    if (file_exists(ENGINE_DIR . '/data/config.php')) {
-        return require ENGINE_DIR . '/data/config.php';
+    if (Registry::exists('config')) {
+        return Registry::get('config');
     }
-    die("Vii Engine not installed. Please run install.php");
+    if (file_exists(ENGINE_DIR . '/data/config.php')) {
+        $config = require ENGINE_DIR . '/data/config.php';
+        Registry::set('config', $config);
+        return $config;
+    }
+    die("Vii Engine not installed. Please run install.php");//todo
 }
 
 /**
@@ -952,16 +960,17 @@ function compileNoAjax($tpl, $params): int
     }
 //BUILD JS
 //    $checkLang = Registry::get('checkLang');
-    $tpl->set('{js}', '<script type="text/javascript" src="{theme}/js/jquery.lib.js"></script>
-<script type="text/javascript" src="{theme}/js/' . Lang::getLang() . '/lang.js"></script>
-<script type="text/javascript" src="{theme}/js/main.js"></script>
-<script type="text/javascript" src="{theme}/js/profile.js"></script>');
+    $tpl->set('{js}', '<script type="text/javascript" src="/js/jquery.lib.js"></script>
+<script type="text/javascript" src="/js/' . Lang::getLang() . '/lang.js"></script>
+<script type="text/javascript" src="/js/main.js"></script>
+<script type="text/javascript" src="/js/audio.js"></script>
+<script type="text/javascript" src="/js/profile.js"></script>');
 
 // FOR MOBILE VERSION 1.0
     if (isset($user_info['user_photo']) && $user_info['user_photo']) {
         $tpl->set('{my-ava}', "/uploads/users/{$user_info['user_id']}/50_{$user_info['user_photo']}");
     } else {
-        $tpl->set('{my-ava}', "{theme}/images/no_ava_50.png");
+        $tpl->set('{my-ava}', "/images/no_ava_50.png");
     }
 
     if (isset($user_info['user_search_pref'])) {
@@ -976,7 +985,7 @@ function compileNoAjax($tpl, $params): int
         $tpl->set('{mobile-link}', '');
     }
 
-    $tpl->set('{lang}', getLangName());
+    $tpl->set('{lang}', Lang::getLang());
     $tpl->compile('main');
     header('Content-type: text/html; charset=utf-8');
     $result = str_replace('{theme}', '/templates/' . $config['temp'], $tpl->result['main']);
@@ -997,14 +1006,6 @@ function tpl_init(): Templates
     $tpl->dir = ROOT_DIR . '/templates/' . $config['temp'];
     define('TEMPLATE_DIR', $tpl->dir);
     return $tpl;
-}
-
-function getLangName()
-{
-    $lang_list = require ENGINE_DIR . '/data/langs.php';
-    $lang_count = count($lang_list);
-    $useLang = ((!empty($_COOKIE['lang'])) > 0 && (!empty($_COOKIE['lang'])) <= $lang_count) ? (int)$_COOKIE['lang'] : 0;
-    return $lang_list[$useLang]['name'];
 }
 
 function system_mozg_clear_cache_file($prefix): void
@@ -1048,5 +1049,46 @@ function compileAdmin($tpl): void
     } else {
         echo $tpl->result['main'];
     }
+}
 
+/**
+ * @param string|null $view
+ * @param array $variables
+ * @return bool
+ * @throws ErrorException
+ * @throws JsonException
+ */
+function view(?string $view, array $variables = []): bool
+{
+    try {
+        echo  (new Mozg\classes\View())->render($view,$variables);
+        return true;
+    }catch (Error){
+        return false;
+    }
+}
+
+/**
+ * Device info
+ * @return array
+ */
+#[ArrayShape(['browser' => 'string',
+        'browser_ver' => 'string',
+        'operating_system' => 'string',
+        'device ' => 'string',
+        'language ' => 'string'])]
+function get_device(): array
+{
+    $browser = new \Sinergi\BrowserDetector\Browser();
+    $operating_system = new \Sinergi\BrowserDetector\Os();
+    $user_device = new \Sinergi\BrowserDetector\Device();
+    $language = new \Sinergi\BrowserDetector\Language();
+
+    return [
+        'browser' => $browser->getName(),
+        'browser_ver' => $browser->getVersion(),
+        'operating_system' => $operating_system->getName(),
+        'device ' => $user_device->getName(),
+        'language ' => $language->getLanguage(),
+    ];
 }

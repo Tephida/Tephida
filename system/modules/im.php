@@ -8,6 +8,8 @@
  */
 
 use FluffyDollop\Support\{Filesystem, Registry};
+use FluffyDollop\Security\AntiSpam;
+use Mozg\classes\Dialog;
 use Mozg\classes\Flood;
 
 NoAjaxQuery();
@@ -477,159 +479,86 @@ if (Registry::get('logged')) {
 
         case "send":
             NoAjaxQuery();
-            if (Flood::check('messages')) {
-                echo 'max_strlen';
-            } else {
-                $room_id = intFilter('room_id');
-                $for_user_id = intFilter('for_user_id');
-                if ($room_id) {
-                    $for_user_id = 0;
-                }
-                $msg = requestFilter('msg');
-                $my_ava = requestFilter('my_ava');
-                $my_name = requestFilter('my_name');
-                $attach_files = requestFilter('attach_files');
-                $attach_files = str_replace('vote|', 'hack|', $attach_files);
-                if (Flood::check('identical', $msg . $attach_files)) {
-                    echo 'max_strlen';
-                } else {
-                    if (!empty($msg) || !empty($attach_files)) {
-                        if (!$room_id) {
-                            $row = $db->super_query("SELECT user_privacy FROM `users` WHERE user_id = '" . $for_user_id . "'");
-                        } else {
-                            $row = $db->super_query("SELECT id FROM `room_users` WHERE room_id = '" . $room_id . "' and oid2 = '" . $user_id . "' and type = 0");
+
+            $room_id = intFilter('room_id');
+            $for_user_id = intFilter('for_user_id');
+            if ($room_id) {
+                $for_user_id = 0;
+            }
+            $msg = requestFilter('msg');
+            $my_ava = requestFilter('my_ava');
+            $my_name = requestFilter('my_name');
+            $attach_files = requestFilter('attach_files');
+            $attach_files = str_replace('vote|', 'hack|', $attach_files);
+
+
+            $dialog = new Dialog($user_id);
+            $response = $dialog->send($for_user_id, $room_id, $msg, $attach_files);
+            _e_json($response);
+
+/*            $tpl->load_template('im/msg.tpl');
+            $tpl->set('{ava}', $my_ava);
+            $tpl->set('{name}', $my_name);
+            $tpl->set('{user-id}', $user_id);
+            $attach_result = '';
+            if ($attach_files) {
+                $attach_arr = explode('||', $attach_files);
+                $cnt_attach = 1;
+                $jid = 0;
+
+                foreach ($attach_arr as $attach_file) {
+                    $attach_type = explode('|', $attach_file);
+                    if ($attach_type[0] == 'photo_u') {
+                        $attauthor_user_id = $user_id;
+                        if ($attach_type[1] == 'attach' and file_exists(ROOT_DIR . "/uploads/attach/{$attauthor_user_id}/c_{$attach_type[2]}")) {
+                            $size = getimagesize(ROOT_DIR . "/uploads/attach/{$attauthor_user_id}/c_{$attach_type[2]}");
+                            $attach_result .= "<img id=\"photo_wall_{$row['id']}_{$cnt_attach}\" src=\"/uploads/attach/{$attauthor_user_id}/c_{$attach_type[2]}\" {$size[3]} style=\"margin-top:3px;margin-right:3px\" align=\"left\" onClick=\"groups.wall_photo_view('{$row['id']}', '', '{$attach_type[1]}', '{$cnt_attach}')\" class=\"cursor_pointer page_num{$row['id']}\" />";
+                            $cnt_attach++;
+                        } elseif (file_exists(ROOT_DIR . "/uploads/users/{$attauthor_user_id}/albums/{$attach_type[2]}/c_{$attach_type[1]}")) {
+                            $size = getimagesize(ROOT_DIR . "/uploads/users/{$attauthor_user_id}/albums/{$attach_type[2]}/c_{$attach_type[1]}");
+                            $attach_result .= "<img id=\"photo_wall_{$row['id']}_{$cnt_attach}\" src=\"/uploads/users/{$attauthor_user_id}/albums/{$attach_type[2]}/c_{$attach_type[1]}\" {$size[3]} style=\"margin-top:3px;margin-right:3px\" align=\"left\" onClick=\"groups.wall_photo_view('{$row['id']}', '', '{$attach_type[1]}', '{$cnt_attach}')\" class=\"cursor_pointer page_num{$row['id']}\" />";
+                            $cnt_attach++;
                         }
-                        if ($row) {
-                            if (!$room_id) {
-                                $user_privacy = xfieldsdataload($row['user_privacy']);
-                                $CheckBlackList = CheckBlackList($for_user_id);
-                                if ($user_privacy['val_msg'] == 2)
-                                    $check_friend = CheckFriends($for_user_id);
-                                else
-                                    $check_friend = null;
-                                if (!$CheckBlackList and $user_privacy['val_msg'] == 1 or $user_privacy['val_msg'] == 2 and $check_friend)
-                                    $xPrivasy = 1;
-                                else
-                                    $xPrivasy = 0;
-                            } else {
-                                $xPrivasy = 1;
-                            }
-                            if ($xPrivasy and $user_id != $for_user_id) {
-                                AntiSpam::LogInsert('identical', $msg . $attach_files);
-                                if (!$room_id && !CheckFriends($for_user_id)) {
-                                    AntiSpam::LogInsert('messages');
-                                }
-                                $user_ids = array();
-                                if (!$room_id) {
-                                    $user_ids[] = $for_user_id;
-                                    $user_ids[] = $user_id;
-                                } else {
-                                    /** fixme limit */
-                                    $sqlUsers = $db->super_query("SELECT oid2 FROM `room_users` WHERE room_id = '" . $room_id . "' and type = 0", true);
-                                    foreach ($sqlUsers as $rowUser)
-                                        $user_ids[] = $rowUser['oid2'];
-                                }
-                                $db->query("INSERT INTO `messages` SET user_ids = '" . implode(',', $user_ids) . "', theme = '...', text = '" . $msg . "', room_id = '{$room_id}', date = '" . $server_time . "', history_user_id = '" . $user_id . "', attach = '" . $attach_files . "'");
-                                $dbid = $db->insert_id();
-                                $user_ids = array_diff($user_ids, array($user_id));
-                                foreach ($user_ids as $k => $v) {
-                                    $db->query("UPDATE `users` SET user_pm_num = user_pm_num+1 WHERE user_id = '" . $v . "'");
-                                    $check_im_2 = $db->super_query("SELECT id FROM im WHERE iuser_id = '" . $v . "' AND im_user_id = '" . ($room_id ? 0 : $user_id) . "' AND room_id = '" . $room_id . "'");
-                                    if (!$check_im_2) {
-                                        $db->query("INSERT INTO im SET iuser_id = '" . $v . "', im_user_id = '" . ($room_id ? 0 : $user_id) . "', room_id = '" . $room_id . "', msg_num = 1, idate = '" . $server_time . "', all_msg_num = 1");
-                                    } else {
-                                        $db->query("UPDATE im  SET idate = '" . $server_time . "', msg_num = msg_num+1, all_msg_num = all_msg_num+1 WHERE id = '" . $check_im_2['id'] . "'");
-                                    }
-                                    $check2 = $db->super_query("SELECT user_last_visit FROM `users` WHERE user_id = '{$v}'");
-                                    $update_time = $server_time - 70;
-                                    if ($check2['user_last_visit'] >= $update_time) {
-                                        $msg_lnk = '/messages#' . ($room_id ? 'c' . $room_id : $user_id);
-                                        $db->query("INSERT INTO `updates` SET for_user_id = '{$v}', from_user_id = '{$user_id}', type = '8', date = '{$server_time}', text = '{$msg}', user_photo = '{$user_info['user_photo']}', user_search_pref = '{$user_info['user_search_pref']}', lnk = '{$msg_lnk}'");
-                                        mozg_create_cache("user_{$v}/updates", 1);
-                                    }
-                                    mozg_clear_cache_file('user_' . $v . '/im');
-                                    mozg_create_cache('user_' . $v . '/im_update', '1');
-                                    mozg_create_cache("user_{$v}/typograf{$user_id}", "");
-                                }
-                                $check_im = $db->super_query("SELECT id FROM `im` WHERE iuser_id = '" . $user_id . "' AND im_user_id = '" . $for_user_id . "' AND room_id = '" . $room_id . "'");
-                                if (!$check_im) {
-                                    $db->query("INSERT INTO im SET iuser_id = '" . $user_id . "', im_user_id = '" . $for_user_id . "', room_id = '" . $room_id . "', idate = '" . $server_time . "', all_msg_num = 1");
-                                } else {
-                                    $db->query("UPDATE im  SET idate = '" . $server_time . "', all_msg_num = all_msg_num+1 WHERE id = '" . $check_im['id'] . "'");
-                                }
-
-
-                                $tpl->load_template('im/msg.tpl');
-                                $tpl->set('{ava}', $my_ava);
-                                $tpl->set('{name}', $my_name);
-                                $tpl->set('{user-id}', $user_id);
-                                $attach_result = '';
-                                if ($attach_files) {
-                                    $attach_arr = explode('||', $attach_files);
-                                    $cnt_attach = 1;
-                                    $jid = 0;
-
-                                    foreach ($attach_arr as $attach_file) {
-                                        $attach_type = explode('|', $attach_file);
-                                        if ($attach_type[0] == 'photo_u') {
-                                            $attauthor_user_id = $user_id;
-                                            if ($attach_type[1] == 'attach' and file_exists(ROOT_DIR . "/uploads/attach/{$attauthor_user_id}/c_{$attach_type[2]}")) {
-                                                $size = getimagesize(ROOT_DIR . "/uploads/attach/{$attauthor_user_id}/c_{$attach_type[2]}");
-                                                $attach_result .= "<img id=\"photo_wall_{$row['id']}_{$cnt_attach}\" src=\"/uploads/attach/{$attauthor_user_id}/c_{$attach_type[2]}\" {$size[3]} style=\"margin-top:3px;margin-right:3px\" align=\"left\" onClick=\"groups.wall_photo_view('{$row['id']}', '', '{$attach_type[1]}', '{$cnt_attach}')\" class=\"cursor_pointer page_num{$row['id']}\" />";
-                                                $cnt_attach++;
-                                            } elseif (file_exists(ROOT_DIR . "/uploads/users/{$attauthor_user_id}/albums/{$attach_type[2]}/c_{$attach_type[1]}")) {
-                                                $size = getimagesize(ROOT_DIR . "/uploads/users/{$attauthor_user_id}/albums/{$attach_type[2]}/c_{$attach_type[1]}");
-                                                $attach_result .= "<img id=\"photo_wall_{$row['id']}_{$cnt_attach}\" src=\"/uploads/users/{$attauthor_user_id}/albums/{$attach_type[2]}/c_{$attach_type[1]}\" {$size[3]} style=\"margin-top:3px;margin-right:3px\" align=\"left\" onClick=\"groups.wall_photo_view('{$row['id']}', '', '{$attach_type[1]}', '{$cnt_attach}')\" class=\"cursor_pointer page_num{$row['id']}\" />";
-                                                $cnt_attach++;
-                                            }
-                                        } elseif ($attach_type[0] == 'video' and file_exists(ROOT_DIR . "/uploads/videos/{$attach_type[3]}/{$attach_type[1]}"))
-                                            $attach_result .= "<div><a href=\"/video{$attach_type[3]}_{$attach_type[2]}\" onClick=\"videos.show({$attach_type[2]}, this.href, location.href); return false\"><img src=\"/uploads/videos/{$attach_type[3]}/{$attach_type[1]}\" style=\"margin-top:3px;margin-right:3px\" align=\"left\" /></a></div>";
-                                        elseif ($attach_type[0] == 'audio') {
-                                            $audioId = (int)$attach_type[1];
-                                            $audioInfo = $db->super_query("SELECT artist, name, url FROM `audio` WHERE aid = '" . $audioId . "'");
-                                            if ($audioInfo) {
-                                                $jid++;
-                                                $attach_result .= '<div class="audioForSize' . $row['id'] . ' player_mini_mbar_wall_all2" id="audioForSize" style="width:440px"><div class="audio_onetrack audio_wall_onemus" style="width:440px"><div class="audio_playic cursor_pointer fl_l" onClick="music.newStartPlay(\'' . $jid . '\', ' . $row['id'] . ')" id="icPlay_' . $row['id'] . $jid . '"></div><div id="music_' . $row['id'] . $jid . '" data="' . $audioInfo['url'] . '" class="fl_l" style="margin-top:-1px"><a href="/?go=search&type=5&query=' . $audioInfo['artist'] . '" onClick="Page.Go(this.href); return false"><b>' . stripslashes($audioInfo['artist']) . '</b></a> &ndash; ' . stripslashes($audioInfo['name']) . '</div><div id="play_time' . $row['id'] . $jid . '" class="color777 fl_r no_display" style="margin-top:2px;margin-right:5px">00:00</div><div class="player_mini_mbar fl_l no_display player_mini_mbar_wall player_mini_mbar_wall_all2" id="ppbarPro' . $row['id'] . $jid . '" style="width:442px"></div></div></div>';
-                                            }
-                                        } elseif ($attach_type[0] == 'smile' and file_exists(ROOT_DIR . "/uploads/smiles/{$attach_type[1]}")) {
-                                            $attach_result .= '<img src=\"/uploads/smiles/' . $attach_type[1] . '\" style="margin-right:5px" />';
-                                        } elseif ($attach_type[0] == 'doc') {
-                                            $doc_id = (int)$attach_type[1];
-                                            $row_doc = $db->super_query("SELECT dname, dsize FROM `doc` WHERE did = '{$doc_id}'", false, "wall/doc{$doc_id}");
-                                            if ($row_doc) {
-                                                $attach_result .= '<div style="margin-top:5px;margin-bottom:5px" class="clear"><div class="doc_attach_ic fl_l" style="margin-top:4px;margin-left:0px"></div><div class="attach_link_block_te"><div class="fl_l">Файл <a href="/index.php?go=doc&act=download&did=' . $doc_id . '" target="_blank" onMouseOver="myhtml.title(\'' . $doc_id . $cnt_attach . $dbid . '\', \'<b>Размер файла: ' . $row_doc['dsize'] . '</b>\', \'doc_\')" id="doc_' . $doc_id . $cnt_attach . $dbid . '">' . $row_doc['dname'] . '</a></div></div></div><div class="clear"></div>';
-                                                $cnt_attach++;
-                                            }
-                                        } else {
-                                            $attach_result .= '';
-                                        }
-                                    }
-                                    if ($attach_result) {
-                                        $msg = '<div style="width:442px;overflow:hidden">' . preg_replace('`(http(?:s)?://\w+[^\s\[\]\<]+)`i', '<a href="/index.php?go=away&url=$1" target="_blank">$1</a>', $msg) . $attach_result . '</div><div class="clear"></div>';
-                                    }
-                                } else {
-                                    $msg = preg_replace('`(http(?:s)?://\w+[^\s\[\]\<]+)`i', '<a href="/index.php?go=away&url=$1" target="_blank">$1</a>', $msg) . $attach_result;
-                                }
-                                $tpl->set('[noInformation]', '');
-                                $tpl->set('[/noInformation]', '');
-                                $tpl->set('{style}', '');
-                                $tpl->set('{text}', stripslashes($msg));
-                                $tpl->set('{msg-id}', $dbid);
-                                $tpl->set('{new}', 'im_class_new');
-                                $tpl->set('{date}', langdate('H:i:s', $server_time));
-                                $tpl->compile('content');
-                                AjaxTpl($tpl);
-                            } else {
-                                echo 'err_privacy';
-                            }
-                        } else {
-                            echo 'no_user';
+                    } elseif ($attach_type[0] == 'video' and file_exists(ROOT_DIR . "/uploads/videos/{$attach_type[3]}/{$attach_type[1]}"))
+                        $attach_result .= "<div><a href=\"/video{$attach_type[3]}_{$attach_type[2]}\" onClick=\"videos.show({$attach_type[2]}, this.href, location.href); return false\"><img src=\"/uploads/videos/{$attach_type[3]}/{$attach_type[1]}\" style=\"margin-top:3px;margin-right:3px\" align=\"left\" /></a></div>";
+                    elseif ($attach_type[0] == 'audio') {
+                        $audioId = (int)$attach_type[1];
+                        $audioInfo = $db->super_query("SELECT artist, name, url FROM `audio` WHERE aid = '" . $audioId . "'");
+                        if ($audioInfo) {
+                            $jid++;
+                            $attach_result .= '<div class="audioForSize' . $row['id'] . ' player_mini_mbar_wall_all2" id="audioForSize" style="width:440px"><div class="audio_onetrack audio_wall_onemus" style="width:440px"><div class="audio_playic cursor_pointer fl_l" onClick="music.newStartPlay(\'' . $jid . '\', ' . $row['id'] . ')" id="icPlay_' . $row['id'] . $jid . '"></div><div id="music_' . $row['id'] . $jid . '" data="' . $audioInfo['url'] . '" class="fl_l" style="margin-top:-1px"><a href="/?go=search&type=5&query=' . $audioInfo['artist'] . '" onClick="Page.Go(this.href); return false"><b>' . stripslashes($audioInfo['artist']) . '</b></a> &ndash; ' . stripslashes($audioInfo['name']) . '</div><div id="play_time' . $row['id'] . $jid . '" class="color777 fl_r no_display" style="margin-top:2px;margin-right:5px">00:00</div><div class="player_mini_mbar fl_l no_display player_mini_mbar_wall player_mini_mbar_wall_all2" id="ppbarPro' . $row['id'] . $jid . '" style="width:442px"></div></div></div>';
+                        }
+                    } elseif ($attach_type[0] == 'smile' and file_exists(ROOT_DIR . "/uploads/smiles/{$attach_type[1]}")) {
+                        $attach_result .= '<img src=\"/uploads/smiles/' . $attach_type[1] . '\" style="margin-right:5px" />';
+                    } elseif ($attach_type[0] == 'doc') {
+                        $doc_id = (int)$attach_type[1];
+                        $row_doc = $db->super_query("SELECT dname, dsize FROM `doc` WHERE did = '{$doc_id}'", false, "wall/doc{$doc_id}");
+                        if ($row_doc) {
+                            $attach_result .= '<div style="margin-top:5px;margin-bottom:5px" class="clear"><div class="doc_attach_ic fl_l" style="margin-top:4px;margin-left:0px"></div><div class="attach_link_block_te"><div class="fl_l">Файл <a href="/index.php?go=doc&act=download&did=' . $doc_id . '" target="_blank" onMouseOver="myhtml.title(\'' . $doc_id . $cnt_attach . $dbid . '\', \'<b>Размер файла: ' . $row_doc['dsize'] . '</b>\', \'doc_\')" id="doc_' . $doc_id . $cnt_attach . $dbid . '">' . $row_doc['dname'] . '</a></div></div></div><div class="clear"></div>';
+                            $cnt_attach++;
                         }
                     } else {
-                        echo 'max_strlen';
+                        $attach_result .= '';
                     }
                 }
+                if ($attach_result) {
+                    $msg = '<div style="width:442px;overflow:hidden">' . preg_replace('`(http(?:s)?://\w+[^\s\[\]\<]+)`i', '<a href="/index.php?go=away&url=$1" target="_blank">$1</a>', $msg) . $attach_result . '</div><div class="clear"></div>';
+                }
+            } else {
+                $msg = preg_replace('`(http(?:s)?://\w+[^\s\[\]\<]+)`i', '<a href="/index.php?go=away&url=$1" target="_blank">$1</a>', $msg) . $attach_result;
             }
+            $tpl->set('[noInformation]', '');
+            $tpl->set('[/noInformation]', '');
+            $tpl->set('{style}', '');
+            $tpl->set('{text}', stripslashes($msg));
+            $tpl->set('{msg-id}', $dbid);
+            $tpl->set('{new}', 'im_class_new');
+            $tpl->set('{date}', langdate('H:i:s', $server_time));
+            $tpl->compile('content');
+            AjaxTpl($tpl);*/
+
+            die();
+
             break;
 
         case "read":
@@ -756,13 +685,28 @@ if (Registry::get('logged')) {
                                 $attach_result .= "<div><a href=\"/video{$attach_type[3]}_{$attach_type[2]}\" onClick=\"videos.show({$attach_type[2]}, this.href, location.href); return false\"><img src=\"/uploads/videos/{$attach_type[3]}/{$attach_type[1]}\" style=\"margin-top:3px;margin-right:3px\" {$size[3]} align=\"left\" /></a></div>";
                                 $resLinkTitle = '';
                             } elseif ($attach_type[0] == 'audio') {
-                                $audioId = (int)$attach_type[1];
-                                $audioInfo = $db->super_query("SELECT artist, name, url FROM `audio` WHERE aid = '" . $audioId . "'");
-                                if ($audioInfo) {
-                                    $jid++;
-                                    $attach_result .= '<div class="audioForSize' . $row['id'] . ' player_mini_mbar_wall_all2" id="audioForSize" style="width:440px"><div class="audio_onetrack audio_wall_onemus" style="width:440px"><div class="audio_playic cursor_pointer fl_l" onClick="music.newStartPlay(\'' . $jid . '\', ' . $row['id'] . ')" id="icPlay_' . $row['id'] . $jid . '"></div><div id="music_' . $row['id'] . $jid . '" data="' . $audioInfo['url'] . '" class="fl_l" style="margin-top:-1px"><a href="/?go=search&type=5&query=' . $audioInfo['artist'] . '" onClick="Page.Go(this.href); return false"><b>' . stripslashes($audioInfo['artist']) . '</b></a> &ndash; ' . stripslashes($audioInfo['name']) . '</div><div id="play_time' . $row['id'] . $jid . '" class="color777 fl_r no_display" style="margin-top:2px;margin-right:5px">00:00</div><div class="player_mini_mbar fl_l no_display player_mini_mbar_wall player_mini_mbar_wall_all2" id="ppbarPro' . $row['id'] . $jid . '" style="width:442px"></div></div></div>';
+                                $data = explode('_', $attach_type[1]);
+                                $audioId = intval($data[0]);
+
+                                $row_audio = $db->super_query("SELECT id, oid, artist, title, url, duration FROM `audio` WHERE id = '{$audioId}'");
+                                if($row_audio){
+                                    $stime = gmdate("i:s", $row_audio['duration']);
+                                    if(!$row_audio['artist']) $row_audio['artist'] = 'Неизвестный исполнитель';
+                                    if(!$row_audio['title']) $row_audio['title'] = 'Без названия';
+                                    $plname = 'wall';
+                                    if($row_audio['oid'] != $user_info['user_id']) $q_s = <<<HTML
+<div class="audioSettingsBut"><li class="icon-plus-6" onClick="gSearch.addAudio('{$row_audio['id']}_{$row_audio['oid']}_{$plname}')" onmouseover="showTooltip(this, {text: 'Добавить в мой список', shift: [6,5,0]});" id="no_play"></li><div class="clear"></div></div>
+HTML;
+                                    else $q_s = '';
+
+
+                                    $qauido = "<div class=\"audioPage audioElem search search_item\" id=\"audio_{$row_audio['id']}_{$row_audio['oid']}_{$plname}\" onclick=\"playNewAudio('{$row_audio['id']}_{$row_audio['oid']}_{$plname}', event);\"><div class=\"area\"><table cellspacing=\"0\" cellpadding=\"0\" width=\"100%\"><tbody><tr><td><div class=\"audioPlayBut new_play_btn\"><div class=\"bl\"><div class=\"figure\"></div></div></div><input type=\"hidden\" value=\"{$row_audio['url']},{$row_audio['duration']},page\" id=\"audio_url_{$row_audio['id']}_{$row_audio['oid']}_{$plname}\"></td><td class=\"info\"><div class=\"audioNames\" style=\"width: 275px;\"><b class=\"author\" onclick=\"Page.Go('/?go=search&query=&type=5&q='+this.innerHTML);\" id=\"artist\">{$row_audio['artist']}</b>  –  <span class=\"name\" id=\"name\">{$row_audio['title']}</span> <div class=\"clear\"></div></div><div class=\"audioElTime\" id=\"audio_time_{$row_audio['id']}_{$row_audio['oid']}_{$plname}\">{$stime}</div>{$q_s}</td></tr></tbody></table><div id=\"player{$row_audio['id']}_{$row_audio['oid']}_{$plname}\" class=\"audioPlayer player{$row_audio['id']}_{$row_audio['oid']}_{$plname}\" border=\"0\" cellpadding=\"0\"><table cellspacing=\"0\" cellpadding=\"0\" width=\"100%\"><tbody><tr><td style=\"width: 100%;\"><div class=\"progressBar fl_l\" style=\"width: 100%;\" onclick=\"cancelEvent(event);\" onmousedown=\"audio_player.progressDown(event, this);\" id=\"no_play\" onmousemove=\"audio_player.playerPrMove(event, this)\" onmouseout=\"audio_player.playerPrOut()\"><div class=\"audioTimesAP\" id=\"main_timeView\"><div class=\"audioTAP_strlka\">100%</div></div><div class=\"audioBGProgress\"></div><div class=\"audioLoadProgress\"></div><div class=\"audioPlayProgress\" id=\"playerPlayLine\"><div class=\"audioSlider\"></div></div></div></td><td><div class=\"audioVolumeBar fl_l\" onclick=\"cancelEvent(event);\" onmousedown=\"audio_player.volumeDown(event, this);\" id=\"no_play\"><div class=\"audioTimesAP\"><div class=\"audioTAP_strlka\">100%</div></div><div class=\"audioBGProgress\"></div><div class=\"audioPlayProgress\" id=\"playerVolumeBar\"><div class=\"audioSlider\"></div></div></div>  </td></tr></tbody></table></div></div></div>";
+                                    $attach_result .= $qauido;
+
+
                                 }
                                 $resLinkTitle = '';
+
                             } elseif ($attach_type[0] == 'smile' and file_exists(ROOT_DIR . "/uploads/smiles/{$attach_type[1]}")) {
                                 $attach_result .= '<img src=\"/uploads/smiles/' . $attach_type[1] . '\" style="margin-right:5px" />';
                                 $resLinkTitle = '';
@@ -1042,13 +986,28 @@ HTML;
                                 $attach_result .= "<div><a href=\"/video{$attach_type[3]}_{$attach_type[2]}\" onClick=\"videos.show({$attach_type[2]}, this.href, location.href); return false\"><img src=\"/uploads/videos/{$attach_type[3]}/{$attach_type[1]}\" style=\"margin-top:3px;margin-right:3px\" {$size[3]} align=\"left\" /></a></div>";
                                 $resLinkTitle = '';
                             } elseif ($attach_type[0] == 'audio') {
-                                $audioId = (int)$attach_type[1];
-                                $audioInfo = $db->super_query("SELECT artist, name, url FROM `audio` WHERE aid = '" . $audioId . "'");
-                                if ($audioInfo) {
-                                    $jid++;
-                                    $attach_result .= '<div class="audioForSize' . $row['id'] . ' player_mini_mbar_wall_all2" id="audioForSize" style="width:440px"><div class="audio_onetrack audio_wall_onemus" style="width:440px"><div class="audio_playic cursor_pointer fl_l" onClick="music.newStartPlay(\'' . $jid . '\', ' . $row['id'] . ')" id="icPlay_' . $row['id'] . $jid . '"></div><div id="music_' . $row['id'] . $jid . '" data="' . $audioInfo['url'] . '" class="fl_l" style="margin-top:-1px"><a href="/?go=search&type=5&query=' . $audioInfo['artist'] . '" onClick="Page.Go(this.href); return false"><b>' . stripslashes($audioInfo['artist']) . '</b></a> &ndash; ' . stripslashes($audioInfo['name']) . '</div><div id="play_time' . $row['id'] . $jid . '" class="color777 fl_r no_display" style="margin-top:2px;margin-right:5px">00:00</div><div class="player_mini_mbar fl_l no_display player_mini_mbar_wall player_mini_mbar_wall_all2" id="ppbarPro' . $row['id'] . $jid . '" style="width:442px"></div></div></div>';
+                                $data = explode('_', $attach_type[1]);
+                                $audioId = intval($data[0]);
+
+                                $row_audio = $db->super_query("SELECT id, oid, artist, title, url, duration FROM `audio` WHERE id = '{$audioId}'");
+                                if($row_audio){
+                                    $stime = gmdate("i:s", $row_audio['duration']);
+                                    if(!$row_audio['artist']) $row_audio['artist'] = 'Неизвестный исполнитель';
+                                    if(!$row_audio['title']) $row_audio['title'] = 'Без названия';
+                                    $plname = 'wall';
+                                    if($row_audio['oid'] != $user_info['user_id']) $q_s = <<<HTML
+<div class="audioSettingsBut"><li class="icon-plus-6" onClick="gSearch.addAudio('{$row_audio['id']}_{$row_audio['oid']}_{$plname}')" onmouseover="showTooltip(this, {text: 'Добавить в мой список', shift: [6,5,0]});" id="no_play"></li><div class="clear"></div></div>
+HTML;
+                                    else $q_s = '';
+
+
+                                    $qauido = "<div class=\"audioPage audioElem search search_item\" id=\"audio_{$row_audio['id']}_{$row_audio['oid']}_{$plname}\" onclick=\"playNewAudio('{$row_audio['id']}_{$row_audio['oid']}_{$plname}', event);\"><div class=\"area\"><table cellspacing=\"0\" cellpadding=\"0\" width=\"100%\"><tbody><tr><td><div class=\"audioPlayBut new_play_btn\"><div class=\"bl\"><div class=\"figure\"></div></div></div><input type=\"hidden\" value=\"{$row_audio['url']},{$row_audio['duration']},page\" id=\"audio_url_{$row_audio['id']}_{$row_audio['oid']}_{$plname}\"></td><td class=\"info\"><div class=\"audioNames\" style=\"width: 275px;\"><b class=\"author\" onclick=\"Page.Go('/?go=search&query=&type=5&q='+this.innerHTML);\" id=\"artist\">{$row_audio['artist']}</b>  –  <span class=\"name\" id=\"name\">{$row_audio['title']}</span> <div class=\"clear\"></div></div><div class=\"audioElTime\" id=\"audio_time_{$row_audio['id']}_{$row_audio['oid']}_{$plname}\">{$stime}</div>{$q_s}</td></tr></tbody></table><div id=\"player{$row_audio['id']}_{$row_audio['oid']}_{$plname}\" class=\"audioPlayer player{$row_audio['id']}_{$row_audio['oid']}_{$plname}\" border=\"0\" cellpadding=\"0\"><table cellspacing=\"0\" cellpadding=\"0\" width=\"100%\"><tbody><tr><td style=\"width: 100%;\"><div class=\"progressBar fl_l\" style=\"width: 100%;\" onclick=\"cancelEvent(event);\" onmousedown=\"audio_player.progressDown(event, this);\" id=\"no_play\" onmousemove=\"audio_player.playerPrMove(event, this)\" onmouseout=\"audio_player.playerPrOut()\"><div class=\"audioTimesAP\" id=\"main_timeView\"><div class=\"audioTAP_strlka\">100%</div></div><div class=\"audioBGProgress\"></div><div class=\"audioLoadProgress\"></div><div class=\"audioPlayProgress\" id=\"playerPlayLine\"><div class=\"audioSlider\"></div></div></div></td><td><div class=\"audioVolumeBar fl_l\" onclick=\"cancelEvent(event);\" onmousedown=\"audio_player.volumeDown(event, this);\" id=\"no_play\"><div class=\"audioTimesAP\"><div class=\"audioTAP_strlka\">100%</div></div><div class=\"audioBGProgress\"></div><div class=\"audioPlayProgress\" id=\"playerVolumeBar\"><div class=\"audioSlider\"></div></div></div>  </td></tr></tbody></table></div></div></div>";
+                                    $attach_result .= $qauido;
+
+
                                 }
                                 $resLinkTitle = '';
+
                             } elseif ($attach_type[0] == 'smile' and file_exists(ROOT_DIR . "/uploads/smiles/{$attach_type[1]}")) {
                                 $attach_result .= '<img src=\"/uploads/smiles/' . $attach_type[1] . '\" style="margin-right:5px" />';
                                 $resLinkTitle = '';

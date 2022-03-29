@@ -1,1 +1,0 @@
-<div class="nav" id="nav">{pages}</div>
