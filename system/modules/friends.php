@@ -285,7 +285,7 @@ if (Registry::get('logged')) {
                     if ($row['user_photo']) {
                         $tpl->set('{ava}', $config['home_url'] . 'uploads/users/' . $row['from_user_id'] . '/' . $avaPREFver . $row['user_photo']);
                     } else {
-                        $tpl->set('{ava}', "{theme}/images/{$noAvaPrf}");
+                        $tpl->set('{ava}', "/images/{$noAvaPrf}");
                     }
 
                     //Возраст юзера
@@ -392,7 +392,7 @@ if (Registry::get('logged')) {
                         if ($row['user_photo']) {
                             $tpl->set('{ava}', $config['home_url'] . 'uploads/users/' . $row['user_id'] . '/100_' . $row['user_photo']);
                         } else {
-                            $tpl->set('{ava}', '{theme}/images/100_no_ava.png');
+                            $tpl->set('{ava}', '/images/100_no_ava.png');
                         }
 
                         OnlineTpl($server_time, $row['user_logged_mobile']);
@@ -462,7 +462,7 @@ if (Registry::get('logged')) {
                         if ($row['user_photo']) {
                             $tpl->set('{ava}', $config['home_url'] . 'uploads/users/' . $row['friend_id'] . '/50_' . $row['user_photo']);
                         } else {
-                            $tpl->set('{ava}', '{theme}/images/100_no_ava.png');
+                            $tpl->set('{ava}', '/images/100_no_ava.png');
                         }
 
                         $tpl->compile('content');
@@ -536,7 +536,7 @@ if (Registry::get('logged')) {
                             if ($row['user_photo']) {
                                 $tpl->set('{ava}', $config['home_url'] . 'uploads/users/' . $row['friend_id'] . '/' . $avaPREFver . $row['user_photo']);
                             } else {
-                                $tpl->set('{ava}', "{theme}/images/{$noAvaPrf}");
+                                $tpl->set('{ava}', "/images/{$noAvaPrf}");
                             }
 
                             OnlineTpl($row['user_last_visit'], $row['user_logged_mobile']);
@@ -674,7 +674,7 @@ if (Registry::get('logged')) {
                             if ($row['user_photo']) {
                                 $tpl->set('{ava}', $config['home_url'] . 'uploads/users/' . $row['friend_id'] . '/' . $avaPREFver . $row['user_photo']);
                             } else {
-                                $tpl->set('{ava}', "{theme}/images/{$noAvaPrf}");
+                                $tpl->set('{ava}', "/images/{$noAvaPrf}");
                             }
 
                             OnlineTpl($row['user_last_visit'], $row['user_logged_mobile']);

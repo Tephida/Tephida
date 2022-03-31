@@ -77,7 +77,7 @@
 {*                [not-owner]*}
 {*                <div class="ratpos {rate-check}" id="ratpos{id}">*}
 {*                    <div onClick="Photo.addrating(1, {id}, this.style)" class="rating"*}
-{*                         style="background:url('{theme}/images/rating3.png')">1*}
+{*                         style="background:url('/images/rating3.png')">1*}
 {*                    </div>*}
 {*                    <div onClick="Photo.addrating(2, {id})" class="rating rating2">2</div>*}
 {*                    <div onClick="Photo.addrating(3, {id})" class="rating rating2">3</div>*}
@@ -86,7 +86,7 @@
 {*                    <div onClick="Photo.addrating(6, {id})" class="rating rating2">6</div>*}
 {*                    <div onClick="Photo.addrating(7, {id})" class="rating rating2">7</div>*}
 {*                    <div onClick="Photo.addrating(8, {id})" class="rating"*}
-{*                         style="background:url('{theme}/images/rating2.png')">7+*}
+                {*                         style="background:url('/images/rating2.png')">7+*}
 {*                    </div>*}
 {*                </div>*}
 {*                <img src="/images/ajax-loader.gif" id="rateload{id}" class="no_display"*}
@@ -153,7 +153,7 @@
                     <div class="fl_l">Повернуть:</div>
                     <div class="photos_gradus_left fl_l" onClick="Photo.Rotation('right', '{id}')"></div>
                     <div class="photos_gradus_right fl_l" onClick="Photo.Rotation('left', '{id}')"></div>
-                    <div class="fl_l" style="margin-left:5px"><img src="{theme}/images/loading_mini.gif"
+                    <div class="fl_l" style="margin-left:5px"><img src="/images/loading_mini.gif"
                                                                    id="loading_gradus{id}" class="no_display"/></div>
                 </div>
                 [/owner]

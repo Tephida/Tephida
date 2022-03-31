@@ -195,7 +195,7 @@
 <div class="new_gr"></div>
 <div class="autowr">
     <div style="position:absolute;margin-top:50px;width:800px">{info}</div>
-    <div style="background:url('{theme}/images/i.png');width:1156px;height:609px;margin-left:-120px;margin-top:50px"></div>
+    <div style="background:url('/images/i.png');width:1156px;height:609px;margin-left:-120px;margin-top:50px"></div>
     {content}
 </div>
 [/aviable]

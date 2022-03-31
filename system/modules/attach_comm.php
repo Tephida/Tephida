@@ -126,7 +126,7 @@ if (Registry::get('logged')) {
                 if ($user_info['user_photo']) {
                     $tpl->set('{ava}', "/uploads/users/{$user_info['user_id']}/50_{$user_info['user_photo']}");
                 } else {
-                    $tpl->set('{ava}', '{theme}/images/no_ava_50.png');
+                    $tpl->set('{ava}', '/images/no_ava_50.png');
                 }
                 $tpl->set('[owner]', '');
                 $tpl->set('[/owner]', '');
@@ -197,7 +197,7 @@ if (Registry::get('logged')) {
                 if ($row_comm['user_photo']) {
                     $tpl->set('{ava}', '/uploads/users/' . $row_comm['auser_id'] . '/50_' . $row_comm['user_photo']);
                 } else {
-                    $tpl->set('{ava}', '{theme}/images/no_ava_50.png');
+                    $tpl->set('{ava}', '/images/no_ava_50.png');
                 }
 
                 OnlineTpl($row_comm['user_last_visit'], $row_comm['user_logged_mobile']);
@@ -278,7 +278,7 @@ if (Registry::get('logged')) {
                         if ($row_comm['user_photo']) {
                             $tpl->set('{ava}', '/uploads/users/' . $row_comm['auser_id'] . '/50_' . $row_comm['user_photo']);
                         } else {
-                            $tpl->set('{ava}', '{theme}/images/no_ava_50.png');
+                            $tpl->set('{ava}', '/images/no_ava_50.png');
                         }
 
                         OnlineTpl($row_comm['user_last_visit'], $row_comm['user_logged_mobile']);

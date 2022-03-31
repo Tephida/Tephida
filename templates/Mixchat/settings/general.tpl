@@ -159,13 +159,13 @@ function savblock(){
  <div class="mgclr"></div>
  <div class="texta">Подтверждающий документ #1:</div><div class="button_div_gray fl_l" style="margin-top:5px">
   <button id="upload">Выбрать документ</button></div><div class="mgclr"></div>
- <div id="docver"><div class="texta">&nbsp;</div><img src="{theme}/images/1.jpg" style="max-width:418px;margin-top:10px" id="docval" /></div>
+ <div id="docver"><div class="texta">&nbsp;</div><img src="/images/1.jpg" style="max-width:418px;margin-top:10px" id="docval" /></div>
  <div class="texta">&nbsp;</div>Вам необходимо сделать фотографию напротив экрана монитора держав в руках паспорт или свидетельство о рождении.<div class="mgclr"></div>
  <div class="texta">Подтверждающий документ #2:</div><div class="button_div_gray fl_l" style="margin-top:5px">
   <button id="upload2">Выбрать документ</button></div><div class="mgclr"></div>
  <div id="docver2">
   <div class="texta">&nbsp;</div>
-  <img src="{theme}/images/2.jpg" style="max-width:418px;margin-top:10px" id="docval2" />
+  <img src="/images/2.jpg" style="max-width:418px;margin-top:10px" id="docval2" />
  </div>
  <div class="texta">&nbsp;</div>Необходимо сделать копию или фотографию самого паспорта или свидетельство о рождении.<div class="mgclr"></div>
  <div class="texta">&nbsp;</div>

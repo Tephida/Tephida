@@ -111,11 +111,11 @@ class Communities extends Module
                     //FOR MOBILE VERSION 1.0
                     if ($config['temp'] == 'mobile')
 
-                        $tpl->set('{photo}', "{theme}/images/no_ava_50.png");
+                        $tpl->set('{photo}', "/images/no_ava_50.png");
 
                     else
 
-                        $tpl->set('{photo}', "{theme}/images/no_ava.gif");
+                        $tpl->set('{photo}', "/images/no_ava.gif");
 
                     $tpl->set('{display-ava}', 'no_display');
                 }
@@ -172,7 +172,7 @@ class Communities extends Module
                     $feedback_users = '';
                     foreach ($sql_feedbackusers as $row_feedbackusers) {
                         if ($row_feedbackusers['user_photo']) $ava = "/uploads/users/{$row_feedbackusers['fuser_id']}/50_{$row_feedbackusers['user_photo']}";
-                        else $ava = "{theme}/images/no_ava_50.png";
+                        else $ava = "/images/no_ava_50.png";
                         $row_feedbackusers['office'] = stripslashes($row_feedbackusers['office']);
                         $feedback_users .= "<div class=\"onesubscription onesubscriptio2n\" id=\"fb{$row_feedbackusers['fuser_id']}\"><a href=\"/u{$row_feedbackusers['fuser_id']}\" onClick=\"Page.Go(this.href); return false\"><img src=\"{$ava}\" alt=\"\" /><div class=\"onesubscriptiontitle\">{$row_feedbackusers['user_search_pref']}</div></a><div class=\"nesubscriptstatus\">{$row_feedbackusers['office']}</div></div>";
                     }
@@ -196,7 +196,7 @@ class Communities extends Module
                 $users = '';
                 foreach ($sql_users as $row_users) {
                     if ($row_users['user_photo']) $ava = "/uploads/users/{$row_users['user_id']}/50_{$row_users['user_photo']}";
-                    else $ava = "{theme}/images/no_ava_50.png";
+                    else $ava = "/images/no_ava_50.png";
                     $users .= "<div class=\"onefriend oneusers\" id=\"subUser{$row_users['user_id']}\"><a href=\"/u{$row_users['user_id']}\" onClick=\"Page.Go(this.href); return false\"><img src=\"{$ava}\"  style=\"margin-bottom:3px\" /></a><a href=\"/u{$row_users['user_id']}\" onClick=\"Page.Go(this.href); return false\">{$row_users['user_name']}<br /><span>{$row_users['user_lastname']}</span></a></div>";
                 }
                 $tpl->set('{users}', $users);
@@ -218,7 +218,7 @@ class Communities extends Module
                         if ($admin_id) {
                             $row_admin = $db->super_query("SELECT user_search_pref, user_photo FROM `users` WHERE user_id = '{$admin_id}'");
                             if ($row_admin['user_photo']) $ava_admin = "/uploads/users/{$admin_id}/50_{$row_admin['user_photo']}";
-                            else $ava_admin = "{theme}/images/no_ava_50.png";
+                            else $ava_admin = "/images/no_ava_50.png";
                             if ($admin_id != $row['real_admin'])
                                 $admin_del_href = "<a href=\"/\" onClick=\"groups.deladmin('{$row['id']}', '{$admin_id}'); return false\"><small>Удалить</small></a>";
                             else

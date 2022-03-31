@@ -22,9 +22,9 @@
 <div class="clear"></div>
 <div id="answers">{answers}</div>
 <div class="support_addform border_radius_5">
-<div class="ava_mini">
- [group=4]<img src="{theme}/images/support.png" alt="" />[/group]
- [not-group=4]<a href="/u{uid}" onClick="Page.Go(this.href); return false"><img src="{ava}" alt="" /></a>[/not-group]
+    <div class="ava_mini">
+        [group=4]<img src="/images/support.png" alt=""/>[/group]
+        [not-group=4]<a href="/u{uid}" onClick="Page.Go(this.href); return false"><img src="{ava}" alt="" /></a>[/not-group]
 </div>
 <textarea 
 	class="videos_input wysiwyg_inpt fl_l" 

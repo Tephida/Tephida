@@ -57,7 +57,7 @@ if (Registry::get('logged')) {
                     if ($row['user_photo']) {
                         $tpl->set('{ava}', '/uploads/users/' . $row['ruid'] . '/100_' . $row['user_photo']);
                     } else {
-                        $tpl->set('{ava}', '{theme}/images/100_no_ava.png');
+                        $tpl->set('{ava}', '/images/100_no_ava.png');
                     }
 
                     //Возраст юзера
@@ -86,7 +86,7 @@ if (Registry::get('logged')) {
             if ($user_info['user_photo']) {
                 $tpl->set('{ava}', "/uploads/users/{$user_info['user_id']}/50_{$user_info['user_photo']}");
             } else {
-                $tpl->set('{ava}', "{theme}/images/no_ava_50.png");
+                $tpl->set('{ava}', "/images/no_ava_50.png");
             }
 
             $tpl->set('{rub}', $owner['balance_rub']);
@@ -112,7 +112,7 @@ if (Registry::get('logged')) {
             if ($user_info['user_photo']) {
                 $tpl->set('{ava}', "/uploads/users/{$user_info['user_id']}/50_{$user_info['user_photo']}");
             } else {
-                $tpl->set('{ava}', "{theme}/images/no_ava_50.png");
+                $tpl->set('{ava}', "/images/no_ava_50.png");
             }
 
             $tpl->set('{balance}', $owner['user_balance']);

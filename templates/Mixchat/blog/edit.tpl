@@ -1,14 +1,14 @@
-<script type="text/javascript" src="{theme}/js/upload.photo.js"></script>
+<script type="text/javascript" src="/js/upload.photo.js"></script>
 <script type="text/javascript">
-$(document).ready(function(){
-	Xajax = new AjaxUpload('bb_photo_1', {
-		action: '/index.php?go=blog&act=upload',
-		name: 'uploadfile',
-		onSubmit: function (file, ext) {
-			if (!(ext && /^(jpg|png|jpeg|gif|jpe)$/.test(ext))) {
-             Page.addAllErr(lang_bad_format, 3300);
-				return false;
-			}
+    $(document).ready(function () {
+        Xajax = new AjaxUpload('bb_photo_1', {
+            action: '/index.php?go=blog&act=upload',
+            name: 'uploadfile',
+            onSubmit: function (file, ext) {
+                if (!(ext && /^(jpg|png|jpeg|gif|jpe)$/.test(ext))) {
+                    Page.addAllErr(lang_bad_format, 3300);
+                    return false;
+                }
 			Page.Loading('start');
 		},
 		onComplete: function (file, response){

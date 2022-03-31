@@ -167,7 +167,7 @@
                     <div id="happyBLockSess">
                         <div class="albtitle">Дни рожденья друзей <span>{{ $happy_friends_num }}</span>
                             <div class="profile_happy_hide">
-                                <img src="{theme}/images/hide_lef.gif"
+                                <img src="/images/hide_lef.gif"
                                      onMouseOver="myhtml.title('1', 'Скрыть', 'happy_block_')"
                                      id="happy_block_1" onClick="HappyFr.HideSess(); return false"/>
                             </div>

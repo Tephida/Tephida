@@ -6,9 +6,9 @@ $(document).ready(function(){
 <style>.speedbar{background:#fff;color:#5081b1}</style>
 <div class="blogthr"></div>
 <div class="blog_left fl_l">
-<div class="notes_ava"><img src="{theme}/images/support2.png" alt="" /></div>
-<div class="one_note border_radius_5" style="width:550px">
- <span><a href="/blog?id={id}" onClick="Page.Go(this.href); return false">{title}</a></span><br />
+    <div class="notes_ava"><img src="/images/support2.png" alt=""/></div>
+    <div class="one_note border_radius_5" style="width:550px">
+        <span><a href="/blog?id={id}" onClick="Page.Go(this.href); return false">{title}</a></span><br />
  <div>{date}</div>
 </div>
 <div class="clear"></div>

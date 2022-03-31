@@ -514,7 +514,7 @@ if (Registry::get('logged')) {
                         if ($row['user_photo'])
                             $tpl->set('{ava}', $config['home_url'] . 'uploads/users/' . $row['user_id'] . '/50_' . $row['user_photo']);
                         else
-                            $tpl->set('{ava}', '{theme}/images/no_ava_50.png');
+                            $tpl->set('{ava}', '/images/no_ava_50.png');
                         $friend_info_online = explode(' ', $row['user_search_pref']);
                         $tpl->set('{user-id}', $row['user_id']);
                         $tpl->set('{name}', $friend_info_online[0]);

@@ -22,18 +22,22 @@ $(document).ready(function(){
     <div id="player_progress_play_bar_2"></div>
    </div>
   </div>
-  <div class="staticpl_progress_bar_voice" id="player_volume_bar_2">
-   <div id="player_volume_bar_value_2"></div>
-  </div>
-  <div class="staticpl_repeat" onClick="player.refresh()" onMouseOver="myhtml.title('1', 'Повторять эту песню', 'xPlayerVolrefresh')" id="xPlayerVolrefresh1"></div>
-  <div class="staticpl_rand" onClick="player.rand()" onMouseOver="myhtml.title('1', 'Случайный порядок', 'xPlayerRand')" id="xPlayerRand1"></div>
-  <div class="staticpl_translate" onClick="player.translate()" onMouseOver="myhtml.title('1', 'Транслировать', 'xPlayerTranslate')" id="xPlayerTranslate1"></div>
-  <div class="clear"></div>
+     <div class="staticpl_progress_bar_voice" id="player_volume_bar_2">
+         <div id="player_volume_bar_value_2"></div>
+     </div>
+     <div class="staticpl_repeat" onClick="player.refresh()"
+          onMouseOver="myhtml.title('1', 'Повторять эту песню', 'xPlayerVolrefresh')" id="xPlayerVolrefresh1"></div>
+     <div class="staticpl_rand" onClick="player.rand()"
+          onMouseOver="myhtml.title('1', 'Случайный порядок', 'xPlayerRand')" id="xPlayerRand1"></div>
+     <div class="staticpl_translate" onClick="player.translate()"
+          onMouseOver="myhtml.title('1', 'Транслировать', 'xPlayerTranslate')" id="xPlayerTranslate1"></div>
+     <div class="clear"></div>
  </div>
- <div class="staticpl_seachbg">
-  <img src="{theme}/images/loading_mini.gif" class="fl_r no_display" id="jQpLoad" style="margin-left:410px;margin-top:13px;position:absolute" />
-  <input type="text" value="Поиск" class="fave_input" 
-	onBlur="if(this.value==''){this.value='Поиск';this.style.color = '#c1cad0'}" 
+<div class="staticpl_seachbg">
+    <img src="/images/loading_mini.gif" class="fl_r no_display" id="jQpLoad"
+         style="margin-left:410px;margin-top:13px;position:absolute"/>
+    <input type="text" value="Поиск" class="fave_input"
+           onBlur="if(this.value==''){this.value='Поиск';this.style.color = '#c1cad0'}"
 	onFocus="if(this.value=='Поиск'){this.value='';this.style.color = '#000'}" 
 	onKeyUp="player.gSearch()"
 	id="jQpSeachVal"

@@ -205,7 +205,7 @@ if (Registry::get('logged')) {
                     if ($user) {
                         $infoUser = $db->super_query("SELECT user_photo, user_search_pref FROM `users` WHERE user_id = '{$user}'");
                         if ($infoUser['user_photo']) $tpl->set('{ava}', '/uploads/users/' . $user . '/50_' . $infoUser['user_photo']);
-                        else $tpl->set('{ava}', '{theme}/images/no_ava_50.png');
+                        else $tpl->set('{ava}', '/images/no_ava_50.png');
                         $tpl->set('{name}', $infoUser['user_search_pref']);
                         $tpl->set('{user-id}', $user);
                         $tpl->compile('content');

@@ -176,7 +176,7 @@ if (Registry::get('logged')) {
                             $tpl->set('[admin]', '');
                             $tpl->set('[/admin]', '');
                         } else $tpl->set_block("'\\[admin\\](.*?)\\[/admin\\]'si", "");
-                        $tpl->set('{avatar}', $row2['user_photo'] ? '/uploads/users/' . $row2['user_id'] . '/50_' . $row2['user_photo'] : '{theme}/images/no_ava_50.png');
+                        $tpl->set('{avatar}', $row2['user_photo'] ? '/uploads/users/' . $row2['user_id'] . '/50_' . $row2['user_photo'] : '/images/no_ava_50.png');
                         $tpl->compile('users');
                     }
                 }
@@ -191,7 +191,7 @@ if (Registry::get('logged')) {
                     $tpl->set_block("'\\[owner\\](.*?)\\[/owner\\]'si", "");
                 }
                 $tpl->set('{nameAttr}', $row['owner'] == $user_id ? '' : 'disabled');
-                $tpl->set('{avatar}', $row['photo'] ? $row['photo'] : '{theme}/images/no_ava_50.png');
+                $tpl->set('{avatar}', $row['photo'] ? $row['photo'] : '/images/no_ava_50.png');
                 $tpl->compile('content');
                 AjaxTpl($tpl);
             }
@@ -259,7 +259,7 @@ if (Registry::get('logged')) {
                 $tpl->load_template('im/createRoomItem.tpl');
                 $config = settings_get();
                 foreach ($sql as $row) {
-                    $tpl->set('{avatar}', $row['user_photo'] ? $config['home_url'] . 'uploads/users/' . $row['friend_id'] . '/50_' . $row['user_photo'] : "{theme}/images/100_no_ava.png");
+                    $tpl->set('{avatar}', $row['user_photo'] ? $config['home_url'] . 'uploads/users/' . $row['friend_id'] . '/50_' . $row['user_photo'] : "/images/100_no_ava.png");
                     $tpl->set('{id}', $row['friend_id']);
                     $tpl->set('{name}', $row['user_search_pref']);
                     $tpl->set('{function}', 'imRoom.toogleItem(this);');
@@ -281,7 +281,7 @@ if (Registry::get('logged')) {
                 $tpl->load_template('im/createRoomItem.tpl');
                 $config = settings_get();
                 foreach ($sql as $row) {
-                    $tpl->set('{avatar}', $row['user_photo'] ? $config['home_url'] . 'uploads/users/' . $row['friend_id'] . '/50_' . $row['user_photo'] : "{theme}/images/100_no_ava.png");
+                    $tpl->set('{avatar}', $row['user_photo'] ? $config['home_url'] . 'uploads/users/' . $row['friend_id'] . '/50_' . $row['user_photo'] : "/images/100_no_ava.png");
                     $tpl->set('{id}', $row['friend_id']);
                     $tpl->set('{name}', $row['user_search_pref']);
                     $tpl->set('{function}', 'imRoom.toogleItem(this);');
@@ -638,7 +638,7 @@ if (Registry::get('logged')) {
                     if ($row['user_photo']) {
                         $tpl->set('{ava}', '/uploads/users/' . $row['history_user_id'] . '/50_' . $row['user_photo']);
                     } else {
-                        $tpl->set('{ava}', '{theme}/images/no_ava_50.png');
+                        $tpl->set('{ava}', '/images/no_ava_50.png');
                     }
                     $read_ids = $row['read_ids'] ? explode(',', $row['read_ids']) : array();
                     if (in_array($user_id, $read_ids, true) || ($read_ids && $user_id == $row['history_user_id'])) {
@@ -719,7 +719,7 @@ HTML;
                                 $attach_type[2] = stripslashes($attach_type[2]);
                                 $str_title = substr($attach_type[2], 0, 55);
                                 if (stripos($attach_type[4], '/uploads/attach/') === false) {
-                                    $attach_type[4] = '{theme}/images/no_ava_groups_100.gif';
+                                    $attach_type[4] = '/images/no_ava_groups_100.gif';
                                     $no_img = false;
                                 } else {
                                     $no_img = true;
@@ -832,14 +832,14 @@ HTML;
                             if ($rowUserTell['photo']) {
                                 $avaTell = '/uploads/groups/' . $row['tell_uid'] . '/50_' . $rowUserTell['photo'];
                             } else {
-                                $avaTell = '{theme}/images/no_ava_50.png';
+                                $avaTell = '/images/no_ava_50.png';
                             }
                         } else {
                             $tell_link = 'u';
                             if ($rowUserTell['user_photo']) {
                                 $avaTell = '/uploads/users/' . $row['tell_uid'] . '/50_' . $rowUserTell['user_photo'];
                             } else {
-                                $avaTell = '{theme}/images/no_ava_50.png';
+                                $avaTell = '/images/no_ava_50.png';
                             }
                         }
                         $row['text'] = <<<HTML
@@ -939,7 +939,7 @@ HTML;
                     if ($row['user_photo']) {
                         $tpl->set('{ava}', '/uploads/users/' . $row['history_user_id'] . '/50_' . $row['user_photo']);
                     } else {
-                        $tpl->set('{ava}', '{theme}/images/no_ava_50.png');
+                        $tpl->set('{ava}', '/images/no_ava_50.png');
                     }
                     $read_ids = $row['read_ids'] ? explode(',', $row['read_ids']) : array();
                     if (in_array($user_id, $read_ids) || ($read_ids && $user_id == $row['history_user_id'])) {
@@ -1020,7 +1020,7 @@ HTML;
                                 $attach_type[2] = stripslashes($attach_type[2]);
                                 $str_title = substr($attach_type[2], 0, 55);
                                 if (stripos($attach_type[4], '/uploads/attach/') === false) {
-                                    $attach_type[4] = '{theme}/images/no_ava_groups_100.gif';
+                                    $attach_type[4] = '/images/no_ava_groups_100.gif';
                                     $no_img = false;
                                 } else {
                                     $no_img = true;
@@ -1128,14 +1128,14 @@ HTML;
                             if ($rowUserTell['photo']) {
                                 $avaTell = '/uploads/groups/' . $row['tell_uid'] . '/50_' . $rowUserTell['photo'];
                             } else {
-                                $avaTell = '{theme}/images/no_ava_50.png';
+                                $avaTell = '/images/no_ava_50.png';
                             }
                         } else {
                             $tell_link = 'u';
                             if ($rowUserTell['user_photo']) {
                                 $avaTell = '/uploads/users/' . $row['tell_uid'] . '/50_' . $rowUserTell['user_photo'];
                             } else {
-                                $avaTell = '{theme}/images/no_ava_50.png';
+                                $avaTell = '/images/no_ava_50.png';
                             }
                         }
                         $row['text'] = <<<HTML
@@ -1173,7 +1173,7 @@ HTML;
                 if ($user_info['user_photo']) {
                     $tpl->set('{my-ava}', '/uploads/users/' . $user_id . '/50_' . $user_info['user_photo']);
                 } else {
-                    $tpl->set('{my-ava}', '{theme}/images/no_ava_50.png');
+                    $tpl->set('{my-ava}', '/images/no_ava_50.png');
                 }
                 if ($room_id) {
                     $checkRoom = $db->super_query("SELECT owner FROM `room` WHERE id = '" . $room_id . "'");
@@ -1306,7 +1306,7 @@ HTML;
                 if ($row['user_photo']) {
                     $tpl->set('{ava}', $row['room_id'] ? $row['user_photo'] : '/uploads/users/' . $row['im_user_id'] . '/50_' . $row['user_photo']);
                 } else {
-                    $tpl->set('{ava}', '{theme}/images/no_ava_50.png');
+                    $tpl->set('{ava}', '/images/no_ava_50.png');
                 }
                 if ($row['msg_num']) {
                     $tpl->set('{msg_num}', '<div class="im_new fl_l" id="msg_num' . ($row['room_id'] ? 'c' . $row['room_id'] : $row['im_user_id']) . '">' . $row['msg_num'] . '</div>');

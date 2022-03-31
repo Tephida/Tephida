@@ -206,10 +206,10 @@ if (Registry::get('logged')) {
                         if ($row['user_photo']) {
                             $tpl->set('{ava}', '/uploads/users/' . $row['from_uid'] . '/50_' . $row['user_photo']);
                         } else {
-                            $tpl->set('{ava}', '{theme}/images/no_ava_50.png');
+                            $tpl->set('{ava}', '/images/no_ava_50.png');
                         }
                     } else {
-                        $tpl->set('{ava}', '{theme}/images/no_ava_50.png');
+                        $tpl->set('{ava}', '/images/no_ava_50.png');
                     }
 
                     if ($user_id == $uid) {

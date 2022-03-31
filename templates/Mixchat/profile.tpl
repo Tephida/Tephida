@@ -134,7 +134,7 @@
         <div id="happyBLockSess">
             <div class="albtitle">Дни рожденья друзей <span>{happy-friends-num}</span>
                 <div class="profile_happy_hide">
-                    <img src="{theme}/images/hide_lef.gif"
+                    <img src="/images/hide_lef.gif"
                          onMouseOver="myhtml.title('1', 'Скрыть', 'happy_block_')"
                          id="happy_block_1" onClick="HappyFr.HideSess(); return false"/>
                 </div>
@@ -271,7 +271,7 @@
             [owner]</a>[/owner]
         <div class="profile_rate_add" onClick="rating.addbox('{user-id}')"
              onMouseOver="myhtml.title('1', 'Повысить рейтинг', 'rate', 1)" id="rate1">
-            <img src="{theme}/images/icons/rate_ic.png"/></div>
+            <img src="/images/icons/rate_ic.png"/></div>
         [owner]<a class="cursor_pointer" onClick="rating.view()" style="text-decoration:none">[/owner]
             <div class="profile_rate_100_right {rating-class-right}"></div>
             <div class="profile_rate_100_head {rating-class-head}" id="profile_rate_num">{rating}</div>
@@ -493,7 +493,7 @@
                     <div class="attach_link_block_te">
                         <div class="fl_l">Ссылка: <a href="/" id="attatch_link_url" target="_blank"></a></div>
                         <img class="fl_l cursor_pointer" style="margin-top:2px;margin-left:5px"
-                             src="{theme}/images/close_a.png"
+                             src="/images/close_a.png"
                              onMouseOver="myhtml.title('1', 'Не прикреплять', 'attach_lnk_')" id="attach_lnk_1"
                              onClick="wall.RemoveAttachLnk()"/></div>
                     <input type="hidden" id="attach_lnk_stared"/>
@@ -530,10 +530,11 @@
                     <div class="attach_toolip_but"></div>
                     <div class="attach_link_block_ic fl_l"></div>
                     <div class="attach_link_block_te">
-                        <div class="fl_l">Опрос: <a id="attatch_vote_title" style="text-decoration:none;cursor:default"></a>
+                        <div class="fl_l">Опрос: <a id="attatch_vote_title"
+                                                    style="text-decoration:none;cursor:default"></a>
                         </div>
                         <img class="fl_l cursor_pointer" style="margin-top:2px;margin-left:5px"
-                             src="{theme}/images/close_a.png"
+                             src="/images/close_a.png"
                              onMouseOver="myhtml.title('1', 'Не прикреплять', 'attach_vote_')" id="attach_vote_1"
                              onClick="Votes.RemoveForAttach()"/>
                     </div>

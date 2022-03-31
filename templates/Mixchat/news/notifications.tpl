@@ -1,9 +1,9 @@
 [record]
 <div class="wallrecord page_bg border_radius_5 margin_bottom_10" style="border:0px;padding:20px">
 <div class="ava_mini" style="float:width:60px">
- [like]<a href="/u{author-id}" onClick="Page.Go(this.href); return false"><img src="{ava}" alt="" /></a>[/like]
- [no-like]<img src="{theme}/images/spacer.gif" alt="" class="news_like" />[/no-like]
- [like]{online}[/like]
+ [like]<a href="/u{author-id}" onClick="Page.Go(this.href); return false"><img src="{ava}" alt=""/></a>[/like]
+    [no-like]<img src="/images/spacer.gif" alt="" class="news_like"/>[/no-like]
+    [like]{online}[/like]
 </div>
 <div style="float:left;width:760px">
 [action]<div class="news_action_photo fl_r">

@@ -89,7 +89,7 @@ if (Registry::get('logged')) {
                     if ($row['user_photo']) {
                         $tpl->set('{ava}', $config['home_url'] . 'uploads/users/' . $row['fave_id'] . '/100_' . $row['user_photo']);
                     } else {
-                        $tpl->set('{ava}', '{theme}/images/100_no_ava.png');
+                        $tpl->set('{ava}', '/images/100_no_ava.png');
                     }
 
                     $tpl->set('{name}', $row['user_search_pref']);
