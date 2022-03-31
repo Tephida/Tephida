@@ -126,9 +126,9 @@
                         <img id="image" src="/uploads/users/{user-id}/{ava}" alt="Picture">
                     </div>
 
-{*                    <div class="col col-1">*}
-{*                        <div class="preview"></div>*}
-{*                    </div>*}
+                    {*                    <div class="col col-1">*}
+                    {*                        <div class="preview"></div>*}
+                    {*                    </div>*}
                 </div>
                 <div class="row">
                     <div class="col col-3">
@@ -151,70 +151,70 @@
             }
 
             // window.addEventListener('DOMContentLoaded', function () {
-                var image = document.querySelector('#image');
-                var previews = document.querySelectorAll('.preview');
-                var previewReady = false;
+            var image = document.querySelector('#image');
+            var previews = document.querySelectorAll('.preview');
+            var previewReady = false;
 
-                var cropper = new Cropper(image, {
-                    aspectRatio: 4 / 4,
-                    viewMode: 2,
-                    ready: function () {
-                        var clone = this.cloneNode();
+            var cropper = new Cropper(image, {
+                aspectRatio: 4 / 4,
+                viewMode: 2,
+                ready: function () {
+                    var clone = this.cloneNode();
 
-                        clone.className = '';
-                        clone.style.cssText = (
-                            'display: block;' +
-                            'width: 100%;' +
-                            'min-width: 0;' +
-                            'min-height: 0;' +
-                            'max-width: none;' +
-                            'max-height: none;'
-                        );
+                    clone.className = '';
+                    clone.style.cssText = (
+                        'display: block;' +
+                        'width: 100%;' +
+                        'min-width: 0;' +
+                        'min-height: 0;' +
+                        'max-width: none;' +
+                        'max-height: none;'
+                    );
 
-                        each(previews, function (elem) {
-                            elem.appendChild(clone.cloneNode());
-                        });
-                        previewReady = true;
-                    },
+                    each(previews, function (elem) {
+                        elem.appendChild(clone.cloneNode());
+                    });
+                    previewReady = true;
+                },
 
-                    crop: function (event) {
-                        if (!previewReady) {
-                            return;
-                        }
+                crop: function (event) {
+                    if (!previewReady) {
+                        return;
+                    }
 
-                        var data = event.detail;
-                        var cropper = this.cropper;
-                        var imageData = cropper.getImageData();
-                        var previewAspectRatio = data.width / data.height;
+                    var data = event.detail;
+                    var cropper = this.cropper;
+                    var imageData = cropper.getImageData();
+                    var previewAspectRatio = data.width / data.height;
 
-                        each(previews, function (elem) {
-                            var previewImage = elem.getElementsByTagName('img').item(0);
-                            var previewWidth = elem.offsetWidth;
-                            var previewHeight = previewWidth / previewAspectRatio;
-                            var imageScaledRatio = data.width / previewWidth;
+                    each(previews, function (elem) {
+                        var previewImage = elem.getElementsByTagName('img').item(0);
+                        var previewWidth = elem.offsetWidth;
+                        var previewHeight = previewWidth / previewAspectRatio;
+                        var imageScaledRatio = data.width / previewWidth;
 
-                            elem.style.height = previewHeight + 'px';
-                            previewImage.style.width = imageData.naturalWidth / imageScaledRatio + 'px';
-                            previewImage.style.height = imageData.naturalHeight / imageScaledRatio + 'px';
-                            previewImage.style.marginLeft = -data.x / imageScaledRatio + 'px';
-                            previewImage.style.marginTop = -data.y / imageScaledRatio + 'px';
+                        elem.style.height = previewHeight + 'px';
+                        previewImage.style.width = imageData.naturalWidth / imageScaledRatio + 'px';
+                        previewImage.style.height = imageData.naturalHeight / imageScaledRatio + 'px';
+                        previewImage.style.marginLeft = -data.x / imageScaledRatio + 'px';
+                        previewImage.style.marginTop = -data.y / imageScaledRatio + 'px';
 
-                            $('#mi_left').val(data.x / imageScaledRatio);
-                            $('#mi_top').val(data.y / imageScaledRatio);
-                            $('#mi_width').val(data.width );
-                            $('#mi_height').val(data.height);
-                        });
-                    },
-                });
+                        $('#mi_left').val(data.x / imageScaledRatio);
+                        $('#mi_top').val(data.y / imageScaledRatio);
+                        $('#mi_width').val(data.width);
+                        $('#mi_height').val(data.height);
+                    });
+                },
+            });
             // });
         </script>
-                <input type="hidden" id="mi_left"/>
-                <input type="hidden" id="mi_top"/>
-                <input type="hidden" id="mi_width"/>
-                <input type="hidden" id="mi_height"/>
-                    <div class="button_div fl_l">
-                        <button onClick="Profile.miniatureSave()" id="miniatureSave">Сохранить изменения</button>
-                    </div>
+        <input type="hidden" id="mi_left"/>
+        <input type="hidden" id="mi_top"/>
+        <input type="hidden" id="mi_width"/>
+        <input type="hidden" id="mi_height"/>
+        <div class="button_div fl_l">
+            <button onClick="Profile.miniatureSave()" id="miniatureSave">Сохранить изменения</button>
+        </div>
         <div class="clear"></div>
     </div>
 </div>
