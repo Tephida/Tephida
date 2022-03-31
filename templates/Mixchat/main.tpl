@@ -2,7 +2,9 @@
 <html lang="{lang}">
 <head>
     {header}
-    [logged]<script>var kj = {uid:'{my-id}'}</script>[/logged]
+    [logged]
+    <script>var kj = {uid:'{my-id}'}</script>
+    [/logged]
     <link href="/dist/output.css" rel="stylesheet">
     {js}
     [not-logged]
@@ -87,7 +89,8 @@
                 [/not-logged]
                 [logged]<a href="/index.php?go=search&online=1"
                            onClick="Page.Go(this.href); return false">{translate=main_tpl_people}</a>
-                <a href="/index.php?go=search&type=4" onClick="Page.Go(this.href); return false">{translate=main_tpl_lang_1}</a>
+                <a href="/index.php?go=search&type=4"
+                   onClick="Page.Go(this.href); return false">{translate=main_tpl_lang_1}</a>
                 <a href="/audio" onClick="Page.Go(this.href); return false" id="fplayer_pos">музыка</a>
                 <a href="/support?act=new" onClick="Page.Go(this.href); return false">помощь</a>
                 <a href="/?act=logout">выйти</a>[/logged]
@@ -165,7 +168,7 @@
             </a>
         </div>
         [/logged]
-{*        <div id="audioPlayer"></div>*}
+        {*        <div id="audioPlayer"></div>*}
         <div id="page">
             {info}{content}
             <div class="clear"></div>
@@ -177,8 +180,8 @@
     <a href="/support" onClick="Page.Go(this.href); return false">Помощь</a>
     <div>Mixchat &copy; 2022
         <a class="cursor_pointer" onClick="trsn.box();"
-                                onMouseOver="myhtml.title('1', 'Выбор используемого языка на сайте', 'langTitle', 1)"
-                                id="langTitle1">{translate=lang}</a>
+           onMouseOver="myhtml.title('1', 'Выбор используемого языка на сайте', 'langTitle', 1)"
+           id="langTitle1">{translate=lang}</a>
     </div>
 </div>
 [/not-aviable]
@@ -204,6 +207,7 @@
         $('#event' + xnid).remove();
         $('#updates').css('height', $('.update_box').size() * 123 + 'px');
     }
+
     function GoPage(event, p) {
         var oi = (event.target) ? event.target.id : ((event.srcElement) ? event.srcElement.id : null);
         if (oi == 'no_ev' || oi == 'update_close' || oi == 'update_close2') return false;
@@ -220,6 +224,7 @@
                 Page.Go(p);
         }
     }
+
     $(document).ready(function () {
         setInterval(function () {
             $.post('/index.php?go=updates', function (d) {
