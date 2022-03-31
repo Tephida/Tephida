@@ -175,7 +175,6 @@
 </div>
 <div class="footer">
     <a href="/support" onClick="Page.Go(this.href); return false">Помощь</a>
-    <a href="/review" onClick="Page.Go(this.href); return false">Отзывы</a>
     <div>Mixchat &copy; 2022
         <a class="cursor_pointer" onClick="trsn.box();"
                                 onMouseOver="myhtml.title('1', 'Выбор используемого языка на сайте', 'langTitle', 1)"
