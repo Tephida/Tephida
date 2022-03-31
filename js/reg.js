@@ -313,7 +313,7 @@ function updateCode() {
 
 function checkCode() {
     var val_sec_code = $("#val_sec_code").val();
-    $('#code_loading').html('<img src="' + template_dir + '/images/loading_mini.gif" style="margin-top:21px" />');
+    $('#code_loading').html('<img src="' + '/images/loading_mini.gif" style="margin-top:21px" />');
     $.get('/security/code?user_code=' + val_sec_code, function (data) {
         if (data.status == '1') {
             reg.send(val_sec_code);

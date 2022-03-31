@@ -159,7 +159,7 @@ var Photo = {
             $('#rateload' + i).show();
         } else {
             $('#ratingyes' + i).html('<div class="ratingyestext fl_l">Ваша оценка</div> <div id="addratingyes' + i + '"></div>').css('width', '120px').css('padding-top', '0px');
-            if (r == 1) $('#addratingyes' + i).html('<div class="rating rating3" style="background:url(\'' + template_dir + '/images/rating3.png\')">1</div>');
+            if (r == 1) $('#addratingyes' + i).html('<div class="rating rating3" style="background:url(\'/images/rating3.png\')">1</div>');
             else $('#addratingyes' + i).html('<div class="rating rating3">' + r + '</div>');
             $('#ratingyes' + i).fadeIn('fast');
         }
@@ -173,7 +173,7 @@ var Photo = {
                 return false;
             }
             if (r == 6) {
-                $('#addratingyes' + i).html('<div class="rating rating3" style="background:url(\'' + template_dir + '/images/rating2.png\')">5+</div>');
+                $('#addratingyes' + i).html('<div class="rating rating3" style="background:url(\'/images/rating2.png\')">5+</div>');
                 $('#ratingyes' + i).fadeIn('fast');
             }
         });
@@ -2217,7 +2217,7 @@ var groups = {
         $.post('/index.php?go=groups&act=delphoto', {
             id: id
         }, function () {
-            $('#ava').attr('src', template_dir + '/images/no_ava.gif');
+            $('#ava').attr('src', '/images/no_ava.gif');
             $('#del_pho_but').hide();
             Box.Close();
         });
@@ -2230,7 +2230,7 @@ var groups = {
         var office = $('#office').val();
         var phone = $('#phone').val();
         var email = $('#email').val();
-        if ($('#feedimg').attr('src') != template_dir + '/images/contact_info.png') {
+        if ($('#feedimg').attr('src') != '/images/contact_info.png') {
             $('#box_loading').show();
             ge('box_butt_create').disabled = true;
             $.post('/index.php?go=groups&act=addfeedback_db', {
@@ -2300,14 +2300,14 @@ var groups = {
                 d = d.split('|');
                 if (d[0]) {
                     if (d[1]) $('#feedimg').attr('src', '/uploads/users/' + upage + '/100_' + d[1]);
-                    else $('#feedimg').attr('src', template_dir + '/images/100_no_ava.png');
+                    else $('#feedimg').attr('src', '/images/100_no_ava.png');
                     $('#office').focus();
                 } else {
                     setErrorInputMsg('upage');
-                    $('#feedimg').attr('src', template_dir + '/images/contact_info.png');
+                    $('#feedimg').attr('src', '/images/contact_info.png');
                 }
             });
-        } else $('#feedimg').attr('src', template_dir + '/images/contact_info.png');
+        } else $('#feedimg').attr('src', '/images/contact_info.png');
     },
     saveinfo: function (id) {
         var title = $('#title').val();
@@ -2822,7 +2822,7 @@ var im = {
         var room_id = uid.toString().substr(0, 1) == 'c' ? uid.toString().substr(1) : 0;
         $('.im_oneusr').removeClass('im_usactive');
         $('#dialog' + uid).addClass('im_usactive');
-        $('#imViewMsg').html('<img src="' + template_dir + '/images/loading_im.gif" style="margin-left:225px;margin-top:220px" />');
+        $('#imViewMsg').html('<img src="' + '/images/loading_im.gif" style="margin-left:225px;margin-top:220px" />');
         $.post('/index.php?go=im&act=history', {
             need_read: 1,
             for_user_id: uid,
@@ -2831,7 +2831,7 @@ var im = {
             $('#imViewMsg').html(d);
             $('.im_scroll').append('<div class="im_typograf"></div>').scrollTop(99999);
             var aco = $('.im_usactive').text().split(' ');
-            $('.im_typograf').html('<div class="no_display" id="im_typograf"><img src="' + template_dir + '/images/typing.gif" /> ' + aco[0] + ' набирает сообщение..</div>');
+            $('.im_typograf').html('<div class="no_display" id="im_typograf"><img src="' + '/images/typing.gif" /> ' + aco[0] + ' набирает сообщение..</div>');
             $('#msg_text').focus();
             var count = parseInt($('#msg_num' + uid).text());
             if (count) {
@@ -3253,7 +3253,7 @@ var Doc = {
         ln = name.length;
         if (ln > 50) name = name.substring(0, 12) + '..' + name.substring(ln - 4, ln);
         res_attach_id = 'doc_' + attach_id;
-        $('#attach_files').append('<div style="padding-bottom:6px;padding-top:6px;display:block;width:100%" id="attach_file_' + res_attach_id + '" class="attach_file" ><div class="doc_attach_ic fl_l"></div><div class="doc_attach_text"><div class="fl_l">' + name + '</div><img class="fl_l cursor_pointer" style="margin-top:2px;margin-left:5px" src="' + template_dir + '/images/close_a.png" onMouseOver="myhtml.title(\'' + res_attach_id + '\', \'' + lang_wall_no_atttach + '\', \'wall_doc_\')" id="wall_doc_' + res_attach_id + '" onClick="wall.attach_delete(\'' + res_attach_id + '\', \'doc|' + id + '||\')" /></div><div class="clear"></div></div><div class="clear"></div>');
+        $('#attach_files').append('<div style="padding-bottom:6px;padding-top:6px;display:block;width:100%" id="attach_file_' + res_attach_id + '" class="attach_file" ><div class="doc_attach_ic fl_l"></div><div class="doc_attach_text"><div class="fl_l">' + name + '</div><img class="fl_l cursor_pointer" style="margin-top:2px;margin-left:5px" src="' + '/images/close_a.png" onMouseOver="myhtml.title(\'' + res_attach_id + '\', \'' + lang_wall_no_atttach + '\', \'wall_doc_\')" id="wall_doc_' + res_attach_id + '" onClick="wall.attach_delete(\'' + res_attach_id + '\', \'doc|' + id + '||\')" /></div><div class="clear"></div></div><div class="clear"></div>');
         $('#vaLattach_files').val($('#vaLattach_files').val() + 'doc|' + id + '||');
         if ($('.attach_file').length > 9) $('#wall_attach').hide();
     },
@@ -3315,7 +3315,7 @@ var Votes = {
         for (i = 2; i <= 10; i++) $('#div_inp_answr_' + i).remove();
     },
     Send: function (answer_id, vote_id) {
-        $('#answer_load' + answer_id).append('<img src="' + template_dir + '/images/loading_mini.gif" style="margin-left:5px" />');
+        $('#answer_load' + answer_id).append('<img src="' + '/images/loading_mini.gif" style="margin-left:5px" />');
         for (i = 0; i <= 10; i++) $('#wall_vote_oneanswe' + i).attr('onClick', '');
         $.post('/index.php?go=votes', {
             vote_id: vote_id,

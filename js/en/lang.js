@@ -7,7 +7,6 @@
  */
 
 //LANG
-template_dir = '/templates/Default';
 uploads_dir = '/uploads';
 uploads_smile_dir = '/uploads/smiles';
 lang_empty = 'The fields should not be empty.';

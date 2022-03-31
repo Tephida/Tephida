@@ -2180,7 +2180,7 @@ var audio_player = {
             tbl.addClass('opened');
             var html = tbl.html();
             if (html.length == 0) {
-                tbl.html('<div style="padding:20px 0;text-align:center;"><img src="/templates/Default/images/loading_mini.gif"></div>');
+                tbl.html('<div style="padding:20px 0;text-align:center;"><img src="/images/loading_mini.gif"></div>');
                 $.post('/audio?act=get_text', {
                     id: id
                 }, function (d) {
@@ -2352,7 +2352,7 @@ var audio = {
     },
     moreOther: function () {
         var but = $('#audio_more_but');
-        but.html('<img src="/templates/Default/images/loading_mini.gif">');
+        but.html('<img src="/images/loading_mini.gif">');
         $.post(location.href, {
             doload: 1,
             more: 1,
@@ -2376,7 +2376,7 @@ var audio = {
     loadMoreSearch: function () {
         if (this.start_load) return;
         this.start_load = true;
-        $('#audio_more_but').html('<img src="/templates/Default/images/loading_mini.gif"/>');
+        $('#audio_more_but').html('<img src="/images/loading_mini.gif"/>');
         var q = $('#search_audio_val').val();
         $.post('/audio?act=search_all', {
             doload: 1,
@@ -2450,7 +2450,7 @@ var audio = {
             setErrorInputMsg('audio_name');
             return;
         }
-        $('#saveabutton').html('<img src="/templates/Default/images/loading_mini.gif"/>').attr('onClick', '');
+        $('#saveabutton').html('<img src="/images/loading_mini.gif"/>').attr('onClick', '');
         $.post('/audio?act=save_edit', {
             id: aid,
             genre: genre,
@@ -2472,7 +2472,7 @@ var audio = {
     },
     start_delete: function (id, aid, pid) {
         $('#box_del .button_div_gray').remove();
-        $('#box_del .button_div').html('<img src="/templates/Default/images/loading_mini.gif"/>');
+        $('#box_del .button_div').html('<img src="/images/loading_mini.gif"/>');
         $.post('/audio?act=del_audio', {
             id: aid
         }, function (d) {
