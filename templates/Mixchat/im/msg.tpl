@@ -9,7 +9,7 @@
         <a href="/u{user-id}" onClick="Page.Go(this.href); return false">{name}</a>
         <div class="fl_r im_msg_date">
             <div class="fl_l">{date}</div>
-            <img src="{theme}/images/close_a_wall.png"
+            <img src="/images/close_a_wall.png"
                  onMouseOver="myhtml.title('{msg-id}', 'Удалить сообщение', 'del_text_', -3)"
                  onClick="im.delet('{msg-id}', '{folder}'); return false" id="del_text_{msg-id}"
                  class="msg_histry_del cursor_pointer im_msg_delf fl_r"/></div>

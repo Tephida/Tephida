@@ -199,7 +199,7 @@ HTML;
                         $str_title = iconv_substr($attach_type[2], 0, 55, 'utf-8');
 
                         if (stripos($attach_type[4], '/uploads/attach/') === false) {
-                            $attach_type[4] = '{theme}/images/no_ava_groups_100.gif';
+                            $attach_type[4] = '/images/no_ava_groups_100.gif';
                             $no_img = false;
                         } else
                             $no_img = true;
@@ -336,13 +336,13 @@ HTML;
                     if ($rowUserTell['photo'])
                         $avaTell = '/uploads/groups/' . $row_wall['tell_uid'] . '/50_' . $rowUserTell['photo'];
                     else
-                        $avaTell = '{theme}/images/no_ava_50.png';
+                        $avaTell = '/images/no_ava_50.png';
                 } else {
                     $tell_link = 'u';
                     if ($rowUserTell['user_photo'])
                         $avaTell = '/uploads/users/' . $row_wall['tell_uid'] . '/50_' . $rowUserTell['user_photo'];
                     else
-                        $avaTell = '{theme}/images/no_ava_50.png';
+                        $avaTell = '/images/no_ava_50.png';
                 }
 
                 if ($row_wall['tell_comm']) $border_tell_class = 'wall_repost_border'; else $border_tell_class = 'wall_repost_border2';
@@ -373,7 +373,7 @@ HTML;
             if ($row_wall['photo'])
                 $this->tpl->set('{ava}', '/uploads/groups/' . $row_wall['public_id'] . '/50_' . $row_wall['photo']);
             else
-                $this->tpl->set('{ava}', '{theme}/images/no_ava_50.png');
+                $this->tpl->set('{ava}', '/images/no_ava_50.png');
 
             //Мне нравится
             if (stripos($row_wall['likes_users'], "u{$user_id}|") !== false) {
@@ -399,7 +399,7 @@ HTML;
             if ($user_info['user_photo'])
                 $this->tpl->set('{viewer-ava}', '/uploads/users/' . $user_id . '/50_' . $user_info['user_photo']);
             else
-                $this->tpl->set('{viewer-ava}', '{theme}/images/no_ava_50.png');
+                $this->tpl->set('{viewer-ava}', '/images/no_ava_50.png');
 
             //Админ
             if ($public_admin) {
@@ -468,7 +468,7 @@ HTML;
                         if ($row_comments['user_photo']) {
                             $this->tpl->set('{ava}', $config['home_url'] . 'uploads/users/' . $row_comments['public_id'] . '/50_' . $row_comments['user_photo']);
                         } else {
-                            $this->tpl->set('{ava}', '{theme}/images/no_ava_50.png');
+                            $this->tpl->set('{ava}', '/images/no_ava_50.png');
                         }
 
                         $this->tpl->set('{rec-id}', $row_wall['id']);

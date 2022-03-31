@@ -402,7 +402,7 @@ function OnlineTpl($time, $mobile = false) {
     global $tpl, $online_time, $lang;
     //Если человек сидит с мобильнйо версии
     if ($mobile)
-        $mobile_icon = '<img src="{theme}/images/spacer.gif" class="mobile_online" />';
+        $mobile_icon = '<img src="/images/spacer.gif" class="mobile_online" />';
     else
         $mobile_icon = '';
     if ($time >= $online_time)
@@ -909,7 +909,7 @@ function compileNoAjax($tpl, $params): int
             $config = settings_get();
             $ava = '<img src="' . $config['home_url'] . 'uploads/users/' . $user_info['user_id'] . '/100_' . $user_info['user_photo'] . '"   style="width: 40px;height: 40px;" />';
         } else {
-            $ava = '<img src="{theme}/images/no_ava_50.png" />';
+            $ava = '<img src="/images/no_ava_50.png" />';
         }
         $tpl->set('{user_photo}', $ava);
     } else {

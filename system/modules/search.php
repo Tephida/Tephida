@@ -217,7 +217,7 @@ if ($sql_) {
             if ($row['user_photo']) {
                 $tpl->set('{ava}', $config['home_url'] . 'uploads/users/' . $row['user_id'] . '/100_' . $row['user_photo']);
             } else {
-                $tpl->set('{ava}', '{theme}/images/100_no_ava.png');
+                $tpl->set('{ava}', '/images/100_no_ava.png');
             }
             //Возраст юзера
             $user_birthday = explode('-', $row['user_birthday']);
@@ -275,7 +275,7 @@ if ($sql_) {
             if ($row['user_photo']) {
                 $tpl->set('{ava}', $config['home_url'] . 'uploads/users/' . $row['owner_user_id'] . '/50_' . $row['user_photo']);
             } else {
-                $tpl->set('{ava}', '{theme}/images/no_ava_50.png');
+                $tpl->set('{ava}', '/images/no_ava_50.png');
             }
 
             $tpl->set('{user-id}', $row['owner_user_id']);
@@ -300,7 +300,7 @@ if ($sql_) {
             if ($row['photo']) {
                 $tpl->set('{ava}', '/uploads/groups/' . $row['id'] . '/100_' . $row['photo']);
             } else {
-                $tpl->set('{ava}', '{theme}/images/no_ava_groups_100.gif');
+                $tpl->set('{ava}', '/images/no_ava_groups_100.gif');
             }
 
             $tpl->set('{public-id}', $row['id']);

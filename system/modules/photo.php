@@ -54,7 +54,7 @@ if (Registry::get('logged')) {
                 if ($user_info['user_photo']) {
                     $tpl->set('{ava}', $config['home_url'] . 'uploads/users/' . $user_id . '/50_' . $user_info['user_photo']);
                 } else {
-                    $tpl->set('{ava}', '{theme}/images/no_ava_50.png');
+                    $tpl->set('{ava}', '/images/no_ava_50.png');
                 }
                 $tpl->set('{online}', $lang['online']);
                 $tpl->set('{date}', langdate('сегодня в H:i', $server_time));
@@ -194,7 +194,7 @@ if (Registry::get('logged')) {
                     if ($row_comm['user_photo']) {
                         $tpl->set('{ava}', $config['home_url'] . 'uploads/users/' . $row_comm['user_id'] . '/50_' . $row_comm['user_photo']);
                     } else {
-                        $tpl->set('{ava}', '{theme}/images/no_ava_50.png');
+                        $tpl->set('{ava}', '/images/no_ava_50.png');
                     }
                     OnlineTpl($row_comm['user_last_visit'], $row_comm['user_logged_mobile']);
                     $date_str = megaDate(strtotime($row_comm['date']));
@@ -346,16 +346,16 @@ if (Registry::get('logged')) {
                         $tpl->set('{user-id}', $row['user_id']);
                         $tpl->set('{user-id}', $row['user_id']);
                         if ($row['rating'] == 1) {
-                            $tpl->set('{rate}', '<div class="rating rating3" style="background:url(\'{theme}/images/rating3.png\')">' . $row['rating'] . '</div>');
+                            $tpl->set('{rate}', '<div class="rating rating3" style="background:url(\'/images/rating3.png\')">' . $row['rating'] . '</div>');
                         } else if ($row['rating'] == 6) {
-                            $tpl->set('{rate}', '<div class="rating rating3"  style="background:url(\'{theme}/images/rating2.png\')">5+</div>');
+                            $tpl->set('{rate}', '<div class="rating rating3"  style="background:url(\'/images/rating2.png\')">5+</div>');
                         } else {
                             $tpl->set('{rate}', '<div class="rating rating3">' . $row['rating'] . '</div>');
                         }
                         if ($row['user_photo']) {
                             $tpl->set('{ava}', "/uploads/users/{$row['user_id']}/50_{$row['user_photo']}");
                         } else {
-                            $tpl->set('{ava}', "{theme}/images/no_ava_50.png");
+                            $tpl->set('{ava}', "/images/no_ava_50.png");
                         }
                         $date_str = megaDate($row['date']);
                         $tpl->set('{date}', $date_str);
@@ -475,7 +475,7 @@ if (Registry::get('logged')) {
                                 if ($row_comm['user_photo']) {
                                     $tpl->set('{ava}', $config['home_url'] . 'uploads/users/' . $row_comm['user_id'] . '/50_' . $row_comm['user_photo']);
                                 } else {
-                                    $tpl->set('{ava}', '{theme}/images/no_ava_50.png');
+                                    $tpl->set('{ava}', '/images/no_ava_50.png');
                                 }
                                 OnlineTpl($row_comm['user_last_visit'], $row_comm['user_logged_mobile']);
                                 $date_str = megaDate(strtotime($row_comm['date']));
@@ -684,9 +684,9 @@ if (Registry::get('logged')) {
                             $tpl->set('{rate-check}', 'no_display');
                             $tpl->set('{rate-check-2}', '');
                             if ($check['rating'] == 1) {
-                                $tpl->set('{ok-rate}', '<div class="rating rating3" style="background:url(\'{theme}/images/rating3.png\')">' . $check['rating'] . '</div>');
+                                $tpl->set('{ok-rate}', '<div class="rating rating3" style="background:url(\'/images/rating3.png\')">' . $check['rating'] . '</div>');
                             } else if ($check['rating'] == 6) {
-                                $tpl->set('{ok-rate}', '<div class="rating rating3"  style="background:url(\'{theme}/images/rating2.png\')">5+</div>');
+                                $tpl->set('{ok-rate}', '<div class="rating rating3"  style="background:url(\'/images/rating2.png\')">5+</div>');
                             } else {
                                 $tpl->set('{ok-rate}', '<div class="rating rating3">' . $check['rating'] . '</div>');
                             }

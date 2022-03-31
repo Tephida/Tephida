@@ -1,1 +1,0 @@
-<div class="onefriend" style="height:70px">[status]<a href="/u{user-id}" onClick="Page.Go(this.href); return false">[/status]<div><img src="{ava}" alt="" /></div>{name}[status]</a>[/status]</div>

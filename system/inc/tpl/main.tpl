@@ -6,7 +6,6 @@
     <script type="text/javascript" src="/js/jquery.lib.js"></script>
     <script type="text/javascript" src="/js/en/lang.js"></script>
     <script type="text/javascript" src="/js/main.js"></script>
-    <script type="text/javascript" src="/js/audio.js"></script>
     <link href="/dist/output.css" rel="stylesheet">
     <script>
         var Logged = {

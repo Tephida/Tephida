@@ -76,7 +76,7 @@ if (Registry::get('logged')) {
                     if ($row['user_photo']) {
                         $tpl->set('{ava}', '/uploads/users/' . $user_id . '/50_' . $row['user_photo']);
                     } else {
-                        $tpl->set('{ava}', '{theme}/images/no_ava_50.png');
+                        $tpl->set('{ava}', '/images/no_ava_50.png');
                     }
                     $tpl->set('{answers}', '');
                     $tpl->compile('content');
@@ -155,14 +155,14 @@ if (Registry::get('logged')) {
                 $tpl->load_template('support/answer.tpl');
                 if (!$auser_id) {
                     $tpl->set('{name}', 'Агент поддержки');
-                    $tpl->set('{ava}', '{theme}/images/support.png');
+                    $tpl->set('{ava}', '/images/support.png');
                     $tpl->set_block("'\\[no-agent\\](.*?)\\[/no-agent\\]'si", "");
                 } else {
                     $tpl->set('{name}', $row['user_search_pref']);
                     if ($row['user_photo']) {
                         $tpl->set('{ava}', '/uploads/users/' . $user_id . '/50_' . $row['user_photo']);
                     } else {
-                        $tpl->set('{ava}', '{theme}/images/no_ava_50.png');
+                        $tpl->set('{ava}', '/images/no_ava_50.png');
                     }
 
                     $tpl->set('[no-agent]', '');
@@ -212,14 +212,14 @@ if (Registry::get('logged')) {
                 foreach ($sql_answer as $row_answer) {
                     if (!$row_answer['auser_id']) {
                         $tpl->set('{name}', 'Агент поддержки');
-                        $tpl->set('{ava}', '{theme}/images/support.png');
+                        $tpl->set('{ava}', '/images/support.png');
                         $tpl->set_block("'\\[no-agent\\](.*?)\\[/no-agent\\]'si", "");
                     } else {
                         $tpl->set('{name}', $row['user_search_pref']);
                         if ($row['user_photo']) {
                             $tpl->set('{ava}', '/uploads/users/' . $row['suser_id'] . '/50_' . $row['user_photo']);
                         } else {
-                            $tpl->set('{ava}', '{theme}/images/no_ava_50.png');
+                            $tpl->set('{ava}', '/images/no_ava_50.png');
                         }
 
                         $tpl->set('[no-agent]', '');
@@ -265,7 +265,7 @@ if (Registry::get('logged')) {
                 if ($row['user_photo']) {
                     $tpl->set('{ava}', '/uploads/users/' . $row['suser_id'] . '/50_' . $row['user_photo']);
                 } else {
-                    $tpl->set('{ava}', '{theme}/images/no_ava_50.png');
+                    $tpl->set('{ava}', '/images/no_ava_50.png');
                 }
 
                 $tpl->set('{answers}', $tpl->result['answers'] ?? '');
@@ -332,12 +332,12 @@ if (Registry::get('logged')) {
                         if ($row['user_photo']) {
                             $tpl->set('{ava}', '/uploads/users/' . $row['suser_id'] . '/50_' . $row['user_photo']);
                         } else {
-                            $tpl->set('{ava}', '{theme}/images/no_ava_50.png');
+                            $tpl->set('{ava}', '/images/no_ava_50.png');
                         }
                     } else {
                         $tpl->set('{name}', 'Агент поддержки');
                         $tpl->set('{status}', 'Есть ответ.');
-                        $tpl->set('{ava}', '{theme}/images/support.png');
+                        $tpl->set('{ava}', '/images/support.png');
                         $tpl->set('{answer}', 'ответил');
                     }
                     $tpl->set('{qid}', $row['id']);

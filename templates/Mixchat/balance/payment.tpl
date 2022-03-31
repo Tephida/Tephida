@@ -28,20 +28,21 @@
    <option value="lat">Латвия</option>
    <option value="lit">Литва</option>
    <option value="tad">Таджикистан</option>
-   <option value="est">Эстония</option>
+      <option value="est">Эстония</option>
   </select>
-  <div class="payment_h2">Оператор</div>
-  <select id="payment_oper" onChange="payment.cost(this.value)" class="inpst payment_sel" disabled="disabled">
-   <option value="0"></option>
-  </select>
-  <div class="payment_h2">На сколько хотите пополнить</div>
-  <select id="payment_cost" class="inpst payment_sel" onChange="payment.number(this.value)" disabled="disabled">
-   <option value="0"></option>
-  </select>
-  <div class="payment_logo"><img src="{theme}/images/payment.png" width="256" height="256" /></div>
-  <div class="no_display" id="smsblock">
-  <div class="payment_block">
-   Для получения <b>рублей</b> на Ваш счёт, отправьте платное SMS сообщение c текстом <b><span id="smspref"></span>4241645447{user-id}</b> на номер <b id="smsnumber">9797</b><br /><br />
+     <div class="payment_h2">Оператор</div>
+     <select id="payment_oper" onChange="payment.cost(this.value)" class="inpst payment_sel" disabled="disabled">
+         <option value="0"></option>
+     </select>
+     <div class="payment_h2">На сколько хотите пополнить</div>
+     <select id="payment_cost" class="inpst payment_sel" onChange="payment.number(this.value)" disabled="disabled">
+         <option value="0"></option>
+     </select>
+     <div class="payment_logo"><img src="/images/payment.png" width="256" height="256"/></div>
+     <div class="no_display" id="smsblock">
+         <div class="payment_block">
+             Для получения <b>рублей</b> на Ваш счёт, отправьте платное SMS сообщение c текстом <b><span
+                         id="smspref"></span>4241645447{user-id}</b> на номер <b id="smsnumber">9797</b><br /><br />
    Стоимость сообщения равна сумме пополнения, то есть хотите пополнить на 100 руб. то SMS будет стоить 100 руб.
   </div>
   <div class="clear"></div>

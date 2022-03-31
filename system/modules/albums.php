@@ -754,7 +754,7 @@ HTML;
                         if ($row_comm['user_photo']) {
                             $tpl->set('{ava}', $config['home_url'] . 'uploads/users/' . $row_comm['user_id'] . '/50_' . $row_comm['user_photo']);
                         } else {
-                            $tpl->set('{ava}', '{theme}/images/no_ava_50.png');
+                            $tpl->set('{ava}', '/images/no_ava_50.png');
                         }
 
                         OnlineTpl($row_comm['user_last_visit'], $row_comm['user_logged_mobile']);
@@ -1078,7 +1078,7 @@ HTML;
                                 if ($row['cover'])
                                     $tpl->set('{cover}', $config['home_url'] . 'uploads/users/' . $uid . '/albums/' . $row['aid'] . '/c_' . $row['cover']);
                                 else
-                                    $tpl->set('{cover}', '{theme}/images/no_cover.png');
+                                    $tpl->set('{cover}', '/images/no_cover.png');
 
                                 $tpl->set('{aid}', $row['aid']);
                                 $tpl->set('{hash}', $row['ahash']);

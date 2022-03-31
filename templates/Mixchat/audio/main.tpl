@@ -55,10 +55,12 @@
 <div id="atitle">{title}</div>
 <div class="al_audio_result_wrap shadow_box">
 [is_user]<div class="audio_search_bl">
-<input type="text" placeholder="Поиск" onkeyup="audio.search(this.value[public], {uid}[/public]);" id="search_audio_val"/>
-<img src="{theme}/images/loading_mini.gif" id="search_preloader" class="no_display"/>
-</div>[/is_user]
-<div id="audios_res">
+<input type="text" placeholder="Поиск" onkeyup="audio.search(this.value[public], {uid}[/public]);"
+       id="search_audio_val"/>
+        <img src="/images/loading_mini.gif" id="search_preloader" class="no_display"/>
+    </div>
+    [/is_user]
+    <div id="audios_res">
 {audios_res}
 </div>
 <div id="load_but"></div>

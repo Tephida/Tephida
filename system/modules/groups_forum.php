@@ -118,7 +118,7 @@ if (Registry::get('logged')) {
                 if ($user_info['user_photo']) {
                     $tpl->set('{ava}', "/uploads/users/{$user_info['user_id']}/50_{$user_info['user_photo']}");
                 } else {
-                    $tpl->set('{ava}', '{theme}/images/no_ava_50.png');
+                    $tpl->set('{ava}', '/images/no_ava_50.png');
                 }
                 $tpl->compile('content');
                 AjaxTpl($tpl);
@@ -187,7 +187,7 @@ if (Registry::get('logged')) {
                     if ($row_comm['user_photo']) {
                         $tpl->set('{ava}', "/uploads/users/{$row_comm['muser_id']}/50_{$row_comm['user_photo']}");
                     } else {
-                        $tpl->set('{ava}', '{theme}/images/no_ava_50.png');
+                        $tpl->set('{ava}', '/images/no_ava_50.png');
                     }
                     $tpl->compile('content');
                 }
@@ -458,7 +458,7 @@ if (Registry::get('logged')) {
                         if ($row_comm['user_photo']) {
                             $tpl->set('{ava}', "/uploads/users/{$row_comm['muser_id']}/50_{$row_comm['user_photo']}");
                         } else {
-                            $tpl->set('{ava}', '{theme}/images/no_ava_50.png');
+                            $tpl->set('{ava}', '/images/no_ava_50.png');
                         }
 
                         //ADMIN 2
@@ -561,13 +561,13 @@ if (Registry::get('logged')) {
                 if ($row['user_photo']) {
                     $tpl->set('{ava}', "/uploads/users/{$row['fuser_id']}/50_{$row['user_photo']}");
                 } else {
-                    $tpl->set('{ava}', '{theme}/images/no_ava_50.png');
+                    $tpl->set('{ava}', '/images/no_ava_50.png');
                 }
 
                 if ($user_info['user_photo']) {
                     $tpl->set('{my-ava}', "/uploads/users/{$user_id}/50_{$user_info['user_photo']}");
                 } else {
-                    $tpl->set('{my-ava}', '{theme}/images/no_ava_50.png');
+                    $tpl->set('{my-ava}', '/images/no_ava_50.png');
                 }
 
                 $tpl->set('{msg}', $tpl->result['msg']);

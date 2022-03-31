@@ -168,13 +168,13 @@ if (Registry::get('logged')) {
                 if ($row['user_photo']) {
                     $tpl->set('{ava}', '/uploads/users/' . $row['ac_user_id'] . '/50_' . $row['user_photo']);
                 } else {
-                    $tpl->set('{ava}', '{theme}/images/no_ava_50.png');
+                    $tpl->set('{ava}', '/images/no_ava_50.png');
                 }
             } else {
                 if ($rowInfoUser['photo']) {
                     $tpl->set('{ava}', '/uploads/groups/' . $row['ac_user_id'] . '/50_' . $rowInfoUser['photo']);
                 } else {
-                    $tpl->set('{ava}', '{theme}/images/no_ava_50.png');
+                    $tpl->set('{ava}', '/images/no_ava_50.png');
                 }
             }
 
@@ -228,7 +228,7 @@ if (Registry::get('logged')) {
                             if ($fr_info['user_photo']) {
                                 $ava = "/uploads/users/{$fr_id}/100_{$fr_info['user_photo']}";
                             } else {
-                                $ava = '{theme}/images/100_no_ava.png';
+                                $ava = '/images/100_no_ava.png';
                             }
 
                             $newfriends .= "<div class=\"newsnewfriend\"><a href=\"/u{$fr_id}\" onClick=\"Page.Go(this.href); return false\"><img src=\"{$ava}\" alt=\"\" />{$fr_info['user_search_pref']}</a></div>";
@@ -368,7 +368,7 @@ if (Registry::get('logged')) {
                                 $str_title = substr($attach_type[2], 0, 55);
 
                                 if (stripos($attach_type[4], '/uploads/attach/') === false) {
-                                    $attach_type[4] = '{theme}/images/no_ava_groups_100.gif';
+                                    $attach_type[4] = '/images/no_ava_groups_100.gif';
                                     $no_img = false;
                                 } else {
                                     $no_img = true;
@@ -489,14 +489,14 @@ if (Registry::get('logged')) {
                             if ($rowUserTell['photo']) {
                                 $avaTell = '/uploads/groups/' . $row_info['tell_uid'] . '/50_' . $rowUserTell['photo'];
                             } else {
-                                $avaTell = '{theme}/images/no_ava_50.png';
+                                $avaTell = '/images/no_ava_50.png';
                             }
                         } else {
                             $tell_link = 'u';
                             if ($rowUserTell['user_photo']) {
                                 $avaTell = '/uploads/users/' . $row_info['tell_uid'] . '/50_' . $rowUserTell['user_photo'];
                             } else {
-                                $avaTell = '{theme}/images/no_ava_50.png';
+                                $avaTell = '/images/no_ava_50.png';
                             }
                         }
 
@@ -648,7 +648,7 @@ HTML;
                                 $str_title = substr($attach_type[2], 0, 55);
 
                                 if (stripos($attach_type[4], '/uploads/attach/') === false) {
-                                    $attach_type[4] = '{theme}/images/no_ava_groups_100.gif';
+                                    $attach_type[4] = '/images/no_ava_groups_100.gif';
                                     $no_img = false;
                                 } else {
                                     $no_img = true;
@@ -768,14 +768,14 @@ HTML;
                             if ($rowUserTell['photo']) {
                                 $avaTell = '/uploads/groups/' . $row_info_likes['tell_uid'] . '/50_' . $rowUserTell['photo'];
                             } else {
-                                $avaTell = '{theme}/images/no_ava_50.png';
+                                $avaTell = '/images/no_ava_50.png';
                             }
                         } else {
                             $tell_link = 'u';
                             if ($rowUserTell['user_photo']) {
                                 $avaTell = '/uploads/users/' . $row_info_likes['tell_uid'] . '/50_' . $rowUserTell['user_photo'];
                             } else {
-                                $avaTell = '{theme}/images/no_ava_50.png';
+                                $avaTell = '/images/no_ava_50.png';
                             }
                         }
 
@@ -807,7 +807,7 @@ HTML;
                             if ($rowUser['user_photo']) {
                                 $luAva = '/uploads/users/' . $likeUser . '/50_' . $rowUser['user_photo'];
                             } else {
-                                $luAva = '{theme}/images/no_ava_50.png';
+                                $luAva = '/images/no_ava_50.png';
                             }
                             $rList .= '<a href="/u' . $likeUser . '" onClick="Page.Go(this.href); return false"><img src="' . $luAva . '" width="32" style="margin-right:5px;margin-top:3px" /></a>';
                             $uNames .= '<a href="/u' . $likeUser . '" onClick="Page.Go(this.href); return false">' . $rowUser['user_search_pref'] . '</a>, ';
@@ -1021,7 +1021,7 @@ HTML;
                             $str_title = substr($attach_type[2], 0, 55);
 
                             if (stripos($attach_type[4], '/uploads/attach/') === false) {
-                                $attach_type[4] = '{theme}/images/no_ava_groups_100.gif';
+                                $attach_type[4] = '/images/no_ava_groups_100.gif';
                                 $no_img = false;
                             } else {
                                 $no_img = true;
@@ -1144,14 +1144,14 @@ HTML;
                         if ($rowUserTell['photo']) {
                             $avaTell = '/uploads/groups/' . $rec_info['tell_uid'] . '/50_' . $rowUserTell['photo'];
                         } else {
-                            $avaTell = '{theme}/images/no_ava_50.png';
+                            $avaTell = '/images/no_ava_50.png';
                         }
                     } else {
                         $tell_link = 'u';
                         if ($rowUserTell['user_photo']) {
                             $avaTell = '/uploads/users/' . $rec_info['tell_uid'] . '/50_' . $rowUserTell['user_photo'];
                         } else {
-                            $avaTell = '{theme}/images/no_ava_50.png';
+                            $avaTell = '/images/no_ava_50.png';
                         }
                     }
 
@@ -1217,7 +1217,7 @@ HTML;
                 if ($user_info['user_photo']) {
                     $tpl->set('{viewer-ava}', '/uploads/users/' . $user_id . '/50_' . $user_info['user_photo']);
                 } else {
-                    $tpl->set('{viewer-ava}', '{theme}/images/no_ava_50.png');
+                    $tpl->set('{viewer-ava}', '/images/no_ava_50.png');
                 }
 
                 $tpl->set('{rec-id}', $row['obj_id']);
@@ -1271,7 +1271,7 @@ HTML;
                             if ($row_comments['user_photo']) {
                                 $tpl->set('{ava}', $config['home_url'] . 'uploads/users/' . $row_comments['author_user_id'] . '/50_' . $row_comments['user_photo']);
                             } else {
-                                $tpl->set('{ava}', '{theme}/images/no_ava_50.png');
+                                $tpl->set('{ava}', '/images/no_ava_50.png');
                             }
 
                             $tpl->set('{rec-id}', $row['obj_id']);
@@ -1442,7 +1442,7 @@ HTML;
                             $str_title = substr($attach_type[2], 0, 55);
 
                             if (stripos($attach_type[4], '/uploads/attach/') === false) {
-                                $attach_type[4] = '{theme}/images/no_ava_groups_100.gif';
+                                $attach_type[4] = '/images/no_ava_groups_100.gif';
                                 $no_img = false;
                             } else {
                                 $no_img = true;
@@ -1562,14 +1562,14 @@ HTML;
                         if ($rowUserTell['photo']) {
                             $avaTell = '/uploads/groups/' . $rec_info_groups['tell_uid'] . '/50_' . $rowUserTell['photo'];
                         } else {
-                            $avaTell = '{theme}/images/no_ava_50.png';
+                            $avaTell = '/images/no_ava_50.png';
                         }
                     } else {
                         $tell_link = 'u';
                         if ($rowUserTell['user_photo']) {
                             $avaTell = '/uploads/users/' . $rec_info_groups['tell_uid'] . '/50_' . $rowUserTell['user_photo'];
                         } else {
-                            $avaTell = '{theme}/images/no_ava_50.png';
+                            $avaTell = '/images/no_ava_50.png';
                         }
                     }
 
@@ -1620,7 +1620,7 @@ HTML;
                 if ($user_info['user_photo']) {
                     $tpl->set('{viewer-ava}', '/uploads/users/' . $user_id . '/50_' . $user_info['user_photo']);
                 } else {
-                    $tpl->set('{viewer-ava}', '{theme}/images/no_ava_50.png');
+                    $tpl->set('{viewer-ava}', '/images/no_ava_50.png');
                 }
 
                 $tpl->set('{rec-id}', $row['obj_id']);
@@ -1673,7 +1673,7 @@ HTML;
                             if ($row_comments['user_photo']) {
                                 $tpl->set('{ava}', $config['home_url'] . 'uploads/users/' . $row_comments['public_id'] . '/50_' . $row_comments['user_photo']);
                             } else {
-                                $tpl->set('{ava}', '{theme}/images/no_ava_50.png');
+                                $tpl->set('{ava}', '/images/no_ava_50.png');
                             }
 
                             $tpl->set('{rec-id}', $row['obj_id']);

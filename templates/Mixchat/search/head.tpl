@@ -96,13 +96,13 @@ maxlength="65" />
    <option value="0">Любая страна</option>
    {country}
   </select>
-  <img src="{theme}/images/loading_mini.gif" alt="" class="load_mini no_display" id="load_mini" /></div>
- <div class="search_clear"></div>
+     <img src="/images/loading_mini.gif" alt="" class="load_mini no_display" id="load_mini"/></div>
+    <div class="search_clear"></div>
 
- <div class="padstylej">
-  <select name="city" id="select_city" class="inpst search_sel" onChange="gSearch.go();">
-   <option value="0">Любой город</option>
-   {city}
+    <div class="padstylej">
+        <select name="city" id="select_city" class="inpst search_sel" onChange="gSearch.go();">
+            <option value="0">Любой город</option>
+            {city}
   </select>
  </div>
  <div class="search_clear"></div>

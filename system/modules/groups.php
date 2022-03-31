@@ -357,7 +357,7 @@ if (Registry::get('logged')) {
                     if ($row['user_photo']) {
                         $tpl->set('{ava}', '/uploads/users/' . $row['fuser_id'] . '/50_' . $row['user_photo']);
                     } else {
-                        $tpl->set('{ava}', '{theme}/images/no_ava_50.png');
+                        $tpl->set('{ava}', '/images/no_ava_50.png');
                     }
                     if (stripos($owner['admin'], "u{$user_id}|") !== false) {
                         $tpl->set('[admin]', '');
@@ -683,7 +683,7 @@ if (Registry::get('logged')) {
                         if ($row_comments['user_photo']) {
                             $tpl->set('{ava}', $config['home_url'] . 'uploads/users/' . $row_comments['public_id'] . '/50_' . $row_comments['user_photo']);
                         } else {
-                            $tpl->set('{ava}', '{theme}/images/no_ava_50.png');
+                            $tpl->set('{ava}', '/images/no_ava_50.png');
                         }
                         $tpl->set('{comm-id}', $row_comments['id']);
                         $tpl->set('{user-id}', $row_comments['public_id']);
@@ -798,7 +798,7 @@ if (Registry::get('logged')) {
                     if ($row_comments['user_photo']) {
                         $tpl->set('{ava}', $config['home_url'] . 'uploads/users/' . $row_comments['public_id'] . '/50_' . $row_comments['user_photo']);
                     } else {
-                        $tpl->set('{ava}', '{theme}/images/no_ava_50.png');
+                        $tpl->set('{ava}', '/images/no_ava_50.png');
                     }
 
                     $tpl->set('{rec-id}', $rec_id);
@@ -992,7 +992,7 @@ if (Registry::get('logged')) {
                         if ($row['user_photo']) {
                             $tpl->set('{ava}', $config['home_url'] . 'uploads/users/' . $row['user_id'] . '/50_' . $row['user_photo']);
                         } else {
-                            $tpl->set('{ava}', '{theme}/images/no_ava_50.png');
+                            $tpl->set('{ava}', '/images/no_ava_50.png');
                         }
                         $friend_info_online = explode(' ', $row['user_search_pref']);
                         $tpl->set('{user-id}', $row['user_id']);
@@ -1075,7 +1075,7 @@ if (Registry::get('logged')) {
                     if ($row['user_photo']) {
                         $tpl->set('{ava}', '/uploads/users/' . $row['user_id'] . '/50_' . $row['user_photo']);
                     } else {
-                        $tpl->set('{ava}', '{theme}/images/no_ava_50.png');
+                        $tpl->set('{ava}', '/images/no_ava_50.png');
                     }
                     $tpl->set('{user-id}', $row['user_id']);
                     $tpl->set('{name}', $row['user_name']);
@@ -1116,7 +1116,7 @@ if (Registry::get('logged')) {
                     if ($row['photo']) {
                         $tpl->set('{ava}', '/uploads/groups/' . $row['id'] . '/50_' . $row['photo']);
                     } else {
-                        $tpl->set('{ava}', '{theme}/images/no_ava_50.png');
+                        $tpl->set('{ava}', '/images/no_ava_50.png');
                     }
                     $tpl->set('{name}', stripslashes($row['title']));
                     $tpl->set('{public-id}', $row['id']);
@@ -1239,7 +1239,7 @@ if (Registry::get('logged')) {
                     if ($row['user_photo']) {
                         $tpl->set('{ava}', $config['home_url'] . 'uploads/users/' . $row['friend_id'] . '/50_' . $row['user_photo']);
                     } else {
-                        $tpl->set('{ava}', "{theme}/images/100_no_ava.png");
+                        $tpl->set('{ava}', "/images/100_no_ava.png");
                     }
 
                     $tpl->set('{user-id}', $row['friend_id']);
@@ -1415,7 +1415,7 @@ if (Registry::get('logged')) {
                         if ($row['photo']) {
                             $tpl->set('{photo}', "/uploads/groups/{$row['id']}/100_{$row['photo']}");
                         } else {
-                            $tpl->set('{photo}', "{theme}/images/no_ava_groups_100.gif");
+                            $tpl->set('{photo}', "/images/no_ava_groups_100.gif");
                         }
 
                         $tpl->set('{name}', stripslashes($row['title']));
@@ -1434,7 +1434,7 @@ if (Registry::get('logged')) {
                         if ($row['user_photo']) {
                             $tpl->set('{inviter-ava}', '/uploads/users/' . $row['user_id'] . '/50_' . $row['user_photo']);
                         } else {
-                            $tpl->set('{inviter-ava}', '{theme}/images/100_no_ava.png');
+                            $tpl->set('{inviter-ava}', '/images/100_no_ava.png');
                         }
 
                         $tpl->compile('content');
@@ -1532,7 +1532,7 @@ if (Registry::get('logged')) {
                     if ($row['photo']) {
                         $tpl->set('{photo}', "/uploads/groups/{$row['id']}/100_{$row['photo']}");
                     } else {
-                        $tpl->set('{photo}', "{theme}/images/no_ava_groups_100.gif");
+                        $tpl->set('{photo}', "/images/no_ava_groups_100.gif");
                     }
 
                     $tpl->compile('content');

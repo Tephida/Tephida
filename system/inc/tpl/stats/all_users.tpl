@@ -1,5 +1,5 @@
-<script type="text/javascript" src="{theme}/js/jquery.1.7.2.js"></script>
-<script type="text/javascript" src="{theme}/js/jquery.graph.js"></script>
+<script type="text/javascript" src="/js/jquery.lib.js"></script>
+<script type="text/javascript" src="/js/jquery.graph.js"></script>
 <script type="text/javascript">
     $(document).ready(function () {
         var graphData = [{

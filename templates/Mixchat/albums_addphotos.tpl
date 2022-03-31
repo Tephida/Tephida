@@ -1,4 +1,3 @@
-<script type="text/javascript" src="{theme}/js/swfupload.js"></script>
 <script type="text/javascript">
 var cnt = 0;
 var UploadedFiles = 0;
@@ -146,15 +145,19 @@ $(document).ready(function() {
  <div class="uploadButton"><div id="uploadButton"></div></div>
  <div class="uploadbuttbg no_display"></div>
 </div>
-<div class="button_div_gray fl_l" style="margin-left:10px;"><button onClick="Page.Go('/albums/view/{aid}'); return false;">Просмотр альбома</button></div>
+<div class="button_div_gray fl_l" style="margin-left:10px;"><button onClick="Page.Go('/albums/view/{aid}'); return false;">
+        Просмотр альбома
+    </button>
 </div>
-<div class="swf_loaded" id="upBar">
- <div class="video_show_bg swf_uploaded">
-  <div class="upProcLotitle" id="status"></div>
-  <div style="background:url('{theme}/images/progress_grad.gif?1');border:1px solid #45688e;height:18px;position:absolute" id="uploadproc"></div>
-  <div style="background:#fff;border:1px solid #cccccc;width:270px;height:18px;margin-bottom:10px"></div>
-  Не закрывайте эту вкладку, пока не завершится загрузка..
- </div>
 </div>
-<input type="hidden" value="{aid}" id="aid" />
+    <div class="swf_loaded" id="upBar">
+        <div class="video_show_bg swf_uploaded">
+            <div class="upProcLotitle" id="status"></div>
+            <div style="background:url('/images/progress_grad.gif?1');border:1px solid #45688e;height:18px;position:absolute"
+                 id="uploadproc"></div>
+            <div style="background:#fff;border:1px solid #cccccc;width:270px;height:18px;margin-bottom:10px"></div>
+            Не закрывайте эту вкладку, пока не завершится загрузка..
+        </div>
+    </div>
+    <input type="hidden" value="{aid}" id="aid" />
 </div>
