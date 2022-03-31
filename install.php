@@ -135,7 +135,6 @@ switch ($act) {
                 './uploads/audio/',
                 './uploads/doc/',
                 './templates/',
-                './templates/Default/',
             );
 
             try {
@@ -409,7 +408,7 @@ return array (
 
 'admin_index' => "{$_POST['adminfile']}",
 
-'temp' => "Default", 
+'temp' => "Mixchat", 
 
 'online_time' => "150", 
 

@@ -491,7 +491,7 @@ class Bugs
 ////            $tpl->set('{ava}', '/uploads/users/' . $row['user_id'] . '/50_' . $row['user_photo']);
 //        }
 //        else {
-////            $tpl->set('{ava}', '/templates/Default/images/no_ava_50.png');
+////            $tpl->set('{ava}', '/images/no_ava_50.png');
 //        }
 //        $tpl->set('{name}', $row['user_search_pref']);
 //        $tpl->compile('content');
