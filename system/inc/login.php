@@ -8,9 +8,9 @@
  */
 
 use FluffyDollop\Support\Registry;
-use Mozg\classes\Cookie;
 use Mozg\classes\TplCp;
 use Mozg\classes\Users;
+use FluffyDollop\Support\Cookie;
 
 header('Content-type: text/html; charset=utf-8');
 

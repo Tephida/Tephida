@@ -1,0 +1,44 @@
+type:build:
+  - ".github/**/*"
+  - ".coveralls.yml"
+  - ".gitignore"
+  - "phpcs.xml"
+dependencies:
+  - "composer.json"
+  - "composer.lock"
+type:helper:
+  - "src/Helpers/**/*"
+  - "src/Support/**/*"
+  - "src/Traits/**/*"
+  - "system/functions.php"
+
+type:major:
+  - "system/init.php"
+  - "system/login.php"
+  - "system/mod.php"
+type:classes:
+  - "system/classes/**/*"
+type:modules:
+  - "system/modules/**/*"
+type:admin:
+  - "system/inc/**/*"
+type:i18n:
+  - "lang/**/*"
+type:services:
+  - "system/Exceptions/**/*"
+type:interfaces:
+  - "system/Interfaces/**/*"
+  - "system/Contracts/**/*"
+type:tests:
+  - 'tests/**/*'
+  - 'phpunit.xml.dist'
+type:templates:
+  - "css/**/*"
+  - "images/**/*"
+  - "style/**/*"
+  - "templates/**/*"
+theme:docs:
+  - "README.md"
+  - "LICENSE"
+  - "CONTRIBUTING.md"
+  - "CODE_OF_CONDUCT.md"

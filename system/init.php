@@ -7,7 +7,7 @@
  *
  */
 
-use Mozg\classes\Cookie;
+use FluffyDollop\Support\Cookie;
 use Mozg\modules\Lang;
 use FluffyDollop\Support\{Registry, Router, Templates};
 
