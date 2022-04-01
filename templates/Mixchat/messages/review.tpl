@@ -19,7 +19,8 @@
 
 <div id="bmsg_{mid}">
     <div class="msg_div">
-        <div class="msg_ava fl_l"><a href="u{user-id}" onClick="Page.Go(this.href); return false"><img src="{ava}" alt=""/></a>
+        <div class="msg_ava fl_l"><a href="u{user-id}" onClick="Page.Go(this.href); return false"><img src="{ava}"
+                                                                                                       alt=""/></a>
         </div>
         <div class="msg_name"><a href="u{user-id}" onClick="Page.Go(this.href); return false">[outbox]Сообщение для
                 [/outbox]{name}</a>&nbsp;&nbsp;<font>{online}</font><span>{date}</span></div>

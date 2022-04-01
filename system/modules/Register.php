@@ -9,10 +9,9 @@
 
 namespace Mozg\modules;
 
-use Mozg\classes\{Cookie, Email, Module, TpLSite, ViewEmail};
-use FluffyDollop\Support\{Filesystem, Registry, Status, ViiMail};
+use Mozg\classes\{Email, Module, TpLSite, ViewEmail};
+use FluffyDollop\Support\{Filesystem, Registry, Status, Cookie, ViiMail};
 use JetBrains\PhpStorm\NoReturn;
-use Tephida\View\myView;
 
 class Register extends Module
 {

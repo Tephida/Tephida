@@ -121,65 +121,55 @@
     <div class="page">
         @if($logged)
             <div class="panelUser">
-                <a onMouseOver="myhtml.title('1', 'Моя Страница', 'myprof')" onMouseOut="$('.js_titleRemove').remove();"
-                   href="{{ $my_page_link }}" onClick="Page.Go(this.href); return false;">
-                    <div class="ic_profile" id="myprof1" onMouseOut="$('.js_titleRemove').remove();"></div>
+                <a href="{{ $my_page_link }}" onClick="Page.Go(this.href); return false;">
+                    <div class="ic_profile" id="myprof1"
+                         onMouseOver="myhtml.title('1', 'Моя Страница', 'myprof')"></div>
                 </a>
-                <a onMouseOut="$('.js_titleRemove').remove();" onMouseOver="myhtml.title('2', 'Сообщения', 'myprof')"
-                   href="/messages" onClick="Page.Go(this.href); return false;">
-                    <div class="ic_msg" id="myprof2" onMouseOut="$('.js_titleRemove').remove();">
+                <a href="/messages" onClick="Page.Go(this.href); return false;">
+                    <div class="ic_msg" id="myprof2" onMouseOver="myhtml.title('2', 'Сообщения', 'myprof')">
                         <div id="new_msg">{{ $msg }}</div>
                     </div>
                 </a>
-                <a onMouseOut="$('.js_titleRemove').remove();" onMouseOver="myhtml.title('3', 'Друзья', 'myprof')"
-                   href="/friends{requests-link}" onClick="Page.Go(this.href); return false;" id="requests_link">
-                    <div class="ic_friends" id="myprof3" onMouseOut="$('.js_titleRemove').remove();">
+                <a href="/friends{requests-link}" onClick="Page.Go(this.href); return false;" id="requests_link">
+                    <div class="ic_friends" id="myprof3" onMouseOver="myhtml.title('3', 'Друзья', 'myprof')">
                         <div id="new_requests">{{ $demands }}</div>
                     </div>
                 </a>
-                <a onMouseOut="$('.js_titleRemove').remove();" onMouseOver="myhtml.title('4', 'Фотографии', 'myprof')"
-                   href="/albums/{my-id}" onClick="Page.Go(this.href); return false;" id="requests_link_new_photos">
-                    <div class="ic_photo" id="myprof4" onMouseOut="$('.js_titleRemove').remove();">
+                <a href="/albums/{my-id}" onClick="Page.Go(this.href); return false;" id="requests_link_new_photos">
+                    <div class="ic_photo" id="myprof4" onMouseOver="myhtml.title('4', 'Фотографии', 'myprof')">
                         <div id="new_photos">{{ $new_photos }}</div>
                     </div>
                 </a>
-                <a onMouseOut="$('.js_titleRemove').remove();" onMouseOver="myhtml.title('5', 'Закладки', 'myprof')"
-                   href="/fave" onClick="Page.Go(this.href); return false;">
-                    <div id="myprof5" class="ic_fave" onMouseOut="$('.js_titleRemove').remove();"></div>
+                <a href="/fave" onClick="Page.Go(this.href); return false;">
+                    <div id="myprof5" class="ic_fave" onMouseOver="myhtml.title('5', 'Закладки', 'myprof')"></div>
                 </a>
-                <a onMouseOut="$('.js_titleRemove').remove();" onMouseOver="myhtml.title('6', 'Видеозаписи', 'myprof')"
-                   href="/videos" onClick="Page.Go(this.href); return false;">
-                    <div onMouseOut="$('.js_titleRemove').remove();" id="myprof6" class="ic_video"></div>
+                <a href="/videos" onClick="Page.Go(this.href); return false;">
+                    <div id="myprof6" class="ic_video" onMouseOver="myhtml.title('6', 'Видеозаписи', 'myprof')"></div>
                 </a>
-                <a onMouseOut="$('.js_titleRemove').remove();" onMouseOver="myhtml.title('8', 'Сообщества', 'myprof')"
-                   href="{{ $groups_link }}" onClick="Page.Go(this.href); return false;" id="new_groups_lnk">
-                    <div onMouseOut="$('.js_titleRemove').remove();" id="myprof8" class="ic_groups">
+                <a href="{{ $groups_link }}" onClick="Page.Go(this.href); return false;" id="new_groups_lnk">
+                    <div id="myprof8" class="ic_groups" onMouseOver="myhtml.title('8', 'Сообщества', 'myprof')">
                         <div id="new_groups">{{ $new_groups }}</div>
                     </div>
                 </a>
-                <a onMouseOut="$('.js_titleRemove').remove();" onMouseOver="myhtml.title('9', 'Новости', 'myprof')"
-                   href="/news{{ $news_link }}" onClick="Page.Go(this.href); return false;" id="news_link">
-                    <div onMouseOut="$('.js_titleRemove').remove();" id="myprof9" class="ic_news">
+                <a href="/news{{ $news_link }}" onClick="Page.Go(this.href); return false;" id="news_link">
+                    <div id="myprof9" class="ic_news" onMouseOver="myhtml.title('9', 'Новости', 'myprof')">
                         <div id="new_news">{{ $new_news }}</div>
                     </div>
                 </a>
-                <a onMouseOut="$('.js_titleRemove').remove();" onMouseOver="myhtml.title('10', 'Заметки', 'myprof')"
-                   href="/notes" onClick="Page.Go(this.href); return false;">
-                    <div onMouseOut="$('.js_titleRemove').remove();" id="myprof10" class="ic_notes"></div>
+                <a href="/notes" onClick="Page.Go(this.href); return false;">
+                    <div id="myprof10" class="ic_notes" onMouseOver="myhtml.title('10', 'Заметки', 'myprof')"></div>
                 </a>
-                <a onMouseOut="$('.js_titleRemove').remove();" onMouseOver="myhtml.title('11', 'Настройки', 'myprof')"
-                   href="/settings" onClick="Page.Go(this.href); return false;">
-                    <div onMouseOut="$('.js_titleRemove').remove();" id="myprof11" class="ic_settings"></div>
+                <a href="/settings" onClick="Page.Go(this.href); return false;">
+                    <div id="myprof11" class="ic_settings"
+                         onMouseOver="myhtml.title('11', 'Настройки', 'myprof')"></div>
                 </a>
-                <a onMouseOut="$('.js_titleRemove').remove();" onMouseOver="myhtml.title('12', 'Помощь', 'myprof')"
-                   href="/support" onClick="Page.Go(this.href); return false;">
-                    <div onMouseOut="$('.js_titleRemove').remove();" id="myprof12" class="ic_support">
+                <a href="/support" onClick="Page.Go(this.href); return false;">
+                    <div id="myprof12" class="ic_support" onMouseOver="myhtml.title('12', 'Помощь', 'myprof')">
                         <div id="new_support">{{ $new_support }}</div>
                     </div>
                 </a>
-                <a onMouseOut="$('.js_titleRemove').remove();" onMouseOver="myhtml.title('13', 'Баланс', 'myprof')"
-                   href="{{ $ubm_link }}" onClick="Page.Go(this.href); return false;" id="ubm_link">
-                    <div onMouseOut="$('.js_titleRemove').remove();" id="myprof13" class="ic_balance">
+                <a href="{{ $ubm_link }}" onClick="Page.Go(this.href); return false;" id="ubm_link">
+                    <div id="myprof13" class="ic_balance" onMouseOver="myhtml.title('13', 'Баланс', 'myprof')">
                         <div id="new_ubm">{{ $new_ubm }}</div>
                     </div>
                 </a>
@@ -200,7 +190,6 @@
        onClick="Page.Go(this.href); return false">@_e('main_tpl_people')</a>
     <a href="/index.php?go=search&type=4" onClick="Page.Go(this.href); return false">@_e('main_tpl_lang_1')</a>
     <a href="/support" onClick="Page.Go(this.href); return false">@_e('main_support')</a>
-    <a href="/review" onClick="Page.Go(this.href); return false">Отзывы</a>
     <div>Mixchat &copy; 2022
         <a class="cursor_pointer" onClick="trsn.box();"
            onMouseOver="myhtml.title('1', '@_e('lang_toltip')', 'langTitle', 1)"

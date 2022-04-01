@@ -9,8 +9,7 @@
 
 use FluffyDollop\Support\{Filesystem, Gzip, Registry, Templates};
 use JetBrains\PhpStorm\ArrayShape;
-use Mozg\classes\Cookie;
-use Mozg\classes\Declensions;
+use FluffyDollop\Support\Cookie;
 use Mozg\modules\Lang;
 
 /**
@@ -42,9 +41,10 @@ function informationText($array): string
  * @param $num
  * @param $type
  * @return void
- * @throws ErrorException
+ * @deprecated
  */
-function navigation($gc, $num, $type) {
+function navigation($gc, $num, $type): void
+{
     global $tpl, $page;
     $gcount = $gc;
     $cnt = $num;
@@ -52,7 +52,7 @@ function navigation($gc, $num, $type) {
     $items_per_page = $gcount;
     $page_refers_per_page = 5;
     $pages = '';
-    $pages_count = (($items_count % $items_per_page != 0)) ? floor($items_count / $items_per_page) + 1 : floor($items_count / $items_per_page);
+    $pages_count = (($items_count % $items_per_page !== 0)) ? floor($items_count / $items_per_page) + 1 : floor($items_count / $items_per_page);
     $start_page = ($page - $page_refers_per_page <= 0) ? 1 : $page - $page_refers_per_page + 1;
     $page_refers_per_page_count = (($page - $page_refers_per_page < 0) ? $page : $page_refers_per_page) + (($page + $page_refers_per_page > $pages_count) ? ($pages_count - $page) : $page_refers_per_page - 1);
     if ($page > 1) $pages.= '<a href="' . $type . ($page - 1) . '" onClick="Page.Go(this.href); return false">&laquo;</a>';
@@ -102,7 +102,7 @@ function navigationNew($items_per_page, $items_count, $type): string
         $pages .= '<a href="' . $type . ($start_page - 1) . '" onClick="Page.Go(this.href); return false">...</a>';
     }
     for ($index = -1; ++$index <= $page_refers_per_page_count - 1;) {
-        if ($index + $start_page == $page) {
+        if ($index + $start_page === $page) {
             $pages .= '<span>' . ($start_page + $index) . '</span>';
         } else {
             $pages .= '<a href="' . $type . ($start_page + $index) . '" onClick="Page.Go(this.href); return false">' . ($start_page + $index) . '</a>';
@@ -113,7 +113,7 @@ function navigationNew($items_per_page, $items_count, $type): string
         $pages .= '<a href="' . $type . $pages_count . '" onClick="Page.Go(this.href); return false">' . $pages_count . '</a>';
     }
     $res_if = $items_count / $items_per_page;
-    if (ceil($res_if) == $page) {
+    if (ceil($res_if) === $page) {
         $pages .= '';
     } else {
         $pages .= '<a href="' . $type . ($page + 1) . '" onClick="Page.Go(this.href); return false">&raquo;</a>';
@@ -358,7 +358,7 @@ function declWord(int $num, string $type): string
 {
     $lang = Lang::getLang();
     $decl_list = require ROOT_DIR . "/lang/{$lang}/declensions.php";
-    return (new Declensions($decl_list))->makeWord($num, $type);
+    return (new \FluffyDollop\Support\Declensions($decl_list))->makeWord($num, $type);
 }
 
 /**
@@ -836,6 +836,7 @@ function compileAjax($tpl, $params): int
  * @param $params
  * @return int
  * @throws Exception
+ *
  */
 function compileNoAjax($tpl, $params): int
 {

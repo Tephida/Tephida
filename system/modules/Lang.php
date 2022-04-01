@@ -11,10 +11,9 @@ declare(strict_types=1);
 
 namespace Mozg\modules;
 
-use Mozg\classes\Cookie;
 use Mozg\classes\Module;
-use Mozg\classes\TpLSite;
 use Sinergi\BrowserDetector\Language;
+use FluffyDollop\Support\Cookie;
 
 class Lang extends Module
 {
@@ -29,7 +28,6 @@ class Lang extends Module
     {
         $lang_list = self::langList();
         $lang_count = \count($lang_list);
-//        $lang_Id = isset($_COOKIE['lang']) ? (int)$_COOKIE['lang'] : 0;
         $lang_Id = (int)(Cookie::get('lang'));
         if ($lang_Id > $lang_count) {
             Cookie::append('lang', self::EN, 365);
@@ -49,7 +47,6 @@ class Lang extends Module
                 $use_lang = self::EN;
             }
         }
-//        $use_lang = ($use_lang == 0) ? self::EN : $use_lang;
         return $lang_list[$use_lang]['key'];
     }
 

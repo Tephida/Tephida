@@ -1,0 +1,17 @@
+addReviewers: true
+
+numberOfReviewers: 1
+
+reviewers:
+  - semyon492
+
+addAssignees: true
+
+assignees:
+  - semyon492
+
+numberOfAssignees: 1
+
+skipKeywords:
+  - wip
+  - draft

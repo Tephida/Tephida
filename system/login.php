@@ -10,7 +10,8 @@
 declare(strict_types=1);
 
 use FluffyDollop\Support\Registry;
-use Mozg\classes\{Cookie, TpLSite, Users};
+use FluffyDollop\Support\Cookie;
+use Mozg\classes\{Users};
 
 $_IP = $_SERVER['REMOTE_ADDR'];
 

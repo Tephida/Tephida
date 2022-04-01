@@ -1,6 +1,7 @@
 <div class="friends_onefriend border_radius_5 d-flex justify-content-start" style="width:543px">
     <div>
-        <a href="" onClick="messages.new_({user-id}); return false" class="no_display" style="position:absolute;margin-top:82px;margin-left:0">
+        <a href="" onClick="messages.new_({user-id}); return false" class="no_display"
+           style="position:absolute;margin-top:82px;margin-left:0">
             <img src="/images/badsr.png" style="width:22px;height:18px" alt="{name}">
         </a>
         <a href="u{user-id}" onClick="Page.Go(this.href); return false">
