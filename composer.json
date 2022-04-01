@@ -14,7 +14,7 @@
     "ext-zlib": "*",
     "ext-gd": "*",
     "ext-iconv": "*",
-    "tephida/fluffy-dollop": "^3.2.7",
+    "tephida/fluffy-dollop": "^3.3.2",
     "tephida/view": "^1.0",
     "sinergi/browser-detector": "^6.1",
     "ext-curl": "*",
