@@ -18,7 +18,7 @@ It requires PHP version 8.0 and supports PHP up to 8.1.
 
 ### Server Requirements
 
-The Sura framework has a few system requirements.
+Vii engine has a few system requirements.
 
 However, if you are not using Homestead, you will need to make sure your server meets the following requirements:
 
