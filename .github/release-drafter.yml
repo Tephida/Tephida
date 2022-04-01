@@ -8,7 +8,7 @@ name-template: '$RESOLVED_VERSION'
 tag-template: '$RESOLVED_VERSION'
 
 categories:
-  - title: 'Features'
+  - title: '🚀  Features'
     labels:
       - 'feature'
       - 'type:helper'
@@ -19,7 +19,7 @@ categories:
       - 'type:resources'
       - 'type:services'
       - 'type:interfaces'
-  - title: 'Bug Fixes'
+  - title: '🐛 Bug Fixes'
     labels:
       - 'fix'
       - 'bugfix'
@@ -27,7 +27,7 @@ categories:
       - 'hotfix'
       - 'dependencies'
       - 'type:major'
-  - title: 'Maintenance'
+  - title: '🧰 Maintenance'
     labels:
       - 'type:build'
       - 'refactoring'
