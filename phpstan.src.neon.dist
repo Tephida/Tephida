@@ -1,6 +1,6 @@
 parameters:
   paths:
-    - src
+    - system
   level: 0
   ignoreErrors:
     - "#\\(void\\) is used#"
