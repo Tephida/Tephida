@@ -9,6 +9,7 @@
 
 use FluffyDollop\Support\{Filesystem, Registry};
 use FluffyDollop\Security\AntiSpam;
+use Mozg\classes\Cache;
 use Mozg\classes\Dialog;
 use Mozg\classes\Flood;
 
@@ -58,11 +59,11 @@ if (Registry::get('logged')) {
                                         $msg_lnk = '/messages#c' . $room_id;
                                         $msg = informationText($msg);
                                         $db->query("INSERT INTO `updates` SET for_user_id = '{$v['oid2']}', from_user_id = '{$user_id}', type = '8', date = '{$server_time}', text = '{$msg}', user_photo = '{$user_info['user_photo']}', user_search_pref = '{$user_info['user_search_pref']}', lnk = '{$msg_lnk}'");
-                                        mozg_create_cache("user_{$v['oid2']}/updates", 1);
+                                        Cache::mozg_create_cache("user_{$v['oid2']}/updates", 1);
                                     }
-                                    mozg_clear_cache_file('user_' . $v['oid2'] . '/im');
-                                    mozg_create_cache('user_' . $v['oid2'] . '/im_update', '1');
-                                    mozg_create_cache("user_{$v['oid2']}/typograf{$user_id}", "");
+                                    Cache::mozg_clear_cache_file('user_' . $v['oid2'] . '/im');
+                                    Cache::mozg_create_cache('user_' . $v['oid2'] . '/im_update', '1');
+                                    Cache::mozg_create_cache("user_{$v['oid2']}/typograf{$user_id}", "");
                                 }
                             }
                             $db->query("UPDATE `room_users` SET type = 1 WHERE id = '" . $row2['id'] . "'");
@@ -133,11 +134,11 @@ if (Registry::get('logged')) {
                                             $msg_lnk = '/messages#c' . $room_id;
                                             $msg = informationText($msg);
                                             $db->query("INSERT INTO `updates` SET for_user_id = '{$v['oid2']}', from_user_id = '{$user_id}', type = '8', date = '{$server_time}', text = '{$msg}', user_photo = '{$user_info['user_photo']}', user_search_pref = '{$user_info['user_search_pref']}', lnk = '{$msg_lnk}'");
-                                            mozg_create_cache("user_{$v['oid2']}/updates", 1);
+                                            Cache::mozg_create_cache("user_{$v['oid2']}/updates", 1);
                                         }
-                                        mozg_clear_cache_file('user_' . $v['oid2'] . '/im');
-                                        mozg_create_cache('user_' . $v['oid2'] . '/im_update', '1');
-                                        mozg_create_cache("user_{$v['oid2']}/typograf{$user_id}", "");
+                                        Cache::mozg_clear_cache_file('user_' . $v['oid2'] . '/im');
+                                        Cache::mozg_create_cache('user_' . $v['oid2'] . '/im_update', '1');
+                                        Cache::mozg_create_cache("user_{$v['oid2']}/typograf{$user_id}", "");
                                     }
                                 }
                                 $jsonResponse['response'] = $room_id;
@@ -231,11 +232,11 @@ if (Registry::get('logged')) {
                                     $msg_lnk = '/messages#c' . $room_id;
                                     $msg = informationText($msg);
                                     $db->query("INSERT INTO `updates` SET for_user_id = '{$v['oid2']}', from_user_id = '{$user_id}', type = '8', date = '{$server_time}', text = '{$msg}', user_photo = '{$user_info['user_photo']}', user_search_pref = '{$user_info['user_search_pref']}', lnk = '{$msg_lnk}'");
-                                    mozg_create_cache("user_{$v['oid2']}/updates", 1);
+                                    Cache::mozg_create_cache("user_{$v['oid2']}/updates", 1);
                                 }
-                                mozg_clear_cache_file('user_' . $v['oid2'] . '/im');
-                                mozg_create_cache('user_' . $v['oid2'] . '/im_update', '1');
-                                mozg_create_cache("user_{$v['oid2']}/typograf{$user_id}", "");
+                                Cache::mozg_clear_cache_file('user_' . $v['oid2'] . '/im');
+                                Cache::mozg_create_cache('user_' . $v['oid2'] . '/im_update', '1');
+                                Cache::mozg_create_cache("user_{$v['oid2']}/typograf{$user_id}", "");
                             }
                         }
                         $jsonResponse['response'] = $room_id;
@@ -341,11 +342,11 @@ if (Registry::get('logged')) {
                                 SET for_user_id = '{$v}', from_user_id = '{$user_id}', type = '8', 
                                 date = '{$server_time}', text = '{$msg}', user_photo = '{$user_info['user_photo']}', 
                                 user_search_pref = '{$user_info['user_search_pref']}', lnk = '{$msg_lnk}'");
-                                mozg_create_cache("user_{$v}/updates", 1);
+                                Cache::mozg_create_cache("user_{$v}/updates", 1);
                             }
-                            mozg_clear_cache_file('user_' . $v . '/im');
-                            mozg_create_cache('user_' . $v . '/im_update', '1');
-                            mozg_create_cache("user_{$v}/typograf{$user_id}", "");
+                            Cache::mozg_clear_cache_file('user_' . $v . '/im');
+                            Cache::mozg_create_cache('user_' . $v . '/im_update', '1');
+                            Cache::mozg_create_cache("user_{$v}/typograf{$user_id}", "");
                         }
                         $jsonResponse['response'] = $room_id;
                     } else {
@@ -404,11 +405,11 @@ if (Registry::get('logged')) {
                                             $msg_lnk = '/messages#c' . $room_id;
                                             $msg = informationText($msg);
                                             $db->query("INSERT INTO `updates` SET for_user_id = '{$v['oid2']}', from_user_id = '{$user_id}', type = '8', date = '{$server_time}', text = '{$msg}', user_photo = '{$user_info['user_photo']}', user_search_pref = '{$user_info['user_search_pref']}', lnk = '{$msg_lnk}'");
-                                            mozg_create_cache("user_{$v['oid2']}/updates", 1);
+                                            Cache::mozg_create_cache("user_{$v['oid2']}/updates", 1);
                                         }
-                                        mozg_clear_cache_file('user_' . $v['oid2'] . '/im');
-                                        mozg_create_cache('user_' . $v['oid2'] . '/im_update', '1');
-                                        mozg_create_cache("user_{$v['oid2']}/typograf{$user_id}", "");
+                                        Cache::mozg_clear_cache_file('user_' . $v['oid2'] . '/im');
+                                        Cache::mozg_create_cache('user_' . $v['oid2'] . '/im_update', '1');
+                                        Cache::mozg_create_cache("user_{$v['oid2']}/typograf{$user_id}", "");
                                     }
                                 }
                             }
@@ -456,11 +457,11 @@ if (Registry::get('logged')) {
                                     $msg_lnk = '/messages#c' . $room_id;
                                     $msg = informationText($msg);
                                     $db->query("INSERT INTO `updates` SET for_user_id = '{$v['oid2']}', from_user_id = '{$user_id}', type = '8', date = '{$server_time}', text = '{$msg}', user_photo = '{$user_info['user_photo']}', user_search_pref = '{$user_info['user_search_pref']}', lnk = '{$msg_lnk}'");
-                                    mozg_create_cache("user_{$v['oid2']}/updates", 1);
+                                    Cache::mozg_create_cache("user_{$v['oid2']}/updates", 1);
                                 }
-                                mozg_clear_cache_file('user_' . $v['oid2'] . '/im');
-                                mozg_create_cache('user_' . $v['oid2'] . '/im_update', '1');
-                                mozg_create_cache("user_{$v['oid2']}/typograf{$user_id}", "");
+                                Cache::mozg_clear_cache_file('user_' . $v['oid2'] . '/im');
+                                Cache::mozg_create_cache('user_' . $v['oid2'] . '/im_update', '1');
+                                Cache::mozg_create_cache("user_{$v['oid2']}/typograf{$user_id}", "");
                             }
                         }
                         $db->query("UPDATE room_users  SET type = 2 WHERE id = '" . $row2['id'] . "'");
@@ -577,7 +578,7 @@ if (Registry::get('logged')) {
                     $im_user_id = 0;
                 }
                 $db->query("UPDATE `im` SET msg_num = msg_num-1 WHERE iuser_id = '" . $user_id . "' and im_user_id = '" . $im_user_id . "' AND room_id = '" . $check['room_id'] . "'");
-                mozg_clear_cache_file('user_' . $check['history_user_id'] . '/im');
+                Cache::mozg_clear_cache_file('user_' . $check['history_user_id'] . '/im');
             }
             break;
 
@@ -587,9 +588,9 @@ if (Registry::get('logged')) {
             $for_user_id = intFilter('for_user_id');
             if (!$room_id) {
                 if (intFilter('stop') == 1) {
-                    mozg_create_cache("user_{$for_user_id}/typograf{$user_id}", "");
+                    Cache::mozg_create_cache("user_{$for_user_id}/typograf{$user_id}", "");
                 } else {
-                    mozg_create_cache("user_{$for_user_id}/typograf{$user_id}", 1);
+                    Cache::mozg_create_cache("user_{$for_user_id}/typograf{$user_id}", 1);
                 }
             }
             break;
@@ -602,9 +603,9 @@ if (Registry::get('logged')) {
                 $for_user_id = 0;
             }
             $last_id = intFilter('last_id');
-            $sess_last_id = mozg_cache('user_' . $user_id . '/im');
+            $sess_last_id = Cache::mozg_cache('user_' . $user_id . '/im');
             if (!$room_id) {
-                $typograf = mozg_cache("user_{$user_id}/typograf{$for_user_id}");
+                $typograf = Cache::mozg_cache("user_{$user_id}/typograf{$for_user_id}");
                 if ($typograf) {
                     {
                         echo "<script>$('#im_typograf').fadeIn()</script>";
@@ -623,7 +624,7 @@ if (Registry::get('logged')) {
             }
 
             $sql_ = $db->super_query("SELECT tb1.id, text, information, date, read_ids, history_user_id, attach, tell_uid, tell_date, public, tell_comm, if(history_user_id > 0, tb2.user_name, '') as user_name, if(history_user_id > 0, tb2.user_photo, '') as user_photo FROM `messages` tb1 LEFT JOIN `users` tb2 ON history_user_id > 0 AND tb1.history_user_id = tb2.user_id WHERE " . ($room_id ? "tb1.room_id = '{$room_id}'" : "tb1.room_id = 0 and find_in_set('{$for_user_id}', tb1.user_ids)") . " and find_in_set('{$user_id}', tb1.user_ids) AND not find_in_set('{$user_id}', tb1.del_ids) ORDER by `date` ASC LIMIT " . $limit . ", 20", true);
-            mozg_create_cache('user_' . $user_id . '/im', $last_id);
+            Cache::mozg_create_cache('user_' . $user_id . '/im', $last_id);
             if ($sql_) {
                 $tpl->load_template('im/msg.tpl');
                 foreach ($sql_ as $row) {
@@ -878,7 +879,7 @@ HTML;
                 $for_user_id = 0;
             }
             if ($for_user_id) {
-                mozg_create_cache("user_{$for_user_id}/typograf{$user_id}", "");
+                Cache::mozg_create_cache("user_{$for_user_id}/typograf{$user_id}", "");
             }
             $limit_msg = 20;
             if ($need_read) {
@@ -895,7 +896,7 @@ HTML;
                             $im_user_id = 0;
                         }
                         $db->query("UPDATE `im` SET msg_num = msg_num-1 WHERE iuser_id = '" . $user_id . "' and im_user_id = '" . $im_user_id . "' AND room_id = '" . $row['room_id'] . "'");
-                        mozg_clear_cache_file('user_' . $row['history_user_id'] . '/im');
+                        Cache::mozg_clear_cache_file('user_' . $row['history_user_id'] . '/im');
                     }
                     $db->query("UPDATE `users` SET user_pm_num = user_pm_num-" . count($sql) . " WHERE user_id = '" . $user_id . "'");
                 }
@@ -1208,7 +1209,7 @@ HTML;
 
         case "upDialogs":
             NoAjaxQuery();
-            $update = mozg_cache('user_' . $user_id . '/im_update');
+            $update = Cache::mozg_cache('user_' . $user_id . '/im_update');
             if ($update) {
                 $sql_ = $db->super_query("SELECT tb1.msg_num, im_user_id, room_id FROM `im` tb1 LEFT JOIN `users` tb2 ON tb1.im_user_id > 0 and tb2.user_id = tb1.im_user_id LEFT JOIN `room` tb3 ON tb1.room_id > 0 and tb3.id = tb1.room_id WHERE tb1.iuser_id = '" . $user_id . "' AND msg_num > 0 ORDER by `idate` DESC LIMIT 0, 50", true);
                 $res = '';
@@ -1220,7 +1221,7 @@ HTML;
                     $doc_title = 'document.title = \'(' . $user_info['user_pm_num'] . ') Новые сообщения\';';
                 } else {
                     $doc_title = 'document.title = \'Диалоги\';';
-                    mozg_create_cache('user_' . $user_id . '/im_update', '0');
+                    Cache::mozg_create_cache('user_' . $user_id . '/im_update', '0');
                     $user_pm_num_2 = '';
                 }
                 echo '<script type="text/javascript">
@@ -1258,7 +1259,7 @@ HTML;
                                 $im_user_id = 0;
                             }
                             $db->query("UPDATE `im` SET msg_num = msg_num-1 WHERE iuser_id = '" . $user_id . "' and im_user_id = '" . $im_user_id . "' AND room_id = '" . $row2['room_id'] . "'");
-                            mozg_clear_cache_file('user_' . $row2['history_user_id'] . '/im');
+                            Cache::mozg_clear_cache_file('user_' . $row2['history_user_id'] . '/im');
                         }
                     }
                 }
@@ -1290,7 +1291,7 @@ HTML;
                         $im_user_id = 0;
                     }
                     $db->query("UPDATE `im` SET msg_num = msg_num-1 WHERE iuser_id = '" . $user_id . "' and im_user_id = '" . $im_user_id . "' AND room_id = '" . $row['room_id'] . "'");
-                    mozg_clear_cache_file('user_' . $row['history_user_id'] . '/im');
+                    Cache::mozg_clear_cache_file('user_' . $row['history_user_id'] . '/im');
                 }
             }
             break;

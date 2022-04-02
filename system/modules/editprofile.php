@@ -8,6 +8,7 @@
  */
 
 use FluffyDollop\Support\{Filesystem, Registry, Status, Thumbnail};
+use Mozg\classes\Cache;
 
 NoAjaxQuery();
 
@@ -148,8 +149,8 @@ if (Registry::get('logged')) {
                         $config = settings_get();
                         $photo = $config['home_url'] . 'uploads/users/' . $user_id . '/' . $image_rename . $res_type;
 
-                        mozg_clear_cache_file('user_' . $user_id . '/profile_' . $user_id);
-                        mozg_clear_cache();
+                        Cache::mozg_clear_cache_file('user_' . $user_id . '/profile_' . $user_id);
+                        Cache::mozg_clear_cache();
                         $status = Status::OK;
                     } else {
                         $photo = '';
@@ -196,8 +197,8 @@ if (Registry::get('logged')) {
                 Filesystem::delete($upload_dir . 'c_' . $row['user_photo']);
                 //TODO удалить из альбома
 
-                mozg_clear_cache_file('user_' . $user_id . '/profile_' . $user_id);
-                mozg_clear_cache();
+                Cache::mozg_clear_cache_file('user_' . $user_id . '/profile_' . $user_id);
+                Cache::mozg_clear_cache();
             }
             break;
 
@@ -254,8 +255,8 @@ if (Registry::get('logged')) {
 
             $db->query("UPDATE `users` SET user_sex = '{$user_sex}', user_day = '{$user_day}', user_month = '{$user_month}', user_year = '{$user_year}', user_country = '{$user_country}', user_city = '{$user_city}', user_country_city_name = '{$user_country_city_name}', user_birthday = '{$user_birthday}', user_sp = '{$user_sp}' WHERE user_id = '{$user_info['user_id']}'");
 
-            mozg_clear_cache_file('user_' . $user_info['user_id'] . '/profile_' . $user_info['user_id']);
-            mozg_clear_cache();
+            Cache::mozg_clear_cache_file('user_' . $user_info['user_id'] . '/profile_' . $user_info['user_id']);
+            Cache::mozg_clear_cache();
 
             echo 'ok';
 
@@ -284,7 +285,7 @@ if (Registry::get('logged')) {
 
             $db->query("UPDATE `users` SET user_xfields = '{$xfieldsdata}' WHERE user_id = '{$user_info['user_id']}'");
 
-            mozg_clear_cache_file('user_' . $user_info['user_id'] . '/profile_' . $user_info['user_id']);
+            Cache::mozg_clear_cache_file('user_' . $user_info['user_id'] . '/profile_' . $user_info['user_id']);
 
             echo 'ok';
 
@@ -314,7 +315,7 @@ if (Registry::get('logged')) {
 
             $db->query("UPDATE `users` SET user_xfields_all = '{$xfieldsdata}' WHERE user_id = '{$user_info['user_id']}'");
 
-            mozg_clear_cache_file('user_' . $user_info['user_id'] . '/profile_' . $user_info['user_id']);
+            Cache::mozg_clear_cache_file('user_' . $user_info['user_id'] . '/profile_' . $user_info['user_id']);
 
             echo 'ok';
 

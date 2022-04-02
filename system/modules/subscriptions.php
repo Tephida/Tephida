@@ -8,6 +8,7 @@
  */
 
 use FluffyDollop\Support\Registry;
+use Mozg\classes\Cache;
 
 NoAjaxQuery();
 
@@ -50,13 +51,13 @@ if (Registry::get('logged')) {
 
                     $db->query("INSERT INTO `updates` SET for_user_id = '{$for_user_id}', from_user_id = '{$user_info['user_id']}', type = '13', date = '{$server_time}', text = '{$action_update_text}', user_photo = '{$user_info['user_photo']}', user_search_pref = '{$user_info['user_search_pref']}', lnk = '/u{$user_info['user_id']}'");
 
-                    mozg_create_cache("user_{$for_user_id}/updates", 1);
+                    Cache::mozg_create_cache("user_{$for_user_id}/updates", 1);
 
                 }
 
                 //Чистим кеш
-                mozg_clear_cache_file('user_' . $user_id . '/profile_' . $user_id);
-                mozg_clear_cache_file('subscr_user_' . $user_id);
+                Cache::mozg_clear_cache_file('user_' . $user_id . '/profile_' . $user_id);
+                Cache::mozg_clear_cache_file('subscr_user_' . $user_id);
             }
             break;
 
@@ -71,8 +72,8 @@ if (Registry::get('logged')) {
                 $db->query("UPDATE `users` SET user_subscriptions_num = user_subscriptions_num-1 WHERE user_id = '{$user_id}'");
 
                 //Чистим кеш
-                mozg_clear_cache_file('user_' . $user_id . '/profile_' . $user_id);
-                mozg_clear_cache_file('subscr_user_' . $user_id);
+                Cache::mozg_clear_cache_file('user_' . $user_id . '/profile_' . $user_id);
+                Cache::mozg_clear_cache_file('subscr_user_' . $user_id);
             }
             break;
 

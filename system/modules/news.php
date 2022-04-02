@@ -63,9 +63,9 @@ if (Registry::get('logged')) {
         $sql_where = '';
 
         //Обновляем счетчик новых новостей, ставим 0
-        $CacheNews = mozg_cache('user_' . $_SESSION['user_id'] . '/new_news');
+        $CacheNews = Cache::mozg_cache('user_' . $_SESSION['user_id'] . '/new_news');
         if ($CacheNews)
-            mozg_create_cache('user_' . $user_id . '/new_news', '');
+            Cache::mozg_create_cache('user_' . $user_id . '/new_news', '');
     } else {
         $metatags['title'] = $lang['news_title'];
         $user_speedbar = $lang['news_speedbar'];

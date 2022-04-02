@@ -26,15 +26,15 @@ if (isset($_POST['save'])) {
         msgbox('Ошибка', 'Все поля обязательны к заполнению', 'javascript:history.go(-1)');
 } else {
     //Удаление
-    if ($_GET['act'] == 'del') {
-        $id = intval($_GET['id']);
+    if ($_GET['act'] === 'del') {
+        $id = (int)$_GET['id'];
         $db->query("DELETE FROM `static` WHERE id = '" . $id . "'");
         header("Location: ?mod=static");
     }
 
     //Редактирование
-    if ($_GET['act'] == 'edit') {
-        $id = intval($_GET['id']);
+    if ($_GET['act'] === 'edit') {
+        $id = (int)$_GET['id'];
         $row = $db->super_query("SELECT title, alt_name, text FROM `static` WHERE id = '" . $id . "'");
         if ($row) {
 
