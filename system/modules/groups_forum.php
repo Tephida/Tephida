@@ -36,7 +36,7 @@ if (Registry::get('logged')) {
                 $dbid = $db->insert_id();
                 //Обновляем кол-во тем в сообществе
                 $db->query("UPDATE `communities` SET forum_num = forum_num+1 WHERE id = '{$public_id}'");
-                Cache::mozg_clear_cache_file("groups_forum/forum{$public_id}");
+                Cache::mozgClearCacheFile("groups_forum/forum{$public_id}");
                 echo $dbid;
             }
             break;
@@ -87,11 +87,11 @@ if (Registry::get('logged')) {
 
                         if ($check2['user_last_visit'] >= $update_time) {
                             $db->query("INSERT INTO `updates` SET for_user_id = '{$row_owner2['muser_id']}', from_user_id = '{$user_id}', type = '6', date = '{$server_time}', text = '{$msg}', user_photo = '{$user_info['user_photo']}', user_search_pref = '{$user_info['user_search_pref']}', lnk = '/forum{$row['public_id']}?act=view&id={$fid}'");
-                            Cache::mozg_create_cache("user_{$row_owner2['muser_id']}/updates", 1);
+                            Cache::mozgCreateCache("user_{$row_owner2['muser_id']}/updates", 1);
                             //ИНАЧЕ Добавляем +1 юзеру для оповещания
                         } else {
-                            $cntCacheNews = Cache::mozg_cache("user_{$row_owner2['muser_id']}/new_news");
-                            Cache::mozg_create_cache("user_{$row_owner2['muser_id']}/new_news", ($cntCacheNews + 1));
+                            $cntCacheNews = Cache::mozgCache("user_{$row_owner2['muser_id']}/new_news");
+                            Cache::mozgCreateCache("user_{$row_owner2['muser_id']}/new_news", ($cntCacheNews + 1));
                         }
                     }
                 } else {
@@ -100,7 +100,7 @@ if (Registry::get('logged')) {
                     $dbid = $db->insert_id();
                 }
 
-                Cache::mozg_clear_cache_file("groups_forum/forum{$row['public_id']}");
+                Cache::mozgClearCacheFile("groups_forum/forum{$row['public_id']}");
 
                 //Обновляем данные в теме
                 $db->query("UPDATE `communities_forum` SET msg_num = msg_num+1, lastdate = '{$server_time}', lastuser_id = '{$user_id}' WHERE fid = '{$fid}'");
@@ -241,7 +241,7 @@ if (Registry::get('logged')) {
 
                 $db->query("UPDATE `communities_forum` SET title = '{$title}' WHERE fid = '{$fid}'");
 
-                Cache::mozg_clear_cache_file("groups_forum/forum{$row['public_id']}");
+                Cache::mozgClearCacheFile("groups_forum/forum{$row['public_id']}");
 
             }
 
@@ -266,7 +266,7 @@ if (Registry::get('logged')) {
                     $fixed = 0;
                 }
                 $db->query("UPDATE `communities_forum` SET fixed = '{$fixed}' WHERE fid = '{$fid}'");
-                Cache::mozg_clear_cache_file("groups_forum/forum{$row['public_id']}");
+                Cache::mozgClearCacheFile("groups_forum/forum{$row['public_id']}");
             }
             break;
 
@@ -321,7 +321,7 @@ if (Registry::get('logged')) {
                 $db->query("DELETE FROM `communities_forum_msg` WHERE fid = '{$fid}'");
                 $db->query("DELETE FROM `votes` WHERE id = '{$row['vote']}'");
                 $db->query("DELETE FROM `votes_result` WHERE vote_id = '{$row['vote']}'");
-                Cache::mozg_mass_clear_cache_file("votes/vote_{$row['vote']}|votes/vote_answer_cnt_{$row['vote']}|groups_forum/forum{$row['public_id']}");
+                Cache::mozgMassClearCacheFile("votes/vote_{$row['vote']}|votes/vote_answer_cnt_{$row['vote']}|groups_forum/forum{$row['public_id']}");
             }
             break;
 
@@ -344,7 +344,7 @@ if (Registry::get('logged')) {
                 $db->query("UPDATE `communities_forum` SET vote = '0' WHERE fid = '{$fid}'");
                 $db->query("DELETE FROM `votes` WHERE id = '{$row['vote']}'");
                 $db->query("DELETE FROM `votes_result` WHERE vote_id = '{$row['vote']}'");
-                Cache::mozg_mass_clear_cache_file("votes/vote_{$row['vote']}|votes/vote_answer_cnt_{$row['vote']}");
+                Cache::mozgMassClearCacheFile("votes/vote_{$row['vote']}|votes/vote_answer_cnt_{$row['vote']}");
             }
             break;
 
@@ -366,7 +366,7 @@ if (Registry::get('logged')) {
                 $db->query("DELETE FROM `communities_forum_msg` WHERE mid = '{$mid}'");
                 //Удаляем из ленты новостей
                 $db->query("DELETE FROM `news` WHERE action_type = '6' AND obj_id = '{$mid}' AND action_time = '{$row['mdate']}'");
-                Cache::mozg_clear_cache_file("groups_forum/forum{$row2['public_id']}");
+                Cache::mozgClearCacheFile("groups_forum/forum{$row2['public_id']}");
             }
 
             break;

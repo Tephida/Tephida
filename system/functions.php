@@ -375,20 +375,20 @@ function GenerateAlbumPhotosPosition($uid, $aid = false)
             $photo_info.= $count . '|' . $row['id'] . '||';
             $count++;
         }
-        Cache::mozg_create_cache('user_' . $uid . '/position_photos_album_' . $aid, $photo_info);
+        Cache::mozgCreateCache('user_' . $uid . '/position_photos_album_' . $aid, $photo_info);
     }
 }
 function CheckFriends($friendId): bool
 {
     $user_info = Registry::get('user_info');
     /** @var string $user_info['user_id'] */
-    $open_my_list = Cache::mozg_cache("user_{$user_info['user_id']}/friends");
+    $open_my_list = Cache::mozgCache("user_{$user_info['user_id']}/friends");
     return stripos($open_my_list, "u{$friendId}|") !== false;
 }
 function CheckBlackList($userId): bool
 {
     $user_info = Registry::get('user_info');
-    $open_my_list = Cache::mozg_cache("user_{$userId}/blacklist");
+    $open_my_list = Cache::mozgCache("user_{$userId}/blacklist");
     /** @var string $user_info['user_id'] */
     return stripos($open_my_list, "|{$user_info['user_id']}|") !== false;
 }
@@ -396,7 +396,7 @@ function MyCheckBlackList($userId): bool
 {
     $user_info = Registry::get('user_info');
     /** @var string $user_info['user_id'] */
-    $open_my_list = Cache::mozg_cache("user_{$user_info['user_id']}/blacklist");
+    $open_my_list = Cache::mozgCache("user_{$user_info['user_id']}/blacklist");
     return stripos($open_my_list, "|{$userId}|") !== false;
 }
 
@@ -634,7 +634,7 @@ function compile($tpl, array $params = array()): int
 
     if (isset($user_info['user_id'])) {
         //Загружаем кол-во новых новостей
-        $CacheNews = Cache::mozg_cache('user_' . $user_info['user_id'] . '/new_news');
+        $CacheNews = Cache::mozgCache('user_' . $user_info['user_id'] . '/new_news');
         if ($CacheNews) {
             $params['new_news'] = "<div class=\"ic_newAct\" style=\"margin-left:18px\">{$CacheNews}</div>";
             $params['news_link'] = '/notifications';
@@ -643,7 +643,7 @@ function compile($tpl, array $params = array()): int
             $params['news_link'] = '';
         }
 //Загружаем кол-во новых подарков
-        $CacheGift = Cache::mozg_cache("user_{$user_info['user_id']}/new_gift");
+        $CacheGift = Cache::mozgCache("user_{$user_info['user_id']}/new_gift");
         if ($CacheGift) {
             $params['new_ubm'] = "<div class=\"ic_newAct\" style=\"margin-left:20px\">{$CacheGift}</div>";
             $params['gifts_link'] = "/gifts{$user_info['user_id']}?new=1";

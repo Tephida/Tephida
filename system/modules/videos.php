@@ -118,7 +118,7 @@ if (Registry::get('logged')) {
                     }
 
                     //Чистим кеш
-                    Cache::mozg_mass_clear_cache_file("user_{$user_id}/page_videos_user|user_{$user_id}/page_videos_user_friends|user_{$user_id}/page_videos_user_all|user_{$user_id}/profile_{$user_id}|user_{$user_id}/videos_num_all|user_{$user_id}/videos_num_friends");
+                    Cache::mozgMassClearCacheFile("user_{$user_id}/page_videos_user|user_{$user_id}/page_videos_user_friends|user_{$user_id}/page_videos_user_all|user_{$user_id}/profile_{$user_id}|user_{$user_id}/videos_num_all|user_{$user_id}/videos_num_friends");
 
                     if (intFilter('notes') == 1) {
                         echo "{$photo}|{$user_id}|{$dbid}";
@@ -238,7 +238,7 @@ if (Registry::get('logged')) {
                     Filesystem::delete(ROOT_DIR . '/uploads/videos/' . $row['owner_user_id'] . '/' . $photo_name);
 
                     //Чистим кеш
-                    Cache::mozg_mass_clear_cache_file("user_{$row['owner_user_id']}/page_videos_user|user_{$row['owner_user_id']}/page_videos_user_friends|user_{$row['owner_user_id']}/page_videos_user_all|user_{$row['owner_user_id']}/profile_{$row['owner_user_id']}|user_{$row['owner_user_id']}/videos_num_all|user_{$row['owner_user_id']}/videos_num_friends|wall/video{$vid}");
+                    Cache::mozgMassClearCacheFile("user_{$row['owner_user_id']}/page_videos_user|user_{$row['owner_user_id']}/page_videos_user_friends|user_{$row['owner_user_id']}/page_videos_user_all|user_{$row['owner_user_id']}/profile_{$row['owner_user_id']}|user_{$row['owner_user_id']}/videos_num_all|user_{$row['owner_user_id']}/videos_num_friends|wall/video{$vid}");
                 }
             }
 
@@ -282,7 +282,7 @@ if (Registry::get('logged')) {
                     $db->query("UPDATE `videos` SET title = '{$title}', descr = '{$descr}', privacy = '{$privacy}' WHERe id = '{$vid}'");
                     echo stripslashes($descr);
                     //Чистим кеш
-                    Cache::mozg_mass_clear_cache_file("user_{$row['owner_user_id']}/page_videos_user|user_{$row['owner_user_id']}/page_videos_user_friends|user_{$row['owner_user_id']}/page_videos_user_all|user_{$row['owner_user_id']}/videos_num_all|user_{$row['owner_user_id']}/videos_num_friends|wall/video{$vid}");
+                    Cache::mozgMassClearCacheFile("user_{$row['owner_user_id']}/page_videos_user|user_{$row['owner_user_id']}/page_videos_user_friends|user_{$row['owner_user_id']}/page_videos_user_all|user_{$row['owner_user_id']}/videos_num_all|user_{$row['owner_user_id']}/videos_num_friends|wall/video{$vid}");
                 }
             }
             break;
@@ -472,11 +472,11 @@ if (Registry::get('logged')) {
 
                                 if ($row_userOW['user_last_visit'] >= $update_time) {
                                     $db->query("INSERT INTO `updates` SET for_user_id = '{$check_video['owner_user_id']}', from_user_id = '{$user_id}', type = '3', date = '{$server_time}', text = '{$comment}', user_photo = '{$user_info['user_photo']}', user_search_pref = '{$user_info['user_search_pref']}', lnk = '/video{$check_video['owner_user_id']}_{$vid}'");
-                                    Cache::mozg_create_cache("user_{$check_video['owner_user_id']}/updates", 1);
+                                    Cache::mozgCreateCache("user_{$check_video['owner_user_id']}/updates", 1);
                                     //ИНАЧЕ Добавляем +1 юзеру для оповещения
                                 } else {
-                                    $cntCacheNews = Cache:: mozg_cache('user_' . $check_video['owner_user_id'] . '/new_news');
-                                    Cache::mozg_create_cache('user_' . $check_video['owner_user_id'] . '/new_news', ($cntCacheNews + 1));
+                                    $cntCacheNews = Cache:: mozgCache('user_' . $check_video['owner_user_id'] . '/new_news');
+                                    Cache::mozgCreateCache('user_' . $check_video['owner_user_id'] . '/new_news', ($cntCacheNews + 1));
                                 }
 
                                 //Отправка уведомления на E-mail
@@ -494,9 +494,9 @@ if (Registry::get('logged')) {
                                 }
                             }
                             //Чистим кеш
-                            Cache::mozg_mass_clear_cache_file("user_{$check_video['owner_user_id']}/page_videos_user|user_{$check_video['owner_user_id']}/page_videos_user_friends|user_{$check_video['owner_user_id']}/page_videos_user_all");
+                            Cache::mozgMassClearCacheFile("user_{$check_video['owner_user_id']}/page_videos_user|user_{$check_video['owner_user_id']}/page_videos_user_friends|user_{$check_video['owner_user_id']}/page_videos_user_all");
                         } else {
-                            Cache::mozg_clear_cache_file("groups/video{$check_video['public_id']}");
+                            Cache::mozgClearCacheFile("groups/video{$check_video['public_id']}");
                         }
                         AjaxTpl($tpl);
                     }
@@ -525,7 +525,7 @@ if (Registry::get('logged')) {
                     $db->query("DELETE FROM `videos_comments` WHERE id = '{$comm_id}'");
                     $db->query("DELETE FROM `news` WHERE obj_id = '{$comm_id}' AND action_type = 9");
                     $db->query("UPDATE `videos` SET comm_num = comm_num-1 WHERE id = '{$row['video_id']}'");
-                    Cache::mozg_clear_cache_file("groups/video{$row['public_id']}");
+                    Cache::mozgClearCacheFile("groups/video{$row['public_id']}");
                 }
 
             } else if ($row['author_user_id'] == $user_id || $row['owner_user_id'] == $user_id) {
@@ -533,7 +533,7 @@ if (Registry::get('logged')) {
                 $db->query("DELETE FROM `news` WHERE obj_id = '{$comm_id}' AND action_type = 9");
                 $db->query("UPDATE `videos` SET comm_num = comm_num-1 WHERE id = '{$row['video_id']}'");
                 //Чистим кеш
-                Cache::mozg_mass_clear_cache_file("user_{$row['owner_user_id']}/page_videos_user|user_{$row['owner_user_id']}/page_videos_user_friends|user_{$row['owner_user_id']}/page_videos_user_all");
+                Cache::mozgMassClearCacheFile("user_{$row['owner_user_id']}/page_videos_user|user_{$row['owner_user_id']}/page_videos_user_friends|user_{$row['owner_user_id']}/page_videos_user_all");
             }
 
             break;
@@ -771,7 +771,7 @@ if (Registry::get('logged')) {
                 $db->query("UPDATE `users` SET user_videos_num = user_videos_num+1 WHERE user_id = '{$user_id}'");
 
                 //Чистим кеш
-                Cache::mozg_mass_clear_cache_file("user_{$user_id}/page_videos_user|user_{$user_id}/page_videos_user_friends|user_{$user_id}/page_videos_user_all|user_{$user_id}/profile_{$user_id}|user_{$user_id}/videos_num_all|user_{$user_id}/videos_num_friends");
+                Cache::mozgMassClearCacheFile("user_{$user_id}/page_videos_user|user_{$user_id}/page_videos_user_friends|user_{$user_id}/page_videos_user_all|user_{$user_id}/profile_{$user_id}|user_{$user_id}/videos_num_all|user_{$user_id}/videos_num_friends");
             }
 
             break;

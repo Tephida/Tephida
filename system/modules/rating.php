@@ -106,7 +106,7 @@ if (Registry::get('logged')) {
                     //Вставляем в лог
                     $db->query("INSERT INTO `users_rating` SET user_id = '{$user_id}', for_user_id = '{$for_user_id}', addnum = '{$num}', date = '{$server_time}'");
                     //Чистим кеш
-                    Cache::mozg_clear_cache_file("user_{$for_user_id}/profile_{$for_user_id}");
+                    Cache::mozgClearCacheFile("user_{$for_user_id}/profile_{$for_user_id}");
 
                 } else {
                     echo 1;

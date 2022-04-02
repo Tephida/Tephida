@@ -16,7 +16,7 @@ if (isset($_POST['add'])) {
         $row = $db->super_query("SELECT COUNT(*) AS cnt FROM `country` WHERE name = '" . $country . "'");
         if (!$row['cnt']) {
             $db->query("INSERT INTO `country` SET name = '" . $country . "'");
-            Cache::system_mozg_clear_cache_file('country');
+            Cache::systemMozgClearCacheFile('country');
             msgbox('Информация', 'Страна успешно добавлена', '?mod=country');
         } else
             msgbox('Ошибка', 'Такая страна уже добавлена', 'javascript:history.go(-1)');
@@ -32,7 +32,7 @@ if ($_GET['act'] === 'del') {
     $row = $db->super_query("SELECT COUNT(*) AS cnt FROM `country` WHERE id = '" . $id . "'");
     if ($row['cnt']) {
         $db->query("DELETE FROM `country` WHERE id = '" . $id . "'");
-        Cache::system_mozg_clear_cache_file('country');
+        Cache::systemMozgClearCacheFile('country');
         header("Location: ?mod=country");
     }
     die();

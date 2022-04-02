@@ -17,7 +17,7 @@ class Cache
     /**
      * @return void
      */
-    public static function mozg_clear_cache(): void
+    public static function mozgClearCache(): void
     {
         $folder = '';
         $fdir = opendir(ENGINE_DIR . '/cache/' . $folder);
@@ -32,7 +32,7 @@ class Cache
      * @param string $folder
      * @return void
      */
-    public static function mozg_clear_cache_folder(string $folder): void
+    public static function mozgClearCacheFolder(string $folder): void
     {
         $fdir = opendir(ENGINE_DIR . '/cache/' . $folder);
         while ($file = readdir($fdir)) {
@@ -46,7 +46,7 @@ class Cache
      * @param string $prefix
      * @return bool
      */
-    public static function mozg_clear_cache_file(string $prefix): bool
+    public static function mozgClearCacheFile(string $prefix): bool
     {
         if (is_file(ENGINE_DIR . '/cache/' . $prefix . '.tmp')) {
             return Filesystem::delete(ENGINE_DIR . '/cache/' . $prefix . '.tmp');
@@ -58,7 +58,7 @@ class Cache
      * @param string $prefix
      * @return void
      */
-    public static function mozg_mass_clear_cache_file(string $prefix): void
+    public static function mozgMassClearCacheFile(string $prefix): void
     {
         $arr_prefix = explode('|', $prefix);
         foreach ($arr_prefix as $file) {
@@ -72,7 +72,7 @@ class Cache
     /**
      * @throws Exception
      */
-    public static function mozg_create_folder_cache(string $prefix): void
+    public static function mozgCreateFolderCache(string $prefix): void
     {
         Filesystem::createDir(ROOT_DIR . '/system/cache/' . $prefix);
     }
@@ -82,7 +82,7 @@ class Cache
      * @param mixed $cache_text
      * @return false|int
      */
-    public static function mozg_create_cache(string $prefix, mixed $cache_text): false|int
+    public static function mozgCreateCache(string $prefix, mixed $cache_text): false|int
     {
         $filename = ENGINE_DIR . '/cache/' . $prefix . '.tmp';
         return file_put_contents($filename, $cache_text);
@@ -92,7 +92,7 @@ class Cache
      * @param string $prefix
      * @return false|string|int
      */
-    public static function mozg_cache(string $prefix): false|string|int
+    public static function mozgCache(string $prefix): false|string|int
     {
         $filename = ENGINE_DIR . '/cache/' . $prefix . '.tmp';
         if (file_exists($filename)) {
@@ -101,7 +101,7 @@ class Cache
         return false;
     }
 
-    public static function system_mozg_clear_cache_file(string $prefix): void
+    public static function systemMozgClearCacheFile(string $prefix): void
     {
         Filesystem::delete(ENGINE_DIR . '/cache/system/' . $prefix . '.php');
     }

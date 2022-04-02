@@ -49,7 +49,7 @@ if ($_GET['action'] === 'obj') {
                 $db->query("UPDATE `users` SET user_wall_num = user_wall_num-1 WHERE user_id = '{$row['for_user_id']}'");
 
                 //Чистим кеш
-                Cache::mozg_clear_cache_file('user_' . $row['for_user_id'] . '/profile_' . $row['for_user_id']);
+                Cache::mozgClearCacheFile('user_' . $row['for_user_id'] . '/profile_' . $row['for_user_id']);
 
                 //удаляем из ленты новостей
                 $db->query("DELETE FROM `news` WHERE obj_id = '{$rid}' AND action_type = 6");
@@ -85,8 +85,8 @@ if ($_GET['action'] === 'obj') {
             $db->query("UPDATE `users` SET user_notes_num = user_notes_num-1 WHERE user_id = '{$row['owner_user_id']}'");
 
             //Чистим кеш владельцу заметки и заметок на его стр
-            Cache::mozg_clear_cache_file('user_' . $row['owner_user_id'] . '/profile_' . $row['owner_user_id']);
-            Cache::mozg_clear_cache_file('user_' . $row['owner_user_id'] . '/notes_user_' . $row['owner_user_id']);
+            Cache::mozgClearCacheFile('user_' . $row['owner_user_id'] . '/profile_' . $row['owner_user_id']);
+            Cache::mozgClearCacheFile('user_' . $row['owner_user_id'] . '/notes_user_' . $row['owner_user_id']);
         }
 
         //Видео
@@ -103,7 +103,7 @@ if ($_GET['action'] === 'obj') {
             Filesystem::delete(ROOT_DIR . '/uploads/videos/' . $row['owner_user_id'] . '/' . $photo_name);
 
             //Чистим кеш
-            Cache::mozg_mass_clear_cache_file("user_{$row['owner_user_id']}/page_videos_user|user_{$row['owner_user_id']}/page_videos_user_friends|user_{$row['owner_user_id']}/page_videos_user_all|user_{$row['owner_user_id']}/profile_{$row['owner_user_id']}|user_{$row['owner_user_id']}/videos_num_all|user_{$row['owner_user_id']}/videos_num_friends");
+            Cache::mozgMassClearCacheFile("user_{$row['owner_user_id']}/page_videos_user|user_{$row['owner_user_id']}/page_videos_user_friends|user_{$row['owner_user_id']}/page_videos_user_all|user_{$row['owner_user_id']}/profile_{$row['owner_user_id']}|user_{$row['owner_user_id']}/videos_num_all|user_{$row['owner_user_id']}/videos_num_friends");
         }
 
         //Фотография
@@ -144,7 +144,7 @@ if ($_GET['action'] === 'obj') {
             $db->query("UPDATE `albums` SET photo_num = photo_num-1, comm_num = comm_num-{$row['comm_num']} {$set_cover} WHERE aid = '{$row['album_id']}'");
 
             //Чистим кеш
-            Cache::mozg_mass_clear_cache_file("user_{$row['user_id']}/albums|user_{$row['user_id']}/albums_all|user_{$row['user_id']}/albums_friends|user_{$row['user_id']}/position_photos_album_{$row['album_id']}");
+            Cache::mozgMassClearCacheFile("user_{$row['user_id']}/albums|user_{$row['user_id']}/albums_all|user_{$row['user_id']}/albums_friends|user_{$row['user_id']}/position_photos_album_{$row['album_id']}");
 
             //Выводим и удаляем отметки если они есть
             $sql_mark = $db->super_query("SELECT muser_id FROM `photos_mark` WHERE mphoto_id = '" . $rid . "' AND mapprove = '0'", 1);
