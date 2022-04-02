@@ -1,4 +1,4 @@
 parameters:
   paths:
-    - types
+    - system
   level: max
