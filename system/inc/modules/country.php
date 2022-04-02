@@ -27,8 +27,8 @@ if (isset($_POST['add'])) {
 }
 
 //Удаление
-if ($_GET['act'] == 'del') {
-    $id = intval($_GET['id']);
+if ($_GET['act'] === 'del') {
+    $id = (int)$_GET['id'];
     $row = $db->super_query("SELECT COUNT(*) AS cnt FROM `country` WHERE id = '" . $id . "'");
     if ($row['cnt']) {
         $db->query("DELETE FROM `country` WHERE id = '" . $id . "'");

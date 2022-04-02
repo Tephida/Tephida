@@ -33,7 +33,7 @@ if (isset($_POST['save'])) {
     //Проверка E-mail
     if (!filter_var($user_email, FILTER_VALIDATE_EMAIL)) $errors[] = 'Введите коректный e-mail адрес';
     //Если меняем пароль
-    if ($_POST['old_pass']) if ($old_pass == $row['user_password']) $newPassOk = true;
+    if ($_POST['old_pass']) if ($old_pass === $row['user_password']) $newPassOk = true;
     else $errors[] = 'Старый пароль введен неправильно';
     foreach ($errors as $er) if ($er) $all_er.= '<li>' . $er . '</li>';
     if ($all_er) msgbox('Ошибка', $all_er, '?mod=mysettings');
