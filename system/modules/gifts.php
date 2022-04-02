@@ -8,6 +8,7 @@
  */
 
 use FluffyDollop\Support\Registry;
+use Mozg\classes\Cache;
 
 NoAjaxQuery();
 
@@ -74,21 +75,21 @@ if (Registry::get('logged')) {
                         }
                         $action_update_text = "<img src=\"/uploads/gifts/{$gift}.png\" width=\"50\" align=\"right\" />{$msg}";
                         $db->query("INSERT INTO `updates` SET for_user_id = '{$for_user_id}', from_user_id = '{$from_user_id}', type = '7', date = '{$server_time}', text = '{$action_update_text}', user_photo = '{$user_info['user_photo']}', user_search_pref = '{$user_info['user_search_pref']}', lnk = '/gifts{$for_user_id}?new=1'");
-                        mozg_create_cache("user_{$for_user_id}/updates", 1);
+                        Cache::mozg_create_cache("user_{$for_user_id}/updates", 1);
                         //ИНАЧЕ Добавляем +1 юзеру для оповещения
                     } else {
-                        $cntCacheNews = mozg_cache("user_{$for_user_id}/new_gift");
-                        mozg_create_cache("user_{$for_user_id}/new_gift", ($cntCacheNews + 1));
+                        $cntCacheNews = Cache::mozg_cache("user_{$for_user_id}/new_gift");
+                        Cache::mozg_create_cache("user_{$for_user_id}/new_gift", ($cntCacheNews + 1));
                     }
 
-                    mozg_mass_clear_cache_file("user_{$for_user_id}/profile_{$for_user_id}|user_{$for_user_id}/gifts");
+                    Cache::mozg_mass_clear_cache_file("user_{$for_user_id}/profile_{$for_user_id}|user_{$for_user_id}/gifts");
                     $config = settings_get();
                     //Если цена подарка выше бонусного, то начисляем цену подарка на рейтинг
                     if ($gifts['price'] > $config['bonus_rate']) {
                         //Начисляем
                         $db->query("UPDATE `users` SET user_rating = user_rating + {$gifts['price']} WHERE user_id = '{$user_id}'");
                         //Чистим кеш
-                        mozg_clear_cache_file("user_{$user_id}/profile_{$user_id}");
+                        Cache::mozg_clear_cache_file("user_{$user_id}/profile_{$user_id}");
                     }
 
                     //Отправка уведомления на E-mail
@@ -120,7 +121,7 @@ if (Registry::get('logged')) {
             if ($user_id == $row['uid']) {
                 $db->query("DELETE FROM `gifts` WHERE gid = '{$gid}'");
                 $db->query("UPDATE `users` SET user_gifts = user_gifts-1 WHERE user_id = '{$user_id}'");
-                mozg_mass_clear_cache_file("user_{$user_id}/profile_{$user_id}|user_{$user_id}/gifts");
+                Cache::mozg_mass_clear_cache_file("user_{$user_id}/profile_{$user_id}|user_{$user_id}/gifts");
             }
 
             break;
@@ -166,7 +167,7 @@ if (Registry::get('logged')) {
                 $tpl->set_block("'\\[no-new\\](.*?)\\[/no-new\\]'si", "");
                 $sql_where = "AND status = 1";
                 $gcount = 50;
-                mozg_create_cache("user_{$user_id}/new_gift", '');
+                Cache::mozg_create_cache("user_{$user_id}/new_gift", '');
             } else {
                 $tpl->set('[no-new]', '');
                 $tpl->set('[/no-new]', '');

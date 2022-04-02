@@ -8,6 +8,7 @@
  */
 
 use FluffyDollop\Support\Registry;
+use Mozg\classes\Cache;
 use Mozg\classes\TpLSite;
 
 NoAjaxQuery();
@@ -76,8 +77,8 @@ if (Registry::get('logged')) {
                     $user_name = ucfirst($user_name);
                     $user_lastname = ucfirst($user_lastname);
                     $db->query("UPDATE `users` SET user_name = '{$user_name}', user_lastname = '{$user_lastname}', user_search_pref = '{$user_name} {$user_lastname}' WHERE user_id = '{$user_id}'");
-                    mozg_clear_cache_file('user_' . $user_id . '/profile_' . $user_id);
-                    mozg_clear_cache();
+                    Cache::mozg_clear_cache_file('user_' . $user_id . '/profile_' . $user_id);
+                    Cache::mozg_clear_cache();
                 }
             } else {
                 echo $errors;
@@ -99,7 +100,7 @@ if (Registry::get('logged')) {
             if ($val_info <= 0 || $val_info > 3) $val_info = 1;
             $user_privacy = "val_msg|{$val_msg}||val_wall1|{$val_wall1}||val_wall2|{$val_wall2}||val_wall3|{$val_wall3}||val_info|{$val_info}||";
             $db->query("UPDATE `users` SET user_privacy = '{$user_privacy}' WHERE user_id = '{$user_id}'");
-            mozg_clear_cache_file('user_' . $user_id . '/profile_' . $user_id);
+            Cache::mozg_clear_cache_file('user_' . $user_id . '/profile_' . $user_id);
 
             break;
 
@@ -151,16 +152,16 @@ if (Registry::get('logged')) {
                     //Обновляем у друга которого удаляем кол-во друзей
                     $db->query("UPDATE `users` SET user_friends_num = user_friends_num-1 WHERE user_id = '{$bad_user_id}'");
                     //Чистим кеш владельцу стр и тому кого удаляем из др.
-                    mozg_clear_cache_file('user_' . $user_id . '/profile_' . $user_id);
-                    mozg_clear_cache_file('user_' . $bad_user_id . '/profile_' . $bad_user_id);
+                    Cache::mozg_clear_cache_file('user_' . $user_id . '/profile_' . $user_id);
+                    Cache::mozg_clear_cache_file('user_' . $bad_user_id . '/profile_' . $bad_user_id);
                     //Удаляем пользователя из кеш файл друзей
-                    $openMyList = mozg_cache("user_{$user_id}/friends");
-                    mozg_create_cache("user_{$user_id}/friends", str_replace("u{$bad_user_id}|", "", $openMyList));
-                    $openTakeList = mozg_cache("user_{$bad_user_id}/friends");
-                    mozg_create_cache("user_{$bad_user_id}/friends", str_replace("u{$user_id}|", "", $openTakeList));
+                    $openMyList = Cache::mozg_cache("user_{$user_id}/friends");
+                    Cache::mozg_create_cache("user_{$user_id}/friends", str_replace("u{$bad_user_id}|", "", $openMyList));
+                    $openTakeList = Cache::mozg_cache("user_{$bad_user_id}/friends");
+                    Cache::mozg_create_cache("user_{$bad_user_id}/friends", str_replace("u{$user_id}|", "", $openTakeList));
                 }
-                $openMyList = mozg_cache("user_{$user_id}/blacklist");
-                mozg_create_cache("user_{$user_id}/blacklist", $openMyList . "|{$bad_user_id}|");
+                $openMyList = Cache::mozg_cache("user_{$user_id}/blacklist");
+                Cache::mozg_create_cache("user_{$user_id}/blacklist", $openMyList . "|{$bad_user_id}|");
             }
 
             break;
@@ -177,8 +178,8 @@ if (Registry::get('logged')) {
             if ($row['cnt'] and in_array($bad_user_id, $array_blacklist) and $user_id != $bad_user_id) {
                 $myRow['user_blacklist'] = str_replace("|{$bad_user_id}|", "", $myRow['user_blacklist']);
                 $db->query("UPDATE `users` SET user_blacklist_num = user_blacklist_num-1, user_blacklist = '{$myRow['user_blacklist']}' WHERE user_id = '{$user_id}'");
-                $openMyList = mozg_cache("user_{$user_id}/blacklist");
-                mozg_create_cache("user_{$user_id}/blacklist", str_replace("|{$bad_user_id}|", "", $openMyList));
+                $openMyList = Cache::mozg_cache("user_{$user_id}/blacklist");
+                Cache::mozg_create_cache("user_{$user_id}/blacklist", str_replace("|{$bad_user_id}|", "", $openMyList));
             }
 
             break;

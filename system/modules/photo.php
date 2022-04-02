@@ -8,6 +8,7 @@
  */
 
 use FluffyDollop\Support\{Gzip, Registry, Thumbnail};
+use Mozg\classes\Cache;
 
 if (Registry::get('logged')) {
     $act = requestFilter('act');
@@ -70,12 +71,12 @@ if (Registry::get('logged')) {
                     $update_time = $server_time - 70;
                     if ($row_userOW['user_last_visit'] >= $update_time) {
                         $db->query("INSERT INTO `updates` SET for_user_id = '{$check_photo['user_id']}', from_user_id = '{$user_id}', type = '2', date = '{$server_time}', text = '{$comment}', user_photo = '{$user_info['user_photo']}', user_search_pref = '{$user_info['user_search_pref']}', lnk = '/photo{$check_photo['user_id']}_{$pid}_{$check_photo['album_id']}'");
-                        mozg_create_cache("user_{$check_photo['user_id']}/updates", 1);
+                        Cache::mozg_create_cache("user_{$check_photo['user_id']}/updates", 1);
                         //ИНАЧЕ Добавляем +1 юзеру для оповещания
                     } else {
                         //Добавляем +1 юзеру для оповещания
-                        $cntCacheNews = mozg_cache('user_' . $check_photo['user_id'] . '/new_news');
-                        mozg_create_cache('user_' . $check_photo['user_id'] . '/new_news', ($cntCacheNews + 1));
+                        $cntCacheNews = Cache::mozg_cache('user_' . $check_photo['user_id'] . '/new_news');
+                        Cache::mozg_create_cache('user_' . $check_photo['user_id'] . '/new_news', ($cntCacheNews + 1));
                     }
                     //Отправка уведомления на E-mail
                     if ($config['news_mail_4'] == 'yes') {
@@ -92,7 +93,7 @@ if (Registry::get('logged')) {
                     }
                 }
                 //Чистим кеш кол-во комментов
-                mozg_mass_clear_cache_file("user_{$check_photo['user_id']}/albums_{$check_photo['user_id']}_comm|user_{$check_photo['user_id']}/albums_{$check_photo['user_id']}_comm_all|user_{$check_photo['user_id']}/albums_{$check_photo['user_id']}_comm_friends");
+                Cache::mozg_mass_clear_cache_file("user_{$check_photo['user_id']}/albums_{$check_photo['user_id']}_comm|user_{$check_photo['user_id']}/albums_{$check_photo['user_id']}_comm_all|user_{$check_photo['user_id']}/albums_{$check_photo['user_id']}_comm_friends");
                 AjaxTpl($tpl);
             } else {
                 echo 'err_privacy';
@@ -110,7 +111,7 @@ if (Registry::get('logged')) {
                 $db->query("UPDATE `photos` SET comm_num = comm_num-1 WHERE id = '{$check_comment['pid']}'");
                 $db->query("UPDATE `albums` SET comm_num = comm_num-1 WHERE aid = '{$check_comment['album_id']}'");
                 //Чистим кеш кол-во комментов
-                mozg_mass_clear_cache_file("user_{$check_comment['owner_id']}/albums_{$check_comment['owner_id']}_comm|user_{$check_comment['owner_id']}/albums_{$check_comment['owner_id']}_comm_all|user_{$check_comment['owner_id']}/albums_{$check_comment['owner_id']}_comm_friends");
+                Cache::mozg_mass_clear_cache_file("user_{$check_comment['owner_id']}/albums_{$check_comment['owner_id']}_comm|user_{$check_comment['owner_id']}/albums_{$check_comment['owner_id']}_comm_all|user_{$check_comment['owner_id']}/albums_{$check_comment['owner_id']}_comm_friends");
             }
 
             break;
@@ -170,8 +171,8 @@ if (Registry::get('logged')) {
                 $db->query("INSERT INTO `news` SET ac_user_id = '{$user_id}', action_type = 1, action_text = '{$wall_text}', obj_id = '{$dbid}', action_time = '{$server_time}'");
                 //Обновляем имя фотки в бд
                 $db->query("UPDATE `users` SET user_photo = '{$newName}', user_wall_id = '{$dbid}' WHERE user_id = '{$user_id}'");
-                mozg_clear_cache_file("user_{$user_id}/profile_{$user_id}");
-                mozg_clear_cache();
+                Cache::mozg_clear_cache_file("user_{$user_id}/profile_{$user_id}");
+                Cache::mozg_clear_cache();
             }
 
             break;
@@ -314,12 +315,12 @@ if (Registry::get('logged')) {
                 $update_time = $server_time - 70;
                 if ($row_owner['user_last_visit'] >= $update_time) {
                     $db->query("INSERT INTO `updates` SET for_user_id = '{$row['user_id']}', from_user_id = '{$user_info['user_id']}', type = '9', date = '{$server_time}', text = '{$action_update_text}', user_photo = '{$user_info['user_photo']}', user_search_pref = '{$user_info['user_search_pref']}', lnk = '/photo{$row['user_id']}_{$pid}_{$row['album_id']}'");
-                    mozg_create_cache("user_{$row['user_id']}/updates", 1);
+                    Cache::mozg_create_cache("user_{$row['user_id']}/updates", 1);
                     //ИНАЧЕ делаем +1 для ленты
                     
                 } else {
-                    $cntCacheNews = mozg_cache("user_{$row['user_id']}/new_news");
-                    mozg_create_cache("user_{$row['user_id']}/new_news", ($cntCacheNews + 1));
+                    $cntCacheNews = Cache::mozg_cache("user_{$row['user_id']}/new_news");
+                    Cache::mozg_create_cache("user_{$row['user_id']}/new_news", ($cntCacheNews + 1));
                 }
             }
             break;
@@ -419,14 +420,14 @@ if (Registry::get('logged')) {
                 //Если фотография вызвана не со стены
                 if (!$fuser && $check_album) {
                     //Проверяем на наличии файла с позициями только для этого фоток
-                    $check_pos = mozg_cache('user_' . $uid . '/position_photos_album_' . $check_album['album_id']);
+                    $check_pos = Cache::mozg_cache('user_' . $uid . '/position_photos_album_' . $check_album['album_id']);
 
                     //Чистим кеш
-                    mozg_clear_cache_file('user_' . $user_id . '/position_photos_album_' . $check_album['album_id']);
+                    Cache::mozg_clear_cache_file('user_' . $user_id . '/position_photos_album_' . $check_album['album_id']);
                     //Если нет, то вызываем функцию генерации
                     if (!$check_pos) {
                         GenerateAlbumPhotosPosition($uid, $check_album['album_id']);
-                        $check_pos = mozg_cache('user_' . $uid . '/position_photos_album_' . $check_album['album_id']);
+                        $check_pos = Cache::mozg_cache('user_' . $uid . '/position_photos_album_' . $check_album['album_id']);
                     }
                     $position = xfieldsdataload($check_pos);
                 } else {
