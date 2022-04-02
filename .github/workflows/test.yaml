@@ -30,7 +30,8 @@ jobs:
       - name: PHPUnit
         run: |
           composer update --prefer-dist --no-interaction --no-ansi --no-progress
-          php vendor/bin/phpunit
+          php vendor/bin/phpunit --no-configuration tests
+
   tests-php-8-1:
     runs-on: ubuntu-latest
     steps:
@@ -42,4 +43,4 @@ jobs:
       - name: PHPUnit
         run: |
           composer update --prefer-dist --no-interaction --no-ansi --no-progress
-          php vendor/bin/phpunit
+          php vendor/bin/phpunit --no-configuration tests
