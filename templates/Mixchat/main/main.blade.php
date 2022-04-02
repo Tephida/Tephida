@@ -5,7 +5,7 @@
     @if($logged)
         <script>var kj = {uid: '{my-id}'}</script>
     @endif
-    <link href="/dist/output.css" rel="stylesheet">
+    <link href="/css/style.css" rel="stylesheet">
     {{ $js }}
     @if(!$logged)
         <script type="text/javascript" src="/js/reg.js"></script>
