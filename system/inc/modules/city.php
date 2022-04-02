@@ -8,6 +8,8 @@
  */
 
 //Добавление
+use Mozg\classes\Cache;
+
 if (isset($_POST['add'])) {
     $country = intFilter('country');
     $city = requestFilter('city', 25000, true);
@@ -15,7 +17,7 @@ if (isset($_POST['add'])) {
         $row = $db->super_query("SELECT COUNT(*) AS cnt FROM `city` WHERE name = '" . $city . "' AND id_country = '" . $country . "'");
         if (!$row['cnt']) {
             $db->query("INSERT INTO `city` SET name = '" . $city . "', id_country = '" . $country . "'");
-            system_mozg_clear_cache_file('country_city_' . $country);
+            Cache::system_mozg_clear_cache_file('country_city_' . $country);
             msgbox('Информация', 'Город успешно добавлен', '?mod=city');
         } else
             msgbox('Ошибка', 'Такой город уже добавлен', 'javascript:history.go(-1)');
@@ -31,7 +33,7 @@ if ($_GET['act'] == 'del') {
     $row = $db->super_query("SELECT id_country FROM `city` WHERE id = '" . $id . "'");
     if ($row) {
         $db->query("DELETE FROM `city` WHERE id = '" . $id . "'");
-        system_mozg_clear_cache_file('country_city_' . $row['id_country']);
+        Cache::system_mozg_clear_cache_file('country_city_' . $row['id_country']);
         header("Location: ?mod=city&country=" . $row['id_country']);
     }
     die();

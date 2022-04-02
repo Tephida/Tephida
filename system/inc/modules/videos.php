@@ -22,7 +22,7 @@ if ($_GET['act'] == 'edit') {
                 $db->query("UPDATE `videos` SET title = '" . $title . "', descr = '" . $descr . "' WHERE id = '" . $id . "'");
 
                 //Чистим кеш
-                mozg_mass_clear_cache_file("user_{$row['owner_user_id']}/page_videos_user|user_{$row['owner_user_id']}/page_videos_user_friends|user_{$row['owner_user_id']}/page_videos_user_all|user_{$row['owner_user_id']}/videos_num_all|user_{$row['owner_user_id']}/videos_num_friends");
+                Cache::mozg_mass_clear_cache_file("user_{$row['owner_user_id']}/page_videos_user|user_{$row['owner_user_id']}/page_videos_user_friends|user_{$row['owner_user_id']}/page_videos_user_all|user_{$row['owner_user_id']}/videos_num_all|user_{$row['owner_user_id']}/videos_num_friends");
 
                 msgbox('Информация', 'Видеозапись успешно отредактирована', '?mod=videos');
             } else

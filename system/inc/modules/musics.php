@@ -8,6 +8,8 @@
  */
 
 //Редактирование
+use Mozg\classes\Cache;
+
 if ($_GET['act'] == 'edit') {
     $id = intval($_GET['id']);
 
@@ -21,7 +23,7 @@ if ($_GET['act'] == 'edit') {
             if (isset($artist) and !empty($artist) and isset($name) and !empty($name)) {
                 $db->query("UPDATE `audio` SET artist = '" . $artist . "', name = '" . $name . "' WHERE aid = '" . $id . "'");
 
-                mozg_clear_cache_file('user_' . $row['auser_id'] . '/audios_profile');
+                Cache::mozg_clear_cache_file('user_' . $row['auser_id'] . '/audios_profile');
 
                 msgbox('Информация', 'Аудиозапись успешно отредактирована', '?mod=musics');
             } else

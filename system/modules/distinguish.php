@@ -8,6 +8,7 @@
  */
 
 use FluffyDollop\Support\Registry;
+use Mozg\classes\Cache;
 
 NoAjaxQuery();
 
@@ -70,7 +71,7 @@ if (Registry::get('logged')) {
                     $db->query("INSERT INTO `photos_mark` SET muser_id = '" . random_int(0, 100000) . "', mphoto_id = '" . $photo_id . "', mdate = '" . $server_time . "', msettings_pos = '" . $msettings_pos . "', mphoto_name = '" . $mphoto_name . "', mmark_user_id = '" . $user_id . "', mapprove = 1");
                 }
 
-            mozg_clear_cache_file('photos_mark/p' . $photo_id);
+            Cache::mozg_clear_cache_file('photos_mark/p' . $photo_id);
             break;
 
         //################### Удаление отметки ###################//
@@ -96,7 +97,7 @@ if (Registry::get('logged')) {
                         $db->query("UPDATE `users` SET user_new_mark_photos = user_new_mark_photos-1 WHERE user_id = '" . $muser_id . "'");
                     }
                 }
-                mozg_clear_cache_file('photos_mark/p' . $photo_id);
+                Cache::mozg_clear_cache_file('photos_mark/p' . $photo_id);
             }
             break;
 
@@ -107,7 +108,7 @@ if (Registry::get('logged')) {
             if ($row && !$row['mapprove']) {
                 $db->query("UPDATE `photos_mark` SET mapprove = '1' WHERE mphoto_id = '" . $photo_id . "' AND muser_id = '" . $user_id . "'");
                 $db->query("UPDATE `users` SET user_new_mark_photos = user_new_mark_photos-1 WHERE user_id = '" . $user_id . "'");
-                mozg_clear_cache_file('photos_mark/p' . $photo_id);
+                Cache::mozg_clear_cache_file('photos_mark/p' . $photo_id);
             }
             break;
 

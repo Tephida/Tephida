@@ -8,6 +8,7 @@
  */
 
 use FluffyDollop\Support\Registry;
+use Mozg\classes\Cache;
 
 NoAjaxQuery();
 
@@ -24,9 +25,9 @@ if (Registry::get('logged')) {
     if (!$row['cnt']) {
         $db->query("INSERT INTO `votes_result` SET user_id = '{$user_id}', vote_id = '{$vote_id}', answer = '{$answer_id}'");
         $db->query("UPDATE `votes` SET answer_num = answer_num+1 WHERE id = '{$vote_id}'");
-        mozg_mass_clear_cache_file("votes/vote_{$vote_id}|votes/vote_answer_cnt_{$vote_id}|votes/check{$user_id}_{$vote_id}");
+        Cache::mozg_mass_clear_cache_file("votes/vote_{$vote_id}|votes/vote_answer_cnt_{$vote_id}|votes/check{$user_id}_{$vote_id}");
         //Составляем новый ответ
-        mozg_create_cache("votes/check{$user_id}_{$vote_id}", "a:1:{s:3:\"cnt\";s:1:\"1\";}");
+        Cache::mozg_create_cache("votes/check{$user_id}_{$vote_id}", "a:1:{s:3:\"cnt\";s:1:\"1\";}");
         $row_vote = $db->super_query("SELECT title, answers, answer_num FROM `votes` WHERE id = '{$vote_id}'", false);
         $row_vote['title'] = stripslashes($row_vote['title']);
         $result = "<div class=\"wall_vote_title\">{$row_vote['title']}</div>";
