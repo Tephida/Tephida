@@ -78,7 +78,7 @@ HTML;
                 $db->query("DELETE FROM `audio` WHERE id = '{$id}'");
                 if (!$check['public']) {
                     $db->query("UPDATE `users` SET user_audio = user_audio - 1 WHERE user_id = '{$user_info['user_id']}'");
-                    Cache::mozg_clear_cache_file('user_' . $user_info['user_id'] . '/profile_' . $user_info['user_id']);
+                    Cache::mozgClearCacheFile('user_' . $user_info['user_id'] . '/profile_' . $user_info['user_id']);
                 } else $db->query("UPDATE `communities` SET audio_num = audio_num - 1 WHERE id = '{$check['oid']}'");
                 if ($check['original']) @$db->query("UPDATE `audio` SET add_count = add_count - 1 WHERE id = '{$check['original']}'");
             } else echo 'error';
@@ -94,7 +94,7 @@ HTML;
                 $dbid = $db->insert_id();
                 $db->query("UPDATE `users` SET user_audio = user_audio + 1 WHERE user_id = '{$user_info['user_id']}'");
                 $db->query("UPDATE `audio` SET add_count = add_count + 1 WHERE id = '{$id}'");
-                Cache::mozg_clear_cache_file('user_' . $user_info['user_id'] . '/profile_' . $user_info['user_id']);
+                Cache::mozgClearCacheFile('user_' . $user_info['user_id'] . '/profile_' . $user_info['user_id']);
             }
             break;
 
@@ -233,7 +233,7 @@ HTML;
                         $db->query("INSERT INTO `audio` SET duration = '{$time_sec}', filename = '{$file_rename}{$res_type}', oid = '{$user_info['user_id']}', url = '{$lnk}', artist = '{$artist}', title = '{$name}',  date = '{$server_time}'");
                         $dbid = $db->insert_id();
                         $db->query("UPDATE `users` SET user_audio = user_audio + 1 WHERE user_id = '{$user_info['user_id']}'");
-                        Cache::mozg_clear_cache_file('user_' . $user_info['user_id'] . '/profile_' . $user_info['user_id']);
+                        Cache::mozgClearCacheFile('user_' . $user_info['user_id'] . '/profile_' . $user_info['user_id']);
                     }
 
 //@unlink(ROOT_DIR.'/uploads/audio_tmp/'.$file_rename.'.mp3');

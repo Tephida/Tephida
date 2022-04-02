@@ -75,8 +75,8 @@ if (Registry::get('logged')) {
                     $db->query("INSERT INTO `news` SET ac_user_id = '{$user_id}', action_type = 5, action_text = '{$db_id}', action_time = '{$server_time}'");
 
                 //Чистим кеш владельцу заметки и заметок на его стр
-                Cache::mozg_clear_cache_file('user_' . $user_id . '/profile_' . $user_id);
-                Cache::mozg_clear_cache_file('user_' . $user_id . '/notes_user_' . $user_id);
+                Cache::mozgClearCacheFile('user_' . $user_id . '/profile_' . $user_id);
+                Cache::mozgClearCacheFile('user_' . $user_id . '/notes_user_' . $user_id);
             }
 
             break;
@@ -179,8 +179,8 @@ if (Registry::get('logged')) {
                 $db->query("UPDATE `users` SET user_notes_num = user_notes_num-1 WHERE user_id = '{$user_id}'");
 
                 //Чистим кеш владельцу заметки и заметок на его стр
-                Cache::mozg_clear_cache_file('user_' . $user_id . '/profile_' . $user_id);
-                Cache::mozg_clear_cache_file('user_' . $user_id . '/notes_user_' . $user_id);
+                Cache::mozgClearCacheFile('user_' . $user_id . '/profile_' . $user_id);
+                Cache::mozgClearCacheFile('user_' . $user_id . '/notes_user_' . $user_id);
             }
 
             break;
@@ -230,13 +230,13 @@ if (Registry::get('logged')) {
 
                             $db->query("INSERT INTO `updates` SET for_user_id = '{$check['owner_user_id']}', from_user_id = '{$user_id}', type = '4', date = '{$server_time}', text = '{$comment}', user_photo = '{$user_info['user_photo']}', user_search_pref = '{$user_info['user_search_pref']}', lnk = '/notes/view/{$note_id}'");
 
-                            Cache::mozg_create_cache("user_{$check['owner_user_id']}/updates", 1);
+                            Cache::mozgCreateCache("user_{$check['owner_user_id']}/updates", 1);
 
                             //ИНАЧЕ Добавляем +1 юзеру для оповещания
                         } else {
 
-                            $cntCacheNews = Cache::mozg_cache('user_' . $check['owner_user_id'] . '/new_news');
-                            Cache::mozg_create_cache('user_' . $check['owner_user_id'] . '/new_news', ($cntCacheNews + 1));
+                            $cntCacheNews = Cache::mozgCache('user_' . $check['owner_user_id'] . '/new_news');
+                            Cache::mozgCreateCache('user_' . $check['owner_user_id'] . '/new_news', ($cntCacheNews + 1));
 
                         }
 
@@ -257,7 +257,7 @@ if (Registry::get('logged')) {
                     }
 
                     //Чистим кеш владельцу заметки и заметок на его стр
-                    Cache::mozg_clear_cache_file('user_' . $check['owner_user_id'] . '/notes_user_' . $check['owner_user_id']);
+                    Cache::mozgClearCacheFile('user_' . $check['owner_user_id'] . '/notes_user_' . $check['owner_user_id']);
 
                     AjaxTpl($tpl);
                 }
@@ -277,7 +277,7 @@ if (Registry::get('logged')) {
                 $db->query("UPDATE `notes` SET comm_num = comm_num-1 WHERE id = '{$row['note_id']}'");
 
                 //Чистим кеш владельцу заметки и заметок на его стр
-                Cache::mozg_clear_cache_file('user_' . $row['owner_user_id'] . '/notes_user_' . $row['owner_user_id']);
+                Cache::mozgClearCacheFile('user_' . $row['owner_user_id'] . '/notes_user_' . $row['owner_user_id']);
             }
 
             break;

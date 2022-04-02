@@ -24,14 +24,14 @@ if (Registry::get('logged')) {
         $row = $db->super_query("SELECT admin FROM `communities` WHERE id = '{$public_id}'");
         if (stripos($row['admin'], "u{$user_id}|") !== false) {
             $db->query("UPDATE `communities` SET status_text = '{$text}' WHERE id = '{$public_id}'");
-            Cache::mozg_clear_cache_folder('groups');
+            Cache::mozgClearCacheFolder('groups');
         }
         //Если пользователь
     } else {
         $db->query("UPDATE `users` SET user_status = '{$text}' WHERE user_id = '{$user_id}'");
         //Чистим кеш
-        Cache::mozg_clear_cache_file('user_' . $user_id . '/profile_' . $user_id);
-        Cache::mozg_clear_cache();
+        Cache::mozgClearCacheFile('user_' . $user_id . '/profile_' . $user_id);
+        Cache::mozgClearCache();
     }
     echo requestFilter('text');
 }

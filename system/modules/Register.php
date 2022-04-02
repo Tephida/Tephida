@@ -120,7 +120,7 @@ class Register extends Module
                         Cookie::append("password", md5(md5($password_first)), 365);
                         Cookie::append("hid", $hid, 365);
                         //Создаём папку юзера в кеше
-                        Cache::mozg_create_folder_cache("user_{$id}");
+                        Cache::mozgCreateFolderCache("user_{$id}");
                         //Директория юзеров
                         $upload_dir = ROOT_DIR . '/uploads/users/';
 
@@ -406,7 +406,7 @@ class Register extends Module
                     Cookie::append('hid', $hid, 365);
 
                     //Создаём папку юзера в кеше
-                    Cache::mozg_create_folder_cache("user_{$reg_user_id}");
+                    Cache::mozgCreateFolderCache("user_{$reg_user_id}");
 
                     //Директория юзеров
                     $upload_dir = ROOT_DIR . '/uploads/users/';

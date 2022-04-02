@@ -35,5 +35,5 @@ if (Registry::get('logged')) {
     } else {
         $db->query("UPDATE `users` SET user_delet = 1, user_photo = '' WHERE user_id = '" . $user_id . "'");
     }
-    Cache::mozg_clear_cache_file('user_' . $user_id . '/profile_' . $user_id);
+    Cache::mozgClearCacheFile('user_' . $user_id . '/profile_' . $user_id);
 }

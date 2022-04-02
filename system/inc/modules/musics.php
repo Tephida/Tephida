@@ -23,7 +23,7 @@ if ($_GET['act'] === 'edit') {
             if (!empty($artist) and !empty($name)) {
                 $db->query("UPDATE `audio` SET artist = '" . $artist . "', name = '" . $name . "' WHERE aid = '" . $id . "'");
 
-                Cache::mozg_clear_cache_file('user_' . $row['auser_id'] . '/audios_profile');
+                Cache::mozgClearCacheFile('user_' . $row['auser_id'] . '/audios_profile');
 
                 msgbox('Информация', 'Аудиозапись успешно отредактирована', '?mod=musics');
             } else

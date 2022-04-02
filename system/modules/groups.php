@@ -43,7 +43,7 @@ if (Registry::get('logged')) {
 
                 Filesystem::createDir(ROOT_DIR . '/uploads/groups/' . $cid . '/');
                 Filesystem::createDir(ROOT_DIR . '/uploads/groups/' . $cid . '/photos/');
-                Cache::mozg_mass_clear_cache_file("user_{$user_id}/profile_{$user_id}|groups/{$user_id}");
+                Cache::mozgMassClearCacheFile("user_{$user_id}/profile_{$user_id}|groups/{$user_id}");
 
                 echo $cid;
             } else {
@@ -78,7 +78,7 @@ if (Registry::get('logged')) {
                     }
                     $db->query("INSERT INTO `communities_stats_log` SET user_id = '{$user_info['user_id']}', date = '{$stat_date}', act = '3', gid = '{$id}'");
                 }
-                Cache::mozg_mass_clear_cache_file("user_{$user_id}/profile_{$user_id}|groups/{$user_id}");
+                Cache::mozgMassClearCacheFile("user_{$user_id}/profile_{$user_id}|groups/{$user_id}");
             }
             break;
 
@@ -150,8 +150,8 @@ if (Registry::get('logged')) {
                             //Результат для ответа
                             echo $image_rename . $res_type;
 
-                            Cache::mozg_clear_cache_folder('groups');
-                            Cache::mozg_clear_cache_file("wall/group{$id}");
+                            Cache::mozgClearCacheFolder('groups');
+                            Cache::mozgClearCacheFile("wall/group{$id}");
 
                         } else {
                             echo 'big_size';
@@ -180,8 +180,8 @@ if (Registry::get('logged')) {
                 Filesystem::delete($upload_dir . '100_' . $row['photo']);
                 $db->query("UPDATE `communities` SET photo = '' WHERE id = '{$id}'");
 
-                Cache::mozg_clear_cache_folder('groups');
-                Cache::mozg_clear_cache_file("wall/group{$id}");
+                Cache::mozgClearCacheFolder('groups');
+                Cache::mozgClearCacheFile("wall/group{$id}");
             }
 
             break;
@@ -237,7 +237,7 @@ if (Registry::get('logged')) {
                 $db->query("UPDATE `users` SET user_public_num = user_public_num + 1 {$appSQLDel} WHERE user_id = '{$user_id}'");
 
                 //Чистим кеш
-                Cache::mozg_mass_clear_cache_file("user_{$user_id}/profile_{$user_id}|groups/{$user_id}");
+                Cache::mozgMassClearCacheFile("user_{$user_id}/profile_{$user_id}|groups/{$user_id}");
             }
 
             break;
@@ -325,7 +325,7 @@ if (Registry::get('logged')) {
             if (stripos($checkAdmin['admin'], "u{$user_id}|") !== false && $checkSec['cnt']) {
                 $db->query("UPDATE `communities_feedback` SET office = '{$office}', fphone = '{$phone}', femail = '{$email}' WHERE fuser_id = '{$upage}' AND cid = '{$id}'");
 
-                Cache::mozg_clear_cache_file("wall/group{$id}");
+                Cache::mozgClearCacheFile("wall/group{$id}");
 
             } else {
                 echo 1;
@@ -425,8 +425,8 @@ if (Registry::get('logged')) {
                     echo 'err_adres';
                 }
 
-                Cache::mozg_clear_cache_folder('groups');
-                Cache::mozg_clear_cache_file("wall/group{$id}");
+                Cache::mozgClearCacheFolder('groups');
+                Cache::mozgClearCacheFile("wall/group{$id}");
             }
 
             break;
@@ -635,13 +635,13 @@ if (Registry::get('logged')) {
 
                                 $db->query("INSERT INTO `updates` SET for_user_id = '{$row_owner2['public_id']}', from_user_id = '{$user_id}', type = '5', date = '{$server_time}', text = '{$wall_text}', user_photo = '{$user_info['user_photo']}', user_search_pref = '{$user_info['user_search_pref']}', lnk = '/news/notifications'");
 
-                                Cache::mozg_create_cache("user_{$row_owner2['public_id']}/updates", 1);
+                                Cache::mozgCreateCache("user_{$row_owner2['public_id']}/updates", 1);
 
                                 //ИНАЧЕ Добавляем +1 юзеру для оповещения
                             } else {
 
-                                $cntCacheNews = Cache::mozg_cache("user_{$row_owner2['public_id']}/new_news");
-                                Cache::mozg_create_cache("user_{$row_owner2['public_id']}/new_news", ((int)$cntCacheNews + 1));
+                                $cntCacheNews = Cache::mozgCache("user_{$row_owner2['public_id']}/new_news");
+                                Cache::mozgCreateCache("user_{$row_owner2['public_id']}/new_news", ((int)$cntCacheNews + 1));
                             }
                         }
                     }
@@ -1039,7 +1039,7 @@ if (Registry::get('logged')) {
                     $db->query("INSERT INTO `news` SET ac_user_id = '{$user_id}', action_type = 1, action_text = '{$row['text']}', obj_id = '{$dbid}', action_time = '{$server_time}'");
 
                     //Чистим кеш
-                    Cache::mozg_clear_cache_file("user_{$user_id}/profile_{$user_id}");
+                    Cache::mozgClearCacheFile("user_{$user_id}/profile_{$user_id}");
                 } else {
                     echo 1;
                 }
