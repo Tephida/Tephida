@@ -3,8 +3,8 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "cssprod": "npx tailwindcss -i ./css/style.css -o ./dist/output.css --minify",
-    "cssdev": "npx tailwindcss -i ./css/style.css -o ./dist/output.css --watch",
+    "cssprod": "npx tailwindcss -i ./css/dist.css -o ./css/style.css --minify",
+    "cssdev": "npx tailwindcss -i ./css/dist.css -o ./css/style.css --watch",
     "twinit": "npx tailwindcss init",
     "install": "npm install -D tailwindcss",
     "bootstrap": "npm update"
