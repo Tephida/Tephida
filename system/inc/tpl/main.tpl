@@ -6,7 +6,7 @@
     <script type="text/javascript" src="/js/jquery.lib.js"></script>
     <script type="text/javascript" src="/js/en/lang.js"></script>
     <script type="text/javascript" src="/js/main.js"></script>
-    <link href="/dist/output.css" rel="stylesheet">
+    <link href="/css/style.css" rel="stylesheet">
     <script>
         var Logged = {
             log_out: function () {
