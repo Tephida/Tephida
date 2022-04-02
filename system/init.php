@@ -1,4 +1,5 @@
 <?php
+
 /*
  *   (c) Semen Alekseev
  *
@@ -45,8 +46,7 @@ $user_info = $user_info ?? Registry::get('user_info');
 if ($user_info['user_delet'] > 0) {
     include_once ENGINE_DIR . '/modules/profile_delet.php';
 }
-if ((isset($user_info['user_ban_date']) && $user_info['user_ban_date'] >= Registry::get('server_time')) ||
-    (isset($user_info['user_ban_date']) && $user_info['user_ban_date'] === '0')) {
+if ($user_info['user_ban_date'] >= Registry::get('server_time') || ($user_info['user_ban_date'] === '0')) {
     include_once ENGINE_DIR . '/modules/profile_ban.php';
 }
 //Если юзер авторизован, то обновляем последнюю дату посещения в таблице друзей и на личной стр
@@ -68,7 +68,9 @@ if (Registry::get('logged')) {
     }
 
     if (($user_info['user_last_visit'] + 60) <= $server_time) {
-        $db->query("UPDATE LOW_PRIORITY `users` SET user_logged_mobile = '{$device_user}', user_last_visit = '{$server_time}' {$sql_balance} WHERE user_id = '{$user_info['user_id']}'");
+        $db->query("UPDATE LOW_PRIORITY `users` SET user_logged_mobile = '{$device_user}',
+            user_last_visit = '{$server_time}' {$sql_balance} 
+            WHERE user_id = '{$user_info['user_id']}'");
     }
 }
 
@@ -130,7 +132,9 @@ try {
     if ($router->isFound()) {
         $router->executeHandler($router::getRequestHandler(), $params);
     } else {
-        $module = isset($_GET['go']) ? htmlspecialchars(strip_tags(stripslashes(trim(urldecode($_GET['go']))))) : 'main';
+        //todo update
+        $module = isset($_GET['go']) ?
+            htmlspecialchars(strip_tags(stripslashes(trim(urldecode($_GET['go']))))) : 'main';
         $action = requestFilter('act');
         $class = ucfirst($module);
         if (!class_exists($class) || $action === '' || $class === 'Wall') {
