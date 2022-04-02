@@ -213,10 +213,11 @@ function check_smartphone(): bool
     if (isset($_SESSION['mobile_enable']))
         return true;
     $phone_array = array('iphone', 'android', 'pocket', 'palm', 'windows ce', 'windowsce', 'mobile windows', 'cellphone', 'opera mobi', 'operamobi', 'ipod', 'small', 'sharp', 'sonyericsson', 'symbian', 'symbos', 'opera mini', 'nokia', 'htc_', 'samsung', 'motorola', 'smartphone', 'blackberry', 'playstation portable', 'tablet browser', 'android');
-    $agent = strtolower($_SERVER['HTTP_USER_AGENT']);
+    $agent = (!empty($_SERVER['HTTP_USER_AGENT'])) ? strtolower($_SERVER['HTTP_USER_AGENT']) : '';
     foreach ($phone_array as $value) {
-        if (str_contains($agent, $value))
+        if (str_contains($agent, $value)) {
             return true;
+        }
     }
     return false;
 }

@@ -21,7 +21,8 @@
     "james-heinrich/getid3": "^2.0-dev"
   },
   "require-dev": {
-    "fakerphp/faker": "^1.19"
+    "fakerphp/faker": "^1.19",
+    "phpunit/phpunit": "^9.5.20"
   },
   "autoload": {
     "files": [
