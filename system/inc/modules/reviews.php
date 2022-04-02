@@ -10,9 +10,9 @@
 echoheader();
 
 //Отправляем на сайт
-if ($_GET['act'] == 'ok') {
+if ($_GET['act'] === 'ok') {
 
-    $id = intval($_GET['id']);
+    $id = (int)$_GET['id'];
 
     $db->query("UPDATE `reviews` SET approve = '0' WHERE id = '{$id}'");
 
@@ -21,9 +21,9 @@ if ($_GET['act'] == 'ok') {
 }
 
 //Удаление
-if ($_GET['act'] == 'del') {
+if ($_GET['act'] === 'del') {
 
-    $id = intval($_GET['id']);
+    $id = (int)$_GET['id'];
 
     $db->query("DELETE FROM `reviews` WHERE id = '{$id}'");
 
@@ -31,12 +31,11 @@ if ($_GET['act'] == 'del') {
 
 }
 
-
-if ($_GET['page'] > 0) $page = intval($_GET['page']); else $page = 1;
+$page = intFilter('page', 1);
 $gcount = 20;
 $limit_page = ($page - 1) * $gcount;
 
-$approve = intval($_GET['approve']);
+$approve = (int)$_GET['approve'];
 
 if ($approve) {
     $where_sql = "AND tb1.approve = 1";

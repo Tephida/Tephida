@@ -43,15 +43,15 @@ if ($se_uid || $sort || $se_name || $se_email || $ban || $delete || $regdate) {
     } else {
         $checked_ban = '';
     }
-    if ($delete == 'on') {
+    if ($delete === 'on') {
         $where_sql .= " AND user_delet = 1 ";
         $checked_delete = "checked";
     } else {
         $checked_delete = '';
     }
-    if ($sort == 1) $order_sql = "`user_search_pref` ASC";
-    else if ($sort == 2) $order_sql = "`user_reg_date` ASC";
-    else if ($sort == 3) $order_sql = "`user_last_visit` DESC";
+    if ($sort === 1) $order_sql = "`user_search_pref` ASC";
+    else if ($sort === 2) $order_sql = "`user_reg_date` ASC";
+    else if ($sort === 3) $order_sql = "`user_last_visit` DESC";
     else $order_sql = "`user_reg_date` DESC";
 } else {
     $checked_ban = $checked_delete = '';
@@ -92,19 +92,21 @@ foreach ($sql_ as $row) {
 
     $row['user_status'] = '';
 
+    $row['user_group'] = (int)$row['user_group'];
+
     if ($row['user_delet']) {
         $toltip_num++;
         $row['user_status'] .= "<div class=\"user_status\" style='background: red' onmouseover=\"myhtml.title('{$toltip_num}', 'Удален', 'statusTitle', '{$toltip_num}')\" id=\"statusTitle{$toltip_num}\"></div>";
     } else if ($row['user_ban']) {
         $toltip_num++;
         $row['user_status'] .= "<div class=\"user_status\" style='background: blue' onmouseover=\"myhtml.title('{$toltip_num}', 'Заблокирован', 'statusTitle', '{$toltip_num}')\" id=\"statusTitle{$toltip_num}\"></div>";
-    } else if ($row['user_group'] == 1) {
+    } else if ($row['user_group'] === 1) {
         $toltip_num++;
         $row['user_status'] .= "<div class=\"user_status\" style='background: yellow' onmouseover=\"myhtml.title('{$toltip_num}', 'Администратор', 'statusTitle', '{$toltip_num}')\" id=\"statusTitle{$toltip_num}\"></div>";
-    } else if ($row['user_group'] == 4) {
+    } else if ($row['user_group'] === 4) {
         $toltip_num++;
         $row['user_status'] .= "<div class=\"user_status\" style='background: green' onmouseover=\"myhtml.title('{$toltip_num}', 'Техподдержка', 'statusTitle', '{$toltip_num}')\" id=\"statusTitle{$toltip_num}\"></div>";
-    } else if ($row['user_real'] == 1) {
+    } else if ($row['user_real'] === 1) {
         $toltip_num++;
         $row['user_status'] .= "<div class=\"user_status\" style='background: purple' onmouseover=\"myhtml.title('{$toltip_num}', 'Проверен', 'statusTitle', '{$toltip_num}')\" id=\"statusTitle{$toltip_num}\"></div>";
     }
