@@ -46,16 +46,12 @@ if (isset($_POST['send'])) {
 	$word_find = str_replace("|", "&#124", $word_find);
 	$word_replace = str_replace("|", "&#124", $word_replace);
 
-	$word_find = str_replace("$", "&#036;", $word_find);
-	$word_find = str_replace("{", "&#123;", $word_find);
-	$word_find = str_replace("}", "&#125;", $word_find);
+    $word_find = str_replace(array("$", "{", "}"), array("&#036;", "&#123;", "&#125;"), $word_find);
 
-	$word_replace = str_replace("$", "&#036;", $word_replace);
-	$word_replace = str_replace("{", "&#123;", $word_replace);
-	$word_replace = str_replace("}", "&#125;", $word_replace);
-	
-	fwrite($new_words, "$word_id|$word_find|$word_replace|".intval($_POST['type'])."|".intval($_POST['register'])."|".intval($_POST['filter_search'])."|".intval( $_POST['filter_action'])."||\n");
-	fclose($new_words);
+    $word_replace = str_replace(array("$", "{", "}"), array("&#036;", "&#123;", "&#125;"), $word_replace);
+
+    fwrite($new_words, "$word_id|$word_find|$word_replace|" . (int)$_POST['type'] . "|" . (int)$_POST['register'] . "|" . (int)$_POST['filter_search'] . "|" . (int)$_POST['filter_action'] . "||\n");
+    fclose($new_words);
 	
 	header("Location: ?mod=wordfilter");
 	
