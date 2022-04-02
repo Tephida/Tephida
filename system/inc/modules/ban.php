@@ -38,8 +38,8 @@ if (isset($_POST['save'])) {
     echoheader();
 
     //Разблокировка
-    if ($_GET['act'] == 'unban') {
-        $id = intval($_GET['id']);
+    if ($_GET['act'] === 'unban') {
+        $id = (int)$_GET['id'];
         $db->query("DELETE FROM `banned` WHERE id = '" . $id . "'");
         Filesystem::delete(ENGINE_DIR . '/cache/system/banned.php');
         header("Location: ?mod=ban");

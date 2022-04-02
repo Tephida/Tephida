@@ -14,7 +14,7 @@ $db = Registry::get('db');
 
 //Редактирование
 $act = requestFilter('act');
-if ($act == 'edit') {
+if ($act === 'edit') {
     $id = intFilter('id');
 
     //SQL Запрос на вывод информации
@@ -113,16 +113,16 @@ if ($act == 'edit') {
             $where_sql .= "AND del = 1 ";
             $checked_delete = "checked";
         }
-        if ($sort == 5) {
+        if ($sort === 5) {
             $where_sql = "AND photo != '' ";
         }
-        if ($sort == 1) {
+        if ($sort === 1) {
             $order_sql = "`title` ASC";
-        } else if ($sort == 2) {
+        } else if ($sort === 2) {
             $order_sql = "`date` ASC";
-        } else if ($sort == 3) {
+        } else if ($sort === 3) {
             $order_sql = "`traf` DESC";
-        } else if ($sort == 4) {
+        } else if ($sort === 4) {
             $order_sql = "`rec_num` DESC";
         } else {
             $order_sql = "`date` DESC";
