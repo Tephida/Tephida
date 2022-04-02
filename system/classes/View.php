@@ -64,13 +64,13 @@ class View
         $variables['logged'] = Registry::get('logged');
         if (isset($user_info['user_id'])) {
             //Загружаем кол-во новых новостей
-            $cache_news = mozg_cache('user_' . $user_info['user_id'] . '/new_news');
+            $cache_news = Cache::mozg_cache('user_' . $user_info['user_id'] . '/new_news');
             if ($cache_news) {
                 $this->notify['new_news'] = "<div class=\"ic_newAct\">{$cache_news}</div>";
                 $this->notify['news_link'] = '/notifications';
             }
             /** Загружаем кол-во новых подарков */
-            $cache_gift = mozg_cache("user_{$user_info['user_id']}/new_gift");
+            $cache_gift = Cache::mozg_cache("user_{$user_info['user_id']}/new_gift");
             if ($cache_gift) {
                 $this->notify['new_ubm'] = "<div class=\"ic_newAct\">{$cache_gift}</div>";
                 $this->notify['gifts_link'] = "/gifts{$user_info['user_id']}?new=1";

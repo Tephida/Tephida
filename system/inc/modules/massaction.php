@@ -8,6 +8,7 @@
  */
 
 use FluffyDollop\Support\{Filesystem, Registry};
+use Mozg\classes\Cache;
 use Mozg\classes\TplCp;
 
 $act = $_GET['act'];
@@ -57,20 +58,20 @@ switch ($act) {
 
                         $db->query("UPDATE `users` SET user_search_pref = '' WHERE user_id = '" . $user_id . "'");
 
-                        mozg_clear_cache_file('user_' . $user_id . '/profile_' . $user_id);
+                        Cache::mozg_clear_cache_file('user_' . $user_id . '/profile_' . $user_id);
                     } else if ($mass_type == 7) {
                         //Восстановление пользователей
                         $db->query("UPDATE `users` SET user_delet = 0 WHERE user_id = '" . $user_id . "'");
-                        mozg_clear_cache_file('user_' . $user_id . '/profile_' . $user_id);
+                        Cache::mozg_clear_cache_file('user_' . $user_id . '/profile_' . $user_id);
                     } else if ($mass_type == 8) {
                         //Блокировка пользователей
                         $this_time = $ban_date ? time() + ($ban_date * 60 * 60 * 24) : 0;
                         $db->query("UPDATE `users` SET user_ban = 1, user_active = 1, user_ban_date = '" . $this_time . "' WHERE user_id = '" . $user_id . "'");
-                        mozg_clear_cache_file('user_' . $user_id . '/profile_' . $user_id);
+                        Cache::mozg_clear_cache_file('user_' . $user_id . '/profile_' . $user_id);
                     } else if ($mass_type == 9) {
                         //Разблокировка пользователей
                         $db->query("UPDATE `users` SET user_ban = 0, user_ban_date = '' WHERE user_id = '" . $user_id . "'");
-                        mozg_clear_cache_file('user_' . $user_id . '/profile_' . $user_id);
+                        Cache::mozg_clear_cache_file('user_' . $user_id . '/profile_' . $user_id);
                     } else if ($mass_type == 3) {
                         //Удаление отправленных сообщений юзерам
                         $sql_msg = $db->super_query("SELECT SQL_CALC_FOUND_ROWS from_user_id FROM `messages` WHERE folder = 'outbox' AND for_user_id = '" . $user_id . "' GROUP by `from_user_id`", true);
@@ -115,7 +116,7 @@ switch ($act) {
                             $rowOnwer = $db->super_query("SELECT owner_user_id FROM `videos` WHERE id = '" . $row_pc['video_id'] . "'");
 
                             //Чистим кеш
-                            mozg_mass_clear_cache_file("user_{$rowOnwer['owner_user_id']}/page_videos_user|user_{$rowOnwer['owner_user_id']}/page_videos_user_friends|user_{$rowOnwer['owner_user_id']}/page_videos_user_all");
+                            Cache::mozg_mass_clear_cache_file("user_{$rowOnwer['owner_user_id']}/page_videos_user|user_{$rowOnwer['owner_user_id']}/page_videos_user_friends|user_{$rowOnwer['owner_user_id']}/page_videos_user_all");
                         }
 
                         $db->query("DELETE FROM `videos_comments` WHERE author_user_id = '" . $user_id . "'");
@@ -131,7 +132,7 @@ switch ($act) {
                             $rowOnwer = $db->super_query("SELECT owner_user_id FROM `notes` WHERE id = '" . $row_pc['note_id'] . "'");
 
                             //Чистим кеш
-                            mozg_clear_cache_file('user_' . $rowOnwer['owner_user_id'] . '/notes_user_' . $row['owner_user_id']);
+                            Cache::mozg_clear_cache_file('user_' . $rowOnwer['owner_user_id'] . '/notes_user_' . $row['owner_user_id']);
                         }
 
                         $db->query("DELETE FROM `notes_comments` WHERE from_user_id = '" . $user_id . "'");
@@ -145,7 +146,7 @@ switch ($act) {
                             $db->query("UPDATE `users` SET user_wall_num = user_wall_num-" . $count['cnt'] . " WHERE user_id = '" . $row_pc['for_user_id'] . "'");
 
                             //Чистим кеш
-                            mozg_clear_cache_file('user_' . $row_pc['for_user_id'] . '/profile_' . $row_pc['for_user_id']);
+                            Cache::mozg_clear_cache_file('user_' . $row_pc['for_user_id'] . '/profile_' . $row_pc['for_user_id']);
                         }
 
                         $db->query("DELETE FROM `wall` WHERE author_user_id = '" . $user_id . "' AND for_user_id != '" . $user_id . "' AND fast_comm_id = '0'");
@@ -247,7 +248,7 @@ switch ($act) {
                 //Otmetka off
                 else if ($mass_type == 20)
                     msgbox('Модерация', 'Анкета активирована', '?mod=users');
-                mozg_clear_cache();
+                Cache::mozg_clear_cache();
             } else
                 msgbox('Ошибка', 'Выберите действие', '?mod=users');
         } else
@@ -274,8 +275,8 @@ switch ($act) {
                             $db->query("UPDATE `users` SET user_notes_num = user_notes_num-1 WHERE user_id = '" . $row['owner_user_id'] . "'");
 
                             //Чистим кеш владельцу заметки и заметок на его стр
-                            mozg_clear_cache_file('user_' . $row['owner_user_id'] . '/profile_' . $row['owner_user_id']);
-                            mozg_clear_cache_file('user_' . $row['owner_user_id'] . '/notes_user_' . $row['owner_user_id']);
+                            Cache::mozg_clear_cache_file('user_' . $row['owner_user_id'] . '/profile_' . $row['owner_user_id']);
+                            Cache::mozg_clear_cache_file('user_' . $row['owner_user_id'] . '/notes_user_' . $row['owner_user_id']);
                         }
                     }
                     msgbox('Информация', 'Выбранные заметки успешно удалены', '?mod=notes');
@@ -293,8 +294,8 @@ switch ($act) {
                             $db->query("DELETE FROM `notes_comments` WHERE note_id = '" . $note_id . "'");
 
                             //Чистим кеш владельцу заметки и заметок на его стр
-                            mozg_clear_cache_file('user_' . $row['owner_user_id'] . '/profile_' . $row['owner_user_id']);
-                            mozg_clear_cache_file('user_' . $row['owner_user_id'] . '/notes_user_' . $row['owner_user_id']);
+                            Cache::mozg_clear_cache_file('user_' . $row['owner_user_id'] . '/profile_' . $row['owner_user_id']);
+                            Cache::mozg_clear_cache_file('user_' . $row['owner_user_id'] . '/notes_user_' . $row['owner_user_id']);
                         }
                     }
                     msgbox('Информация', 'Комментарии к выбраным заметкам удалены', '?mod=notes');
@@ -435,7 +436,7 @@ switch ($act) {
                             Filesystem::delete(ROOT_DIR . '/uploads/videos/' . $row['owner_user_id'] . '/' . $photo_name);
 
                             //Чистим кеш
-                            mozg_mass_clear_cache_file("user_{$row['owner_user_id']}/page_videos_user|user_{$row['owner_user_id']}/page_videos_user_friends|user_{$row['owner_user_id']}/page_videos_user_all|user_{$row['owner_user_id']}/profile_{$row['owner_user_id']}|user_{$row['owner_user_id']}/videos_num_all|user_{$row['owner_user_id']}/videos_num_friends");
+                            Cache::mozg_mass_clear_cache_file("user_{$row['owner_user_id']}/page_videos_user|user_{$row['owner_user_id']}/page_videos_user_friends|user_{$row['owner_user_id']}/page_videos_user_all|user_{$row['owner_user_id']}/profile_{$row['owner_user_id']}|user_{$row['owner_user_id']}/videos_num_all|user_{$row['owner_user_id']}/videos_num_friends");
                         }
                     }
                     msgbox('Информация', 'Выбранные видеозаписи успешно удалены', '?mod=videos');
@@ -453,7 +454,7 @@ switch ($act) {
                             $db->query("UPDATE `videos` SET comm_num = '0' WHERE id = '" . $vid . "'");
 
                             //Чистим кеш
-                            mozg_mass_clear_cache_file("user_{$row['owner_user_id']}/page_videos_user|user_{$row['owner_user_id']}/page_videos_user_friends|user_{$row['owner_user_id']}/page_videos_user_all");
+                            Cache::mozg_mass_clear_cache_file("user_{$row['owner_user_id']}/page_videos_user|user_{$row['owner_user_id']}/page_videos_user_friends|user_{$row['owner_user_id']}/page_videos_user_all");
                         }
                     }
                     msgbox('Информация', 'Комментарии к выбраным видео удалены', '?mod=videos');
@@ -486,7 +487,7 @@ switch ($act) {
                     if ($check) {
                         $db->query("DELETE FROM `audio` WHERE aid = '" . $aid . "'");
                         $db->query("UPDATE `users` SET user_audio = user_audio-1 WHERE user_id = '" . $check['auser_id'] . "'");
-                        mozg_mass_clear_cache_file('user_' . $check['auser_id'] . '/audios_profile|user_' . $check['auser_id'] . '/profile_' . $check['auser_id']);
+                        Cache::mozg_mass_clear_cache_file('user_' . $check['auser_id'] . '/audios_profile|user_' . $check['auser_id'] . '/profile_' . $check['auser_id']);
                     }
                 }
                 msgbox('Информация', 'Выбранные аудиозаписи успешно удалены', '?mod=musics');
@@ -532,9 +533,9 @@ switch ($act) {
                         $db->query("UPDATE `users` SET user_albums_num = user_albums_num-1 WHERE user_id = '" . $row['user_id'] . "'");
 
                         //Удаляем кеш позиций фотографий и кеш профиля
-                        mozg_clear_cache_file('user_' . $row['user_id'] . '/position_photos_album_' . $aid);
-                        mozg_clear_cache_file("user_{$row['user_id']}/profile_{$row['user_id']}");
-                        mozg_mass_clear_cache_file("user_{$row['user_id']}/albums|user_{$row['user_id']}/albums_all|user_{$row['user_id']}/albums_friends|user_{$row['user_id']}/albums_cnt_friends|user_{$row['user_id']}/albums_cnt_all");
+                        Cache::mozg_clear_cache_file('user_' . $row['user_id'] . '/position_photos_album_' . $aid);
+                        Cache::mozg_clear_cache_file("user_{$row['user_id']}/profile_{$row['user_id']}");
+                        Cache::mozg_mass_clear_cache_file("user_{$row['user_id']}/albums|user_{$row['user_id']}/albums_all|user_{$row['user_id']}/albums_friends|user_{$row['user_id']}/albums_cnt_friends|user_{$row['user_id']}/albums_cnt_all");
                     }
                 }
                 msgbox('Информация', 'Выбранные альбомы успешно удалены', '?mod=albums');

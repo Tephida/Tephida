@@ -8,6 +8,7 @@
  */
 
 use FluffyDollop\Support\{Filesystem, Registry};
+use Mozg\classes\Cache;
 use Mozg\classes\download;
 
 if (Registry::get('logged')) {
@@ -71,7 +72,7 @@ if (Registry::get('logged')) {
 
                         echo $file_name . '"' . $db->insert_id() . '"' . $dsize . '"' . strtolower($type) . '"' . langdate('сегодня в H:i', $server_time);
 
-                        mozg_mass_clear_cache_file("user_{$user_id}/profile_{$user_id}|user_{$user_id}/docs");
+                        Cache::mozg_mass_clear_cache_file("user_{$user_id}/profile_{$user_id}|user_{$user_id}/docs");
 
                     }
 
@@ -99,8 +100,8 @@ if (Registry::get('logged')) {
                 //Обновляем кол-во док. у юзера
                 $db->query("UPDATE `users` SET user_doc_num = user_doc_num-1 WHERE user_id = '{$user_id}'");
 
-                mozg_mass_clear_cache_file("user_{$user_id}/profile_{$user_id}|user_{$user_id}/docs");
-                mozg_clear_cache_file("wall/doc{$did}");
+                Cache::mozg_mass_clear_cache_file("user_{$user_id}/profile_{$user_id}|user_{$user_id}/docs");
+                Cache::mozg_clear_cache_file("wall/doc{$did}");
 
             }
 
@@ -123,8 +124,8 @@ if (Registry::get('logged')) {
 
                 $db->query("UPDATE `doc`SET dname = '{$name}' WHERE did = '{$did}'");
 
-                mozg_mass_clear_cache_file("user_{$user_id}/profile_{$user_id}|user_{$user_id}/docs");
-                mozg_clear_cache_file("wall/doc{$did}");
+                Cache::mozg_mass_clear_cache_file("user_{$user_id}/profile_{$user_id}|user_{$user_id}/docs");
+                Cache::mozg_clear_cache_file("wall/doc{$did}");
 
             }
 

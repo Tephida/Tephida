@@ -8,6 +8,7 @@
  */
 
 use FluffyDollop\Support\Registry;
+use Mozg\classes\Cache;
 
 NoAjaxQuery();
 
@@ -60,7 +61,7 @@ if (Registry::get('logged')) {
                         $db->query("INSERT INTO `news` SET ac_user_id = '{$user_id}', action_type = 1, action_text = '{$row['text']}', obj_id = '{$dbid}', action_time = '{$server_time}'");
 
                         //Чистим кеш
-                        mozg_clear_cache_file("user_{$user_id}/profile_{$user_id}");
+                        Cache::mozg_clear_cache_file("user_{$user_id}/profile_{$user_id}");
                     } else {
                         echo 1;
                     }
@@ -239,8 +240,8 @@ if (Registry::get('logged')) {
                                 $db->query("UPDATE im  SET idate = '" . $server_time . "', msg_num = msg_num+1, all_msg_num = all_msg_num+1 WHERE iuser_id = '" . $for_user_id . "' AND im_user_id = '" . $user_id . "'");
                             }
                             //Чистим кеш обновлений
-                            mozg_clear_cache_file('user_' . $for_user_id . '/im');
-                            mozg_create_cache('user_' . $for_user_id . '/im_update', '1');
+                            Cache::mozg_clear_cache_file('user_' . $for_user_id . '/im');
+                            Cache::mozg_create_cache('user_' . $for_user_id . '/im_update', '1');
 
                             //Отправка уведомления на E-mail
                             if ($config['news_mail_8'] == 'yes') {

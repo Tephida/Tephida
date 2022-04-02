@@ -10,6 +10,7 @@
 namespace Mozg\modules;
 
 use ErrorException;
+use Mozg\classes\Cache;
 use Mozg\classes\Module;
 use FluffyDollop\Support\Registry;
 use Mozg\classes\TpLSite;
@@ -36,7 +37,7 @@ class Profile extends Module
         $params = [];
 
         //Читаем кеш
-        $row = unserialize(mozg_cache($cache_folder . '/profile_' . $id));
+        $row = unserialize(Cache::mozg_cache($cache_folder . '/profile_' . $id));
 
         //Проверяем на наличие кеша, если нет, то выводим из БД и создаём его
         if ($row) {
@@ -46,8 +47,8 @@ class Profile extends Module
             $row = $db->super_query("SELECT user_id, user_real, user_search_pref, user_country_city_name, user_birthday, user_xfields, user_xfields_all, user_city, user_country, user_photo, user_friends_num, user_notes_num, user_subscriptions_num, user_wall_num, user_albums_num, user_last_visit, user_videos_num, user_status, user_privacy, user_sp, user_sex, user_gifts, user_public_num, user_audio, user_delet, user_ban_date, xfields, user_logged_mobile, user_rating FROM `users` WHERE user_id = '{$id}'");
             //todo update
             if ($row) {
-                mozg_create_folder_cache($cache_folder);
-                mozg_create_cache($cache_folder . '/profile_' . $id, serialize($row));
+                Cache::mozg_create_folder_cache($cache_folder);
+                Cache::mozg_create_cache($cache_folder . '/profile_' . $id, serialize($row));
                 $row_online['user_last_visit'] = $row['user_last_visit'];
                 $row_online['user_logged_mobile'] = $row['user_logged_mobile'];
             } else {
