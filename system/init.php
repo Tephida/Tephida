@@ -106,20 +106,7 @@ $routers = [
 
     '/langs/box' => 'Lang@main',
     '/langs/change' => 'Lang@change',
-
-    '/bugs/' => 'Bugs@Index',
-    '/bugs/:num' => 'Bugs@view_page',
-    '/bugs/load_img/' => 'Bugs@load_img',
-    '/bugs/add_box/' => 'Bugs@add_box',
-    '/bugs/create/' => 'Bugs@create',
-    '/bugs/comments/create/' => 'Bugs@create_comment',
-    '/bugs/delete/' => 'Bugs@delete',
-    '/bugs/open/' => 'Bugs@open',
-    '/bugs/complete/' => 'Bugs@complete',
-    '/bugs/close/' => 'Bugs@close',
-    '/bugs/my/' => 'Bugs@my',
-    '/bugs/view/' => 'Bugs@view',
-
+    
     '/balance' => 'Balance@main',
 
     '/balance/payment_2' => 'Balance@payment_2',
