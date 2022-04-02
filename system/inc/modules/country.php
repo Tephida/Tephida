@@ -8,13 +8,15 @@
  */
 
 //Добавление
+use Mozg\classes\Cache;
+
 if (isset($_POST['add'])) {
     $country = requestFilter('country', 25000, true);
     if (isset($country) and !empty($country)) {
         $row = $db->super_query("SELECT COUNT(*) AS cnt FROM `country` WHERE name = '" . $country . "'");
         if (!$row['cnt']) {
             $db->query("INSERT INTO `country` SET name = '" . $country . "'");
-            system_mozg_clear_cache_file('country');
+            Cache::system_mozg_clear_cache_file('country');
             msgbox('Информация', 'Страна успешно добавлена', '?mod=country');
         } else
             msgbox('Ошибка', 'Такая страна уже добавлена', 'javascript:history.go(-1)');
@@ -25,12 +27,12 @@ if (isset($_POST['add'])) {
 }
 
 //Удаление
-if ($_GET['act'] == 'del') {
-    $id = intval($_GET['id']);
+if ($_GET['act'] === 'del') {
+    $id = (int)$_GET['id'];
     $row = $db->super_query("SELECT COUNT(*) AS cnt FROM `country` WHERE id = '" . $id . "'");
     if ($row['cnt']) {
         $db->query("DELETE FROM `country` WHERE id = '" . $id . "'");
-        system_mozg_clear_cache_file('country');
+        Cache::system_mozg_clear_cache_file('country');
         header("Location: ?mod=country");
     }
     die();

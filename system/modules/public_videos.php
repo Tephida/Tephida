@@ -8,6 +8,7 @@
  */
 
 use FluffyDollop\Support\{Filesystem, Registry};
+use Mozg\classes\Cache;
 
 if (Registry::get('logged')) {
     $db = Registry::get('db');
@@ -54,7 +55,7 @@ if (Registry::get('logged')) {
 
                 $db->query("UPDATE `communities` SET videos_num = videos_num + 1 WHERE id = '{$pid}'");
 
-                mozg_clear_cache_file("groups/video{$pid}");
+                Cache::mozg_clear_cache_file("groups/video{$pid}");
 
             }
 
@@ -86,7 +87,7 @@ if (Registry::get('logged')) {
                 Filesystem::delete($upload_dir . '/' . $expPho);
                 $db->query("DELETE FROM `videos` WHERE id = '{$id}'");
                 $db->query("UPDATE `communities` SET videos_num = videos_num - 1 WHERE id = '{$pid}'");
-                mozg_clear_cache_file("groups/video{$pid}");
+                Cache::mozg_clear_cache_file("groups/video{$pid}");
             }
             break;
 
@@ -137,7 +138,7 @@ if (Registry::get('logged')) {
             if ($public_admin && $row['public_id'] == $pid && !empty($title)) {
                 $db->query("UPDATE `videos` SET title = '{$title}', descr = '{$descr}' WHERE id = '{$id}'");
                 echo stripslashes($descr);
-                mozg_clear_cache_file("groups/video{$pid}");
+                Cache::mozg_clear_cache_file("groups/video{$pid}");
             }
             break;
 

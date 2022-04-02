@@ -8,8 +8,8 @@
  */
 
 //Редактирование
-if ($_GET['act'] == 'edit') {
-    $id = intval($_GET['id']);
+if ($_GET['act'] === 'edit') {
+    $id = (int)$_GET['id'];
 
     //SQL Запрос на вывод информации
     $row = $db->super_query("SELECT owner_user_id, title, descr, video FROM `videos` WHERE id = '" . $id . "'");
@@ -22,7 +22,7 @@ if ($_GET['act'] == 'edit') {
                 $db->query("UPDATE `videos` SET title = '" . $title . "', descr = '" . $descr . "' WHERE id = '" . $id . "'");
 
                 //Чистим кеш
-                mozg_mass_clear_cache_file("user_{$row['owner_user_id']}/page_videos_user|user_{$row['owner_user_id']}/page_videos_user_friends|user_{$row['owner_user_id']}/page_videos_user_all|user_{$row['owner_user_id']}/videos_num_all|user_{$row['owner_user_id']}/videos_num_friends");
+                Cache::mozg_mass_clear_cache_file("user_{$row['owner_user_id']}/page_videos_user|user_{$row['owner_user_id']}/page_videos_user_friends|user_{$row['owner_user_id']}/page_videos_user_all|user_{$row['owner_user_id']}/videos_num_all|user_{$row['owner_user_id']}/videos_num_friends");
 
                 msgbox('Информация', 'Видеозапись успешно отредактирована', '?mod=videos');
             } else
@@ -75,7 +75,7 @@ if (!$se_uid) $se_uid = '';
 $se_user_id = intval($_GET['se_user_id']);
 if (!$se_user_id) $se_user_id = '';
 
-$sort = intval($_GET['sort']);
+$sort = intFilter('sort');
 $se_name = requestFilter('se_name', 25000, true);
 
 if ($se_uid or $sort or $se_name or $se_user_id) {
@@ -86,13 +86,13 @@ if ($se_uid or $sort or $se_name or $se_user_id) {
     $query = strtr($se_name, array(' ' => '%')); //Замеянем пробелы на проценты чтоб тоиск был точнее
     if ($se_name)
         $where_sql .= "AND title LIKE '%" . $query . "%' ";
-    if ($sort == 1)
+    if ($sort === 1)
         $order_sql = "`title` ASC";
-    else if ($sort == 2)
+    else if ($sort === 2)
         $order_sql = "`add_date` ASC";
-    else if ($sort == 3)
+    else if ($sort === 3)
         $order_sql = "`views` DESC";
-    else if ($sort == 4)
+    else if ($sort === 4)
         $order_sql = "`comm_num` DESC";
     else
         $order_sql = "`add_date` DESC";
@@ -100,10 +100,7 @@ if ($se_uid or $sort or $se_name or $se_user_id) {
     $order_sql = "`add_date` DESC";
 
 //Выводим список людей
-if ($_GET['page'] > 0)
-    $page = intval($_GET['page']);
-else
-    $page = 1;
+$page = intFilter('page', 1);
 $gcount = 20;
 $limit_page = ($page - 1) * $gcount;
 

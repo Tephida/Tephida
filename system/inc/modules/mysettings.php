@@ -7,6 +7,8 @@
  *
  */
 
+use Mozg\classes\Cache;
+
 $row = $db->super_query("SELECT user_email, user_name, user_lastname, user_password FROM `users` WHERE user_id = '" . $user_info['user_id'] . "'");
 //Если сохраянем
 if (isset($_POST['save'])) {
@@ -31,7 +33,7 @@ if (isset($_POST['save'])) {
     //Проверка E-mail
     if (!filter_var($user_email, FILTER_VALIDATE_EMAIL)) $errors[] = 'Введите коректный e-mail адрес';
     //Если меняем пароль
-    if ($_POST['old_pass']) if ($old_pass == $row['user_password']) $newPassOk = true;
+    if ($_POST['old_pass']) if ($old_pass === $row['user_password']) $newPassOk = true;
     else $errors[] = 'Старый пароль введен неправильно';
     foreach ($errors as $er) if ($er) $all_er.= '<li>' . $er . '</li>';
     if ($all_er) msgbox('Ошибка', $all_er, '?mod=mysettings');
@@ -41,8 +43,8 @@ if (isset($_POST['save'])) {
         else
             $db->query("UPDATE `users` SET user_name = '" . $user_name . "', user_lastname = '" . $user_lastname . "', user_email = '" . $user_email . "', user_password = '" . $new_pass . "', user_search_pref = '" . $user_name . " " . $user_lastname . "' WHERE user_id = '" . $user_info['user_id'] . "'");
         //clear cache
-        mozg_clear_cache_file('user_' . $user_info['user_id'] . '/profile_' . $user_info['user_id']);
-        mozg_clear_cache();
+        Cache::mozg_clear_cache_file('user_' . $user_info['user_id'] . '/profile_' . $user_info['user_id']);
+        Cache::mozg_clear_cache();
         msgbox('Изменения сохранены', 'Ваша персональная информация была успешно сохранена', '?mod=mysettings');
     }
 } else {

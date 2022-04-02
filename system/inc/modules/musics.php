@@ -8,8 +8,10 @@
  */
 
 //Редактирование
-if ($_GET['act'] == 'edit') {
-    $id = intval($_GET['id']);
+use Mozg\classes\Cache;
+
+if ($_GET['act'] === 'edit') {
+    $id = (int)$_GET['id'];
 
     //SQL Запрос на вывод информации
     $row = $db->super_query("SELECT auser_id, artist, name FROM `audio` WHERE aid = '" . $id . "'");
@@ -18,10 +20,10 @@ if ($_GET['act'] == 'edit') {
             $artist = requestFilter('artist', 25000, true);
             $name = requestFilter('name', 25000, true);
 
-            if (isset($artist) and !empty($artist) and isset($name) and !empty($name)) {
+            if (!empty($artist) and !empty($name)) {
                 $db->query("UPDATE `audio` SET artist = '" . $artist . "', name = '" . $name . "' WHERE aid = '" . $id . "'");
 
-                mozg_clear_cache_file('user_' . $row['auser_id'] . '/audios_profile');
+                Cache::mozg_clear_cache_file('user_' . $row['auser_id'] . '/audios_profile');
 
                 msgbox('Информация', 'Аудиозапись успешно отредактирована', '?mod=musics');
             } else
@@ -68,28 +70,39 @@ HTML;
 
 echoheader();
 
-$se_uid = intval($_GET['se_uid']);
+$se_uid = (int)$_GET['se_uid'];
 if (!$se_uid) $se_uid = '';
 
-$se_user_id = intval($_GET['se_user_id']);
+$se_user_id = (int)$_GET['se_user_id'];
 if (!$se_user_id) $se_user_id = '';
 
-$sort = intval($_GET['sort']);
+$sort = intFilter('sort');
 $se_name = requestFilter('se_name', 25000, true);
 
 if ($se_uid or $sort or $se_name or $se_user_id) {
-    if ($se_uid) $where_sql .= "AND aid = '" . $se_uid . "' ";
-    if ($se_user_id) $where_sql .= "AND auser_id = '" . $se_user_id . "' ";
+    if ($se_uid) {
+        $where_sql .= "AND aid = '" . $se_uid . "' ";
+    }
+    if ($se_user_id) {
+        $where_sql .= "AND auser_id = '" . $se_user_id . "' ";
+    }
     $query = strtr($se_name, array(' ' => '%')); //Замеянем пробелы на проценты чтоб тоиск был точнее
-    if ($se_name) $where_sql .= "AND name LIKE '%" . $query . "%' ";
-    if ($sort == 1) $order_sql = "`artist` ASC";
-    else if ($sort == 2) $order_sql = "`adate` ASC";
-    else $order_sql = "`adate` DESC";
-} else
+    if ($se_name) {
+        $where_sql .= "AND name LIKE '%" . $query . "%' ";
+    }
+    if ($sort === 1) {
+        $order_sql = "`artist` ASC";
+    } else if ($sort === 2) {
+        $order_sql = "`adate` ASC";
+    } else {
+        $order_sql = "`adate` DESC";
+    }
+} else {
     $order_sql = "`adate` DESC";
+}
 
 //Выводим список людей
-if ($_GET['page'] > 0) $page = intval($_GET['page']); else $page = 1;
+$page = intFilter('page', 1);
 $gcount = 20;
 $limit_page = ($page - 1) * $gcount;
 

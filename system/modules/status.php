@@ -8,6 +8,7 @@
  */
 
 use FluffyDollop\Support\Registry;
+use Mozg\classes\Cache;
 
 NoAjaxQuery();
 
@@ -23,14 +24,14 @@ if (Registry::get('logged')) {
         $row = $db->super_query("SELECT admin FROM `communities` WHERE id = '{$public_id}'");
         if (stripos($row['admin'], "u{$user_id}|") !== false) {
             $db->query("UPDATE `communities` SET status_text = '{$text}' WHERE id = '{$public_id}'");
-            mozg_clear_cache_folder('groups');
+            Cache::mozg_clear_cache_folder('groups');
         }
         //Если пользователь
     } else {
         $db->query("UPDATE `users` SET user_status = '{$text}' WHERE user_id = '{$user_id}'");
         //Чистим кеш
-        mozg_clear_cache_file('user_' . $user_id . '/profile_' . $user_id);
-        mozg_clear_cache();
+        Cache::mozg_clear_cache_file('user_' . $user_id . '/profile_' . $user_id);
+        Cache::mozg_clear_cache();
     }
     echo requestFilter('text');
 }

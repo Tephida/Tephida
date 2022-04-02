@@ -12,6 +12,7 @@ declare(strict_types=1);
 use FluffyDollop\Support\Filesystem;
 use FluffyDollop\Support\Registry;
 use FluffyDollop\Support\Thumbnail;
+use Mozg\classes\Cache;
 use Mozg\classes\Flood;
 use Mozg\classes\TpLSite;
 use Mozg\classes\WallProfile;
@@ -180,13 +181,13 @@ if (Registry::get('logged')) {
 
                                                 $db->query("INSERT INTO `updates` SET for_user_id = '{$row_owner2['author_user_id']}', from_user_id = '{$user_id}', type = '5', date = '{$server_time}', text = '{$wall_text}', user_photo = '{$user_info['user_photo']}', user_search_pref = '{$user_info['user_search_pref']}', lnk = '/wall{$for_user_id}_{$fast_comm_id}'");
 
-                                                mozg_create_cache("user_{$row_owner2['author_user_id']}/updates", 1);
+                                                Cache::mozg_create_cache("user_{$row_owner2['author_user_id']}/updates", 1);
 
                                                 //ИНАЧЕ Добавляем +1 юзеру для оповещения
                                             } else {
 
-                                                $cntCacheNews = mozg_cache("user_{$row_owner2['author_user_id']}/new_news");
-                                                mozg_create_cache("user_{$row_owner2['author_user_id']}/new_news", ($cntCacheNews + 1));
+                                                $cntCacheNews = Cache::mozg_cache("user_{$row_owner2['author_user_id']}/new_news");
+                                                Cache::mozg_create_cache("user_{$row_owner2['author_user_id']}/new_news", ($cntCacheNews + 1));
 
                                             }
 
@@ -218,13 +219,13 @@ if (Registry::get('logged')) {
 
                                                 $db->query("INSERT INTO `updates` SET for_user_id = '{$row_owner['author_user_id']}', from_user_id = '{$user_id}', type = '1', date = '{$server_time}', text = '{$wall_text}', user_photo = '{$user_info['user_photo']}', user_search_pref = '{$user_info['user_search_pref']}', lnk = '/wall{$for_user_id}_{$fast_comm_id}'");
 
-                                                mozg_create_cache("user_{$row_owner['author_user_id']}/updates", 1);
+                                                Cache::mozg_create_cache("user_{$row_owner['author_user_id']}/updates", 1);
 
                                                 //ИНАЧЕ Добавляем +1 юзеру для оповещения
                                             } else {
 
-                                                $cntCacheNews = mozg_cache('user_' . $row_owner['author_user_id'] . '/new_news');
-                                                mozg_create_cache('user_' . $row_owner['author_user_id'] . '/new_news', ($cntCacheNews + 1));
+                                                $cntCacheNews = Cache::mozg_cache('user_' . $row_owner['author_user_id'] . '/new_news');
+                                                Cache::mozg_create_cache('user_' . $row_owner['author_user_id'] . '/new_news', ($cntCacheNews + 1));
 
                                             }
 
@@ -263,7 +264,7 @@ if (Registry::get('logged')) {
                                             $wall->select($config, $id, $for_user_id, $user_privacy, $check_friend, $user_info);
                                         }
 
-                                        mozg_clear_cache_file('user_' . $for_user_id . '/profile_' . $for_user_id);
+                                        Cache::mozg_clear_cache_file('user_' . $for_user_id . '/profile_' . $for_user_id);
 
                                         //Отправка уведомления на E-mail
                                         if ($config['news_mail_7'] == 'yes' && $user_id != $for_user_id) {
@@ -345,7 +346,7 @@ if (Registry::get('logged')) {
                     $db->query("UPDATE `users` SET user_wall_num = user_wall_num-1 WHERE user_id = '{$row['for_user_id']}'");
 
                     //Чистим кеш
-                    mozg_clear_cache_file('user_' . $row['for_user_id'] . '/profile_' . $row['for_user_id']);
+                    Cache::mozg_clear_cache_file('user_' . $row['for_user_id'] . '/profile_' . $row['for_user_id']);
 
                     //удаляем из ленты новостей
                     $db->query("DELETE FROM `news` WHERE obj_id = '{$rid}' AND action_type = 6");
@@ -413,7 +414,7 @@ if (Registry::get('logged')) {
 
                             $db->query("INSERT INTO `updates` SET for_user_id = '{$row['author_user_id']}', from_user_id = '{$user_info['user_id']}', type = '10', date = '{$server_time}', text = '{$action_update_text}', user_photo = '{$user_info['user_photo']}', user_search_pref = '{$user_info['user_search_pref']}', lnk = '/wall{$row['author_user_id']}_{$rid}'");
 
-                            mozg_create_cache("user_{$row['author_user_id']}/updates", 1);
+                            Cache::mozg_create_cache("user_{$row['author_user_id']}/updates", 1);
 
                         }
 
@@ -645,7 +646,7 @@ if (Registry::get('logged')) {
                         $db->query("INSERT INTO `news` SET ac_user_id = '{$user_id}', action_type = 1, action_text = '{$row['text']}', obj_id = '{$dbid}', action_time = '{$server_time}'");
 
                         //Чистим кеш
-                        mozg_clear_cache_file("user_{$user_id}/profile_{$user_id}");
+                        Cache::mozg_clear_cache_file("user_{$user_id}/profile_{$user_id}");
                     } else
                         echo 1;
                 } else

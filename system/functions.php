@@ -10,6 +10,7 @@
 use FluffyDollop\Support\{Filesystem, Gzip, Registry, Templates};
 use JetBrains\PhpStorm\ArrayShape;
 use FluffyDollop\Support\Cookie;
+use Mozg\classes\Cache;
 use Mozg\modules\Lang;
 
 /**
@@ -222,63 +223,6 @@ function check_smartphone(): bool
     return false;
 }
 
-function mozg_clear_cache(): void
-{
-    $folder = '';
-    $fdir = opendir(ENGINE_DIR . '/cache/' . $folder);
-    while ($file = readdir($fdir))
-        if ($file != '.' and $file != '..' and $file != '.htaccess' and $file != 'system') {
-            if (is_file(ENGINE_DIR . '/cache/' . $file))
-                Filesystem::delete(ENGINE_DIR . '/cache/' . $file);
-        }
-}
-function mozg_clear_cache_folder($folder): void
-{
-    $fdir = opendir(ENGINE_DIR . '/cache/' . $folder);
-    while ($file = readdir($fdir)) {
-        if (is_file(ENGINE_DIR . '/cache/' . $folder . '/' . $file))
-            Filesystem::delete(ENGINE_DIR . '/cache/' . $folder . '/' . $file);
-    }
-}
-function mozg_clear_cache_file($prefix): bool
-{
-    if (is_file(ENGINE_DIR . '/cache/' . $prefix . '.tmp'))
-        return Filesystem::delete(ENGINE_DIR . '/cache/' . $prefix . '.tmp');
-    else
-        return false;
-}
-function mozg_mass_clear_cache_file($prefix): void
-{
-    $arr_prefix = explode('|', $prefix);
-    foreach ($arr_prefix as $file) {
-        if (is_file(ENGINE_DIR . '/cache/' . $file . '.tmp')) {
-            Filesystem::delete(ENGINE_DIR . '/cache/' . $file . '.tmp');
-        }
-    }
-
-}
-
-/**
- * @throws Exception
- */
-function mozg_create_folder_cache($prefix): void
-{
-    Filesystem::createDir(ROOT_DIR . '/system/cache/' . $prefix);
-}
-function mozg_create_cache($prefix, $cache_text): false|int
-{
-    $filename = ENGINE_DIR . '/cache/' . $prefix . '.tmp';
-    if (file_exists($filename)) {
-        $fp = fopen($filename, 'wb+');
-        fwrite($fp, $cache_text);
-        fclose($fp);
-        chmod($filename, 0666);
-        return 1;
-    } else {
-        return file_put_contents($filename, $cache_text);
-    }
-}
-
 function mozg_cache($prefix): false|string|int
 {
     $filename = ENGINE_DIR . '/cache/' . $prefix . '.tmp';
@@ -431,20 +375,20 @@ function GenerateAlbumPhotosPosition($uid, $aid = false)
             $photo_info.= $count . '|' . $row['id'] . '||';
             $count++;
         }
-        mozg_create_cache('user_' . $uid . '/position_photos_album_' . $aid, $photo_info);
+        Cache::mozg_create_cache('user_' . $uid . '/position_photos_album_' . $aid, $photo_info);
     }
 }
 function CheckFriends($friendId): bool
 {
     $user_info = Registry::get('user_info');
     /** @var string $user_info['user_id'] */
-    $open_my_list = mozg_cache("user_{$user_info['user_id']}/friends");
+    $open_my_list = Cache::mozg_cache("user_{$user_info['user_id']}/friends");
     return stripos($open_my_list, "u{$friendId}|") !== false;
 }
 function CheckBlackList($userId): bool
 {
     $user_info = Registry::get('user_info');
-    $open_my_list = mozg_cache("user_{$userId}/blacklist");
+    $open_my_list = Cache::mozg_cache("user_{$userId}/blacklist");
     /** @var string $user_info['user_id'] */
     return stripos($open_my_list, "|{$user_info['user_id']}|") !== false;
 }
@@ -452,7 +396,7 @@ function MyCheckBlackList($userId): bool
 {
     $user_info = Registry::get('user_info');
     /** @var string $user_info['user_id'] */
-    $open_my_list = mozg_cache("user_{$user_info['user_id']}/blacklist");
+    $open_my_list = Cache::mozg_cache("user_{$user_info['user_id']}/blacklist");
     return stripos($open_my_list, "|{$userId}|") !== false;
 }
 
@@ -690,7 +634,7 @@ function compile($tpl, array $params = array()): int
 
     if (isset($user_info['user_id'])) {
         //Загружаем кол-во новых новостей
-        $CacheNews = mozg_cache('user_' . $user_info['user_id'] . '/new_news');
+        $CacheNews = Cache::mozg_cache('user_' . $user_info['user_id'] . '/new_news');
         if ($CacheNews) {
             $params['new_news'] = "<div class=\"ic_newAct\" style=\"margin-left:18px\">{$CacheNews}</div>";
             $params['news_link'] = '/notifications';
@@ -699,7 +643,7 @@ function compile($tpl, array $params = array()): int
             $params['news_link'] = '';
         }
 //Загружаем кол-во новых подарков
-        $CacheGift = mozg_cache("user_{$user_info['user_id']}/new_gift");
+        $CacheGift = Cache::mozg_cache("user_{$user_info['user_id']}/new_gift");
         if ($CacheGift) {
             $params['new_ubm'] = "<div class=\"ic_newAct\" style=\"margin-left:20px\">{$CacheGift}</div>";
             $params['gifts_link'] = "/gifts{$user_info['user_id']}?new=1";
@@ -994,7 +938,7 @@ function compileNoAjax($tpl, $params): int
     print $result;
     $tpl->global_clear();
 //    $db->close();
-    if ($config['gzip'] == 'yes') {
+    if ($config['gzip'] === 'yes') {
         (new Gzip(false))->GzipOut();
     }
 
@@ -1008,11 +952,6 @@ function tpl_init(): Templates
     $tpl->dir = ROOT_DIR . '/templates/' . $config['temp'];
     define('TEMPLATE_DIR', $tpl->dir);
     return $tpl;
-}
-
-function system_mozg_clear_cache_file($prefix): void
-{
-    Filesystem::delete(ENGINE_DIR . '/cache/system/' . $prefix . '.php');
 }
 
 /**

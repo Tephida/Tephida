@@ -14,7 +14,6 @@ use FluffyDollop\Support\Filesystem;
 
 class Cache
 {
-
     /**
      * @return void
      */
@@ -52,7 +51,6 @@ class Cache
         if (is_file(ENGINE_DIR . '/cache/' . $prefix . '.tmp')) {
             return Filesystem::delete(ENGINE_DIR . '/cache/' . $prefix . '.tmp');
         }
-
         return false;
     }
 
@@ -101,5 +99,10 @@ class Cache
             return file_get_contents($filename);
         }
         return false;
+    }
+
+    public static function system_mozg_clear_cache_file(string $prefix): void
+    {
+        Filesystem::delete(ENGINE_DIR . '/cache/system/' . $prefix . '.php');
     }
 }
