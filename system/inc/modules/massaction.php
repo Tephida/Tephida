@@ -480,7 +480,7 @@ switch ($act) {
         $massaction_list = $_POST['massaction_list'];
         $mass_type = intFilter('mass_type');
         if ($massaction_list) {
-            if ($mass_type =-= 1) {
+            if ($mass_type == 1) {
                 foreach ($massaction_list as $id) {
                     $aid = (int)$id;
                     $check = $db->super_query("SELECT auser_id FROM `audio` WHERE aid = '" . $aid . "'");
