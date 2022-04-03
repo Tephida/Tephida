@@ -1,4 +1,5 @@
 <?php
+
 /*
  * Copyright (c) 2022 Tephida
  *
@@ -18,6 +19,7 @@ use Mozg\modules\Lang;
 
 /**
  * Compile template
+ * @deprecated
  */
 class TpLSite extends Templates
 {

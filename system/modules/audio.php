@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 use JamesHeinrich\GetID3\GetID3;
@@ -210,7 +211,7 @@ HTML;
             $tmp = explode('.', $file_name);
             $file_extension = end($tmp);
             $type = strtolower($file_extension);
-            $config = settings_load();
+            $config = settings_get();
 
             if ($type === 'mp3' && $config['audio_mod_add'] === 'yes' && $file_size < 200000000) {
                 $res_type = '.' . $type;

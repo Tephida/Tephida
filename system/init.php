@@ -13,7 +13,7 @@ use Mozg\modules\Lang;
 use FluffyDollop\Support\{Registry, Router, Templates};
 
 try {
-    $config = settings_load();
+    $config = settings_get();
     Registry::set('config', $config);
 } catch (Exception $e) {
     throw new InvalidArgumentException('Invalid config. Please run install.php');
@@ -108,7 +108,6 @@ $routers = [
 
     '/langs/box' => 'Lang@main',
     '/langs/change' => 'Lang@change',
-    
     '/balance' => 'Balance@main',
 
     '/balance/payment_2' => 'Balance@payment_2',

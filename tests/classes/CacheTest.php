@@ -8,37 +8,37 @@ use PHPUnit\Framework\TestCase;
 class CacheTest extends TestCase
 {
 
-    public function testMozg_mass_clear_cache_file()
+    public function testMozgMassClearCacheFile()
     {
         self::assertTrue(true);
     }
 
-    public function testMozg_clear_cache_folder()
+    public function testMozgClearCacheFolder()
     {
         self::assertTrue(true);
     }
 
-    public function testMozg_create_folder_cache()
+    public function testMozgCreateFolderCache()
     {
         self::assertTrue(true);
     }
 
-    public function testMozg_create_cache()
+    public function testMozgCreateCache()
     {
         self::assertTrue(true);
     }
 
-    public function testMozg_clear_cache()
+    public function testMozgClearCache()
     {
         self::assertTrue(true);
     }
 
-    public function testMozg_cache()
+    public function testMozgCache()
     {
         self::assertTrue(true);
     }
 
-    public function testMozg_clear_cache_file()
+    public function testMozgClearCacheFile()
     {
         self::assertTrue(true);
     }

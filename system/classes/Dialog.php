@@ -1,4 +1,5 @@
 <?php
+
 /*
  * Copyright (c) 2022 Tephida
  *
@@ -219,7 +220,8 @@ class Dialog
                 }
             }
             if ($row['msg_num']) {
-                $this->db->query("UPDATE `users` SET user_pm_num = user_pm_num-{$row['msg_num']} WHERE user_id = '{$user_id}'");
+                $this->db->query("UPDATE `users` SET user_pm_num = user_pm_num-{$row['msg_num']} 
+                    WHERE user_id = '{$user_id}'");
             }
             $this->db->query("DELETE FROM `im` WHERE id = '{$row['id']}'");
             return true;

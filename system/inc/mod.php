@@ -1,4 +1,5 @@
 <?php
+
 /*
  * Copyright (c) 2022 Tephida
  *
@@ -9,7 +10,7 @@
 
 $mod = isset($_GET['mod']) ? htmlspecialchars(strip_tags(stripslashes(trim(urldecode($_GET['mod']))))) : "main";
 // Локализация для даты
-$langdate = array(
+$langdate = [
     'January' => "января",
     'February' => "февраля",
     'March' => "марта",
@@ -30,7 +31,7 @@ $langdate = array(
     'Jul' => "июл", 'Aug' => "авг", 'Sep' => "сен", 'Oct' => "окт", 'Nov' => "ноя", 'Dec' => "дек",
     'Sunday' => "Воскресенье", 'Monday' => "Понедельник", 'Tuesday' => "Вторник", 'Wednesday' => "Среда",
     'Thursday' => "Четверг", 'Friday' => "Пятница", 'Saturday' => "Суббота", 'Sun' => "Вс", 'Mon' => "Пн",
-    'Tue' => "Вт", 'Wed' => "Ср", 'Thu' => "Чт", 'Fri' => "Пт", 'Sat' => "Сб",);
+    'Tue' => "Вт", 'Wed' => "Ср", 'Thu' => "Чт", 'Fri' => "Пт", 'Sat' => "Сб",];
 $server_time = (int)$_SERVER['REQUEST_TIME'];
 switch ($mod) {
     //Настройки системы

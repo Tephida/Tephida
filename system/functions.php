@@ -1,4 +1,5 @@
 <?php
+
 /*
  * Copyright (c) 2022 Tephida
  *
@@ -82,6 +83,7 @@ HTML;
 }
 
 /**
+ * TODO !!!UPDATE
  * @param $items_per_page
  * @param $items_count
  * @param $type
@@ -133,6 +135,7 @@ function navigationNew($items_per_page, $items_count, $type): string
  * @param $act
  * @return void
  * @throws ErrorException
+ * @deprecated
  */
 function box_navigation($gc, $num, $id, $function, $act) {
     global $tpl, $page;
@@ -180,7 +183,7 @@ function box_navigation($gc, $num, $id, $function, $act) {
 function msgbox($title, $text, $tpl_name) {
     global $tpl;
     $tpl_2 = new Templates();
-    $config = settings_load();
+    $config = settings_get();
     $tpl_2->dir = ROOT_DIR . '/templates/' . $config['temp'];
     $tpl_2->load_template($tpl_name . '.tpl');
     $tpl_2->set('{error}', $text);
@@ -191,6 +194,7 @@ function msgbox($title, $text, $tpl_name) {
 }
 
 /**
+ * @deprecated
  * @param $tpl
  * @param $title
  * @param $text
@@ -207,6 +211,7 @@ function msgBoxNew($tpl, $title, $text, $tpl_name): int
 }
 
 /**
+ * @deprecated
  * @return bool
  */
 function check_smartphone(): bool
@@ -223,24 +228,14 @@ function check_smartphone(): bool
     return false;
 }
 
-function mozg_cache($prefix): false|string|int
-{
-    $filename = ENGINE_DIR . '/cache/' . $prefix . '.tmp';
-    if (file_exists($filename)) {
-        return file_get_contents($filename);
-    }
-    return false;
-}
-
 /**
+ * TODO update
  * @return void
  */
 function NoAjaxQuery() : void
 {
-    if (!empty($_POST['ajax']) && $_POST['ajax'] == 'yes') {
-        if ($_SERVER['HTTP_REFERER'] !== $_SERVER['HTTP_HOST'] && $_SERVER['REQUEST_METHOD'] !== 'POST') {
-            header('Location: /index.php?go=none');
-        }
+    if (!empty($_POST['ajax']) && $_POST['ajax'] == 'yes' && $_SERVER['HTTP_REFERER'] !== $_SERVER['HTTP_HOST'] && $_SERVER['REQUEST_METHOD'] !== 'POST') {
+        header('Location: /index.php?go=none');
     }
 }
 
@@ -339,10 +334,17 @@ document.getElementById('page').innerHTML = '{$lang['no_notes']}';
 </script>
 HTML;
         die();
-    } else
-        return header('Location: /index.php?go=none');
+    } else {
+        header('Location: /index.php?go=none');
+    }
 }
 
+/**
+ * @deprecated
+ * @param $time
+ * @param $mobile
+ * @return void
+ */
 function OnlineTpl($time, $mobile = false) {
     global $tpl, $online_time, $lang;
     //Если человек сидит с мобильнйо версии
@@ -356,6 +358,11 @@ function OnlineTpl($time, $mobile = false) {
         return $tpl->set('{online}', '');
 }
 
+/**
+ * @deprecated
+ * @param $tpl
+ * @return int
+ */
 function AjaxTpl($tpl): int
 {
     $config = settings_get();
@@ -398,33 +405,6 @@ function MyCheckBlackList($userId): bool
     /** @var string $user_info['user_id'] */
     $open_my_list = Cache::mozgCache("user_{$user_info['user_id']}/blacklist");
     return stripos($open_my_list, "|{$userId}|") !== false;
-}
-
-/**
- * @param $ips
- * @return false|mixed
- */
-function check_ip($ips) {
-    $_IP = $_SERVER['REMOTE_ADDR'];
-    $blockip = FALSE;
-    if (is_array($ips)) {
-        foreach ($ips as $ip_line) {
-            $ip_arr = rtrim($ip_line['ip']);
-            $ip_check_matches = 0;
-            $db_ip_split = explode(".", $ip_arr);
-            $this_ip_split = explode(".", $_IP);
-            for ($i_i = 0;$i_i < 4;$i_i++) {
-                if ($this_ip_split[$i_i] == $db_ip_split[$i_i] || $db_ip_split[$i_i] == '*') {
-                    $ip_check_matches += 1;
-                }
-            }
-            if ($ip_check_matches == 4) {
-                $blockip = $ip_line['ip'];
-                break;
-            }
-        }
-    }
-    return $blockip;
 }
 
 /**
@@ -513,52 +493,61 @@ function normalizeName(string $value, bool $part = true): array|null|string
 
     $value = trim(strip_tags($value));
     $value = preg_replace("/\s+/u", "-", $value);
+    if (empty($value)) {
+        return null;
+    }
     $value = str_replace("/", "-", $value);
-
-    if ($part)
+    if ($part) {
         $value = preg_replace("/[^a-z0-9\_\-.]+/mi", "", $value);
-    else
+    } else {
         $value = preg_replace("/[^a-z0-9\_\-]+/mi", "", $value);
-
+    }
+    if (empty($value)) {
+        return null;
+    }
     $value = preg_replace('#[\-]+#i', '-', $value);
     return preg_replace('#[.]+#i', '.', $value);
 }
 
 function clearFilePath($file, $ext = array()): string
 {
-
     $file = trim(str_replace(chr(0), '', (string)$file));
     $file = str_replace(array('/', '\\'), '/', $file);
 
     $path_parts = pathinfo($file);
 
-    if (count($ext)) {
-        if (!in_array($path_parts['extension'], $ext)) return '';
+    if (count($ext) && !in_array($path_parts['extension'], $ext, true)) {
+        return '';
     }
 
     $filename = normalizeName($path_parts['basename'], true);
 
-    if (!$filename) return '';
+    if (!$filename) {
+        return '';
+    }
 
     $parts = array_filter(explode('/', $path_parts['dirname']), 'strlen');
 
     $absolutes = array();
 
     foreach ($parts as $part) {
-        if ('.' == $part) continue;
-        if ('..' == $part) {
+        if ('.' === $part) {
+            continue;
+        }
+        if ('..' === $part) {
             array_pop($absolutes);
         } else {
             $absolutes[] = normalizeName($part, false);
         }
     }
-
+    //fixme
     $path = implode('/', $absolutes);
 
-    if ($path)
+    if ($path) {
         return implode('/', $absolutes) . '/' . $filename;
-    else
-        return '';
+    }
+
+    return '';
 
 }
 
@@ -569,44 +558,37 @@ function cleanPath($path): string
     $parts = array_filter(explode('/', $path), 'strlen');
     $absolutes = array();
     foreach ($parts as $part) {
-        if ('.' == $part) continue;
-        if ('..' == $part) {
+        if ('.' === $part) {
+            continue;
+        }
+        if ('..' === $part) {
             array_pop($absolutes);
         } else {
             $absolutes[] = to_translit($part, false, false);
         }
     }
-
     return implode('/', $absolutes);
 }
 
+/**
+ * @return array
+ */
 function settings_get(): array
 {
     if (Registry::exists('config')) {
         return Registry::get('config');
     }
-    if (file_exists(ENGINE_DIR . '/data/config.php')) {
-        $config = require ENGINE_DIR . '/data/config.php';
+    if (file_exists('./data/config.php')) {
+        $config = require './data/config.php';
         Registry::set('config', $config);
         return $config;
     }
-    die("Vii Engine not installed. Please run install.php");//todo
-}
-
-function settings_load(): array
-{
-    if (Registry::exists('config')) {
-        return Registry::get('config');
-    }
-    if (file_exists(ENGINE_DIR . '/data/config.php')) {
-        $config = require ENGINE_DIR . '/data/config.php';
-        Registry::set('config', $config);
-        return $config;
-    }
-    die("Vii Engine not installed. Please run install.php");//todo
+    return [];
+//    die("Vii Engine not installed. Please run install.php");//todo
 }
 
 /**
+ * @deprecated
  * @param $tpl
  * @param array $params
  * @return int
@@ -712,6 +694,7 @@ function compile($tpl, array $params = array()): int
 }
 
 /**
+ * @deprecated
  * @param $tpl
  * @param $params
  * @return int
@@ -777,6 +760,7 @@ function compileAjax($tpl, $params): int
 }
 
 /**
+ * @deprecated
  * @param $tpl
  * @param $params
  * @return int
@@ -945,22 +929,27 @@ function compileNoAjax($tpl, $params): int
     return print('');
 }
 
+/**
+ * @deprecated
+ * @return Templates
+ */
 function tpl_init(): Templates
 {
     $tpl = new Templates();
-    $config = settings_load();
+    $config = settings_get();
     $tpl->dir = ROOT_DIR . '/templates/' . $config['temp'];
     define('TEMPLATE_DIR', $tpl->dir);
     return $tpl;
 }
 
 /**
+ * @deprecated
  * @throws JsonException
  */
 function compileAdmin($tpl): void
 {
     $tpl->load_template('main.tpl');
-    $config = settings_load();
+    $config = settings_get();
     $admin_index = $config['admin_index'];
     $admin_link = $config['home_url'] . $config['admin_index'];
     if (Registry::get('logged')) {
@@ -1036,7 +1025,6 @@ function get_device(): array
 
 function notify_ico(): string
 {
-
     return "<div class=\"ic_msg\" id=\"myprof2\" onmouseout=\"$('.js_titleRemove').remove();\">
          <div id=\"new_msg\">
             <div class=\"ic_newAct\">4</div>

@@ -62,5 +62,3 @@ if ($module === 'albums') {
     ];
     view('info.info', $params);
 }
-
-

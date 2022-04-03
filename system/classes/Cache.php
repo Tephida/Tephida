@@ -1,4 +1,5 @@
 <?php
+
 /*
  * Copyright (c) 2022 Tephida
  *
@@ -22,7 +23,8 @@ class Cache
         $folder = '';
         $fdir = opendir(ENGINE_DIR . '/cache/' . $folder);
         while ($file = readdir($fdir)) {
-            if ($file !== '.' && $file !== '..' && $file !== '.htaccess' && $file !== 'system' && is_file(ENGINE_DIR . '/cache/' . $file)) {
+            if ($file !== '.' && $file !== '..' && $file !== '.htaccess' && $file !== 'system'
+                && is_file(ENGINE_DIR . '/cache/' . $file)) {
                 Filesystem::delete(ENGINE_DIR . '/cache/' . $file);
             }
         }
@@ -66,7 +68,6 @@ class Cache
                 Filesystem::delete(ENGINE_DIR . '/cache/' . $file . '.tmp');
             }
         }
-
     }
 
     /**
