@@ -19,7 +19,7 @@ if (Registry::get('logged')) {
     $act = requestFilter('act');
     $user_info = $user_info ?? Registry::get('user_info');
     $server_time = Registry::get('server_time');
-//	$act = $_GET['act'];
+//	$act = $_GET['act'];y
     $user_id = $user_info['user_id'];
     $metatags['title'] = $lang['support_title'];
     $page = intFilter('page', 1);
@@ -189,93 +189,7 @@ if (Registry::get('logged')) {
 
         //################### Просмотр вопроса ###################//
         case "show":
-            $qid = intFilter('qid');
 
-            $mobile_speedbar = 'Просмотр вопроса';
-
-            $meta_tags['title'] = 'Просмотр вопроса';
-            $config = settings_get();
-            $tpl_dir_name = ROOT_DIR . '/templates/' . $config['temp'];
-            $tpl = new TpLSite($tpl_dir_name, $meta_tags);
-
-            if ($user_info['user_group'] == 4) {
-                $sql_where = "";
-            } else {
-                $sql_where = "AND tb1.suser_id = '{$user_id}'";
-            }
-
-            $row = $db->super_query("SELECT tb1.id, title, question, sdate, sfor_user_id, suser_id, tb2.user_search_pref, user_photo FROM `support` tb1, `users` tb2 WHERE tb1.id = '{$qid}' AND tb1.suser_id = tb2.user_id {$sql_where}");
-            if ($row) {
-                //Выводим ответы
-                $sql_answer = $db->super_query("SELECT id, adate, answer, auser_id FROM `support_answers` WHERE qid = '{$qid}' ORDER by `adate` ASC LIMIT 0, 100", true);
-
-                $tpl->load_template('support/answer.tpl');
-                foreach ($sql_answer as $row_answer) {
-                    if (!$row_answer['auser_id']) {
-                        $tpl->set('{name}', 'Агент поддержки');
-                        $tpl->set('{ava}', '/images/support.png');
-                        $tpl->set_block("'\\[no-agent\\](.*?)\\[/no-agent\\]'si", "");
-                    } else {
-                        $tpl->set('{name}', $row['user_search_pref']);
-                        if ($row['user_photo']) {
-                            $tpl->set('{ava}', '/uploads/users/' . $row['suser_id'] . '/50_' . $row['user_photo']);
-                        } else {
-                            $tpl->set('{ava}', '/images/no_ava_50.png');
-                        }
-
-                        $tpl->set('[no-agent]', '');
-                        $tpl->set('[/no-agent]', '');
-                    }
-
-                    if ($row_answer['auser_id'] == $user_id || $user_info['user_group'] == 4) {
-                        $tpl->set('[owner]', '');
-                        $tpl->set('[/owner]', '');
-                    } else {
-                        $tpl->set_block("'\\[owner\\](.*?)\\[/owner\\]'si", "");
-                    }
-
-                    $tpl->set('{id}', $row_answer['id']);
-                    $tpl->set('{uid}', $user_id);
-                    $tpl->set('{answer}', stripslashes($row_answer['answer']));
-                    $date_str = megaDate($row_answer['adate']);
-                    $tpl->set('{date}', $date_str);
-                    $tpl->compile('answers');
-                }
-
-                $tpl->load_template('support/show.tpl');
-                $tpl->set('{title}', stripslashes($row['title']));
-                $tpl->set('{question}', stripslashes($row['question']));
-                $tpl->set('{qid}', $qid);
-                $date_str = megaDate($row['sdate']);
-                $tpl->set('{date}', $date_str);
-
-                if ($row['sfor_user_id'] == $row['suser_id']) {
-                    $tpl->set('{status}', 'Вопрос ожидает обработки.');
-                } else {
-                    $tpl->set('{status}', 'Есть ответ.');
-                }
-
-                $tpl->set('{name}', $row['user_search_pref']);
-
-                if ($user_info['user_group'] == 4) {
-                    $tpl->set('{uid}', $row['suser_id']);
-                } else {
-                    $tpl->set('{uid}', $user_id);
-                }
-
-                if ($row['user_photo']) {
-                    $tpl->set('{ava}', '/uploads/users/' . $row['suser_id'] . '/50_' . $row['user_photo']);
-                } else {
-                    $tpl->set('{ava}', '/images/no_ava_50.png');
-                }
-
-                $tpl->set('{answers}', $tpl->result['answers'] ?? '');
-                $tpl->compile('content');
-            } else {
-                $speedbar = $lang['error'];
-                msgbox('', $lang['support_no_quest'], 'info');
-            }
-            compile($tpl);
             break;
 
         //################### Просмотр всех вопросов ###################//

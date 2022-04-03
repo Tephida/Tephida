@@ -21,6 +21,15 @@ $tableSchema[] = "CREATE TABLE `bugs` (
   `admin_text` text NOT NULL,
   `admin_id` int(11) NOT NULL DEFAULT '693'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8";
+$tableSchema[] = "CREATE TABLE `pay` (
+  `id` int(11) UNSIGNED NOT NULL,
+  `amount` int(11) NOT NULL,
+  `order_id` int(11) NOT NULL,
+  `user_id` int(11) NOT NULL,
+  `kassa` varchar(40) NOT NULL,
+  `status` int(11) NOT NULL DEFAULT '0',
+  `product` int(11) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8";
 $tableSchema[] = "CREATE TABLE `bugs_comments` (
   `id` int(11) NOT NULL,
   `author_user_id` int(11) NOT NULL,
@@ -109,10 +118,15 @@ $table_Chema[] = "CREATE TABLE IF NOT EXISTS `attach_comm` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;";
 $table_Chema[] = "CREATE TABLE IF NOT EXISTS `audio` (
   `aid` int(11) unsigned NOT NULL AUTO_INCREMENT,
+  `id` int(11) unsigned NOT NULL,
   `auser_id` int(11) unsigned NOT NULL,
   `url` text NOT NULL,
   `artist` varchar(50) NOT NULL,
   `name` varchar(50) NOT NULL,
+  `title` varchar(50) NOT NULL,
+  `duration` varchar(100) NOT NULL,
+  `oid` int(11) NOT NULL,
+  `public` int(11) NOT NULL,
   `adate` varchar(10) NOT NULL,
   PRIMARY KEY (`aid`),
   KEY `auser_id` (`auser_id`),
@@ -3808,7 +3822,7 @@ $table_Chema[] = 'CREATE TABLE IF NOT EXISTS `invites` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
   `uid` int(11) NOT NULL,
   `ruid` int(11) NOT NULL,
-  KEY `uid` (`uid`)
+  KEY `id` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;';
 $table_Chema[] = 'CREATE TABLE IF NOT EXISTS `log` (
   `uid` int(11) NOT NULL,

@@ -8,16 +8,8 @@
  *
  */
 
-use FluffyDollop\Support\Cookie;
-use Mozg\modules\Lang;
 use FluffyDollop\Support\{Registry, Router, Templates};
-
-try {
-    $config = settings_get();
-    Registry::set('config', $config);
-} catch (Exception $e) {
-    throw new InvalidArgumentException('Invalid config. Please run install.php');
-}
+use Mozg\modules\Lang;
 
 $db = require ENGINE_DIR . '/data/db.php';
 Registry::set('db', $db);
@@ -27,9 +19,11 @@ $checkLang = Lang::getLang();
 
 $lang = include ROOT_DIR . '/lang/' . $checkLang . '/site.php';
 Registry::set('lang', $lang);
+
 $langdate = include ROOT_DIR . '/lang/' . $checkLang . '/date.php';
 
 $tpl = new Templates();
+$config = settings_get();
 $tpl->dir = ROOT_DIR . '/templates/' . $config['temp'];
 define('TEMPLATE_DIR', $tpl->dir);
 
@@ -125,34 +119,43 @@ $routers = [
     '/pay/fkw/success/' => 'Balance@main',//4
     '/pay/fw/bad/' => 'Balance@main',//4
     '/pay/fkw/bad/' => 'Balance@main',//4
+
+    '/support' => 'Support@main',//4
+
+
 ];
 $router->add($routers);
-try {
-    if ($router->isFound()) {
-        $router->executeHandler($router::getRequestHandler(), $params);
+
+if ($router->isFound()) {
+    $router->executeHandler($router::getRequestHandler(), $params);
+} else {
+    //todo update
+    $module = isset($_GET['go']) ?
+        htmlspecialchars(strip_tags(stripslashes(trim(urldecode($_GET['go']))))) : 'main';
+    $action = requestFilter('act');
+    $class = ucfirst($module);
+    if (!class_exists($class) || $action === '' || $class === 'Wall') {
+        try {
+            include_once __DIR__ . '/mod.php';
+        } catch (Error) {
+            $params = [
+                'title' => 'error 500',
+                'text' => 'error 500',
+            ];
+            view('info.info', $params);
+        }
     } else {
-        //todo update
-        $module = isset($_GET['go']) ?
-            htmlspecialchars(strip_tags(stripslashes(trim(urldecode($_GET['go']))))) : 'main';
-        $action = requestFilter('act');
-        $class = ucfirst($module);
-        if (!class_exists($class) || $action === '' || $class === 'Wall') {
-            include_once ENGINE_DIR . '/mod.php';
-        } else {
-            $controller = new $class();
-            $params['params'] = '';
-            $params = [$params];
-            try {
-                return call_user_func_array([$controller, $action], $params);
-            } catch (Error $error) {
-                var_dump($error);
-            }
+        $controller = new $class();
+        $params['params'] = '';
+        $params = [$params];
+        try {
+            return call_user_func_array([$controller, $action], $params);
+        } catch (Error $error) {
+            $params = [
+                'title' => 'error 500',
+                'text' => 'error 500',
+            ];
+            view('info.info', $params);
         }
     }
-} catch (Error $error) {
-    if ($user_info['user_group'] === 1) {
-        var_dump($error);
-        exit();
-    }
-    include_once ENGINE_DIR . '/mod.php';
 }

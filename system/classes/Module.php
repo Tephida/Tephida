@@ -19,6 +19,7 @@ class Module
     public \FluffyDollop\Support\Templates $tpl;
     public string|Mysql|array|bool|null $user_info;
     protected string $tpl_dir_name;
+    private array $lang;
 
 
     public function __construct()

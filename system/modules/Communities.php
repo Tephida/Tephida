@@ -21,7 +21,8 @@ class Communities extends Module
 
         if (Registry::get('logged')) {
             $db = Registry::get('db');
-            $lang = Registry::get('lang');
+            $register = new \FluffyDollop\Registry\Registry();
+            $lang = $register->get('lang');
             $user_info = Registry::get('user_info');
             $server_time = Registry::get('server_time');
             $config = settings_get();
