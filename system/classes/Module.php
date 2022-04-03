@@ -1,4 +1,5 @@
 <?php
+
 /*
  * Copyright (c) 2022 Tephida
  *
@@ -17,7 +18,6 @@ class Module
     public Mysql $db;
     public \FluffyDollop\Support\Templates $tpl;
     public string|Mysql|array|bool|null $user_info;
-//    private string|Mysql|array|bool|null $lang;
     protected string $tpl_dir_name;
 
 

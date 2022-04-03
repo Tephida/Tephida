@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Mozg\classes;
@@ -15,7 +16,7 @@ class Email
      * @param string $subject
      * @return void
      */
-    public static function send(string $to, string $subject = '', string $message): void
+    public static function send(string $to, string $subject, string $message): void
     {
         $headers = 'From: ' . strip_tags('noreply@mixchat.ru') . "\r\n";
 //                    $headers .= "Reply-To: ". strip_tags('noreply@mixchat.ru') . "\r\n";

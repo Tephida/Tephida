@@ -13,6 +13,9 @@ use FluffyDollop\Support\Registry;
 use JsonException;
 use FluffyDollop\Support\Templates;
 
+/**
+ * @deprecated
+ */
 class TplCp extends Templates
 {
     public array $meta_tags = array(

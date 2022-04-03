@@ -18,6 +18,7 @@ use Mozg\modules\Lang;
 
 /**
  * Compile template
+ * @deprecated
  */
 class TpLSite extends Templates
 {

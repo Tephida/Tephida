@@ -108,7 +108,6 @@ $routers = [
 
     '/langs/box' => 'Lang@main',
     '/langs/change' => 'Lang@change',
-    
     '/balance' => 'Balance@main',
 
     '/balance/payment_2' => 'Balance@payment_2',

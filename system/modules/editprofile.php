@@ -484,8 +484,9 @@ if (Registry::get('logged')) {
                         $tpl->set('{sp-text}', 'Муж:');
                     else if ($user_sp[0] == 5)
                         $tpl->set('{sp-text}', 'Любимый:');
-                    else
+                    else {
                         $tpl->set('{sp-text}', 'Партнёр:');
+                    }
                 }
             } else {
                 $tpl->set('[sp]', '');
@@ -522,7 +523,6 @@ if (Registry::get('logged')) {
 
             compile($tpl);
     }
-
 } else {
     $user_speedbar = 'Информация';
     msgbox('', $lang['not_logged'], 'info');

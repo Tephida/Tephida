@@ -106,12 +106,15 @@ $page = intFilter('page', 1);
 $gcount = 20;
 $limit_page = ($page - 1) * $gcount;
 
-$sql_ = $db->super_query("SELECT tb1.aid, artist, name, adate, auser_id, tb2.user_name FROM `audio` tb1, `users` tb2 WHERE tb1.auser_id = tb2.user_id {$where_sql} ORDER by {$order_sql} LIMIT {$limit_page}, {$gcount}", true);
+$sql_ = $db->super_query("SELECT tb1.aid, artist, name, adate, auser_id, tb2.user_name 
+    FROM `audio` tb1, `users` tb2 WHERE tb1.auser_id = tb2.user_id {$where_sql} 
+    ORDER by {$order_sql} LIMIT {$limit_page}, {$gcount}", true);
 
 //Кол-во людей считаем
 $numRows = $db->super_query("SELECT COUNT(*) AS cnt FROM `audio` WHERE aid != '' {$where_sql}");
 
-$selsorlist = installationSelected($sort, '<option value="1">по алфавиту</option><option value="2">по дате добавления</option>');
+$selsorlist = installationSelected($sort,
+    '<option value="1">по алфавиту</option><option value="2">по дате добавления</option>');
 
 echo <<<HTML
 <style type="text/css" media="all">
@@ -156,7 +159,8 @@ foreach ($sql_ as $row) {
     $row['adate'] = langdate('j M Y в H:i', $row['adate']);
 
     $users .= <<<HTML
-<div style="background:#fff;float:left;padding:5px;width:100px;text-align:center;"><a href="/u{$row['auser_id']}" target="_blank">{$row['user_name']}</a></div>
+<div style="background:#fff;float:left;padding:5px;width:100px;text-align:center;"><a href="/u{$row['auser_id']}" 
+target="_blank">{$row['user_name']}</a></div>
 <div style="background:#fff;float:left;padding:5px;width:329px;text-align:center;margin-left:1px"><a href="?mod=musics&act=edit&id={$row['aid']}">{$row['artist']} – &nbsp;{$row['name']}</a></div>
 <div style="background:#fff;float:left;padding:5px;width:110px;text-align:center;margin-left:1px">{$row['adate']}</div>
 <div style="background:#fff;float:left;padding:4px;width:20px;text-align:center;font-weight:bold;margin-left:1px"><input type="checkbox" name="massaction_list[]" style="float:right;" value="{$row['aid']}" /></div>
@@ -183,7 +187,8 @@ function ckeck_uncheck_all() {
 <div style="background:#f0f0f0;float:left;padding:5px;width:100px;text-align:center;font-weight:bold;margin-top:-5px">Добавил</div>
 <div style="background:#f0f0f0;float:left;padding:5px;width:329px;text-align:center;font-weight:bold;margin-top:-5px;margin-left:1px">Название</div>
 <div style="background:#f0f0f0;float:left;padding:5px;width:110px;text-align:center;font-weight:bold;margin-top:-5px;margin-left:1px">Дата добавления</div>
-<div style="background:#f0f0f0;float:left;padding:4px;width:20px;text-align:center;font-weight:bold;margin-top:-5px;margin-left:1px"><input type="checkbox" name="master_box" title="Выбрать все" onclick="javascript:ckeck_uncheck_all()" style="float:right;"></div>
+<div style="background:#f0f0f0;float:left;padding:4px;width:20px;text-align:center;font-weight:bold;margin-top:-5px;margin-left:1px"><input type="checkbox" name="master_box" title="Выбрать все" 
+onclick="javascript:ckeck_uncheck_all()" style="float:right;"></div>
 <div class="clr"></div>
 {$users}
 <div style="float:right">

@@ -55,12 +55,12 @@ class View
         $variables['lang'] = $dictionary['lang'];
         $variables['available'] = $variables['available'] ?? false;
         $version = 13;
-        $variables['js'] = '<script type="text/javascript" src="/js/jquery.lib.js?v='.$version.'"></script>
-<script type="text/javascript" src="/js/' . Lang::getLang() . '/lang.js?v='.$version.'"></script>
-<script type="text/javascript" src="/js/main.js?v='.$version.'"></script>
-<script type="text/javascript" src="/js/audio.js?v='.$version.'"></script>
-<script type="text/javascript" src="/js/payment.js?v='.$version.'"></script>
-<script type="text/javascript" src="/js/profile.js?v='.$version.'"></script>';
+        $variables['js'] = '<script type="text/javascript" src="/js/jquery.lib.js?v=' . $version . '"></script>
+<script type="text/javascript" src="/js/' . Lang::getLang() . '/lang.js?v=' . $version . '"></script>
+<script type="text/javascript" src="/js/main.js?v=' . $version . '"></script>
+<script type="text/javascript" src="/js/audio.js?v=' . $version . '"></script>
+<script type="text/javascript" src="/js/payment.js?v=' . $version . '"></script>
+<script type="text/javascript" src="/js/profile.js?v=' . $version . '"></script>';
         $variables['logged'] = Registry::get('logged');
         if (isset($user_info['user_id'])) {
             //Загружаем кол-во новых новостей
@@ -98,7 +98,8 @@ class View
             /** Отметки на фото */
             if ($user_info['user_new_mark_photos']) {
                 $this->notify['new_photos_link'] = 'newphotos';
-                $this->notify['new_photos'] = "<div class=\"ic_newAct\">" . $user_info['user_new_mark_photos'] . "</div>";
+                $this->notify['new_photos'] = "<div class=\"ic_newAct\">" .
+                    $user_info['user_new_mark_photos'] . "</div>";
             } else {
                 $this->notify['new_photos_link'] = $user_info['user_id'];
             }
@@ -108,7 +109,7 @@ class View
                 $this->notify['new_groups'] = "<div class=\"ic_newAct\">" . $user_info['invties_pub_num'] . "</div>";
                 $this->notify['new_groups_lnk'] = '/groups?act=invites';
             }
-            if (requestFilter('ajax') !== 'yes'){
+            if (requestFilter('ajax') !== 'yes') {
                 $variables['my_page_link'] = '/u' . $user_info['user_id'];
                 $variables['msg'] = $this->notify['user_pm_num'];
                 $variables['demands'] = $this->notify['demands'];
@@ -124,7 +125,8 @@ class View
         }
         $views = ROOT_DIR . '/templates/' . $config['temp'];
         $cache = ENGINE_DIR . '/cache/views';
-        $blade = new myView($views, $cache, \Tephida\View\View::MODE_AUTO); // MODE_DEBUG allows pinpointing troubles.
+        /** MODE_DEBUG allows pinpointing troubles. */
+        $blade = new myView($views, $cache, \Tephida\View\View::MODE_AUTO);
         $blade::$dictionary = Lang::dictionary();
         if (requestFilter('ajax') === 'yes') {
             $json_content = $blade->run($view, $variables);
@@ -157,7 +159,7 @@ class View
             $json_data = json_encode($result, JSON_THROW_ON_ERROR);
             return $blade->run('main.json', ['json' => $json_data]);
         }
-            header('Access-Control-Allow-Origin: *');
-            return $blade->run($view, $variables);
+        header('Access-Control-Allow-Origin: *');
+        return $blade->run($view, $variables);
     }
 }

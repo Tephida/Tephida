@@ -533,14 +533,9 @@ class Wall
 //                    $this->tpl->compile($this->compile);
                 }
             }
-
             //Закрываем блок для JS
 //            $this->tpl->result[$this->compile] .= '</div>';
-
         }
-
         return $wall_row;
-
     }
-
 }

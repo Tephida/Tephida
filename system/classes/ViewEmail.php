@@ -16,11 +16,11 @@ class ViewEmail
     /**
      * @throws \Exception
      */
-    public function __construct($template, $variables)
+    public function __construct(string $template, $variables)
     {
         $config = settings_get() ?? settings_load();
-        $views = ROOT_DIR . '/templates/'.$config['temp'].'';
-        $cache =  ENGINE_DIR.'/cache/views';
+        $views = ROOT_DIR . '/templates/' . $config['temp'] . '';
+        $cache = ENGINE_DIR . '/cache/views';
         $blade = new myView($views, $cache, \Tephida\View\View::MODE_AUTO); // MODE_DEBUG allows pinpointing troubles.
         $blade::$dictionary = Lang::dictionary();
         $this->message = $blade->run($template, $variables);
@@ -29,7 +29,7 @@ class ViewEmail
     /**
      * @return string
      */
-    public function run(): string
+    final public function run(): string
     {
         return $this->message;
     }

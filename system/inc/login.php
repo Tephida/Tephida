@@ -1,4 +1,5 @@
 <?php
+
 /*
  * Copyright (c) 2022 Tephida
  *
@@ -7,10 +8,10 @@
  *
  */
 
+use FluffyDollop\Support\Cookie;
 use FluffyDollop\Support\Registry;
 use Mozg\classes\TplCp;
 use Mozg\classes\Users;
-use FluffyDollop\Support\Cookie;
 
 header('Content-type: text/html; charset=utf-8');
 
@@ -57,31 +58,22 @@ if (isset($_SESSION['user_id']) > 0) {
     $logged = true;
     Registry::set('logged', true);
     $logged_user_id = (int)$_SESSION['user_id'];
-//    $user_info = $db->super_query("SELECT user_id, user_email, user_group, user_password FROM `users` WHERE user_id = '" . $logged_user_id . "'");
     $user_info = Users::login($logged_user_id, 'control_panel');
-    //Если есть данные о сесии, но нет инфы о юзере, то выкидываем его
-    if (!$user_info['user_id']) {
-
-//        $tpl = new TplCp(ADMIN_DIR . '/tpl/');
-//        $tpl->load_template('login.tpl');
-//        $tpl->set('{error_log}', '');
-//        $tpl->compile('content');
-//        $tpl->render();
-
-//        header("Location: {$admin_link}?act=logout");
-    }
 
 //Если есть данные о COOKIE то проверяем
 } elseif (isset($_COOKIE['user_id']) > 0 && $_COOKIE['password'] && $_COOKIE['hid']) {
     $cookie_user_id = (int)$_COOKIE['user_id'];
-    $user_info = $db->super_query("SELECT user_id, user_email, user_group, user_password, user_hid FROM `users` WHERE user_id = '" . $cookie_user_id . "' AND user_group = '1'");
+    $user_info = $db->super_query("SELECT user_id, user_email, user_group, user_password, user_hid 
+FROM `users` WHERE user_id = '" . $cookie_user_id . "' AND user_group = '1'");
     $user_info = Users::login($cookie_user_id, 'control_panel');
     //Если пароль и HID совпадает то пропускаем
-    if (($user_info['user_password'] === $_COOKIE['password']) && ($user_info['user_hid'] === $_COOKIE['password'] . md5(md5($_IP)))) {
+    if (($user_info['user_password'] === $_COOKIE['password']) &&
+        ($user_info['user_hid'] === $_COOKIE['password'] . md5(md5($_IP)))) {
         $_SESSION['user_id'] = $user_info['user_id'];
 
         //Вставляем лог в бд
-        $db->query("UPDATE `log` SET browser = '" . $_BROWSER . "', ip = '" . $_IP . "' WHERE uid = '" . $user_info['user_id'] . "'");
+        $db->query("UPDATE `log` SET browser = '" . $_BROWSER . "', ip = '" . $_IP . "' 
+        WHERE uid = '" . $user_info['user_id'] . "'");
 
         $logged = true;
         Registry::set('logged', true);
@@ -98,7 +90,6 @@ if (isset($_SESSION['user_id']) > 0) {
 
 //Если данные поступили через пост и пользователь не авторизован
 if (isset($_POST['log_in']) && !isset($_SESSION['user_id'])) {
-
     //Приготавливаем данные
     $email = requestFilter('email');
     $password = stripslashes($_POST['pass']);
@@ -106,9 +97,10 @@ if (isset($_POST['log_in']) && !isset($_SESSION['user_id'])) {
     //Проверяем правильность e-mail
     if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
         $error_log = 'Доступ отключён!';
-    } else if (strlen($password) >= 0 && strlen($email) > 0) {
+    } elseif (strlen($password) >= 0 && strlen($email) > 0) {
         $md5_pass = md5(md5($password));
-        $check_user = $db->super_query("SELECT user_id FROM `users` WHERE user_email = '" . $email . "' AND user_password = '" . $md5_pass . "' AND user_group = 1");
+        $check_user = $db->super_query("SELECT user_id FROM `users` 
+            WHERE user_email = '" . $email . "' AND user_password = '" . $md5_pass . "' AND user_group = 1");
 
         //Если есть юзер то пропускаем
         if ($check_user) {
@@ -143,14 +135,15 @@ if (!$logged) {
     $tpl->set('{admin_link}', $admin_link);
     $tpl->compile('content');
     $tpl->render();
-} else if ($user_info['user_group'] == 1) {
+} elseif ($user_info['user_group'] == 1) {
     include ADMIN_DIR . '/mod.php';
 } else {
     $config = settings_load();
 
     $tpl = new TplCp(ADMIN_DIR . '/tpl/');
     $tpl->load_template('info/info_red.tpl');
-    $tpl->set('{error}', 'У вас недостаточно прав для просмотра этого раздела. <a href="' . $admin_link . '?act=logout">Выйти</a>');
+    $tpl->set('{error}', 'У вас недостаточно прав для просмотра этого раздела. <a href="'
+        . $admin_link . '?act=logout">Выйти</a>');
     $tpl->set('{admin_link}', $admin_link);
     $tpl->set('{title}', 'Информация');
     $tpl->compile('content');
