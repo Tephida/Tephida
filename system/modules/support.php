@@ -14,7 +14,8 @@ use Mozg\classes\{Flood, TpLSite};
 NoAjaxQuery();
 
 if (Registry::get('logged')) {
-    $lang = Registry::get('lang');
+    $register = new \FluffyDollop\Registry\Registry();
+    $lang = $register->get('lang');
     $db = Registry::get('db');
     $act = requestFilter('act');
     $user_info = $user_info ?? Registry::get('user_info');
