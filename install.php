@@ -530,7 +530,12 @@ SET user_name = '{$_POST['name']}',
                 $table_Chema[] = "INSERT INTO `log` SET uid = '1', browser = '', ip = ''";
 
                 foreach ($table_Chema as $query) {
-                    $db->query($query);
+                    try {
+                        $db->query($query);
+                    } catch (Error $e) {
+                        echo $query;
+                        exit();
+                    }
                 }
 
                 $admin_index = $admin_index ?? 'adminpanel.php';
@@ -653,7 +658,12 @@ HTML;
             $table_Chema[] = "DROP TABLE IF EXISTS `wall`";
             $table_Chema[] = "DROP TABLE IF EXISTS `wall_like`";
             foreach ($table_Chema as $query) {
-                $db->query($query);
+                try {
+                    $db->query($query);
+                } catch (Error $e) {
+                    echo $query;
+                    exit();
+                }
             }
 
             \FluffyDollop\Support\Filesystem::delete(ENGINE_DIR . '/data/config.php');

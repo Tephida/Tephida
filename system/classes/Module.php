@@ -26,8 +26,7 @@ class Module
     {
         $this->db = Registry::get('db');
         $this->user_info = Registry::get('user_info');
-        $register = new \FluffyDollop\Registry\Registry();
-        $this->lang = $register->get('lang');
+        $this->lang = Registry::get('lang');
         $this->tpl = new \FluffyDollop\Support\Templates();
         $config = settings_get();
         $this->tpl->dir = ROOT_DIR . '/templates/' . $config['temp'];

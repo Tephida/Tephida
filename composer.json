@@ -14,10 +14,10 @@
     "ext-zlib": "*",
     "ext-gd": "*",
     "ext-iconv": "*",
-    "tephida/fluffy-dollop": "^3.3.2",
+    "ext-curl": "*",
+    "tephida/fluffy-dollop": "^3.5",
     "tephida/view": "^1.0",
     "sinergi/browser-detector": "^6.1",
-    "ext-curl": "*",
     "james-heinrich/getid3": "^2.0-dev"
   },
   "require-dev": {

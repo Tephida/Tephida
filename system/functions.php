@@ -578,12 +578,15 @@ function settings_get(): array
     if (Registry::exists('config')) {
         return Registry::get('config');
     }
-    if (file_exists('./data/config.php')) {
-        $config = require './data/config.php';
+    try {
+        $config = require __DIR__ . '/data/config.php';
         Registry::set('config', $config);
         return $config;
+    } catch (Error) {
+        echo 'Please install system';
+        exit();
     }
-    return [];
+
 //    die("Vii Engine not installed. Please run install.php");//todo
 }
 
