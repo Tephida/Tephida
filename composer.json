@@ -22,6 +22,7 @@
   },
   "require-dev": {
     "fakerphp/faker": "^1.19",
+    "php-coveralls/php-coveralls": "^2.1",
     "phpspec/prophecy": "^1.15",
     "phpspec/prophecy-phpunit": "^2.0",
     "phpstan/phpstan": "^1.5",
