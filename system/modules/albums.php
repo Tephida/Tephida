@@ -1,4 +1,5 @@
 <?php
+
 /*
  * Copyright (c) 2022 Tephida
  *
@@ -49,7 +50,7 @@ if (Registry::get('logged')) {
                     $id = $db->insert_id();
                     $db->query("UPDATE `users` SET user_albums_num = user_albums_num+1 WHERE user_id = '{$user_info['user_id']}'");
 
-                    Cache::mozg_mass_clear_cache_file("user_{$user_info['user_id']}/albums|user_{$user_info['user_id']}/albums_all|user_{$user_info['user_id']}/albums_friends|user_{$user_info['user_id']}/albums_cnt_friends|user_{$user_info['user_id']}/albums_cnt_all|user_{$user_info['user_id']}/profile_{$user_info['user_id']}");
+                    Cache::mozgMassClearCacheFile("user_{$user_info['user_id']}/albums|user_{$user_info['user_id']}/albums_all|user_{$user_info['user_id']}/albums_friends|user_{$user_info['user_id']}/albums_cnt_friends|user_{$user_info['user_id']}/albums_cnt_all|user_{$user_info['user_id']}/profile_{$user_info['user_id']}");
                     if ($sql_) {
                         echo '/albums/add/' . $id;
                     } else {
@@ -184,10 +185,10 @@ if (Registry::get('logged')) {
 
                                 //Удаляем кеш позиций фотографий
 //								if(!$photos_num) //WTF?
-                                Cache::mozg_clear_cache_file('user_' . $user_id . '/profile_' . $user_id);
+                                Cache::mozgClearCacheFile('user_' . $user_id . '/profile_' . $user_id);
 
                                 //Чистим кеш
-                                Cache::mozg_mass_clear_cache_file("user_{$user_info['user_id']}/albums|user_{$user_info['user_id']}/albums_all|user_{$user_info['user_id']}/albums_friends|user_{$user_info['user_id']}/position_photos_album_{$aid}");
+                                Cache::mozgMassClearCacheFile("user_{$user_info['user_id']}/albums|user_{$user_info['user_id']}/albums_all|user_{$user_info['user_id']}/albums_friends|user_{$user_info['user_id']}/position_photos_album_{$aid}");
 
                                 $img_url = str_replace($config['home_url'], '/', $img_url);
 
@@ -258,7 +259,7 @@ if (Registry::get('logged')) {
                 $db->query("UPDATE `albums` SET photo_num = photo_num-1, comm_num = comm_num-{$row['comm_num']} {$set_cover} WHERE aid = '{$row['album_id']}'");
 
                 //Чистим кеш
-                Cache::mozg_mass_clear_cache_file("user_{$user_info['user_id']}/albums|user_{$user_info['user_id']}/albums_all|user_{$user_info['user_id']}/albums_friends|user_{$row['user_id']}/position_photos_album_{$row['album_id']}");
+                Cache::mozgMassClearCacheFile("user_{$user_info['user_id']}/albums|user_{$user_info['user_id']}/albums_all|user_{$user_info['user_id']}/albums_friends|user_{$row['user_id']}/position_photos_album_{$row['album_id']}");
 
                 //Выводим и удаляем отметки если они есть
                 $sql_mark = $db->super_query("SELECT muser_id FROM `photos_mark` WHERE mphoto_id = '" . $id . "' AND mapprove = '0'", true);
@@ -286,7 +287,7 @@ if (Registry::get('logged')) {
                 $db->query("UPDATE `albums` SET cover = '{$row['photo_name']}' WHERE aid = '{$row['album_id']}'");
 
                 //Чистим кеш
-                Cache::mozg_mass_clear_cache_file("user_{$user_info['user_id']}/albums|user_{$user_info['user_id']}/albums_all|user_{$user_info['user_id']}/albums_friends");
+                Cache::mozgMassClearCacheFile("user_{$user_info['user_id']}/albums|user_{$user_info['user_id']}/albums_all|user_{$user_info['user_id']}/albums_friends");
             }
 
             break;
@@ -335,7 +336,7 @@ if (Registry::get('logged')) {
                 }
 
                 //Чистим кеш
-                Cache::mozg_mass_clear_cache_file("user_{$user_info['user_id']}/albums|user_{$user_info['user_id']}/albums_all|user_{$user_info['user_id']}/albums_friends");
+                Cache::mozgMassClearCacheFile("user_{$user_info['user_id']}/albums|user_{$user_info['user_id']}/albums_all|user_{$user_info['user_id']}/albums_friends");
             }
 
             break;
@@ -358,7 +359,7 @@ if (Registry::get('logged')) {
                         $photo_info .= $count . '|' . $idval . '||';
                         $count++;
                     }
-                    Cache::mozg_create_cache('user_' . $user_info['user_id'] . '/position_photos_album_' . $row['album_id'], $photo_info);
+                    Cache::mozgCreateCache('user_' . $user_info['user_id'] . '/position_photos_album_' . $row['album_id'], $photo_info);
                 }
             }
             break;
@@ -409,7 +410,7 @@ if (Registry::get('logged')) {
                     $db->query("UPDATE `albums` SET name = '{$name}', descr = '{$descr}', privacy = '{$sql_privacy}' WHERE aid = '{$id}'");
                     echo stripslashes($name) . '|#|||#row#|||#|' . stripslashes($descr);
 
-                    Cache::mozg_mass_clear_cache_file("user_{$user_id}/albums|user_{$user_id}/albums_all|user_{$user_id}/albums_friends|user_{$user_id}/albums_cnt_friends|user_{$user_id}/albums_cnt_all");
+                    Cache::mozgMassClearCacheFile("user_{$user_id}/albums|user_{$user_id}/albums_all|user_{$user_id}/albums_friends|user_{$user_id}/albums_cnt_friends|user_{$user_id}/albums_cnt_all");
                 } else
                     echo 'no_name';
             }
@@ -599,10 +600,10 @@ HTML;
                 $db->query("UPDATE `users` SET user_albums_num = user_albums_num-1 WHERE user_id = '{$user_id}'");
 
                 //Удаляем кеш позиций фотографий и кеш профиля
-                Cache::mozg_clear_cache_file('user_' . $row['user_id'] . '/position_photos_album_' . $row['aid']);
-                Cache::mozg_clear_cache_file("user_{$user_info['user_id']}/profile_{$user_info['user_id']}");
+                Cache::mozgClearCacheFile('user_' . $row['user_id'] . '/position_photos_album_' . $row['aid']);
+                Cache::mozgClearCacheFile("user_{$user_info['user_id']}/profile_{$user_info['user_id']}");
 
-                Cache::mozg_mass_clear_cache_file("user_{$user_id}/albums|user_{$user_id}/albums_all|user_{$user_id}/albums_friends|user_{$user_id}/albums_cnt_friends|user_{$user_id}/albums_cnt_all");
+                Cache::mozgMassClearCacheFile("user_{$user_id}/albums|user_{$user_id}/albums_all|user_{$user_id}/albums_friends|user_{$user_id}/albums_cnt_friends|user_{$user_id}/albums_cnt_all");
             }
 
             break;
@@ -953,7 +954,7 @@ HTML;
                         msgbox('', '<br /><br />В альбоме нет фотографий<br /><br /><br />', 'info_2');
 
                     //Проверяем на наличии файла с позициями фоток
-                    $check_pos = Cache::mozg_cache('user_' . $row_album['user_id'] . '/position_photos_album_' . $aid);
+                    $check_pos = Cache::mozgCache('user_' . $row_album['user_id'] . '/position_photos_album_' . $aid);
 
                     //Если нет, то вызываем функцию генерации
                     if (!$check_pos) {

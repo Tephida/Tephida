@@ -1,4 +1,5 @@
 <?php
+
 /*
  * Copyright (c) 2022 Tephida
  *
@@ -18,6 +19,7 @@ use Mozg\modules\Lang;
 
 /**
  * Compile template
+ * @deprecated
  */
 class TpLSite extends Templates
 {
@@ -77,13 +79,13 @@ class TpLSite extends Templates
 
         if (isset($user_info['user_id'])) {
             //Загружаем кол-во новых новостей
-            $CacheNews = Cache::mozg_cache('user_' . $user_info['user_id'] . '/new_news');
+            $CacheNews = Cache::mozgCache('user_' . $user_info['user_id'] . '/new_news');
             if ($CacheNews) {
                 $this->notify['new_news'] = "<div class=\"ic_newAct\">{$CacheNews}</div>";
                 $this->notify['news_link'] = '/notifications';
             }
             /** Загружаем кол-во новых подарков */
-            $CacheGift = Cache::mozg_cache("user_{$user_info['user_id']}/new_gift");
+            $CacheGift = Cache::mozgCache("user_{$user_info['user_id']}/new_gift");
             if ($CacheGift) {
                 $this->notify['new_ubm'] = "<div class=\"ic_newAct\">{$CacheGift}</div>";
                 $this->notify['gifts_link'] = "/gifts{$user_info['user_id']}?new=1";
@@ -270,8 +272,8 @@ class TpLSite extends Templates
 
             $user_friends_demands = $user_info['user_friends_demands'] ?? 0;
             $user_support = $user_info['user_support'] ?? 0;
-            $CacheNews = Cache::mozg_cache('user_' . $user_info['user_id'] . '/new_news') ?? 0;
-            $CacheGift = Cache::mozg_cache("user_{$user_info['user_id']}/new_gift") ?? 0;
+            $CacheNews = Cache::mozgCache('user_' . $user_info['user_id'] . '/new_news') ?? 0;
+            $CacheGift = Cache::mozgCache("user_{$user_info['user_id']}/new_gift") ?? 0;
 
             $new_actions = $user_friends_demands + $user_support + $CacheNews + $CacheGift + $user_info['user_pm_num'];
             if ($new_actions) {

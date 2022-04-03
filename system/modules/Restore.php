@@ -1,4 +1,5 @@
 <?php
+
 /*
  * Copyright (c) 2022 Tephida
  *
@@ -83,7 +84,7 @@ class Restore extends Module
             $db->query("INSERT INTO `restore` SET email = '{$email}', hash = '{$hash}', ip = '{$_IP}'");
 
             //Отправляем письмо на почту для восстановления
-            $config = settings_load();
+            $config = settings_get();
 
             /** @var array $lang */
             $dictionary = $this->lang;

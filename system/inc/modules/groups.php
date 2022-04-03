@@ -1,4 +1,5 @@
 <?php
+
 /*
  * Copyright (c) 2022 Tephida
  *
@@ -71,7 +72,7 @@ if ($act === 'edit') {
             $tpl->set('{descr}', $row['descr']);
             $tpl->set('{checked}', $checked);
             $tpl->set('{groups_num}', '');
-            $config = settings_load();
+            $config = settings_get();
             $tpl->set('{admin_index}', $config['admin_index']);
             $tpl->compile('content');
             $tpl->render();
@@ -184,7 +185,7 @@ if ($act === 'edit') {
     $tpl->set('{checked_ban}', $checked_ban);
     $tpl->set('{checked_delet}', $checked_delete);
     $tpl->set('{groups_num}', $numRows['cnt']);
-    $config = settings_load();
+    $config = settings_get();
     $tpl->set('{admin_index}', $config['admin_index']);
     $tpl->compile('content');
     $tpl->render();

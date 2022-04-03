@@ -1,4 +1,5 @@
 <?php
+
 /*
  * Copyright (c) 2022 Tephida
  *
@@ -13,6 +14,9 @@ use FluffyDollop\Support\Registry;
 use JsonException;
 use FluffyDollop\Support\Templates;
 
+/**
+ * @deprecated
+ */
 class TplCp extends Templates
 {
     public array $meta_tags = array(
@@ -34,7 +38,7 @@ class TplCp extends Templates
     final public function render(): false|string
     {
         $this->load_template('main.tpl');
-        $config = settings_load();
+        $config = settings_get();
         $admin_link = $config['home_url'] . $config['admin_index'];
         if (Registry::get('logged')) {
             $stat_lnk = "<a href=\"{$admin_link}?mod=stats\" onclick=\"Page.Go(this.href); return false;\" style=\"margin-right:10px\">статистика</a>";

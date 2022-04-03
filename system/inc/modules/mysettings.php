@@ -1,4 +1,5 @@
 <?php
+
 /*
  * Copyright (c) 2022 Tephida
  *
@@ -43,8 +44,8 @@ if (isset($_POST['save'])) {
         else
             $db->query("UPDATE `users` SET user_name = '" . $user_name . "', user_lastname = '" . $user_lastname . "', user_email = '" . $user_email . "', user_password = '" . $new_pass . "', user_search_pref = '" . $user_name . " " . $user_lastname . "' WHERE user_id = '" . $user_info['user_id'] . "'");
         //clear cache
-        Cache::mozg_clear_cache_file('user_' . $user_info['user_id'] . '/profile_' . $user_info['user_id']);
-        Cache::mozg_clear_cache();
+        Cache::mozgClearCacheFile('user_' . $user_info['user_id'] . '/profile_' . $user_info['user_id']);
+        Cache::mozgClearCache();
         msgbox('Изменения сохранены', 'Ваша персональная информация была успешно сохранена', '?mod=mysettings');
     }
 } else {
