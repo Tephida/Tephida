@@ -19,13 +19,15 @@ class Module
     public \FluffyDollop\Support\Templates $tpl;
     public string|Mysql|array|bool|null $user_info;
     protected string $tpl_dir_name;
+    private array $lang;
 
 
     public function __construct()
     {
         $this->db = Registry::get('db');
         $this->user_info = Registry::get('user_info');
-        $this->lang = Registry::get('lang');
+        $register = new \FluffyDollop\Registry\Registry();
+        $this->lang = $register->get('lang');
         $this->tpl = new \FluffyDollop\Support\Templates();
         $config = settings_get();
         $this->tpl->dir = ROOT_DIR . '/templates/' . $config['temp'];

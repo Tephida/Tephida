@@ -8,25 +8,25 @@
  *
  */
 
-use FluffyDollop\Support\Cookie;
-use Mozg\modules\Lang;
 use FluffyDollop\Support\{Registry, Router, Templates};
-
-try {
-    $config = settings_get();
-    Registry::set('config', $config);
-} catch (Exception $e) {
-    throw new InvalidArgumentException('Invalid config. Please run install.php');
-}
+use Mozg\modules\Lang;
 
 $db = require ENGINE_DIR . '/data/db.php';
 Registry::set('db', $db);
+
+$config = settings_get();
 
 //lang
 $checkLang = Lang::getLang();
 
 $lang = include ROOT_DIR . '/lang/' . $checkLang . '/site.php';
 Registry::set('lang', $lang);
+
+$register = new \FluffyDollop\Registry\Registry();
+$register->set('lang', function () {
+    return include ROOT_DIR . '/lang/' . Lang::getLang() . '/site.php';
+});
+
 $langdate = include ROOT_DIR . '/lang/' . $checkLang . '/date.php';
 
 $tpl = new Templates();
