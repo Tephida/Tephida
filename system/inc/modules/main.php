@@ -1,4 +1,5 @@
 <?php
+
 /*
  * Copyright (c) 2022 Tephida
  *
@@ -145,7 +146,7 @@ if (class_exists('Faker\Factory') && file_exists(ENGINE_DIR . '/inc/modules/fake
 }
 
 $tpl->load_template('modules.tpl');
-$config = settings_load();
+$config = settings_get();
 $admin_link = $config['home_url'] . $config['admin_index'];
 
 foreach ($modules as $key => $module) {

@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Mozg\classes;
@@ -41,7 +42,7 @@ class View
      * @throws \JsonException
      * @throws \Exception
      */
-    final public function render(?string $view, $variables = []): string
+    final public function render(?string $view, array $variables = []): string
     {
         $config = settings_get();
         /** @var array $user_info */

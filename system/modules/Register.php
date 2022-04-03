@@ -1,4 +1,5 @@
 <?php
+
 /*
  * Copyright (c) 2022 Tephida
  *
@@ -270,7 +271,7 @@ class Register extends Module
                     //Отправляем письмо на почту для восстановления
                     /** @var array $dictionary */
                     $dictionary = $this->lang;
-                    $config = settings_get() ?? settings_load();
+                    $config = settings_get();
                     $variables = [
                         'home_url' => $config['home_url'],
                         'hash' => $hash,

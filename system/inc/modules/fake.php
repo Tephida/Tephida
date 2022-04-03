@@ -1,4 +1,5 @@
 <?php
+
 /*
  *   (c) Tephida
  *
@@ -10,7 +11,7 @@
 use FluffyDollop\Support\Registry;
 use Mozg\classes\TplCp;
 
-$config = settings_load();
+$config = settings_get();
 
 $act = requestFilter('act');
 

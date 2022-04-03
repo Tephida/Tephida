@@ -15,7 +15,7 @@ use Mozg\classes\Users;
 
 header('Content-type: text/html; charset=utf-8');
 
-$config = settings_load();
+$config = settings_get();
 $admin_index = $config['admin_index'];
 $admin_link = $config['home_url'] . $admin_index;
 
@@ -138,7 +138,7 @@ if (!$logged) {
 } elseif ($user_info['user_group'] == 1) {
     include ADMIN_DIR . '/mod.php';
 } else {
-    $config = settings_load();
+    $config = settings_get();
 
     $tpl = new TplCp(ADMIN_DIR . '/tpl/');
     $tpl->load_template('info/info_red.tpl');
