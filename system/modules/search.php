@@ -1,4 +1,5 @@
 <?php
+
 /*
  * Copyright (c) 2022 Tephida
  *
@@ -15,7 +16,7 @@ $user_info = (isset($user_info)) ? $user_info : Registry::get('user_info');
 $metatags['title'] = $lang['search'];
 $db = Registry::get('db');
 $mobile_speedbar = 'Поиск';
-$config = settings_load();
+$config = settings_get();
 
 $_SERVER['QUERY_STRING'] = strip_tags($_SERVER['QUERY_STRING']);
 $query_string = preg_replace("/&page=[0-9]+/i", '', $_SERVER['QUERY_STRING']);

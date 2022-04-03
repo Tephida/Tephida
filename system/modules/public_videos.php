@@ -1,4 +1,5 @@
 <?php
+
 /*
  * Copyright (c) 2022 Tephida
  *
@@ -55,7 +56,7 @@ if (Registry::get('logged')) {
 
                 $db->query("UPDATE `communities` SET videos_num = videos_num + 1 WHERE id = '{$pid}'");
 
-                Cache::mozg_clear_cache_file("groups/video{$pid}");
+                Cache::mozgClearCacheFile("groups/video{$pid}");
 
             }
 
@@ -87,7 +88,7 @@ if (Registry::get('logged')) {
                 Filesystem::delete($upload_dir . '/' . $expPho);
                 $db->query("DELETE FROM `videos` WHERE id = '{$id}'");
                 $db->query("UPDATE `communities` SET videos_num = videos_num - 1 WHERE id = '{$pid}'");
-                Cache::mozg_clear_cache_file("groups/video{$pid}");
+                Cache::mozgClearCacheFile("groups/video{$pid}");
             }
             break;
 
@@ -138,7 +139,7 @@ if (Registry::get('logged')) {
             if ($public_admin && $row['public_id'] == $pid && !empty($title)) {
                 $db->query("UPDATE `videos` SET title = '{$title}', descr = '{$descr}' WHERE id = '{$id}'");
                 echo stripslashes($descr);
-                Cache::mozg_clear_cache_file("groups/video{$pid}");
+                Cache::mozgClearCacheFile("groups/video{$pid}");
             }
             break;
 

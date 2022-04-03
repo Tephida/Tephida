@@ -1,4 +1,5 @@
 <?php
+
 /*
  * Copyright (c) 2022 Tephida
  *
@@ -130,7 +131,7 @@ HTML;
 $query_string = preg_replace("/&page=[0-9]+/i", '', $_SERVER['QUERY_STRING']);
 
 $tpl->load_template('users/main.tpl');
-$config = settings_load();
+$config = settings_get();
 $tpl->set('{admin_index}', $config['admin_index']);
 $tpl->set('{se_uid}', $se_uid);
 $tpl->set('{se_name}', $se_name);

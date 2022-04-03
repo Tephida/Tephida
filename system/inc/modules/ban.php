@@ -1,4 +1,5 @@
 <?php
+
 /*
  * Copyright (c) 2022 Tephida
  *
@@ -29,7 +30,7 @@ if (isset($_POST['save'])) {
             msgbox('Ошибка', 'Этот IP уже добавлен под фильтр', '?mod=ban');
         } else {
             $db->query("INSERT INTO `banned` SET descr = '" . $descr . "', date = '" . $this_time . "', always = '" . $always . "', ip = '" . $ip . "'");
-            Filesystem::delete(ENGINE_DIR . '/cache/system/banned.php');
+            Filesystem::delete(ENGINE_DIR . '/cache/system/banned.json');
             header("Location: ?mod=ban");
         }
     } else
@@ -41,7 +42,7 @@ if (isset($_POST['save'])) {
     if ($_GET['act'] === 'unban') {
         $id = (int)$_GET['id'];
         $db->query("DELETE FROM `banned` WHERE id = '" . $id . "'");
-        Filesystem::delete(ENGINE_DIR . '/cache/system/banned.php');
+        Filesystem::delete(ENGINE_DIR . '/cache/system/banned.json');
         header("Location: ?mod=ban");
     }
 

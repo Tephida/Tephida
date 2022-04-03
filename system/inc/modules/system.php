@@ -1,4 +1,5 @@
 <?php
+
 /*
  * Copyright (c) 2022 Tephida
  *
@@ -9,7 +10,7 @@
 
 use Mozg\classes\TplCp;
 
-$config = settings_load();
+$config = settings_get();
 
 $act = requestFilter('act');
 

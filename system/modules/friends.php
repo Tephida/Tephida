@@ -1,4 +1,5 @@
 <?php
+
 /*
  * Copyright (c) 2022 Tephida
  *
@@ -64,7 +65,7 @@ if (Registry::get('logged')) {
 
                                 $db->query("INSERT INTO `updates` SET for_user_id = '{$for_user_id}', from_user_id = '{$user_info['user_id']}', type = '11', date = '{$server_time}', text = '{$action_update_text}', user_photo = '{$user_info['user_photo']}', user_search_pref = '{$user_info['user_search_pref']}', lnk = '/friends/requests'");
 
-                                Cache::mozg_create_cache("user_{$for_user_id}/updates", 1);
+                                Cache::mozgCreateCache("user_{$for_user_id}/updates", 1);
 
                             }
                             $config = settings_get();
@@ -147,7 +148,7 @@ if (Registry::get('logged')) {
 
                     $db->query("INSERT INTO `updates` SET for_user_id = '{$take_user_id}', from_user_id = '{$user_info['user_id']}', type = '12', date = '{$server_time}', text = '{$action_update_text}', user_photo = '{$user_info['user_photo']}', user_search_pref = '{$user_info['user_search_pref']}', lnk = '/u{$take_user_id}'");
 
-                    Cache::mozg_create_cache("user_{$take_user_id}/updates", 1);
+                    Cache::mozgCreateCache("user_{$take_user_id}/updates", 1);
 
                 }
 
@@ -164,15 +165,15 @@ if (Registry::get('logged')) {
                 }
 
                 //Чистим кеш владельцу стр и тому кого добавляем в др.
-                Cache::mozg_clear_cache_file('user_' . $user_id . '/profile_' . $user_id);
-                Cache::mozg_clear_cache_file('user_' . $take_user_id . '/profile_' . $take_user_id);
+                Cache::mozgClearCacheFile('user_' . $user_id . '/profile_' . $user_id);
+                Cache::mozgClearCacheFile('user_' . $take_user_id . '/profile_' . $take_user_id);
 
                 //Записываем пользователя в кеш файл друзей
-                $openMyList = Cache::mozg_cache("user_{$user_id}/friends");
-                Cache::mozg_create_cache("user_{$user_id}/friends", $openMyList . "u{$take_user_id}|");
+                $openMyList = Cache::mozgCache("user_{$user_id}/friends");
+                Cache::mozgCreateCache("user_{$user_id}/friends", $openMyList . "u{$take_user_id}|");
 
-                $openTakeList = Cache::mozg_cache("user_{$take_user_id}/friends");
-                Cache::mozg_create_cache("user_{$take_user_id}/friends", $openTakeList . "u{$user_id}|");
+                $openTakeList = Cache::mozgCache("user_{$take_user_id}/friends");
+                Cache::mozgCreateCache("user_{$take_user_id}/friends", $openTakeList . "u{$user_id}|");
             } else {
                 echo 'no_request';
             }
@@ -222,15 +223,15 @@ if (Registry::get('logged')) {
                 $db->query("UPDATE `users` SET user_friends_num = user_friends_num-1 WHERE user_id = '{$delet_user_id}'");
 
                 //Чистим кеш владельцу стр и тому кого удаляем из др.
-                Cache::mozg_clear_cache_file('user_' . $user_id . '/profile_' . $user_id);
-                Cache::mozg_clear_cache_file('user_' . $delet_user_id . '/profile_' . $delet_user_id);
+                Cache::mozgClearCacheFile('user_' . $user_id . '/profile_' . $user_id);
+                Cache::mozgClearCacheFile('user_' . $delet_user_id . '/profile_' . $delet_user_id);
 
                 //Удаляем пользователя из кеша файл друзей
-                $openMyList = Cache::mozg_cache("user_{$user_id}/friends");
-                Cache::mozg_create_cache("user_{$user_id}/friends", str_replace("u{$delet_user_id}|", "", $openMyList));
+                $openMyList = Cache::mozgCache("user_{$user_id}/friends");
+                Cache::mozgCreateCache("user_{$user_id}/friends", str_replace("u{$delet_user_id}|", "", $openMyList));
 
-                $openTakeList = Cache::mozg_cache("user_{$delet_user_id}/friends");
-                Cache::mozg_create_cache("user_{$delet_user_id}/friends", str_replace("u{$user_id}|", "", $openTakeList));
+                $openTakeList = Cache::mozgCache("user_{$delet_user_id}/friends");
+                Cache::mozgCreateCache("user_{$delet_user_id}/friends", str_replace("u{$user_id}|", "", $openTakeList));
             } else {
                 echo 'no_friend';
             }

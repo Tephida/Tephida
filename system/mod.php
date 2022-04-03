@@ -1,4 +1,5 @@
 <?php
+
 /*
  * Copyright (c) 2022 Tephida
  *
@@ -61,5 +62,3 @@ if ($module === 'albums') {
     ];
     view('info.info', $params);
 }
-
-

@@ -1,4 +1,5 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Mozg\classes;
@@ -19,7 +20,7 @@ class Friends
         /** @var array $user_info */
         $user_info = Registry::get('user_info');
         $user_id = $user_info['user_id'];
-        $open_my_list = Cache::mozg_cache("user_{$for_user_id}/blacklist");
+        $open_my_list = Cache::mozgCache("user_{$for_user_id}/blacklist");
         if (!$open_my_list){
             $db = Registry::get('db');
             /** @var array $row */
