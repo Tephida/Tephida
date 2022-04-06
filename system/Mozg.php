@@ -5,11 +5,15 @@ namespace Mozg;
 use Error;
 use FluffyDollop\Support\Registry;
 use FluffyDollop\Support\Router;
-use FluffyDollop\Support\Templates;
-use Mozg\modules\Lang;
+use Mozg\classes\I18n;
+
 
 class Mozg
 {
+    /**
+     * @throws \JsonException
+     * @throws \ErrorException
+     */
     public static function initialize()
     {
         if (isset($_POST['PHPSESSID'])) {
@@ -20,17 +24,16 @@ class Mozg
         Registry::set('db', $db);
 
 //lang
-        $checkLang = Lang::getLang();
+        $checkLang = I18n::getLang();
 
-        $lang = include ROOT_DIR . '/lang/' . $checkLang . '/site.php';
+        $lang = I18n::dictionary();
+
+//        $lang = include ROOT_DIR . '/lang/' . $checkLang . '/site.php';
         Registry::set('lang', $lang);
 
         $langdate = include ROOT_DIR . '/lang/' . $checkLang . '/date.php';
 
-        $tpl = new Templates();
         $config = settings_get();
-        $tpl->dir = ROOT_DIR . '/templates/' . $config['temp'];
-        define('TEMPLATE_DIR', $tpl->dir);
 
         Registry::set('server_time', time());
 
@@ -43,7 +46,7 @@ class Mozg
         $user_info = Registry::get('user_info');
 
         if ($user_info['user_delet'] > 0) {
-            include_once ENGINE_DIR . '//modules/profile_delet.php';
+            include_once ENGINE_DIR . '/modules/profile_delet.php';
         }
         if ($user_info['user_ban_date'] >= Registry::get('server_time') || ($user_info['user_ban_date'] === '0')) {
             include_once ENGINE_DIR . '/modules/profile_ban.php';
@@ -134,7 +137,6 @@ class Mozg
 
             '/editprofile/delete/photo' => 'Editprofile@deletePhoto',
 
-            ''
 
         ];
         $router->add($routers);

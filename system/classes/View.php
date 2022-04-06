@@ -53,12 +53,12 @@ class View
             $_SESSION['ref_id'] = intFilter('reg');
         }
         $variables['title'] = $variables['title'] ?? 'No title';
-        $dictionary = Lang::dictionary();
+        $dictionary = I18n::dictionary();
         $variables['lang'] = $dictionary['lang'];
         $variables['available'] = $variables['available'] ?? false;
         $version = 14;
         $variables['js'] = '<script type="text/javascript" src="/js/jquery.lib.js?v=' . $version . '"></script>
-<script type="text/javascript" src="/js/' . Lang::getLang() . '/lang.js?v=' . $version . '"></script>
+<script type="text/javascript" src="/js/' . I18n::getLang() . '/lang.js?v=' . $version . '"></script>
 <script type="text/javascript" src="/js/main.js?v=' . $version . '"></script>
 <script type="text/javascript" src="/js/audio.js?v=' . $version . '"></script>
 <script type="text/javascript" src="/js/payment.js?v=' . $version . '"></script>
@@ -129,7 +129,7 @@ class View
         $cache = ENGINE_DIR . '/cache/views';
         /** MODE_DEBUG allows pinpointing troubles. */
         $blade = new myView($views, $cache, \Tephida\View\View::MODE_AUTO);
-        $blade::$dictionary = Lang::dictionary();
+        $blade::$dictionary = I18n::dictionary();
         if (requestFilter('ajax') === 'yes') {
             $json_content = $blade->run($view, $variables);
             $title = $variables['title'] ?? $this->title;

@@ -8,6 +8,7 @@
  *
  */
 
+use Mozg\classes\I18n;
 use FluffyDollop\Support\{Registry, Router, Templates};
 use Mozg\modules\Lang;
 
@@ -15,7 +16,7 @@ $db = require ENGINE_DIR . '/data/db.php';
 Registry::set('db', $db);
 
 //lang
-$checkLang = Lang::getLang();
+$checkLang = I18n::getLang();
 
 $lang = include ROOT_DIR . '/lang/' . $checkLang . '/site.php';
 Registry::set('lang', $lang);
