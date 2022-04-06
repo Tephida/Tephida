@@ -327,7 +327,7 @@ var Profile = {
     },
     StartDelPhoto: function () {
         $('#box_loading').show();
-        $.get('/index.php?go=editprofile&act=del_photo', function () {
+        $.get('/editprofile/delete/photo', function () {
             $('#ava').html('<img src="/images/no_ava.gif" alt="" />');
             $('#del_pho_but').hide();
             Box.Close('del_photo');
@@ -567,4 +567,4 @@ String.prototype.toHHMMSS = function () {
     }
     return /*hours+':'+*/ minutes + ':' + seconds;
 }
-const doLoad = new LazyLoading();
+// const doLoad = new LazyLoading();

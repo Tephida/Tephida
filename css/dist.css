@@ -1,6 +1,10 @@
+@import "tailwindcss/base";
+@import "./css/components/buttons.css";
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
 
 @layer components {
     .btn-primary {
@@ -3168,7 +3172,6 @@ ul.listing li span {
     float: left;
     width: 200px;
     background: #fff;
-    margin-top: -30px;
     margin-right: 10px;
     box-shadow: 0 5px 10px 0 #b4b4b4;
     position: relative;

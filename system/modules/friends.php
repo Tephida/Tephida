@@ -323,7 +323,7 @@ if (Registry::get('logged')) {
                 } else {
                     $sql_order = "ORDER by `friends_date`";
                 }
-
+                $online_time = time() - $config['online_time'];
                 $sql_ = $db->super_query("SELECT tb1.user_id, user_country_city_name, user_search_pref, user_birthday, user_photo, user_logged_mobile FROM `users` tb1, `friends` tb2 WHERE tb1.user_id = tb2.friend_id AND tb2.user_id = '{$get_user_id}' AND tb1.user_last_visit >= '{$online_time}' AND tb2.subscriptions = 0 {$sql_order} DESC LIMIT {$limit_page}, {$gcount}", true);
 
                 //Выводим имя юзера

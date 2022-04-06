@@ -28,7 +28,7 @@ class Profile extends Module
     {
         $db = Registry::get('db');
         $config = settings_get();
-        $online_time = Registry::get('server_time') - $config['online_time'];
+        $online_time = time() - $config['online_time'];
 
         $id = intFilter('id');
         $user_info = Registry::get('user_info');

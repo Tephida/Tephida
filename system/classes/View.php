@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Mozg\classes;
 
 use ErrorException;
+use Exception;
 use FluffyDollop\Support\Registry;
 use Mozg\modules\Lang;
 use Tephida\View\myView;
@@ -37,10 +38,10 @@ class View
     }
 
     /**
-     * @return int
-     * @throws ErrorException
-     * @throws \JsonException
-     * @throws \Exception
+     * @param string|null $view
+     * @param array $variables
+     * @return string
+     * @throws Exception
      */
     final public function render(?string $view, array $variables = []): string
     {
@@ -55,7 +56,7 @@ class View
         $dictionary = Lang::dictionary();
         $variables['lang'] = $dictionary['lang'];
         $variables['available'] = $variables['available'] ?? false;
-        $version = 13;
+        $version = 14;
         $variables['js'] = '<script type="text/javascript" src="/js/jquery.lib.js?v=' . $version . '"></script>
 <script type="text/javascript" src="/js/' . Lang::getLang() . '/lang.js?v=' . $version . '"></script>
 <script type="text/javascript" src="/js/main.js?v=' . $version . '"></script>

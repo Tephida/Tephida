@@ -48,7 +48,7 @@
                 <div class="headhr"></div>
                 @if($logged)
                 <!--search-->
-                <div id="seNewB">
+                {{--<div id="seNewB">
                         <input type="text" value="Поиск" class="fave_input search_input"
                                onBlur="if(this.value == '' || this.value=='Поиск'){this.value='Поиск';this.style.color = '#c1cad0'}"
                                onFocus="if(this.value=='Поиск'){this.value='';this.style.color = '#000'}"
@@ -93,7 +93,7 @@
                             </a>
                             <span id="reFastSearch"></span>
                         </div>
-                    </div>
+                    </div>--}}
                     <!--/search-->
                 @endif
                 <div class="headmenu fl_r">
