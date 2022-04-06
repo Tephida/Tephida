@@ -12,6 +12,7 @@ use FluffyDollop\Support\{Filesystem, Gzip, Registry, Templates};
 use JetBrains\PhpStorm\ArrayShape;
 use FluffyDollop\Support\Cookie;
 use Mozg\classes\Cache;
+use Mozg\classes\I18n;
 use Mozg\modules\Lang;
 
 /**
@@ -296,7 +297,7 @@ function user_age($user_year, $user_month, $user_day)
 
 function declWord(int $num, string $type): string
 {
-    $lang = Lang::getLang();
+    $lang = I18n::getLang();
     $decl_list = require ROOT_DIR . "/lang/{$lang}/declensions.php";
     return (new \FluffyDollop\Support\Declensions($decl_list))->makeWord($num, $type);
 }
