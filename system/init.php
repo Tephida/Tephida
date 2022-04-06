@@ -29,19 +29,19 @@ define('TEMPLATE_DIR', $tpl->dir);
 
 Registry::set('server_time', time());
 
-include_once ENGINE_DIR . '/login.php';
+include_once 'login.php';
 
 if ($config['offline'] === 'yes') {
-    include ENGINE_DIR . '/modules/offline.php';
+    include ROOT_DIR . '/system/modules/offline.php';
 }
 /** @var array $user_info */
 $user_info = $user_info ?? Registry::get('user_info');
 
 if ($user_info['user_delet'] > 0) {
-    include_once ENGINE_DIR . '/modules/profile_delet.php';
+    include_once ROOT_DIR . '/system/modules/profile_delet.php';
 }
 if ($user_info['user_ban_date'] >= Registry::get('server_time') || ($user_info['user_ban_date'] === '0')) {
-    include_once ENGINE_DIR . '/modules/profile_ban.php';
+    include_once ROOT_DIR . '/system/modules/profile_ban.php';
 }
 //Если юзер авторизован, то обновляем последнюю дату посещения в таблице друзей и на личной стр
 if (Registry::get('logged')) {

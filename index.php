@@ -9,6 +9,8 @@
 
 declare(strict_types=1);
 
+use Mozg\Mozg;
+
 if (version_compare(PHP_VERSION, '8.0.0') < 0) {
     throw new \RuntimeException('Please change php version');
 }
@@ -21,9 +23,13 @@ ob_implicit_flush(false);
 const ROOT_DIR = __DIR__;
 const ENGINE_DIR = ROOT_DIR . '/system';
 try {
-    require __DIR__.'/vendor/autoload.php';
+    require __DIR__ . '/vendor/autoload.php';
 } catch (Error) {
     throw new \RuntimeException('Please install composer');
 }
+
 /** Initialize */
-include_once ENGINE_DIR . '/init.php';
+(new Mozg())::initialize();
+//include_once ENGINE_DIR . '/init.php';
+
+
