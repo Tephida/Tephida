@@ -28,7 +28,6 @@ class Mozg
 
         $lang = I18n::dictionary();
 
-//        $lang = include ROOT_DIR . '/lang/' . $checkLang . '/site.php';
         Registry::set('lang', $lang);
 
         $langdate = include ROOT_DIR . '/lang/' . $checkLang . '/date.php';
@@ -51,7 +50,7 @@ class Mozg
         if ($user_info['user_ban_date'] >= Registry::get('server_time') || ($user_info['user_ban_date'] === '0')) {
             include_once ENGINE_DIR . '/modules/profile_ban.php';
         }
-//Если юзер авторизован, то обновляем последнюю дату посещения в таблице друзей и на личной стр
+
         /**
          * Если юзер авторизован,
          * то обновляем последнюю дату посещения в таблице друзей и на личной стр
@@ -134,6 +133,7 @@ class Mozg
             '/messages' => 'Im@main',
 
             '/settings' => 'Settings@main',
+            '/wall/send' => 'Wall@sendRecord',
 
             '/editprofile/delete/photo' => 'Editprofile@deletePhoto',
 
