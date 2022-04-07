@@ -24,7 +24,7 @@ class Profile extends Module
      * @return void
      * @throws ErrorException|\JsonException|\Exception
      */
-    function main(): void
+    final public function main(): void
     {
         $db = Registry::get('db');
         $config = settings_get();
@@ -402,12 +402,12 @@ HTML;
 
                                 $type = requestFilter('type');
 
-                                if ($type == 'own') {
+                                if ($type === 'own') {
                                     $cnt_rec = $db->super_query("SELECT COUNT(*) AS cnt FROM `wall` WHERE for_user_id = '{$id}' AND author_user_id = '{$id}' AND fast_comm_id = 0");
                                     $where_sql = "AND tb1.author_user_id = '{$id}'";
 //                                    $tpl->set_block("'\\[record-tab\\](.*?)\\[/record-tab\\]'si", "");
                                     $page_type = '/wall' . $id . '_sec=own&page=';
-                                } else if ($type == 'record') {
+                                } else if ($type === 'record') {
                                     $where_sql = "AND tb1.id = '{$rid}'";
 //                                    $tpl->set('[record-tab]', '');
 //                                    $tpl->set('[/record-tab]', '');
@@ -498,7 +498,7 @@ HTML;
 
                                 $type = requestFilter('type');
 
-                                if (($cnt_rec['cnt'] > $gcount && $type == '') || $type == 'own') {
+                                if (($cnt_rec['cnt'] > $gcount && $type == '') || $type === 'own') {
                                     navigation($gcount, $cnt_rec['cnt'], $page_type);
                                 }
 
@@ -509,13 +509,27 @@ HTML;
 //                                $wall->select($config, $id, $for_user_id, $user_privacy, $check_friend, $user_info);
                                 $wall_data = (new Wall())->profile($config, $id, $for_user_id, $user_privacy, $check_friend, $user_info, $wall_row);
                             }
-                        }else{
+                        } else {
                             echo 'Error 500';
                         }
                     }
                 }
 
                 $params['wall_records'] = $wall_data ?? [];
+
+                if ($user_id != $id) {
+                    if ($user_privacy['val_wall1'] == 3 or $user_privacy['val_wall1'] == 2 and !$check_friend) {
+                        $cnt_rec = $db->super_query("SELECT COUNT(*) AS cnt FROM `wall` WHERE for_user_id = '{$id}' AND author_user_id = '{$id}' AND fast_comm_id = 0");
+                        $row['user_wall_num'] = $cnt_rec['cnt'];
+                    }
+                }
+
+                $row['user_wall_num'] = $row['user_wall_num'] ?? '';
+                if ($row['user_wall_num'] > 10) {
+                    $params['wall_link'] = true;
+                } else {
+                    $params['wall_link'] = false;
+                }
 
                 //Общие друзья
                 if (Registry::get('logged') && $row['user_friends_num'] && $id !== $user_info['user_id']) {
@@ -839,19 +853,7 @@ HTML;
                 //Стена
 //                $tpl->set('{records}', $tpl->result['wall'] ?? '');
 
-                if ($user_id != $id) {
-                    if ($user_privacy['val_wall1'] == 3 or $user_privacy['val_wall1'] == 2 and !$check_friend) {
-                        $cnt_rec = $db->super_query("SELECT COUNT(*) AS cnt FROM `wall` WHERE for_user_id = '{$id}' AND author_user_id = '{$id}' AND fast_comm_id = 0");
-                        $row['user_wall_num'] = $cnt_rec['cnt'];
-                    }
-                }
 
-                $row['user_wall_num'] = $row['user_wall_num'] ?? '';
-                if ($row['user_wall_num'] > 10) {
-                    $params['wall_link'] = true;
-                } else {
-                    $params['wall_link'] = false;
-                }
 
 //                $tpl->set('{wall-rec-num}', $row['user_wall_num']);
 

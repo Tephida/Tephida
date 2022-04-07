@@ -1170,7 +1170,7 @@ var wall = {
         if (!rec_num) rec_num = 1;
         if (wall_text != 0 || attach_files != 0) {
             butloading('wall_send', 56, 'disabled');
-            $.post('/index.php?go=wall&act=send', {
+            $.post('/wall/send', {
                 wall_text: wall_text,
                 for_user_id: for_user_id[1],
                 attach_files: attach_files,

@@ -758,19 +758,22 @@
                 @if($wall_num > 0 && !$blacklist)
                     @include('wall.one_record', ['wall_records' => $wall_records])
                 @else
-                    <div class="wall_none" >На стене пока нет ни одной записи.</div>
+                    <div class="wall_none">На стене пока нет ни одной записи.</div>
                 @endif
             </div>
-            [wall-link]<span id="wall_all_record"></span>
-            <div onClick="wall.page('{{ $user_id }}'); return false" id="wall_l_href" class="cursor_pointer">
-                <div class="doc_all_but margin_top_10 border_radius_5" id="wall_link">к предыдущим записям</div>
-            </div>
-            [/wall-link]@endif
+            @if($wall_link)
+                <span id="wall_all_record"></span>
+                <div onClick="wall.page('{{ $user_id }}'); return false" id="wall_l_href" class="cursor_pointer">
+                    <div class="doc_all_but margin_top_10 border_radius_5" id="wall_link">к предыдущим записям</div>
+                </div>
+            @endif
+            @endif
         </div>
-        @if($blacklist)
-            <div class="err_yellow" style="font-weight:normal;margin-top:5px">{name} ограничил доступ к своей странице.
-            </div>
-        @endif
+            @if($blacklist)
+                <div class="err_yellow" style="font-weight:normal;margin-top:5px">{name} ограничил доступ к своей
+                    странице.
+                </div>
+            @endif
     </div>
     <div class="clear"></div>
 @endsection

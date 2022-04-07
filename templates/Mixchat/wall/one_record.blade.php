@@ -43,11 +43,14 @@
                     </div>
                     <div class="public_likes_user_block no_display" id="public_likes_user_block{{ $row['rec_id'] }}"
                          onMouseOver="groups.wall_like_users_five('{{ $row['rec_id'] }}')"
-                         onMouseOut="groups.wall_like_users_five_hide('{{ $row['rec_id'] }}')" style="margin-left:610px">
-                        <div onClick="wall.all_liked_users('{{ $row['rec_id'] }}', '', '{{ $row['likes'] }}')">Понравилось {{ $row['likes-text'] }}</div>
+                         onMouseOut="groups.wall_like_users_five_hide('{{ $row['rec_id'] }}')"
+                         style="margin-left:610px">
+                        <div onClick="wall.all_liked_users('{{ $row['rec_id'] }}', '', '{{ $row['likes'] }}')">
+                            Понравилось {{ $row['likes-text'] }}</div>
                         <div class="public_wall_likes_hidden">
                             <div class="public_wall_likes_hidden2">
-                                <a href="/u{viewer-id}" id="like_user{viewer-id}_{{ $row['rec_id'] }}" class="no_display"
+                                <a href="/u{{ $row['viewer_id'] }}"
+                                   id="like_user{{ $row['viewer_id'] }}_{{ $row['rec_id'] }}" class="no_display"
                                    onClick="Page.Go(this.href); return false">
                                     <img src="{{ $row['viewer_ava'] }}" width="32"/>
                                 </a>
