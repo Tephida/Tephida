@@ -135,6 +135,9 @@ class Mozg
             '/settings' => 'Settings@main',
             '/wall/send' => 'Wall@sendRecord',
 
+            '/updates' => 'Updates@main',
+            '/search' => 'Search@main',
+
             '/editprofile/delete/photo' => 'Editprofile@deletePhoto',
 
 
