@@ -125,6 +125,7 @@ $table_Chema[] = "CREATE TABLE IF NOT EXISTS `audio` (
   `name` varchar(50) NOT NULL,
   `title` varchar(50) NOT NULL,
   `duration` varchar(100) NOT NULL,
+  `add_count` bigint(20) NOT NULL DEFAULT 0,
   `oid` int(11) NOT NULL,
   `public` int(11) NOT NULL,
   `adate` varchar(10) NOT NULL,

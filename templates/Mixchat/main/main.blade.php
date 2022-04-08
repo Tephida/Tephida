@@ -222,7 +222,7 @@
 
         $(document).ready(function () {
             setInterval(function () {
-                $.post('/index.php?go=updates', function (d) {
+                $.post('/updates', function (d) {
                     row = d.split('|');
                     if (d && row[1]) {
                         if (row[0] == 1) uTitle = 'Новый ответ на стене';
