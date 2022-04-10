@@ -632,10 +632,19 @@ function compileAdmin($tpl): void
 function view(?string $view, array $variables = []): bool
 {
     try {
-        echo  (new Mozg\classes\View())->render($view,$variables);
+        echo (new Mozg\classes\View())->render($view, $variables);
         return true;
-    }catch (Error){
+    } catch (Error) {
         return false;
+    }
+}
+
+function view_json(?string $view, array $variables = []): string
+{
+    try {
+        return (new Mozg\classes\View())->render($view, $variables);
+    } catch (Error|Exception) {
+        return 'err 500';
     }
 }
 
@@ -644,10 +653,10 @@ function view(?string $view, array $variables = []): bool
  * @return array
  */
 #[ArrayShape(['browser' => 'string',
-        'browser_ver' => 'string',
-        'operating_system' => 'string',
-        'device ' => 'string',
-        'language ' => 'string'])]
+    'browser_ver' => 'string',
+    'operating_system' => 'string',
+    'device ' => 'string',
+    'language ' => 'string'])]
 function get_device(): array
 {
     $browser = new \Sinergi\BrowserDetector\Browser();

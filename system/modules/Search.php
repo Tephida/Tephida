@@ -6,15 +6,19 @@ use Mozg\classes\Module;
 
 class Search extends Module
 {
+    /**
+     * @throws \JsonException
+     * @throws \ErrorException
+     */
     public function main()
     {
-        $lang = $this->langs;
+        $lang = $this->lang;
         $db = $this->db;
         $user_info = $this->user_info;
 //        $logged = $this->logged();
         $config = settings_get();
 
-        $params['title'] = $lang['search'] . ' | Sura';
+        $params['title'] = 'search';
 
         $_SERVER['QUERY_STRING'] = strip_tags($_SERVER['QUERY_STRING']);
         $query_string = preg_replace("/&page=[0-9]+/i", '', $_SERVER['QUERY_STRING']);
@@ -36,11 +40,7 @@ class Search extends Module
             $query = false;
         }
 
-        if (requestFilter('type') !== null) {
-            $type = (int)requestFilter('type');
-        } else {
-            $type = 1;
-        }
+        $type = intFilter('type');
 
         //Задаём параметры сортировки
         $sql_sort = '';
@@ -120,19 +120,19 @@ class Search extends Module
         $gcount = 30;
 
         //Делаем SQL Запрос в БД на вывод данных
-        if ($type == 1) { //Если критерий поиск "по людям"
+        if ($type === 0) { //Если критерий поиск "по людям"
             $sql_query = "SELECT user_id, user_search_pref, user_photo, user_birthday, user_country_city_name, user_last_visit, user_logged_mobile FROM `users` {$where_sql_gen} {$sql_sort} ORDER by `user_rating` DESC LIMIT {$limit_page}, {$gcount}";
             $sql_count = "SELECT COUNT(*) AS cnt FROM `users` {$where_sql_gen} {$sql_sort}";
-        } elseif ($type == 2 and $config['video_mod'] == 'yes' and $config['video_mod_search'] == 'yes') { //Если критерий поиск "по видеозаписям"
+        } elseif ($type === 1 and $config['video_mod'] == 'yes' and $config['video_mod_search'] == 'yes') { //Если критерий поиск "по видеозаписям"
             $sql_query = "SELECT id, photo, title, add_date, comm_num, owner_user_id FROM `videos` WHERE title LIKE '%{$query}%' AND privacy = 1 ORDER by `add_date` DESC LIMIT {$limit_page}, {$gcount}";
             $sql_count = "SELECT COUNT(*) AS cnt FROM `videos` WHERE title LIKE '%{$query}%' AND privacy = 1";
-        } elseif ($type == 4) { //Если критерий поиск "по сообщества"
+        } elseif ($type === 3) { //Если критерий поиск "по сообщества"
             $sql_query = "SELECT id, title, photo, traf, adres FROM `communities` WHERE title LIKE '%{$query}%' AND del = '0' AND ban = '0' ORDER by `traf` DESC, `photo` DESC LIMIT {$limit_page}, {$gcount}";
             $sql_count = "SELECT COUNT(*) AS cnt FROM `communities` WHERE title LIKE '%{$query}%' AND del = '0' AND ban = '0'";
-        } elseif ($type == 5 and $config['audio_mod'] == 'yes' and $config['audio_mod_search'] == 'yes') { //Если критерий поиск "по аудиозаписи"
+        } elseif ($type === 4 and $config['audio_mod'] == 'yes' and $config['audio_mod_search'] == 'yes') { //Если критерий поиск "по аудиозаписи"
             $sql_query = "SELECT audio.id, url, artist, title, oid, duration,users.user_search_pref FROM audio LEFT JOIN users ON audio.oid = users.user_id WHERE MATCH (title, artist) AGAINST ('%{$query}%') OR artist LIKE '%{$query}%' OR title LIKE '%{$query}%' ORDER by `add_count` DESC LIMIT {$limit_page}, {$gcount}";
             $sql_count = "SELECT COUNT(*) AS cnt FROM `audio` WHERE MATCH (title, artist) AGAINST ('%{$query}%') OR artist LIKE '%{$query}%' OR title LIKE '%{$query}%'";
-        } elseif ($type == 3) { //Если критерий поиск "по аудиозаписи"
+        } elseif ($type === 2) { //Если критерий поиск "по аудиозаписи"
             $last_users = $db->super_query("SELECT `user_id`, `user_search_pref`, user_photo, user_birthday, `user_country_city_name`, user_last_visit, user_logged_mobile FROM `users` ORDER BY `user_rating` DESC LIMIT 6", 1);
             $last_tracks = $db->super_query("SELECT id, url, artist, title, oid, duration FROM `audio` ORDER BY `add_count` LIMIT 3", 1);
             $last_videos = $db->super_query("SELECT `id`, `owner_user_id`, `photo`, `comm_num`, `title` FROM `videos` ORDER BY id DESC LIMIT 7", 1);
@@ -177,7 +177,7 @@ class Search extends Module
 
         $params['type'] = $type;
 
-        if ($type == 1) {
+        if ($type == 0) {
 
             if ($online) {
                 $params['checked_online'] = 'checked';
@@ -201,7 +201,7 @@ class Search extends Module
              */
 //            $params['country'] = (new Support)->allCountry($country);
 //            $params['city'] = (new Support)->allCity($country, $city);
-        } elseif ($type == 3) {
+        } elseif ($type === 2) {
             $sql_ = array();
         } else {
             $params['search_tab'] = false;
@@ -212,7 +212,7 @@ class Search extends Module
         //Загружаем шаблон на вывод если он есть одного юзера и выводим
 
         //Если критерий поиск "по людям"
-        if ($type == 1) {
+        if ($type == 0) {
 //                    $tpl->load_template('search/result_people.tpl');
             foreach ($sql_ as $key => $row) {
                 $sql_[$key]['user_id'] = $row['user_id'];
@@ -246,7 +246,7 @@ class Search extends Module
                     $sql_[$key]['online'] = '';
                 }
             }
-        } elseif ($type == 2) {
+        } elseif ($type == 1) {
 //                    $tpl->load_template('search/result_video.tpl');
             foreach ($sql_ as $key => $row) {
 //                        $tpl->set('{photo}', );
@@ -268,7 +268,7 @@ class Search extends Module
 //                        $tpl->compile('content');
             }
 
-        } elseif ($type == 3) {
+        } elseif ($type == 2) {
             foreach ($last_users as $key1 => $row) {
                 $last_users[$key1]['user_id'] = $row['user_id'];
                 $last_users[$key1]['name'] = $row['user_search_pref'];
@@ -336,7 +336,7 @@ class Search extends Module
             $params['last_groups'] = $last_group;
             $sql_ = array();
             $params['navigation'] = '';
-        } elseif ($type == 4) {
+        } elseif ($type == 3) {
 //                    $tpl->load_template('search/result_groups.tpl');
             foreach ($sql_ as $key => $row) {
                 if ($row['photo']) {
@@ -356,7 +356,7 @@ class Search extends Module
             }
 
             //Если критерий поиск "по аудизаписям"
-        } elseif ($type == 5) {
+        } elseif ($type == 4) {
             foreach ($sql_ as $key => $row) {
 //                        $stime = gmdate("i:s", $row['duration']);
                 if (!$row['artist']) {
@@ -369,10 +369,18 @@ class Search extends Module
 
         }
         $params['search'] = $sql_;
-        if ($type != 3) {
-            $params['navigation'] = Tools::navigation($gcount, (int)$count['cnt'], '/search/?' . $query_string . '&page=');
+        if ($type !== 2) {
+//            $params['navigation'] = Tools::navigation($gcount, (int)$count['cnt'], '/search/?' . $query_string . '&page=');
         }
 
+        $params['search_tab'] = true;
+        $params['country'] = '';
+        $params['city'] = '';
+        $params['sex'] = '';
+        $params['day'] = '';
+        $params['month'] = '';
+        $params['year'] = '';
+        $params['navigation'] = '';
         return view('search.search', $params);
     }
 }

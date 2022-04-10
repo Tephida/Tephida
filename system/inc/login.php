@@ -11,7 +11,7 @@
 use FluffyDollop\Support\Cookie;
 use FluffyDollop\Support\Registry;
 use Mozg\classes\TplCp;
-use Mozg\classes\Users;
+use Mozg\Models\Users;
 
 header('Content-type: text/html; charset=utf-8');
 

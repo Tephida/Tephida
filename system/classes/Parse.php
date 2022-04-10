@@ -10,6 +10,9 @@
 
 namespace Mozg\classes;
 
+/**
+ * @deprecated
+ */
 class Parse
 {
     function BBparse($source, $preview = false)
@@ -38,6 +41,7 @@ class Parse
         }
         return $source;
     }
+
     function BBvideo($source, $preview = false) {
         global $config;
         $exp = explode('|', $source);
@@ -61,6 +65,7 @@ class Parse
         }
         return $source;
     }
+
     function BBphoto($source, $preview = false) {
         global $config;
         $exp = explode('|', $source);
@@ -93,6 +98,7 @@ class Parse
         }
         return $source;
     }
+
     function BBlink($source) {
         $exp = explode('|', $source);
         if ($exp[0]) {
@@ -102,6 +108,7 @@ class Parse
         }
         return $source;
     }
+
     function BBdecode($source) {
         $source = str_ireplace("&#123;", "{", $source);
         $source = str_ireplace("&#96;", "`", $source);
@@ -125,16 +132,19 @@ class Parse
         }
         return $source;
     }
+
     function BBdecodePhoto($source) {
         $start = explode('-->', $source);
         $source = "[photo]{$start[0]}[/photo]";
         return $source;
     }
+
     function BBdecodeVideo($source) {
         $start = explode('-->', $source);
         $source = "[video]{$start[0]}[/video]";
         return $source;
     }
+
     function BBdecodeLink($source) {
         $start = explode('-->', $source);
         $source = "[link]{$start[0]}[/link]";

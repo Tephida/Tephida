@@ -375,9 +375,9 @@ class ModalBox {
         Page.Loading('start');
         $.post(url, data, function (html) {
             if (!CheckRequestVideo(location.href)){
-                this.Close(name, cache);
+                Box.Close(name, cache);
             }
-            this.Show(name, width, title, html, cancel_text, func_text, func, height, overflow, bg_show, bg_show_bottom, cache);
+            Box.Show(name, width, title, html.content, cancel_text, func_text, func, height, overflow, bg_show, bg_show_bottom, cache);
             Page.Loading('stop');
             if (input_focus)
                 $('#' + input_focus).focus();
@@ -451,7 +451,7 @@ class ModalBox {
         $('html').css('overflow', 'hidden');
         $(window).keydown(function (event) {
             if (event.keyCode === 27) {
-                this.Close(name, cache);
+                Box.Close(name, cache);
             }
         });
     }
@@ -478,7 +478,7 @@ class ModalBox {
         setTimeout("Box.InfoClose()", tout);
         $(window).keydown(function (event) {
             if (event.keyCode === 27) {
-                this.InfoClose();
+                Box.InfoClose();
             }
         });
     }

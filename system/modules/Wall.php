@@ -37,9 +37,7 @@ class Wall extends \Mozg\classes\Module
                 $check = $db->super_query("SELECT user_privacy, user_last_visit FROM `users` WHERE user_id = '{$for_user_id}'");
 
                 if ($check) {
-
                     if (!empty($wall_text) || !empty($attach_files)) {
-
                         //Приватность
                         $user_privacy = xfieldsdataload($check['user_privacy']);
 

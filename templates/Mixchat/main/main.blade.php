@@ -11,6 +11,8 @@
         <script type="text/javascript" src="/js/reg.js"></script>
     @endif
     <link rel="shortcut icon" href="/images/uic.png"/>
+    <!-- CSS only -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
 </head>
 <body onResize="onBodyResize()" class="no_display">
 <div class="scroll_fix_bg no_display" onMouseDown="myhtml.scrollTop()">
@@ -40,7 +42,7 @@
             <div class="headwr">
                 @if($logged)
                     <a href="/news" onClick="Page.Go(this.href); return false">
-                        <div class="logo"></div>
+                        <div class="logo">Mixchat</div>
                     </a>
                 @else
                     <div class="logo"></div>
