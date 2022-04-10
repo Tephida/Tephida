@@ -12,9 +12,9 @@ namespace Mozg\modules;
 
 use ErrorException;
 use Mozg\classes\Cache;
+use Mozg\classes\DB;
 use Mozg\classes\Module;
 use FluffyDollop\Support\Registry;
-use Mozg\classes\TpLSite;
 use Mozg\classes\Wall;
 use Mozg\classes\WallProfile;
 
@@ -42,7 +42,9 @@ class Profile extends Module
 
         //Проверяем на наличие кеша, если нет, то выводим из БД и создаём его
         if ($row) {
-            $row_online = $db->super_query("SELECT user_last_visit, user_logged_mobile FROM `users` WHERE user_id = '{$id}'");
+//            $row_online = $db->super_query("SELECT user_last_visit, user_logged_mobile FROM `users` WHERE user_id = '{$id}'");
+
+            $row_online = \Mozg\classes\DB::getDB()->row('SELECT user_last_visit, user_logged_mobile FROM `users` WHERE user_id = ?', $id);
         } else {
             /** @var array $row */
             $row = $db->super_query("SELECT user_id, user_real, user_search_pref, user_country_city_name, user_birthday, user_xfields, user_xfields_all, user_city, user_country, user_photo, user_friends_num, user_notes_num, user_subscriptions_num, user_wall_num, user_albums_num, user_last_visit, user_videos_num, user_status, user_privacy, user_sp, user_sex, user_gifts, user_public_num, user_audio, user_delet, user_ban_date, xfields, user_logged_mobile, user_rating FROM `users` WHERE user_id = '{$id}'");
@@ -105,10 +107,9 @@ class Profile extends Module
                 $user_country_city_name_exp = explode('|', $row['user_country_city_name']);
 
                 //################### Друзья ###################//
-                if ($row['user_friends_num']) {
+                if ($row['user_friends_num'] && $user_info['user_group'] === 0) {
                     /** @var array $sql_friends */
                     $sql_friends = $db->super_query("SELECT tb1.friend_id, tb2.user_search_pref, user_photo FROM `friends` tb1, `users` tb2 WHERE tb1.user_id = '{$id}' AND tb1.friend_id = tb2.user_id  AND subscriptions = 0 ORDER by rand() DESC LIMIT 0, 6", true);
-                    $all_friends = [];
                     foreach ($sql_friends as $key => $row_friends) {
                         $friend_info = explode(' ', $row_friends['user_search_pref']);
                         $all_friends[$key]['user_id'] = $row_friends['friend_id'];
@@ -334,7 +335,19 @@ HTML;
                 //################### Праздники друзей ###################//
                 if ($user_id == $id && !isset($_SESSION['happy_friends_block_hide'])) {
                     /** @var array $sql_happy_friends */
-                    $sql_happy_friends = $db->super_query("SELECT tb1.friend_id, tb2.user_search_pref, user_photo, user_birthday FROM `friends` tb1, `users` tb2 WHERE tb1.user_id = '" . $id . "' AND tb1.friend_id = tb2.user_id  AND subscriptions = 0 AND user_day = '" . date('j', $server_time) . "' AND user_month = '" . date('n', $server_time) . "' ORDER by `user_last_visit` DESC LIMIT 0, 50", true);
+//                    $sql_happy_friends = $db->super_query("SELECT tb1.friend_id, tb2.user_search_pref, user_photo,
+//       user_birthday FROM `friends` tb1, `users` tb2
+//WHERE tb1.user_id = '" . $id . "' AND tb1.friend_id = tb2.user_id  AND subscriptions = 0
+//AND user_day = '" . date('j', $server_time) . "' AND user_month = '" . date('n', $server_time) . "'
+//ORDER by `user_last_visit` DESC LIMIT 0, 50", true);
+
+                    $sql_happy_friends = DB::getDB()->run('SELECT tb1.friend_id, tb2.user_search_pref, 
+                        user_photo,  user_birthday FROM `friends` tb1, `users` tb2 
+                        WHERE tb1.user_id = ? AND tb1.friend_id = tb2.user_id  AND subscriptions = 0 
+                        AND user_day = ? AND user_month = ? ORDER by `user_last_visit`
+                        DESC LIMIT 0, 50', $id, date('j', $server_time), date('n', $server_time));
+
+
                     foreach ($sql_happy_friends as $key => $happy_row_friends) {
                         $cnt_happfr++;
                         $sql_happy_friends[$key]['user_id'] = $happy_row_friends['friend_id'];
@@ -460,7 +473,16 @@ HTML;
                         $limit_select = 10;
 
                         if ($user_privacy['val_wall1'] == 1 || ($user_privacy['val_wall1'] == 2 && $check_friend) || $user_id == $id) {
-                            $wall_row = $db->super_query("SELECT tb1.id, author_user_id, text, add_date, fasts_num, likes_num, likes_users, tell_uid, type, tell_date, public, attach, tell_comm, tb2.user_photo, user_search_pref, user_last_visit, user_logged_mobile FROM `wall` tb1, `users` tb2 WHERE for_user_id = '{$id}' AND tb1.author_user_id = tb2.user_id AND tb1.fast_comm_id = 0 {$where_sql} ORDER by `add_date` DESC LIMIT {$limit_page}, {$limit_select}", true);
+//                            $wall_row = $db->super_query("SELECT tb1.id, author_user_id, text, add_date, fasts_num, likes_num, likes_users, tell_uid, type, tell_date, public, attach, tell_comm, tb2.user_photo, user_search_pref, user_last_visit, user_logged_mobile FROM `wall` tb1, `users` tb2 WHERE for_user_id = '{$id}' AND tb1.author_user_id = tb2.user_id AND tb1.fast_comm_id = 0 {$where_sql} ORDER by `add_date` DESC LIMIT {$limit_page}, {$limit_select}", true);
+
+                            $wall_row = DB::getDB()->run('SELECT tb1.id, author_user_id, text, add_date, 
+                                fasts_num, likes_num, likes_users, tell_uid, type, tell_date, public, attach, 
+                                tell_comm, tb2.user_photo, user_search_pref, user_last_visit, user_logged_mobile 
+                                FROM `wall` tb1, `users` tb2 
+                                WHERE for_user_id = ? AND tb1.author_user_id = tb2.user_id 
+                                  AND tb1.fast_comm_id = 0 ' . $where_sql . '  
+                                ORDER by `add_date` DESC LIMIT ' . $limit_page . ' , ' . $limit_select, $id);
+
                             $Hacking = false;
                         } elseif ($wallAuthorId['author_user_id'] == $id) {
                             $wall_row = $db->super_query("SELECT tb1.id, author_user_id, text, add_date, fasts_num, likes_num, likes_users, tell_uid, type, tell_date, public, attach, tell_comm, tb2.user_photo, user_search_pref, user_last_visit, user_logged_mobile FROM `wall` tb1, `users` tb2 WHERE for_user_id = '{$id}' AND tb1.author_user_id = tb2.user_id AND tb1.fast_comm_id = 0 {$where_sql} ORDER by `add_date` DESC LIMIT {$limit_page}, {$limit_select}", true);
@@ -682,15 +704,16 @@ HTML;
                                 if (!isset($xfields_all['games'])) $xfields_all['games'] = '';
                                 if (!isset($xfields_all['quote'])) $xfields_all['quote'] = '';*/
 
-                $preg_safq_name_exp = explode(', ', 'activity, interests, myinfo, music, kino, books, games, quote');
+//                $preg_safq_name_exp = explode(', ', 'activity, interests, myinfo, music, kino, books, games, quote');
 
-                if ($xfields_all['myinfo']) {
-                    $params['not_block_info'] = '';
-                } else {
-                    $params['not_block_info'] = '<div align="center" style="color:#999;">Информация отсутствует.</div>';
-                }
+//                if ($xfields_all['myinfo']) {
+//                    $params['not_block_info'] = '';
+//                } else {
+                $params['not_block_info'] = '<div align="center" style="color:#999;">Информация отсутствует.</div>';
+//                }
 
-                $params['myinfo'] = nl2br(stripslashes($xfields_all['myinfo']));
+//                $params['myinfo'] = nl2br(stripslashes($xfields_all['myinfo']));
+                $params['myinfo'] = '';
 
                 $params['name'] = $user_name_lastname_exp[0];
                 $params['lastname'] = $user_name_lastname_exp[1];
@@ -730,7 +753,10 @@ HTML;
                 }
 
                 //Аватарка
-                $row_view_photos = $db->super_query("SELECT * FROM `photos` WHERE user_id = '{$id}'");
+//                $row_view_photos = $db->super_query("SELECT * FROM `photos` WHERE user_id = '{$id}'");
+
+                $row_view_photos = DB::getDB()->row('SELECT * FROM `photos` WHERE user_id = ?', $id);
+
                 $params['photoid'] = $row_view_photos['id'] ?? 0;
                 $params['albumid'] = $row_view_photos['album_id'] ?? 0;
                 if ($row['user_photo']) {
@@ -767,7 +793,9 @@ HTML;
                     $cache_pref = "_all";
                 }
 
-                $sql_albums = $db->super_query("SELECT aid, name, adate, photo_num, cover FROM `albums` WHERE user_id = '{$id}' {$albums_privacy} ORDER by `position` ASC LIMIT 0, 4", true);
+//                $sql_albums = $db->super_query("SELECT aid, name, adate, photo_num, cover FROM `albums` WHERE user_id = '{$id}' {$albums_privacy} ORDER by `position` ASC LIMIT 0, 4", true);
+                $sql_albums = DB::getDB()->run('SELECT aid, name, adate, photo_num, cover FROM `albums` WHERE user_id = ? ' . $albums_privacy . ' ORDER by `position` ASC LIMIT 0, 4', $id);
+
                 if ($sql_albums && $albums_count['cnt'] && $config['album_mod'] == 'yes') {
                     foreach ($sql_albums as $key2 => $row_albums) {
                         $sql_albums[$key2]['name'] = stripslashes($row_albums['name']);

@@ -1,10 +1,6 @@
-@import "tailwindcss/base";
-@import "./components/buttons.css";
-
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
-
 
 @layer components {
     .btn-primary {

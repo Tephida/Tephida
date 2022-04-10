@@ -44,11 +44,11 @@ class Mozg
         /** @var array $user_info */
         $user_info = Registry::get('user_info');
 
-        if ($user_info['user_delet'] > 0) {
-            include_once ENGINE_DIR . '/modules/profile_delet.php';
-        }
-        if ($user_info['user_ban_date'] >= Registry::get('server_time') || ($user_info['user_ban_date'] === '0')) {
-            include_once ENGINE_DIR . '/modules/profile_ban.php';
+//        if ($user_info['user_delet'] > 0) {
+//            include_once ENGINE_DIR . '/modules/profile_delet.php';
+//        }
+        if ((Registry::get('logged') && $user_info['user_ban_date'] >= Registry::get('server_time')) || (Registry::get('logged') && ($user_info['user_ban_date'] === '0'))) {
+//            include_once ENGINE_DIR . '/modules/profile_ban.php';
         }
 
         /**
@@ -82,7 +82,7 @@ class Mozg
         $router = Router::fromGlobals();
         $params = [];
         $routers = [
-            '/' => 'Register@main',
+            '/' => 'Home@main',
 
             '/register/send' => 'Register@send',
             '/register/rules' => 'Register@rules',
@@ -137,6 +137,7 @@ class Mozg
 
             '/updates' => 'Updates@main',
             '/search' => 'Search@main',
+            '/news' => 'News@main',
 
             '/editprofile/delete/photo' => 'Editprofile@deletePhoto',
 

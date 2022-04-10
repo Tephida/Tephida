@@ -10,19 +10,21 @@
 
 namespace Mozg\modules;
 
-use Mozg\classes\{Cache, Email, Module, TpLSite, ViewEmail};
-use FluffyDollop\Support\{Filesystem, Registry, Status, Cookie, ViiMail};
+use Mozg\classes\{Cache, Email, Module, ViewEmail};
+use FluffyDollop\Support\{Registry, Status, Cookie, ViiMail};
+use FluffyDollop\Filesystem\Filesystem;
 use JetBrains\PhpStorm\NoReturn;
+use Tephida\View\myView;
 
-class Register extends Module
+final class Register extends Module
 {
     /**
      * @throws \JsonException
+     * @throws \Exception
      */
     public function send()
     {
         if (!Registry::get('logged')) {
-            $db = Registry::get('db');
             $server_time = Registry::get('server_time');
 //    NoAjaxQuery();
             //Код безопасности
@@ -96,14 +98,14 @@ class Register extends Module
                 $allEr = count($errors);
 
                 //Если нет ошибок, то пропускаем и добавляем в базу
-                if ($allEr == 4) {
-                    $check_email = $db->super_query("SELECT COUNT(*) AS cnt FROM `users` WHERE user_email = '{$user_email}'");
+                if ($allEr === 4) {
+                    $check_email = \Mozg\classes\DB::getDB()->row('SELECT COUNT(*) AS cnt FROM `users` WHERE user_email = ?', $user_email);
                     if (!$check_email['cnt']) {
                         $md5_pass = md5(md5($password_first));
                         $user_group = '5';
-                        if ($user_country > 0 or $user_city > 0) {
-                            $country_info = $db->super_query("SELECT name FROM `country` WHERE id = '" . $user_country . "'");
-                            $city_info = $db->super_query("SELECT name FROM `city` WHERE id = '" . $user_city . "'");
+                        if ($user_country > 0 || $user_city > 0) {
+                            $country_info = \Mozg\classes\DB::getDB()->row('SELECT name FROM `country` WHERE id = ?', $user_country);
+                            $city_info = \Mozg\classes\DB::getDB()->row('SELECT name FROM `city` WHERE id = ?', $user_city);
                             $user_country_city_name = $country_info['name'] . '|' . $city_info['name'];
                         } else {
                             $user_country_city_name = '|';
@@ -112,8 +114,28 @@ class Register extends Module
                         //Hash ID
                         $_IP = null;//FIXME
                         $hid = $md5_pass . md5(md5($_IP));
-                        $db->query("INSERT INTO `users` (user_last_visit, user_email, user_password, user_name, user_lastname, user_sex, user_day, user_month, user_year, user_country, user_city, user_reg_date, user_lastdate, user_group, user_hid, user_country_city_name, user_search_pref, user_birthday, user_privacy) VALUES ('{$server_time}', '{$user_email}', '{$md5_pass}', '{$user_name}', '{$user_lastname}', '{$user_sex}', '{$user_day}', '{$user_month}', '{$user_year}', '{$user_country}', '{$user_city}', '{$server_time}', '{$server_time}', '{$user_group}', '{$hid}', '{$user_country_city_name}', '{$user_search_pref}', '{$user_birthday}', 'val_msg|1||val_wall1|1||val_wall2|1||val_wall3|1||val_info|1||')");
-                        $id = $db->insert_id();
+
+                        $id = \Mozg\classes\DB::getDB()->insert('users', [
+                            'user_last_visit' => $server_time,
+                            'user_email' => $user_email,
+                            'user_password' => $md5_pass,
+                            'user_name' => $user_name,
+                            'user_lastname' => $user_lastname,
+                            'user_sex' => $user_sex,
+                            'user_day' => $user_day,
+                            'user_month' => $user_month,
+                            'user_year' => $user_year,
+                            'user_country' => $user_country,
+                            'user_city' => $user_city,
+                            'user_reg_date' => $server_time,
+                            'user_lastdate' => $server_time,
+                            'user_group' => $user_group,
+                            'user_hid' => $hid,
+                            'user_country_city_name' => $user_country_city_name,
+                            'user_search_pref' => $user_search_pref,
+                            'user_birthday' => $user_birthday,
+                            'user_privacy' => 'val_msg|1||val_wall1|1||val_wall2|1||val_wall3|1||val_info|1||',
+                        ]);
                         //Устанавливаем в сессию ИД юзера
                         $_SESSION['user_id'] = (int)$id;
                         //Записываем COOKIE
@@ -133,18 +155,34 @@ class Register extends Module
 
                         if ($ref_id) {
                             //Проверяем на накрутку убм, что юзер не сам регистрирует анкеты
-                            $check_ref = $db->super_query("SELECT COUNT(*) AS cnt FROM `log` WHERE ip = '{$_IP}'");
+                            $check_ref = \Mozg\classes\DB::getDB()->row('SELECT COUNT(*) AS cnt FROM `log` WHERE ip =  ?', $_IP);
                             if (!$check_ref['cnt']) {
                                 $ref_id = (int)$ref_id;
                                 //Даём +10 убм
-                                $db->query("UPDATE `users` SET user_balance = user_balance+10 WHERE user_id = '{$ref_id}'");
+//                                $db->query("UPDATE `users` SET user_balance = user_balance+10 WHERE user_id = '{$ref_id}'");
+                                \Mozg\classes\DB::getDB()->update('users', [
+                                    'user_balance+10',
+                                ], [
+                                    'user_id' => $ref_id
+                                ]);
                                 //Вставляем ид регистратора
-                                $db->query("INSERT INTO `invites` SET uid = '{$ref_id}', ruid = '{$id}'");
+//                                $db->query("INSERT INTO `invites` SET uid = '{$ref_id}', ruid = '{$id}'");
+
+                                \Mozg\classes\DB::getDB()->insert('invites', [
+                                    'uid' => $ref_id,
+                                    'ruid' => $id,
+                                ]);
                             }
                         }
                         //Вставляем лог в бд
                         $_BROWSER = $_BROWSER ?? null;
-                        $db->query("INSERT INTO `log` SET uid = '{$id}', browser = '{$_BROWSER}', ip = '{$_IP}'");
+//                        $db->query("INSERT INTO `log` SET uid = '{$id}', browser = '{$_BROWSER}', ip = '{$_IP}'");
+
+                        \Mozg\classes\DB::getDB()->insert('log', [
+                            'uid' => $id,
+                            'browser' => $_BROWSER,
+                            'ip' => $_IP,
+                        ]);
                         $status = Status::OK;
                     } else {
                         $status = Status::BAD_MAIL;
@@ -185,30 +223,42 @@ class Register extends Module
 //        $tpl->renderAjax();
     }
 
+    /**
+     * @throws \JsonException
+     * @throws \ErrorException
+     */
     public function rules()
     {
-        $tpl = new TpLSite($this->tpl_dir_name);
-        $tpl->load_template('register/rules.tpl');
-        $tpl->compile('content');
-        $tpl->renderAjax();
-    }
-
-    public function step2()
-    {
-        $tpl = new TpLSite($this->tpl_dir_name);
-        $tpl->load_template('register/step2.tpl');
-        $tpl->set('{rndval}', time());
-        $tpl->compile('content');
-        $tpl->renderAjax();
+        $result = [
+            'title' => 'rules',
+            'content' => view_json('register.rules', [])
+        ];
+        header('Content-Type: application/json');
+        return print json_encode($result, JSON_THROW_ON_ERROR);
     }
 
     /**
+     * @throws \JsonException
+     */
+    public function step2()
+    {
+        $params = [
+            'rndval' => time()
+        ];
+        $result = [
+            'title' => 'rules',
+            'content' => view_json('register.step2', $params)
+        ];
+        header('Content-Type: application/json');
+        return print json_encode($result, JSON_THROW_ON_ERROR);
+    }
+
+    /**
+     * todo json response
      * @throws \Exception
      */
     public function step3()
     {
-        $db = Registry::get('db');
-
         //Код безопасности
         $session_sec_code = $_SESSION['sec_code'];
         $sec_code = $_POST['sec_code'];
@@ -253,12 +303,17 @@ class Register extends Module
                 }*/
 
                 /** @var array $check_email */
-                $check_email = $db->super_query("SELECT COUNT(*) AS cnt FROM `users` WHERE user_email = '{$user_email}'");
+                $check_email = \Mozg\classes\DB::getDB()->row('SELECT COUNT(*) AS cnt FROM `users` WHERE user_email = ?', $user_email);
                 if ($check_email['cnt']) {
                     echo '3';
                 } else {
                     //Удаляем все предыдущие запросы на регистрацию этого email
-                    $db->query("DELETE FROM `restore` WHERE email = '{$user_email}'");
+//                    $db->query("DELETE FROM `restore` WHERE email = '{$user_email}'");
+
+                    \Mozg\classes\DB::getDB()->delete('restore', [
+                        'email' => $user_email
+                    ]);
+
                     $salt = 'abchefghjkmnpqrstuvwxyz0123456789';
                     $rand_lost = '';
                     for ($i = 0; $i < 15; $i++) {
@@ -267,7 +322,14 @@ class Register extends Module
                     $hash = md5(time() . $user_email . random_int(0, 100000) . $rand_lost);
                     $_IP = null;//fixme
                     //Вставляем в базу
-                    $db->query("INSERT INTO `restore` SET email = '{$user_email}', hash = '{$hash}', ip = '{$_IP}'");
+//                    $db->query("INSERT INTO `restore` SET email = '{$user_email}', hash = '{$hash}', ip = '{$_IP}'");
+
+                    \Mozg\classes\DB::getDB()->insert('restore', [
+                        'email' => $user_email,
+                        'hash' => $hash,
+                        'ip' => $_IP,
+                    ]);
+
                     //Отправляем письмо на почту для восстановления
                     /** @var array $dictionary */
                     $dictionary = $this->lang;
@@ -294,15 +356,13 @@ class Register extends Module
     public function activate()
     {
         try {
-            $db = Registry::get('db');
             $hash = strip_data($_GET['hash']);
 
-            $_IP = '';
-            $row = $db->super_query("SELECT email FROM `restore` WHERE hash = '{$hash}' AND ip = '{$_IP}'");
-
-            $tpl = new TpLSite($this->tpl_dir_name);
+            $_IP = $_SERVER['REMOTE_ADDR'];
+            $row = \Mozg\classes\DB::getDB()->row('SELECT email FROM `restore` WHERE hash = ? AND ip = ?', $hash, $_IP);
+//            $tpl = new TpLSite($this->tpl_dir_name);
             if ($row) {
-                $tpl->load_template('register/step3.tpl');
+//                $tpl->load_template('register/step3.tpl');
 
                 $salt = 'abchefghjkmnpqrstuvwxyz0123456789';
                 $rand_lost = '';
@@ -310,18 +370,22 @@ class Register extends Module
                     $rand_lost .= $salt[random_int(0, 33)];
                 }
                 $new_hash = md5(time() . $row['email'] . random_int(0, 100000) . $rand_lost);
-                $tpl->set('{hash}', $new_hash);
-                $db->query("UPDATE `restore` SET hash = '{$new_hash}' WHERE email = '{$row['email']}'");
+//                $tpl->set('{hash}', $new_hash);
+                \Mozg\classes\DB::getDB()->update('restore', [
+                    'hash' => $new_hash,
+                ], [
+                    'email' => $row['email']
+                ]);
 
             } else {
 //            echo 'Эта ссылка на регистрацию устарела. Пройдите процесс получения ссылки еще раз.';
 //            msgbox('', 'Эта ссылка на регистрацию устарела. Пройдите процесс получения ссылки еще раз.', 'info');
 
-                $tpl->load_template('info.tpl');
-                $tpl->set('{error}', 'Эта ссылка на регистрацию устарела. Пройдите процесс получения ссылки еще раз.');
+//                $tpl->load_template('info.tpl');
+//                $tpl->set('{error}', 'Эта ссылка на регистрацию устарела. Пройдите процесс получения ссылки еще раз.');
             }
-            $tpl->compile('content');
-            $tpl->render();
+//            $tpl->compile('content');
+//            $tpl->render();
         }catch (\Error $error){
 //            var_dump($error);
         }
@@ -337,9 +401,9 @@ class Register extends Module
         //Проверка hash
         $hash = strip_data($_POST['hash']);
 
-        $_IP = '';
+        $_IP = $_SERVER['REMOTE_ADDR'];
         /** @var array $row */
-        $row = $db->super_query("SELECT email FROM `restore` WHERE hash = '{$hash}' AND ip = '{$_IP}'");
+        $row = \Mozg\classes\DB::getDB()->row('SELECT email FROM `restore` WHERE hash = ? AND ip = ?', $hash, $_IP);
 
         if ($row['email']) {
 
@@ -386,14 +450,34 @@ class Register extends Module
 
                 //Вставляем юзера в базу
                 $server_time = time();
-                $db->query("INSERT INTO `users` SET user_email = '{$row['email']}', user_password = '{$md5_pass}', 
-                        user_name = '{$user_name}', user_lastname = '{$user_lastname}', 
-                        user_reg_date = '{$server_time}', user_lastdate = '{$server_time}', 
-                        user_group = '{$user_group}', user_search_pref = '{$user_search_pref}', 
-                        user_privacy = 'val_msg|2||val_wall1|2||val_wall2|2||val_wall3|2||val_info|2||', 
-                        user_active = '1'"
-                );
-                $reg_user_id = $db->insert_id();
+//                $db->query("INSERT INTO `users` SET
+//                        user_email = '{$row['email']}',
+//                        user_password = '{$md5_pass}',
+//                        user_name = '{$user_name}',
+//                        user_lastname = '{$user_lastname}',
+//                        user_reg_date = '{$server_time}',
+//                        user_lastdate = '{$server_time}',
+//                        user_group = '{$user_group}',
+//                        user_search_pref = '{$user_search_pref}',
+//                        user_privacy = 'val_msg|2||val_wall1|2||val_wall2|2||val_wall3|2||val_info|2||',
+//                        user_active = '1'"
+//                );
+
+                $reg_user_id = \Mozg\classes\DB::getDB()->insert('users', [
+                    'user_email' => $row['email'],
+                    'user_password' => $md5_pass,
+                    'user_name' => $user_name,
+                    'user_lastname' => $user_lastname,
+                    'user_reg_date' => $server_time,
+                    'user_lastdate' => $server_time,
+                    'user_group' => $user_group,
+                    'user_hid' => $hid,
+                    'user_search_pref' => $user_search_pref,
+                    'user_active' => '1',
+                    'user_privacy' => 'val_msg|1||val_wall1|1||val_wall2|1||val_wall3|1||val_info|1||',
+                ]);
+
+//                $reg_user_id = $db->insert_id();
 
                 //Если юзер добавился в базу, то входим на сайт
                 if ($reg_user_id) {
@@ -448,10 +532,18 @@ class Register extends Module
 
                     //Вставляем лог в бд
                     $_BROWSER = '';
-                    $db->query("INSERT INTO `log` SET uid = '{$reg_user_id}', browser = '{$_BROWSER}', ip = '{$_IP}'");
+//                    $db->query("INSERT INTO `log` SET uid = '{$reg_user_id}', browser = '{$_BROWSER}', ip = '{$_IP}'");
+
+                    \Mozg\classes\DB::getDB()->insert('log', [
+                        'uid' => $reg_user_id,
+                        'browser' => $_BROWSER,
+                        'ip' => $_IP,
+                    ]);
 
                     //Удаляем ссылку регистрации на этот email
-                    $db->query("DELETE FROM `restore` WHERE email = '{$row['email']}'");
+                    \Mozg\classes\DB::getDB()->delete('restore', [
+                        'email' => $row['email']
+                    ]);
 //                    $db->query("INSERT INTO `users_param` SET user_id = '{$id}'");
                 }
             } else {

@@ -82,7 +82,7 @@ RewriteEngine On
 	RewriteRule ^video([0-9]+)_([0-9]+)_sec=msg/id=([0-9]+)(/?)+$ index.php?go=messages&act=review&mid=$3 [L]
 	
 # Поиск
-	RewriteRule ^search/query=(.*)&type=([0-3]+)(/?)+$ index.php?go=search&query=$1&type=$2 [L]
+#	RewriteRule ^search/query=(.*)&type=([0-3]+)(/?)+$ index.php?go=search&query=$1&type=$2 [L]
 	
 # Новости
 	RewriteRule ^news(/?)+$ index.php?go=news [L]
