@@ -14,19 +14,19 @@ switch ($act) {
 
     //################### Начало рассылки ###################//
     case "send":
-        $limit = intval($_POST['limit']);
-        $lastid = intval($_POST['lastid']);
-        $title = requestFilter('title', 25000, true);
+        $limit = (int)$_POST['limit'];
+        $lastid = (int)$_POST['lastid'];
+        $title = (new \FluffyDollop\Http\Request)->filter('title', 25000, true);
 //		$_POST['text'] = $_POST['text'];
 
         $sql_ = $db->super_query("SELECT user_search_pref, user_email FROM `users` ORDER by `user_id` ASC LIMIT " . $lastid . ", " . $limit, true);
 
         if ($sql_) {
-            include_once ENGINE_DIR . '/classes/mail.php';
-            $mail = new vii_mail($config, true);
+//            include_once ENGINE_DIR . '/classes/mail.php';
+//            $mail = new vii_mail($config, true);
 
             foreach ($sql_ as $row) {
-                $message_send = requestFilter('text');
+                $message_send = (new \FluffyDollop\Http\Request)->filter('text');
                 $message_send = str_replace("{%user-name%}", $row['user_search_pref'], $message_send);
 
                 $mail->send($row['user_email'], $title, $message_send);

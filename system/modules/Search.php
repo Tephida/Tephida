@@ -24,15 +24,15 @@ class Search extends Module
         $query_string = preg_replace("/&page=[0-9]+/i", '', $_SERVER['QUERY_STRING']);
         $user_id = $user_info['user_id'] ?? null;
 
-        $page = intFilter('page', 1);
+        $page = (new \FluffyDollop\Http\Request)->int('page', 1);
         $g_count = 20;
         $limit_page = ($page - 1) * $g_count;
 
-        if (requestFilter('query') !== null) {
+        if ((new \FluffyDollop\Http\Request)->filter('query') !== null) {
 //                $query = $db->safesql(Validation::strip_data(urldecode($request['query']))));
-            $query = strip_data(urldecode(requestFilter('query')));
-            if (requestFilter('n') !== null) {
-                $query = strip_data(urldecode(requestFilter('query')));
+            $query = strip_data(urldecode((new \FluffyDollop\Http\Request)->filter('query')));
+            if ((new \FluffyDollop\Http\Request)->filter('n') !== null) {
+                $query = strip_data(urldecode((new \FluffyDollop\Http\Request)->filter('query')));
             }
             //Заменяем пробелы на проценты чтоб поиск был точнее
             $query = strtr($query, array(' ' => '%'));

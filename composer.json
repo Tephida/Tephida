@@ -15,7 +15,7 @@
     "ext-gd": "*",
     "ext-iconv": "*",
     "ext-curl": "*",
-    "tephida/fluffy-dollop": "^3.9",
+    "tephida/fluffy-dollop": "^3.12",
     "tephida/view": "^1.0",
     "tephida/database": "^0.1",
     "sinergi/browser-detector": "^6.1",

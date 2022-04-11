@@ -12,8 +12,8 @@
 use Mozg\classes\Cache;
 
 if (isset($_POST['add'])) {
-    $country = intFilter('country');
-    $city = requestFilter('city', 25000, true);
+    $country = (new \FluffyDollop\Http\Request)->int('country');
+    $city = (new \FluffyDollop\Http\Request)->filter('city', 25000, true);
     if (isset($city) and !empty($city) and $country) {
         $row = $db->super_query("SELECT COUNT(*) AS cnt FROM `city` WHERE name = '" . $city . "' AND id_country = '" . $country . "'");
         if (!$row['cnt']) {

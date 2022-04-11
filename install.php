@@ -104,7 +104,7 @@ function check_install(): bool
     return !(!file_exists(ENGINE_DIR . '/data/config.php') || !file_exists(ENGINE_DIR . '/data/db.php'));
 }
 
-$act = requestFilter('act');
+$act = (new \FluffyDollop\Http\Request)->filter('act');
 
 switch ($act) {
     case "files":

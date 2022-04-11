@@ -14,8 +14,8 @@ class Updates extends Module
      */
     final public function main(): void
     {
-        if (Registry::get('logged')) {
-            $db = $this->db;
+/*        if (Registry::get('logged')) {
+//            $db = $this->db;
             $server_time = time();
             $user_info = $this->user_info;
             $user_id = $user_info['user_id'];
@@ -36,6 +36,6 @@ class Updates extends Module
                     Cache::mozgCreateCache("user_{$user_id}/updates", '');
                 }
             }
-        }
+        }*/
     }
 }

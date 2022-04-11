@@ -15,7 +15,7 @@ use FluffyDollop\Support\Registry;
 use Mozg\Models\Users;
 
 $_IP = $_SERVER['REMOTE_ADDR'];
-$act = requestFilter('act');
+$act = (new \FluffyDollop\Http\Request)->filter('act');
 $db = Registry::get('db');
 $config = settings_get();
 //Если делаем выход
@@ -92,7 +92,7 @@ if (isset($_SESSION['user_id']) > 0) {
 //Если данные поступили через пост и пользователь не авторизован
 if (isset($_POST['log_in']) && !$logged) {
 //Приготавливаем данные
-    $email = requestFilter('email');
+    $email = (new \FluffyDollop\Http\Request)->filter('email');
     $password = md5(md5(stripslashes($_POST['password'])));
 //Проверяем правильность e-mail
     if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {

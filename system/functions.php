@@ -610,13 +610,13 @@ function compileAdmin($tpl): void
     $tpl->set('{exit_lnk}', $exit_lnk);
     $tpl->set('{content}', $tpl->result['content']);
     $tpl->compile('main');
-    if (requestFilter('ajax') == 'yes') {
+    if ((new \FluffyDollop\Http\Request)->filter('ajax') === 'yes') {
         $metatags['title'] = $metatags['title'] ?? 'Панель управления';
         $result_ajax = array(
             'title' => $metatags['title'],
             'content' => $tpl->result['info'] . $tpl->result['content']
         );
-        _e_json($result_ajax);
+        (new \FluffyDollop\Http\Response)->_e_json($result_ajax);
     } else {
         echo $tpl->result['main'];
     }

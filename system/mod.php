@@ -53,7 +53,7 @@ if ($module === 'albums') {
     $_SESSION['happy_friends_block_hide'] = 1;
 } elseif ($module === 'away') {
     /** Редирект */
-    $url = requestFilter('url');
+    $url = (new \FluffyDollop\Http\Request)->filter('url');
     header("Location: {$url}");
 } elseif (!include ENGINE_DIR . '/modules/' . $module . '.php') {
     $params = [

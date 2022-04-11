@@ -543,7 +543,7 @@ class WallPage extends Module
                         $gcount = $gcount ?? null;
                         $page_type = $page_type ?? null;
 
-                        $type = requestFilter('type');
+                        $type = (new \FluffyDollop\Http\Request)->filter('type');
 
                         if (($cnt_rec['cnt'] > $gcount && $type == '') || $type == 'own') {
                             navigation($gcount, $cnt_rec['cnt'], $page_type);

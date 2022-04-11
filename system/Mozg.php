@@ -151,7 +151,7 @@ class Mozg
             //todo update
             $module = isset($_GET['go']) ?
                 htmlspecialchars(strip_tags(stripslashes(trim(urldecode($_GET['go']))))) : 'main';
-            $action = requestFilter('act');
+            $action = (new \FluffyDollop\Http\Request)->filter('act');
             $class = ucfirst($module);
             if (!class_exists($class) || $action === '' || $class === 'Wall') {
 //                try {

@@ -10,7 +10,7 @@
 
 namespace Mozg\classes;
 
-use FluffyDollop\Security\AntiSpam;
+use Mozg\Security\AntiSpam;
 
 class Flood extends AntiSpam
 {
