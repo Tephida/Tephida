@@ -109,7 +109,7 @@ $act = (new \FluffyDollop\Http\Request)->filter('act');
 switch ($act) {
     case "files":
         if (!check_install()) {
-            echo '<div class="h1">Проверка на запись у важных файлов системы</div>';
+            echo '<div class="h1">Проверка файлов системы</div>';
 
             $important_files = array(
                 './system/data/xfields.txt',
@@ -183,7 +183,7 @@ switch ($act) {
                     if (is_writable($file)) {
                         $file_status = "<div style=\"color: green;\">разрешено</div>";
                     } else {
-                        @chmod("$file", 0755);
+                        @chmod($file, 0755);
                         if (is_writable($file)) {
                             $file_status = "<div style=\"color: green;\">разрешено</div>";
                         } else {
@@ -192,13 +192,13 @@ switch ($act) {
                         }
                     }
                 }
-                $chmod_value = @decoct(@fileperms($file)) % 1000;
+                $chmod_value = decoct(fileperms($file)) % 1000;
                 echo "<div style=\"float:left;width:450px;padding:10px;border-bottom:1px dashed #ddd\">{$file}</div>
 			<div style=\"float:left;width:90px;text-align:center;padding:10px;border-bottom:1px dashed #ddd\">{$chmod_value}</div>
 			<div style=\"float:left;width:195px;text-align:center;padding:10px;border-bottom:1px dashed #ddd\">{$file_status}</div>
 			<div class=clear></div>";
             }
-            if ($chmod_errors == 0 && $not_found_errors == 0) {
+            if ($chmod_errors === 0 && $not_found_errors === 0) {
                 $status_report = 'Проверка успешно завершена! Можете продолжить установку!';
             } else {
                 $status_report = '';
@@ -345,20 +345,14 @@ HTML;
                 $db_config = <<<HTML
 <?php
 
-const DBHOST = "{$_POST['mysql_server']}"; 
-
-const DBNAME = "{$_POST['mysql_dbname']}";
-
-const DBUSER = "{$_POST['mysql_dbuser']}";
-
-const DBPASS = "{$_POST['mysql_pass']}";
-
-const COLLATE = "utf8";
-
-return new \FluffyDollop\Support\Mysql;
-
+return [
+    'host' => "{$_POST['mysql_server']}",
+    'name' => "{$_POST['mysql_dbname']}",
+    'user' => "{$_POST['mysql_dbuser']}",
+    'pass' => "{$_POST['mysql_pass']}",
+];
 HTML;
-                file_put_contents(ENGINE_DIR . "/data/db.php", $db_config);
+                file_put_contents(ENGINE_DIR . "/data/db_config.php", $db_config);
 
                 //Создаём файл админ панели
                 $admin = <<<HTML
@@ -391,143 +385,117 @@ include ADMIN_DIR.'/login.php';
 HTML;
                 file_put_contents(ROOT_DIR . "/" . $_POST['adminfile'], $admin);
 
-
                 //Создаём файл конфигурации системы
                 $config = <<<HTML
 <?php
 
 //System Configurations 
 
-return array ( 
-
+return [
 'home' => "Социальная сеть", 
-
 'charset' => "utf-8", 
-
 'home_url' => "{$_POST['url']}", 
-
 'admin_index' => "{$_POST['adminfile']}",
-
 'temp' => "Mixchat", 
-
 'online_time' => "150", 
-
 'lang' => "Russian", 
-
 'gzip' => "no", 
-
 'gzip_js' => "no", 
-
 'offline' => "no", 
-
 'offline_msg' => "Сайт находится на текущей реконструкции, после завершения всех работ сайт будет открыт.\r\n\r\nПриносим вам свои извинения за доставленные неудобства.",
-
 'bonus_rate' => "", 
-
 'cost_balance' => "10", 
-
 'video_mod' => "yes", 
-
 'video_mod_comm' => "yes", 
-
 'video_mod_add' => "yes", 
-
 'video_mod_add_my' => "yes", 
-
 'video_mod_search' => "yes", 
-
 'audio_mod' => "yes", 
-
 'audio_mod_add' => "yes", 
-
 'audio_mod_search' => "yes", 
-
 'album_mod' => "yes", 
-
 'max_albums' => "20", 
-
 'max_album_photos' => "500", 
-
 'max_photo_size' => "5000", 
-
 'photo_format' => "jpg, jpeg, jpe, png, gif", 
-
 'albums_drag' => "yes", 
-
 'photos_drag' => "yes", 
-
 'rate_price' => "1", 
-
 'admin_mail' => "{$_POST['email']}", 
-
 'mail_metod' => "php", 
-
 'smtp_host' => "localhost", 
-
 'smtp_port' => "25", 
-
 'smtp_user' => "", 
-
 'smtp_pass' => "", 
-
 'news_mail_1' => "no", 
-
 'news_mail_2' => "no", 
-
 'news_mail_3' => "no", 
-
 'news_mail_4' => "no", 
-
 'news_mail_5' => "no", 
-
 'news_mail_6' => "no", 
-
 'news_mail_7' => "no", 
-
 'news_mail_8' => "no", 
-
-'code_word' => "code_word", 
-
-'sms_number' => "123456", 
-
-);
+];
 
 HTML;
                 file_put_contents(ENGINE_DIR . "/data/config.php", $config);
 
-                $db = require ENGINE_DIR . '/data/db.php';
+                $db_config = require ENGINE_DIR . '/data/db_config.php';
 
                 $_POST['name'] = strip_tags($_POST['name']);
                 $_POST['lastname'] = strip_tags($_POST['lastname']);
                 $table_Chema = array();
+                $table_data = array();
 
                 include_once ENGINE_DIR . '/data/mysql_tables.php';
+//                include_once ENGINE_DIR . '/data/mysql_data.php';
+                $db = new PDO(
+                    "mysql:dbname=" . $_POST['mysql_dbname'] . ";host=" . $_POST['mysql_server'],
+                    $_POST['mysql_dbuser'],
+                    $_POST['mysql_pass']);
+                try {
+                    $db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);//Error Handling
+                    foreach ($table_Chema as $sql) {
+                        try {
+                            $db->exec($sql);
+                        } catch (Error $e) {
+                            echo 'error query: ' . $sql;
+                            exit();
+                        }
+                    }
+
+                    include_once ENGINE_DIR . '/data/mysql_data.php';
+
+                } catch (PDOException $e) {
+                    echo $e->getMessage();//Remove or change message in production code
+                }
+
 
                 //Вставляем админа в базу
-                $_POST['pass'] = md5(md5($_POST['pass']));
-                $hid = $_POST['pass'] . md5(md5($_SERVER['REMOTE_ADDR']));
+//                $_POST['pass'] = md5(md5($_POST['pass']));
+//                $hid = $_POST['pass'] . md5(md5($_SERVER['REMOTE_ADDR']));
 
                 $server_time = time();
 
-                $table_Chema[] = "INSERT INTO `users` 
-SET user_name = '{$_POST['name']}', 
-    user_lastname = '{$_POST['lastname']}', 
-    user_email = '{$_POST['email']}', 
-    user_password = '{$_POST['pass']}', 
-    user_group = 1, 
-    user_search_pref = '{$_POST['name']} {$_POST['lastname']}', 
-    user_privacy = 'val_msg|1||val_wall1|1||val_wall2|1||val_wall3|1||val_info|1||', 
-    user_hid = '{$hid}',     
-    user_birthday = '0-0-0', 
-    user_day = '0', 
-    user_month = '0', 
-    user_year = '0', 
-    user_country = '0', 
-    user_city = '0', 
-    user_lastdate = '{$server_time}', 
-    user_lastupdate = '{$server_time}',   
-    user_reg_date = '{$server_time}'";
-                $table_Chema[] = "INSERT INTO `log` SET uid = '1', browser = '', ip = ''";
+//                $table_Chema[] = "INSERT INTO `users`
+//SET user_name = '{$_POST['name']}',
+//    user_lastname = '{$_POST['lastname']}',
+//    user_email = '{$_POST['email']}',
+//    user_password = '{$_POST['pass']}',
+//    user_group = 1,
+//    user_search_pref = '{$_POST['name']} {$_POST['lastname']}',
+//    user_privacy = 'val_msg|1||val_wall1|1||val_wall2|1||val_wall3|1||val_info|1||',
+//    user_hid = '{$hid}',
+//    user_birthday = '0-0-0',
+//    user_day = '0',
+//    user_month = '0',
+//    user_year = '0',
+//    user_country = '0',
+//    user_city = '0',
+//    user_lastdate = '{$server_time}',
+//    user_lastupdate = '{$server_time}',
+//    user_reg_date = '{$server_time}'";
+//                $table_Chema[] = "INSERT INTO `log` SET uid = '1', browser = '', ip = ''";
 
                 foreach ($table_Chema as $query) {
                     try {
