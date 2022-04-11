@@ -22,7 +22,7 @@ if (isset($_POST['save'])) {
         $ip = htmlspecialchars(strip_tags(trim($_POST['ip'])));
     else
         $ip = "";
-    $descr = requestFilter('descr');
+    $descr = (new \FluffyDollop\Http\Request)->filter('descr');
 
     if ($ip) {
         $row = $db->super_query("SELECT id FROM `banned` WHERE ip ='" . $ip . "'");

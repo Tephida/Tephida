@@ -1,4 +1,4 @@
-@if(requestFilter('ajax') !== 'yes')<!DOCTYPE html>
+@if((new \FluffyDollop\Http\Request)->checkAjax() === false)<!DOCTYPE html>
 <html lang="{{ $lang }}">
 <head>
     <title>{{ $title }}</title>
@@ -31,7 +31,7 @@
 @if($available === 'main')
     <small style="color:#ccc;padding:3px;position:absolute">Tephida</small>
     <div class="header_flex">
-        <a href="/" class="new_logo" onClick="Page.Go(this.href); return false" style="margin-top:-10px">Mixchat</a>
+        <a href="/" class="new_logo" onClick="Page.Go(this.href); return false" style="margin-top:-10px">{{ $home }}</a>
         <div class="new_descr">@_e('site_desc')<br/>
         </div>
         <div class="new_but fl_r cursor_pointer" onClick="boxlogin();" style="margin-top:-32px">@_e('login')</div>
@@ -42,7 +42,7 @@
             <div class="headwr">
                 @if($logged)
                     <a href="/news" onClick="Page.Go(this.href); return false">
-                        <div class="logo">Mixchat</div>
+                        <div class="logo">{{ $home }}</div>
                     </a>
                 @else
                     <div class="logo"></div>
@@ -50,52 +50,52 @@
                 <div class="headhr"></div>
                 @if($logged)
                 <!--search-->
-                {{--<div id="seNewB">
-                        <input type="text" value="Поиск" class="fave_input search_input"
-                               onBlur="if(this.value == '' || this.value=='Поиск'){this.value='Поиск';this.style.color = '#c1cad0'}"
-                               onFocus="if(this.value=='Поиск'){this.value='';this.style.color = '#000'}"
-                               onKeyPress="if(event.keyCode == 13) gSearch.go();"
-                               onKeyUp="FSE.Txt()"
-                               onClick="if(this.value != 0) $('.fast_search_bg').show()"
-                               id="query" maxlength="65"/>
-                        <div id="search_types">
-                            <input type="hidden" value="1" id="se_type"/>
-                            <div class="search_type" id="search_selected_text"
-                                 onClick="gSearch.open_types('#sel_types'); return false">@_e('by_people')
+                    {{--<div id="seNewB">
+                            <input type="text" value="Поиск" class="fave_input search_input"
+                                   onBlur="if(this.value == '' || this.value=='Поиск'){this.value='Поиск';this.style.color = '#c1cad0'}"
+                                   onFocus="if(this.value=='Поиск'){this.value='';this.style.color = '#000'}"
+                                   onKeyPress="if(event.keyCode == 13) gSearch.go();"
+                                   onKeyUp="FSE.Txt()"
+                                   onClick="if(this.value != 0) $('.fast_search_bg').show()"
+                                   id="query" maxlength="65"/>
+                            <div id="search_types">
+                                <input type="hidden" value="1" id="se_type"/>
+                                <div class="search_type" id="search_selected_text"
+                                     onClick="gSearch.open_types('#sel_types'); return false">@_e('by_people')
+                                </div>
+                                <div class="search_alltype_sel no_display" id="sel_types">
+                                    <div id="1"
+                                         onClick="gSearch.select_type(this.id, 'по людям'); FSE.GoSe($('#query').val()); return false"
+                                         class="search_type_selected">@_e('by_people')
+                                    </div>
+                                    <div id="2"
+                                         onClick="gSearch.select_type(this.id, 'по видеозаписям'); FSE.GoSe($('#query').val()); return false">
+                                        по видеозаписям
+                                    </div>
+                                    <div id="3"
+                                         onClick="gSearch.select_type(this.id, 'по заметкам');  FSE.GoSe($('#query').val()); return false">
+                                        по заметкам
+                                    </div>
+                                    <div id="4"
+                                         onClick="gSearch.select_type(this.id, 'по сообществам'); FSE.GoSe($('#query').val()); return false">
+                                        по сообществам
+                                    </div>
+                                    <div id="5"
+                                         onClick="gSearch.select_type(this.id, 'по аудиозаписям');  FSE.GoSe($('#query').val()); return false">
+                                        по аудиозаписям
+                                    </div>
+                                </div>
                             </div>
-                            <div class="search_alltype_sel no_display" id="sel_types">
-                                <div id="1"
-                                     onClick="gSearch.select_type(this.id, 'по людям'); FSE.GoSe($('#query').val()); return false"
-                                     class="search_type_selected">@_e('by_people')
-                                </div>
-                                <div id="2"
-                                     onClick="gSearch.select_type(this.id, 'по видеозаписям'); FSE.GoSe($('#query').val()); return false">
-                                    по видеозаписям
-                                </div>
-                                <div id="3"
-                                     onClick="gSearch.select_type(this.id, 'по заметкам');  FSE.GoSe($('#query').val()); return false">
-                                    по заметкам
-                                </div>
-                                <div id="4"
-                                     onClick="gSearch.select_type(this.id, 'по сообществам'); FSE.GoSe($('#query').val()); return false">
-                                    по сообществам
-                                </div>
-                                <div id="5"
-                                     onClick="gSearch.select_type(this.id, 'по аудиозаписям');  FSE.GoSe($('#query').val()); return false">
-                                    по аудиозаписям
-                                </div>
+                            <div class="fast_search_bg no_display" id="fast_search_bg">
+                                <a href="/" style="padding:12px;background:#eef3f5" onClick="gSearch.go(); return false"
+                                   onMouseOver="FSE.ClrHovered(this.id)" id="all_fast_res_clr1">
+                                    <text>Искать</text>
+                                    <b id="fast_search_txt"></b>
+                                    <div class="fl_r fast_search_ic"></div>
+                                </a>
+                                <span id="reFastSearch"></span>
                             </div>
-                        </div>
-                        <div class="fast_search_bg no_display" id="fast_search_bg">
-                            <a href="/" style="padding:12px;background:#eef3f5" onClick="gSearch.go(); return false"
-                               onMouseOver="FSE.ClrHovered(this.id)" id="all_fast_res_clr1">
-                                <text>Искать</text>
-                                <b id="fast_search_txt"></b>
-                                <div class="fl_r fast_search_ic"></div>
-                            </a>
-                            <span id="reFastSearch"></span>
-                        </div>
-                    </div>--}}
+                        </div>--}}
                     <!--/search-->
                 @endif
                 <div class="headmenu fl_r">
@@ -181,7 +181,7 @@
         <div id="page">
             @endif
             @yield('content')
-            @if(requestFilter('ajax') !== 'yes')
+            @if((new \FluffyDollop\Http\Request)->checkAjax() === false)
                 <div class="clear"></div>
         </div>
         <div class="clear"></div>

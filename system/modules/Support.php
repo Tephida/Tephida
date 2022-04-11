@@ -30,8 +30,8 @@ class Support extends Module
         if (Flood::check('support')) {
             echo 'limit';
         } else {
-            $title = requestFilter('title', 25000, true);
-            $question = requestFilter('question');
+            $title = (new \FluffyDollop\Http\Request)->filter('title', 25000, true);
+            $question = (new \FluffyDollop\Http\Request)->filter('question');
             $limitTime = $server_time - 3600;
             $rowLast = $db->super_query("SELECT COUNT(*) AS cnt FROM `support` WHERE сdate > '{$limitTime}'");
             if (!$rowLast['cnt'] and !empty($title) and !empty($question) and $user_info['user_group'] != 4) {
@@ -106,8 +106,8 @@ class Support extends Module
     public function answer()
     {
         NoAjaxQuery();
-        $qid = intFilter('qid');
-        $answer = requestFilter('answer');
+        $qid = (new \FluffyDollop\Http\Request)->int('qid');
+        $answer = (new \FluffyDollop\Http\Request)->filter('answer');
         $check = $db->super_query("SELECT suser_id FROM `support` WHERE id = '{$qid}'");
         if ($check['suser_id'] == $user_id or $user_info['user_group'] == 4 and isset($answer) and !empty($answer)) {
             if ($user_info['user_group'] == 4) {

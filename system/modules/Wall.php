@@ -19,11 +19,11 @@ class Wall extends \Mozg\classes\Module
 
 //        $wall = new WallProfile($tpl);
 //			NoAjaxQuery();
-        $wall_text = requestFilter('wall_text');
+        $wall_text = (new \FluffyDollop\Http\Request)->filter('wall_text');
         if (Flood::check('identical', $wall_text)) {
             echo 'err_privacy';
         } else {
-            $attach_files = requestFilter('attach_files', 25000, true);
+            $attach_files = (new \FluffyDollop\Http\Request)->filter('attach_files', 25000, true);
             $for_user_id = intFilter('for_user_id');
             $fast_comm_id = intFilter('rid');
             $answer_comm_id = intFilter('answer_comm_id');
@@ -115,8 +115,8 @@ class Wall extends \Mozg\classes\Module
                             $attach_files = str_replace(array('vote|', '&amp;#124;', '&amp;raquo;', '&amp;quot;'), array('hack|', '&#124;', '&raquo;', '&quot;'), $attach_files);
 
                             //Голосование
-                            $vote_title = requestFilter('vote_title', 25000, true);
-                            $vote_answer_1 = requestFilter('vote_answer_1', 25000, true);
+                            $vote_title = (new \FluffyDollop\Http\Request)->filter('vote_title', 25000, true);
+                            $vote_answer_1 = (new \FluffyDollop\Http\Request)->filter('vote_answer_1', 25000, true);
 
                             $ansers_list = array();
 
@@ -124,7 +124,7 @@ class Wall extends \Mozg\classes\Module
 
                                 for ($vote_i = 1; $vote_i <= 10; $vote_i++) {
 
-                                    $vote_answer = requestFilter('vote_answer_' . $vote_i, 25000, true);
+                                    $vote_answer = (new \FluffyDollop\Http\Request)->filter('vote_answer_' . $vote_i, 25000, true);
                                     $vote_answer = str_replace('|', '&#124;', $vote_answer);
 
                                     if ($vote_answer) {

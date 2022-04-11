@@ -10,7 +10,7 @@
 
 namespace Mozg\classes;
 
-use FluffyDollop\Security\AntiSpam;
+use Mozg\Security\AntiSpam;
 use FluffyDollop\Support\Mysql;
 use FluffyDollop\Support\Registry;
 use FluffyDollop\Support\Status;

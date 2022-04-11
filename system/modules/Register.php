@@ -11,7 +11,7 @@
 namespace Mozg\modules;
 
 use Mozg\classes\{Cache, Email, Module, ViewEmail};
-use FluffyDollop\Support\{Registry, Status, Cookie, ViiMail};
+use FluffyDollop\Support\{Registry, Status, Cookie};
 use FluffyDollop\Filesystem\Filesystem;
 use JetBrains\PhpStorm\NoReturn;
 use Tephida\View\myView;
@@ -29,42 +29,42 @@ final class Register extends Module
 //    NoAjaxQuery();
             //Код безопасности
             $session_sec_code = $_SESSION['sec_code'] ?? null;
-            $sec_code = requestFilter('sec_code');
+            $sec_code = (new \FluffyDollop\Http\Request)->filter('sec_code');
             //Если код введенный юзером совпадает, то пропускаем, иначе выводим ошибку
             if ($sec_code == $session_sec_code) {
                 //Входные POST Данные
 
-                $user_name = requestFilter('name');
-                $user_lastname = requestFilter('lastname');
-                $user_email = requestFilter('email', 100, true);
+                $user_name = (new \FluffyDollop\Http\Request)->filter('name');
+                $user_lastname = (new \FluffyDollop\Http\Request)->filter('lastname');
+                $user_email = (new \FluffyDollop\Http\Request)->filter('email', 100, true);
                 $user_name = ucfirst($user_name);
                 $user_lastname = ucfirst($user_lastname);
-                $user_sex = intFilter('sex');
+                $user_sex = (new \FluffyDollop\Http\Request)->int('sex');
                 if ($user_sex < 0 || $user_sex > 2) {
                     $user_sex = 0;
                 }
-                $user_day = intFilter('day');
+                $user_day = (new \FluffyDollop\Http\Request)->int('day');
                 if ($user_day < 0 || $user_day > 31) {
                     $user_day = 0;
                 }
-                $user_month = intFilter('month');
+                $user_month = (new \FluffyDollop\Http\Request)->int('month');
                 if ($user_month < 0 || $user_month > 12) {
                     $user_month = 0;
                 }
-                $user_year = intFilter('year');
+                $user_year = (new \FluffyDollop\Http\Request)->int('year');
                 if ($user_year < 1930 || $user_year > 2007) {
                     $user_year = 0;
                 }
-                $user_country = intFilter('country');
+                $user_country = (new \FluffyDollop\Http\Request)->int('country');
                 if ($user_country < 0 || $user_country > 10) {
                     $user_country = 0;
                 }
-                $user_city = intFilter('city');
+                $user_city = (new \FluffyDollop\Http\Request)->int('city');
                 if ($user_city < 0 || $user_city > 1587) {
                     $user_city = 0;
                 }
-                $password_first = requestFilter('password_first');
-                $password_second = requestFilter('password_second');
+                $password_first = (new \FluffyDollop\Http\Request)->filter('password_first');
+                $password_second = (new \FluffyDollop\Http\Request)->filter('password_second');
 
                 $user_birthday = $user_year . '-' . $user_month . '-' . $user_day;
 
@@ -266,7 +266,7 @@ final class Register extends Module
         if ($sec_code === $session_sec_code) {
 
             //POST данные
-            $user_email = requestFilter('email');
+            $user_email = (new \FluffyDollop\Http\Request)->filter('email');
 
             //Проверка E-mail
 //            if(preg_match('/^(("[\w-\s]+")|([\w-]+(?:\.[\w-]+)*)|("[\w-\s]+")([\w-]+(?:\.[\w-]+)*))(@((?:[\w-]+\.)*\w[\w-]{0,66})\.([a-z]{2,6}(?:\.[a-z]{2})?)$)|(@\[?((25[0-5]\.|2[0-4][0-9]\.|1[0-9]{2}\.|[0-9]{1,2}\.))((25[0-5]|2[0-4][0-9]|1[0-9]{2}|[0-9]{1,2})\.){2}(25[0-5]|2[0-4][0-9]|1[0-9]{2}|[0-9]{1,2})\]?$)/i', $user_email)) {
@@ -408,14 +408,14 @@ final class Register extends Module
         if ($row['email']) {
 
             //Входные POST Данные
-            $user_name = requestFilter('reg_name');
-            $user_lastname = requestFilter('reg_lastname');
+            $user_name = (new \FluffyDollop\Http\Request)->filter('reg_name');
+            $user_lastname = (new \FluffyDollop\Http\Request)->filter('reg_lastname');
 
             $user_name = ucfirst($user_name);
             $user_lastname = ucfirst($user_lastname);
 
-            $password_first = $_POST['reg_pass1'];
-            $password_second = $_POST['reg_pass2'];
+            $password_first = (new \FluffyDollop\Http\Request)->filter('reg_pass1');
+            $password_second = (new \FluffyDollop\Http\Request)->filter('reg_pass2');
 
             $errors = [];
 

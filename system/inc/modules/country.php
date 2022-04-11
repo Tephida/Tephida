@@ -12,7 +12,7 @@
 use Mozg\classes\Cache;
 
 if (isset($_POST['add'])) {
-    $country = requestFilter('country', 25000, true);
+    $country = (new \FluffyDollop\Http\Request)->filter('country', 25000, true);
     if (isset($country) and !empty($country)) {
         $row = $db->super_query("SELECT COUNT(*) AS cnt FROM `country` WHERE name = '" . $country . "'");
         if (!$row['cnt']) {

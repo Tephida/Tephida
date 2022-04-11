@@ -367,7 +367,7 @@ HTML;
                 //################### Загрузка стены ###################//
                 $params['wall_num'] = $row['user_wall_num'];
                 if ($row['user_wall_num']) {
-                    if (requestFilter('uid')) {
+                    if ((new \FluffyDollop\Http\Request)->filter('uid')) {
 //                        $meta_tags['title'] = 'walls';
 
 //                        $tpl = new TpLSite(ROOT_DIR . '/templates/' . $config['temp'], $meta_tags);
@@ -379,10 +379,10 @@ HTML;
                     /** Показ последних 10 записей */
 
                     //Если вызвана страница стены, не со страницы юзера
-                    if (!isset($id) && !requestFilter('uid')) {
-                        $rid = intFilter('rid');
+                    if (!isset($id) && !(new \FluffyDollop\Http\Request)->filter('uid')) {
+                        $rid = (new \FluffyDollop\Http\Request)->int('rid');
 
-                        $id = intFilter('uid');
+                        $id = (new \FluffyDollop\Http\Request)->int('uid');
                         if (!$id) {
                             $id = $user_id;
                         }
@@ -413,7 +413,7 @@ HTML;
                                     $cnt_rec = $db->super_query("SELECT COUNT(*) AS cnt FROM `wall` WHERE for_user_id = '{$id}' AND author_user_id = '{$id}' AND fast_comm_id = 0");
                                 }
 
-                                $type = requestFilter('type');
+                                $type = (new \FluffyDollop\Http\Request)->filter('type');
 
                                 if ($type === 'own') {
                                     $cnt_rec = $db->super_query("SELECT COUNT(*) AS cnt FROM `wall` WHERE for_user_id = '{$id}' AND author_user_id = '{$id}' AND fast_comm_id = 0");
@@ -505,7 +505,7 @@ HTML;
 
                             $for_user_id = null;//fixme
 
-                            if ($rid || $walluid || requestFilter('uid')) {
+                            if ($rid || $walluid || (new \FluffyDollop\Http\Request)->filter('uid')) {
 //                                $wall->template('wall/one_record.tpl');
 //                                $wall->compile('content');
                                 $config = settings_get();
@@ -518,7 +518,7 @@ HTML;
                                 $gcount = $gcount ?? null;
                                 $page_type = $page_type ?? null;
 
-                                $type = requestFilter('type');
+                                $type = (new \FluffyDollop\Http\Request)->filter('type');
 
                                 if (($cnt_rec['cnt'] > $gcount && $type == '') || $type === 'own') {
                                     navigation($gcount, $cnt_rec['cnt'], $page_type);

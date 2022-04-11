@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Mozg\classes;
 
-use ErrorException;
 use Exception;
+use FluffyDollop\Http\Request;
 use FluffyDollop\Support\Registry;
 use Mozg\modules\Lang;
 use Tephida\View\myView;
@@ -50,9 +50,10 @@ class View
         $user_info = Registry::get('user_info');
         //Если юзер перешел по реферальной ссылке, то добавляем реферал_ид в сессию
         if (isset($_GET['reg'])) {
-            $_SESSION['ref_id'] = intFilter('reg');
+            $_SESSION['ref_id'] = (new Request)->int('reg');
         }
         $variables['title'] = $variables['title'] ?? 'No title';
+        $variables['home'] = $config['home'] ?? 'Logo';
         $dictionary = I18n::dictionary();
         $variables['lang'] = $dictionary['lang'];
         $variables['available'] = $variables['available'] ?? false;
@@ -111,7 +112,7 @@ class View
                 $this->notify['new_groups'] = "<div class=\"ic_newAct\">" . $user_info['invties_pub_num'] . "</div>";
                 $this->notify['new_groups_lnk'] = '/groups?act=invites';
             }
-            if (requestFilter('ajax') !== 'yes') {
+            if ((new Request)->filter('ajax') !== 'yes') {
                 $variables['my_page_link'] = '/u' . $user_info['user_id'];
                 $variables['msg'] = $this->notify['user_pm_num'];
                 $variables['demands'] = $this->notify['demands'];
@@ -130,7 +131,7 @@ class View
         /** MODE_DEBUG allows pinpointing troubles. */
         $blade = new myView($views, $cache, \Tephida\View\View::MODE_AUTO);
         $blade::$dictionary = I18n::dictionary();
-        if (requestFilter('ajax') === 'yes') {
+        if ((new Request)->checkAjax() === true) {
             $json_content = $blade->run($view, $variables);
             $title = $variables['title'] ?? $this->title;
             if (Registry::get('logged')) {
