@@ -1,4 +1,5 @@
 <?php
+
 /*
  *   (c) Semen Alekseev
  *
@@ -137,7 +138,7 @@ $table_Chema[] = "CREATE TABLE `city` (
   PRIMARY KEY (`id`),
   KEY `id_country` (`id_country`)
 ) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=3349 ;";
-
+/*
 $table_Chema[] = "INSERT INTO `city` (`id`, `id_country`, `name`) VALUES
 (1, 1, 'Москва'),
 (2, 1, 'Абрамцево'),
@@ -1762,6 +1763,7 @@ $table_Chema[] = "INSERT INTO `city` (`id`, `id_country`, `name`) VALUES
 (1621, 1, 'Спасск-Дальний'),
 (1622, 1, 'Терней'),
 (1623, 1, 'Уссурийск');";
+
 $table_Chema[] = "INSERT INTO `city` (`id`, `id_country`, `name`) VALUES
 (1624, 1, 'Фокино'),
 (1625, 1, 'Хасан'),
@@ -3366,6 +3368,7 @@ $table_Chema[] = "INSERT INTO `city` (`id`, `id_country`, `name`) VALUES
 (3224, 2, 'Новая Ушица'),
 (3225, 2, 'Полонное'),
 (3226, 2, 'Славута');";
+
 $table_Chema[] = "INSERT INTO `city` (`id`, `id_country`, `name`) VALUES
 (3227, 2, 'Старая Синява'),
 (3228, 2, 'Староконстантинов'),
@@ -3489,8 +3492,7 @@ $table_Chema[] = "INSERT INTO `city` (`id`, `id_country`, `name`) VALUES
 (3346, 7, 'Таллин'),
 (3347, 7, 'Тарту'),
 (3348, 7, 'Хаапсалу');";
-
-
+*/
 $table_Chema[] = "CREATE TABLE `communities` (
   `id` INT( 11 ) AUTO_INCREMENT PRIMARY KEY,
   `admin` text NOT NULL,
@@ -3645,7 +3647,7 @@ $table_Chema[] = "CREATE TABLE `country` (
   `name` varchar(255) NOT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=16 ;";
-$table_Chema[] = "INSERT INTO `country` (`id`, `name`) VALUES
+/*$table_Chema[] = "INSERT INTO `country` (`id`, `name`) VALUES
 (4, 'Беларусь'),
 (3, 'Казахстан'),
 (2, 'Украина'),
@@ -3655,7 +3657,7 @@ $table_Chema[] = "INSERT INTO `country` (`id`, `name`) VALUES
 (7, 'Эстония'),
 (8, 'Азербайджан'),
 (9, 'Литва'),
-(10, 'США');";
+(10, 'США');";*/
 $table_Chema[] = "CREATE TABLE `doc` (
   `did` INT( 11 ) AUTO_INCREMENT PRIMARY KEY,
   `duser_id` int(11) unsigned NOT NULL,
@@ -3712,6 +3714,7 @@ $table_Chema[] = "CREATE TABLE `gifts_list` (
   PRIMARY KEY (`gid`),
   KEY `img` (`img`)
 ) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=83 ;";
+/*
 $table_Chema[] = "INSERT INTO `gifts_list` (`gid`, `img`, `price`) VALUES
 (8, '11', 30),
 (9, '14', 3),
@@ -3786,7 +3789,8 @@ $table_Chema[] = "INSERT INTO `gifts_list` (`gid`, `img`, `price`) VALUES
 (78, '417', 2),
 (79, '500', 25),
 (80, '501', 30),
-(82, '502', 20);";
+(82, '502', 20);";*/
+
 $table_Chema[] = "CREATE TABLE `im` (
   `id` INT( 11 ) AUTO_INCREMENT PRIMARY KEY,
   `iuser_id` int(11) unsigned NOT NULL,
@@ -3820,15 +3824,15 @@ $table_Chema[] = 'CREATE TABLE `mail_tpl` (
 );';
 
 
-$table_Chema[] = "INSERT INTO `mail_tpl` (`id`, `text`) VALUES
-			(1, 'Доброго времени суток, {%user%}!\r\nПользователь {%user-friend%}, отправил Вам заявку на дружбу.\r\n\r\nПросмотреть заявку Вы можете по ссылке: https://{$_SERVER['HTTP_HOST']}/friends/requests\r\n\r\nС уважением, Социальная сеть.\r\nАдминистрация https://{$_SERVER['HTTP_HOST']}/'),
-			(2, 'Доброго времени суток, {%user%}!\r\nПользователь {%user-friend%}, ответил на Вашу запись {%rec-link%}\r\n\r\nС уважением, Социальная сеть.\r\nАдминистрация https://{$_SERVER['HTTP_HOST']}/'),
-			(3, 'Доброго времени суток, {%user%}!\r\nПользователь {%user-friend%}, оставил комментарий к Вашей видеозаписи {%rec-link%}\r\n\r\nС уважением, Социальная сеть.\r\nАдминистрация https://{$_SERVER['HTTP_HOST']}/'),
-			(4, 'Доброго времени суток, {%user%}!\r\nПользователь {%user-friend%}, оставил комментарий к Вашей фотографии {%rec-link%}\r\n\r\nС уважением, Социальная сеть.\r\nАдминистрация https://{$_SERVER['HTTP_HOST']}/'),
-			(5, 'Доброго времени суток, {%user%}!\r\nПользователь {%user-friend%}, оставил комментарий к Вашей заметке {%rec-link%}\r\n\r\nС уважением, Социальная сеть.\r\nАдминистрация https://{$_SERVER['HTTP_HOST']}/'),
-			(6, 'Доброго времени суток, {%user%}!\r\nПользователь {%user-friend%}, отправил Вам подарок.\r\n\r\nПросмотреть подарок Вы можете по ссылке: {%rec-link%}\r\n\r\nС уважением, Социальная сеть.\r\nАдминистрация https://{$_SERVER['HTTP_HOST']}/'),
-			(7, 'Доброго времени суток, {%user%}!\r\nПользователь {%user-friend%}, оставил на Вашей стене новую запись.\r\n\r\nПросмотреть запись можете по ссылке: {%rec-link%}\r\n\r\nС уважением, Социальная сеть.\r\nАдминистрация https://{$_SERVER['HTTP_HOST']}/'),
-			(8, 'Доброго времени суток, {%user%}!\r\nПользователь {%user-friend%}, отправил Вам новое личное сообщение.\r\n\r\nПросмотреть сообщение можете по ссылке: {%rec-link%}\r\n\r\nС уважением, Социальная сеть.\r\nАдминистрация https://{$_SERVER['HTTP_HOST']}/');";
+//$table_Chema[] = "INSERT INTO `mail_tpl` (`id`, `text`) VALUES
+//			(1, 'Доброго времени суток, {%user%}!\r\nПользователь {%user-friend%}, отправил Вам заявку на дружбу.\r\n\r\nПросмотреть заявку Вы можете по ссылке: https://{$_SERVER['HTTP_HOST']}/friends/requests\r\n\r\nС уважением, Социальная сеть.\r\nАдминистрация https://{$_SERVER['HTTP_HOST']}/'),
+//			(2, 'Доброго времени суток, {%user%}!\r\nПользователь {%user-friend%}, ответил на Вашу запись {%rec-link%}\r\n\r\nС уважением, Социальная сеть.\r\nАдминистрация https://{$_SERVER['HTTP_HOST']}/'),
+//			(3, 'Доброго времени суток, {%user%}!\r\nПользователь {%user-friend%}, оставил комментарий к Вашей видеозаписи {%rec-link%}\r\n\r\nС уважением, Социальная сеть.\r\nАдминистрация https://{$_SERVER['HTTP_HOST']}/'),
+//			(4, 'Доброго времени суток, {%user%}!\r\nПользователь {%user-friend%}, оставил комментарий к Вашей фотографии {%rec-link%}\r\n\r\nС уважением, Социальная сеть.\r\nАдминистрация https://{$_SERVER['HTTP_HOST']}/'),
+//			(5, 'Доброго времени суток, {%user%}!\r\nПользователь {%user-friend%}, оставил комментарий к Вашей заметке {%rec-link%}\r\n\r\nС уважением, Социальная сеть.\r\nАдминистрация https://{$_SERVER['HTTP_HOST']}/'),
+//			(6, 'Доброго времени суток, {%user%}!\r\nПользователь {%user-friend%}, отправил Вам подарок.\r\n\r\nПросмотреть подарок Вы можете по ссылке: {%rec-link%}\r\n\r\nС уважением, Социальная сеть.\r\nАдминистрация https://{$_SERVER['HTTP_HOST']}/'),
+//			(7, 'Доброго времени суток, {%user%}!\r\nПользователь {%user-friend%}, оставил на Вашей стене новую запись.\r\n\r\nПросмотреть запись можете по ссылке: {%rec-link%}\r\n\r\nС уважением, Социальная сеть.\r\nАдминистрация https://{$_SERVER['HTTP_HOST']}/'),
+//			(8, 'Доброго времени суток, {%user%}!\r\nПользователь {%user-friend%}, отправил Вам новое личное сообщение.\r\n\r\nПросмотреть сообщение можете по ссылке: {%rec-link%}\r\n\r\nС уважением, Социальная сеть.\r\nАдминистрация https://{$_SERVER['HTTP_HOST']}/');";
 
 $table_Chema[] = "CREATE TABLE `messages` (
   `id` INT( 11 ) AUTO_INCREMENT PRIMARY KEY,

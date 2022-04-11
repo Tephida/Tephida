@@ -343,101 +343,101 @@ HTML;
                 $_POST['mysql_pass'] = str_replace(array("$", '"'), array("\\$", '\"'), $_POST['mysql_pass']);
                 //Создаём файл БД
                 $db_config = <<<HTML
-<?php
-
-return [
-    'host' => "{$_POST['mysql_server']}",
-    'name' => "{$_POST['mysql_dbname']}",
-    'user' => "{$_POST['mysql_dbuser']}",
-    'pass' => "{$_POST['mysql_pass']}",
-];
-HTML;
+                <?php
+                
+                return [
+                    'host' => "{$_POST['mysql_server']}",
+                    'name' => "{$_POST['mysql_dbname']}",
+                    'user' => "{$_POST['mysql_dbuser']}",
+                    'pass' => "{$_POST['mysql_pass']}",
+                ];
+                HTML;
                 file_put_contents(ENGINE_DIR . "/data/db_config.php", $db_config);
 
                 //Создаём файл админ панели
                 $admin = <<<HTML
-<?php
-/*
- *   (c) Semen Alekseev
- *
- *  For the full copyright and license information, please view the LICENSE
- *   file that was distributed with this source code.
- *
- */
-session_start();
-ob_start();
-ob_implicit_flush(0);
-
-if (version_compare(PHP_VERSION, '8.0.0') < 0) {
-    throw new \RuntimeException("Please change php version");
-}
-
-try {
-    require_once './vendor/autoload.php';
-} catch (Exception) {
-    throw new \RuntimeException("Please install composer");
-}
-
-const ROOT_DIR = __DIR__;
-const ENGINE_DIR = ROOT_DIR . '/system';
-const ADMIN_DIR = ROOT_DIR . '/system/inc';
-include ADMIN_DIR.'/login.php';
-HTML;
+                <?php
+                /*
+                 *   (c) Semen Alekseev
+                 *
+                 *  For the full copyright and license information, please view the LICENSE
+                 *   file that was distributed with this source code.
+                 *
+                 */
+                session_start();
+                ob_start();
+                ob_implicit_flush(0);
+                
+                if (version_compare(PHP_VERSION, '8.0.0') < 0) {
+                    throw new \RuntimeException("Please change php version");
+                }
+                
+                try {
+                    require_once './vendor/autoload.php';
+                } catch (Exception) {
+                    throw new \RuntimeException("Please install composer");
+                }
+                
+                const ROOT_DIR = __DIR__;
+                const ENGINE_DIR = ROOT_DIR . '/system';
+                const ADMIN_DIR = ROOT_DIR . '/system/inc';
+                include ADMIN_DIR.'/login.php';
+                HTML;
                 file_put_contents(ROOT_DIR . "/" . $_POST['adminfile'], $admin);
 
                 //Создаём файл конфигурации системы
                 $config = <<<HTML
-<?php
-
-//System Configurations 
-
-return [
-'home' => "Социальная сеть", 
-'charset' => "utf-8", 
-'home_url' => "{$_POST['url']}", 
-'admin_index' => "{$_POST['adminfile']}",
-'temp' => "Mixchat", 
-'online_time' => "150", 
-'lang' => "Russian", 
-'gzip' => "no", 
-'gzip_js' => "no", 
-'offline' => "no", 
-'offline_msg' => "Сайт находится на текущей реконструкции, после завершения всех работ сайт будет открыт.\r\n\r\nПриносим вам свои извинения за доставленные неудобства.",
-'bonus_rate' => "", 
-'cost_balance' => "10", 
-'video_mod' => "yes", 
-'video_mod_comm' => "yes", 
-'video_mod_add' => "yes", 
-'video_mod_add_my' => "yes", 
-'video_mod_search' => "yes", 
-'audio_mod' => "yes", 
-'audio_mod_add' => "yes", 
-'audio_mod_search' => "yes", 
-'album_mod' => "yes", 
-'max_albums' => "20", 
-'max_album_photos' => "500", 
-'max_photo_size' => "5000", 
-'photo_format' => "jpg, jpeg, jpe, png, gif", 
-'albums_drag' => "yes", 
-'photos_drag' => "yes", 
-'rate_price' => "1", 
-'admin_mail' => "{$_POST['email']}", 
-'mail_metod' => "php", 
-'smtp_host' => "localhost", 
-'smtp_port' => "25", 
-'smtp_user' => "", 
-'smtp_pass' => "", 
-'news_mail_1' => "no", 
-'news_mail_2' => "no", 
-'news_mail_3' => "no", 
-'news_mail_4' => "no", 
-'news_mail_5' => "no", 
-'news_mail_6' => "no", 
-'news_mail_7' => "no", 
-'news_mail_8' => "no", 
-];
-
-HTML;
+                    <?php
+                    
+                    //System Configurations 
+                    
+                    return [
+                    'home' => "Социальная сеть", 
+                    'charset' => "utf-8", 
+                    'home_url' => "{$_POST['url']}", 
+                    'admin_index' => "{$_POST['adminfile']}",
+                    'temp' => "Mixchat", 
+                    'online_time' => "150", 
+                    'lang' => "Russian", 
+                    'gzip' => "no", 
+                    'gzip_js' => "no", 
+                    'offline' => "no", 
+                    'offline_msg' => "Сайт находится на текущей реконструкции, после завершения всех работ сайт будет открыт.\r\n\r\nПриносим вам свои извинения за доставленные неудобства.",
+                    'bonus_rate' => "", 
+                    'cost_balance' => "10", 
+                    'video_mod' => "yes", 
+                    'video_mod_comm' => "yes", 
+                    'video_mod_add' => "yes", 
+                    'video_mod_add_my' => "yes", 
+                    'video_mod_search' => "yes", 
+                    'audio_mod' => "yes", 
+                    'audio_mod_add' => "yes", 
+                    'audio_mod_search' => "yes", 
+                    'album_mod' => "yes", 
+                    'max_albums' => "20", 
+                    'max_album_photos' => "500", 
+                    'max_photo_size' => "5000", 
+                    'photo_format' => "jpg, jpeg, jpe, png, gif", 
+                    'albums_drag' => "yes", 
+                    'photos_drag' => "yes", 
+                    'rate_price' => "1", 
+                    'admin_mail' => "{$_POST['email']}", 
+                    'mail_metod' => "php", 
+                    'smtp_host' => "localhost", 
+                    'smtp_port' => "25", 
+                    'smtp_user' => "", 
+                    'smtp_pass' => "", 
+                    'news_mail_1' => "no", 
+                    'news_mail_2' => "no", 
+                    'news_mail_3' => "no", 
+                    'news_mail_4' => "no", 
+                    'news_mail_5' => "no", 
+                    'news_mail_6' => "no", 
+                    'news_mail_7' => "no", 
+                    'news_mail_8' => "no", 
+                    ];
+                    
+                    HTML;
                 file_put_contents(ENGINE_DIR . "/data/config.php", $config);
 
                 $db_config = require ENGINE_DIR . '/data/db_config.php';
@@ -464,46 +464,58 @@ HTML;
                         }
                     }
 
-                    include_once ENGINE_DIR . '/data/mysql_data.php';
+                    include_once ENGINE_DIR . '/data/mysql_data_country.php';
+
+                    //Вставляем админа в базу
+                    $_POST['pass'] = md5(md5($_POST['pass']));
+                    $hid = $_POST['pass'] . md5(md5($_SERVER['REMOTE_ADDR']));
+
+                    $server_time = time();
+
+                    $sql = "INSERT INTO users (
+                   user_name, 
+                   user_lastname, 
+                   user_email,
+                   user_password,
+                   user_group,
+                   user_search_pref,
+                   user_privacy,
+                   user_hid,
+                   user_birthday,
+                   user_day,
+                   user_month,
+                   user_year,
+                   user_country,
+                   user_city,
+                   user_lastdate,
+                   user_lastupdate,
+                   user_reg_date
+                   ) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
+                    $db->prepare($sql)->execute([
+                        $_POST['name'],
+                        $_POST['lastname'],
+                        $_POST['email'],
+                        $_POST['pass'],
+                        1,
+                        $_POST['name'] . ' ' . $_POST['lastname'],
+                        'val_msg|1||val_wall1|1||val_wall2|1||val_wall3|1||val_info|1||',
+                        $hid,
+                        '0-0-0',
+                        0,
+                        0,
+                        0,
+                        0,
+                        0,
+                        $server_time,
+                        $server_time,
+                        $server_time,
+                    ]);
+
+                    $sql = "INSERT INTO log (uid, browser, ip) VALUES (?,?,?)";
+                    $db->prepare($sql)->execute([1, '', '']);
 
                 } catch (PDOException $e) {
                     echo $e->getMessage();//Remove or change message in production code
-                }
-
-
-                //Вставляем админа в базу
-//                $_POST['pass'] = md5(md5($_POST['pass']));
-//                $hid = $_POST['pass'] . md5(md5($_SERVER['REMOTE_ADDR']));
-
-                $server_time = time();
-
-//                $table_Chema[] = "INSERT INTO `users`
-//SET user_name = '{$_POST['name']}',
-//    user_lastname = '{$_POST['lastname']}',
-//    user_email = '{$_POST['email']}',
-//    user_password = '{$_POST['pass']}',
-//    user_group = 1,
-//    user_search_pref = '{$_POST['name']} {$_POST['lastname']}',
-//    user_privacy = 'val_msg|1||val_wall1|1||val_wall2|1||val_wall3|1||val_info|1||',
-//    user_hid = '{$hid}',
-//    user_birthday = '0-0-0',
-//    user_day = '0',
-//    user_month = '0',
-//    user_year = '0',
-//    user_country = '0',
-//    user_city = '0',
-//    user_lastdate = '{$server_time}',
-//    user_lastupdate = '{$server_time}',
-//    user_reg_date = '{$server_time}'";
-//                $table_Chema[] = "INSERT INTO `log` SET uid = '1', browser = '', ip = ''";
-
-                foreach ($table_Chema as $query) {
-                    try {
-                        $db->query($query);
-                    } catch (Error $e) {
-                        echo $query;
-                        exit();
-                    }
                 }
 
                 $admin_index = $admin_index ?? 'adminpanel.php';
