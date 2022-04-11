@@ -138,28 +138,28 @@ switch ($act) {
             );
 
             try {
-                \FluffyDollop\Support\Filesystem::createDir('./uploads/room/');
-                \FluffyDollop\Support\Filesystem::createDir('./uploads/records/');
-                \FluffyDollop\Support\Filesystem::createDir('./uploads/attach/');
-                \FluffyDollop\Support\Filesystem::createDir('./uploads/audio_tmp/');
-                \FluffyDollop\Support\Filesystem::createDir('./uploads/blog/');
-                \FluffyDollop\Support\Filesystem::createDir('./uploads/groups/');
-                \FluffyDollop\Support\Filesystem::createDir('./uploads/users/');
-                \FluffyDollop\Support\Filesystem::createDir('./uploads/videos/');
-                \FluffyDollop\Support\Filesystem::createDir('./uploads/audio/');
-                \FluffyDollop\Support\Filesystem::createDir('./uploads/doc/');
+                \FluffyDollop\Filesystem\Filesystem::createDir('./uploads/room/');
+                \FluffyDollop\Filesystem\Filesystem::createDir('./uploads/records/');
+                \FluffyDollop\Filesystem\Filesystem::createDir('./uploads/attach/');
+                \FluffyDollop\Filesystem\Filesystem::createDir('./uploads/audio_tmp/');
+                \FluffyDollop\Filesystem\Filesystem::createDir('./uploads/blog/');
+                \FluffyDollop\Filesystem\Filesystem::createDir('./uploads/groups/');
+                \FluffyDollop\Filesystem\Filesystem::createDir('./uploads/users/');
+                \FluffyDollop\Filesystem\Filesystem::createDir('./uploads/videos/');
+                \FluffyDollop\Filesystem\Filesystem::createDir('./uploads/audio/');
+                \FluffyDollop\Filesystem\Filesystem::createDir('./uploads/doc/');
 
-                \FluffyDollop\Support\Filesystem::createDir('./system/cache/');
-                \FluffyDollop\Support\Filesystem::createDir('./system/cache/groups/');
-                \FluffyDollop\Support\Filesystem::createDir('./system/cache/groups_forum/');
-                \FluffyDollop\Support\Filesystem::createDir('./system/cache/groups_mark/');
-                \FluffyDollop\Support\Filesystem::createDir('./system/cache/photos_mark/');
-                \FluffyDollop\Support\Filesystem::createDir('./system/cache/votes/');
-                \FluffyDollop\Support\Filesystem::createDir('./system/cache/wall/');
+                \FluffyDollop\Filesystem\Filesystem::createDir('./system/cache/');
+                \FluffyDollop\Filesystem\Filesystem::createDir('./system/cache/groups/');
+                \FluffyDollop\Filesystem\Filesystem::createDir('./system/cache/groups_forum/');
+                \FluffyDollop\Filesystem\Filesystem::createDir('./system/cache/groups_mark/');
+                \FluffyDollop\Filesystem\Filesystem::createDir('./system/cache/photos_mark/');
+                \FluffyDollop\Filesystem\Filesystem::createDir('./system/cache/votes/');
+                \FluffyDollop\Filesystem\Filesystem::createDir('./system/cache/wall/');
 
-                \FluffyDollop\Support\Filesystem::createDir('./system/data/');
+                \FluffyDollop\Filesystem\Filesystem::createDir('./system/data/');
 
-                \FluffyDollop\Support\Filesystem::createDir('./backup/');
+                \FluffyDollop\Filesystem\Filesystem::createDir('./backup/');
 
             } catch (Exception $e) {
                 echo '<div class="h2">Не удалось создать директории</div>';
@@ -567,8 +567,8 @@ HTML;
         break;
     case "remove_installer":
         if (check_install() && !file_exists('./system/data/look')) {
-            \FluffyDollop\Support\Filesystem::delete('./install.php');
-            \FluffyDollop\Support\Filesystem::delete('./system/mysql_tables.php');
+            \FluffyDollop\Filesystem\Filesystem::delete('./install.php');
+            \FluffyDollop\Filesystem\Filesystem::delete('./system/mysql_tables.php');
             header('Location: /');
 
         } else {
@@ -577,24 +577,24 @@ HTML;
         break;
     case "clean":
         if (check_install() && !file_exists('./system/data/look')) {
-            \FluffyDollop\Support\Filesystem::delete('./uploads/room/');
-            \FluffyDollop\Support\Filesystem::delete('./uploads/records/');
-            \FluffyDollop\Support\Filesystem::delete('./uploads/attach/');
-            \FluffyDollop\Support\Filesystem::delete('./uploads/audio_tmp/');
-            \FluffyDollop\Support\Filesystem::delete('./uploads/blog/');
-            \FluffyDollop\Support\Filesystem::delete('./uploads/groups/');
-            \FluffyDollop\Support\Filesystem::delete('./uploads/users/');
-            \FluffyDollop\Support\Filesystem::delete('./uploads/videos/');
-            \FluffyDollop\Support\Filesystem::delete('./uploads/audio/');
-            \FluffyDollop\Support\Filesystem::delete('./uploads/doc/');
-            \FluffyDollop\Support\Filesystem::delete('./system/cache/groups/');
-            \FluffyDollop\Support\Filesystem::delete('./system/cache/groups_forum/');
-            \FluffyDollop\Support\Filesystem::delete('./system/cache/groups_mark/');
-            \FluffyDollop\Support\Filesystem::delete('./system/cache/photos_mark/');
-            \FluffyDollop\Support\Filesystem::delete('./system/cache/votes/');
-            \FluffyDollop\Support\Filesystem::delete('./system/cache/wall/');
+            \FluffyDollop\Filesystem\Filesystem::delete('./uploads/room/');
+            \FluffyDollop\Filesystem\Filesystem::delete('./uploads/records/');
+            \FluffyDollop\Filesystem\Filesystem::delete('./uploads/attach/');
+            \FluffyDollop\Filesystem\Filesystem::delete('./uploads/audio_tmp/');
+            \FluffyDollop\Filesystem\Filesystem::delete('./uploads/blog/');
+            \FluffyDollop\Filesystem\Filesystem::delete('./uploads/groups/');
+            \FluffyDollop\Filesystem\Filesystem::delete('./uploads/users/');
+            \FluffyDollop\Filesystem\Filesystem::delete('./uploads/videos/');
+            \FluffyDollop\Filesystem\Filesystem::delete('./uploads/audio/');
+            \FluffyDollop\Filesystem\Filesystem::delete('./uploads/doc/');
+            \FluffyDollop\Filesystem\Filesystem::delete('./system/cache/groups/');
+            \FluffyDollop\Filesystem\Filesystem::delete('./system/cache/groups_forum/');
+            \FluffyDollop\Filesystem\Filesystem::delete('./system/cache/groups_mark/');
+            \FluffyDollop\Filesystem\Filesystem::delete('./system/cache/photos_mark/');
+            \FluffyDollop\Filesystem\Filesystem::delete('./system/cache/votes/');
+            \FluffyDollop\Filesystem\Filesystem::delete('./system/cache/wall/');
 
-            \FluffyDollop\Support\Filesystem::delete(ROOT_DIR . '/adminpanel.php');
+            \FluffyDollop\Filesystem\Filesystem::delete(ROOT_DIR . '/adminpanel.php');
 
             $db = require ENGINE_DIR . '/data/db.php';
 
@@ -666,8 +666,8 @@ HTML;
                 }
             }
 
-            \FluffyDollop\Support\Filesystem::delete(ENGINE_DIR . '/data/config.php');
-            \FluffyDollop\Support\Filesystem::delete(ENGINE_DIR . '/data/db.php');
+            \FluffyDollop\Filesystem\Filesystem::delete(ENGINE_DIR . '/data/config.php');
+            \FluffyDollop\Filesystem\Filesystem::delete(ENGINE_DIR . '/data/db.php');
 
             echo <<<HTML
 Добро пожаловать в мастер установки Vii Engine. 
