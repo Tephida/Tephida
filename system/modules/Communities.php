@@ -28,13 +28,13 @@ class Communities extends Module
             $config = settings_get();
 
             $user_id = $user_info['user_id'];
-            $pid = intFilter('pid');
+            $pid = (new \FluffyDollop\Http\Request)->int('pid');
             $mobile_speedbar = 'Сообщество';
-            $get_adres = requestFilter('get_adres', 100);
+            $get_adres = (new \FluffyDollop\Http\Request)->filter('get_adres', 100);
 
             //Если страница вызвана через "к предыдущим записям"
             $limit_select = 10;
-            $page_cnt = intFilter('page_cnt');
+            $page_cnt = (new \FluffyDollop\Http\Request)->int('page_cnt');
             if ($page_cnt > 0) {
                 $page_cnt *= $limit_select;
             }

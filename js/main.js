@@ -327,7 +327,7 @@ var Profile = {
     },
     StartDelPhoto: function () {
         $('#box_loading').show();
-        $.get('/index.php?go=editprofile&act=del_photo', function () {
+        $.get('/editprofile/delete/photo', function () {
             $('#ava').html('<img src="/images/no_ava.gif" alt="" />');
             $('#del_pho_but').hide();
             Box.Close('del_photo');
@@ -375,9 +375,9 @@ class ModalBox {
         Page.Loading('start');
         $.post(url, data, function (html) {
             if (!CheckRequestVideo(location.href)){
-                this.Close(name, cache);
+                Box.Close(name, cache);
             }
-            this.Show(name, width, title, html, cancel_text, func_text, func, height, overflow, bg_show, bg_show_bottom, cache);
+            Box.Show(name, width, title, html.content, cancel_text, func_text, func, height, overflow, bg_show, bg_show_bottom, cache);
             Page.Loading('stop');
             if (input_focus)
                 $('#' + input_focus).focus();
@@ -451,7 +451,7 @@ class ModalBox {
         $('html').css('overflow', 'hidden');
         $(window).keydown(function (event) {
             if (event.keyCode === 27) {
-                this.Close(name, cache);
+                Box.Close(name, cache);
             }
         });
     }
@@ -478,7 +478,7 @@ class ModalBox {
         setTimeout("Box.InfoClose()", tout);
         $(window).keydown(function (event) {
             if (event.keyCode === 27) {
-                this.InfoClose();
+                Box.InfoClose();
             }
         });
     }
@@ -567,4 +567,4 @@ String.prototype.toHHMMSS = function () {
     }
     return /*hours+':'+*/ minutes + ':' + seconds;
 }
-const doLoad = new LazyLoading();
+// const doLoad = new LazyLoading();

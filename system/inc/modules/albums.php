@@ -13,12 +13,12 @@ if (!$se_uid) {
     $se_uid = '';
 }
 
-$se_user_id = intFilter('se_user_id');
+$se_user_id = (new \FluffyDollop\Http\Request)->int('se_user_id');
 if (!$se_user_id) {
     $se_user_id = '';
 }
 
-$se_name = requestFilter('se_name', 25000, true);
+$se_name = (new \FluffyDollop\Http\Request)->filter('se_name', 25000, true);
 
 $sort = $sort ?? null;
 $where_sql = $where_sql ?? '';

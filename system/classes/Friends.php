@@ -24,7 +24,7 @@ class Friends
         if (!$open_my_list){
             $db = Registry::get('db');
             /** @var array $row */
-            $row = $db->super_query("SELECT user_blacklist FROM `users` WHERE user_id = '{$for_user_id}'");
+            $row = \Mozg\classes\DB::getDB()->row('SELECT user_blacklist FROM `users` WHERE user_id =  ?', $for_user_id);
             $open_my_list = $row['user_blacklist'];
         }
         return stripos($open_my_list, "|{$user_id}|") !== false;

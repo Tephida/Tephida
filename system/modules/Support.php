@@ -11,7 +11,7 @@ class Support extends Module
 
     public function pageNew()
     {
-        $meta_tags['title'] = 'Новый вопрос';
+        $params['title'] = 'Новый вопрос';
         $config = settings_get();
         $tpl_dir_name = ROOT_DIR . '/templates/' . $config['temp'];
         $tpl = new TpLSite($tpl_dir_name, $meta_tags);
@@ -30,8 +30,8 @@ class Support extends Module
         if (Flood::check('support')) {
             echo 'limit';
         } else {
-            $title = requestFilter('title', 25000, true);
-            $question = requestFilter('question');
+            $title = (new \FluffyDollop\Http\Request)->filter('title', 25000, true);
+            $question = (new \FluffyDollop\Http\Request)->filter('question');
             $limitTime = $server_time - 3600;
             $rowLast = $db->super_query("SELECT COUNT(*) AS cnt FROM `support` WHERE сdate > '{$limitTime}'");
             if (!$rowLast['cnt'] and !empty($title) and !empty($question) and $user_info['user_group'] != 4) {
@@ -106,8 +106,8 @@ class Support extends Module
     public function answer()
     {
         NoAjaxQuery();
-        $qid = intFilter('qid');
-        $answer = requestFilter('answer');
+        $qid = (new \FluffyDollop\Http\Request)->int('qid');
+        $answer = (new \FluffyDollop\Http\Request)->filter('answer');
         $check = $db->super_query("SELECT suser_id FROM `support` WHERE id = '{$qid}'");
         if ($check['suser_id'] == $user_id or $user_info['user_group'] == 4 and isset($answer) and !empty($answer)) {
             if ($user_info['user_group'] == 4) {
@@ -253,12 +253,16 @@ class Support extends Module
         compile($tpl);
     }
 
+    /**
+     * @throws \JsonException
+     * @throws \ErrorException
+     */
     public function main()
     {
-        $lang = Registry::get('lang');
-        $logged = Registry::get('logged');
-        $db = Registry::get('db');
-        $user_info = Registry::get('user_info');
+        $lang = $this->lang;
+        $logged = $this->logged;
+        $db = $this->db;
+        $user_info = $this->user_info;
         $user_id = $user_info['user_id'];
         $page = intFilter('page', 1);
         $gcount = 20;
@@ -269,19 +273,13 @@ class Support extends Module
 
         if ($logged) {
             $user_id = $user_info['user_id'];
-//            $params['title'] = $lang['help'].' | Sura';
+//            $params['title'] = $lang['help'];
 
             $path = explode('/', $_SERVER['REQUEST_URI']);
-
-            if (is_int($path['2'])) {
-                $page = $path['2'];
-            } else {
-                $page = 1;
-            }
-            $page = isset($path['2']) ? $path['2'] : 1;
+            $page = !empty($path['2']) ? (int)$path['2'] : 1;
             $g_count = 20;
             $limit_page = ($page - 1) * $g_count;
-            if ($user_info['user_support'] && $user_info['user_group'] != 4) {
+            if ($user_info['user_support'] && $user_info['user_group'] !== 4) {
                 $db->query("UPDATE `users` SET user_support = 0 WHERE user_id = '{$user_id}'");
             }
 
@@ -300,16 +298,19 @@ class Support extends Module
 
             if ($sql_) {
                 $count = $db->super_query("SELECT COUNT(*) AS cnt FROM `support` {$sql_where_cnt}");
+                $count['cnt'] = (int)$count['cnt'];
+            } else {
+                $count = ['cnt' => 0];
             }
+            $params['cnt'] = $count['cnt'];
+            $params['alert_info'] = '';
 
-            if (isset($sql_) && $sql_ == true) {
+            if (isset($sql_) && $sql_) {
                 if ($user_info['user_group'] <= 4) {
                     $params['cnt'] = $count['cnt'] . ' ' . declWord($count['cnt'], 'questions');
                 } else {
                     $params['cnt'] = 'Вы задали ' . $count['cnt'] . ' ' . declWord($count['cnt'], 'questions');
                 }
-//                $tpl->load_template('support/question.tpl');
-
                 foreach ($sql_ as $key => $row) {
                     $sql_[$key]['title'] = stripslashes($row['title']);
                     $sql_[$key]['date'] = $row['sdate'];
@@ -337,14 +338,12 @@ class Support extends Module
                 $params['questions'] = $sql_;
                 $params['navigation'] = '';
             } else {
-                if ($user_info['user_group'] == 4) {
-                    $params['alert_info'] = '';
-                } else {
-                    $params['alert_info'] = '';
-                }
+                $params['alert_info'] = '';
             }
-
             return view('support.support', $params);
         }
+        $params['title'] = $lang['no_infooo'];
+        $params['info'] = $lang['not_logged'];
+        return view('info.info', $params);
     }
 }

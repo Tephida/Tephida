@@ -14,16 +14,16 @@ use Mozg\classes\TplCp;
 $db = Registry::get('db');
 
 //Редактирование
-$act = requestFilter('act');
+$act = (new \FluffyDollop\Http\Request)->filter('act');
 if ($act === 'edit') {
-    $id = intFilter('id');
+    $id = (new \FluffyDollop\Http\Request)->int('id');
 
     //SQL Запрос на вывод информации
     $row = $db->super_query("SELECT title, descr, comments, photo FROM `communities` WHERE id = '" . $id . "'");
     if ($row) {
         if (isset($_POST['save'])) {
-            $title = requestFilter('title', 25000, true);
-            $descr = requestFilter('descr');
+            $title = (new \FluffyDollop\Http\Request)->filter('title', 25000, true);
+            $descr = (new \FluffyDollop\Http\Request)->filter('descr');
 
             if (!empty($title) && !empty($descr)) {
                 if ($_POST['comments']) {
@@ -87,12 +87,12 @@ if ($act === 'edit') {
         $tpl->render();
     }
 } else {
-    $se_uid = intFilter('se_uid');
-    $se_user_id = intFilter('se_user_id');
-    $sort = intFilter('sort');
-    $se_name = requestFilter('se_name', 25000, true);
-    $ban = requestFilter('ban');
-    $delete = requestFilter('delete');
+    $se_uid = (new \FluffyDollop\Http\Request)->int('se_uid');
+    $se_user_id = (new \FluffyDollop\Http\Request)->int('se_user_id');
+    $sort = (new \FluffyDollop\Http\Request)->int('sort');
+    $se_name = (new \FluffyDollop\Http\Request)->filter('se_name', 25000, true);
+    $ban = (new \FluffyDollop\Http\Request)->filter('ban');
+    $delete = (new \FluffyDollop\Http\Request)->filter('delete');
 
     $where_sql = '';
     if ($se_uid || $sort || $se_name || $se_user_id || $ban || $delete) {

@@ -12,9 +12,9 @@ namespace Mozg\modules;
 
 use ErrorException;
 use Mozg\classes\Cache;
+use Mozg\classes\DB;
 use Mozg\classes\Module;
 use FluffyDollop\Support\Registry;
-use Mozg\classes\TpLSite;
 use Mozg\classes\Wall;
 use Mozg\classes\WallProfile;
 
@@ -24,11 +24,11 @@ class Profile extends Module
      * @return void
      * @throws ErrorException|\JsonException|\Exception
      */
-    function main(): void
+    final public function main(): void
     {
         $db = Registry::get('db');
         $config = settings_get();
-        $online_time = Registry::get('server_time') - $config['online_time'];
+        $online_time = time() - $config['online_time'];
 
         $id = intFilter('id');
         $user_info = Registry::get('user_info');
@@ -42,7 +42,9 @@ class Profile extends Module
 
         //Проверяем на наличие кеша, если нет, то выводим из БД и создаём его
         if ($row) {
-            $row_online = $db->super_query("SELECT user_last_visit, user_logged_mobile FROM `users` WHERE user_id = '{$id}'");
+//            $row_online = $db->super_query("SELECT user_last_visit, user_logged_mobile FROM `users` WHERE user_id = '{$id}'");
+
+            $row_online = \Mozg\classes\DB::getDB()->row('SELECT user_last_visit, user_logged_mobile FROM `users` WHERE user_id = ?', $id);
         } else {
             /** @var array $row */
             $row = $db->super_query("SELECT user_id, user_real, user_search_pref, user_country_city_name, user_birthday, user_xfields, user_xfields_all, user_city, user_country, user_photo, user_friends_num, user_notes_num, user_subscriptions_num, user_wall_num, user_albums_num, user_last_visit, user_videos_num, user_status, user_privacy, user_sp, user_sex, user_gifts, user_public_num, user_audio, user_delet, user_ban_date, xfields, user_logged_mobile, user_rating FROM `users` WHERE user_id = '{$id}'");
@@ -105,10 +107,9 @@ class Profile extends Module
                 $user_country_city_name_exp = explode('|', $row['user_country_city_name']);
 
                 //################### Друзья ###################//
-                if ($row['user_friends_num']) {
+                if ($row['user_friends_num'] && $user_info['user_group'] === 0) {
                     /** @var array $sql_friends */
                     $sql_friends = $db->super_query("SELECT tb1.friend_id, tb2.user_search_pref, user_photo FROM `friends` tb1, `users` tb2 WHERE tb1.user_id = '{$id}' AND tb1.friend_id = tb2.user_id  AND subscriptions = 0 ORDER by rand() DESC LIMIT 0, 6", true);
-                    $all_friends = [];
                     foreach ($sql_friends as $key => $row_friends) {
                         $friend_info = explode(' ', $row_friends['user_search_pref']);
                         $all_friends[$key]['user_id'] = $row_friends['friend_id'];
@@ -334,7 +335,19 @@ HTML;
                 //################### Праздники друзей ###################//
                 if ($user_id == $id && !isset($_SESSION['happy_friends_block_hide'])) {
                     /** @var array $sql_happy_friends */
-                    $sql_happy_friends = $db->super_query("SELECT tb1.friend_id, tb2.user_search_pref, user_photo, user_birthday FROM `friends` tb1, `users` tb2 WHERE tb1.user_id = '" . $id . "' AND tb1.friend_id = tb2.user_id  AND subscriptions = 0 AND user_day = '" . date('j', $server_time) . "' AND user_month = '" . date('n', $server_time) . "' ORDER by `user_last_visit` DESC LIMIT 0, 50", true);
+//                    $sql_happy_friends = $db->super_query("SELECT tb1.friend_id, tb2.user_search_pref, user_photo,
+//       user_birthday FROM `friends` tb1, `users` tb2
+//WHERE tb1.user_id = '" . $id . "' AND tb1.friend_id = tb2.user_id  AND subscriptions = 0
+//AND user_day = '" . date('j', $server_time) . "' AND user_month = '" . date('n', $server_time) . "'
+//ORDER by `user_last_visit` DESC LIMIT 0, 50", true);
+
+                    $sql_happy_friends = DB::getDB()->run('SELECT tb1.friend_id, tb2.user_search_pref, 
+                        user_photo,  user_birthday FROM `friends` tb1, `users` tb2 
+                        WHERE tb1.user_id = ? AND tb1.friend_id = tb2.user_id  AND subscriptions = 0 
+                        AND user_day = ? AND user_month = ? ORDER by `user_last_visit`
+                        DESC LIMIT 0, 50', $id, date('j', $server_time), date('n', $server_time));
+
+
                     foreach ($sql_happy_friends as $key => $happy_row_friends) {
                         $cnt_happfr++;
                         $sql_happy_friends[$key]['user_id'] = $happy_row_friends['friend_id'];
@@ -354,7 +367,7 @@ HTML;
                 //################### Загрузка стены ###################//
                 $params['wall_num'] = $row['user_wall_num'];
                 if ($row['user_wall_num']) {
-                    if (requestFilter('uid')) {
+                    if ((new \FluffyDollop\Http\Request)->filter('uid')) {
 //                        $meta_tags['title'] = 'walls';
 
 //                        $tpl = new TpLSite(ROOT_DIR . '/templates/' . $config['temp'], $meta_tags);
@@ -366,10 +379,10 @@ HTML;
                     /** Показ последних 10 записей */
 
                     //Если вызвана страница стены, не со страницы юзера
-                    if (!isset($id) && !requestFilter('uid')) {
-                        $rid = intFilter('rid');
+                    if (!isset($id) && !(new \FluffyDollop\Http\Request)->filter('uid')) {
+                        $rid = (new \FluffyDollop\Http\Request)->int('rid');
 
-                        $id = intFilter('uid');
+                        $id = (new \FluffyDollop\Http\Request)->int('uid');
                         if (!$id) {
                             $id = $user_id;
                         }
@@ -400,14 +413,14 @@ HTML;
                                     $cnt_rec = $db->super_query("SELECT COUNT(*) AS cnt FROM `wall` WHERE for_user_id = '{$id}' AND author_user_id = '{$id}' AND fast_comm_id = 0");
                                 }
 
-                                $type = requestFilter('type');
+                                $type = (new \FluffyDollop\Http\Request)->filter('type');
 
-                                if ($type == 'own') {
+                                if ($type === 'own') {
                                     $cnt_rec = $db->super_query("SELECT COUNT(*) AS cnt FROM `wall` WHERE for_user_id = '{$id}' AND author_user_id = '{$id}' AND fast_comm_id = 0");
                                     $where_sql = "AND tb1.author_user_id = '{$id}'";
 //                                    $tpl->set_block("'\\[record-tab\\](.*?)\\[/record-tab\\]'si", "");
                                     $page_type = '/wall' . $id . '_sec=own&page=';
-                                } else if ($type == 'record') {
+                                } else if ($type === 'record') {
                                     $where_sql = "AND tb1.id = '{$rid}'";
 //                                    $tpl->set('[record-tab]', '');
 //                                    $tpl->set('[/record-tab]', '');
@@ -460,7 +473,16 @@ HTML;
                         $limit_select = 10;
 
                         if ($user_privacy['val_wall1'] == 1 || ($user_privacy['val_wall1'] == 2 && $check_friend) || $user_id == $id) {
-                            $wall_row = $db->super_query("SELECT tb1.id, author_user_id, text, add_date, fasts_num, likes_num, likes_users, tell_uid, type, tell_date, public, attach, tell_comm, tb2.user_photo, user_search_pref, user_last_visit, user_logged_mobile FROM `wall` tb1, `users` tb2 WHERE for_user_id = '{$id}' AND tb1.author_user_id = tb2.user_id AND tb1.fast_comm_id = 0 {$where_sql} ORDER by `add_date` DESC LIMIT {$limit_page}, {$limit_select}", true);
+//                            $wall_row = $db->super_query("SELECT tb1.id, author_user_id, text, add_date, fasts_num, likes_num, likes_users, tell_uid, type, tell_date, public, attach, tell_comm, tb2.user_photo, user_search_pref, user_last_visit, user_logged_mobile FROM `wall` tb1, `users` tb2 WHERE for_user_id = '{$id}' AND tb1.author_user_id = tb2.user_id AND tb1.fast_comm_id = 0 {$where_sql} ORDER by `add_date` DESC LIMIT {$limit_page}, {$limit_select}", true);
+
+                            $wall_row = DB::getDB()->run('SELECT tb1.id, author_user_id, text, add_date, 
+                                fasts_num, likes_num, likes_users, tell_uid, type, tell_date, public, attach, 
+                                tell_comm, tb2.user_photo, user_search_pref, user_last_visit, user_logged_mobile 
+                                FROM `wall` tb1, `users` tb2 
+                                WHERE for_user_id = ? AND tb1.author_user_id = tb2.user_id 
+                                  AND tb1.fast_comm_id = 0 ' . $where_sql . '  
+                                ORDER by `add_date` DESC LIMIT ' . $limit_page . ' , ' . $limit_select, $id);
+
                             $Hacking = false;
                         } elseif ($wallAuthorId['author_user_id'] == $id) {
                             $wall_row = $db->super_query("SELECT tb1.id, author_user_id, text, add_date, fasts_num, likes_num, likes_users, tell_uid, type, tell_date, public, attach, tell_comm, tb2.user_photo, user_search_pref, user_last_visit, user_logged_mobile FROM `wall` tb1, `users` tb2 WHERE for_user_id = '{$id}' AND tb1.author_user_id = tb2.user_id AND tb1.fast_comm_id = 0 {$where_sql} ORDER by `add_date` DESC LIMIT {$limit_page}, {$limit_select}", true);
@@ -483,7 +505,7 @@ HTML;
 
                             $for_user_id = null;//fixme
 
-                            if ($rid || $walluid || requestFilter('uid')) {
+                            if ($rid || $walluid || (new \FluffyDollop\Http\Request)->filter('uid')) {
 //                                $wall->template('wall/one_record.tpl');
 //                                $wall->compile('content');
                                 $config = settings_get();
@@ -496,9 +518,9 @@ HTML;
                                 $gcount = $gcount ?? null;
                                 $page_type = $page_type ?? null;
 
-                                $type = requestFilter('type');
+                                $type = (new \FluffyDollop\Http\Request)->filter('type');
 
-                                if (($cnt_rec['cnt'] > $gcount && $type == '') || $type == 'own') {
+                                if (($cnt_rec['cnt'] > $gcount && $type == '') || $type === 'own') {
                                     navigation($gcount, $cnt_rec['cnt'], $page_type);
                                 }
 
@@ -509,13 +531,27 @@ HTML;
 //                                $wall->select($config, $id, $for_user_id, $user_privacy, $check_friend, $user_info);
                                 $wall_data = (new Wall())->profile($config, $id, $for_user_id, $user_privacy, $check_friend, $user_info, $wall_row);
                             }
-                        }else{
+                        } else {
                             echo 'Error 500';
                         }
                     }
                 }
 
                 $params['wall_records'] = $wall_data ?? [];
+
+                if ($user_id != $id) {
+                    if ($user_privacy['val_wall1'] == 3 or $user_privacy['val_wall1'] == 2 and !$check_friend) {
+                        $cnt_rec = $db->super_query("SELECT COUNT(*) AS cnt FROM `wall` WHERE for_user_id = '{$id}' AND author_user_id = '{$id}' AND fast_comm_id = 0");
+                        $row['user_wall_num'] = $cnt_rec['cnt'];
+                    }
+                }
+
+                $row['user_wall_num'] = $row['user_wall_num'] ?? '';
+                if ($row['user_wall_num'] > 10) {
+                    $params['wall_link'] = true;
+                } else {
+                    $params['wall_link'] = false;
+                }
 
                 //Общие друзья
                 if (Registry::get('logged') && $row['user_friends_num'] && $id !== $user_info['user_id']) {
@@ -668,15 +704,16 @@ HTML;
                                 if (!isset($xfields_all['games'])) $xfields_all['games'] = '';
                                 if (!isset($xfields_all['quote'])) $xfields_all['quote'] = '';*/
 
-                $preg_safq_name_exp = explode(', ', 'activity, interests, myinfo, music, kino, books, games, quote');
+//                $preg_safq_name_exp = explode(', ', 'activity, interests, myinfo, music, kino, books, games, quote');
 
-                if ($xfields_all['myinfo']) {
-                    $params['not_block_info'] = '';
-                } else {
-                    $params['not_block_info'] = '<div align="center" style="color:#999;">Информация отсутствует.</div>';
-                }
+//                if ($xfields_all['myinfo']) {
+//                    $params['not_block_info'] = '';
+//                } else {
+                $params['not_block_info'] = '<div align="center" style="color:#999;">Информация отсутствует.</div>';
+//                }
 
-                $params['myinfo'] = nl2br(stripslashes($xfields_all['myinfo']));
+//                $params['myinfo'] = nl2br(stripslashes($xfields_all['myinfo']));
+                $params['myinfo'] = '';
 
                 $params['name'] = $user_name_lastname_exp[0];
                 $params['lastname'] = $user_name_lastname_exp[1];
@@ -716,7 +753,10 @@ HTML;
                 }
 
                 //Аватарка
-                $row_view_photos = $db->super_query("SELECT * FROM `photos` WHERE user_id = '{$id}'");
+//                $row_view_photos = $db->super_query("SELECT * FROM `photos` WHERE user_id = '{$id}'");
+
+                $row_view_photos = DB::getDB()->row('SELECT * FROM `photos` WHERE user_id = ?', $id);
+
                 $params['photoid'] = $row_view_photos['id'] ?? 0;
                 $params['albumid'] = $row_view_photos['album_id'] ?? 0;
                 if ($row['user_photo']) {
@@ -753,7 +793,9 @@ HTML;
                     $cache_pref = "_all";
                 }
 
-                $sql_albums = $db->super_query("SELECT aid, name, adate, photo_num, cover FROM `albums` WHERE user_id = '{$id}' {$albums_privacy} ORDER by `position` ASC LIMIT 0, 4", true);
+//                $sql_albums = $db->super_query("SELECT aid, name, adate, photo_num, cover FROM `albums` WHERE user_id = '{$id}' {$albums_privacy} ORDER by `position` ASC LIMIT 0, 4", true);
+                $sql_albums = DB::getDB()->run('SELECT aid, name, adate, photo_num, cover FROM `albums` WHERE user_id = ? ' . $albums_privacy . ' ORDER by `position` ASC LIMIT 0, 4', $id);
+
                 if ($sql_albums && $albums_count['cnt'] && $config['album_mod'] == 'yes') {
                     foreach ($sql_albums as $key2 => $row_albums) {
                         $sql_albums[$key2]['name'] = stripslashes($row_albums['name']);
@@ -839,19 +881,7 @@ HTML;
                 //Стена
 //                $tpl->set('{records}', $tpl->result['wall'] ?? '');
 
-                if ($user_id != $id) {
-                    if ($user_privacy['val_wall1'] == 3 or $user_privacy['val_wall1'] == 2 and !$check_friend) {
-                        $cnt_rec = $db->super_query("SELECT COUNT(*) AS cnt FROM `wall` WHERE for_user_id = '{$id}' AND author_user_id = '{$id}' AND fast_comm_id = 0");
-                        $row['user_wall_num'] = $cnt_rec['cnt'];
-                    }
-                }
 
-                $row['user_wall_num'] = $row['user_wall_num'] ?? '';
-                if ($row['user_wall_num'] > 10) {
-                    $params['wall_link'] = true;
-                } else {
-                    $params['wall_link'] = false;
-                }
 
 //                $tpl->set('{wall-rec-num}', $row['user_wall_num']);
 

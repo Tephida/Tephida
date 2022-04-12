@@ -24,7 +24,7 @@ class Restore extends Module
     {
         NoAjaxQuery();
         $db = $this->db;
-        $email = requestFilter('email');
+        $email = (new \FluffyDollop\Http\Request)->filter('email');
         if (!empty($email)) {
             $check = $db->super_query("SELECT user_id, user_search_pref, user_photo FROM `users` WHERE user_email = '{$email}'");
             if ($check) {
@@ -65,7 +65,7 @@ class Restore extends Module
         NoAjaxQuery();
         $db = $this->db;
         $server_time = time();
-        $email = requestFilter('email');
+        $email = (new \FluffyDollop\Http\Request)->filter('email');
         /** @var array $check */
         $check = $db->super_query("SELECT user_name FROM `users` WHERE user_email = '{$email}'");
         if ($check) {
@@ -108,7 +108,7 @@ class Restore extends Module
     {
         $tpl = $this->tpl;
         $db = $this->db;
-        $hash = strip_data(requestFilter('h'));
+        $hash = strip_data((new \FluffyDollop\Http\Request)->filter('h'));
         $_IP = '';//FIXME
         if (!empty($hash)) {
             $row = $db->super_query("SELECT email FROM `restore` WHERE hash = '{$hash}' AND ip = '{$_IP}'");
@@ -148,12 +148,12 @@ class Restore extends Module
     public function finish()
     {
         NoAjaxQuery();
-        $hash = strip_data(requestFilter('hash'));
+        $hash = strip_data((new \FluffyDollop\Http\Request)->filter('hash'));
         $row = $db->super_query("SELECT email FROM `restore` WHERE hash = '{$hash}' AND ip = '{$_IP}'");
         if ($row) {
-            $new_pass = md5(md5(requestFilter('new_pass')));
-            $new_pass2 = md5(md5(requestFilter('new_pass2')));
-            if (strlen($new_pass) >= 6 and $new_pass == $new_pass2) {
+            $new_pass = md5(md5((new \FluffyDollop\Http\Request)->filter('new_pass')));
+            $new_pass2 = md5(md5((new \FluffyDollop\Http\Request)->filter('new_pass2')));
+            if (strlen($new_pass) >= 6 and $new_pass === $new_pass2) {
                 $db->query("UPDATE `users` SET user_password = '{$new_pass}' WHERE user_email = '{$row['email']}'");
                 $db->query("DELETE FROM `restore` WHERE email = '{$row['email']}'");
             }

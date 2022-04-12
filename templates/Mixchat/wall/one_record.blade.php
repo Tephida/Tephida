@@ -1,19 +1,22 @@
 @foreach($wall_records as $row)
     @if($row['record'])
-        <div class="wallrecord wall_upage2 page_bg border_radius_5 margin_bottom_10" id="wall_record_{{ $row['rec_id'] }}"
+        <div class="wallrecord wall_upage2 page_bg border_radius_5 margin_bottom_10"
+             id="wall_record_{{ $row['rec_id'] }}"
              style="border:0;padding:20px">
             <div style="float:left;width:60px">
-                <div class="ava_mini @if($row['privacy_comment'] && !$row['comments_link']) wall_ava_mini @endif"
+                <div class="ava_mini @if(isset($row['privacy_comment']) && $row['privacy_comment'] === true && !$row['comments_link']) wall_ava_mini @endif"
                      id="ava_rec_{{ $row['rec_id'] }}">
                     <a href="/u{{ $user_id }}" onClick="Page.Go(this.href); return false">
                         <img src="{{ $row['ava'] }}" alt="" title=""/></a>{online}
                 </div>
             </div>
             <div>
-                <div class="wallauthor fl_l"><a href="/u{{ $user_id }}" onClick="Page.Go(this.href); return false">{{ $row['name'] }}</a>
+                <div class="wallauthor fl_l"><a href="/u{{ $user_id }}"
+                                                onClick="Page.Go(this.href); return false">{{ $row['name'] }}</a>
                     <span class="color777">{{ $row['type'] }}</span></div>
                 @if($row['owner_record'])
-                <div class="wall_delete" onMouseOver="myhtml.title('{{ $row['rec_id'] }}', 'Удалить запись', 'wall_del_')"
+                    <div class="wall_delete"
+                         onMouseOver="myhtml.title('{{ $row['rec_id'] }}', 'Удалить запись', 'wall_del_')"
                      onClick="wall.delet('{{ $row['rec_id'] }}'); return false" id="wall_del_{{ $row['rec_id'] }}"></div>
                 @endif
                 <div class="wall_tell_all cursor_pointer"
@@ -35,7 +38,7 @@
                     <div class="fl_l">
                         <a href="/wall{author-id}_{{ $row['rec_id'] }}" onClick="Page.Go(this.href); return false"
                             class="online">{{ $row['date'] }}</a>
-                        @if(!$row['privacy_comment'] && !$row['comments_link'])
+                        @if(isset($row['privacy_comment']) && !$row['privacy_comment'] && !$row['comments_link'])
                         <span id="fast_comm_link_{{ $row['rec_id'] }}" class="fast_comm_link">&nbsp;|&nbsp;
                             <a href="/" id="fast_link_{{ $row['rec_id'] }}"
                                onClick="wall.open_fast_form('{{ $row['rec_id'] }}'); wall.fast_open_textarea('{{ $row['rec_id'] }}'); return false">Комментировать</a>
@@ -43,11 +46,14 @@
                     </div>
                     <div class="public_likes_user_block no_display" id="public_likes_user_block{{ $row['rec_id'] }}"
                          onMouseOver="groups.wall_like_users_five('{{ $row['rec_id'] }}')"
-                         onMouseOut="groups.wall_like_users_five_hide('{{ $row['rec_id'] }}')" style="margin-left:610px">
-                        <div onClick="wall.all_liked_users('{{ $row['rec_id'] }}', '', '{{ $row['likes'] }}')">Понравилось {{ $row['likes-text'] }}</div>
+                         onMouseOut="groups.wall_like_users_five_hide('{{ $row['rec_id'] }}')"
+                         style="margin-left:610px">
+                        <div onClick="wall.all_liked_users('{{ $row['rec_id'] }}', '', '{{ $row['likes'] }}')">
+                            Понравилось {{ $row['likes-text'] }}</div>
                         <div class="public_wall_likes_hidden">
                             <div class="public_wall_likes_hidden2">
-                                <a href="/u{viewer-id}" id="like_user{viewer-id}_{{ $row['rec_id'] }}" class="no_display"
+                                <a href="/u{{ $row['viewer_id'] }}"
+                                   id="like_user{{ $row['viewer_id'] }}_{{ $row['rec_id'] }}" class="no_display"
                                    onClick="Page.Go(this.href); return false">
                                     <img src="{{ $row['viewer_ava'] }}" width="32"/>
                                 </a>
@@ -66,7 +72,7 @@
                             <b id="wall_like_cnt{{ $row['rec_id'] }}" class="{yes-like-color}">{{ $row['likes'] }}</b>
                         </div>
                     </div>
-                    @if(!$row['privacy_comment'] && !$row['comments_link'])
+                    @if(isset($row['privacy_comment']) && !$row['privacy_comment'] && !$row['comments_link'])
                     <div class="wall_fast_form no_display" id="fast_form_{{ $row['rec_id'] }}">
                         <div class="no_display wall_fast_texatrea" id="fast_textarea_{{ $row['rec_id'] }}">
                             <textarea class="wall_inpst fast_form_width wall_fast_text" style="height:33px;color:#000;margin:0px;width:100%"

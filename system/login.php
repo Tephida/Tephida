@@ -10,12 +10,12 @@
 
 declare(strict_types=1);
 
-use FluffyDollop\Support\Registry;
 use FluffyDollop\Support\Cookie;
-use Mozg\classes\{Users};
+use FluffyDollop\Support\Registry;
+use Mozg\Models\Users;
 
 $_IP = $_SERVER['REMOTE_ADDR'];
-$act = requestFilter('act');
+$act = (new \FluffyDollop\Http\Request)->filter('act');
 $db = Registry::get('db');
 $config = settings_get();
 //Если делаем выход
@@ -43,9 +43,9 @@ if (isset($_SESSION['user_id']) > 0) {
     Registry::set('user_info', $user_info);
 //Если юзер нажимает "Главная", и он зашел не с моб версии. То скидываем на его стр.
     $host_site = $_SERVER['QUERY_STRING'];
-    if (!$host_site && $config['temp'] !== 'mobile') {
-        header('Location: /u' . $user_info['user_id']);
-    }
+//    if (!$host_site && $config['temp'] !== 'mobile') {
+//        header('Location: /u' . $user_info['user_id']);
+//    }
     //Если есть данные о COOKIE, то проверяем
 } elseif (isset($_COOKIE['user_id']) > 0 && $_COOKIE['password'] && $_COOKIE['hid']) {
     $cookie_user_id = (int)$_COOKIE['user_id'];
@@ -56,9 +56,23 @@ if (isset($_SESSION['user_id']) > 0) {
         $device = get_device();
         $device_str = serialize($device);
 //Вставляем лог в бд
-        $db->query("UPDATE `log` SET browser = '" . $device['browser'] . "', ip = '" . $_IP . "', device = '" . $device_str . "' WHERE uid = '" . $user_info['user_id'] . "'");
+//        $db->query("UPDATE `log` SET browser = '" . $device['browser'] . "', ip = '" . $_IP . "', device = '" . $device_str . "' WHERE uid = '" . $user_info['user_id'] . "'");
+
+        \Mozg\classes\DB::getDB()->update('log', [
+            'browser' => $device['browser'],
+            'ip' => $_IP,
+            'device' => $device_str,
+        ], [
+            'uid' => $user_info['user_id']
+        ]);
+
 //Удаляем все ранние события
-        $db->query("DELETE FROM `updates` WHERE for_user_id = '{$user_info['user_id']}'");
+//        $db->query("DELETE FROM `updates` WHERE for_user_id = '{$user_info['user_id']}'");
+
+        \Mozg\classes\DB::getDB()->delete('updates', [
+            'for_user_id' => $user_info['user_id']
+        ]);
+
         $logged = true;
         Registry::set('logged', true);
         Registry::set('user_info', $user_info);
@@ -69,7 +83,7 @@ if (isset($_SESSION['user_id']) > 0) {
     //Если юзер нажимает "Главная" и он зашел не с моб версии, то скидываем на его стр.
     $host_site = $_SERVER['QUERY_STRING'];
     if ($logged && !$host_site && $config['temp'] !== 'mobile') {
-        header('Location: /u' . $user_info['user_id']);
+//        header('Location: /u' . $user_info['user_id']);
     }
 } else {
     $logged = false;
@@ -78,7 +92,7 @@ if (isset($_SESSION['user_id']) > 0) {
 //Если данные поступили через пост и пользователь не авторизован
 if (isset($_POST['log_in']) && !$logged) {
 //Приготавливаем данные
-    $email = requestFilter('email');
+    $email = (new \FluffyDollop\Http\Request)->filter('email');
     $password = md5(md5(stripslashes($_POST['password'])));
 //Проверяем правильность e-mail
     if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
@@ -89,16 +103,30 @@ if (isset($_POST['log_in']) && !$logged) {
         exit();
     }
     if (!empty($email)) {
-        /** @var string $check_user user id */
-        $check_user = $db->super_query("SELECT user_id FROM `users` WHERE user_email = '" . $email . "' AND user_password = '" . $password . "'");
+        /** @var array $check_user user id */
+//        $check_user = $db->super_query("SELECT user_id FROM `users` WHERE user_email = '" . $email . "' AND user_password = '" . $password . "'");
+        $check_user = \Mozg\classes\DB::getDB()->row('SELECT user_id FROM `users` WHERE user_email = ? AND user_password = ?', $email, $password);
+
 //Если есть юзер то пропускаем
         if ($check_user) {
 //Hash ID
             $hid = $password . md5(md5($_IP));
 //Обновляем хэш входа
-            $db->query("UPDATE `users` SET user_hid = '" . $hid . "' WHERE user_id = '" . $check_user['user_id'] . "'");
+//            $db->query("UPDATE `users` SET user_hid = '" . $hid . "' WHERE user_id = '" . $check_user['user_id'] . "'");
+
+            \Mozg\classes\DB::getDB()->update('users', [
+                'user_hid' => $hid
+            ], [
+                'user_id' => $check_user['user_id']
+            ]);
+
 //Удаляем все ранние события
-            $db->query("DELETE FROM `updates` WHERE for_user_id = '{$check_user['user_id']}'");
+//            $db->query("DELETE FROM `updates` WHERE for_user_id = '{$check_user['user_id']}'");
+
+            \Mozg\classes\DB::getDB()->delete('updates', [
+                'for_user_id' => $check_user['user_id']
+            ]);
+
 //Устанавливаем в сессию ИД юзера
             $_SESSION['user_id'] = (int)$check_user['user_id'];
 //Записываем COOKIE
@@ -108,12 +136,21 @@ if (isset($_POST['log_in']) && !$logged) {
             $device = get_device();
             $device_str = serialize($device);
 //Вставляем лог в бд
-            $db->query("UPDATE `log` SET browser = '" . $device['browser'] . "', ip = '" . $_IP . "', device = '" . $device_str . "' WHERE uid = '" . $user_info['user_id'] . "'");
-            if ($config['temp'] !== 'mobile') {
-                header('Location: /u' . $check_user['user_id']);
-            } else {
-                header('Location: /');
-            }
+//            $db->query("UPDATE `log` SET browser = '" . $device['browser'] . "', ip = '" . $_IP . "', device = '" . $device_str . "' WHERE uid = '" . $user_info['user_id'] . "'");
+
+            \Mozg\classes\DB::getDB()->update('log', [
+                'browser' => $device['browser'],
+                'ip' => $_IP,
+                'device' => $device_str,
+            ], [
+                'uid' => $check_user['user_id']
+            ]);
+
+//            if ($config['temp'] !== 'mobile') {
+//                header('Location: /u' . $check_user['user_id']);
+//            } else {
+            header('Location: /');
+//            }
         } else {
             $params = [
                 'title' => 'Restore',
