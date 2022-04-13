@@ -841,7 +841,7 @@ if (Registry::get('logged')) {
                         }
 
                         $tpl->load_template('wall/head.tpl');
-                        $tpl->set('{name}', gramatikName($row_user['user_name']));
+                        $tpl->set('{name}', grammaticalName($row_user['user_name']));
                         $tpl->set('{uid}', $id);
                         $tpl->set('{rec-id}', $rid);
                         $tpl->set("{activetab-{$type}}", 'activetab');

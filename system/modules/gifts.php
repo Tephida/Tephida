@@ -150,7 +150,7 @@ if (Registry::get('logged')) {
                 $tpl->set('[/not-owner]', '');
                 $tpl->set_block("'\\[owner\\](.*?)\\[/owner\\]'si", "");
             }
-            $tpl->set('{name}', gramatikName($owner['user_name']));
+            $tpl->set('{name}', grammaticalName($owner['user_name']));
             $tpl->set('{gifts-num}', '<span id="num">' . $owner['user_gifts'] . '</span> ' . declWord($owner['user_gifts'], 'gifts'));
             if ($owner['user_gifts']) {
                 $tpl->set('[yes]', '');

@@ -793,7 +793,7 @@ if (Registry::get('logged')) {
                 $owner = $db->super_query("SELECT user_videos_num, user_search_pref FROM `users` WHERE user_id = '{$get_user_id}'");
                 if ($owner) {
                     $name_info = explode(' ', $owner['user_search_pref']);
-                    $metatags['title'] = $lang['videos'] . ' ' . gramatikName($name_info[0]) . ' ' . gramatikName($name_info[1]);
+                    $metatags['title'] = $lang['videos'] . ' ' . grammaticalName($name_info[0]) . ' ' . grammaticalName($name_info[1]);
 //Проверка естьли запрашиваемый юзер в друзьях у юзера который смотрит стр
                     if ($user_id != $get_user_id) {
                         $check_friend = CheckFriends($get_user_id);
@@ -822,7 +822,7 @@ if (Registry::get('logged')) {
                     if ($get_user_id == $user_id) {
                         $user_speedbar = 'У Вас <span id="nums">' . ($owner['user_videos_num'] ? $owner['user_videos_num'] : false) . '</span> ' . declWord($owner['user_videos_num'], 'videos');
                     } else {
-                        $user_speedbar = 'У ' . gramatikName($name_info[0]) . ' ' . ($owner['user_videos_num'] ? $owner['user_videos_num'] : false) . ' ' . declWord($owner['user_videos_num'], 'videos');
+                        $user_speedbar = 'У ' . grammaticalName($name_info[0]) . ' ' . ($owner['user_videos_num'] ? $owner['user_videos_num'] : false) . ' ' . declWord($owner['user_videos_num'], 'videos');
                     }
                     if ($owner['user_videos_num']) {
 
@@ -833,7 +833,7 @@ if (Registry::get('logged')) {
                         $tpl->load_template('videos/head.tpl');
                         $tpl->set('{user-id}', $get_user_id);
                         $tpl->set('{videos_num}', $owner['user_videos_num']);
-                        $tpl->set('{name}', gramatikName($name_info[0]));
+                        $tpl->set('{name}', grammaticalName($name_info[0]));
                         if ($get_user_id == $user_id) {
                             $tpl->set('[owner]', '');
                             $tpl->set('[/owner]', '');
@@ -890,7 +890,6 @@ if (Registry::get('logged')) {
                         }
                     }
                 } else {
-                    Hacking();
                 }
                 compile($tpl);
             } else {

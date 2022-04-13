@@ -353,7 +353,7 @@ if (Registry::get('logged')) {
                         $tpl->set('[/not-owner]', '');
                         $tpl->set_block("'\\[owner\\](.*?)\\[/owner\\]'si", "");
                     }
-                    $tpl->set('{name}', gramatikName($author_info[0]));
+                    $tpl->set('{name}', grammaticalName($author_info[0]));
                     $tpl->set_block("'\\[add\\](.*?)\\[/add\\]'si", "");
                     $tpl->set_block("'\\[edit\\](.*?)\\[/edit\\]'si", "");
                     $tpl->set_block("'\\[all\\](.*?)\\[/all\\]'si", "");
@@ -471,8 +471,8 @@ if (Registry::get('logged')) {
 
                     //Формирование мета титле и спидбара
                     $author_info = explode(' ', $owner['user_search_pref']);
-                    $metatags['title'] = $lang['title_notes'] . ' ' . gramatikName($author_info[0]) . ' ' . gramatikName($author_info[1]);
-                    $user_speedbar = 'У ' . gramatikName($author_info[0]) . ' <span id="notes_num">' . $owner['user_notes_num'] . '</span> ' . declWord((int)$owner['user_notes_num'], 'notes');
+                    $metatags['title'] = $lang['title_notes'] . ' ' . grammaticalName($author_info[0]) . ' ' . grammaticalName($author_info[1]);
+                    $user_speedbar = 'У ' . grammaticalName($author_info[0]) . ' <span id="notes_num">' . $owner['user_notes_num'] . '</span> ' . declWord((int)$owner['user_notes_num'], 'notes');
 
                     //Загруажем head заметок
                     $tpl->load_template('notes/head.tpl');
@@ -489,7 +489,7 @@ if (Registry::get('logged')) {
                         $tpl->set('[/not-owner]', '');
                         $tpl->set_block("'\\[owner\\](.*?)\\[/owner\\]'si", "");
                     }
-                    $tpl->set('{name}', gramatikName($author_info[0]));
+                    $tpl->set('{name}', grammaticalName($author_info[0]));
                     $tpl->set_block("'\\[add\\](.*?)\\[/add\\]'si", "");
                     $tpl->set_block("'\\[edit\\](.*?)\\[/edit\\]'si", "");
                     $tpl->set_block("'\\[view\\](.*?)\\[/view\\]'si", "");

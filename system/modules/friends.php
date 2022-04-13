@@ -329,7 +329,7 @@ if (Registry::get('logged')) {
                 //Выводим имя юзера
                 $friends_sql = $db->super_query("SELECT user_name, user_friends_num FROM `users` WHERE user_id = '{$get_user_id}'");
                 if ($user_info['user_id'] != $get_user_id) {
-                    $gram_name = gramatikName($friends_sql['user_name']);
+                    $gram_name = grammaticalName($friends_sql['user_name']);
                 } else {
                     $gram_name = 'Вас';
                 }
@@ -501,7 +501,7 @@ if (Registry::get('logged')) {
                 //Верх
                 $tpl->load_template('friends/head_common.tpl');
 
-                $tpl->set('{name}', gramatikName($owner['user_name']));
+                $tpl->set('{name}', grammaticalName($owner['user_name']));
                 $tpl->set('{user-id}', $uid);
 
                 if ($count_common['cnt']) {
@@ -591,7 +591,7 @@ if (Registry::get('logged')) {
                 $friends_sql = $db->super_query("SELECT user_name, user_friends_num FROM `users` WHERE user_id = '{$get_user_id}'");
 
                 if ($user_info['user_id'] != $get_user_id) {
-                    $gram_name = gramatikName($friends_sql['user_name']);
+                    $gram_name = grammaticalName($friends_sql['user_name']);
                 } else {
                     $gram_name = 'Вас';
                 }

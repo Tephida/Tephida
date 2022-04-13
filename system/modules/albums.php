@@ -92,7 +92,6 @@ if (Registry::get('logged')) {
 
                 compile($tpl, $params);
             } else {
-                Hacking();
             }
             break;
 
@@ -468,7 +467,6 @@ if (Registry::get('logged')) {
                     echo $lang['no_photo_alnumx'];
                 }
             } else {
-                Hacking();
             }
 
             break;
@@ -635,7 +633,7 @@ HTML;
                 $album_privacy = explode('|', $row_album['privacy']);
                 $uid = $row_album['user_id'];
                 if (!$uid) {
-                    Hacking();
+                    return '';
                 }
             } else {
                 $album_privacy = null;
@@ -702,7 +700,7 @@ HTML;
                 $tpl->load_template('albums_top.tpl');
                 $tpl->set('{user-id}', $uid);
                 $tpl->set('{aid}', $aid);
-                $tpl->set('{name}', gramatikName($row_owner['user_name']));
+                $tpl->set('{name}', grammaticalName($row_owner['user_name']));
                 $tpl->set('{album-name}', stripslashes($row_album['name']));
                 $tpl->set('[comments]', '');
                 $tpl->set('[/comments]', '');
@@ -883,7 +881,7 @@ HTML;
             if (!$CheckBlackList) {
                 $album_privacy = explode('|', $row_album['privacy']);
                 if (!$row_album) {
-                    Hacking();
+                    return '';
                 }
 
                 //Проверка есть ли запрашиваемый юзер в друзьях у юзера который смотрит стр
@@ -900,7 +898,7 @@ HTML;
 
                     $tpl->load_template('albums_top.tpl');
                     $tpl->set('{user-id}', $row_album['user_id']);
-                    $tpl->set('{name}', gramatikName($row_owner['user_name']));
+                    $tpl->set('{name}', grammaticalName($row_owner['user_name']));
                     $tpl->set('{aid}', $aid);
                     $tpl->set('[view]', '');
                     $tpl->set('[/view]', '');
@@ -1027,7 +1025,7 @@ HTML;
                 if (!$CheckBlackList) {
                     $author_info = explode(' ', $row_owner['user_search_pref']);
 
-                    $params['metatags']['title'] = $lang['title_albums'] . ' ' . gramatikName($author_info[0]) . ' ' . gramatikName($author_info[1]);
+                    $params['metatags']['title'] = $lang['title_albums'] . ' ' . grammaticalName($author_info[0]) . ' ' . grammaticalName($author_info[1]);
                     $user_speedbar = $lang['title_albums'];
 
                     //Выводи данные об альбоме
@@ -1100,12 +1098,12 @@ HTML;
                             if ($user_info['user_id'] == $uid) {
                                 $user_speedbar = 'У Вас <span id="albums_num">' . $row_owner['user_albums_num'] . '</span> ' . declWord($row_owner['user_albums_num'], 'albums');
                             } else {
-                                $user_speedbar = 'У ' . gramatikName($author_info[0]) . ' ' . $row_owner['user_albums_num'] . ' ' . declWord($row_owner['user_albums_num'], 'albums');
+                                $user_speedbar = 'У ' . grammaticalName($author_info[0]) . ' ' . $row_owner['user_albums_num'] . ' ' . declWord($row_owner['user_albums_num'], 'albums');
                             }
 
                             $tpl->load_template('albums_top.tpl');
                             $tpl->set('{user-id}', $uid);
-                            $tpl->set('{name}', gramatikName($author_info[0]));
+                            $tpl->set('{name}', grammaticalName($author_info[0]));
                             $tpl->set('[all-albums]', '');
                             $tpl->set('[/all-albums]', '');
                             $tpl->set_block("'\\[view\\](.*?)\\[/view\\]'si", "");
@@ -1166,8 +1164,9 @@ HTML;
                     msgbox('', $lang['no_notes'], 'info');
                     compile($tpl);
                 }
-            } else
-                Hacking();
+            } else {
+
+            }
 
 
     }

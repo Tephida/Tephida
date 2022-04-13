@@ -859,7 +859,7 @@ HTML;
                 }
 
                 $author_info = explode(' ', $row['user_search_pref']);
-                $params['gram_name'] = gramatikName($author_info[0]);
+                $params['gram_name'] = grammaticalName($author_info[0]);
 
 //                $tpl->set('{friends-num}', $row['user_friends_num']);
                 if (!isset($online_friends['cnt'])) {

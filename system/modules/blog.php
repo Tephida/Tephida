@@ -27,8 +27,6 @@ if (Registry::get('logged')) {
             if ($user_info['user_group'] == 1) {
                 $tpl->load_template('blog/add.tpl');
                 $tpl->compile('content');
-            } else {
-                Hacking();
             }
 
             compile($tpl);
@@ -90,10 +88,8 @@ if (Registry::get('logged')) {
                     $tpl->set('{id}', $id);
                     $tpl->compile('content');
                 } else {
-                    Hacking();
                 }
             } else {
-                Hacking();
             }
 
             compile($tpl);
