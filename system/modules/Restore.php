@@ -13,7 +13,7 @@ namespace Mozg\modules;
 use ErrorException;
 use FluffyDollop\Http\{Request, Response};
 use JsonException;
-use Mozg\classes\{DB, Email, Module, ViewEmail};
+use Mozg\classes\{Email, Module, ViewEmail};
 use FluffyDollop\Support\{Registry, Status};
 
 /**
