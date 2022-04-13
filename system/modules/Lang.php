@@ -12,9 +12,9 @@ declare(strict_types=1);
 
 namespace Mozg\modules;
 
+use FluffyDollop\Http\Request;
 use Mozg\classes\I18n;
 use Mozg\classes\Module;
-use Sinergi\BrowserDetector\Language;
 use FluffyDollop\Support\Cookie;
 
 class Lang extends Module
@@ -28,7 +28,7 @@ class Lang extends Module
      */
     final public function change(): void
     {
-        $lang_Id = intFilter('id', 1);
+        $lang_Id = (new Request)->int('id', 1);
         $lang_list = I18n::langList();
         $lang_count = \count($lang_list);
         if ($lang_Id > $lang_count) {
