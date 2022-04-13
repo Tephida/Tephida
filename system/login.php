@@ -10,12 +10,13 @@
 
 declare(strict_types=1);
 
-use FluffyDollop\Support\Cookie;
-use FluffyDollop\Support\Registry;
+use FluffyDollop\Support\{Cookie, Registry};
+use FluffyDollop\Http\Request;
+use Mozg\classes\DB;
 use Mozg\Models\Users;
 
 $_IP = $_SERVER['REMOTE_ADDR'];
-$act = (new \FluffyDollop\Http\Request)->filter('act');
+$act = (new Request)->filter('act');
 $db = Registry::get('db');
 $config = settings_get();
 //Если делаем выход
@@ -58,7 +59,7 @@ if (isset($_SESSION['user_id']) > 0) {
 //Вставляем лог в бд
 //        $db->query("UPDATE `log` SET browser = '" . $device['browser'] . "', ip = '" . $_IP . "', device = '" . $device_str . "' WHERE uid = '" . $user_info['user_id'] . "'");
 
-        \Mozg\classes\DB::getDB()->update('log', [
+        DB::getDB()->update('log', [
             'browser' => $device['browser'],
             'ip' => $_IP,
             'device' => $device_str,
@@ -69,7 +70,7 @@ if (isset($_SESSION['user_id']) > 0) {
 //Удаляем все ранние события
 //        $db->query("DELETE FROM `updates` WHERE for_user_id = '{$user_info['user_id']}'");
 
-        \Mozg\classes\DB::getDB()->delete('updates', [
+        DB::getDB()->delete('updates', [
             'for_user_id' => $user_info['user_id']
         ]);
 
@@ -92,7 +93,7 @@ if (isset($_SESSION['user_id']) > 0) {
 //Если данные поступили через пост и пользователь не авторизован
 if (isset($_POST['log_in']) && !$logged) {
 //Приготавливаем данные
-    $email = (new \FluffyDollop\Http\Request)->filter('email');
+    $email = (new Request)->filter('email');
     $password = md5(md5(stripslashes($_POST['password'])));
 //Проверяем правильность e-mail
     if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
@@ -105,7 +106,7 @@ if (isset($_POST['log_in']) && !$logged) {
     if (!empty($email)) {
         /** @var array $check_user user id */
 //        $check_user = $db->super_query("SELECT user_id FROM `users` WHERE user_email = '" . $email . "' AND user_password = '" . $password . "'");
-        $check_user = \Mozg\classes\DB::getDB()->row('SELECT user_id FROM `users` WHERE user_email = ? AND user_password = ?', $email, $password);
+        $check_user = DB::getDB()->row('SELECT user_id FROM `users` WHERE user_email = ? AND user_password = ?', $email, $password);
 
 //Если есть юзер то пропускаем
         if ($check_user) {
@@ -114,7 +115,7 @@ if (isset($_POST['log_in']) && !$logged) {
 //Обновляем хэш входа
 //            $db->query("UPDATE `users` SET user_hid = '" . $hid . "' WHERE user_id = '" . $check_user['user_id'] . "'");
 
-            \Mozg\classes\DB::getDB()->update('users', [
+            DB::getDB()->update('users', [
                 'user_hid' => $hid
             ], [
                 'user_id' => $check_user['user_id']
@@ -123,7 +124,7 @@ if (isset($_POST['log_in']) && !$logged) {
 //Удаляем все ранние события
 //            $db->query("DELETE FROM `updates` WHERE for_user_id = '{$check_user['user_id']}'");
 
-            \Mozg\classes\DB::getDB()->delete('updates', [
+            DB::getDB()->delete('updates', [
                 'for_user_id' => $check_user['user_id']
             ]);
 
@@ -138,7 +139,7 @@ if (isset($_POST['log_in']) && !$logged) {
 //Вставляем лог в бд
 //            $db->query("UPDATE `log` SET browser = '" . $device['browser'] . "', ip = '" . $_IP . "', device = '" . $device_str . "' WHERE uid = '" . $user_info['user_id'] . "'");
 
-            \Mozg\classes\DB::getDB()->update('log', [
+            DB::getDB()->update('log', [
                 'browser' => $device['browser'],
                 'ip' => $_IP,
                 'device' => $device_str,
