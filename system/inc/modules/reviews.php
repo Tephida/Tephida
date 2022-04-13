@@ -32,7 +32,7 @@ if ($_GET['act'] === 'del') {
 
 }
 
-$page = intFilter('page', 1);
+$page = (new \FluffyDollop\Http\Request)->int('page', 1);
 $gcount = 20;
 $limit_page = ($page - 1) * $gcount;
 

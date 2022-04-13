@@ -8,6 +8,7 @@
  *
  */
 
+use FluffyDollop\Http\Request;
 use FluffyDollop\Support\Registry;
 use Mozg\classes\Cache;
 
@@ -17,7 +18,7 @@ if (Registry::get('logged')) {
     $db = Registry::get('db');
     $user_info = $user_info ?? Registry::get('user_info');
     $user_id = $user_info['user_id'];
-    $act = requestFilter('act');
+    $act = (new Request)->filter('act');
     $server_time = Registry::get('server_time');
 
     switch ($act) {
@@ -26,7 +27,7 @@ if (Registry::get('logged')) {
         case "view":
 
             $limit_news = 10;
-            $page_cnt = intFilter('page_cnt');
+            $page_cnt = (new Request)->int('page_cnt');
             if ($page_cnt > 0) {
                 $page_cnt *= $limit_news;
             } else {
@@ -84,8 +85,8 @@ if (Registry::get('logged')) {
         //################### Начисление рейтинга ###################//
         case "add":
 
-            $for_user_id = intFilter('for_user_id');
-            $num = intFilter('num');
+            $for_user_id = (new Request)->int('for_user_id');
+            $num = (new Request)->int('num');
             if ($num < 0) {
                 $num = 0;
             }
@@ -124,7 +125,7 @@ if (Registry::get('logged')) {
             //Выводим текущий баланс свой
             $row = $db->super_query("SELECT user_balance FROM `users` WHERE user_id = '{$user_id}'");
             $tpl->load_template('rating/main.tpl');
-            $tpl->set('{user-id}', intFilter('for_user_id'));
+            $tpl->set('{user-id}', (new Request)->int('for_user_id'));
             $tpl->set('{num}', $row['user_balance'] - 1);
             $tpl->set('{balance}', $row['user_balance']);
             $tpl->compile('content');

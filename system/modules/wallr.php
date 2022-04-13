@@ -10,18 +10,16 @@
 
 declare(strict_types=1);
 
-use FluffyDollop\Support\Filesystem;
+use FluffyDollop\Http\Request;
 use FluffyDollop\Support\Registry;
-use FluffyDollop\Support\Thumbnail;
 use Mozg\classes\Cache;
 use Mozg\classes\Flood;
-use Mozg\classes\TpLSite;
 use Mozg\classes\WallProfile;
 use Mozg\classes\WallPublic;
 
 if (Registry::get('logged')) {
     $db = Registry::get('db');
-    $act = requestFilter('act');
+    $act = (new Request)->filter('act');
     $user_info = $user_info ?? Registry::get('user_info');
     $user_id = $user_info['user_id'];
     $limit_select = 10;
@@ -35,14 +33,14 @@ if (Registry::get('logged')) {
         case "send":
             $wall = new WallProfile($tpl);
 //			NoAjaxQuery();
-            $wall_text = requestFilter('wall_text');
+            $wall_text = (new Request)->filter('wall_text');
             if (Flood::check('identical', $wall_text)) {
                 echo 'err_privacy';
             } else {
-                $attach_files = requestFilter('attach_files', 25000, true);
-                $for_user_id = intFilter('for_user_id');
-                $fast_comm_id = intFilter('rid');
-                $answer_comm_id = intFilter('answer_comm_id');
+                $attach_files = (new Request)->filter('attach_files', 25000, true);
+                $for_user_id = (new Request)->int('for_user_id');
+                $fast_comm_id = (new Request)->int('rid');
+                $answer_comm_id = (new Request)->int('answer_comm_id');
                 $str_date = time();
 
                 $spam_action = (!$fast_comm_id) ? 'wall' : 'comments';
@@ -133,8 +131,8 @@ if (Registry::get('logged')) {
                                     $attach_files = str_replace(array('vote|', '&amp;#124;', '&amp;raquo;', '&amp;quot;'), array('hack|', '&#124;', '&raquo;', '&quot;'), $attach_files);
 
                                     //Голосование
-                                    $vote_title = requestFilter('vote_title', 25000, true);
-                                    $vote_answer_1 = requestFilter('vote_answer_1', 25000, true);
+                                    $vote_title = (new Request)->filter('vote_title', 25000, true);
+                                    $vote_answer_1 = (new Request)->filter('vote_answer_1', 25000, true);
 
                                     $ansers_list = array();
 
@@ -142,7 +140,7 @@ if (Registry::get('logged')) {
 
                                         for ($vote_i = 1; $vote_i <= 10; $vote_i++) {
 
-                                            $vote_answer = requestFilter('vote_answer_' . $vote_i, 25000, true);
+                                            $vote_answer = (new Request)->filter('vote_answer_' . $vote_i, 25000, true);
                                             $vote_answer = str_replace('|', '&#124;', $vote_answer);
 
                                             if ($vote_answer)
@@ -298,9 +296,9 @@ if (Registry::get('logged')) {
 
                                         $wall->comm_query("SELECT tb1.id, author_user_id, text, add_date, fasts_num, tb2.user_photo, user_search_pref, user_last_visit FROM `wall` tb1, `users` tb2 WHERE tb1.author_user_id = tb2.user_id AND tb1.fast_comm_id = '{$fast_comm_id}' ORDER by `add_date` ASC LIMIT {$limit_comm_num}, 3");
 
-                                        if (intFilter('type') == 1)
+                                        if ((new Request)->int('type') == 1)
                                             $wall->comm_template('news/news.tpl');
-                                        else if (intFilter('type') == 2)
+                                        else if ((new Request)->int('type') == 2)
                                             $wall->comm_template('wall/one_record.tpl');
                                         else
                                             $wall->comm_template('wall/record.tpl');
@@ -327,7 +325,7 @@ if (Registry::get('logged')) {
          */
         case "delet":
             NoAjaxQuery();
-            $rid = intFilter('rid');
+            $rid = (new Request)->int('rid');
             //Проверка на существование записи и выводим ID владельца записи и кому предназначена запись
             $row = $db->super_query("SELECT author_user_id, for_user_id, fast_comm_id, add_date, attach FROM `wall` WHERE id = '{$rid}'");
             if ($row['author_user_id'] == $user_id || $row['for_user_id'] == $user_id) {
@@ -386,7 +384,7 @@ if (Registry::get('logged')) {
          */
         case "like_yes":
             NoAjaxQuery();
-            $rid = intFilter('rid');
+            $rid = (new Request)->int('rid');
             //Проверка на существование записи
             $row = $db->super_query("SELECT text, for_user_id, likes_users, author_user_id FROM `wall` WHERE id = '{$rid}'");
             if ($row) {
@@ -438,7 +436,7 @@ if (Registry::get('logged')) {
          */
         case "like_no":
             NoAjaxQuery();
-            $rid = intFilter('rid');
+            $rid = (new Request)->int('rid');
             //Проверка на существование записи
             $row = $db->super_query("SELECT likes_users FROM `wall` WHERE id = '{$rid}'");
             if ($row) {
@@ -466,7 +464,7 @@ if (Registry::get('logged')) {
          */
         case "liked_users":
             NoAjaxQuery();
-            $rid = intFilter('rid');
+            $rid = (new Request)->int('rid');
             $sql_ = $db->super_query("SELECT tb1.user_id, tb2.user_photo FROM `wall_like` tb1, `users` tb2 WHERE tb1.user_id = tb2.user_id AND tb1.rec_id = '{$rid}' ORDER by `date` DESC LIMIT 0, 7", true);
             if ($sql_) {
                 $config = settings_get();
@@ -487,9 +485,9 @@ if (Registry::get('logged')) {
          */
         case "all_liked_users":
             NoAjaxQuery();
-            $rid = intFilter('rid');
-            $liked_num = intFilter('liked_num');
-            $page = intFilter('page', 1);
+            $rid = (new Request)->int('rid');
+            $liked_num = (new Request)->int('liked_num');
+            $page = (new Request)->int('page', 1);
 
             $gcount = 24;
             $limit_page = ($page - 1) * $gcount;
@@ -541,8 +539,8 @@ if (Registry::get('logged')) {
             $tpl = new TpLSite($this->tpl_dir_name, $meta_tags);
 
             $wall = new WallProfile($tpl);
-            $fast_comm_id = intFilter('fast_comm_id');
-            $for_user_id = intFilter('for_user_id');
+            $fast_comm_id = (new Request)->int('fast_comm_id');
+            $for_user_id = (new Request)->int('for_user_id');
             if ($fast_comm_id && $for_user_id) {
 
                 //Проверка на существование получателя
@@ -560,9 +558,9 @@ if (Registry::get('logged')) {
                     if ($user_privacy['val_wall3'] == 1 || $user_privacy['val_wall3'] == 2 && $check_friend || $user_id == $for_user_id) {
                         $wall->comm_query("SELECT tb1.id, author_user_id, text, add_date, fasts_num, tb2.user_photo, user_search_pref, user_last_visit FROM `wall` tb1, `users` tb2 WHERE tb1.author_user_id = tb2.user_id AND tb1.fast_comm_id = '{$fast_comm_id}' ORDER by `add_date` ASC LIMIT 0, 200", '');
 
-                        if (intFilter('type') == 1)
+                        if ((new Request)->int('type') == 1)
                             $wall->comm_template('news/news.tpl');
-                        else if (intFilter('type') == 2)
+                        else if ((new Request)->int('type') == 2)
                             $wall->comm_template('wall/one_record.tpl');
                         else
                             $wall->comm_template('wall/record.tpl');
@@ -623,7 +621,7 @@ if (Registry::get('logged')) {
          */
         case "tell":
             NoAjaxQuery();
-            $rid = intFilter('rid');
+            $rid = (new Request)->int('rid');
 
             //Проверка на существование записи
             $row = $db->super_query("SELECT add_date, text, author_user_id, tell_uid, tell_date, public, attach FROM `wall` WHERE fast_comm_id = '0' AND id = '{$rid}'");
@@ -659,7 +657,7 @@ if (Registry::get('logged')) {
          * Парсер информации о ссылке
          */
         case "parse_link":
-            $lnk = 'https://' . str_replace('https://', '', requestFilter('lnk'));
+            $lnk = 'https://' . str_replace('https://', '', (new Request)->filter('lnk'));
             $check_url = get_headers(stripslashes($lnk));
 
             if (strpos($check_url[0], '200')) {
@@ -766,13 +764,13 @@ if (Registry::get('logged')) {
 
         default:
 
-            if (requestFilter('uid')) {
+            if ((new Request)->filter('uid')) {
                 $meta_tags['title'] = 'walls';
 
                 $tpl = new TpLSite(ROOT_DIR . '/templates/' . $config['temp'], $meta_tags);
             }
 
-            if (!isset($id) && !requestFilter('uid')) {
+            if (!isset($id) && !(new Request)->filter('uid')) {
                 $wall = new WallPublic($tpl);
             } else {
 
@@ -782,17 +780,17 @@ if (Registry::get('logged')) {
             /** Показ последних 10 записей */
 
             //Если вызвана страница стены, не со страницы юзера
-            if (!isset($id) && !requestFilter('uid')) {
-                $rid = intFilter('rid');
+            if (!isset($id) && !(new Request)->filter('uid')) {
+                $rid = (new Request)->int('rid');
 
-                $id = intFilter('uid');
+                $id = (new Request)->int('uid');
                 if (!$id)
                     $id = $user_id;
 
                 $walluid = $id;
                 $metatags['title'] = $lang['wall_title'];
                 $user_speedbar = 'На стене нет записей';
-                $page = intFilter('page', 1);
+                $page = (new Request)->int('page', 1);
                 $gcount = 10;
                 $limit_page = ($page - 1) * $gcount;
 
@@ -817,7 +815,7 @@ if (Registry::get('logged')) {
                             $cnt_rec = $db->super_query("SELECT COUNT(*) AS cnt FROM `wall` WHERE for_user_id = '{$id}' AND author_user_id = '{$id}' AND fast_comm_id = 0");
                         }
 
-                        $type = requestFilter('type');
+                        $type = (new Request)->filter('type');
 
                         if ($type == 'own') {
                             $cnt_rec = $db->super_query("SELECT COUNT(*) AS cnt FROM `wall` WHERE for_user_id = '{$id}' AND author_user_id = '{$id}' AND fast_comm_id = 0");
@@ -893,7 +891,7 @@ if (Registry::get('logged')) {
 
                     $for_user_id = $for_user_id ?? null;
 
-                    if ($rid || $walluid || requestFilter('uid')) {
+                    if ($rid || $walluid || (new Request)->filter('uid')) {
                         $wall->template('wall/one_record.tpl');
                         $wall->compile('content');
                         $config = settings_get();
@@ -904,13 +902,13 @@ if (Registry::get('logged')) {
                         $gcount = $gcount ?? null;
                         $page_type = $page_type ?? null;
 
-                        $type = requestFilter('type');
+                        $type = (new Request)->filter('type');
 
                         if (($cnt_rec['cnt'] > $gcount && $type == '') || $type == 'own') {
                             navigation($gcount, $cnt_rec['cnt'], $page_type);
                         }
 
-                        if (requestFilter('uid')) {
+                        if ((new Request)->filter('uid')) {
 //                           var_dump($tpl->result);
                             try {
                                 $wall->render();

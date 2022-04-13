@@ -8,11 +8,12 @@
  *
  */
 
-use FluffyDollop\Support\{Gzip, Registry, Thumbnail};
+use FluffyDollop\Http\Request;
+use FluffyDollop\Support\{Registry};
 use Mozg\classes\Cache;
 
 if (Registry::get('logged')) {
-    $act = requestFilter('act');
+    $act = (new Request)->filter('act');
     $user_info = $user_info ?? Registry::get('user_info');
     $user_id = $user_info['user_id'];
     $server_time = Registry::get('server_time');
@@ -23,8 +24,8 @@ if (Registry::get('logged')) {
 
         case "addcomm":
             NoAjaxQuery();
-            $pid = intFilter('pid');
-            $comment = requestFilter('comment');
+            $pid = (new Request)->int('pid');
+            $comment = (new Request)->filter('comment');
             $date = date('Y-m-d H:i:s', $server_time);
             $hash = md5($user_id . $server_time . $_IP . $user_info['user_email'] . random_int(0, 1000000000)) . $comment . $pid;
             $check_photo = $db->super_query("SELECT album_id, user_id, photo_name FROM `photos` WHERE id = '{$pid}'");
@@ -104,7 +105,7 @@ if (Registry::get('logged')) {
             
         case "del_comm":
             NoAjaxQuery();
-            $hash = requestFilter('hash', 32);
+            $hash = (new Request)->filter('hash', 32);
             $check_comment = $db->super_query("SELECT id, pid, album_id, owner_id FROM `photos_comments` WHERE hash = '{$hash}'");
             if ($check_comment) {
                 $db->query("DELETE FROM `photos_comments` WHERE hash = '{$hash}'");
@@ -120,11 +121,11 @@ if (Registry::get('logged')) {
             
         case "crop":
             NoAjaxQuery();
-            $pid = intFilter('pid');
-            $i_left = intFilter('i_left');
-            $i_top = intFilter('i_top');
-            $i_width = intFilter('i_width');
-            $i_height = intFilter('i_height');
+            $pid = (new Request)->int('pid');
+            $i_left = (new Request)->int('i_left');
+            $i_top = (new Request)->int('i_top');
+            $i_width = (new Request)->int('i_width');
+            $i_height = (new Request)->int('i_height');
             $check_photo = $db->super_query("SELECT photo_name, album_id FROM `photos` WHERE id = '{$pid}' AND user_id = '{$user_id}'");
             if ($check_photo && $i_width >= 100 && $i_height >= 100 && $i_left >= 0) {
                 $imgInfo = explode('.', $check_photo['photo_name']);
@@ -181,8 +182,8 @@ if (Registry::get('logged')) {
             
         case "all_comm":
             NoAjaxQuery();
-            $pid = intFilter('pid');
-            $num = intFilter('num');
+            $pid = (new Request)->int('pid');
+            $num = (new Request)->int('num');
             if ($num > 7) {
                 $limit = $num - 3;
                 $sql_comm = $db->super_query("SELECT tb1.user_id,text,date,id,hash,pid, tb2.user_search_pref, user_photo, user_last_visit, user_logged_mobile FROM `photos_comments` tb1, `users` tb2 WHERE tb1.user_id = tb2.user_id AND tb1.pid = '{$pid}' ORDER by `date` ASC LIMIT 0, {$limit}", true);
@@ -216,8 +217,8 @@ if (Registry::get('logged')) {
             //################### Просмотр ПРОСТОЙ фотографии не из альбома ###################//
             
         case "profile":
-            $uid = intFilter('uid');
-            $photo_name = requestFilter('photo');
+            $uid = (new Request)->int('uid');
+            $photo_name = (new Request)->filter('photo');
             if (isset($_POST['type'])) {
                 $photo = ROOT_DIR . "/uploads/attach/{$uid}/c_{$photo_name}";
             } else {
@@ -232,7 +233,7 @@ if (Registry::get('logged')) {
                 else {
                     $tpl->set('{photo}', "/uploads/users/{$uid}/o_{$photo_name}");
                 }
-                $tpl->set('{close-link}', requestFilter('close_link'));
+                $tpl->set('{close-link}', (new Request)->filter('close_link'));
                 $tpl->compile('content');
                 AjaxTpl($tpl);
             } else {
@@ -242,9 +243,9 @@ if (Registry::get('logged')) {
             //################### Поворот фотографии ###################//
             
         case "rotation":
-            $id = intFilter('id');
+            $id = (new Request)->int('id');
             $row = $db->super_query("SELECT photo_name, album_id, user_id FROM `photos` WHERE id = '" . $id . "'");
-            $photo_position = requestFilter('pos');
+            $photo_position = (new Request)->filter('pos');
             if (($row['photo_name'] && $photo_position == 'left') || ($photo_position == 'right' && $user_id == $row['user_id'])) {
                 $filename = ROOT_DIR . '/uploads/users/' . $user_id . '/albums/' . $row['album_id'] . '/' . $row['photo_name'];
                 if ($photo_position == 'right') {
@@ -271,9 +272,9 @@ if (Registry::get('logged')) {
             
         case "addrating":
             NoAjaxQuery();
-            $rating = intFilter('rating');
+            $rating = (new Request)->int('rating');
             if ($rating <= 0 OR $rating > 6) $rating = 5;
-            $pid = intFilter('pid');
+            $pid = (new Request)->int('pid');
             //Проверка на существование фото в базе
             $row = $db->super_query("SELECT user_id, album_id, photo_name FROM `photos` WHERE id = '{$pid}'");
             //Проверка ставил человек на это фото уже оценку или нет
@@ -329,8 +330,8 @@ if (Registry::get('logged')) {
         //################### Просмотр оценок ###################//
         case "view_rating":
             NoAjaxQuery();
-            $pid = intFilter('pid');
-            $lid = intFilter('lid');
+            $pid = (new Request)->int('pid');
+            $lid = (new Request)->int('lid');
             //Проверка на то, что есть фото
             $check = $db->super_query("SELECT rating_all FROM `photos` WHERE user_id = '{$user_info['user_id']}' AND id = '{$pid}'");
             //Если фото есть, то продолжаем вывод
@@ -390,7 +391,7 @@ if (Registry::get('logged')) {
             
         case "del_rate":
             NoAjaxQuery();
-            $id = intFilter('id');
+            $id = (new Request)->int('id');
             //Выводим ИД фото и проверяем на админа фотки
             $row = $db->super_query("SELECT photo_id, rating FROM `photos_rating` WHERE id = '{$id}' AND owner_user_id = '{$user_info['user_id']}'");
             if ($row['photo_id']) {
@@ -409,10 +410,10 @@ if (Registry::get('logged')) {
         default:
             //################### Просмотр фотографии ###################//
             NoAjaxQuery();
-            $uid = intFilter('uid');
-            $photo_id = intFilter('pid');
-            $fuser = intFilter('fuser');
-            $section = requestFilter('section');
+            $uid = (new Request)->int('uid');
+            $photo_id = (new Request)->int('pid');
+            $fuser = (new Request)->int('fuser');
+            $section = (new Request)->filter('section');
             //ЧС
             $CheckBlackList = CheckBlackList($uid);
             if (!$CheckBlackList) {

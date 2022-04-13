@@ -8,11 +8,12 @@
  *
  */
 
+use FluffyDollop\Http\Request;
 use FluffyDollop\Support\Registry;
 use Mozg\classes\Cache;
 
 if (Registry::get('logged')) {
-    $act = requestFilter('act');
+    $act = (new Request)->filter('act');
     $user_info = $user_info ?? Registry::get('user_info');
     $user_id = $user_info['user_id'];
     $server_time = Registry::get('server_time');
@@ -24,10 +25,10 @@ if (Registry::get('logged')) {
         case "new_send":
             NoAjaxQuery();
 
-            $public_id = intFilter('public_id');
-            $title = requestFilter('title', 25000, true);
-            $attach_files = requestFilter('attach_files', 25000, true);
-            $text = requestFilter('text');
+            $public_id = (new Request)->int('public_id');
+            $title = (new Request)->filter('title', 25000, true);
+            $attach_files = (new Request)->filter('attach_files', 25000, true);
+            $text = (new Request)->filter('text');
 
             $row = $db->super_query("SELECT ulist, discussion FROM `communities` WHERE id = '{$public_id}'");
 
@@ -44,7 +45,7 @@ if (Registry::get('logged')) {
 
         //################### Страница создания новой темы ###################//
         case "new":
-            $public_id = intFilter('public_id');
+            $public_id = (new Request)->int('public_id');
             $row = $db->super_query("SELECT ulist, discussion FROM `communities` WHERE id = '{$public_id}'");
             if (stripos($row['ulist'], "|{$user_id}|") !== false and $row['discussion']) {
                 $tpl->load_template('forum/new.tpl');
@@ -60,9 +61,9 @@ if (Registry::get('logged')) {
         case "add_msg":
             NoAjaxQuery();
 
-            $fid = intFilter('fid');
-            $answer_id = intFilter('answer_id');
-            $msg = requestFilter('msg');
+            $fid = (new Request)->int('fid');
+            $answer_id = (new Request)->int('answer_id');
+            $msg = (new Request)->filter('msg');
 
             $row = $db->super_query("SELECT status, public_id FROM `communities_forum` WHERE fid = '{$fid}'");
             $row2 = $db->super_query("SELECT discussion FROM `communities` WHERE id = '{$row['public_id']}'");
@@ -132,8 +133,8 @@ if (Registry::get('logged')) {
         case "prev_msg":
             NoAjaxQuery();
 
-            $id = intFilter('fid');
-            $pid = intFilter('pid');
+            $id = (new Request)->int('fid');
+            $pid = (new Request)->int('pid');
 
             //SQL запрос на вывод
             $row = $db->super_query("SELECT msg_num, public_id FROM `communities_forum` WHERE fid = '{$id}'");
@@ -148,8 +149,8 @@ if (Registry::get('logged')) {
 
             $limit = 10;
 
-            $first_id = intFilter('first_id');
-            $page_post = intFilter('page');
+            $first_id = (new Request)->int('first_id');
+            $page_post = (new Request)->int('page');
             if ($page_post <= 0) {
                 $page_post = 1;
             }
@@ -203,8 +204,8 @@ if (Registry::get('logged')) {
         case "saveedit":
             NoAjaxQuery();
 
-            $fid = intFilter('fid');
-            $text = requestFilter('text');
+            $fid = (new Request)->int('fid');
+            $text = (new Request)->filter('text');
 
             $row = $db->super_query("SELECT fuser_id, public_id FROM `communities_forum` WHERE fid = '{$fid}'");
             $row2 = $db->super_query("SELECT admin, discussion FROM `communities` WHERE id = '{$row['public_id']}'");
@@ -226,8 +227,8 @@ if (Registry::get('logged')) {
         case "savetitle":
             NoAjaxQuery();
 
-            $fid = intFilter('fid');
-            $title = requestFilter('title', 25000, true);
+            $fid = (new Request)->int('fid');
+            $title = (new Request)->filter('title', 25000, true);
 
             $row = $db->super_query("SELECT fuser_id, public_id FROM `communities_forum` WHERE fid = '{$fid}'");
             $row2 = $db->super_query("SELECT admin, discussion FROM `communities` WHERE id = '{$row['public_id']}'");
@@ -251,7 +252,7 @@ if (Registry::get('logged')) {
         //################### Фиксирование темы . закрепление ###################//
         case "fix":
             NoAjaxQuery();
-            $fid = intFilter('fid');
+            $fid = (new Request)->int('fid');
             $row = $db->super_query("SELECT fuser_id, public_id, fixed FROM `communities_forum` WHERE fid = '{$fid}'");
             $row2 = $db->super_query("SELECT admin, discussion FROM `communities` WHERE id = '{$row['public_id']}'");
             if (stripos($row2['admin'], "u{$user_id}|") !== false) {
@@ -275,7 +276,7 @@ if (Registry::get('logged')) {
         case "status":
             NoAjaxQuery();
 
-            $fid = intFilter('fid');
+            $fid = (new Request)->int('fid');
 
             $row = $db->super_query("SELECT fuser_id, public_id, status FROM `communities_forum` WHERE fid = '{$fid}'");
             $row2 = $db->super_query("SELECT admin, discussion FROM `communities` WHERE id = '{$row['public_id']}'");
@@ -304,7 +305,7 @@ if (Registry::get('logged')) {
         case "del":
             NoAjaxQuery();
 
-            $fid = intFilter('fid');
+            $fid = (new Request)->int('fid');
 
             $row = $db->super_query("SELECT fuser_id, public_id, vote FROM `communities_forum` WHERE fid = '{$fid}'");
             $row2 = $db->super_query("SELECT admin, discussion FROM `communities` WHERE id = '{$row['public_id']}'");
@@ -330,7 +331,7 @@ if (Registry::get('logged')) {
         case "delvote":
             NoAjaxQuery();
 
-            $fid = intFilter('fid');
+            $fid = (new Request)->int('fid');
 
             $row = $db->super_query("SELECT fuser_id, vote, public_id FROM `communities_forum` WHERE fid = '{$fid}'");
             $row2 = $db->super_query("SELECT admin, discussion FROM `communities` WHERE id = '{$row['public_id']}'");
@@ -352,7 +353,7 @@ if (Registry::get('logged')) {
         //################### Удаление сообщения ###################//
         case "delmsg":
             NoAjaxQuery();
-            $mid = intFilter('mid');
+            $mid = (new Request)->int('mid');
             $row = $db->super_query("SELECT muser_id, fid, mdate FROM `communities_forum_msg` WHERE mid = '{$mid}'");
             $row2 = $db->super_query("SELECT public_id FROM `communities_forum` WHERE fid = '{$row['fid']}'");
             $row3 = $db->super_query("SELECT admin, discussion FROM `communities` WHERE id = '{$row2['public_id']}'");
@@ -376,7 +377,7 @@ if (Registry::get('logged')) {
         case "createvote":
             NoAjaxQuery();
 
-            $fid = intFilter('fid');
+            $fid = (new Request)->int('fid');
 
             $row = $db->super_query("SELECT fuser_id, public_id FROM `communities_forum` WHERE fid = '{$fid}'");
             $row2 = $db->super_query("SELECT admin, discussion FROM `communities` WHERE id = '{$row['public_id']}'");
@@ -390,15 +391,15 @@ if (Registry::get('logged')) {
             if ($user_info['user_group'] == 1 || $public_admin || ($row['fuser_id'] == $user_id && $row2['discussion'])) {
 
                 //Голосование
-                $vote_title = requestFilter('vote_title', 25000, true);
-                $vote_answer_1 = requestFilter('vote_answer_1', 25000, true);
+                $vote_title = (new Request)->filter('vote_title', 25000, true);
+                $vote_answer_1 = (new Request)->filter('vote_answer_1', 25000, true);
 
                 $ansers_list = array();
 
                 if (!empty($vote_title) && !empty($vote_answer_1)) {
 
                     for ($vote_i = 1; $vote_i <= 10; $vote_i++) {
-                        $vote_answer = requestFilter('vote_answer_' . $vote_i, 25000, true);
+                        $vote_answer = (new Request)->filter('vote_answer_' . $vote_i, 25000, true);
                         $vote_answer = str_replace('|', '&#124;', $vote_answer);
                         if ($vote_answer) {
                             $ansers_list[] = $vote_answer;
@@ -416,8 +417,8 @@ if (Registry::get('logged')) {
         //################### Просмотр темы ###################//
         case "view":
 
-            $public_id = intFilter('public_id');
-            $id = intFilter('id');
+            $public_id = (new Request)->int('public_id');
+            $id = (new Request)->int('id');
 
             //Выводим данные о теме
             $row = $db->super_query("SELECT tb1.fid, fixed, title, text, status, fdate, fuser_id, attach, vote, msg_num, public_id, tb2.user_search_pref, user_photo, user_last_visit, user_logged_mobile FROM `communities_forum` tb1, `users` tb2 WHERE tb1.fid = '{$id}' AND tb1.fuser_id = tb2.user_id");
@@ -695,7 +696,7 @@ if (Registry::get('logged')) {
             if (isset($_POST['a']))
                 NoAjaxQuery();
 
-            $public_id = intFilter('public_id');
+            $public_id = (new Request)->int('public_id');
 
             $row = $db->super_query("SELECT forum_num, discussion, ulist FROM `communities` WHERE id = '{$public_id}'");
 
@@ -723,7 +724,7 @@ if (Registry::get('logged')) {
 
                 //SQL запрос на вывод
                 $limit = 20;
-                $page_post = intFilter('page');
+                $page_post = (new Request)->int('page');
                 if ($page_post > 0) {
                     $page = $page_post * $limit;
                 } else {

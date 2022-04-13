@@ -8,6 +8,7 @@
  *
  */
 
+use FluffyDollop\Http\Request;
 use Mozg\classes\Cache;
 use Mozg\classes\Parse;
 use FluffyDollop\Support\Registry;
@@ -15,12 +16,12 @@ use FluffyDollop\Support\Registry;
 NoAjaxQuery();
 
 if (Registry::get('logged')) {
-    $act = requestFilter('act');
+    $act = (new Request)->filter('act');
     $user_info = $user_info ?? Registry::get('user_info');
     $user_id = intval($user_info['user_id']);
     $yesterday_date = Registry::get('server_time');
     $server_time = Registry::get('server_time');
-    $page = intFilter('page', 1);
+    $page = (new Request)->int('page', 1);
     $db = Registry::get('db');
 
     $gcount = 20;
@@ -57,8 +58,8 @@ if (Registry::get('logged')) {
             include ENGINE_DIR . '/classes/Parse.php';
             $parse = new parse();
 
-            $title = requestFilter('title');
-            $text = $parse->BBparse(requestFilter('text'));
+            $title = (new Request)->filter('title');
+            $text = $parse->BBparse((new Request)->filter('text'));
 
             if (strlen($title) > 0 && strlen($text) > 0) {
                 $db->query("INSERT INTO `notes` SET owner_user_id = '{$user_id}', title = '{$title}', full_text = '{$text}', date = NOW()");
@@ -90,8 +91,8 @@ if (Registry::get('logged')) {
             include ENGINE_DIR . '/classes/Parse.php';
             $parse = new parse();
 
-            $title = requestFilter('title');
-            $text = $parse->BBparse(requestFilter('text'), true);
+            $title = (new Request)->filter('title');
+            $text = $parse->BBparse((new Request)->filter('text'), true);
 
             if ($text && $title) {
                 //Загружаем шаблон вывода полного просмотра заметки
@@ -110,7 +111,7 @@ if (Registry::get('logged')) {
 
         //################### Страница редактирования заметки ###################//
         case "edit":
-            $note_id = intFilter('note_id');
+            $note_id = (new Request)->int('note_id');
             $metatags['title'] = $lang['note_edit'];
             $user_speedbar = $lang['note_edit'];
 
@@ -154,10 +155,10 @@ if (Registry::get('logged')) {
             include ENGINE_DIR . '/classes/Parse.php';
             $parse = new parse();
 
-            $note_id = intFilter('note_id');
+            $note_id = (new Request)->int('note_id');
 
-            $title = requestFilter('title');
-            $text = $parse->BBparse(requestFilter('text'));
+            $title = (new Request)->filter('title');
+            $text = $parse->BBparse((new Request)->filter('text'));
 
             if (strlen($title) > 0 && strlen($text) > 0) {
                 //Проверка на существование заметки
@@ -171,7 +172,7 @@ if (Registry::get('logged')) {
         //################### Удаление заметки ###################//
         case "delet":
             NoAjaxQuery();
-            $note_id = intFilter('note_id');
+            $note_id = (new Request)->int('note_id');
             //Проверка на существование заметки
             $row = $db->super_query("SELECT owner_user_id FROM `notes` WHERE id = '{$note_id}'");
             if ($row['owner_user_id'] == $user_id) {
@@ -189,8 +190,8 @@ if (Registry::get('logged')) {
         //################### Добавления комментария ###################//
         case "addcomment":
             NoAjaxQuery();
-            $note_id = intFilter('note_id');
-            $textcom = requestFilter('textcom');
+            $note_id = (new Request)->int('note_id');
+            $textcom = (new Request)->filter('textcom');
 
             //Проверка на существование заметки
             $check = $db->super_query("SELECT owner_user_id FROM `notes` WHERE id = '{$note_id}'");
@@ -269,7 +270,7 @@ if (Registry::get('logged')) {
         //################### Удаление комментария ###################//
         case "delcomment":
             NoAjaxQuery();
-            $comm_id = intFilter('comm_id');
+            $comm_id = (new Request)->int('comm_id');
             //Проверка на существование коммента и выводим ИД создателя заметки
             $row = $db->super_query("SELECT tb1.note_id, from_user_id, tb2.owner_user_id FROM `notes_comments` tb1, `notes` tb2  WHERE tb1.id = '{$comm_id}' AND tb1.note_id = tb2.id");
             if ($row['from_user_id'] == $user_id || $row['owner_user_id'] == $user_id) {
@@ -286,8 +287,8 @@ if (Registry::get('logged')) {
         //################### Показ всех комментариев ###################//
         case "allcomment":
             NoAjaxQuery();
-            $note_id = intFilter('note_id');
-            $comm_num = intFilter('comm_num');
+            $note_id = (new Request)->int('note_id');
+            $comm_num = (new Request)->int('comm_num');
             if ($comm_num > 10 && $note_id) {
                 $limit = $comm_num - 10;
 
@@ -324,7 +325,7 @@ if (Registry::get('logged')) {
 
         //################### Просмотр полной заметки ###################//
         case "view":
-            $note_id = intFilter('note_id');
+            $note_id = (new Request)->int('note_id');
 
             //SQL Запрос
             $row = $db->super_query("SELECT tb1.title, owner_user_id, full_text, comm_num, date, tb2.user_search_pref FROM `notes` tb1, `users` tb2 WHERE id = '{$note_id}' AND tb1.owner_user_id = tb2.user_id");
@@ -452,7 +453,7 @@ if (Registry::get('logged')) {
 
         default:
 
-            $get_user_id = intFilter('get_user_id');
+            $get_user_id = (new Request)->int('get_user_id');
             if (!$get_user_id)
                 $get_user_id = $user_id;
 

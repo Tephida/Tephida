@@ -8,13 +8,15 @@
  *
  */
 
-use FluffyDollop\Support\{Filesystem, Registry, Thumbnail};
+use FluffyDollop\Http\Request;
+use FluffyDollop\Support\{ Registry};
+use FluffyDollop\Filesystem\Filesystem;
 use Mozg\classes\Cache;
 
 NoAjaxQuery();
 
 if (Registry::get('logged')) {
-    $act = requestFilter('act');
+    $act = (new Request)->filter('act');
     $server_time = Registry::get('server_time');
     $db = Registry::get('db');
     $user_info = $user_info ?? Registry::get('user_info');
@@ -25,10 +27,10 @@ if (Registry::get('logged')) {
         case "create":
             NoAjaxQuery();
 
-            $name = requestFilter('name', 25000, true);
-            $descr = requestFilter('descr');
-            $privacy = intFilter('privacy');
-            $privacy_comm = intFilter('privacy_comm');
+            $name = (new Request)->filter('name', 25000, true);
+            $descr = (new Request)->filter('descr');
+            $privacy = (new Request)->int('privacy');
+            $privacy_comm = (new Request)->int('privacy_comm');
             if ($privacy <= 0 or $privacy > 3)
                 $privacy = 1;
             if ($privacy_comm <= 0 or $privacy_comm > 3)
@@ -75,7 +77,7 @@ if (Registry::get('logged')) {
 
         //################### Страница добавление фотографий в альбом ###################//
         case "add":
-            $aid = intFilter('aid');
+            $aid = (new Request)->int('aid');
             $user_id = $user_info['user_id'];
 
             //Проверка на существование альбома
@@ -99,7 +101,7 @@ if (Registry::get('logged')) {
         case "upload":
             NoAjaxQuery();
 
-            $aid = intFilter('aid');
+            $aid = (new Request)->int('aid');
             $user_id = $user_info['user_id'];
 
             //Проверка на существование альбома и то что загружает владелец альбома
@@ -220,7 +222,7 @@ if (Registry::get('logged')) {
         //################### Удаление фотографии из альбома ###################//
         case "del_photo":
             NoAjaxQuery();
-            $id = intFilter('id');
+            $id = (new Request)->int('id');
             $user_id = $user_info['user_id'];
 
             $row = $db->super_query("SELECT user_id, album_id, photo_name, comm_num, position FROM `photos` WHERE id = '{$id}'");
@@ -277,7 +279,7 @@ if (Registry::get('logged')) {
         //################### Установка новой обложки для альбома ###################//
         case "set_cover":
             NoAjaxQuery();
-            $id = intFilter('id');
+            $id = (new Request)->int('id');
             $user_id = $user_info['user_id'];
 
             //Выводи фотку из БД, если она есть
@@ -294,9 +296,9 @@ if (Registry::get('logged')) {
         //################### Сохранение описания к фотографии ###################//
         case "save_descr":
             NoAjaxQuery();
-            $id = intFilter('id');
+            $id = (new Request)->int('id');
             $user_id = $user_info['user_id'];
-            $descr = requestFilter('descr');
+            $descr = (new Request)->filter('descr');
 
             //Выводим фотку из БД, если она есть
             $row = $db->super_query("SELECT id FROM `photos` WHERE id = '{$id}' AND user_id = '{$user_id}'");
@@ -304,25 +306,25 @@ if (Registry::get('logged')) {
                 $db->query("UPDATE `photos` SET descr = '{$descr}' WHERE id = '{$id}' AND user_id = '{$user_id}'");
 
                 //Ответ скрипта
-                echo requestFilter('descr');
+                echo (new Request)->filter('descr');
             }
             break;
 
         //################### Страница редактирование фотографии ###################//
         case "editphoto":
             NoAjaxQuery();
-            $id = intFilter('id');
+            $id = (new Request)->int('id');
             $user_id = $user_info['user_id'];
             $row = $db->super_query("SELECT descr FROM `photos` WHERE id = '{$id}' AND user_id = '{$user_id}'");
             if ($row)
-                echo requestFilter('descr');
+                echo (new Request)->filter('descr');
 
             break;
 
         //################### Сохранение сортировки альбомов ###################//
         case "save_pos_albums":
             NoAjaxQuery();
-            $array = requestFilter('album');
+            $array = (new Request)->filter('album');
             $count = 1;
             $config = settings_get();
             //Если есть данные о массиве
@@ -343,7 +345,7 @@ if (Registry::get('logged')) {
         //################### Сохранение сортировки фотографий ###################//
         case "save_pos_photos":
             NoAjaxQuery();
-            $array = requestFilter('photo');
+            $array = (new Request)->filter('photo');
             $count = 1;
             $config = settings_get();
             //Если есть данные о массиве
@@ -367,7 +369,7 @@ if (Registry::get('logged')) {
         case "edit_page":
             NoAjaxQuery();
             $user_id = $user_info['user_id'];
-            $id = intFilter('id');
+            $id = (new Request)->int('id');
             $row = $db->super_query("SELECT aid, name, descr, privacy FROM `albums` WHERE aid = '{$id}' AND user_id = '{$user_id}'");
             if ($row) {
                 $album_privacy = explode('|', $row['privacy']);
@@ -387,13 +389,13 @@ if (Registry::get('logged')) {
         //################### Сохранение настроек альбома ###################//
         case "save_album":
             NoAjaxQuery();
-            $id = intFilter('id');
+            $id = (new Request)->int('id');
             $user_id = $user_info['user_id'];
-            $name = requestFilter('name', 25000, true);
-            $descr = requestFilter('descr');
+            $name = (new Request)->filter('name', 25000, true);
+            $descr = (new Request)->filter('descr');
 
-            $privacy = intFilter('privacy');
-            $privacy_comm = intFilter('privacy_comm');
+            $privacy = (new Request)->int('privacy');
+            $privacy_comm = (new Request)->int('privacy_comm');
             if ($privacy <= 0 or $privacy > 3) {
                 $privacy = 1;
             }
@@ -420,12 +422,12 @@ if (Registry::get('logged')) {
             NoAjaxQuery();
 
             $user_id = $user_info['user_id'];
-            $id = intFilter('id');
+            $id = (new Request)->int('id');
 
             if ($user_id and $id) {
 
                 //Для навигатор
-                $page = intFilter('page', 1);
+                $page = (new Request)->int('page', 1);
                 $gcount = 36;
                 $limit_page = ($page - 1) * $gcount;
 
@@ -475,10 +477,10 @@ if (Registry::get('logged')) {
         case "all_photos_box":
             NoAjaxQuery();
             $user_id = $user_info['user_id'];
-            $notes = intFilter('notes');
+            $notes = (new Request)->int('notes');
 
             //Для навигатор
-            $page = intFilter('page', 1);
+            $page = (new Request)->int('page', 1);
             $gcount = 36;
             $limit_page = ($page - 1) * $gcount;
 
@@ -611,8 +613,8 @@ HTML;
             $mobile_speedbar = 'Комментарии';
 
             $user_id = $user_info['user_id'];
-            $uid = intFilter('uid');
-            $aid = intFilter('aid');
+            $uid = (new Request)->int('uid');
+            $aid = (new Request)->int('aid');
 
             if ($aid) {
                 $uid = false;
@@ -621,7 +623,7 @@ HTML;
                 $aid = false;
             }
 
-            $page = intFilter('page', 1);
+            $page = (new Request)->int('page', 1);
             $gcount = 25;
             $limit_page = ($page - 1) * $gcount;
 
@@ -801,7 +803,7 @@ HTML;
         //################### Страница изменения порядка фотографий ###################//
         case "edit_pos_photos":
             $user_id = $user_info['user_id'];
-            $aid = intFilter('aid');
+            $aid = (new Request)->int('aid');
 
             $check_album = $db->super_query("SELECT name FROM `albums` WHERE aid = '{$aid}' AND user_id = '{$user_id}'");
 
@@ -864,9 +866,9 @@ HTML;
             $mobile_speedbar = 'Просмотр альбома';
 
             $user_id = $user_info['user_id'];
-            $aid = intFilter('aid');
+            $aid = (new Request)->int('aid');
 
-            $page = intFilter('page', 1);
+            $page = (new Request)->int('page', 1);
             $gcount = 25;
             $limit_page = ($page - 1) * $gcount;
 
@@ -987,7 +989,7 @@ HTML;
             $tpl->compile('info');
 
             //Выводим сами фотографии
-            $page = intFilter('page', 1);
+            $page = (new Request)->int('page', 1);
             $gcount = 25;
             $limit_page = ($page - 1) * $gcount;
             $sql_ = $db->super_query("SELECT tb1.mphoto_id, tb2.photo_name, album_id, user_id FROM `photos_mark` tb1, `photos` tb2 WHERE tb1.mphoto_id = tb2.id AND tb1.mapprove = 0 AND tb1.muser_id = '" . $user_info['user_id'] . "' ORDER by `mdate` DESC LIMIT " . $limit_page . ", " . $gcount, true);
@@ -1014,7 +1016,7 @@ HTML;
             //################### Просмотр всех альбомов юзера ###################//
             $mobile_speedbar = 'Альбомы';
 
-            $uid = intFilter('uid');
+            $uid = (new Request)->int('uid');
 
             //Выводим данные о владельце альбома(ов)
             $row_owner = $db->super_query("SELECT user_search_pref, user_albums_num, user_new_mark_photos FROM `users` WHERE user_id = '{$uid}'");

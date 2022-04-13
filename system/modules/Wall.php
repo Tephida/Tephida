@@ -1,10 +1,15 @@
 <?php
+/*
+ * Copyright (c) 2022 Tephida
+ *
+ *  For the full copyright and license information, please view the LICENSE
+ *   file that was distributed with this source code.
+ *
+ */
 
 namespace Mozg\modules;
 
-use FluffyDollop\Support\Filesystem;
-use FluffyDollop\Support\Thumbnail;
-use FluffyDollop\Support\ViiMail;
+use FluffyDollop\Http\Request;
 use Mozg\classes\Cache;
 use Mozg\classes\Flood;
 
@@ -19,14 +24,14 @@ class Wall extends \Mozg\classes\Module
 
 //        $wall = new WallProfile($tpl);
 //			NoAjaxQuery();
-        $wall_text = (new \FluffyDollop\Http\Request)->filter('wall_text');
+        $wall_text = (new Request)->filter('wall_text');
         if (Flood::check('identical', $wall_text)) {
             echo 'err_privacy';
         } else {
-            $attach_files = (new \FluffyDollop\Http\Request)->filter('attach_files', 25000, true);
-            $for_user_id = intFilter('for_user_id');
-            $fast_comm_id = intFilter('rid');
-            $answer_comm_id = intFilter('answer_comm_id');
+            $attach_files = (new Request)->filter('attach_files', 25000, true);
+            $for_user_id = (new Request)->int('for_user_id');
+            $fast_comm_id = (new Request)->int('rid');
+            $answer_comm_id = (new Request)->int('answer_comm_id');
             $str_date = time();
 
             $spam_action = (!$fast_comm_id) ? 'wall' : 'comments';
@@ -115,8 +120,8 @@ class Wall extends \Mozg\classes\Module
                             $attach_files = str_replace(array('vote|', '&amp;#124;', '&amp;raquo;', '&amp;quot;'), array('hack|', '&#124;', '&raquo;', '&quot;'), $attach_files);
 
                             //Голосование
-                            $vote_title = (new \FluffyDollop\Http\Request)->filter('vote_title', 25000, true);
-                            $vote_answer_1 = (new \FluffyDollop\Http\Request)->filter('vote_answer_1', 25000, true);
+                            $vote_title = (new Request)->filter('vote_title', 25000, true);
+                            $vote_answer_1 = (new Request)->filter('vote_answer_1', 25000, true);
 
                             $ansers_list = array();
 
@@ -124,7 +129,7 @@ class Wall extends \Mozg\classes\Module
 
                                 for ($vote_i = 1; $vote_i <= 10; $vote_i++) {
 
-                                    $vote_answer = (new \FluffyDollop\Http\Request)->filter('vote_answer_' . $vote_i, 25000, true);
+                                    $vote_answer = (new Request)->filter('vote_answer_' . $vote_i, 25000, true);
                                     $vote_answer = str_replace('|', '&#124;', $vote_answer);
 
                                     if ($vote_answer) {
@@ -285,9 +290,9 @@ class Wall extends \Mozg\classes\Module
 
 //                                $wall->comm_query("SELECT tb1.id, author_user_id, text, add_date, fasts_num, tb2.user_photo, user_search_pref, user_last_visit FROM `wall` tb1, `users` tb2 WHERE tb1.author_user_id = tb2.user_id AND tb1.fast_comm_id = '{$fast_comm_id}' ORDER by `add_date` ASC LIMIT {$limit_comm_num}, 3");
 
-                                if (intFilter('type') === 1) {
+                                if ((new Request)->int('type') === 1) {
 //                                    $wall->comm_template('news/news.tpl');
-                                } else if (intFilter('type') === 2) {
+                                } else if ((new Request)->int('type') === 2) {
 //                                    $wall->comm_template('wall/one_record.tpl');
                                 } else {
 //                                    $wall->comm_template('wall/record.tpl');

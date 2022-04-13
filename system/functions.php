@@ -11,7 +11,7 @@
 use FluffyDollop\Support\Registry;
 use FluffyDollop\Http\{Request, Response};
 use JetBrains\PhpStorm\ArrayShape;
-use Mozg\classes\{Cache, I18n};
+use Mozg\classes\{Cache, I18n, View};
 
 /**
  * @throws JsonException
@@ -596,7 +596,7 @@ function compileAdmin($tpl): void
 function view(?string $view, array $variables = []): bool
 {
     try {
-        echo (new Mozg\classes\View())->render($view, $variables);
+        echo (new View())->render($view, $variables);
         return true;
     } catch (Error) {
         return false;
@@ -606,7 +606,7 @@ function view(?string $view, array $variables = []): bool
 function view_json(?string $view, array $variables = []): string
 {
     try {
-        return (new Mozg\classes\View())->render($view, $variables);
+        return (new View())->render($view, $variables);
     } catch (Error|Exception) {
         return 'err 500';
     }

@@ -8,17 +8,16 @@
  *
  */
 
-use FluffyDollop\Support\{Filesystem, Registry};
-use FluffyDollop\Security\AntiSpam;
+use FluffyDollop\Support\{Registry};
+use FluffyDollop\Http\Request;
 use Mozg\classes\Cache;
 use Mozg\classes\Dialog;
-use Mozg\classes\Flood;
 
 NoAjaxQuery();
 
 $jsonResponse = array();
 if (Registry::get('logged')) {
-    $act = requestFilter('act');
+    $act = (new Request)->filter('act');
     $user_info = $user_info ?? Registry::get('user_info');
     $user_id = $user_info['user_id'];
     $db = Registry::get('db');
@@ -26,8 +25,8 @@ if (Registry::get('logged')) {
 
     switch ($act) {
         case 'exclude':
-            $id = intFilter('id');
-            $room_id = intFilter('room_id');
+            $id = (new Request)->int('id');
+            $room_id = (new Request)->int('room_id');
             if ($room_id) {
                 if ($id) {
                     $row = $db->super_query("SELECT id, photo FROM room WHERE id = '{$room_id}' and owner = '{$user_id}'");
@@ -85,7 +84,7 @@ if (Registry::get('logged')) {
             break;
 
         case 'uploadRoomAvatar':
-            $room_id = intFilter('room_id');
+            $room_id = (new Request)->int('room_id');
             if ($room_id) {
                 $row = $db->super_query("SELECT id, photo FROM room WHERE id = '{$room_id}' and owner = '{$user_id}'");
                 if ($row) {
@@ -162,7 +161,7 @@ if (Registry::get('logged')) {
             break;
 
         case 'viewRoomBox':
-            $room_id = intFilter('room_id');
+            $room_id = (new Request)->int('room_id');
             $row = $db->super_query("SELECT id, title, owner, photo FROM room WHERE id = '{$room_id}'");
             if ($row) {
                 $tpl->result['users'] = '';
@@ -200,8 +199,8 @@ if (Registry::get('logged')) {
             break;
 
         case 'saveRoomName':
-            $room_id = intFilter('room_id');
-            $title = substr(requestFilter('title'), 0, 100);
+            $room_id = (new Request)->int('room_id');
+            $title = substr((new Request)->filter('title'), 0, 100);
             if ($room_id) {
                 if ($title) {
                     $row = $db->super_query("SELECT id FROM room WHERE id = '{$room_id}' and owner = '{$user_id}'");
@@ -275,7 +274,7 @@ if (Registry::get('logged')) {
             break;
 
         case 'inviteToRoomBox':
-            $room_id = intFilter('room_id');
+            $room_id = (new Request)->int('room_id');
             $tpl->result['friends'] = '';
             /** fixme limit */
             $sql = $db->super_query("SELECT tb1.friend_id, tb2.user_photo, tb2.user_search_pref FROM friends tb1, users tb2 WHERE tb1.user_id = '{$user_id}' AND tb1.friend_id = tb2.user_id AND tb1.subscriptions = 0 AND tb1.friend_id NOT IN (SELECT oid2 FROM room_users WHERE room_id = '{$room_id}' and type != 2) ORDER by friends_date DESC", true);
@@ -298,8 +297,8 @@ if (Registry::get('logged')) {
             break;
 
         case 'createRoom':
-            $title = requestFilter('title');
-            $user_ids = requestFilter('user_ids');
+            $title = (new Request)->filter('title');
+            $user_ids = (new Request)->filter('user_ids');
             if ($title) {
                 $user_ids = array_diff($user_ids, array(''));
                 $user_ids = array_diff($user_ids, array($user_id));
@@ -363,8 +362,8 @@ if (Registry::get('logged')) {
             break;
 
         case 'inviteToRoom':
-            $room_id = intFilter('room_id');
-            $user_ids = requestFilter('user_ids');
+            $room_id = (new Request)->int('room_id');
+            $user_ids = (new Request)->filter('user_ids');
             if ($user_ids) {
                 if ($room_id) {
                     $user_ids = array_diff($user_ids, array(''));
@@ -431,7 +430,7 @@ if (Registry::get('logged')) {
             break;
 
         case 'exitFromRoom':
-            $room_id = intFilter('room_id');
+            $room_id = (new Request)->int('room_id');
             if ($room_id) {
                 $row = $db->super_query("SELECT id FROM room WHERE id = '{$room_id}' AND owner != '{$user_id}'");
                 if ($row) {
@@ -482,21 +481,21 @@ if (Registry::get('logged')) {
         case "send":
             NoAjaxQuery();
 
-            $room_id = intFilter('room_id');
-            $for_user_id = intFilter('for_user_id');
+            $room_id = (new Request)->int('room_id');
+            $for_user_id = (new Request)->int('for_user_id');
             if ($room_id) {
                 $for_user_id = 0;
             }
-            $msg = requestFilter('msg');
-            $my_ava = requestFilter('my_ava');
-            $my_name = requestFilter('my_name');
-            $attach_files = requestFilter('attach_files');
+            $msg = (new Request)->filter('msg');
+            $my_ava = (new Request)->filter('my_ava');
+            $my_name = (new Request)->filter('my_name');
+            $attach_files = (new Request)->filter('attach_files');
             $attach_files = str_replace('vote|', 'hack|', $attach_files);
 
 
             $dialog = new Dialog($user_id);
             $response = $dialog->send($for_user_id, $room_id, $msg, $attach_files);
-            _e_json($response);
+            (new \FluffyDollop\Http\Response)->_e_json($response);
 
 /*            $tpl->load_template('im/msg.tpl');
             $tpl->set('{ava}', $my_ava);
@@ -565,7 +564,7 @@ if (Registry::get('logged')) {
 
         case "read":
             NoAjaxQuery();
-            $msg_id = intFilter('msg_id');
+            $msg_id = (new Request)->int('msg_id');
             $check = $db->super_query("SELECT id, id2, date, room_id, history_user_id, room_id, read_ids, user_ids FROM `messages` WHERE id = '" . $msg_id . "' and find_in_set('{$user_id}', user_ids) AND not find_in_set('{$user_id}', del_ids) AND not find_in_set('{$user_id}', read_ids) and history_user_id != '{$user_id}'");
             if ($check) {
                 $read_ids = explode(',', $check['read_ids']);
@@ -585,10 +584,10 @@ if (Registry::get('logged')) {
 
         case "typograf":
             NoAjaxQuery();
-            $room_id = intFilter('room_id');
-            $for_user_id = intFilter('for_user_id');
+            $room_id = (new Request)->int('room_id');
+            $for_user_id = (new Request)->int('for_user_id');
             if (!$room_id) {
-                if (intFilter('stop') == 1) {
+                if ((new Request)->int('stop') == 1) {
                     Cache::mozgCreateCache("user_{$for_user_id}/typograf{$user_id}", "");
                 } else {
                     Cache::mozgCreateCache("user_{$for_user_id}/typograf{$user_id}", 1);
@@ -598,12 +597,12 @@ if (Registry::get('logged')) {
 
         case "update":
             NoAjaxQuery();
-            $room_id = intFilter('room_id');
-            $for_user_id = intFilter('for_user_id');
+            $room_id = (new Request)->int('room_id');
+            $for_user_id = (new Request)->int('for_user_id');
             if ($room_id) {
                 $for_user_id = 0;
             }
-            $last_id = intFilter('last_id');
+            $last_id = (new Request)->int('last_id');
             $sess_last_id = Cache::mozgCache('user_' . $user_id . '/im');
             if (!$room_id) {
                 $typograf = Cache::mozgCache("user_{$user_id}/typograf{$for_user_id}");
@@ -872,10 +871,10 @@ HTML;
 
         case "history":
             NoAjaxQuery();
-            $need_read = intFilter('need_read');
-            $room_id = intFilter('room_id');
-            $for_user_id = intFilter('for_user_id');
-            $first_id = intFilter('first_id');
+            $need_read = (new Request)->int('need_read');
+            $room_id = (new Request)->int('room_id');
+            $for_user_id = (new Request)->int('for_user_id');
+            $first_id = (new Request)->int('first_id');
             if ($room_id) {
                 $for_user_id = 0;
             }
@@ -1234,8 +1233,8 @@ HTML;
             break;
 
         case 'del':
-            $room_id = intFilter('room_id');
-            $im_user_id = intFilter('im_user_id');
+            $room_id = (new Request)->int('room_id');
+            $im_user_id = (new Request)->int('im_user_id');
             if ($room_id) {
                 $im_user_id = 0;
             }
@@ -1273,7 +1272,7 @@ HTML;
 
         case 'delet':
             NoAjaxQuery();
-            $mid = intFilter('mid');
+            $mid = (new Request)->int('mid');
             $row = $db->super_query("SELECT read_ids, room_id, history_user_id, del_ids FROM `messages` WHERE id = '{$mid}' AND find_in_set('{$user_id}', user_ids) and not find_in_set('{$user_id}', del_ids)");
             if ($row) {
                 $del_ids = $row['del_ids'] ? explode(',', $row['del_ids']) : array();

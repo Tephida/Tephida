@@ -8,13 +8,14 @@
  *
  */
 
+use FluffyDollop\Http\Request;
 use FluffyDollop\Support\Registry;
 use Mozg\classes\Cache;
 
 NoAjaxQuery();
 
 if (Registry::get('logged')) {
-    $act = requestFilter('act');
+    $act = (new Request)->filter('act');
     $user_info = $user_info ?? Registry::get('user_info');
     $user_id = $user_info['user_id'];
     $server_time = Registry::get('server_time');
@@ -25,7 +26,7 @@ if (Registry::get('logged')) {
         //################### Страница всех подарков ###################//
         case "view":
             NoAjaxQuery();
-            $for_user_id = intFilter('user_id');
+            $for_user_id = (new Request)->int('user_id');
             /** fixme limit */
             $sql_ = $db->super_query("SELECT gid, img, price FROM `gifts_list` ORDER by `gid` DESC", true);
             $config = settings_get();
@@ -44,13 +45,13 @@ if (Registry::get('logged')) {
         //################### Отправка подарка в БД ###################//
         case "send":
             NoAjaxQuery();
-            $for_user_id = intFilter('for_user_id');
-            $gift = intFilter('gift');
-            $privacy = intFilter('privacy');
+            $for_user_id = (new Request)->int('for_user_id');
+            $gift = (new Request)->int('gift');
+            $privacy = (new Request)->int('privacy');
             if ($privacy < 0 || $privacy > 3) {
                 $privacy = 1;
             }
-            $msg = requestFilter('msg');
+            $msg = (new Request)->filter('msg');
             $gifts = $db->super_query("SELECT price FROM `gifts_list` WHERE img = '" . $gift . "'");
 
             //Выводим текущий баланс свой
@@ -117,7 +118,7 @@ if (Registry::get('logged')) {
         //################### Удаление подарка ###################//
         case "del":
             NoAjaxQuery();
-            $gid = intFilter('gid');
+            $gid = (new Request)->int('gid');
             $row = $db->super_query("SELECT uid FROM `gifts` WHERE gid = '{$gid}'");
             if ($user_id == $row['uid']) {
                 $db->query("DELETE FROM `gifts` WHERE gid = '{$gid}'");
@@ -131,9 +132,9 @@ if (Registry::get('logged')) {
 
             //################### Всех подарков пользователя ###################//
             $metatags['title'] = $lang['gifts'];
-            $uid = intFilter('uid');
+            $uid = (new Request)->int('uid');
 
-            $page = intFilter('page', 1);
+            $page = (new Request)->int('page', 1);
             $gcount = 15;
             $limit_page = ($page - 1) * $gcount;
 
@@ -162,7 +163,7 @@ if (Registry::get('logged')) {
                 $tpl->set_block("'\\[yes\\](.*?)\\[/yes\\]'si", "");
             }
 
-            if (requestFilter('new') && $user_id == $uid) {
+            if ((new Request)->filter('new') && $user_id == $uid) {
                 $tpl->set('[new]', '');
                 $tpl->set('[/new]', '');
                 $tpl->set_block("'\\[no-new\\](.*?)\\[/no-new\\]'si", "");

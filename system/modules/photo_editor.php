@@ -8,11 +8,12 @@
  *
  */
 
-use FluffyDollop\Support\{Filesystem, Registry, Thumbnail};
+use FluffyDollop\Support\{Registry};
+use FluffyDollop\Http\Request;
 
 if (Registry::get('logged')) {
 
-    $act = requestFilter('act');
+    $act = (new Request)->filter('act');
     $user_info = $user_info ?? Registry::get('user_info');
     $user_id = $user_info['user_id'];
     $server_time = Registry::get('server_time');
@@ -24,7 +25,7 @@ if (Registry::get('logged')) {
         case "close":
 
             $tpl->load_template('photos/editor_close.tpl');
-            $tpl->set('{photo}', requestFilter('image'));
+            $tpl->set('{photo}', (new Request)->filter('image'));
             $tpl->compile('content');
 
             AjaxTpl($tpl);
@@ -38,10 +39,10 @@ if (Registry::get('logged')) {
             //Разрешенные форматы
             $allowed_files = explode(', ', $config['photo_format']);
 
-            $res_image = requestFilter('image');
+            $res_image = (new Request)->filter('image');
             $array = explode('.', $res_image);
             $format = end($array);
-            $pid = intFilter('pid');
+            $pid = (new Request)->int('pid');
 
             if (stripos($_SERVER['HTTP_REFERER'], 'pixlr.com') !== false && $pid && $format) {
 

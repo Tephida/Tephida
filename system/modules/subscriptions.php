@@ -8,6 +8,7 @@
  *
  */
 
+use FluffyDollop\Http\Request;
 use FluffyDollop\Support\Registry;
 use Mozg\classes\Cache;
 
@@ -15,7 +16,7 @@ NoAjaxQuery();
 
 if (Registry::get('logged')) {
     $db = Registry::get('db');
-    $act = requestFilter('act');
+    $act = (new Request)->filter('act');
     $user_info = $user_info ?? Registry::get('user_info');
     $user_id = $user_info['user_id'];
     $server_time = Registry::get('server_time');
@@ -24,7 +25,7 @@ if (Registry::get('logged')) {
 
         //################### Добавление юзера в подписки ###################//
         case "add":
-            $for_user_id = intFilter('for_user_id');
+            $for_user_id = (new Request)->int('for_user_id');
 
             //Проверка на существование юзера в подписках
             $check = $db->super_query("SELECT user_id FROM `friends` WHERE user_id = '{$user_id}' AND friend_id = '{$for_user_id}' AND subscriptions = 1");
@@ -64,7 +65,7 @@ if (Registry::get('logged')) {
 
         //################### Удаление юзера из подписок ###################//
         case "del":
-            $del_user_id = intFilter('del_user_id');
+            $del_user_id = (new Request)->int('del_user_id');
 
             //Проверка на существование юзера в подписках
             $check = $db->super_query("SELECT user_id FROM `friends` WHERE user_id = '{$user_id}' AND friend_id = '{$del_user_id}' AND subscriptions = 1");
@@ -81,11 +82,11 @@ if (Registry::get('logged')) {
         default:
 
             //################### Показ всех подписок юзера ###################//
-            $page = intFilter('page', 1);
+            $page = (new Request)->int('page', 1);
             $gcount = 24;
             $limit_page = ($page - 1) * $gcount;
-            $for_user_id = intFilter('for_user_id');
-            $subscr_num = intFilter('subscr_num');
+            $for_user_id = (new Request)->int('for_user_id');
+            $subscr_num = (new Request)->int('subscr_num');
 
             $sql_ = $db->super_query("SELECT tb1.friend_id, tb2.user_search_pref, user_photo, user_country_city_name, user_status FROM `friends` tb1, `users` tb2 WHERE tb1.user_id = '{$for_user_id}' AND tb1.friend_id = tb2.user_id AND tb1.subscriptions = 1 ORDER by `friends_date` DESC LIMIT {$limit_page}, {$gcount}", true);
 

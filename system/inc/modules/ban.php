@@ -8,11 +8,13 @@
  *
  */
 
-use FluffyDollop\Support\Filesystem;
+use FluffyDollop\Filesystem\Filesystem;
+use FluffyDollop\Http\Request;
+use FluffyDollop\Support\Registry;
 
 //Если добавляем
 if (isset($_POST['save'])) {
-    $ban_date = intFilter('days');
+    $ban_date = (new Request)->int('days');
     $this_time = $ban_date ? Registry::get('server_time') + ($ban_date * 60 * 60 * 24) : 0;
     if ($this_time)
         $always = 1;
@@ -22,7 +24,7 @@ if (isset($_POST['save'])) {
         $ip = htmlspecialchars(strip_tags(trim($_POST['ip'])));
     else
         $ip = "";
-    $descr = (new \FluffyDollop\Http\Request)->filter('descr');
+    $descr = (new Request)->filter('descr');
 
     if ($ip) {
         $row = $db->super_query("SELECT id FROM `banned` WHERE ip ='" . $ip . "'");

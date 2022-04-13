@@ -8,13 +8,14 @@
  *
  */
 
+use FluffyDollop\Http\Request;
 use FluffyDollop\Support\Registry;
 
 NoAjaxQuery();
 
 if (Registry::get('logged')) {
 
-    $act = requestFilter('act');
+    $act = (new Request)->filter('act');
     $user_info = $user_info ?? Registry::get('user_info');
     $user_id = $user_info['user_id'];
     $server_time = Registry::get('server_time');
@@ -25,10 +26,10 @@ if (Registry::get('logged')) {
         //################### Загрузка плейлиста ###################//
         default:
             //Если поиск
-            $query = requestFilter('query');
+            $query = (new Request)->filter('query');
             $query = strtr($query, array(' ' => '%')); //Заменяем пробелы на проценты чтоб поиск был точнее
-            $do_load = intFilter('doload');
-            $get_user_id = intFilter('get_user_id');
+            $do_load = (new Request)->int('doload');
+            $get_user_id = (new Request)->int('get_user_id');
             if ($get_user_id == $user_id || !$get_user_id) {
                 $get_user_id = $user_id;
             }
@@ -42,7 +43,7 @@ if (Registry::get('logged')) {
             }
             //Выводим из БД
             $limit_select = 20;
-            $page_cnt = intFilter('page_cnt', 0);
+            $page_cnt = (new Request)->int('page_cnt', 0);
             if ($page_cnt > 0) {
                 $page_cnt *= $limit_select;
             } else {

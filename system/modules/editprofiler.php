@@ -8,13 +8,15 @@
  *
  */
 
-use FluffyDollop\Support\{Filesystem, Registry, Status, Thumbnail};
+use FluffyDollop\Support\{Registry, Status};
+use FluffyDollop\Filesystem\Filesystem;
+use FluffyDollop\Http\Request;
 use Mozg\classes\Cache;
 
 NoAjaxQuery();
 
 if (Registry::get('logged')) {
-    $act = requestFilter('act');
+    $act = (new Request)->filter('act');
     $server_time = Registry::get('server_time');
     $metatags['title'] = $lang['editmyprofile'];
     $db = Registry::get('db');
@@ -215,22 +217,22 @@ if (Registry::get('logged')) {
         case "save_general":
             NoAjaxQuery();
 
-            $post_user_sex = intFilter('sex');
+            $post_user_sex = (new Request)->int('sex');
             if ($post_user_sex == 1 || $post_user_sex == 2) {
                 $user_sex = $post_user_sex;
             } else {
                 $user_sex = false;
             }
 
-            $user_day = intFilter('day');
-            $user_month = intFilter('month');
-            $user_year = intFilter('year');
-            $user_country = intFilter('country');
-            $user_city = intFilter('city');
+            $user_day = (new Request)->int('day');
+            $user_month = (new Request)->int('month');
+            $user_year = (new Request)->int('year');
+            $user_country = (new Request)->int('country');
+            $user_city = (new Request)->int('city');
             $user_birthday = $user_year . '-' . $user_month . '-' . $user_day;
 
             if ($user_sex) {
-                $post_sp = intFilter('sp');
+                $post_sp = (new Request)->int('sp');
                 if ($post_sp >= 1 && $post_sp <= 7) {
                     $sp = $post_sp;
                 } else {
@@ -238,7 +240,7 @@ if (Registry::get('logged')) {
                 }
 
                 if ($sp) {
-                    $sp_val = intFilter('sp_val');
+                    $sp_val = (new Request)->int('sp_val');
                     $user_sp = $sp . '|' . $sp_val;
                 }
             }
@@ -268,13 +270,13 @@ if (Registry::get('logged')) {
             NoAjaxQuery();
 
             $xfields = array();
-            $xfields['vk'] = requestFilter('vk', 200);
-            $xfields['od'] = requestFilter('od', 200);
-            $xfields['phone'] = requestFilter('phone', 200);
-            $xfields['skype'] = requestFilter('skype',  200);
-            $xfields['fb'] = requestFilter('fb',  200);
-            $xfields['icq'] = requestFilter('icq',  200);
-            $xfields['site'] = requestFilter('site',  200);
+            $xfields['vk'] = (new Request)->filter('vk', 200);
+            $xfields['od'] = (new Request)->filter('od', 200);
+            $xfields['phone'] = (new Request)->filter('phone', 200);
+            $xfields['skype'] = (new Request)->filter('skype', 200);
+            $xfields['fb'] = (new Request)->filter('fb', 200);
+            $xfields['icq'] = (new Request)->filter('icq', 200);
+            $xfields['site'] = (new Request)->filter('site', 200);
 
             $xfieldsdata = '';
             foreach ($xfields as $name => $value) {
@@ -297,14 +299,14 @@ if (Registry::get('logged')) {
             NoAjaxQuery();
 
             $xfields = array();
-            $xfields['activity'] = requestFilter('activity', 5000);
-            $xfields['interests'] = requestFilter('interests',  5000);
-            $xfields['myinfo'] = requestFilter('myinfo',  5000);
-            $xfields['music'] = requestFilter('music',  5000);
-            $xfields['kino'] = requestFilter('kino',  5000);
-            $xfields['books'] = requestFilter('books',  5000);
-            $xfields['games'] = requestFilter('games',  5000);
-            $xfields['quote'] = requestFilter('quote',  5000);
+            $xfields['activity'] = (new Request)->filter('activity', 5000);
+            $xfields['interests'] = (new Request)->filter('interests', 5000);
+            $xfields['myinfo'] = (new Request)->filter('myinfo', 5000);
+            $xfields['music'] = (new Request)->filter('music', 5000);
+            $xfields['kino'] = (new Request)->filter('kino', 5000);
+            $xfields['books'] = (new Request)->filter('books', 5000);
+            $xfields['games'] = (new Request)->filter('games', 5000);
+            $xfields['quote'] = (new Request)->filter('quote', 5000);
 
             $xfieldsdata = '';
             foreach ($xfields as $name => $value) {
@@ -396,10 +398,10 @@ if (Registry::get('logged')) {
 
             $row = $db->super_query("SELECT user_photo FROM `users` WHERE user_id = '{$user_info['user_id']}'");
 
-            $i_left = intFilter('i_left');
-            $i_top = intFilter('i_top');
-            $i_width = intFilter('i_width');
-            $i_height = intFilter('i_height');
+            $i_left = (new Request)->int('i_left');
+            $i_top = (new Request)->int('i_top');
+            $i_width = (new Request)->int('i_width');
+            $i_height = (new Request)->int('i_height');
 
             if ($row['user_photo'] and $i_width >= 100 and $i_height >= 100 and $i_left >= 0) {
                 $tmb = new Thumbnail(ROOT_DIR . "/uploads/users/{$user_info['user_id']}/{$row['user_photo']}");

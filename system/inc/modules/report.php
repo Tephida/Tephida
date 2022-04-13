@@ -8,6 +8,7 @@
  *
  */
 
+use FluffyDollop\Http\Request;
 use FluffyDollop\Support\Filesystem;
 use Mozg\classes\Cache;
 
@@ -164,7 +165,7 @@ if ($_GET['action'] === 'obj') {
 echoheader();
 echohtmlstart('Поиск по жалобам');
 
-$act = intFilter('act');
+$act = (new Request)->int('act');
 $type = (int)$_GET['type'];
 $se_uid = (int)$_GET['se_uid'];
 if (!$se_uid) {
@@ -185,7 +186,7 @@ if ($se_uid or $act or $type) {
 }
 
 //Выводим список
-$page = intFilter('page', 1);
+$page = (new Request)->int('page', 1);
 $gcount = 20;
 $limit_page = ($page - 1) * $gcount;
 

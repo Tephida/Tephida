@@ -11,6 +11,7 @@
 namespace Mozg\modules;
 
 use ErrorException;
+use FluffyDollop\Http\Request;
 use Mozg\classes\Cache;
 use Mozg\classes\DB;
 use Mozg\classes\Module;
@@ -30,7 +31,7 @@ class Profile extends Module
         $config = settings_get();
         $online_time = time() - $config['online_time'];
 
-        $id = intFilter('id');
+        $id = (new Request)->int('id');
         $user_info = Registry::get('user_info');
         $user_id = (int)$user_info['user_id'];
         $cache_folder = 'user_' . $id;
@@ -367,7 +368,7 @@ HTML;
                 //################### Загрузка стены ###################//
                 $params['wall_num'] = $row['user_wall_num'];
                 if ($row['user_wall_num']) {
-                    if ((new \FluffyDollop\Http\Request)->filter('uid')) {
+                    if ((new Request)->filter('uid')) {
 //                        $meta_tags['title'] = 'walls';
 
 //                        $tpl = new TpLSite(ROOT_DIR . '/templates/' . $config['temp'], $meta_tags);
@@ -379,16 +380,16 @@ HTML;
                     /** Показ последних 10 записей */
 
                     //Если вызвана страница стены, не со страницы юзера
-                    if (!isset($id) && !(new \FluffyDollop\Http\Request)->filter('uid')) {
-                        $rid = (new \FluffyDollop\Http\Request)->int('rid');
+                    if (!isset($id) && !(new Request)->filter('uid')) {
+                        $rid = (new Request)->int('rid');
 
-                        $id = (new \FluffyDollop\Http\Request)->int('uid');
+                        $id = (new Request)->int('uid');
                         if (!$id) {
                             $id = $user_id;
                         }
 
                         $walluid = $id;
-                        $page = intFilter('page', 1);
+                        $page = (new Request)->int('page', 1);
                         $gcount = 10;
                         $limit_page = ($page - 1) * $gcount;
 
@@ -413,7 +414,7 @@ HTML;
                                     $cnt_rec = $db->super_query("SELECT COUNT(*) AS cnt FROM `wall` WHERE for_user_id = '{$id}' AND author_user_id = '{$id}' AND fast_comm_id = 0");
                                 }
 
-                                $type = (new \FluffyDollop\Http\Request)->filter('type');
+                                $type = (new Request)->filter('type');
 
                                 if ($type === 'own') {
                                     $cnt_rec = $db->super_query("SELECT COUNT(*) AS cnt FROM `wall` WHERE for_user_id = '{$id}' AND author_user_id = '{$id}' AND fast_comm_id = 0");
@@ -467,7 +468,7 @@ HTML;
                     if (!$CheckBlackList) {
                         $where_sql = $where_sql ?? null;
 
-                        $page = intFilter('page', 1);
+                        $page = (new Request)->int('page', 1);
                         $gcount = 10;
                         $limit_page = ($page - 1) * $gcount;
                         $limit_select = 10;
@@ -505,7 +506,7 @@ HTML;
 
                             $for_user_id = null;//fixme
 
-                            if ($rid || $walluid || (new \FluffyDollop\Http\Request)->filter('uid')) {
+                            if ($rid || $walluid || (new Request)->filter('uid')) {
 //                                $wall->template('wall/one_record.tpl');
 //                                $wall->compile('content');
                                 $config = settings_get();
@@ -518,7 +519,7 @@ HTML;
                                 $gcount = $gcount ?? null;
                                 $page_type = $page_type ?? null;
 
-                                $type = (new \FluffyDollop\Http\Request)->filter('type');
+                                $type = (new Request)->filter('type');
 
                                 if (($cnt_rec['cnt'] > $gcount && $type == '') || $type === 'own') {
                                     navigation($gcount, $cnt_rec['cnt'], $page_type);
