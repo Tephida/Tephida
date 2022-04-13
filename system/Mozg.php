@@ -3,18 +3,18 @@
 namespace Mozg;
 
 use Error;
-use FluffyDollop\Support\Registry;
-use FluffyDollop\Support\Router;
-use Mozg\classes\I18n;
-
+use ErrorException;
+use FluffyDollop\Http\Request;
+use JsonException;
+use FluffyDollop\Support\{Registry, Router};
+use Mozg\classes\{I18n, DB};
 
 class Mozg
 {
     /**
-     * @throws \JsonException
-     * @throws \ErrorException
+     * @throws ErrorException|JsonException
      */
-    public static function initialize()
+    public static function initialize(): mixed
     {
         if (isset($_POST['PHPSESSID'])) {
             session_id($_POST['PHPSESSID']);
@@ -23,33 +23,24 @@ class Mozg
         $db = require ENGINE_DIR . '/data/db.php';
         Registry::set('db', $db);
 
-//lang
-        $checkLang = I18n::getLang();
-
+//        $checkLang = I18n::getLang();
         $lang = I18n::dictionary();
-
         Registry::set('lang', $lang);
 
-        $langdate = include ROOT_DIR . '/lang/' . $checkLang . '/date.php';
-
-        $config = settings_get();
-
+//        $config = settings_get();
         Registry::set('server_time', time());
-
-        include_once 'login.php';
-
-        if ($config['offline'] === 'yes') {
-            include ENGINE_DIR . '/modules/offline.php';
-        }
+        (new classes\Auth)->login();
+//        if ($config['offline'] === 'yes') {
+//            include ENGINE_DIR . '/modules/offline.php';
+//        }
         /** @var array $user_info */
         $user_info = Registry::get('user_info');
-
 //        if ($user_info['user_delet'] > 0) {
 //            include_once ENGINE_DIR . '/modules/profile_delet.php';
 //        }
-        if ((Registry::get('logged') && $user_info['user_ban_date'] >= Registry::get('server_time')) || (Registry::get('logged') && ($user_info['user_ban_date'] === '0'))) {
+//        if ((Registry::get('logged') && $user_info['user_ban_date'] >= Registry::get('server_time')) || (Registry::get('logged') && ($user_info['user_ban_date'] === '0'))) {
 //            include_once ENGINE_DIR . '/modules/profile_ban.php';
-        }
+//        }
 
         /**
          * Если юзер авторизован,
@@ -61,11 +52,6 @@ class Mozg
                 $user_info['user_lastupdate'] = 1;
             }
             $server_time = Registry::get('server_time');
-            if (date('Y-m-d', $user_info['user_lastupdate']) < date('Y-m-d', $server_time)) {
-                $sql_balance = ", user_balance = user_balance+1, user_lastupdate = '{$server_time}'";
-            } else {
-                $sql_balance = '';
-            }
             //Определяем устройство
             $device_user = 0;
             if (empty($user_info['user_last_visit'])) {
@@ -73,9 +59,23 @@ class Mozg
             }
 
             if (($user_info['user_last_visit'] + 60) <= $server_time) {
-                $db->query("UPDATE LOW_PRIORITY `users` SET user_logged_mobile = '{$device_user}',
-            user_last_visit = '{$server_time}' {$sql_balance} 
-            WHERE user_id = '{$user_info['user_id']}'");
+                if (date('Y-m-d', $user_info['user_lastupdate']) < date('Y-m-d', $server_time)) {
+                    DB::getDB()->update('users', [
+                        'user_logged_mobile' => $device_user,
+                        'user_last_visit' => $server_time,
+                        'user_balance' => 'user_balance + 1',
+                        'user_lastupdate' => $server_time,
+                    ], [
+                        'user_id' => $user_info['user_id']
+                    ]);
+                } else {
+                    DB::getDB()->update('users', [
+                        'user_logged_mobile' => $device_user,
+                        'user_last_visit' => $server_time,
+                    ], [
+                        'user_id' => $user_info['user_id']
+                    ]);
+                }
             }
         }
 
@@ -141,7 +141,6 @@ class Mozg
 
             '/editprofile/delete/photo' => 'Editprofile@deletePhoto',
 
-
         ];
         $router->add($routers);
 
@@ -151,23 +150,15 @@ class Mozg
             //todo update
             $module = isset($_GET['go']) ?
                 htmlspecialchars(strip_tags(stripslashes(trim(urldecode($_GET['go']))))) : 'main';
-            $action = (new \FluffyDollop\Http\Request)->filter('act');
+            $action = (new Request)->filter('act');
             $class = ucfirst($module);
             if (!class_exists($class) || $action === '' || $class === 'Wall') {
-//                try {
-//                    include_once ENGINE_DIR . '/mod.php';
-//                } catch (Error $e) {
-//                    if ($user_info['user_group'] == 1){
-//                        $text = $e->getMessage().' '.$e->getLine().' '.$e->getFile();
-//                    }else{
                 $text = 'error 500';
-//                    }
                 $params = [
                     'title' => 'error 500',
                     'text' => $text,
                 ];
                 view('info.info', $params);
-//                }
             } else {
                 $controller = new $class();
                 $params['params'] = '';

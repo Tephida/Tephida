@@ -8,11 +8,11 @@
  *
  */
 
-use FluffyDollop\Support\{Filesystem, Gzip, Registry, Templates};
+use FluffyDollop\Support\Registry;
+use FluffyDollop\Http\{Request, Response};
 use JetBrains\PhpStorm\ArrayShape;
 use FluffyDollop\Support\Cookie;
-use Mozg\classes\Cache;
-use Mozg\classes\I18n;
+use Mozg\classes\{Cache, I18n};
 use Mozg\modules\Lang;
 
 /**
@@ -610,13 +610,13 @@ function compileAdmin($tpl): void
     $tpl->set('{exit_lnk}', $exit_lnk);
     $tpl->set('{content}', $tpl->result['content']);
     $tpl->compile('main');
-    if ((new \FluffyDollop\Http\Request)->filter('ajax') === 'yes') {
+    if ((new Request)->filter('ajax') === 'yes') {
         $metatags['title'] = $metatags['title'] ?? 'Панель управления';
         $result_ajax = array(
             'title' => $metatags['title'],
             'content' => $tpl->result['info'] . $tpl->result['content']
         );
-        (new \FluffyDollop\Http\Response)->_e_json($result_ajax);
+        (new Response)->_e_json($result_ajax);
     } else {
         echo $tpl->result['main'];
     }

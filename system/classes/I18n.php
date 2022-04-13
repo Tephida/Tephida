@@ -46,7 +46,8 @@ class I18n
      */
     public static function dictionary(): array
     {
-        return require ROOT_DIR . '/lang/' . self::getLang() . '/site.php';
+        $file_name = '/site.php';
+        return require ROOT_DIR . '/lang/' . self::getLang() . $file_name;
     }
 
     /**
