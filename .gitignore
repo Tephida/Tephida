@@ -16,3 +16,4 @@
 /composer.phar
 /vendor/
 /.idea/
+/node_modules/
