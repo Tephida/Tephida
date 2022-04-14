@@ -8,11 +8,12 @@
  *
  */
 
+use FluffyDollop\Http\Request;
 use Mozg\classes\TplCp;
 
 $config = settings_get();
 
-$act = requestFilter('act');
+$act = (new Request)->filter('act');
 
 switch ($act) {
     case "save":

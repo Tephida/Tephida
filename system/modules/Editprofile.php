@@ -1,14 +1,24 @@
 <?php
+/*
+ * Copyright (c) 2022 Tephida
+ *
+ *  For the full copyright and license information, please view the LICENSE
+ *   file that was distributed with this source code.
+ *
+ */
 
 namespace Mozg\modules;
 
-use FluffyDollop\Support\Filesystem;
+use FluffyDollop\Filesystem\Filesystem;
 use FluffyDollop\Support\Status;
 use Mozg\classes\Cache;
 use Mozg\classes\Module;
 
 class Editprofile extends Module
 {
+    /**
+     * @throws \JsonException
+     */
     final public function deletePhoto(): void
     {
         NoAjaxQuery();

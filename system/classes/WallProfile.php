@@ -14,7 +14,6 @@ namespace Mozg\classes;
 
 use ErrorException;
 use FluffyDollop\Support\Registry;
-use FluffyDollop\Support\Templates;
 use JsonException;
 
 class WallProfile
@@ -157,7 +156,7 @@ class WallProfile
                         $audioId = intval($attach_type[1]);
                         $audioInfo = $db->super_query("SELECT artist, name, url FROM `audio` WHERE aid = '" . $audioId . "'");
                         if ($audioInfo) {
-                            if (intFilter('uid'))
+                            if ((new \FluffyDollop\Http\Request)->int('uid'))
                                 $appClassWidth = 'player_mini_mbar_wall_all';
                             else
                                 $appClassWidth = '';

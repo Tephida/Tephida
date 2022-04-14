@@ -8,6 +8,7 @@
  *
  */
 
+use FluffyDollop\Http\Request;
 use FluffyDollop\Support\Registry;
 use Mozg\classes\Cache;
 
@@ -18,8 +19,8 @@ if (Registry::get('logged')) {
     $user_info = $user_info ?? Registry::get('user_info');
     $user_id = $user_info['user_id'];
 
-    $vote_id = intFilter('vote_id');
-    $answer_id = intFilter('answer_id');
+    $vote_id = (new Request)->int('vote_id');
+    $answer_id = (new Request)->int('answer_id');
 
     $row = $db->super_query("SELECT COUNT(*) AS cnt FROM `votes_result` WHERE user_id = '{$user_id}' AND vote_id = '{$vote_id}'");
 

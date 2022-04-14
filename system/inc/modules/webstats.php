@@ -8,6 +8,8 @@
  *
  */
 
+use FluffyDollop\Http\Request;
+
 echoheader();
 echohtmlstart('Общая статистика сайта');
 
@@ -124,10 +126,10 @@ HTML;
 //$user_info = $user_info ?? Registry::get('user_info');
 //$user_info['user_id'] = 0;
 $server_time = time();
-$month = intFilter('m');
+$month = (new Request)->int('m');
 if ($month and $month <= 0 or $month > 12) $month = 1;
 
-$year = intFilter('y');
+$year = (new Request)->int('y');
 if ($year and $year < 2022 or $year > 2030) $year = 2022;
 
 if ($month and $year) {

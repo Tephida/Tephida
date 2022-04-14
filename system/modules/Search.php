@@ -1,7 +1,15 @@
 <?php
+/*
+ * Copyright (c) 2022 Tephida
+ *
+ *  For the full copyright and license information, please view the LICENSE
+ *   file that was distributed with this source code.
+ *
+ */
 
 namespace Mozg\modules;
 
+use FluffyDollop\Http\Request;
 use Mozg\classes\Module;
 
 class Search extends Module
@@ -24,15 +32,15 @@ class Search extends Module
         $query_string = preg_replace("/&page=[0-9]+/i", '', $_SERVER['QUERY_STRING']);
         $user_id = $user_info['user_id'] ?? null;
 
-        $page = (new \FluffyDollop\Http\Request)->int('page', 1);
+        $page = (new Request)->int('page', 1);
         $g_count = 20;
         $limit_page = ($page - 1) * $g_count;
 
-        if ((new \FluffyDollop\Http\Request)->filter('query') !== null) {
+        if ((new Request)->filter('query') !== null) {
 //                $query = $db->safesql(Validation::strip_data(urldecode($request['query']))));
-            $query = strip_data(urldecode((new \FluffyDollop\Http\Request)->filter('query')));
-            if ((new \FluffyDollop\Http\Request)->filter('n') !== null) {
-                $query = strip_data(urldecode((new \FluffyDollop\Http\Request)->filter('query')));
+            $query = strip_data(urldecode((new Request)->filter('query')));
+            if ((new Request)->filter('n') !== null) {
+                $query = strip_data(urldecode((new Request)->filter('query')));
             }
             //Заменяем пробелы на проценты чтоб поиск был точнее
             $query = strtr($query, array(' ' => '%'));
@@ -40,12 +48,12 @@ class Search extends Module
             $query = false;
         }
 
-        $type = intFilter('type');
+        $type = (new Request)->int('type');
 
         //Задаём параметры сортировки
         $sql_sort = '';
-        if (intFilter('sex') !== null) {
-            $sex = intFilter('sex');
+        if ((new Request)->int('sex') !== null) {
+            $sex = (new Request)->int('sex');
             $sql_sort .= "AND user_sex = '{$sex}'";
         } else {
             $sex = '';

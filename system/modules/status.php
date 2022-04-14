@@ -8,6 +8,7 @@
  *
  */
 
+use FluffyDollop\Http\Request;
 use FluffyDollop\Support\Registry;
 use Mozg\classes\Cache;
 
@@ -17,11 +18,11 @@ if (Registry::get('logged')) {
     $db = Registry::get('db');
     $user_info = $user_info ?? Registry::get('user_info');
     $user_id = $user_info['user_id'];
-    $text = requestFilter('text', 25000, true);
-    $public_id = intFilter('public_id');
+    $text = (new Request)->filter('text', 25000, true);
+    $public_id = (new Request)->int('public_id');
 
     //Если обновляем статус группы
-    if (requestFilter('act') == 'public') {
+    if ((new Request)->filter('act') == 'public') {
         $row = $db->super_query("SELECT admin FROM `communities` WHERE id = '{$public_id}'");
         if (stripos($row['admin'], "u{$user_id}|") !== false) {
             $db->query("UPDATE `communities` SET status_text = '{$text}' WHERE id = '{$public_id}'");
@@ -34,5 +35,5 @@ if (Registry::get('logged')) {
         Cache::mozgClearCacheFile('user_' . $user_id . '/profile_' . $user_id);
         Cache::mozgClearCache();
     }
-    echo requestFilter('text');
+    echo (new Request)->filter('text');
 }

@@ -8,9 +8,9 @@
  *
  */
 
+use FluffyDollop\Http\Request;
 use FluffyDollop\Support\Registry;
 use Mozg\classes\Cache;
-use Mozg\classes\TpLSite;
 
 NoAjaxQuery();
 
@@ -18,7 +18,7 @@ if (Registry::get('logged')) {
     $db = Registry::get('db');
     $user_info = $user_info ?? Registry::get('user_info');
     $user_id = $user_info['user_id'];
-    $act = requestFilter('act');
+    $act = (new Request)->filter('act');
 //    $metatags['title'] = $lang['settings'];
     $server_time = Registry::get('server_time');
 
@@ -26,9 +26,9 @@ if (Registry::get('logged')) {
         /** Изменение пароля */
         case 'newpass':
             NoAjaxQuery();
-            $old_pass = md5(md5(requestFilter('old_pass')));
-            $new_pass = md5(md5(requestFilter('new_pass')));
-            $new_pass2 = md5(md5(requestFilter('new_pass2')));
+            $old_pass = md5(md5((new Request)->filter('old_pass')));
+            $new_pass = md5(md5((new Request)->filter('new_pass')));
+            $new_pass2 = md5(md5((new Request)->filter('new_pass2')));
             //Выводим текущий пароль
             /** @var array $row */
             $row = $db->super_query("SELECT user_password FROM `users` WHERE user_id = '{$user_id}'");
@@ -47,8 +47,8 @@ if (Registry::get('logged')) {
         /** Изменение имени */
         case "newname":
             NoAjaxQuery();
-            $user_name = requestFilter('name');
-            $user_lastname = ucfirst(requestFilter('lastname'));
+            $user_name = (new Request)->filter('name');
+            $user_lastname = ucfirst((new Request)->filter('lastname'));
             //Проверка имени
             if (!empty($user_name)) {
                 if (strlen($user_name) >= 2) {
@@ -89,11 +89,11 @@ if (Registry::get('logged')) {
         /** Сохранение настроек приватности */
         case "saveprivacy":
             NoAjaxQuery();
-            $val_msg = intFilter('val_msg');
-            $val_wall1 = intFilter('val_wall1');
-            $val_wall2 = intFilter('val_wall2');
-            $val_wall3 = intFilter('val_wall3');
-            $val_info = intFilter('val_info');
+            $val_msg = (new Request)->int('val_msg');
+            $val_wall1 = (new Request)->int('val_wall1');
+            $val_wall2 = (new Request)->int('val_wall2');
+            $val_wall3 = (new Request)->int('val_wall3');
+            $val_info = (new Request)->int('val_info');
             if ($val_msg <= 0 || $val_msg > 3) $val_msg = 1;
             if ($val_wall1 <= 0 || $val_wall1 > 3) $val_wall1 = 1;
             if ($val_wall2 <= 0 || $val_wall2 > 3) $val_wall2 = 1;
@@ -134,7 +134,7 @@ if (Registry::get('logged')) {
         /** Добавление в черный список */
         case "addblacklist":
             NoAjaxQuery();
-            $bad_user_id = intFilter('bad_user_id');
+            $bad_user_id = (new Request)->int('bad_user_id');
             //Проверяем на существование юзера
             $row = $db->super_query("SELECT COUNT(*) AS cnt FROM `users` WHERE user_id = '{$bad_user_id}'");
             //Выводим свой блек лист для проверки
@@ -170,7 +170,7 @@ if (Registry::get('logged')) {
         /** Удаление из черного списка */
         case "delblacklist":
             NoAjaxQuery();
-            $bad_user_id = intFilter('bad_user_id');
+            $bad_user_id = (new Request)->int('bad_user_id');
             //Проверяем на существование юзера
             $row = $db->super_query("SELECT COUNT(*) AS cnt FROM `users` WHERE user_id = '{$bad_user_id}'");
             //Выводим свой блеклист для проверка
@@ -224,7 +224,7 @@ if (Registry::get('logged')) {
             include_once ENGINE_DIR . '/classes/mail.php';
             $config = settings_get();
             $mail = new \FluffyDollop\Support\ViiMail($config);
-            $email = requestFilter('email', 25000, true);
+            $email = (new Request)->filter('email', 25000, true);
             //Проверка E-mail
             if (filter_var($email, FILTER_VALIDATE_EMAIL))
                 $ok_email = true;
@@ -332,8 +332,8 @@ HTML;
             $tpl->set('{code-1}', 'no_display');
             $tpl->set('{code-2}', 'no_display');
             $tpl->set('{code-3}', 'no_display');
-            $code1 = strip_data(requestFilter('code1'));
-            $code2 = strip_data(requestFilter('code2'));
+            $code1 = strip_data((new Request)->filter('code1'));
+            $code2 = strip_data((new Request)->filter('code2'));
             if (strlen($code1) == 32) {
                 $code2 = '';
                 $check_code1 = $db->super_query("SELECT email FROM `restore` WHERE hash = '{$code1}' AND ip = '{$_IP}'");

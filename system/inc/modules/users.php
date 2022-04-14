@@ -8,21 +8,21 @@
  *
  */
 
-use Mozg\classes\TplCp;
+use FluffyDollop\Http\Request;
 
-$se_uid = intFilter('se_uid');
+$se_uid = (new Request)->int('se_uid');
 if (!$se_uid) {
     $se_uid = '';
 }
 
-$sort = intFilter('sort');
+$sort = (new Request)->int('sort');
 //$se_name = $_GET['se_name'] ?? '';
 //$se_email = $_GET['se_email'] ?? '';
 
-$se_name = requestFilter('se_name', 25000, true);
-$se_email = requestFilter('se_email', 25000, true);
-$ban = requestFilter('ban');
-$delete = requestFilter('delete');
+$se_name = (new Request)->filter('se_name', 25000, true);
+$se_email = (new Request)->filter('se_email', 25000, true);
+$ban = (new Request)->filter('ban');
+$delete = (new Request)->filter('delete');
 
 $regdate = $_GET['regdate'] ?? null;//todo
 $where_sql = '';
@@ -62,7 +62,7 @@ $order_sql = "`user_reg_date` DESC";
 $selsorlist = installationSelected($sort, '<option value="1">по алфавиту</option><option value="2">по дате регистрации</option><option value="3">по дате посещения</option>');
 
 //Выводим список людей
-$page = intFilter('page', 1);
+$page = (new \FluffyDollop\Http\Request)->int('page', 1);
 
 $gcount = 20;
 $limit_page = ($page - 1) * $gcount;

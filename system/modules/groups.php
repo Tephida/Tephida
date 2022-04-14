@@ -8,18 +8,20 @@
  *
  */
 
-use FluffyDollop\Support\{Filesystem, Registry, Thumbnail};
+use FluffyDollop\Support\{Registry};
+use FluffyDollop\Filesystem\Filesystem;
+use FluffyDollop\Http\Request;
 use Mozg\classes\Cache;
 use Mozg\classes\Flood;
 
 NoAjaxQuery();
 
 if (Registry::get('logged')) {
-    $act = requestFilter('act');
+    $act = (new Request)->filter('act');
     $user_info = $user_info ?? Registry::get('user_info');
     $user_id = $user_info['user_id'];
     $server_time = Registry::get('server_time');
-    $page = intFilter('page', 1);
+    $page = (new Request)->int('page', 1);
     $db = Registry::get('db');
     $gcount = 20;
     $limit_page = ($page - 1) * $gcount;
@@ -31,7 +33,7 @@ if (Registry::get('logged')) {
         //################### Отправка сообщества БД ###################//
         case "send":
             NoAjaxQuery();
-            $title = requestFilter('title', 60, true);
+            $title = (new Request)->filter('title', 60, true);
             if (Flood::check('groups')) {
                 echo 'no_title';//fixme
             } else if (!empty($title)) {
@@ -55,7 +57,7 @@ if (Registry::get('logged')) {
         //################### Выход из сообщества ###################//
         case "exit":
             NoAjaxQuery();
-            $id = intFilter('id');
+            $id = (new Request)->int('id');
             $check = $db->super_query("SELECT COUNT(*) AS cnt FROM `friends` WHERE friend_id = '{$id}' AND user_id = '{$user_id}' AND subscriptions = 2");
             if ($check['cnt']) {
                 $db->query("DELETE FROM `friends` WHERE friend_id = '{$id}' AND user_id = '{$user_id}' AND subscriptions = 2");
@@ -87,7 +89,7 @@ if (Registry::get('logged')) {
         case "loadphoto_page":
             NoAjaxQuery();
             $tpl->load_template('groups/load_photo.tpl');
-            $tpl->set('{id}', intFilter('id'));
+            $tpl->set('{id}', (new Request)->int('id'));
             $tpl->compile('content');
             AjaxTpl($tpl);
             break;
@@ -96,7 +98,7 @@ if (Registry::get('logged')) {
         case "loadphoto":
             NoAjaxQuery();
 
-            $id = intFilter('id');
+            $id = (new Request)->int('id');
 
             //Проверка на то, что фото обновляет адмиH
             $row = $db->super_query("SELECT admin, photo, del, ban FROM `communities` WHERE id = '{$id}'");
@@ -170,7 +172,7 @@ if (Registry::get('logged')) {
         //################### Удаление фото сообщества ###################//
         case "delphoto":
             NoAjaxQuery();
-            $id = intFilter('id');
+            $id = (new Request)->int('id');
 
             //Проверка на то, что фото удалит админ
             $row = $db->super_query("SELECT photo, admin FROM `communities` WHERE id = '{$id}'");
@@ -190,7 +192,7 @@ if (Registry::get('logged')) {
         //################### Вступление в сообщество ###################//
         case "login":
             NoAjaxQuery();
-            $id = intFilter('id');
+            $id = (new Request)->int('id');
 
             //Проверка на существования юзера в сообществе
             $row = $db->super_query("SELECT ulist, del, ban FROM `communities` WHERE id = '{$id}'");
@@ -247,7 +249,7 @@ if (Registry::get('logged')) {
         case "addfeedback_pg":
             NoAjaxQuery();
             $tpl->load_template('groups/addfeedback_pg.tpl');
-            $tpl->set('{id}', intFilter('id'));
+            $tpl->set('{id}', (new Request)->int('id'));
             $tpl->compile('content');
             AjaxTpl($tpl);
 
@@ -256,11 +258,11 @@ if (Registry::get('logged')) {
         //################### Добавления контакт в БД ###################//
         case "addfeedback_db":
             NoAjaxQuery();
-            $id = intFilter('id');
-            $upage = intFilter('upage');
-            $office = requestFilter('office', 25000, true);
-            $phone = requestFilter('phone', 25000, true);
-            $email = requestFilter('email', 25000, true);
+            $id = (new Request)->int('id');
+            $upage = (new Request)->int('upage');
+            $office = (new Request)->filter('office', 25000, true);
+            $phone = (new Request)->filter('phone', 25000, true);
+            $email = (new Request)->filter('email', 25000, true);
 
             //Проверка на то, что действиие делает админ
             $checkAdmin = $db->super_query("SELECT admin FROM `communities` WHERE id = '{$id}'");
@@ -283,8 +285,8 @@ if (Registry::get('logged')) {
         //################### Удаление контакта из БД ###################//
         case "delfeedback":
             NoAjaxQuery();
-            $id = intFilter('id');
-            $uid = intFilter('uid');
+            $id = (new Request)->int('id');
+            $uid = (new Request)->int('uid');
 
             //Проверка на то, что действие делает админ
             $checkAdmin = $db->super_query("SELECT admin FROM `communities` WHERE id = '{$id}'");
@@ -302,7 +304,7 @@ if (Registry::get('logged')) {
         //################### Выводим фотографию юзера при указании ИД страницы ###################//
         case "checkFeedUser":
             NoAjaxQuery();
-            $id = intFilter('id');
+            $id = (new Request)->int('id');
             $row = $db->super_query("SELECT user_photo, user_search_pref FROM `users` WHERE user_id = '{$id}'");
             if ($row) echo $row['user_search_pref'] . "|" . $row['user_photo'];
 
@@ -311,11 +313,11 @@ if (Registry::get('logged')) {
         //################### Сохранение отредактированных данных контакт в БД ###################//
         case "editfeeddave":
             NoAjaxQuery();
-            $id = intFilter('id');
-            $upage = intFilter('uid');
-            $office = requestFilter('office', 25000, true);
-            $phone = requestFilter('phone', 25000, true);
-            $email = requestFilter('email', 25000, true);
+            $id = (new Request)->int('id');
+            $upage = (new Request)->int('uid');
+            $office = (new Request)->filter('office', 25000, true);
+            $phone = (new Request)->filter('phone', 25000, true);
+            $email = (new Request)->filter('email', 25000, true);
 
             //Проверка на то, что действие делает админ
             $checkAdmin = $db->super_query("SELECT admin FROM `communities` WHERE id = '{$id}'");
@@ -337,7 +339,7 @@ if (Registry::get('logged')) {
         //################### Все контакты (БОКС) ###################//
         case "allfeedbacklist":
             NoAjaxQuery();
-            $id = intFilter('id');
+            $id = (new Request)->int('id');
 
             //Выводим ИД админа
             $owner = $db->super_query("SELECT admin FROM `communities` WHERE id = '{$id}'");
@@ -383,14 +385,14 @@ if (Registry::get('logged')) {
         //################### Сохранение отредактированных данных группы ###################//
         case "saveinfo":
             NoAjaxQuery();
-            $id = intFilter('id');
-            $comments = intFilter('comments');
-            $discussion = intFilter('discussion');
-            $title = requestFilter('title', 25000, true);
-            $adres_page = strtolower(requestFilter('adres_page', 25000, true));
-            $descr = requestFilter('descr', 5000);
+            $id = (new Request)->int('id');
+            $comments = (new Request)->int('comments');
+            $discussion = (new Request)->int('discussion');
+            $title = (new Request)->filter('title', 25000, true);
+            $adres_page = strtolower((new Request)->filter('adres_page', 25000, true));
+            $descr = (new Request)->filter('descr', 5000);
 
-            $web = requestFilter('web', 25000, true);
+            $web = (new Request)->filter('web', 25000, true);
 
             $web = str_replace(array('"', "'"), '', $web);
 
@@ -435,7 +437,7 @@ if (Registry::get('logged')) {
         //################### Выводим информацию о пользователе которого будем делать админом ###################//
         case "new_admin":
             NoAjaxQuery();
-            $new_admin_id = intFilter('new_admin_id');
+            $new_admin_id = (new Request)->int('new_admin_id');
             $row = $db->super_query("SELECT tb1.user_id, tb2.user_photo, user_search_pref, user_sex FROM `friends` tb1, `users` tb2 WHERE tb1.user_id = '{$new_admin_id}' AND tb1.user_id = tb2.user_id AND tb1.subscriptions = 2");
             if ($row && $user_id !== $new_admin_id) {
                 if ($row['user_photo']) {
@@ -458,8 +460,8 @@ if (Registry::get('logged')) {
         //################### Запись нового админа в БД ###################//
         case "send_new_admin":
             NoAjaxQuery();
-            $id = intFilter('id');
-            $new_admin_id = intFilter('new_admin_id');
+            $id = (new Request)->int('id');
+            $new_admin_id = (new Request)->int('new_admin_id');
             $row = $db->super_query("SELECT admin, ulist FROM `communities` WHERE id = '{$id}'");
             if (stripos($row['admin'], "u{$user_id}|") !== false and stripos($row['admin'], "u{$new_admin_id}|") === false and stripos($row['ulist'], "|{$user_id}|") !== false) {
                 $admin = $row['admin'] . "u{$new_admin_id}|";
@@ -471,8 +473,8 @@ if (Registry::get('logged')) {
         //################### Удаление админа из БД ###################//
         case "deladmin":
             NoAjaxQuery();
-            $id = intFilter('id');
-            $uid = intFilter('uid');
+            $id = (new Request)->int('id');
+            $uid = (new Request)->int('uid');
             $row = $db->super_query("SELECT admin, ulist, real_admin FROM `communities` WHERE id = '{$id}'");
             if (stripos($row['admin'], "u{$user_id}|") !== false and stripos($row['admin'], "u{$uid}|") !== false and $uid != $row['real_admin']) {
                 $admin = str_replace("u{$uid}|", '', $row['admin']);
@@ -484,9 +486,9 @@ if (Registry::get('logged')) {
         //################### Добавление записи на стену ###################//
         case "wall_send":
             NoAjaxQuery();
-            $id = intFilter('id');
-            $wall_text = requestFilter('wall_text');
-            $attach_files = requestFilter('attach_files', 25000, true);
+            $id = (new Request)->int('id');
+            $wall_text = (new Request)->filter('wall_text');
+            $attach_files = (new Request)->filter('attach_files', 25000, true);
 
             //Проверка на админа
             $row = $db->super_query("SELECT admin, del, ban FROM `communities` WHERE id = '{$id}'");
@@ -539,15 +541,15 @@ if (Registry::get('logged')) {
                 $attach_files = str_replace(array('vote|', '&amp;#124;', '&amp;raquo;', '&amp;quot;'), array('hack|', '&#124;', '&raquo;', '&quot;'), $attach_files);
 
                 //Голосование
-                $vote_title = requestFilter('vote_title', 25000, true);
-                $vote_answer_1 = requestFilter('vote_answer_1', 25000, true);
+                $vote_title = (new Request)->filter('vote_title', 25000, true);
+                $vote_answer_1 = (new Request)->filter('vote_answer_1', 25000, true);
 
                 $ansers_list = array();
 
                 if (!empty($vote_title) && !empty($vote_answer_1)) {
 
                     for ($vote_i = 1; $vote_i <= 10; $vote_i++) {
-                        $vote_answer = requestFilter('vote_answer_' . $vote_i, 25000, true);
+                        $vote_answer = (new Request)->filter('vote_answer_' . $vote_i, 25000, true);
                         $vote_answer = str_replace('|', '&#124;', $vote_answer);
                         if ($vote_answer) {
                             $ansers_list[] = $vote_answer;
@@ -599,10 +601,10 @@ if (Registry::get('logged')) {
             if (Flood::check('comments')) {
                 //fixme
             } else {
-                $rec_id = intFilter('rec_id');
-                $public_id = intFilter('public_id');
-                $wall_text = requestFilter('wall_text');
-                $answer_comm_id = intFilter('answer_comm_id');
+                $rec_id = (new Request)->int('rec_id');
+                $public_id = (new Request)->int('public_id');
+                $wall_text = (new Request)->filter('wall_text');
+                $answer_comm_id = (new Request)->int('answer_comm_id');
 
                 //Проверка на админа и проверяем включены ли комменты
                 $row = $db->super_query("SELECT tb1.fasts_num, public_id, tb2.admin, comments FROM `communities_wall` tb1, `communities` tb2 WHERE tb1.public_id = tb2.id AND tb1.id = '{$rec_id}'");
@@ -746,8 +748,8 @@ if (Registry::get('logged')) {
         //################### Удаление записи ###################//
         case "wall_del":
             NoAjaxQuery();
-            $rec_id = intFilter('rec_id');
-            $public_id = intFilter('public_id');
+            $rec_id = (new Request)->int('rec_id');
+            $public_id = (new Request)->int('public_id');
 
             //Проверка на админа и проверяем включены ли комменты
             if ($public_id) {
@@ -784,8 +786,8 @@ if (Registry::get('logged')) {
         //################### Показ всех комментариев к записи ###################//
         case "all_comm":
             NoAjaxQuery();
-            $rec_id = intFilter('rec_id');
-            $public_id = intFilter('public_id');
+            $rec_id = (new Request)->int('rec_id');
+            $public_id = (new Request)->int('public_id');
 
             //Проверка на админа и проверяем включены ли комменты
             $row = $db->super_query("SELECT tb2.admin, comments FROM `communities_wall` tb1, `communities` tb2 WHERE tb1.public_id = tb2.id AND tb1.id = '{$rec_id}'");
@@ -793,7 +795,7 @@ if (Registry::get('logged')) {
             if ($row['comments'] or stripos($row['admin'], "u{$user_id}|") !== false) {
                 $sql_comments = $db->super_query("SELECT tb1.id, public_id, text, add_date, tb2.user_photo, user_search_pref FROM `communities_wall` tb1, `users` tb2 WHERE tb1.public_id = tb2.user_id AND tb1.fast_comm_id = '{$rec_id}' ORDER by `add_date` ASC", true);
                 $tpl->load_template('groups/record.tpl');
-                //Сообственно выводим комменты
+                //Собственно выводим комменты
                 foreach ($sql_comments as $row_comments) {
                     $tpl->set('{public-id}', $public_id);
                     $tpl->set('{name}', $row_comments['user_search_pref']);
@@ -861,10 +863,10 @@ if (Registry::get('logged')) {
         //################### Страница загрузки фото в сообщество ###################//
         case "photos":
             NoAjaxQuery();
-            $public_id = intFilter('public_id');
+            $public_id = (new Request)->int('public_id');
             $rowPublic = $db->super_query("SELECT admin, photos_num FROM `communities` WHERE id = '{$public_id}'");
             if (stripos($rowPublic['admin'], "u{$user_id}|") !== false) {
-                $page = intFilter('page', 1);
+                $page = (new Request)->int('page', 1);
 
                 $gcount = 36;
                 $limit_page = ($page - 1) * $gcount;
@@ -907,10 +909,11 @@ if (Registry::get('logged')) {
         //################### Выводим инфу о видео при прикреплении видео на стену ###################//
         case "select_video_info":
             NoAjaxQuery();
-            $video_id = intFilter('video_id');
+            $video_id = (new Request)->int('video_id');
             $row = $db->super_query("SELECT photo FROM `videos` WHERE id = '" . $video_id . "'");
             if ($row) {
-                $photo = end(explode('/', $row['photo']));
+                $array1 = explode('/', $row['photo']);
+                $photo = end($array1);
                 echo $photo;
             } else {
                 echo '1';
@@ -921,7 +924,7 @@ if (Registry::get('logged')) {
         //################### Ставим мне нравится ###################//
         case "wall_like_yes":
             NoAjaxQuery();
-            $rec_id = intFilter('rec_id');
+            $rec_id = (new Request)->int('rec_id');
             $row = $db->super_query("SELECT likes_users FROM `communities_wall` WHERE id = '" . $rec_id . "'");
             if ($row && stripos($row['likes_users'], "u{$user_id}|") === false) {
                 $likes_users = "u{$user_id}|" . $row['likes_users'];
@@ -934,7 +937,7 @@ if (Registry::get('logged')) {
         //################### Убераем мне нравится ###################//
         case "wall_like_remove":
             NoAjaxQuery();
-            $rec_id = intFilter('rec_id');
+            $rec_id = (new Request)->int('rec_id');
             $row = $db->super_query("SELECT likes_users FROM `communities_wall` WHERE id = '" . $rec_id . "'");
             if (stripos($row['likes_users'], "u{$user_id}|") !== false) {
                 $likes_users = str_replace("u{$user_id}|", '', $row['likes_users']);
@@ -947,7 +950,7 @@ if (Registry::get('logged')) {
         //################### Выводим последних 7 юзеров кто поставил "Мне нравится" ###################//
         case "wall_like_users_five":
             NoAjaxQuery();
-            $rec_id = intFilter('rec_id');
+            $rec_id = (new Request)->int('rec_id');
             $sql_ = $db->super_query("SELECT tb1.user_id, tb2.user_photo FROM `communities_wall_like` tb1, `users` tb2 WHERE tb1.user_id = tb2.user_id AND tb1.rec_id = '{$rec_id}' ORDER by `date` DESC LIMIT 0, 7", true);
             if ($sql_) {
                 foreach ($sql_ as $row) {
@@ -964,10 +967,10 @@ if (Registry::get('logged')) {
         //################### Выводим всех юзеров которые поставили "мне нравится" ###################//
         case "all_liked_users":
             NoAjaxQuery();
-            $rid = intFilter('rid');
-            $liked_num = intFilter('liked_num');
+            $rid = (new Request)->int('rid');
+            $liked_num = (new Request)->int('liked_num');
 
-            $page = intFilter('page', 1);
+            $page = (new Request)->int('page', 1);
 
             $gcount = 24;
             $limit_page = ($page - 1) * $gcount;
@@ -1013,7 +1016,7 @@ if (Registry::get('logged')) {
         //################### Рассказать друзьям "Мне нравится" ###################//
         case "wall_tell":
             NoAjaxQuery();
-            $rid = intFilter('rec_id');
+            $rid = (new Request)->int('rec_id');
 
             //Проверка на существование записи
             $row = $db->super_query("SELECT add_date, text, public_id, attach, tell_uid, tell_date, public FROM `communities_wall` WHERE fast_comm_id = 0 AND id = '{$rid}'");
@@ -1054,13 +1057,13 @@ if (Registry::get('logged')) {
         case "all_people":
             NoAjaxQuery();
 
-            $page = intFilter('page', 1);
+            $page = (new Request)->int('page', 1);
 
             $gcount = 24;
             $limit_page = ($page - 1) * $gcount;
 
-            $public_id = intFilter('public_id');
-            $subscr_num = intFilter('num');
+            $public_id = (new Request)->int('public_id');
+            $subscr_num = (new Request)->int('num');
 
             $sql_ = $db->super_query("SELECT tb1.user_id, tb2.user_name, user_lastname, user_photo FROM `friends` tb1, `users` tb2 WHERE tb1.friend_id = '{$public_id}' AND tb1.user_id = tb2.user_id AND tb1.subscriptions = 2 ORDER by `friends_date` DESC LIMIT {$limit_page}, {$gcount}", true);
 
@@ -1095,13 +1098,13 @@ if (Registry::get('logged')) {
 
         //################### Показ всех сообщества юзера на которые он подписан (BOX) ###################//
         case "all_groups_user":
-            $page = intFilter('page', 1);
+            $page = (new Request)->int('page', 1);
 
             $gcount = 20;
             $limit_page = ($page - 1) * $gcount;
 
-            $for_user_id = intFilter('for_user_id');
-            $subscr_num = intFilter('num');
+            $for_user_id = (new Request)->int('for_user_id');
+            $subscr_num = (new Request)->int('num');
 
             $sql_ = $db->super_query("SELECT tb1.friend_id, tb2.id, title, photo, traf, adres FROM `friends` tb1, `communities` tb2 WHERE tb1.user_id = '{$for_user_id}' AND tb1.friend_id = tb2.id AND tb1.subscriptions = 2 ORDER by `traf` DESC LIMIT {$limit_page}, {$gcount}", true);
 
@@ -1136,8 +1139,8 @@ if (Registry::get('logged')) {
         //################### Одна запись со стены ###################//
         case "wallgroups":
 
-            $id = intFilter('id');
-            $pid = intFilter('pid');
+            $id = (new Request)->int('id');
+            $pid = (new Request)->int('pid');
 
             $row = $db->super_query("SELECT id, adres, del, ban FROM `communities` WHERE id = '{$pid}'");
 
@@ -1178,7 +1181,7 @@ if (Registry::get('logged')) {
 
             NoAjaxQuery();
 
-            $rec_id = intFilter('rec_id');
+            $rec_id = (new Request)->int('rec_id');
 
             //Выводим ИД группы
             $row = $db->super_query("SELECT public_id FROM `communities_wall` WHERE id = '{$rec_id}'");
@@ -1199,7 +1202,7 @@ if (Registry::get('logged')) {
 
             NoAjaxQuery();
 
-            $rec_id = intFilter('rec_id');
+            $rec_id = (new Request)->int('rec_id');
 
             //Выводим ИД группы
             $row = $db->super_query("SELECT public_id FROM `communities_wall` WHERE id = '{$rec_id}'");
@@ -1219,10 +1222,10 @@ if (Registry::get('logged')) {
 
             NoAjaxQuery();
 
-            $pub_id = intFilter('id');
+            $pub_id = (new Request)->int('id');
 
             $limit_friends = 20;
-            $page_cnt = intFilter('page_cnt');
+            $page_cnt = (new Request)->int('page_cnt');
             if ($page_cnt > 0) {
                 $page_cnt *= $limit_friends;
             }
@@ -1309,7 +1312,7 @@ if (Registry::get('logged')) {
 
             NoAjaxQuery();
 
-            $pub_id = intFilter('id');
+            $pub_id = (new Request)->int('id');
             $limit = 50; #лимит в день
 
             //Выводим список участников группы
@@ -1331,7 +1334,7 @@ if (Registry::get('logged')) {
                 if ($rowPub['id']) {
 
                     //Получаем список, которых надо пригласить и формируем его
-                    $arr_list = explode('|', requestFilter('ulist'));
+                    $arr_list = explode('|', (new Request)->filter('ulist'));
 
                     foreach ($arr_list as $ruser_id) {
                         $ruser_id = (int)$ruser_id;
@@ -1377,7 +1380,7 @@ if (Registry::get('logged')) {
 
             $limit_num = 20;
 
-            $page_cnt = intFilter('page_cnt');
+            $page_cnt = (new Request)->int('page_cnt');
             if ($page_cnt > 0) {
                 $page_cnt *= $limit_num;
             } else {
@@ -1466,7 +1469,7 @@ if (Registry::get('logged')) {
 
             NoAjaxQuery();
 
-            $id = intFilter('id');
+            $id = (new Request)->int('id');
 
             //Проверка на приглашению юзеру
             $check = $db->super_query("SELECT COUNT(*) AS cnt FROM `communities_join` WHERE for_user_id = '{$user_id}' AND public_id = '{$id}'");

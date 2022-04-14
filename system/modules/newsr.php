@@ -8,6 +8,7 @@
  *
  */
 
+use FluffyDollop\Http\Request;
 use FluffyDollop\Support\Registry;
 
 NoAjaxQuery();
@@ -21,7 +22,7 @@ if (Registry::get('logged')) {
 
     //################### Вывод новостей ###################//
 //			$type = $_GET['type']; #тип сортировки
-    $type = requestFilter('type');
+    $type = (new Request)->filter('type');
 
     //Если вызвана страница обновлений
     if ($type == 'updates' || $type == 'photos' || $type == 'videos') {
@@ -83,7 +84,7 @@ if (Registry::get('logged')) {
     }
 
 
-    $page_cnt = intFilter('page_cnt');
+    $page_cnt = (new Request)->int('page_cnt');
     if ($page_cnt > 0) {
         $page_cnt *= $limit_news;
     } else {
@@ -347,7 +348,7 @@ if (Registry::get('logged')) {
                                 $audioId = (int)$attach_type[1];
                                 $audioInfo = $db->super_query("SELECT artist, name, url FROM `audio` WHERE aid = '" . $audioId . "'");
                                 if ($audioInfo) {
-                                    if (intFilter('uid')) {
+                                    if ((new Request)->int('uid')) {
                                         $appClassWidth = 'player_mini_mbar_wall_all';
                                     }
                                     $jid++;
@@ -623,7 +624,7 @@ HTML;
                                 $audioId = (int)$attach_type[1];
                                 $audioInfo = $db->super_query("SELECT artist, name, url FROM `audio` WHERE aid = '" . $audioId . "'");
                                 if ($audioInfo) {
-                                    if (intFilter('uid')) {
+                                    if ((new Request)->int('uid')) {
                                         $appClassWidth = 'player_mini_mbar_wall_all';
                                     }
                                     $jid++;

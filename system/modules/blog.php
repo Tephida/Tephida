@@ -8,12 +8,13 @@
  *
  */
 
+use FluffyDollop\Http\Request;
 use FluffyDollop\Support\Registry;
 
 NoAjaxQuery();
 
 if (Registry::get('logged')) {
-    $act = requestFilter('act');
+    $act = (new Request)->filter('act');
     $user_info = $user_info ?? Registry::get('user_info');
     $user_id = $user_info['user_id'];
     $server_time = Registry::get('server_time');
@@ -27,8 +28,6 @@ if (Registry::get('logged')) {
             if ($user_info['user_group'] == 1) {
                 $tpl->load_template('blog/add.tpl');
                 $tpl->compile('content');
-            } else {
-                Hacking();
             }
 
             compile($tpl);
@@ -42,8 +41,8 @@ if (Registry::get('logged')) {
                 include ENGINE_DIR . '/classes/Parse.php';
                 $parse = new parse();
 
-                $title = requestFilter('title', 25000, true);
-                $text = $parse->BBparse(requestFilter('text'));
+                $title = (new Request)->filter('title', 25000, true);
+                $text = $parse->BBparse((new Request)->filter('text'));
 
                 function BBimg($source)
                 {
@@ -62,7 +61,7 @@ if (Registry::get('logged')) {
         case "del":
             NoAjaxQuery();
             if ($user_info['user_group'] == 1) {
-                $id = intFilter('id');
+                $id = (new Request)->int('id');
                 $db->query("DELETE FROM `blog` WHERE id = '{$id}'");
             }
             break;
@@ -70,7 +69,7 @@ if (Registry::get('logged')) {
         //################### Страница редактирования ###################//
         case "edit":
             if ($user_info['user_group'] == 1) {
-                $id = intFilter('id');
+                $id = (new Request)->int('id');
                 $row = $db->super_query("SELECT title, story FROM `blog` WHERE id = '{$id}'");
                 if ($row) {
                     //Подключаем парсер
@@ -90,10 +89,8 @@ if (Registry::get('logged')) {
                     $tpl->set('{id}', $id);
                     $tpl->compile('content');
                 } else {
-                    Hacking();
                 }
             } else {
-                Hacking();
             }
 
             compile($tpl);
@@ -107,9 +104,9 @@ if (Registry::get('logged')) {
                 include ENGINE_DIR . '/classes/Parse.php';
                 $parse = new parse();
 
-                $title = requestFilter('title', 25000, true);
-                $text = $parse->BBparse(requestFilter('text'));
-                $id = intFilter('id');
+                $title = (new Request)->filter('title', 25000, true);
+                $text = $parse->BBparse((new Request)->filter('text'));
+                $id = (new Request)->int('id');
 
                 function BBimg($source)
                 {
@@ -168,7 +165,7 @@ if (Registry::get('logged')) {
             break;
 
         default:
-            $id = intFilter('id');
+            $id = (new Request)->int('id');
             if ($id) {
                 $sqlWhere = "WHERE id = '{$id}'";
             } else {
@@ -195,7 +192,7 @@ if (Registry::get('logged')) {
                 $cnt++;
                 $rowLast['title'] = stripslashes($rowLast['title']);
 
-                if (intFilter('id') == $rowLast['id'] or $cnt == 1 and !intFilter('id'))
+                if ((new Request)->int('id') == $rowLast['id'] or $cnt == 1 and !(new Request)->int('id'))
                     $lastNews .= "<div><a href=\"/blog?id={$rowLast['id']}\" class=\"bloglnkactive\" onClick=\"Page.Go(this.href); return false\">{$rowLast['title']}</a></div>";
                 else
                     $lastNews .= "<a href=\"/blog?id={$rowLast['id']}\" onClick=\"Page.Go(this.href); return false\">{$rowLast['title']}</a>";

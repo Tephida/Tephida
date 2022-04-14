@@ -10,8 +10,8 @@
 
 //Если начали замену
 if (isset($_POST['save'])) {
-    $find = requestFilter('find');
-    $replace = requestFilter('replace');
+    $find = (new \FluffyDollop\Http\Request)->filter('find');
+    $replace = (new \FluffyDollop\Http\Request)->filter('replace');
 
     if (!empty($find) and !empty($replace)) {
         if ($_POST['photo_comm'])

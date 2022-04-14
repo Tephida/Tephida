@@ -8,6 +8,7 @@
  *
  */
 
+use FluffyDollop\Http\Request;
 use FluffyDollop\Support\Registry;
 
 NoAjaxQuery();
@@ -18,9 +19,9 @@ if (Registry::get('logged')) {
     $server_time = Registry::get('server_time');
     $limit_sql = 7;
     $db = Registry::get('db');
-    $query = requestFilter('query');
+    $query = (new Request)->filter('query');
     $query = strtr($query, array(' ' => '%')); //Заменяем пробелы на проценты чтоб поиск был точнее
-    $type = intFilter('se_type');
+    $type = (new Request)->int('se_type');
 
     if (!empty($query)) {
 

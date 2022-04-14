@@ -1,6 +1,15 @@
 <?php
+/*
+ * Copyright (c) 2022 Tephida
+ *
+ *  For the full copyright and license information, please view the LICENSE
+ *   file that was distributed with this source code.
+ *
+ */
 
 namespace Mozg\modules;
+
+use FluffyDollop\Http\Request;
 
 class Settings extends \Mozg\classes\Module
 {
@@ -26,8 +35,8 @@ class Settings extends \Mozg\classes\Module
             $params['code_3'] = 'no_display';
 
             if (isset($request['code1'])) {
-                $code1 = textFilter('code1');
-                $code2 = textFilter('code2');
+                $code1 = (new Request)->textFilter('code1');
+                $code2 = (new Request)->textFilter('code2');
 
                 if (strlen($code1) == 32) {
 //                    $_IP = Request::getRequest()->getClientIP();

@@ -8,6 +8,7 @@
  *
  */
 
+use FluffyDollop\Http\Request;
 use FluffyDollop\Support\Registry;
 
 NoAjaxQuery();
@@ -16,10 +17,10 @@ if (Registry::get('logged')) {
     $db = Registry::get('db');
     $server_time = Registry::get('server_time');
     $user_info = $user_info ?? Registry::get('user_info');
-    $act = requestFilter('act');
-    $mid = intFilter('id');
-    $type_report = intFilter('type_report');
-    $text_report = requestFilter('text_report');
+    $act = (new Request)->filter('act');
+    $mid = (new Request)->int('id');
+    $type_report = (new Request)->int('type_report');
+    $text_report = (new Request)->filter('text_report');
     $arr_act = array('photo', 'video', 'note', 'wall');
     if ($act == 'wall') {
         $type_report = 6;

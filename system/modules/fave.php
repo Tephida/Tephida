@@ -8,16 +8,17 @@
  *
  */
 
+use FluffyDollop\Http\Request;
 use FluffyDollop\Support\Registry;
 
 NoAjaxQuery();
 
 if (Registry::get('logged')) {
-    $act = requestFilter('act');
+    $act = (new Request)->filter('act');
     $user_info = $user_info ?? Registry::get('user_info');
     $user_id = $user_info['user_id'];
     $db = Registry::get('db');
-    $page = intFilter('page', 1);
+    $page = (new Request)->int('page', 1);
 
     $gcount = 70;
     $limit_page = ($page - 1) * $gcount;
@@ -29,7 +30,7 @@ if (Registry::get('logged')) {
         //################### Добавление юзера в закладки ###################//
         case "add":
             NoAjaxQuery();
-            $fave_id = intFilter('fave_id');
+            $fave_id = (new Request)->int('fave_id');
             //Проверяем на факт существования юзера которого добавляем в закладки
             $row = $db->super_query("SELECT `user_id` FROM `users` WHERE user_id = '{$fave_id}'");
             if ($row && $user_id != $fave_id) {
@@ -51,7 +52,7 @@ if (Registry::get('logged')) {
         //################### Удаление юзера из закладок ###################//
         case "delet":
             NoAjaxQuery();
-            $fave_id = intFilter('fave_id');
+            $fave_id = (new Request)->int('fave_id');
 
             //Проверяем на факт существование этого юзера в закладках, если есть то пропускаем
             $row = $db->super_query("SELECT `user_id` FROM `fave` WHERE user_id = '{$user_id}' AND fave_id = '{$fave_id}'");

@@ -21,7 +21,7 @@ if (isset($_POST['send'])) {
 		
 	}
 	
-	$word_replace = requestFilter('word_replace');
+	$word_replace = (new \FluffyDollop\Http\Request)->filter('word_replace');
 	
 	$word_id = Registry::get('server_time');
 	

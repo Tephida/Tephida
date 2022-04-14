@@ -8,12 +8,13 @@
  *
  */
 
-use FluffyDollop\Support\{Registry, Thumbnail};
+use FluffyDollop\Http\Request;
+use FluffyDollop\Support\{Registry};
 
 NoAjaxQuery();
 
 if (Registry::get('logged')) {
-    $public_id = intFilter('public_id');
+    $public_id = (new Request)->int('public_id');
     $server_time = Registry::get('server_time');
     $user_info = $user_info ?? Registry::get('user_info');
     $db = Registry::get('db');

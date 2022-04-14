@@ -8,21 +8,22 @@
  *
  */
 
+use FluffyDollop\Http\Request;
 use FluffyDollop\Support\Registry;
-use Mozg\classes\{Flood, TpLSite};
+use Mozg\classes\{Flood};
 
 NoAjaxQuery();
 
 if (Registry::get('logged')) {
     $lang = Registry::get('lang');
     $db = Registry::get('db');
-    $act = requestFilter('act');
+    $act = (new Request)->filter('act');
     $user_info = $user_info ?? Registry::get('user_info');
     $server_time = Registry::get('server_time');
 //	$act = $_GET['act'];y
     $user_id = $user_info['user_id'];
     $metatags['title'] = $lang['support_title'];
-    $page = intFilter('page', 1);
+    $page = (new Request)->int('page', 1);
     $gcount = 20;
     $limit_page = ($page - 1) * $gcount;
 
@@ -49,8 +50,8 @@ if (Registry::get('logged')) {
             if (Flood::check('support')) {
                 echo 'limit';
             } else {
-                $title = requestFilter('title', 25000, true);
-                $question = requestFilter('question');
+                $title = (new Request)->filter('title', 25000, true);
+                $question = (new Request)->filter('question');
                 $limitTime = $server_time - 3600;
                 $rowLast = $db->super_query("SELECT COUNT(*) AS cnt FROM `support` WHERE сdate > '{$limitTime}'");
                 if (!$rowLast['cnt'] and !empty($title) and !empty($question) and $user_info['user_group'] != 4) {
@@ -94,7 +95,7 @@ if (Registry::get('logged')) {
         //################### Удаление вопроса  ###################//
         case "delet":
             NoAjaxQuery();
-            $qid = intFilter('qid');
+            $qid = (new Request)->int('qid');
             $row = $db->super_query("SELECT suser_id FROM `support` WHERE id = '{$qid}'");
             if ($row['suser_id'] == $user_id || $user_info['user_group'] == 4) {
                 $db->query("DELETE FROM `support` WHERE id = '{$qid}'");
@@ -106,7 +107,7 @@ if (Registry::get('logged')) {
         //################### Удаление Ответа  ###################//
         case "delet_answer":
             NoAjaxQuery();
-            $id = intFilter('id');
+            $id = (new Request)->int('id');
             $row = $db->super_query("SELECT auser_id FROM `support_answers` WHERE id = '{$id}'");
             if ($row['auser_id'] == $user_id || $user_info['user_group'] == 4) {
                 $db->query("DELETE FROM `support_answers` WHERE id = '{$id}'");
@@ -117,7 +118,7 @@ if (Registry::get('logged')) {
         //################### Закрытие вопроса  ###################//
         case "close":
             NoAjaxQuery();
-            $qid = intFilter('qid');
+            $qid = (new Request)->int('qid');
             if ($user_info['user_group'] == 4) {
                 $row = $db->super_query("SELECT COUNT(*) AS cnt FROM `support` WHERE id = '{$qid}'");
                 if ($row['cnt']) {
@@ -130,8 +131,8 @@ if (Registry::get('logged')) {
         //################### Отправка ответа ###################//
         case "answer":
             NoAjaxQuery();
-            $qid = intFilter('qid');
-            $answer = requestFilter('answer');
+            $qid = (new Request)->int('qid');
+            $answer = (new Request)->filter('answer');
             $check = $db->super_query("SELECT suser_id FROM `support` WHERE id = '{$qid}'");
             if ($check['suser_id'] == $user_id or $user_info['user_group'] == 4 and isset($answer) and !empty($answer)) {
                 if ($user_info['user_group'] == 4) {

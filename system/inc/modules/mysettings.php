@@ -15,9 +15,9 @@ $row = $db->super_query("SELECT user_email, user_name, user_lastname, user_passw
 if (isset($_POST['save'])) {
     $old_pass = md5(md5(stripslashes($_POST['old_pass'])));
     $new_pass = md5(md5(stripslashes($_POST['new_pass'])));
-    $user_name = requestFilter('name', 25000, true);
-    $user_lastname = requestFilter('lastname', 25000, true);
-    $user_email = requestFilter('email', 25000, true);
+    $user_name = (new \FluffyDollop\Http\Request)->filter('name', 25000, true);
+    $user_lastname = (new \FluffyDollop\Http\Request)->filter('lastname', 25000, true);
+    $user_email = (new \FluffyDollop\Http\Request)->filter('email', 25000, true);
     $errors = array();
     //Проверка имени
     if (isset($user_name)) {

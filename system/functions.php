@@ -8,12 +8,11 @@
  *
  */
 
-use FluffyDollop\Support\{Filesystem, Gzip, Registry, Templates};
+use FluffyDollop\Support\Registry;
+use FluffyDollop\Http\{Request, Response};
 use JetBrains\PhpStorm\ArrayShape;
-use FluffyDollop\Support\Cookie;
 use Mozg\classes\Cache;
 use Mozg\classes\I18n;
-use Mozg\modules\Lang;
 
 /**
  * @throws JsonException
@@ -48,39 +47,39 @@ function informationText($array): string
  */
 function navigation($gc, $num, $type): void
 {
-    global $tpl, $page;
-    $gcount = $gc;
-    $cnt = $num;
-    $items_count = $cnt;
-    $items_per_page = $gcount;
-    $page_refers_per_page = 5;
-    $pages = '';
-    $pages_count = (($items_count % $items_per_page !== 0)) ? floor($items_count / $items_per_page) + 1 : floor($items_count / $items_per_page);
-    $start_page = ($page - $page_refers_per_page <= 0) ? 1 : $page - $page_refers_per_page + 1;
-    $page_refers_per_page_count = (($page - $page_refers_per_page < 0) ? $page : $page_refers_per_page) + (($page + $page_refers_per_page > $pages_count) ? ($pages_count - $page) : $page_refers_per_page - 1);
-    if ($page > 1) $pages.= '<a href="' . $type . ($page - 1) . '" onClick="Page.Go(this.href); return false">&laquo;</a>';
-    else $pages.= '';
-    if ($start_page > 1) {
-        $pages.= '<a href="' . $type . '1" onClick="Page.Go(this.href); return false">1</a>';
-        $pages.= '<a href="' . $type . ($start_page - 1) . '" onClick="Page.Go(this.href); return false">...</a>';
-    }
-    for ($index = - 1;++$index <= $page_refers_per_page_count - 1;) {
-        if ($index + $start_page == $page) $pages.= '<span>' . ($start_page + $index) . '</span>';
-        else $pages .= '<a href="' . $type . ($start_page + $index) . '" onClick="Page.Go(this.href); return false">' . ($start_page + $index) . '</a>';
-    }
-    if ($page + $page_refers_per_page <= $pages_count) {
-        $pages .= '<a href="' . $type . ($start_page + $page_refers_per_page_count) . '" onClick="Page.Go(this.href); return false">...</a>';
-        $pages .= '<a href="' . $type . $pages_count . '" onClick="Page.Go(this.href); return false">' . $pages_count . '</a>';
-    }
-    $resif = $cnt / $gcount;
-    if (ceil($resif) == $page) $pages .= '';
-    else $pages .= '<a href="' . $type . ($page + 1) . '" onClick="Page.Go(this.href); return false">&raquo;</a>';
-    if ($pages_count <= 1) $pages = '';
-
-    $content = <<<HTML
-<div class="nav" id="nav">{$pages}</div>
-HTML;
-    $tpl->result['content'] .= $content;
+//    global $tpl, $page;
+//    $gcount = $gc;
+//    $cnt = $num;
+//    $items_count = $cnt;
+//    $items_per_page = $gcount;
+//    $page_refers_per_page = 5;
+//    $pages = '';
+//    $pages_count = (($items_count % $items_per_page !== 0)) ? floor($items_count / $items_per_page) + 1 : floor($items_count / $items_per_page);
+//    $start_page = ($page - $page_refers_per_page <= 0) ? 1 : $page - $page_refers_per_page + 1;
+//    $page_refers_per_page_count = (($page - $page_refers_per_page < 0) ? $page : $page_refers_per_page) + (($page + $page_refers_per_page > $pages_count) ? ($pages_count - $page) : $page_refers_per_page - 1);
+//    if ($page > 1) $pages.= '<a href="' . $type . ($page - 1) . '" onClick="Page.Go(this.href); return false">&laquo;</a>';
+//    else $pages.= '';
+//    if ($start_page > 1) {
+//        $pages.= '<a href="' . $type . '1" onClick="Page.Go(this.href); return false">1</a>';
+//        $pages.= '<a href="' . $type . ($start_page - 1) . '" onClick="Page.Go(this.href); return false">...</a>';
+//    }
+//    for ($index = - 1;++$index <= $page_refers_per_page_count - 1;) {
+//        if ($index + $start_page == $page) $pages.= '<span>' . ($start_page + $index) . '</span>';
+//        else $pages .= '<a href="' . $type . ($start_page + $index) . '" onClick="Page.Go(this.href); return false">' . ($start_page + $index) . '</a>';
+//    }
+//    if ($page + $page_refers_per_page <= $pages_count) {
+//        $pages .= '<a href="' . $type . ($start_page + $page_refers_per_page_count) . '" onClick="Page.Go(this.href); return false">...</a>';
+//        $pages .= '<a href="' . $type . $pages_count . '" onClick="Page.Go(this.href); return false">' . $pages_count . '</a>';
+//    }
+//    $resif = $cnt / $gcount;
+//    if (ceil($resif) == $page) $pages .= '';
+//    else $pages .= '<a href="' . $type . ($page + 1) . '" onClick="Page.Go(this.href); return false">&raquo;</a>';
+//    if ($pages_count <= 1) $pages = '';
+//
+//    $content = <<<HTML
+//<div class="nav" id="nav">{$pages}</div>
+//HTML;
+//    $tpl->result['content'] .= $content;
 }
 
 /**
@@ -92,7 +91,7 @@ HTML;
  */
 function navigationNew($items_per_page, $items_count, $type): string
 {
-    $page = intFilter('page', 1);
+    $page = (new Request)->int('page', 1);
     $page_refers_per_page = 5;
     $pages = '';
     $pages_count = (($items_count % $items_per_page !== 0)) ? floor($items_count / $items_per_page) + 1 : floor($items_count / $items_per_page);
@@ -135,42 +134,42 @@ function navigationNew($items_per_page, $items_count, $type): string
  * @param $function
  * @param $act
  * @return void
- * @throws ErrorException
  * @deprecated
  */
-function box_navigation($gc, $num, $id, $function, $act) {
-    global $tpl, $page;
-    $gcount = $gc;
-    $cnt = $num;
-    $items_count = $cnt;
-    $items_per_page = $gcount;
-    $page_refers_per_page = 5;
-    $pages = '';
-    $pages_count = (($items_count % $items_per_page != 0)) ? floor($items_count / $items_per_page) + 1 : floor($items_count / $items_per_page);
-    $start_page = ($page - $page_refers_per_page <= 0) ? 1 : $page - $page_refers_per_page + 1;
-    $page_refers_per_page_count = (($page - $page_refers_per_page < 0) ? $page : $page_refers_per_page) + (($page + $page_refers_per_page > $pages_count) ? ($pages_count - $page) : $page_refers_per_page - 1);
-    if (!$act) $act = "''";
-    else $act = "'{$act}'";
-    if ($page > 1) $pages.= '<a href="" onClick="' . $function . '(' . $id . ', ' . ($page - 1) . ', ' . $act . '); return false">&laquo;</a>';
-    else $pages.= '';
-    if ($start_page > 1) {
-        $pages.= '<a href="" onClick="' . $function . '(' . $id . ', 1, ' . $act . '); return false">1</a>';
-        $pages.= '<a href="" onClick="' . $function . '(' . $id . ', ' . ($start_page - 1) . ', ' . $act . '); return false">...</a>';
-    }
-    for ($index = - 1;++$index <= $page_refers_per_page_count - 1;) {
-        if ($index + $start_page == $page) $pages.= '<span>' . ($start_page + $index) . '</span>';
-        else $pages .= '<a href="" onClick="' . $function . '(' . $id . ', ' . ($start_page + $index) . ', ' . $act . '); return false">' . ($start_page + $index) . '</a>';
-    }
-    if ($page + $page_refers_per_page <= $pages_count) {
-        $pages .= '<a href="" onClick="' . $function . '(' . $id . ', ' . ($start_page + $page_refers_per_page_count) . ', ' . $act . '); return false">...</a>';
-        $pages .= '<a href="" onClick="' . $function . '(' . $id . ', ' . $pages_count . ', ' . $act . '); return false">' . $pages_count . '</a>';
-    }
-    $resif = $cnt / $gcount;
-    if (ceil($resif) == $page) $pages .= '';
-    else $pages .= '<a href="/" onClick="' . $function . '(' . $id . ', ' . ($page + 1) . ', ' . $act . '); return false">&raquo;</a>';
-    if ($pages_count <= 1) $pages = '';
-    $navigation = "<div class=\"nav\" id=\"nav\">{$pages}</div>";
-    $tpl->result['content'] .= $navigation;
+function box_navigation($gc, $num, $id, $function, $act)
+{
+//    global $tpl, $page;
+//    $gcount = $gc;
+//    $cnt = $num;
+//    $items_count = $cnt;
+//    $items_per_page = $gcount;
+//    $page_refers_per_page = 5;
+//    $pages = '';
+//    $pages_count = (($items_count % $items_per_page != 0)) ? floor($items_count / $items_per_page) + 1 : floor($items_count / $items_per_page);
+//    $start_page = ($page - $page_refers_per_page <= 0) ? 1 : $page - $page_refers_per_page + 1;
+//    $page_refers_per_page_count = (($page - $page_refers_per_page < 0) ? $page : $page_refers_per_page) + (($page + $page_refers_per_page > $pages_count) ? ($pages_count - $page) : $page_refers_per_page - 1);
+//    if (!$act) $act = "''";
+//    else $act = "'{$act}'";
+//    if ($page > 1) $pages.= '<a href="" onClick="' . $function . '(' . $id . ', ' . ($page - 1) . ', ' . $act . '); return false">&laquo;</a>';
+//    else $pages.= '';
+//    if ($start_page > 1) {
+//        $pages.= '<a href="" onClick="' . $function . '(' . $id . ', 1, ' . $act . '); return false">1</a>';
+//        $pages.= '<a href="" onClick="' . $function . '(' . $id . ', ' . ($start_page - 1) . ', ' . $act . '); return false">...</a>';
+//    }
+//    for ($index = - 1;++$index <= $page_refers_per_page_count - 1;) {
+//        if ($index + $start_page == $page) $pages.= '<span>' . ($start_page + $index) . '</span>';
+//        else $pages .= '<a href="" onClick="' . $function . '(' . $id . ', ' . ($start_page + $index) . ', ' . $act . '); return false">' . ($start_page + $index) . '</a>';
+//    }
+//    if ($page + $page_refers_per_page <= $pages_count) {
+//        $pages .= '<a href="" onClick="' . $function . '(' . $id . ', ' . ($start_page + $page_refers_per_page_count) . ', ' . $act . '); return false">...</a>';
+//        $pages .= '<a href="" onClick="' . $function . '(' . $id . ', ' . $pages_count . ', ' . $act . '); return false">' . $pages_count . '</a>';
+//    }
+//    $resif = $cnt / $gcount;
+//    if (ceil($resif) == $page) $pages .= '';
+//    else $pages .= '<a href="/" onClick="' . $function . '(' . $id . ', ' . ($page + 1) . ', ' . $act . '); return false">&raquo;</a>';
+//    if ($pages_count <= 1) $pages = '';
+//    $navigation = "<div class=\"nav\" id=\"nav\">{$pages}</div>";
+//    $tpl->result['content'] .= $navigation;
 }
 
 /**
@@ -178,20 +177,19 @@ function box_navigation($gc, $num, $id, $function, $act) {
  * @param $text
  * @param $tpl_name
  * @return void
- * @throws ErrorException
  * @deprecated
  */
-function msgbox($title, $text, $tpl_name) {
-    global $tpl;
-    $tpl_2 = new Templates();
-    $config = settings_get();
-    $tpl_2->dir = ROOT_DIR . '/templates/' . $config['temp'];
-    $tpl_2->load_template($tpl_name . '.tpl');
-    $tpl_2->set('{error}', $text);
-    $tpl_2->set('{title}', $title);
-    $tpl_2->compile('info');
-    $tpl_2->clear();
-//    $tpl->result['info'] .= $tpl_2->result['info'];
+function msgbox($title, $text, $tpl_name)
+{
+//    global $tpl;
+//    $tpl_2 = new Templates();
+//    $config = settings_get();
+//    $tpl_2->dir = ROOT_DIR . '/templates/' . $config['temp'];
+//    $tpl_2->load_template($tpl_name . '.tpl');
+//    $tpl_2->set('{error}', $text);
+//    $tpl_2->set('{title}', $title);
+//    $tpl_2->compile('info');
+//    $tpl_2->clear();
 }
 
 /**
@@ -204,29 +202,12 @@ function msgbox($title, $text, $tpl_name) {
  */
 function msgBoxNew($tpl, $title, $text, $tpl_name): int
 {
-    $tpl->load_template($tpl_name);
-    $tpl->set('{error}', $text);
-    $tpl->set('{title}', $title);
-    $tpl->compile('content');
-    return $tpl->render();
-}
-
-/**
- * @deprecated
- * @return bool
- */
-function check_smartphone(): bool
-{
-    if (isset($_SESSION['mobile_enable']))
-        return true;
-    $phone_array = array('iphone', 'android', 'pocket', 'palm', 'windows ce', 'windowsce', 'mobile windows', 'cellphone', 'opera mobi', 'operamobi', 'ipod', 'small', 'sharp', 'sonyericsson', 'symbian', 'symbos', 'opera mini', 'nokia', 'htc_', 'samsung', 'motorola', 'smartphone', 'blackberry', 'playstation portable', 'tablet browser', 'android');
-    $agent = (!empty($_SERVER['HTTP_USER_AGENT'])) ? strtolower($_SERVER['HTTP_USER_AGENT']) : '';
-    foreach ($phone_array as $value) {
-        if (str_contains($agent, $value)) {
-            return true;
-        }
-    }
-    return false;
+//    $tpl->load_template($tpl_name);
+//    $tpl->set('{error}', $text);
+//    $tpl->set('{title}', $title);
+//    $tpl->compile('content');
+//    return $tpl->render();
+    return 0;
 }
 
 /**
@@ -306,7 +287,7 @@ function declWord(int $num, string $type): string
  * @param $source
  * @return string
  */
-function gramatikName($source): string
+function grammaticalName($source): string
 {
     $name_u_gram = $source;
     $str_1_name = strlen($name_u_gram);
@@ -324,7 +305,7 @@ function gramatikName($source): string
 function Hacking()
 {
     global $lang;
-    $ajax = checkAjax();
+    $ajax = (new Request)->checkAjax();
     if ($ajax) {
         NoAjaxQuery();
         echo <<<HTML
@@ -463,23 +444,6 @@ function word_filter($source, bool $encode = true)
     return $source;
 }
 
-
-//FOR MOBILE VERSION 1.0
-if (isset($_GET['act']) && $_GET['act'] == 'change_mobile') $_SESSION['mobile'] = 1;
-if (isset($_GET['act']) && $_GET['act'] == 'change_fullver') {
-    $_SESSION['mobile'] = 2;
-    header('Location: /');
-}
-if (check_smartphone()) {
-    if ($_SESSION['mobile'] != 2)
-        $config['temp'] = "mobile";
-    $check_smartphone = true;
-}
-if (isset($_SESSION['mobile']) && $_SESSION['mobile'] == 1) {
-    $config['temp'] = "mobile";
-}
-
-
 function normalizeName(string $value, bool $part = true): array|null|string
 {
     $value = str_replace(chr(0), '', $value);
@@ -610,13 +574,13 @@ function compileAdmin($tpl): void
     $tpl->set('{exit_lnk}', $exit_lnk);
     $tpl->set('{content}', $tpl->result['content']);
     $tpl->compile('main');
-    if ((new \FluffyDollop\Http\Request)->filter('ajax') === 'yes') {
+    if ((new Request)->filter('ajax') === 'yes') {
         $metatags['title'] = $metatags['title'] ?? 'Панель управления';
         $result_ajax = array(
             'title' => $metatags['title'],
             'content' => $tpl->result['info'] . $tpl->result['content']
         );
-        (new \FluffyDollop\Http\Response)->_e_json($result_ajax);
+        (new Response)->_e_json($result_ajax);
     } else {
         echo $tpl->result['main'];
     }
@@ -627,12 +591,12 @@ function compileAdmin($tpl): void
  * @param array $variables
  * @return bool
  * @throws ErrorException
- * @throws JsonException
+ * @throws JsonException|Exception
  */
 function view(?string $view, array $variables = []): bool
 {
     try {
-        echo (new Mozg\classes\View())->render($view, $variables);
+        echo (new View())->render($view, $variables);
         return true;
     } catch (Error) {
         return false;
@@ -642,7 +606,7 @@ function view(?string $view, array $variables = []): bool
 function view_json(?string $view, array $variables = []): string
 {
     try {
-        return (new Mozg\classes\View())->render($view, $variables);
+        return (new View())->render($view, $variables);
     } catch (Error|Exception) {
         return 'err 500';
     }

@@ -8,12 +8,13 @@
  *
  */
 
+use FluffyDollop\Http\Request;
 use FluffyDollop\Support\Registry;
 
 NoAjaxQuery();
 
 if (Registry::get('logged')) {
-    $act = requestFilter('act');
+    $act = (new Request)->filter('act');
     $user_info = $user_info ?? Registry::get('user_info');
     $user_id = $user_info['user_id'];
     $server_time = Registry::get('server_time');
@@ -23,8 +24,8 @@ if (Registry::get('logged')) {
         //################### Удаление комментария ###################//
         case "delcomm":
 
-            $id = intFilter('id');
-            $purl = to_translit(requestFilter('purl'));
+            $id = (new Request)->int('id');
+            $purl = to_translit((new Request)->filter('purl'));
 
             //Выводим данные о комментарии
             $row = $db->super_query("SELECT tb1.forphoto, auser_id, tb2.ouser_id FROM `attach_comm` tb1, `attach` tb2 WHERE tb1.id = '{$id}' AND tb1.forphoto = '{$purl}'");
@@ -73,8 +74,8 @@ if (Registry::get('logged')) {
         //################### Добавления комментария ###################//
         case "addcomm":
 
-            $text = requestFilter('text');
-            $purl = to_translit(requestFilter('purl'));
+            $text = (new Request)->filter('text');
+            $purl = to_translit((new Request)->filter('purl'));
 
             //Проверка на существования фотки в таблице PREFIX_attach
             $row = $db->super_query("SELECT COUNT(*) AS cnt FROM `attach` WHERE photo = '{$purl}'");
@@ -143,7 +144,7 @@ if (Registry::get('logged')) {
         //################### Показ пред.комментариев ###################//
         case "prevcomm":
 
-            $foSQLurl = to_translit(requestFilter('purl'));
+            $foSQLurl = to_translit((new Request)->filter('purl'));
 
             //Выводим данные о владельце фото
             $row = $db->super_query("SELECT ouser_id, acomm_num FROM `attach` WHERE photo = '{$foSQLurl}'");
@@ -161,8 +162,8 @@ if (Registry::get('logged')) {
             }
 
             $limit = 10;
-            $first_id = intFilter('first_id');
-            $page_post = intFilter('page');
+            $first_id = (new Request)->int('first_id');
+            $page_post = (new Request)->int('page');
             if ($page_post <= 0) {
                 $page_post = 1;
             }
@@ -221,7 +222,7 @@ if (Registry::get('logged')) {
 
         default:
 
-            $photo_url = requestFilter('photo');
+            $photo_url = (new Request)->filter('photo');
             $resIMGurl = explode('/', $photo_url);
             $foSQLurl = end($resIMGurl);
             $foSQLurl = to_translit($foSQLurl);

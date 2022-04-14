@@ -348,7 +348,7 @@ HTML;
 
                         $row_last_user = $db->super_query("SELECT user_search_pref FROM `users` WHERE user_id = '{$row_forum['lastuser_id']}'");
                         $last_userX = explode(' ', $row_last_user['user_search_pref']);
-                        $row_last_user['user_search_pref'] = gramatikName($last_userX[0]) . ' ' . gramatikName($last_userX[1]);
+                        $row_last_user['user_search_pref'] = grammaticalName($last_userX[0]) . ' ' . grammaticalName($last_userX[1]);
 
                         $row_forum['title'] = stripslashes($row_forum['title']);
 

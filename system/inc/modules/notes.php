@@ -21,8 +21,8 @@ if ($_GET['act'] == 'edit') {
         $parse = new parse();
 
         if (isset($_POST['save'])) {
-            $title = requestFilter('title', 25000, true);
-            $text = $parse->BBparse(requestFilter('full_text'));
+            $title = (new \FluffyDollop\Http\Request)->filter('title', 25000, true);
+            $text = $parse->BBparse((new \FluffyDollop\Http\Request)->filter('full_text'));
 
             if (!empty($title) and !empty($text)) {
                 $db->query("UPDATE `notes` SET title = '" . $title . "', full_text = '" . $text . "' WHERE id = '" . $note_id . "'");
@@ -78,7 +78,7 @@ $se_user_id = intval($_GET['se_user_id']);
 if (!$se_user_id) $se_user_id = '';
 
 $sort = intval($_GET['sort']);
-$se_name = requestFilter('se_name', 25000, true);
+$se_name = (new \FluffyDollop\Http\Request)->filter('se_name', 25000, true);
 
 if ($se_uid or $sort or $se_name or $se_user_id) {
     if ($se_uid) $where_sql .= "AND id = '" . $se_uid . "' ";
