@@ -25,7 +25,6 @@ if (isset($_POST['save'])) {
     else
         $ip = "";
     $descr = (new Request)->filter('descr');
-
     if ($ip) {
         $row = $db->super_query("SELECT id FROM `banned` WHERE ip ='" . $ip . "'");
         if ($row) {

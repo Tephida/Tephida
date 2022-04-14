@@ -11,6 +11,7 @@
 namespace Mozg\classes;
 
 use FluffyDollop\Support\Registry;
+
 use Tephida\Database\Database;
 
 class Module

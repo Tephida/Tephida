@@ -8,7 +8,9 @@ updates:
     open-pull-requests-limit: 10
     reviewers:
       - semyon492
+      - phakof
     assignees:
       - semyon492
+      - phakof
     labels:
       - type:build

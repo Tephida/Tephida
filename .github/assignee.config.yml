@@ -4,11 +4,13 @@ numberOfReviewers: 1
 
 reviewers:
   - semyon492
+  - phakof
 
 addAssignees: true
 
 assignees:
   - semyon492
+  - phakof
 
 numberOfAssignees: 1
 

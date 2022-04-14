@@ -11,7 +11,8 @@
 use FluffyDollop\Support\Registry;
 use FluffyDollop\Http\{Request, Response};
 use JetBrains\PhpStorm\ArrayShape;
-use Mozg\classes\{Cache, I18n, View};
+use Mozg\classes\Cache;
+use Mozg\classes\I18n;
 
 /**
  * @throws JsonException
@@ -189,7 +190,6 @@ function msgbox($title, $text, $tpl_name)
 //    $tpl_2->set('{title}', $title);
 //    $tpl_2->compile('info');
 //    $tpl_2->clear();
-//    $tpl->result['info'] .= $tpl_2->result['info'];
 }
 
 /**
