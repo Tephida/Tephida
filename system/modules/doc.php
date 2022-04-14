@@ -8,12 +8,14 @@
  *
  */
 
-use FluffyDollop\Support\{Filesystem, Registry};
+use FluffyDollop\Support\{Registry};
+use FluffyDollop\Filesystem\Filesystem;
+use FluffyDollop\Http\Request;
 use Mozg\classes\Cache;
 use Mozg\classes\download;
 
 if (Registry::get('logged')) {
-    $act = requestFilter('act');
+    $act = (new Request)->filter('act');
     $user_info = $user_info ?? Registry::get('user_info');
     $user_id = $user_info['user_id'];
     $server_time = Registry::get('server_time');
@@ -53,7 +55,7 @@ if (Registry::get('logged')) {
                     if (move_uploaded_file($file_tmp, $upload_dir . $downl_file_name . $res_type)) {
 
                         $dsize = Filesystem::formatsize($file_size);
-                        $file_name = textFilter($file_name, 25000, true);
+                        $file_name = (new Request)->textFilter($file_name, 25000, true);
 
                         //Обновляем кол-во док. у юзера
                         $db->query("UPDATE `users` SET user_doc_num = user_doc_num+1 WHERE user_id = '{$user_id}'");
@@ -88,7 +90,7 @@ if (Registry::get('logged')) {
         case "del":
             NoAjaxQuery();
 
-            $did = intFilter('did');
+            $did = (new Request)->int('did');
 
             $row = $db->super_query("SELECT duser_id, ddownload_name FROM `doc` WHERE did = '{$did}'");
 
@@ -112,8 +114,8 @@ if (Registry::get('logged')) {
         case "editsave":
             NoAjaxQuery();
 
-            $did = intFilter('did');
-            $name = requestFilter('name', 25000, true);
+            $did = (new Request)->int('did');
+            $name = (new Request)->filter('name', 25000, true);
             $strLn = strlen($name);
             if ($strLn > 50) {
                 $name = substr($name, 0, 50);
@@ -138,7 +140,7 @@ if (Registry::get('logged')) {
 
             NoAjaxQuery();
 
-            $did = intFilter('did');
+            $did = (new Request)->int('did');
 
             $row = $db->super_query("SELECT duser_id, ddownload_name, dname FROM `doc` WHERE did = '{$did}'");
 
@@ -165,7 +167,7 @@ if (Registry::get('logged')) {
             $metatags['title'] = 'Документы';
 
             $sql_limit = 20;
-            $page_cnt = intFilter('page_cnt');
+            $page_cnt = (new Request)->int('page_cnt');
             if ($page_cnt > 0) {
                 $page_cnt = $page_cnt * $sql_limit;
             } else {
@@ -220,7 +222,7 @@ if (Registry::get('logged')) {
             NoAjaxQuery();
 
             $sql_limit = 20;
-            $page_cnt = intFilter('page_cnt');
+            $page_cnt = (new Request)->int('page_cnt');
             if ($page_cnt > 0) {
                 $page_cnt *= $sql_limit;
             } else {

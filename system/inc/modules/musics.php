@@ -9,6 +9,7 @@
  */
 
 //Редактирование
+use FluffyDollop\Http\Request;
 use Mozg\classes\Cache;
 
 if ($_GET['act'] === 'edit') {
@@ -18,8 +19,8 @@ if ($_GET['act'] === 'edit') {
     $row = $db->super_query("SELECT auser_id, artist, name FROM `audio` WHERE aid = '" . $id . "'");
     if ($row) {
         if (isset($_POST['save'])) {
-            $artist = requestFilter('artist', 25000, true);
-            $name = requestFilter('name', 25000, true);
+            $artist = (new Request)->filter('artist', 25000, true);
+            $name = (new Request)->filter('name', 25000, true);
 
             if (!empty($artist) and !empty($name)) {
                 $db->query("UPDATE `audio` SET artist = '" . $artist . "', name = '" . $name . "' WHERE aid = '" . $id . "'");
@@ -77,8 +78,8 @@ if (!$se_uid) $se_uid = '';
 $se_user_id = (int)$_GET['se_user_id'];
 if (!$se_user_id) $se_user_id = '';
 
-$sort = intFilter('sort');
-$se_name = requestFilter('se_name', 25000, true);
+$sort = (new Request)->int('sort');
+$se_name = (new Request)->filter('se_name', 25000, true);
 
 if ($se_uid or $sort or $se_name or $se_user_id) {
     if ($se_uid) {
@@ -103,7 +104,7 @@ if ($se_uid or $sort or $se_name or $se_user_id) {
 }
 
 //Выводим список людей
-$page = intFilter('page', 1);
+$page = (new Request)->int('page', 1);
 $gcount = 20;
 $limit_page = ($page - 1) * $gcount;
 

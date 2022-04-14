@@ -9,6 +9,8 @@
  */
 
 //Редактирование
+use FluffyDollop\Http\Request;
+
 if ($_GET['act'] === 'edit') {
     $id = (int)$_GET['id'];
 
@@ -16,8 +18,8 @@ if ($_GET['act'] === 'edit') {
     $row = $db->super_query("SELECT owner_user_id, title, descr, video FROM `videos` WHERE id = '" . $id . "'");
     if ($row) {
         if (isset($_POST['save'])) {
-            $title = requestFilter('title', 25000, true);
-            $descr = requestFilter('descr');
+            $title = (new \FluffyDollop\Http\Request)->filter('title', 25000, true);
+            $descr = (new \FluffyDollop\Http\Request)->filter('descr');
 
             if (!empty($title) and !empty($descr)) {
                 $db->query("UPDATE `videos` SET title = '" . $title . "', descr = '" . $descr . "' WHERE id = '" . $id . "'");
@@ -70,14 +72,14 @@ HTML;
 
 echoheader();
 
-$se_uid = intval($_GET['se_uid']);
+$se_uid = (new Request)->int('se_uid');
 if (!$se_uid) $se_uid = '';
 
-$se_user_id = intval($_GET['se_user_id']);
+$se_user_id = (new Request)->int('se_user_id');
 if (!$se_user_id) $se_user_id = '';
 
-$sort = intFilter('sort');
-$se_name = requestFilter('se_name', 25000, true);
+$sort = (new Request)->int('sort');
+$se_name = (new Request)->filter('se_name', 25000, true);
 
 if ($se_uid or $sort or $se_name or $se_user_id) {
     if ($se_uid)
@@ -101,7 +103,7 @@ if ($se_uid or $sort or $se_name or $se_user_id) {
     $order_sql = "`add_date` DESC";
 
 //Выводим список людей
-$page = intFilter('page', 1);
+$page = (new Request)->int('page', 1);
 $gcount = 20;
 $limit_page = ($page - 1) * $gcount;
 

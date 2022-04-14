@@ -8,13 +8,14 @@
  *
  */
 
+use FluffyDollop\Http\Request;
 use FluffyDollop\Support\Registry;
 use Mozg\classes\Cache;
 
 NoAjaxQuery();
 
 if (Registry::get('logged')) {
-    $act = requestFilter('act');
+    $act = (new Request)->filter('act');
     $user_info = $user_info ?? Registry::get('user_info');
     $user_id = $user_info['user_id'];
     $server_time = Registry::get('server_time');
@@ -23,25 +24,25 @@ if (Registry::get('logged')) {
 
         //################### Отмечаем человека на фото ###################//
         case "mark":
-            $i_left = intFilter('i_left');
+            $i_left = (new Request)->int('i_left');
             if ($i_left < 0) {
                 $i_left = 0;
             }
-            $i_top = intFilter('i_top');
+            $i_top = (new Request)->int('i_top');
             if ($i_top < 0) {
                 $i_top = 0;
             }
-            $i_width = intFilter('i_width');
+            $i_width = (new Request)->int('i_width');
             if ($i_width < 0) {
                 $i_width = 0;
             }
-            $i_height = intFilter('i_height');
+            $i_height = (new Request)->int('i_height');
             if ($i_height < 0) {
                 $i_height = 0;
             }
-            $photo_id = intFilter('photo_id');
-            $muser_id = intFilter('user_id');
-            $mphoto_name = strip_data(requestFilter('user_name', 25000, true));
+            $photo_id = (new Request)->int('photo_id');
+            $muser_id = (new Request)->int('user_id');
+            $mphoto_name = strip_data((new Request)->filter('user_name', 25000, true));
             $msettings_pos = $i_left . ", " . $i_top . ", " . $i_width . ", " . $i_height;
             if ($user_id == $muser_id) {
                 $approve = 1;
@@ -62,7 +63,7 @@ if (Registry::get('logged')) {
             } elseif ($row_no['cnt']) {
                 $db->query("UPDATE `photos_mark` SET msettings_pos = '" . $msettings_pos . "' WHERE mphoto_id = '" . $photo_id . "' AND mphoto_name = '" . $mphoto_name . "'");
             } else
-                if (requestFilter('user_ok') == 'yes') {
+                if ((new Request)->filter('user_ok') == 'yes') {
                     $db->query("INSERT INTO `photos_mark` SET muser_id = '" . $muser_id . "', mphoto_id = '" . $photo_id . "', mdate = '" . $server_time . "', msettings_pos = '" . $msettings_pos . "', mapprove = '" . $approve . "', mmark_user_id = '" . $user_id . "'");
 
                     if ($user_id != $muser_id) {
@@ -77,9 +78,9 @@ if (Registry::get('logged')) {
 
         //################### Удаление отметки ###################//
         case "mark_del":
-            $photo_id = intFilter('photo_id');
-            $muser_id = intFilter('user_id');
-            $mphoto_name = strip_data(requestFilter('user_name', 25000, true));
+            $photo_id = (new Request)->int('photo_id');
+            $muser_id = (new Request)->int('user_id');
+            $mphoto_name = strip_data((new Request)->filter('user_name', 25000, true));
             $row = $db->super_query("SELECT user_id FROM `photos` WHERE id = '" . $photo_id . "'");
 
             if ($mphoto_name && $muser_id == 0) {
@@ -104,7 +105,7 @@ if (Registry::get('logged')) {
 
         //################### Подтверждение отметки ###################//
         case "mark_ok":
-            $photo_id = intFilter('photo_id');
+            $photo_id = (new Request)->int('photo_id');
             $row = $db->super_query("SELECT mapprove FROM `photos_mark` WHERE mphoto_id = '" . $photo_id . "' AND muser_id = '" . $user_id . "'");
             if ($row && !$row['mapprove']) {
                 $db->query("UPDATE `photos_mark` SET mapprove = '1' WHERE mphoto_id = '" . $photo_id . "' AND muser_id = '" . $user_id . "'");
@@ -115,9 +116,9 @@ if (Registry::get('logged')) {
 
         //################### Загрузка 110 друзей из списка ###################//
         case "load_friends":
-            $photo_id = intFilter('photo_id');
+            $photo_id = (new Request)->int('photo_id');
             $all_limit = 110;
-            if (requestFilter('page') == 2) {
+            if ((new Request)->filter('page') == 2) {
                 $limit = $all_limit . ", " . ($all_limit * 2);
             } else {
                 $limit = "0, " . $all_limit;

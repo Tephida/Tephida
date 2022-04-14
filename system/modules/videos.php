@@ -8,14 +8,15 @@
  *
  */
 
-use FluffyDollop\Support\{Filesystem, Registry, Thumbnail};
+use FluffyDollop\Support\{Registry};
+use FluffyDollop\Http\Request;
 use Mozg\classes\Cache;
 
 NoAjaxQuery();
 
 if (Registry::get('logged')) {
     $db = Registry::get('db');
-    $act = requestFilter('act');
+    $act = (new Request)->filter('act');
     $user_info = $user_info ?? Registry::get('user_info');
     $user_id = $user_info['user_id'];
     $limit_vieos = 20;
@@ -36,10 +37,10 @@ if (Registry::get('logged')) {
             NoAjaxQuery();
             $config = settings_get();
             if ($config['video_mod_add'] == 'yes') {
-                $good_video_lnk = requestFilter('good_video_lnk');
-                $title = requestFilter('title', 25000, true);
-                $descr = requestFilter('descr', 3000);
-                $privacy = intFilter('privacy');
+                $good_video_lnk = (new Request)->filter('good_video_lnk');
+                $title = (new Request)->filter('title', 25000, true);
+                $descr = (new Request)->filter('descr', 3000);
+                $privacy = (new Request)->int('privacy');
                 if ($privacy <= 0 || $privacy > 3) {
                     $privacy = 1;
                 }
@@ -61,7 +62,7 @@ if (Registry::get('logged')) {
                 $result_video_lnk = $result_video_lnk ?? null;
 
                 //Формируем данные о фото
-                $photo = requestFilter('photo');
+                $photo = (new Request)->filter('photo');
                 $photo = str_replace("\\", "/", $photo);
                 $img_name_arr = explode(".", $photo);
                 $img_format = to_translit(end($img_name_arr));
@@ -121,7 +122,7 @@ if (Registry::get('logged')) {
                     //Чистим кеш
                     Cache::mozgMassClearCacheFile("user_{$user_id}/page_videos_user|user_{$user_id}/page_videos_user_friends|user_{$user_id}/page_videos_user_all|user_{$user_id}/profile_{$user_id}|user_{$user_id}/videos_num_all|user_{$user_id}/videos_num_friends");
 
-                    if (intFilter('notes') == 1) {
+                    if ((new Request)->int('notes') == 1) {
                         echo "{$photo}|{$user_id}|{$dbid}";
                     }
                 }
@@ -135,7 +136,7 @@ if (Registry::get('logged')) {
         case "load":
             NoAjaxQuery();
 
-            $video_lnk = requestFilter('video_lnk');
+            $video_lnk = (new Request)->filter('video_lnk');
 
             if (preg_match("/https:\/\/www.youtube.com|https:\/\/youtube.com|https:\/\/www.vimeo.com|https:\/\/vimeo.com/i", $video_lnk)) {
 
@@ -224,7 +225,7 @@ if (Registry::get('logged')) {
         //################### Удаление видео ###################//
         case "delet":
             NoAjaxQuery();
-            $vid = intFilter('vid');
+            $vid = (new Request)->int('vid');
 
             if ($vid) {
                 $row = $db->super_query("SELECT owner_user_id, photo, public_id FROM `videos` WHERE id = '{$vid}'");
@@ -248,7 +249,7 @@ if (Registry::get('logged')) {
         //################### Страница редактирования видео ###################//
         case "edit":
             NoAjaxQuery();
-            $vid = intFilter('vid');
+            $vid = (new Request)->int('vid');
             if ($vid) {
                 $row = $db->super_query("SELECT title, descr, privacy FROM `videos` WHERE id = '{$vid}' AND owner_user_id = '{$user_id}'");
                 if ($row) {
@@ -267,12 +268,12 @@ if (Registry::get('logged')) {
         //################### Сохранение отредактированных данных ###################//
         case "editsave":
             NoAjaxQuery();
-            $vid = intFilter('vid');
+            $vid = (new Request)->int('vid');
 
             if ($vid) {
-                $title = requestFilter('title', 25000, true);
-                $descr = requestFilter('descr', 3000);
-                $privacy = intFilter('privacy');
+                $title = (new Request)->filter('title', 25000, true);
+                $descr = (new Request)->filter('descr', 3000);
+                $privacy = (new Request)->int('privacy');
                 if ($privacy <= 0 || $privacy > 3) {
                     $privacy = 1;
                 }
@@ -291,10 +292,10 @@ if (Registry::get('logged')) {
         //################### Просмотр видео ###################//
         case "view":
             NoAjaxQuery();
-            $vid = intFilter('vid');
-            $close_link = requestFilter('close_link');
+            $vid = (new Request)->int('vid');
+            $close_link = (new Request)->filter('close_link');
 
-            $get_user_id = intFilter('user_id');
+            $get_user_id = (new Request)->int('user_id');
 
             $db = Registry::get('db');
             $user_info = $user_info ?? Registry::get('user_info');
@@ -431,8 +432,8 @@ if (Registry::get('logged')) {
             NoAjaxQuery();
             $config = settings_get();
             if ($config['video_mod_comm'] == 'yes') {
-                $vid = intFilter('vid');
-                $comment = requestFilter('comment');
+                $vid = (new Request)->int('vid');
+                $comment = (new Request)->filter('comment');
 
                 //Проверка на существования видео
                 $check_video = $db->super_query("SELECT owner_user_id, photo, public_id FROM `videos` WHERE id = '{$vid}'");
@@ -511,7 +512,7 @@ if (Registry::get('logged')) {
         case "delcomment":
 
             NoAjaxQuery();
-            $comm_id = intFilter('comm_id');
+            $comm_id = (new Request)->int('comm_id');
             //Проверка на существования комментария, и выводим ИД владельца видео
             $row = $db->super_query("SELECT tb1.video_id, author_user_id, tb2.owner_user_id, public_id FROM `videos_comments` tb1, `videos` tb2 WHERE tb1.id = '{$comm_id}' AND tb1.video_id = tb2.id");
             if ($row['public_id']) {
@@ -542,9 +543,9 @@ if (Registry::get('logged')) {
         //################### Показ всех комментариев ###################//
         case "all_comm":
             NoAjaxQuery();
-            $vid = intFilter('vid');
-            $comm_num = intFilter('num');
-            $owner_id = intFilter('owner_id');
+            $vid = (new Request)->int('vid');
+            $comm_num = (new Request)->int('num');
+            $owner_id = (new Request)->int('owner_id');
             $row = $db->super_query("SELECT public_id FROM `videos` WHERE id = '{$vid}'");
             if ($row['public_id']) {
                 $infoGroup = $db->super_query("SELECT admin FROM `communities` WHERE id = '{$row['public_id']}'");
@@ -592,10 +593,10 @@ if (Registry::get('logged')) {
         //################### Страница всех видео юзера, для прикрепления видео кому-то на стену ###################//
         case "all_videos":
             NoAjaxQuery();
-            $notes = intFilter('notes');
+            $notes = (new Request)->int('notes');
 
             //Для навигатор
-            $page = intFilter('page', 1);
+            $page = (new Request)->int('page', 1);
             $gcount = 24;
             $limit_page = ($page - 1) * $gcount;
 
@@ -651,9 +652,9 @@ if (Registry::get('logged')) {
         //################### Страница всех видео юзера, для прикрепления видео в сообщество ###################//
         case "all_videos_public":
             NoAjaxQuery();
-            $pid = intFilter('pid');
+            $pid = (new Request)->int('pid');
             //Для навигатор
-            $page = intFilter('page', 1);
+            $page = (new Request)->int('page', 1);
             $gcount = 24;
             $limit_page = ($page - 1) * $gcount;
             //Делаем SQL запрос на вывод
@@ -691,8 +692,8 @@ if (Registry::get('logged')) {
         //################### Бесконечная подгрузка видео из БД ###################//
         case "page":
             NoAjaxQuery();
-            $get_user_id = intFilter('get_user_id');
-            $last_id = intFilter('last_id');
+            $get_user_id = (new Request)->int('get_user_id');
+            $last_id = (new Request)->int('last_id');
             if (!$get_user_id) {
                 $get_user_id = $user_id;
             }
@@ -754,7 +755,7 @@ if (Registry::get('logged')) {
         //################### Добавление видео к себе в список ###################//
         case "addmylist":
             NoAjaxQuery();
-            $vid = intFilter('vid');
+            $vid = (new Request)->int('vid');
             $row = $db->super_query("SELECT video, photo, title, descr FROM `videos` WHERE id = '{$vid}'");
             $config = settings_get();
             if ($row && $config['video_mod_add_my'] == 'yes') {
@@ -780,7 +781,7 @@ if (Registry::get('logged')) {
         default:
 
             //################### Вывод всех видео ###################//
-            $get_user_id = intFilter('get_user_id');
+            $get_user_id = (new Request)->int('get_user_id');
             if (!$get_user_id) {
                 $get_user_id = $user_id;
             }
@@ -793,7 +794,7 @@ if (Registry::get('logged')) {
                 $owner = $db->super_query("SELECT user_videos_num, user_search_pref FROM `users` WHERE user_id = '{$get_user_id}'");
                 if ($owner) {
                     $name_info = explode(' ', $owner['user_search_pref']);
-                    $metatags['title'] = $lang['videos'] . ' ' . gramatikName($name_info[0]) . ' ' . gramatikName($name_info[1]);
+                    $metatags['title'] = $lang['videos'] . ' ' . grammaticalName($name_info[0]) . ' ' . grammaticalName($name_info[1]);
 //Проверка естьли запрашиваемый юзер в друзьях у юзера который смотрит стр
                     if ($user_id != $get_user_id) {
                         $check_friend = CheckFriends($get_user_id);
@@ -822,7 +823,7 @@ if (Registry::get('logged')) {
                     if ($get_user_id == $user_id) {
                         $user_speedbar = 'У Вас <span id="nums">' . ($owner['user_videos_num'] ? $owner['user_videos_num'] : false) . '</span> ' . declWord($owner['user_videos_num'], 'videos');
                     } else {
-                        $user_speedbar = 'У ' . gramatikName($name_info[0]) . ' ' . ($owner['user_videos_num'] ? $owner['user_videos_num'] : false) . ' ' . declWord($owner['user_videos_num'], 'videos');
+                        $user_speedbar = 'У ' . grammaticalName($name_info[0]) . ' ' . ($owner['user_videos_num'] ? $owner['user_videos_num'] : false) . ' ' . declWord($owner['user_videos_num'], 'videos');
                     }
                     if ($owner['user_videos_num']) {
 
@@ -833,7 +834,7 @@ if (Registry::get('logged')) {
                         $tpl->load_template('videos/head.tpl');
                         $tpl->set('{user-id}', $get_user_id);
                         $tpl->set('{videos_num}', $owner['user_videos_num']);
-                        $tpl->set('{name}', gramatikName($name_info[0]));
+                        $tpl->set('{name}', grammaticalName($name_info[0]));
                         if ($get_user_id == $user_id) {
                             $tpl->set('[owner]', '');
                             $tpl->set('[/owner]', '');
@@ -890,7 +891,6 @@ if (Registry::get('logged')) {
                         }
                     }
                 } else {
-                    Hacking();
                 }
                 compile($tpl);
             } else {

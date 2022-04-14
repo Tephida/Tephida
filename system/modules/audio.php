@@ -1,17 +1,25 @@
 <?php
+/*
+ * Copyright (c) 2022 Tephida
+ *
+ *  For the full copyright and license information, please view the LICENSE
+ *   file that was distributed with this source code.
+ *
+ */
 
 declare(strict_types=1);
 
+use FluffyDollop\Http\Request;
 use JamesHeinrich\GetID3\GetID3;
 use Mozg\classes\Cache;
 
 if ($logged) {
     $count = 40;
 //    $page = (isset($_REQUEST['page'])) ? (int)$_REQUEST['page'] : 0;
-    $page = intFilter('page');
+    $page = (new Request)->int('page');
     $offset = $count * $page;
 
-    $act = requestFilter('act');
+    $act = (new Request)->filter('act');
     $metatags['title'] = $lang['audio'];
 
     switch ($act) {
@@ -189,9 +197,9 @@ HTML;
         case 'save_edit':
             $id = intval($_POST['id']);
             $genre = intval($_POST['genre']);
-            $artist = textfilter($_POST['artist']);
-            $title = textfilter($_POST['name']);
-            $text = textfilter($_POST['text']);
+            $artist = (new Request)->textFilter($_POST['artist']);
+            $title = (new Request)->textFilter($_POST['name']);
+            $text = (new Request)->textFilter($_POST['text']);
             if ($genre > -1 && $genre < 18) $access = true;
             $row = $db->super_query("SELECT id, oid, public FROM `audio` WHERE id = '{$id}'");
             if (!$row['public'] && $row['oid'] == $user_info['user_id'] && $access) $db->query("UPDATE `audio` SET artist = '{$artist}', title = '{$title}', text = '{$text}', genre = '{$genre}' WHERE id = '{$id}'");
@@ -221,11 +229,11 @@ HTML;
                     if (!$res['error'] && $res['playtime_seconds']) {
 
                         if ($res['tags']['id3v2']) {
-                            $artist = textFilter($res['tags']['id3v2']['artist'][0]);
-                            $name = textFilter($res['tags']['id3v2']['title'][0]);
+                            $artist = (new Request)->textFilter($res['tags']['id3v2']['artist'][0]);
+                            $name = (new Request)->textFilter($res['tags']['id3v2']['title'][0]);
                         } else if ($res['tags']['id3v1']) {
-                            $artist = textFilter($res['tags']['id3v1']['artist'][0]);
-                            $name = textFilter($res['tags']['id3v1']['title'][0]);
+                            $artist = (new Request)->textFilter($res['tags']['id3v1']['artist'][0]);
+                            $name = (new Request)->textFilter($res['tags']['id3v1']['title'][0]);
                         }
 
                         $time_sec = round((float)(str_replace(',', '.', (string)$res['playtime_seconds'])));
@@ -375,9 +383,9 @@ HTML;
 
         default:
 
-            $type = requestFilter('type');
+            $type = (new Request)->filter('type');
 
-            $uid = intFilter('uid');
+            $uid = (new Request)->int('uid');
             if (!$uid) $uid = $user_info['user_id'];
 
             if ($type == 'popular') {

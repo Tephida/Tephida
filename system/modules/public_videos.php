@@ -8,12 +8,13 @@
  *
  */
 
-use FluffyDollop\Support\{Filesystem, Registry};
+use FluffyDollop\Support\{Registry};
+use FluffyDollop\Http\Request;
 use Mozg\classes\Cache;
 
 if (Registry::get('logged')) {
     $db = Registry::get('db');
-    $act = requestFilter('act');
+    $act = (new Request)->filter('act');
     $user_info = $user_info ?? Registry::get('user_info');
     $user_id = $user_info['user_id'];
     $server_time = Registry::get('server_time');
@@ -25,8 +26,8 @@ if (Registry::get('logged')) {
 
             NoAjaxQuery();
 
-            $pid = intFilter('pid');
-            $id = intFilter('id');
+            $pid = (new Request)->int('pid');
+            $id = (new Request)->int('id');
 
             $infoGroup = $db->super_query("SELECT admin FROM `communities` WHERE id = '{$pid}'");
 
@@ -67,8 +68,8 @@ if (Registry::get('logged')) {
 
             NoAjaxQuery();
 
-            $pid = intFilter('pid');
-            $id = intFilter('id');
+            $pid = (new Request)->int('pid');
+            $id = (new Request)->int('id');
 
             $infoGroup = $db->super_query("SELECT admin FROM `communities` WHERE id = '{$pid}'");
 
@@ -95,8 +96,8 @@ if (Registry::get('logged')) {
         //################### Окно редактирования видео ###################//
         case "edit":
             NoAjaxQuery();
-            $pid = intFilter('pid');
-            $id = intFilter('id');
+            $pid = (new Request)->int('pid');
+            $id = (new Request)->int('id');
             $infoGroup = $db->super_query("SELECT admin FROM `communities` WHERE id = '{$pid}'");
             if (str_contains($infoGroup['admin'], "u{$user_id}|")) {
                 $public_admin = true;
@@ -121,11 +122,11 @@ if (Registry::get('logged')) {
 
             NoAjaxQuery();
 
-            $pid = intFilter('pid');
-            $id = intFilter('id');
+            $pid = (new Request)->int('pid');
+            $id = (new Request)->int('id');
 
-            $title = requestFilter('title', 25000, true);
-            $descr = requestFilter('descr', 3000);
+            $title = (new Request)->filter('title', 25000, true);
+            $descr = (new Request)->filter('descr', 3000);
 
             $infoGroup = $db->super_query("SELECT admin FROM `communities` WHERE id = '{$pid}'");
 
@@ -150,15 +151,15 @@ if (Registry::get('logged')) {
 
             $sql_limit = 20;
 
-            $page_cnt = intFilter('page');
+            $page_cnt = (new Request)->int('page');
             if ($page_cnt > 0) {
                 $page_cnt *= $sql_limit;
             }
 
-            $pid = intFilter('pid');
-            $query = strip_data(requestFilter('query'));
+            $pid = (new Request)->int('pid');
+            $query = strip_data((new Request)->filter('query'));
             $query = strtr($query, array(' ' => '%')); //Замеянем пробелы на проценты чтоб тоиск был точнее
-            $adres = strip_tags(requestFilter('adres'));
+            $adres = strip_tags((new Request)->filter('adres'));
             $row_count = $db->super_query("SELECT COUNT(*) AS cnt FROM `videos` WHERE title LIKE '%{$query}%' AND public_id = '0'");
             $sql_ = $db->super_query("SELECT id, owner_user_id, title, descr, photo, comm_num, add_date FROM `videos` WHERE title LIKE '%{$query}%' AND public_id = '0' ORDER by `add_date` DESC LIMIT {$page_cnt}, {$sql_limit}", true);
             $infoGroup = $db->super_query("SELECT admin FROM `communities` WHERE id = '{$pid}'");
@@ -224,10 +225,10 @@ if (Registry::get('logged')) {
 
             $metatags['title'] = 'Видеозаписи сообщества';
 
-            $pid = intFilter('pid');
+            $pid = (new Request)->int('pid');
 
             $sql_limit = 20;
-            $page_cnt = intFilter('page');
+            $page_cnt = (new Request)->int('page');
             if ($page_cnt > 0) {
                 $page_cnt *= $sql_limit;
             }

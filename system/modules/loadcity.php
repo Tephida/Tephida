@@ -8,11 +8,12 @@
  *
  */
 
+use FluffyDollop\Http\Request;
 use FluffyDollop\Support\Registry;
 
 NoAjaxQuery();
 
-$country_id = intFilter('country');
+$country_id = (new Request)->int('country');
 
 echo '<option value="0">- Выбрать -</option>';
 

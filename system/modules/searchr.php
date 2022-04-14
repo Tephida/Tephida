@@ -8,6 +8,7 @@
  *
  */
 
+use FluffyDollop\Http\Request;
 use FluffyDollop\Support\Registry;
 
 NoAjaxQuery();
@@ -22,26 +23,26 @@ $_SERVER['QUERY_STRING'] = strip_tags($_SERVER['QUERY_STRING']);
 $query_string = preg_replace("/&page=[0-9]+/i", '', $_SERVER['QUERY_STRING']);
 $user_id = $user_info['user_id'] ?? null;
 
-$page = intFilter('page', 1);
+$page = (new Request)->int('page', 1);
 
 $gcount = 20;
 $limit_page = ($page - 1) * $gcount;
 
-$query = strip_data(urldecode(requestFilter('query')));
+$query = strip_data(urldecode((new Request)->filter('query')));
 if (isset($_GET['n']))
-    $query = strip_data(urldecode(requestFilter('query')));
+    $query = strip_data(urldecode((new Request)->filter('query')));
 $query = strtr($query, [' ' => '%']); //Заменяем пробелы на проценты чтоб поиск был точнее
 
-$type = intFilter('type', 1);
-$sex = intFilter('sex');
-$day = intFilter('day');
-$month = intFilter('month');
-$year = intFilter('year');
-$country = intFilter('country');
-$city = intFilter('city');
-$online = intFilter('online');
-$user_photo = intFilter('user_photo');
-$sp = intFilter('sp');
+$type = (new Request)->int('type', 1);
+$sex = (new Request)->int('sex');
+$day = (new Request)->int('day');
+$month = (new Request)->int('month');
+$year = (new Request)->int('year');
+$country = (new Request)->int('country');
+$city = (new Request)->int('city');
+$online = (new Request)->int('online');
+$user_photo = (new Request)->int('user_photo');
+$sp = (new Request)->int('sp');
 
 //Задаём параметры сортировки
 $sql_sort = '';
@@ -102,9 +103,9 @@ if ($query) {
     $tpl->set('{query}', 'Начните вводить любое слово или имя');
 }
 
-$query = strip_data(urldecode(requestFilter('query')));
+$query = strip_data(urldecode((new Request)->filter('query')));
 if (isset($_GET['n']) && $_GET['n']) {
-    $query = strip_data(urldecode(requestFilter('query')));
+    $query = strip_data(urldecode((new Request)->filter('query')));
 }
 
 if ($type == 1) {

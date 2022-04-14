@@ -8,9 +8,9 @@
  *
  */
 
-use FluffyDollop\Support\{Filesystem, Registry};
+use FluffyDollop\Support\{Registry};
+use FluffyDollop\Http\Request;
 use Mozg\classes\Cache;
-use Mozg\classes\TplCp;
 
 $act = $_GET['act'];
 
@@ -20,8 +20,8 @@ switch ($act) {
     case "users":
         $db = Registry::get('db');
         $massaction_users = $_POST['massaction_users'];
-        $mass_type = intFilter('mass_type');
-        $ban_date = intFilter('ban_date');
+        $mass_type = (new Request)->int('mass_type');
+        $ban_date = (new Request)->int('ban_date');
         if ($massaction_users) {
             if ($mass_type <= 19 && $mass_type >= 1) {
                 $inputUlist = '';
@@ -260,7 +260,7 @@ switch ($act) {
     case "notes":
         $db = Registry::get('db');
         $massaction_note = $_POST['massaction_note'];
-        $mass_type = intFilter('mass_type');
+        $mass_type = (new Request)->int('mass_type');
         if ($massaction_note) {
             if ($mass_type <= 2 && $mass_type >= 1) {
                 //Если удаляем
@@ -311,7 +311,7 @@ switch ($act) {
     case "groups":
         $db = Registry::get('db');
         $massaction_list = $_POST['massaction_list'];
-        $mass_type = intFilter('mass_type');
+        $mass_type = (new Request)->int('mass_type');
         if ($massaction_list) {
             if ($mass_type <= 10 && $mass_type >= 1) {
                 //Если удаляем
@@ -418,7 +418,7 @@ switch ($act) {
     case "videos":
         $db = Registry::get('db');
         $massaction_list = $_POST['massaction_list'];
-        $mass_type = intFilter('mass_type');
+        $mass_type = (new Request)->int('mass_type');
         if ($massaction_list) {
             if ($mass_type <= 3 and $mass_type >= 1) {
                 //Если удаляем
@@ -479,9 +479,9 @@ switch ($act) {
     case "musics":
         $db = Registry::get('db');
         $massaction_list = $_POST['massaction_list'];
-        $mass_type = intFilter('mass_type');
+        $mass_type = (new Request)->int('mass_type');
         if ($massaction_list) {
-            if ($mass_type =-= 1) {
+            if ($mass_type === 1) {
                 foreach ($massaction_list as $id) {
                     $aid = (int)$id;
                     $check = $db->super_query("SELECT auser_id FROM `audio` WHERE aid = '" . $aid . "'");
@@ -502,7 +502,7 @@ switch ($act) {
     case "albums":
         $db = Registry::get('db');
         $massaction_list = $_POST['massaction_list'];
-        $mass_type = intFilter('mass_type');
+        $mass_type = (new Request)->int('mass_type');
         if ($massaction_list) {
             //Удаление
             if ($mass_type === 1) {

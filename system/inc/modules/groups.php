@@ -136,7 +136,7 @@ if ($act === 'edit') {
     $checked_delete = $checked_delete ?? "checked";
 
     //Выводим список людей
-    $page = intFilter('page', 1);
+    $page = (new \FluffyDollop\Http\Request)->int('page', 1);
     $g_count = 20;
     $limit_page = ($page - 1) * $g_count;
 

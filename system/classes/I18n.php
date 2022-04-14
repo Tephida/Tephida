@@ -1,5 +1,13 @@
 <?php
 
+/*
+ * Copyright (c) 2022 Tephida
+ *
+ *  For the full copyright and license information, please view the LICENSE
+ *   file that was distributed with this source code.
+ *
+ */
+
 namespace Mozg\classes;
 
 use FluffyDollop\Support\Cookie;
@@ -11,7 +19,7 @@ class I18n
     public const RU = '2';
 
     /**
-     * get lang number
+     * get lang key
      * @return string
      */
     public static function getLang(): string
@@ -46,7 +54,8 @@ class I18n
      */
     public static function dictionary(): array
     {
-        return require ROOT_DIR . '/lang/' . self::getLang() . '/site.php';
+        $file_name = '/site.php';
+        return require ROOT_DIR . '/lang/' . self::getLang() . $file_name;
     }
 
     /**

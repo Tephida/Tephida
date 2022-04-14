@@ -1,4 +1,5 @@
 <?php
+
 /*
  *   (c) Semen Alekseev
  *
@@ -7,56 +8,36 @@
  *
  */
 
-$table_Chema = $table_Chema ?? array();
+$table_Chema = $table_Chema ?? [];
 
-$tableSchema[] = "CREATE TABLE `bugs` (
-  `id` int(11) UNSIGNED NOT NULL,
-  `uids` int(11) UNSIGNED NOT NULL,
-  `title` text NOT NULL,
-  `text` text NOT NULL,
-  `images` varchar(40) NOT NULL,
-  `status` int(11) NOT NULL DEFAULT '1',
-  `date` varchar(15) NOT NULL,
-  `add_date` varchar(15) NOT NULL,
-  `admin_text` text NOT NULL,
-  `admin_id` int(11) NOT NULL DEFAULT '693'
-) ENGINE=InnoDB DEFAULT CHARSET=utf8";
 $tableSchema[] = "CREATE TABLE `pay` (
-  `id` int(11) UNSIGNED NOT NULL,
+  `id` INT( 11 ) AUTO_INCREMENT PRIMARY KEY,
   `amount` int(11) NOT NULL,
   `order_id` int(11) NOT NULL,
   `user_id` int(11) NOT NULL,
   `kassa` varchar(40) NOT NULL,
   `status` int(11) NOT NULL DEFAULT '0',
   `product` int(11) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8";
-$tableSchema[] = "CREATE TABLE `bugs_comments` (
-  `id` int(11) NOT NULL,
-  `author_user_id` int(11) NOT NULL,
-  `bug_id` int(11) NOT NULL,
-  `text` varchar(255) NOT NULL,
-  `add_date` datetime NOT NULL,
-  `status` int(11) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8";
-$table_Chema[] = "CREATE TABLE IF NOT EXISTS `room` (
-  `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT,
+);";
+$table_Chema[] = "CREATE TABLE `room` (
+  `id` INT( 11 ) AUTO_INCREMENT PRIMARY KEY,
   `title` varchar(100) NOT NULL DEFAULT '',
   `owner` bigint(20) NOT NULL DEFAULT '0',
   `photo` varchar(255) NOT NULL DEFAULT '',
   `date` varchar(10) NOT NULL DEFAULT '0',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;";
-$table_Chema[] = "CREATE TABLE IF NOT EXISTS `room_users` (
-  `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT,
+);";
+$table_Chema[] = "CREATE TABLE `room_users` (
+  `id` INT( 11 ) AUTO_INCREMENT PRIMARY KEY,
   `room_id` bigint(20) UNSIGNED NOT NULL DEFAULT '0',
   `oid` bigint(20) UNSIGNED NOT NULL DEFAULT '0',
   `oid2` bigint(20) UNSIGNED NOT NULL DEFAULT '0',
   `date` varchar(10) NOT NULL DEFAULT '0',
   `type` tinyint(1) UNSIGNED NOT NULL DEFAULT '0',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;";
-$table_Chema[] = "CREATE TABLE IF NOT EXISTS `albums` (
-  `aid` int(11) unsigned NOT NULL AUTO_INCREMENT,
+);";
+$table_Chema[] = "CREATE TABLE `albums` (
+  `aid` INT( 11 ) AUTO_INCREMENT PRIMARY KEY,
   `user_id` int(11) unsigned NOT NULL,
   `name` varchar(100) NOT NULL,
   `descr` varchar(255) NOT NULL,
@@ -74,9 +55,9 @@ $table_Chema[] = "CREATE TABLE IF NOT EXISTS `albums` (
   KEY `position` (`position`),
   KEY `privacy` (`privacy`),
   KEY `ahash` (`ahash`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;";
-$table_Chema[] = "CREATE TABLE IF NOT EXISTS `attach` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
+);";
+$table_Chema[] = "CREATE TABLE `attach` (
+  `id` INT( 11 ) AUTO_INCREMENT PRIMARY KEY,
   `photo` varchar(255) NOT NULL,
   `ouser_id` int(11) NOT NULL,
   `acomm_num` mediumint(8) NOT NULL,
@@ -85,9 +66,9 @@ $table_Chema[] = "CREATE TABLE IF NOT EXISTS `attach` (
   PRIMARY KEY (`id`),
   KEY `photo` (`photo`),
   KEY `public_id` (`public_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;";
-$table_Chema[] = "CREATE TABLE IF NOT EXISTS `antispam` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
+);";
+$table_Chema[] = "CREATE TABLE `antispam` (
+  `id` INT( 11 ) AUTO_INCREMENT PRIMARY KEY,
   `act` tinyint(3) NOT NULL,
   `user_id` int(11) NOT NULL,
   `date` int(10) NOT NULL,
@@ -95,9 +76,9 @@ $table_Chema[] = "CREATE TABLE IF NOT EXISTS `antispam` (
   PRIMARY KEY (`id`),
   KEY `act` (`act`,`user_id`,`date`),
   KEY `act_2` (`act`,`user_id`,`date`,`txt`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;";
-$table_Chema[] = "CREATE TABLE IF NOT EXISTS `attach` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
+);";
+$table_Chema[] = "CREATE TABLE `attach` (
+  `id` INT( 11 ) AUTO_INCREMENT PRIMARY KEY,
   `photo` varchar(255) NOT NULL,
   `ouser_id` int(11) NOT NULL,
   `acomm_num` mediumint(8) NOT NULL,
@@ -106,18 +87,18 @@ $table_Chema[] = "CREATE TABLE IF NOT EXISTS `attach` (
   PRIMARY KEY (`id`),
   KEY `photo` (`photo`),
   KEY `public_id` (`public_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;";
-$table_Chema[] = "CREATE TABLE IF NOT EXISTS `attach_comm` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
+);";
+$table_Chema[] = "CREATE TABLE `attach_comm` (
+  `id` INT( 11 ) AUTO_INCREMENT PRIMARY KEY,
   `forphoto` varchar(30) NOT NULL,
   `auser_id` int(11) NOT NULL,
   `text` text NOT NULL,
   `adate` varchar(10) NOT NULL,
   PRIMARY KEY (`id`),
   KEY `forphoto` (`forphoto`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;";
-$table_Chema[] = "CREATE TABLE IF NOT EXISTS `audio` (
-  `aid` int(11) unsigned NOT NULL AUTO_INCREMENT,
+);";
+$table_Chema[] = "CREATE TABLE `audio` (
+  `aid` INT( 11 ) AUTO_INCREMENT PRIMARY KEY,
   `id` int(11) unsigned NOT NULL,
   `auser_id` int(11) unsigned NOT NULL,
   `url` text NOT NULL,
@@ -133,31 +114,31 @@ $table_Chema[] = "CREATE TABLE IF NOT EXISTS `audio` (
   KEY `auser_id` (`auser_id`),
   KEY `adate` (`adate`),
   FULLTEXT KEY `artist` (`artist`,`name`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;";
-$table_Chema[] = "CREATE TABLE IF NOT EXISTS `banned` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
+);";
+$table_Chema[] = "CREATE TABLE `banned` (
+  `id` INT( 11 ) AUTO_INCREMENT PRIMARY KEY,
   `descr` text NOT NULL,
   `date` varchar(15) NOT NULL,
   `always` smallint(4) NOT NULL,
   `ip` varchar(50) NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;";
-$table_Chema[] = "CREATE TABLE IF NOT EXISTS `blog` (
-  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
+);";
+$table_Chema[] = "CREATE TABLE `blog` (
+  `id` INT( 11 ) AUTO_INCREMENT PRIMARY KEY,
   `title` varchar(65) NOT NULL,
   `story` text NOT NULL,
   `date` varchar(15) NOT NULL,
   PRIMARY KEY (`id`),
   KEY `date` (`date`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;";
-$table_Chema[] = "CREATE TABLE IF NOT EXISTS `city` (
-  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
+);";
+$table_Chema[] = "CREATE TABLE `city` (
+  `id` INT( 11 ) AUTO_INCREMENT PRIMARY KEY,
   `id_country` int(11) unsigned NOT NULL,
   `name` varchar(255) NOT NULL,
   PRIMARY KEY (`id`),
   KEY `id_country` (`id_country`)
 ) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=3349 ;";
-
+/*
 $table_Chema[] = "INSERT INTO `city` (`id`, `id_country`, `name`) VALUES
 (1, 1, 'Москва'),
 (2, 1, 'Абрамцево'),
@@ -1782,6 +1763,7 @@ $table_Chema[] = "INSERT INTO `city` (`id`, `id_country`, `name`) VALUES
 (1621, 1, 'Спасск-Дальний'),
 (1622, 1, 'Терней'),
 (1623, 1, 'Уссурийск');";
+
 $table_Chema[] = "INSERT INTO `city` (`id`, `id_country`, `name`) VALUES
 (1624, 1, 'Фокино'),
 (1625, 1, 'Хасан'),
@@ -3386,6 +3368,7 @@ $table_Chema[] = "INSERT INTO `city` (`id`, `id_country`, `name`) VALUES
 (3224, 2, 'Новая Ушица'),
 (3225, 2, 'Полонное'),
 (3226, 2, 'Славута');";
+
 $table_Chema[] = "INSERT INTO `city` (`id`, `id_country`, `name`) VALUES
 (3227, 2, 'Старая Синява'),
 (3228, 2, 'Староконстантинов'),
@@ -3509,9 +3492,9 @@ $table_Chema[] = "INSERT INTO `city` (`id`, `id_country`, `name`) VALUES
 (3346, 7, 'Таллин'),
 (3347, 7, 'Тарту'),
 (3348, 7, 'Хаапсалу');";
-
-$table_Chema[] = "CREATE TABLE IF NOT EXISTS `communities` (
-  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
+*/
+$table_Chema[] = "CREATE TABLE `communities` (
+  `id` INT( 11 ) AUTO_INCREMENT PRIMARY KEY,
   `admin` text NOT NULL,
   `title` varchar(60) NOT NULL,
   `descr` text NOT NULL,
@@ -3541,9 +3524,9 @@ $table_Chema[] = "CREATE TABLE IF NOT EXISTS `communities` (
   KEY `traf` (`traf`),
   KEY `photo` (`photo`),
   FULLTEXT KEY `title` (`title`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;";
-$table_Chema[] = "CREATE TABLE IF NOT EXISTS `communities_audio` (
-  `aid` int(11) unsigned NOT NULL AUTO_INCREMENT,
+);";
+$table_Chema[] = "CREATE TABLE `communities_audio` (
+  `aid` INT( 11 ) AUTO_INCREMENT PRIMARY KEY,
   `public_id` int(11) unsigned NOT NULL,
   `url` text NOT NULL,
   `artist` varchar(50) NOT NULL,
@@ -3552,8 +3535,8 @@ $table_Chema[] = "CREATE TABLE IF NOT EXISTS `communities_audio` (
   PRIMARY KEY (`aid`),
   KEY `auser_id` (`public_id`),
   KEY `adate` (`adate`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;";
-$table_Chema[] = "CREATE TABLE IF NOT EXISTS `communities_feedback` (
+);";
+$table_Chema[] = "CREATE TABLE `communities_feedback` (
   `cid` int(11) NOT NULL,
   `fuser_id` int(11) NOT NULL,
   `office` varchar(30) NOT NULL,
@@ -3563,9 +3546,9 @@ $table_Chema[] = "CREATE TABLE IF NOT EXISTS `communities_feedback` (
   KEY `cid` (`cid`),
   KEY `fuser_id` (`fuser_id`),
   KEY `fdate` (`fdate`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;";
-$table_Chema[] = "CREATE TABLE IF NOT EXISTS `communities_forum` (
-  `fid` int(11) unsigned NOT NULL AUTO_INCREMENT,
+);";
+$table_Chema[] = "CREATE TABLE `communities_forum` (
+  `fid` INT( 11 ) AUTO_INCREMENT PRIMARY KEY,
   `public_id` int(11) unsigned NOT NULL,
   `fuser_id` int(11) unsigned NOT NULL,
   `title` varchar(65) NOT NULL,
@@ -3583,9 +3566,9 @@ $table_Chema[] = "CREATE TABLE IF NOT EXISTS `communities_forum` (
   KEY `fdate` (`fdate`),
   KEY `lastdate` (`lastdate`),
   KEY `fixed` (`fixed`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;";
-$table_Chema[] = "CREATE TABLE IF NOT EXISTS `communities_forum_msg` (
-  `mid` int(11) unsigned NOT NULL AUTO_INCREMENT,
+);";
+$table_Chema[] = "CREATE TABLE `communities_forum_msg` (
+  `mid` INT( 11 ) AUTO_INCREMENT PRIMARY KEY,
   `fid` int(11) unsigned NOT NULL,
   `muser_id` int(11) unsigned NOT NULL,
   `msg` text NOT NULL,
@@ -3595,9 +3578,9 @@ $table_Chema[] = "CREATE TABLE IF NOT EXISTS `communities_forum_msg` (
   KEY `fid` (`fid`),
   KEY `muser_id` (`muser_id`),
   KEY `mdate` (`mdate`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;";
-$table_Chema[] = "CREATE TABLE IF NOT EXISTS `communities_join` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
+);";
+$table_Chema[] = "CREATE TABLE `communities_join` (
+  `id` INT( 11 ) AUTO_INCREMENT PRIMARY KEY,
   `user_id` int(11) NOT NULL,
   `for_user_id` int(11) NOT NULL,
   `public_id` int(11) NOT NULL,
@@ -3606,8 +3589,8 @@ $table_Chema[] = "CREATE TABLE IF NOT EXISTS `communities_join` (
   KEY `for_sel` (`for_user_id`,`public_id`),
   KEY `for_sel_1` (`user_id`,`public_id`,`date`),
   KEY `for_sel_2` (`for_user_id`,`public_id`,`user_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;";
-$table_Chema[] = "CREATE TABLE IF NOT EXISTS `communities_stats` (
+);";
+$table_Chema[] = "CREATE TABLE `communities_stats` (
   `gid` int(11) NOT NULL,
   `date` int(10) NOT NULL,
   `cnt` int(11) NOT NULL,
@@ -3622,16 +3605,16 @@ $table_Chema[] = "CREATE TABLE IF NOT EXISTS `communities_stats` (
   KEY `new_users` (`new_users`),
   KEY `exit_users` (`exit_users`),
   KEY `sel_1` (`gid`,`date_x`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;";
-$table_Chema[] = "CREATE TABLE IF NOT EXISTS `communities_stats_log` (
+);";
+$table_Chema[] = "CREATE TABLE `communities_stats_log` (
   `gid` int(11) NOT NULL,
   `user_id` int(11) NOT NULL,
   `act` tinyint(3) NOT NULL,
   `date` int(10) NOT NULL,
   KEY `gid` (`gid`,`user_id`,`date`,`act`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;";
-$table_Chema[] = "CREATE TABLE IF NOT EXISTS `communities_wall` (
-  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
+);";
+$table_Chema[] = "CREATE TABLE `communities_wall` (
+  `id` INT( 11 ) AUTO_INCREMENT PRIMARY KEY,
   `public_id` int(11) unsigned NOT NULL,
   `text` text NOT NULL,
   `add_date` varchar(15) NOT NULL,
@@ -3650,21 +3633,21 @@ $table_Chema[] = "CREATE TABLE IF NOT EXISTS `communities_wall` (
   KEY `public_id` (`public_id`),
   KEY `add_date` (`add_date`),
   KEY `tell_date` (`tell_date`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;";
-$table_Chema[] = "CREATE TABLE IF NOT EXISTS `communities_wall_like` (
+);";
+$table_Chema[] = "CREATE TABLE `communities_wall_like` (
   `rec_id` int(11) unsigned NOT NULL,
   `user_id` int(11) unsigned NOT NULL,
   `date` varchar(10) NOT NULL,
   KEY `rec_id` (`rec_id`),
   KEY `user_id` (`user_id`),
   KEY `date` (`date`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;";
-$table_Chema[] = "CREATE TABLE IF NOT EXISTS `country` (
+);";
+$table_Chema[] = "CREATE TABLE `country` (
   `id` int(5) unsigned NOT NULL AUTO_INCREMENT,
   `name` varchar(255) NOT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=16 ;";
-$table_Chema[] = "INSERT INTO `country` (`id`, `name`) VALUES
+/*$table_Chema[] = "INSERT INTO `country` (`id`, `name`) VALUES
 (4, 'Беларусь'),
 (3, 'Казахстан'),
 (2, 'Украина'),
@@ -3674,9 +3657,9 @@ $table_Chema[] = "INSERT INTO `country` (`id`, `name`) VALUES
 (7, 'Эстония'),
 (8, 'Азербайджан'),
 (9, 'Литва'),
-(10, 'США');";
-$table_Chema[] = "CREATE TABLE IF NOT EXISTS `doc` (
-  `did` int(11) unsigned NOT NULL AUTO_INCREMENT,
+(10, 'США');";*/
+$table_Chema[] = "CREATE TABLE `doc` (
+  `did` INT( 11 ) AUTO_INCREMENT PRIMARY KEY,
   `duser_id` int(11) unsigned NOT NULL,
   `dname` varchar(255) NOT NULL,
   `dsize` varchar(10) NOT NULL,
@@ -3685,14 +3668,14 @@ $table_Chema[] = "CREATE TABLE IF NOT EXISTS `doc` (
   PRIMARY KEY (`did`),
   KEY `duser_id` (`duser_id`),
   KEY `ddate` (`ddate`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;";
-$table_Chema[] = "CREATE TABLE IF NOT EXISTS `fave` (
+);";
+$table_Chema[] = "CREATE TABLE `fave` (
   `user_id` int(11) unsigned NOT NULL,
   `fave_id` int(11) unsigned NOT NULL,
   `date` datetime NOT NULL,
   KEY `for_fast_select1` (`user_id`,`fave_id`,`date`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;";
-$table_Chema[] = "CREATE TABLE IF NOT EXISTS `friends` (
+);";
+$table_Chema[] = "CREATE TABLE `friends` (
   `user_id` int(11) NOT NULL,
   `friend_id` int(11) unsigned NOT NULL,
   `friends_date` datetime NOT NULL,
@@ -3702,15 +3685,15 @@ $table_Chema[] = "CREATE TABLE IF NOT EXISTS `friends` (
   KEY `subscriptions` (`subscriptions`),
   KEY `views` (`views`),
   KEY `friends_date` (`friends_date`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;";
-$table_Chema[] = "CREATE TABLE IF NOT EXISTS `friends_demands` (
+);";
+$table_Chema[] = "CREATE TABLE `friends_demands` (
   `for_user_id` int(11) unsigned NOT NULL,
   `from_user_id` int(11) unsigned NOT NULL,
   `demand_date` datetime NOT NULL,
   KEY `for_fast_select1` (`for_user_id`,`from_user_id`,`demand_date`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;";
-$table_Chema[] = "CREATE TABLE IF NOT EXISTS `gifts` (
-  `gid` int(11) unsigned NOT NULL AUTO_INCREMENT,
+);";
+$table_Chema[] = "CREATE TABLE `gifts` (
+  `gid` INT( 11 ) AUTO_INCREMENT PRIMARY KEY,
   `uid` int(11) unsigned NOT NULL,
   `from_uid` int(11) unsigned NOT NULL,
   `gift` varchar(10) NOT NULL,
@@ -3723,14 +3706,15 @@ $table_Chema[] = "CREATE TABLE IF NOT EXISTS `gifts` (
   KEY `from_uid` (`from_uid`),
   KEY `status` (`status`),
   KEY `gdate` (`gdate`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;";
-$table_Chema[] = "CREATE TABLE IF NOT EXISTS `gifts_list` (
-  `gid` int(11) NOT NULL AUTO_INCREMENT,
+);";
+$table_Chema[] = "CREATE TABLE `gifts_list` (
+  `gid` INT( 11 ) AUTO_INCREMENT PRIMARY KEY,
   `img` varchar(50) NOT NULL,
   `price` mediumint(8) NOT NULL,
   PRIMARY KEY (`gid`),
   KEY `img` (`img`)
 ) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=83 ;";
+/*
 $table_Chema[] = "INSERT INTO `gifts_list` (`gid`, `img`, `price`) VALUES
 (8, '11', 30),
 (9, '14', 3),
@@ -3805,9 +3789,10 @@ $table_Chema[] = "INSERT INTO `gifts_list` (`gid`, `img`, `price`) VALUES
 (78, '417', 2),
 (79, '500', 25),
 (80, '501', 30),
-(82, '502', 20);";
-$table_Chema[] = "CREATE TABLE IF NOT EXISTS `im` (
-  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
+(82, '502', 20);";*/
+
+$table_Chema[] = "CREATE TABLE `im` (
+  `id` INT( 11 ) AUTO_INCREMENT PRIMARY KEY,
   `iuser_id` int(11) unsigned NOT NULL,
   `im_user_id` int(11) unsigned NOT NULL,
   `room_id` bigint(20) UNSIGNED NOT NULL DEFAULT '0',
@@ -3818,39 +3803,39 @@ $table_Chema[] = "CREATE TABLE IF NOT EXISTS `im` (
   KEY `iuser_id` (`iuser_id`),
   KEY `im_user_id` (`im_user_id`),
   KEY `idate` (`idate`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1;";
-$table_Chema[] = 'CREATE TABLE IF NOT EXISTS `invites` (
-  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
+);";
+$table_Chema[] = 'CREATE TABLE `invites` (
+  `id` INT( 11 ) AUTO_INCREMENT PRIMARY KEY,
   `uid` int(11) NOT NULL,
   `ruid` int(11) NOT NULL,
   KEY `id` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;';
-$table_Chema[] = 'CREATE TABLE IF NOT EXISTS `log` (
+);';
+$table_Chema[] = 'CREATE TABLE `log` (
   `uid` int(11) NOT NULL,
   `browser` text NOT NULL,
   `ip` varchar(15) NOT NULL,
   `device` varchar(255) NOT NULL,
   KEY `uid` (`uid`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;';
-$table_Chema[] = 'CREATE TABLE IF NOT EXISTS `mail_tpl` (
+);';
+$table_Chema[] = 'CREATE TABLE `mail_tpl` (
   `id` mediumint(8) NOT NULL AUTO_INCREMENT,
   `text` text NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;';
+);';
 
 
-$table_Chema[] = "INSERT INTO `mail_tpl` (`id`, `text`) VALUES
-			(1, 'Доброго времени суток, {%user%}!\r\nПользователь {%user-friend%}, отправил Вам заявку на дружбу.\r\n\r\nПросмотреть заявку Вы можете по ссылке: https://{$_SERVER['HTTP_HOST']}/friends/requests\r\n\r\nС уважением, Социальная сеть.\r\nАдминистрация https://{$_SERVER['HTTP_HOST']}/'),
-			(2, 'Доброго времени суток, {%user%}!\r\nПользователь {%user-friend%}, ответил на Вашу запись {%rec-link%}\r\n\r\nС уважением, Социальная сеть.\r\nАдминистрация https://{$_SERVER['HTTP_HOST']}/'),
-			(3, 'Доброго времени суток, {%user%}!\r\nПользователь {%user-friend%}, оставил комментарий к Вашей видеозаписи {%rec-link%}\r\n\r\nС уважением, Социальная сеть.\r\nАдминистрация https://{$_SERVER['HTTP_HOST']}/'),
-			(4, 'Доброго времени суток, {%user%}!\r\nПользователь {%user-friend%}, оставил комментарий к Вашей фотографии {%rec-link%}\r\n\r\nС уважением, Социальная сеть.\r\nАдминистрация https://{$_SERVER['HTTP_HOST']}/'),
-			(5, 'Доброго времени суток, {%user%}!\r\nПользователь {%user-friend%}, оставил комментарий к Вашей заметке {%rec-link%}\r\n\r\nС уважением, Социальная сеть.\r\nАдминистрация https://{$_SERVER['HTTP_HOST']}/'),
-			(6, 'Доброго времени суток, {%user%}!\r\nПользователь {%user-friend%}, отправил Вам подарок.\r\n\r\nПросмотреть подарок Вы можете по ссылке: {%rec-link%}\r\n\r\nС уважением, Социальная сеть.\r\nАдминистрация https://{$_SERVER['HTTP_HOST']}/'),
-			(7, 'Доброго времени суток, {%user%}!\r\nПользователь {%user-friend%}, оставил на Вашей стене новую запись.\r\n\r\nПросмотреть запись можете по ссылке: {%rec-link%}\r\n\r\nС уважением, Социальная сеть.\r\nАдминистрация https://{$_SERVER['HTTP_HOST']}/'),
-			(8, 'Доброго времени суток, {%user%}!\r\nПользователь {%user-friend%}, отправил Вам новое личное сообщение.\r\n\r\nПросмотреть сообщение можете по ссылке: {%rec-link%}\r\n\r\nС уважением, Социальная сеть.\r\nАдминистрация https://{$_SERVER['HTTP_HOST']}/');";
+//$table_Chema[] = "INSERT INTO `mail_tpl` (`id`, `text`) VALUES
+//			(1, 'Доброго времени суток, {%user%}!\r\nПользователь {%user-friend%}, отправил Вам заявку на дружбу.\r\n\r\nПросмотреть заявку Вы можете по ссылке: https://{$_SERVER['HTTP_HOST']}/friends/requests\r\n\r\nС уважением, Социальная сеть.\r\nАдминистрация https://{$_SERVER['HTTP_HOST']}/'),
+//			(2, 'Доброго времени суток, {%user%}!\r\nПользователь {%user-friend%}, ответил на Вашу запись {%rec-link%}\r\n\r\nС уважением, Социальная сеть.\r\nАдминистрация https://{$_SERVER['HTTP_HOST']}/'),
+//			(3, 'Доброго времени суток, {%user%}!\r\nПользователь {%user-friend%}, оставил комментарий к Вашей видеозаписи {%rec-link%}\r\n\r\nС уважением, Социальная сеть.\r\nАдминистрация https://{$_SERVER['HTTP_HOST']}/'),
+//			(4, 'Доброго времени суток, {%user%}!\r\nПользователь {%user-friend%}, оставил комментарий к Вашей фотографии {%rec-link%}\r\n\r\nС уважением, Социальная сеть.\r\nАдминистрация https://{$_SERVER['HTTP_HOST']}/'),
+//			(5, 'Доброго времени суток, {%user%}!\r\nПользователь {%user-friend%}, оставил комментарий к Вашей заметке {%rec-link%}\r\n\r\nС уважением, Социальная сеть.\r\nАдминистрация https://{$_SERVER['HTTP_HOST']}/'),
+//			(6, 'Доброго времени суток, {%user%}!\r\nПользователь {%user-friend%}, отправил Вам подарок.\r\n\r\nПросмотреть подарок Вы можете по ссылке: {%rec-link%}\r\n\r\nС уважением, Социальная сеть.\r\nАдминистрация https://{$_SERVER['HTTP_HOST']}/'),
+//			(7, 'Доброго времени суток, {%user%}!\r\nПользователь {%user-friend%}, оставил на Вашей стене новую запись.\r\n\r\nПросмотреть запись можете по ссылке: {%rec-link%}\r\n\r\nС уважением, Социальная сеть.\r\nАдминистрация https://{$_SERVER['HTTP_HOST']}/'),
+//			(8, 'Доброго времени суток, {%user%}!\r\nПользователь {%user-friend%}, отправил Вам новое личное сообщение.\r\n\r\nПросмотреть сообщение можете по ссылке: {%rec-link%}\r\n\r\nС уважением, Социальная сеть.\r\nАдминистрация https://{$_SERVER['HTTP_HOST']}/');";
 
-$table_Chema[] = "CREATE TABLE IF NOT EXISTS `messages` (
-  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
+$table_Chema[] = "CREATE TABLE `messages` (
+  `id` INT( 11 ) AUTO_INCREMENT PRIMARY KEY,
   `id2` varchar(255) NOT NULL DEFAULT '0',
   `room_id` bigint(20) UNSIGNED NOT NULL DEFAULT '0',
   `information` tinyint(1) UNSIGNED NOT NULL DEFAULT '0',
@@ -3878,9 +3863,9 @@ $table_Chema[] = "CREATE TABLE IF NOT EXISTS `messages` (
   KEY `from_user_id` (`from_user_id`),
   KEY `history_user_id` (`history_user_id`),
   KEY `folder` (`folder`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;";
-$table_Chema[] = 'CREATE TABLE IF NOT EXISTS `news` (
-  `ac_id` int(11) unsigned NOT NULL AUTO_INCREMENT,
+);";
+$table_Chema[] = 'CREATE TABLE `news` (
+  `ac_id` INT( 11 ) AUTO_INCREMENT PRIMARY KEY,
   `ac_user_id` int(11) unsigned NOT NULL,
   `action_type` tinyint(4) unsigned NOT NULL,
   `action_text` text NOT NULL,
@@ -3895,9 +3880,9 @@ $table_Chema[] = 'CREATE TABLE IF NOT EXISTS `news` (
   KEY `for_user_id` (`for_user_id`),
   KEY `obj_id` (`obj_id`),
   KEY `action_time` (`action_time`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;';
-$table_Chema[] = "CREATE TABLE IF NOT EXISTS `notes` (
-  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
+);';
+$table_Chema[] = "CREATE TABLE `notes` (
+  `id` INT( 11 ) AUTO_INCREMENT PRIMARY KEY,
   `owner_user_id` int(11) unsigned NOT NULL,
   `title` varchar(65) NOT NULL,
   `full_text` text NOT NULL,
@@ -3907,9 +3892,9 @@ $table_Chema[] = "CREATE TABLE IF NOT EXISTS `notes` (
   KEY `owner_user_id` (`owner_user_id`),
   KEY `date` (`date`),
   FULLTEXT KEY `title` (`title`,`full_text`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;";
-$table_Chema[] = "CREATE TABLE IF NOT EXISTS `notes_comments` (
-  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
+);";
+$table_Chema[] = "CREATE TABLE `notes_comments` (
+  `id` INT( 11 ) AUTO_INCREMENT PRIMARY KEY,
   `note_id` int(11) unsigned NOT NULL,
   `from_user_id` int(11) unsigned NOT NULL,
   `text` text NOT NULL,
@@ -3918,9 +3903,9 @@ $table_Chema[] = "CREATE TABLE IF NOT EXISTS `notes_comments` (
   KEY `note_id` (`note_id`),
   KEY `from_user_id` (`from_user_id`),
   KEY `add_date` (`add_date`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;";
-$table_Chema[] = "CREATE TABLE IF NOT EXISTS `photos` (
-  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
+);";
+$table_Chema[] = "CREATE TABLE `photos` (
+  `id` INT( 11 ) AUTO_INCREMENT PRIMARY KEY,
   `album_id` int(11) unsigned NOT NULL,
   `photo_name` varchar(25) NOT NULL,
   `user_id` int(11) unsigned NOT NULL,
@@ -3937,9 +3922,9 @@ $table_Chema[] = "CREATE TABLE IF NOT EXISTS `photos` (
   KEY `position` (`position`),
   KEY `date` (`date`),
   KEY `photo_name` (`photo_name`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;";
-$table_Chema[] = "CREATE TABLE IF NOT EXISTS `photos_comments` (
-  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
+);";
+$table_Chema[] = "CREATE TABLE `photos_comments` (
+  `id` INT( 11 ) AUTO_INCREMENT PRIMARY KEY,
   `owner_id` int(11) unsigned NOT NULL,
   `album_id` int(11) unsigned NOT NULL,
   `pid` int(11) unsigned NOT NULL,
@@ -3955,8 +3940,8 @@ $table_Chema[] = "CREATE TABLE IF NOT EXISTS `photos_comments` (
   KEY `hash` (`hash`),
   KEY `photo_name` (`photo_name`),
   KEY `date` (`date`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;";
-$table_Chema[] = "CREATE TABLE IF NOT EXISTS `photos_mark` (
+);";
+$table_Chema[] = "CREATE TABLE `photos_mark` (
   `muser_id` int(11) unsigned NOT NULL,
   `mphoto_id` int(11) unsigned NOT NULL,
   `mphoto_name` varchar(50) NOT NULL,
@@ -3968,9 +3953,9 @@ $table_Chema[] = "CREATE TABLE IF NOT EXISTS `photos_mark` (
   KEY `mphoto_id` (`mphoto_id`),
   KEY `mdate` (`mdate`),
   FULLTEXT KEY `mphoto_name` (`mphoto_name`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;";
-$table_Chema[] = "CREATE TABLE IF NOT EXISTS `photos_rating` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
+);";
+$table_Chema[] = "CREATE TABLE `photos_rating` (
+  `id` INT( 11 ) AUTO_INCREMENT PRIMARY KEY,
   `photo_id` int(11) NOT NULL,
   `user_id` int(11) NOT NULL,
   `date` varchar(10) NOT NULL,
@@ -3979,9 +3964,9 @@ $table_Chema[] = "CREATE TABLE IF NOT EXISTS `photos_rating` (
   PRIMARY KEY (`id`),
   KEY `for_select_1` (`id`,`user_id`),
   KEY `for_select_2` (`photo_id`,`user_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;";
-$table_Chema[] = "CREATE TABLE IF NOT EXISTS `report` (
-  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
+);";
+$table_Chema[] = "CREATE TABLE `report` (
+  `id` INT( 11 ) AUTO_INCREMENT PRIMARY KEY,
   `act` varchar(10) NOT NULL,
   `type` smallint(5) unsigned NOT NULL,
   `text` text NOT NULL,
@@ -3993,9 +3978,9 @@ $table_Chema[] = "CREATE TABLE IF NOT EXISTS `report` (
   KEY `mid` (`mid`),
   KEY `act` (`act`),
   KEY `date` (`date`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;";
-$table_Chema[] = "CREATE TABLE IF NOT EXISTS `restore` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
+);";
+$table_Chema[] = "CREATE TABLE `restore` (
+  `id` INT( 11 ) AUTO_INCREMENT PRIMARY KEY,
   `email` varchar(50) NOT NULL,
   `hash` varchar(32) NOT NULL,
   `ip` varchar(15) NOT NULL,
@@ -4003,9 +3988,9 @@ $table_Chema[] = "CREATE TABLE IF NOT EXISTS `restore` (
   KEY `email` (`email`),
   KEY `hash` (`hash`),
   KEY `ip` (`ip`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;";
-$table_Chema[] = "CREATE TABLE IF NOT EXISTS `reviews` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
+);";
+$table_Chema[] = "CREATE TABLE `reviews` (
+  `id` INT( 11 ) AUTO_INCREMENT PRIMARY KEY,
   `user_id` int(11) NOT NULL,
   `text` text NOT NULL,
   `date` int(10) NOT NULL,
@@ -4014,8 +3999,8 @@ $table_Chema[] = "CREATE TABLE IF NOT EXISTS `reviews` (
   KEY `date` (`date`),
   KEY `for_sel` (`user_id`,`approve`),
   KEY `approve` (`approve`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;";
-$table_Chema[] = "CREATE TABLE IF NOT EXISTS `sms_log` (
+);";
+$table_Chema[] = "CREATE TABLE `sms_log` (
   `user_id` int(11) NOT NULL,
   `from_u` varchar(20) NOT NULL,
   `msg` varchar(100) NOT NULL,
@@ -4025,17 +4010,17 @@ $table_Chema[] = "CREATE TABLE IF NOT EXISTS `sms_log` (
   `abonent_cost` float NOT NULL,
   `date` varchar(10) NOT NULL,
   KEY `user_id` (`user_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;";
-$table_Chema[] = "CREATE TABLE IF NOT EXISTS `static` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
+);";
+$table_Chema[] = "CREATE TABLE `static` (
+  `id` INT( 11 ) AUTO_INCREMENT PRIMARY KEY,
   `alt_name` varchar(50) NOT NULL,
   `title` varchar(150) NOT NULL,
   `text` text NOT NULL,
   PRIMARY KEY (`id`),
   KEY `alt_name` (`alt_name`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;";
-$table_Chema[] = "CREATE TABLE IF NOT EXISTS `support` (
-  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
+);";
+$table_Chema[] = "CREATE TABLE `support` (
+  `id` INT( 11 ) AUTO_INCREMENT PRIMARY KEY,
   `title` varchar(65) NOT NULL,
   `question` text NOT NULL,
   `suser_id` int(11) unsigned NOT NULL,
@@ -4045,9 +4030,9 @@ $table_Chema[] = "CREATE TABLE IF NOT EXISTS `support` (
   PRIMARY KEY (`id`),
   KEY `suser_id` (`suser_id`),
   KEY `сdate` (`сdate`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;";
-$table_Chema[] = "CREATE TABLE IF NOT EXISTS `support_answers` (
-  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
+);";
+$table_Chema[] = "CREATE TABLE `support_answers` (
+  `id` INT( 11 ) AUTO_INCREMENT PRIMARY KEY,
   `qid` int(11) unsigned NOT NULL,
   `auser_id` int(11) unsigned NOT NULL,
   `adate` varchar(15) NOT NULL,
@@ -4056,9 +4041,9 @@ $table_Chema[] = "CREATE TABLE IF NOT EXISTS `support_answers` (
   KEY `qid` (`qid`),
   KEY `auser_id` (`auser_id`),
   KEY `adate` (`adate`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;";
-$table_Chema[] = "CREATE TABLE IF NOT EXISTS `updates` (
-  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
+);";
+$table_Chema[] = "CREATE TABLE `updates` (
+  `id` INT( 11 ) AUTO_INCREMENT PRIMARY KEY,
   `for_user_id` mediumint(8) unsigned NOT NULL,
   `from_user_id` mediumint(8) unsigned NOT NULL,
   `type` smallint(6) unsigned NOT NULL,
@@ -4070,9 +4055,9 @@ $table_Chema[] = "CREATE TABLE IF NOT EXISTS `updates` (
   PRIMARY KEY (`id`),
   KEY `for_user_id` (`for_user_id`),
   KEY `date` (`date`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;";
-$table_Chema[] = "CREATE TABLE IF NOT EXISTS `users` (
-  `user_id` mediumint(11) NOT NULL AUTO_INCREMENT,
+);";
+$table_Chema[] = "CREATE TABLE `users` (
+  `user_id` INT( 11 ) AUTO_INCREMENT PRIMARY KEY,
   `user_email` varchar(50) NOT NULL,
   `user_password` varchar(32) NOT NULL,
   `user_name` varchar(30) NOT NULL,
@@ -4148,16 +4133,16 @@ $table_Chema[] = "CREATE TABLE IF NOT EXISTS `users` (
   KEY `user_rating` (`user_rating`),
   KEY `user_search_pref` (`user_search_pref`)
 ) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;";
-$table_Chema[] = "CREATE TABLE IF NOT EXISTS `users_rating` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
+$table_Chema[] = "CREATE TABLE `users_rating` (
+  `id` INT( 11 ) AUTO_INCREMENT PRIMARY KEY,
   `user_id` int(11) NOT NULL,
   `for_user_id` int(11) NOT NULL,
   `addnum` int(11) NOT NULL,
   `date` varchar(10) NOT NULL,
   PRIMARY KEY (`id`),
   KEY `for_select` (`user_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;";
-$table_Chema[] = "CREATE TABLE IF NOT EXISTS `users_stats` (
+);";
+$table_Chema[] = "CREATE TABLE `users_stats` (
   `user_id` int(11) unsigned NOT NULL,
   `users` int(11) unsigned NOT NULL,
   `views` int(11) unsigned NOT NULL,
@@ -4168,15 +4153,15 @@ $table_Chema[] = "CREATE TABLE IF NOT EXISTS `users_stats` (
   KEY `date_x` (`date_x`),
   KEY `views` (`views`),
   KEY `users` (`users`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;";
-$table_Chema[] = "CREATE TABLE IF NOT EXISTS `users_stats_log` (
+);";
+$table_Chema[] = "CREATE TABLE `users_stats_log` (
   `user_id` int(11) unsigned NOT NULL,
   `for_user_id` int(11) unsigned NOT NULL,
   `date` int(8) unsigned NOT NULL,
   KEY `user_id` (`user_id`,`for_user_id`,`date`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;";
-$table_Chema[] = "CREATE TABLE IF NOT EXISTS `videos` (
-  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
+);";
+$table_Chema[] = "CREATE TABLE `videos` (
+  `id` INT( 11 ) AUTO_INCREMENT PRIMARY KEY,
   `owner_user_id` int(11) unsigned NOT NULL,
   `public_id` int(11) unsigned NOT NULL,
   `video` text NOT NULL,
@@ -4193,9 +4178,9 @@ $table_Chema[] = "CREATE TABLE IF NOT EXISTS `videos` (
   KEY `public_id` (`public_id`),
   KEY `add_date` (`add_date`),
   FULLTEXT KEY `title` (`title`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;";
-$table_Chema[] = "CREATE TABLE IF NOT EXISTS `videos_comments` (
-  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
+);";
+$table_Chema[] = "CREATE TABLE `videos_comments` (
+  `id` INT( 11 ) AUTO_INCREMENT PRIMARY KEY,
   `author_user_id` int(11) unsigned NOT NULL,
   `video_id` int(11) unsigned NOT NULL,
   `text` text NOT NULL,
@@ -4203,16 +4188,16 @@ $table_Chema[] = "CREATE TABLE IF NOT EXISTS `videos_comments` (
   PRIMARY KEY (`id`),
   KEY `for_fast_select1` (`author_user_id`,`video_id`),
   KEY `add_date` (`add_date`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;";
-$table_Chema[] = "CREATE TABLE IF NOT EXISTS `votes` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
+);";
+$table_Chema[] = "CREATE TABLE `votes` (
+  `id` INT( 11 ) AUTO_INCREMENT PRIMARY KEY,
   `title` varchar(80) NOT NULL,
   `answers` text NOT NULL,
   `answer_num` mediumint(8) NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;";
-$table_Chema[] = "CREATE TABLE IF NOT EXISTS `votes_result` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
+);";
+$table_Chema[] = "CREATE TABLE `votes_result` (
+  `id` INT( 11 ) AUTO_INCREMENT PRIMARY KEY,
   `user_id` int(11) NOT NULL,
   `vote_id` int(11) NOT NULL,
   `answer` tinyint(3) NOT NULL,
@@ -4220,9 +4205,9 @@ $table_Chema[] = "CREATE TABLE IF NOT EXISTS `votes_result` (
   KEY `user_id` (`user_id`),
   KEY `vote_id` (`vote_id`),
   KEY `answer` (`answer`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;";
-$table_Chema[] = "CREATE TABLE IF NOT EXISTS `wall` (
-  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
+);";
+$table_Chema[] = "CREATE TABLE `wall` (
+  `id` INT( 11 ) AUTO_INCREMENT PRIMARY KEY,
   `author_user_id` int(11) unsigned NOT NULL,
   `for_user_id` int(11) unsigned NOT NULL,
   `text` text NOT NULL,
@@ -4242,11 +4227,12 @@ $table_Chema[] = "CREATE TABLE IF NOT EXISTS `wall` (
   KEY `fast_comm_id` (`fast_comm_id`),
   KEY `tell_uid` (`tell_uid`,`tell_date`),
   KEY `add_date` (`add_date`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;";
-$table_Chema[] = "CREATE TABLE IF NOT EXISTS `wall_like` (
+);";
+$table_Chema[] = "CREATE TABLE `wall_like` (
+  `id` INT( 11 ) AUTO_INCREMENT PRIMARY KEY,
   `rec_id` int(11) unsigned NOT NULL,
   `user_id` int(11) unsigned NOT NULL,
   `date` varchar(15) NOT NULL,
   KEY `for_fast_select1` (`rec_id`,`user_id`),
   KEY `date` (`date`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;";
+);";

@@ -1,11 +1,18 @@
 <?php
+/*
+ * Copyright (c) 2022 Tephida
+ *
+ *  For the full copyright and license information, please view the LICENSE
+ *   file that was distributed with this source code.
+ *
+ */
 
 namespace Mozg\modules;
 
+use FluffyDollop\Http\Request;
 use FluffyDollop\Support\Registry;
 use Mozg\classes\FKWallet;
 use Mozg\classes\Module;
-use Mozg\classes\TpLSite;
 
 class Balance extends Module
 {
@@ -67,7 +74,7 @@ class Balance extends Module
 
     public function ok_payment()
     {
-        $num = intFilter('num');
+        $num = (new Request)->int('num');
         /** @var array $user_info */
         $user_info = $this->user_info;
         $user_id = $user_info['user_id'];
@@ -163,8 +170,8 @@ class Balance extends Module
      */
     public function payCreateTest(): void
     {
-        $kassa = requestFilter('kassa');
-        $product = requestFilter('product');
+        $kassa = (new Request)->filter('kassa');
+        $product = (new Request)->filter('product');
         $amount = 0;
         /** @var array $user_info */
         $user_info = Registry::get('user_info');
@@ -194,7 +201,7 @@ class Balance extends Module
     {
 //        $kassa = requestFilter('kassa');
         $kassa = 'fkwallet';
-        $product = requestFilter('product');
+        $product = (new Request)->filter('product');
         $amount = 100;
         /** @var array $user_info */
         $user_info = Registry::get('user_info');
@@ -245,7 +252,7 @@ class Balance extends Module
      */
     public function payMain(): void
     {
-        $invoice = requestFilter('invoice');
+        $invoice = (new Request)->filter('invoice');
         header('Location: /pay/test/success/?invoice='.$invoice);
     }
 
@@ -258,7 +265,7 @@ class Balance extends Module
      */
     public function payTestSuccess()
     {
-        $invoice = requestFilter('invoice');
+        $invoice = (new Request)->filter('invoice');
         $db = $this->db;
         /** @var array $user_info */
         $user_info = Registry::get('user_info');

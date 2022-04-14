@@ -8,6 +8,7 @@
  *
  */
 
+use FluffyDollop\Http\Request;
 use FluffyDollop\Support\Registry;
 use Mozg\classes\Cache;
 
@@ -17,7 +18,7 @@ if (Registry::get('logged')) {
     $db = Registry::get('db');
     $user_info = $user_info ?? Registry::get('user_info');
     $server_time = Registry::get('server_time');
-    $act = requestFilter('act');
+    $act = (new Request)->filter('act');
     $user_id = $user_info['user_id'];
 
     switch ($act) {
@@ -26,11 +27,11 @@ if (Registry::get('logged')) {
         case "for_wall":
             NoAjaxQuery();
 
-            $rid = intFilter('rec_id');
-            $comm = requestFilter('comm');
+            $rid = (new Request)->int('rec_id');
+            $comm = (new Request)->filter('comm');
 
             //Проверка на существование записи
-            if (intFilter('g_tell') == 1) {
+            if ((new Request)->int('g_tell') == 1) {
                 $row = $db->super_query("SELECT add_date, text, public_id, attach, tell_uid, tell_date, public FROM `communities_wall` WHERE fast_comm_id = 0 AND id = '{$rid}'");
                 if ($row['tell_uid']) {
                     $row['author_user_id'] = $row['tell_uid'];
@@ -44,7 +45,7 @@ if (Registry::get('logged')) {
                     if ($row['tell_uid']) {
                         $row['add_date'] = $row['tell_date'];
                         $row['author_user_id'] = $row['tell_uid'];
-                    } elseif (intFilter('g_tell') == 1) {
+                    } elseif ((new Request)->int('g_tell') == 1) {
                         $row['public'] = 1;
                         $row['author_user_id'] = $row['public_id'];
                     }
@@ -77,9 +78,9 @@ if (Registry::get('logged')) {
         case "groups":
             NoAjaxQuery();
 
-            $rid = intFilter('rec_id');
-            $sel_group = intFilter('sel_group');
-            $comm = requestFilter('comm');
+            $rid = (new Request)->int('rec_id');
+            $sel_group = (new Request)->int('sel_group');
+            $comm = (new Request)->filter('comm');
 
             //Проверка на существование записи
             $row = $db->super_query("SELECT add_date, text, author_user_id, tell_uid, tell_date, public, attach FROM `wall` WHERE fast_comm_id = '0' AND id = '{$rid}'");
@@ -120,9 +121,9 @@ if (Registry::get('logged')) {
         case "groups_2":
             NoAjaxQuery();
 
-            $rid = intFilter('rec_id');
-            $sel_group = intFilter('sel_group');
-            $comm = requestFilter('comm');
+            $rid = (new Request)->int('rec_id');
+            $sel_group = (new Request)->int('sel_group');
+            $comm = (new Request)->filter('comm');
 
             //Проверка на существование записи
             $row = $db->super_query("SELECT add_date, text, public_id, attach, tell_uid, tell_date, public FROM `communities_wall` WHERE fast_comm_id = 0 AND id = '{$rid}'");
@@ -164,9 +165,9 @@ if (Registry::get('logged')) {
         case "message":
             NoAjaxQuery();
 
-            $for_user_id = intFilter('for_user_id');
-            $tell_comm = requestFilter('comm');
-            $rid = intFilter('rec_id');
+            $for_user_id = (new Request)->int('for_user_id');
+            $tell_comm = (new Request)->filter('comm');
+            $rid = (new Request)->int('rec_id');
 
             if ($user_id != $for_user_id) {
 
@@ -207,7 +208,7 @@ if (Registry::get('logged')) {
                                 $tell_uid = $row_rec['tell_uid'];
                                 $tell_date = $row_rec['tell_date'];
                             } else {
-                                if (intFilter('g_tell') == 1) {
+                                if ((new Request)->int('g_tell') == 1) {
                                     $row_rec['author_user_id'] = $row_rec['public_id'];
                                     $row_rec['public'] = 1;
                                 }

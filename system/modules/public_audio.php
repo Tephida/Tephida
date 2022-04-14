@@ -1,4 +1,13 @@
 <?php
+/*
+ * Copyright (c) 2022 Tephida
+ *
+ *  For the full copyright and license information, please view the LICENSE
+ *   file that was distributed with this source code.
+ *
+ */
+
+use FluffyDollop\Http\Request;
 
 if ($logged) {
     $count = 40;
@@ -78,11 +87,11 @@ HTML;
                         if (!$res['error'] && $res['playtime_seconds']) {
 
                             if ($res['tags']['id3v2']) {
-                                $artist = textFilter($res['tags']['id3v2']['artist'][0]);
-                                $name = textFilter($res['tags']['id3v2']['title'][0]);
+                                $artist = (new Request)->textFilter($res['tags']['id3v2']['artist'][0]);
+                                $name = (new Request)->textFilter($res['tags']['id3v2']['title'][0]);
                             } else if ($res['tags']['id3v1']) {
-                                $artist = textFilter($res['tags']['id3v1']['artist'][0]);
-                                $name = textFilter($res['tags']['id3v1']['title'][0]);
+                                $artist = (new Request)->textFilter($res['tags']['id3v1']['artist'][0]);
+                                $name = (new Request)->textFilter($res['tags']['id3v1']['title'][0]);
                             }
 
                             $time_sec = round(str_replace(',', '.', $res['playtime_seconds']));

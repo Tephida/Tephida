@@ -8,6 +8,7 @@
  *
  */
 
+use FluffyDollop\Http\Request;
 use FluffyDollop\Support\Registry;
 
 NoAjaxQuery();
@@ -16,12 +17,12 @@ if (Registry::get('logged')) {
     $db = Registry::get('db');
     $user_info = $user_info ?? Registry::get('user_info');
     $server_time = Registry::get('server_time');
-    $month = intFilter('m');
+    $month = (new Request)->int('m');
     if ($month and $month <= 0 or $month > 12) {
         $month = 1;
     }
 
-    $year = intFilter('y');
+    $year = (new Request)->int('y');
     if ($year and $year < 2022 or $year > 2030) $year = 2022;
 
     if ($month and $year) {

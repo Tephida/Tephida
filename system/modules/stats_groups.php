@@ -8,6 +8,7 @@
  *
  */
 
+use FluffyDollop\Http\Request;
 use FluffyDollop\Support\Registry;
 
 NoAjaxQuery();
@@ -15,7 +16,7 @@ NoAjaxQuery();
 if (Registry::get('logged')) {
     $db = Registry::get('db');
     $server_time = Registry::get('server_time');
-    $act = requestFilter('act');
+    $act = (new Request)->filter('act');
     $user_info = $user_info ?? Registry::get('user_info');
 
     switch ($act) {
@@ -24,12 +25,12 @@ if (Registry::get('logged')) {
 
             //################### Выводим статистику ###################//
 
-            $gid = intFilter('gid');
+            $gid = (new Request)->int('gid');
 
-            $month = intFilter('m');
+            $month = (new Request)->int('m');
             if ($month and $month <= 0 or $month > 12) $month = 2;
 
-            $year = intFilter('y');
+            $year = (new Request)->int('y');
             if ($year and $year < 2013 or $year > 2020) $year = 2013;
 
             //Выводим админа сообщества

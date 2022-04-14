@@ -11,7 +11,9 @@
 /uploads/videos/
 /system/data/config.php
 /system/data/db.php
+/system/data/db_config.php
 /adminpanel.php
 /composer.phar
 /vendor/
 /.idea/
+/node_modules/

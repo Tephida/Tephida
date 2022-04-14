@@ -8,6 +8,7 @@
  *
  */
 
+use FluffyDollop\Http\Request;
 use FluffyDollop\Support\Registry;
 use Mozg\classes\Cache;
 use Mozg\classes\Flood;
@@ -16,11 +17,11 @@ use Mozg\classes\Flood;
 NoAjaxQuery();
 
 if (Registry::get('logged')) {
-    $act = requestFilter('act');
+    $act = (new Request)->filter('act');
     $metatags['title'] = $lang['friends'] ?? '';
     $user_info = $user_info ?? Registry::get('user_info');
     $server_time = Registry::get('server_time');
-    $page = intFilter('page', 1);
+    $page = (new Request)->int('page', 1);
     $db = Registry::get('db');
     $gcount = 20;
     $limit_page = ($page - 1) * $gcount;
@@ -35,7 +36,7 @@ if (Registry::get('logged')) {
             if (Flood::check('friends')) {
                 echo 'yes_demand';//fixme
             } else {
-                $for_user_id = intFilter('for_user_id');
+                $for_user_id = (new Request)->int('for_user_id');
                 $from_user_id = $user_info['user_id'];
 
                 //Проверяем на факт сушествования заявки для пользователя, если она уже есть, то даёт ответ "yes_demand"
@@ -96,7 +97,7 @@ if (Registry::get('logged')) {
         //################### Принятие заявки на дружбу ###################//
         case "take":
             NoAjaxQuery();
-            $take_user_id = intFilter('take_user_id');
+            $take_user_id = (new Request)->int('take_user_id');
             $user_id = $user_info['user_id'];
 
             //Проверяем на существования юзера в таблице заявок в друзья
@@ -183,7 +184,7 @@ if (Registry::get('logged')) {
         //################### Отклонение заявки на дружбу ###################//
         case "reject":
             NoAjaxQuery();
-            $reject_user_id = intFilter('reject_user_id');
+            $reject_user_id = (new Request)->int('reject_user_id');
             $user_id = $user_info['user_id'];
 
             //Проверяем на существования юзера в таблице заявок в друзья
@@ -204,7 +205,7 @@ if (Registry::get('logged')) {
         //################### Удаления друга из списка друзей ###################//
         case "delete":
             NoAjaxQuery();
-            $delet_user_id = intFilter('delet_user_id');
+            $delet_user_id = (new Request)->int('delet_user_id');
             $user_id = $user_info['user_id'];
 
             //Проверяем на существования юзера в списке друзей
@@ -308,7 +309,7 @@ if (Registry::get('logged')) {
         case "online":
             $mobile_speedbar = 'Друзья на сайте';
 
-            $get_user_id = intFilter('user_id');
+            $get_user_id = (new Request)->int('user_id');
 
             if (!$get_user_id) {
                 $get_user_id = $user_info['user_id'];
@@ -329,7 +330,7 @@ if (Registry::get('logged')) {
                 //Выводим имя юзера
                 $friends_sql = $db->super_query("SELECT user_name, user_friends_num FROM `users` WHERE user_id = '{$get_user_id}'");
                 if ($user_info['user_id'] != $get_user_id) {
-                    $gram_name = gramatikName($friends_sql['user_name']);
+                    $gram_name = grammaticalName($friends_sql['user_name']);
                 } else {
                     $gram_name = 'Вас';
                 }
@@ -436,14 +437,14 @@ if (Registry::get('logged')) {
 
             $user_id = $user_info['user_id'];
 
-            $page = intFilter('page', 1);
+            $page = (new Request)->int('page', 1);
 
             $gcount = 18;
             $limit_page = ($page - 1) * $gcount;
 
-            if (intFilter('user_sex') == 1) {
+            if ((new Request)->int('user_sex') == 1) {
                 $sql_usSex = 2;
-            } elseif (intFilter('user_sex') == 2) {
+            } elseif ((new Request)->int('user_sex') == 2) {
                 $sql_usSex = 1;
             } else {
                 $sql_usSex = false;
@@ -487,7 +488,7 @@ if (Registry::get('logged')) {
             $metatags['title'] = 'Общие друзья';
             $user_speedbar = 'Общие друзья';
 
-            $uid = intFilter('uid');
+            $uid = (new Request)->int('uid');
 
             //Выводим информацию о человеке, у которого смотрим общих друзей
             $owner = $db->super_query("SELECT user_friends_num, user_name FROM `users` WHERE user_id = '{$uid}'");
@@ -501,7 +502,7 @@ if (Registry::get('logged')) {
                 //Верх
                 $tpl->load_template('friends/head_common.tpl');
 
-                $tpl->set('{name}', gramatikName($owner['user_name']));
+                $tpl->set('{name}', grammaticalName($owner['user_name']));
                 $tpl->set('{user-id}', $uid);
 
                 if ($count_common['cnt']) {
@@ -580,7 +581,7 @@ if (Registry::get('logged')) {
             //################### Просмотр всех друзей ###################//
             $mobile_speedbar = 'Друзья';
 
-            $get_user_id = intFilter('user_id');
+            $get_user_id = (new Request)->int('user_id');
             if (!$get_user_id)
                 $get_user_id = $user_info['user_id'];
 
@@ -591,7 +592,7 @@ if (Registry::get('logged')) {
                 $friends_sql = $db->super_query("SELECT user_name, user_friends_num FROM `users` WHERE user_id = '{$get_user_id}'");
 
                 if ($user_info['user_id'] != $get_user_id) {
-                    $gram_name = gramatikName($friends_sql['user_name']);
+                    $gram_name = grammaticalName($friends_sql['user_name']);
                 } else {
                     $gram_name = 'Вас';
                 }

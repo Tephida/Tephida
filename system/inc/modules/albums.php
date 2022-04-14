@@ -8,7 +8,7 @@
  *
  */
 
-$se_uid = intFilter('se_uid');
+$se_uid = (new \FluffyDollop\Http\Request)->int('se_uid');
 if (!$se_uid) {
     $se_uid = '';
 }
@@ -34,7 +34,7 @@ if ($se_uid or $sort or $se_name or $se_user_id) {
 }
 
 //Выводим список людей
-$page = intFilter('page');
+$page = (new \FluffyDollop\Http\Request)->int('page');
 $gcount = 20;
 $limit_page = ($page - 1) * $gcount;
 

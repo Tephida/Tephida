@@ -1,10 +1,17 @@
 <?php
+/*
+ * Copyright (c) 2022 Tephida
+ *
+ *  For the full copyright and license information, please view the LICENSE
+ *   file that was distributed with this source code.
+ *
+ */
 
 namespace Mozg\modules;
 
+use FluffyDollop\Http\Request;
 use FluffyDollop\Support\Registry;
 use Mozg\classes\Module;
-use Mozg\classes\TpLSite;
 
 class Support extends Module
 {
@@ -30,8 +37,8 @@ class Support extends Module
         if (Flood::check('support')) {
             echo 'limit';
         } else {
-            $title = (new \FluffyDollop\Http\Request)->filter('title', 25000, true);
-            $question = (new \FluffyDollop\Http\Request)->filter('question');
+            $title = (new Request)->filter('title', 25000, true);
+            $question = (new Request)->filter('question');
             $limitTime = $server_time - 3600;
             $rowLast = $db->super_query("SELECT COUNT(*) AS cnt FROM `support` WHERE сdate > '{$limitTime}'");
             if (!$rowLast['cnt'] and !empty($title) and !empty($question) and $user_info['user_group'] != 4) {
@@ -73,7 +80,7 @@ class Support extends Module
     public function delete()
     {
         NoAjaxQuery();
-        $qid = intFilter('qid');
+        $qid = (new Request)->int('qid');
         $row = $db->super_query("SELECT suser_id FROM `support` WHERE id = '{$qid}'");
         if ($row['suser_id'] == $user_id || $user_info['user_group'] == 4) {
             $db->query("DELETE FROM `support` WHERE id = '{$qid}'");
@@ -84,7 +91,7 @@ class Support extends Module
     public function deleteAnswer()
     {
         NoAjaxQuery();
-        $id = intFilter('id');
+        $id = (new Request)->int('id');
         $row = $db->super_query("SELECT auser_id FROM `support_answers` WHERE id = '{$id}'");
         if ($row['auser_id'] == $user_id || $user_info['user_group'] == 4) {
             $db->query("DELETE FROM `support_answers` WHERE id = '{$id}'");
@@ -94,7 +101,7 @@ class Support extends Module
     public function close()
     {
         NoAjaxQuery();
-        $qid = intFilter('qid');
+        $qid = (new Request)->int('qid');
         if ($user_info['user_group'] == 4) {
             $row = $db->super_query("SELECT COUNT(*) AS cnt FROM `support` WHERE id = '{$qid}'");
             if ($row['cnt']) {
@@ -106,8 +113,8 @@ class Support extends Module
     public function answer()
     {
         NoAjaxQuery();
-        $qid = (new \FluffyDollop\Http\Request)->int('qid');
-        $answer = (new \FluffyDollop\Http\Request)->filter('answer');
+        $qid = (new Request)->int('qid');
+        $answer = (new Request)->filter('answer');
         $check = $db->super_query("SELECT suser_id FROM `support` WHERE id = '{$qid}'");
         if ($check['suser_id'] == $user_id or $user_info['user_group'] == 4 and isset($answer) and !empty($answer)) {
             if ($user_info['user_group'] == 4) {
@@ -164,7 +171,7 @@ class Support extends Module
 
     public function show()
     {
-        $qid = intFilter('qid');
+        $qid = (new Request)->int('qid');
 
         $mobile_speedbar = 'Просмотр вопроса';
 
@@ -264,7 +271,7 @@ class Support extends Module
         $db = $this->db;
         $user_info = $this->user_info;
         $user_id = $user_info['user_id'];
-        $page = intFilter('page', 1);
+        $page = (new Request)->int('page', 1);
         $gcount = 20;
         $limit_page = ($page - 1) * $gcount;
 

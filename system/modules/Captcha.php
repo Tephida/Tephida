@@ -13,6 +13,7 @@ namespace Mozg\modules;
 use Error;
 use ErrorException;
 use Exception;
+use FluffyDollop\Http\Response;
 use FluffyDollop\Support\Status;
 use JsonException;
 
@@ -104,7 +105,7 @@ class Captcha
         if (self::clean_url($_SERVER['HTTP_REFERER']) != self::clean_url($_SERVER['HTTP_HOST'])) {
             $status = Status::BAD;
             $response = ['status' => $status];
-            _e_json($response);
+            (new Response)->_e_json($response);
             exit();
         }
 
@@ -117,6 +118,6 @@ class Captcha
         }
         $response = ['status' => $status];
 
-        _e_json($response);
+        (new Response)->_e_json($response);
     }
 }

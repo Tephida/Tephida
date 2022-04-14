@@ -1,4 +1,11 @@
 <?php
+/*
+ * Copyright (c) 2022 Tephida
+ *
+ *  For the full copyright and license information, please view the LICENSE
+ *   file that was distributed with this source code.
+ *
+ */
 
 namespace Mozg\classes;
 
@@ -120,7 +127,7 @@ class Wall
                         $audioId = intval($attach_type[1]);
                         $audioInfo = $db->super_query("SELECT artist, name, url FROM `audio` WHERE aid = '" . $audioId . "'");//fixme name, aid
                         if ($audioInfo) {
-                            if (intFilter('uid')) {
+                            if ((new \FluffyDollop\Http\Request)->int('uid')) {
                                 $appClassWidth = 'player_mini_mbar_wall_all';
                             } else {
                                 $appClassWidth = '';
