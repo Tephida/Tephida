@@ -11,7 +11,7 @@
 use FluffyDollop\Support\Cookie;
 use FluffyDollop\Support\Registry;
 use Mozg\classes\TplCp;
-use Mozg\classes\Users;
+use Mozg\Models\Users;
 
 header('Content-type: text/html; charset=utf-8');
 
@@ -91,7 +91,7 @@ FROM `users` WHERE user_id = '" . $cookie_user_id . "' AND user_group = '1'");
 //Если данные поступили через пост и пользователь не авторизован
 if (isset($_POST['log_in']) && !isset($_SESSION['user_id'])) {
     //Приготавливаем данные
-    $email = requestFilter('email');
+    $email = (new \FluffyDollop\Http\Request)->filter('email');
     $password = stripslashes($_POST['pass']);
 
     //Проверяем правильность e-mail

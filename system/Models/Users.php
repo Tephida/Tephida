@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Mozg\classes;
+namespace Mozg\Models;
 
-use FluffyDollop\Support\Registry;
 use JetBrains\PhpStorm\ArrayShape;
+use Mozg\classes\DB;
 
 /**
  *
@@ -39,10 +39,15 @@ class Users
     ])]
     public static function profile(int $id): array
     {
-        return (Registry::get('db'))->super_query("SELECT user_id, user_email, user_group, user_friends_demands, 
+        return DB::getDB()->row('SELECT user_id, user_email, user_group, user_friends_demands, 
        user_pm_num, user_support, user_lastupdate, user_photo, user_msg_type, user_delet, user_ban_date, 
        user_new_mark_photos, user_search_pref, user_status, user_last_visit, invties_pub_num, user_hid, user_password
-        FROM `users` WHERE user_id = '{$id}'");
+        FROM `users` WHERE user_id = ?', $id);
+
+//        return (Registry::get('db'))->super_query("SELECT user_id, user_email, user_group, user_friends_demands,
+//       user_pm_num, user_support, user_lastupdate, user_photo, user_msg_type, user_delet, user_ban_date,
+//       user_new_mark_photos, user_search_pref, user_status, user_last_visit, invties_pub_num, user_hid, user_password
+//        FROM `users` WHERE user_id = '{$id}'");
     }
 
     /**
@@ -58,8 +63,11 @@ class Users
     ])]
     public static function admin(int $id): array
     {
-        return (Registry::get('db'))->super_query("SELECT user_id, user_email, user_group, user_hid, user_password 
-        FROM `users` WHERE user_id = '{$id}' AND user_group = '1'");
+        return DB::getDB()->row('SELECT user_id, user_email, user_group, user_hid, user_password 
+        FROM `users` WHERE user_id = ?  AND user_group = ?', $id, '1');
+
+//        return (Registry::get('db'))->super_query("SELECT user_id, user_email, user_group, user_hid, user_password
+//        FROM `users` WHERE user_id = '{$id}' AND user_group = '1'");
     }
 
     /**
@@ -71,6 +79,8 @@ class Users
     {
         if ($type === 'site') {
             $user_info = self::profile($id);
+//            var_dump($user_info);exit();
+
             $user_info['user_id'] = (int)$user_info['user_id'];
             $user_info['user_group'] = (int)$user_info['user_group'];
             $user_info['user_lastupdate'] = (int)$user_info['user_lastupdate'];

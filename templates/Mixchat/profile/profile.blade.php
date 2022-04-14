@@ -205,7 +205,7 @@
                     </div>
                 @endif
 
-                @if($all_friends)
+                @if(!empty($all_friends))
                     <div class="b_friends {b_friends}">
                         <a href="/friends/{{ $user_id }}" onClick="Page.Go(this.href); return false"
                            style="text-decoration:none">
@@ -279,7 +279,7 @@
                     </div>
                 @endif
 
-                @if($groups)
+                    @if(!empty($groups))
                     <div class="b_pages {b_pages}">
                         <div class="albtitle cursor_pointer" onClick="groups.all_groups_user('{{ $user_id }}')">
                             <div class="profile_ic_pages fl_l"></div>
@@ -300,7 +300,7 @@
                     </div>
                 @endif
 
-                @if($videos)
+                    @if(!empty($videos))
                     <div class="b_video {b_video}">
                         <a href="/videos/{{ $user_id }}" onClick="Page.Go(this.href); return false"
                            style="text-decoration:none">
@@ -324,7 +324,7 @@
                     </div>
                 @endif
 
-                @if($notes)
+                    @if(!empty($notes))
                     <div class="{b_notes}">
                         <a href="/notes/{{ $user_id }}" onClick="Page.Go(this.href); return false"
                            style="text-decoration:none">
@@ -494,7 +494,7 @@
 
         </div>
 
-        @if($albums)
+            @if(!empty($albums))
             <div class="b_albums {b_albums}">
                 <div class="page_bg border_radius_5 margin_top_10">
                     <a href="/albums/{{ $user_id }}" onClick="Page.Go(this.href); return false"
@@ -518,8 +518,8 @@
                     <div class="clear"></div>
                 </div>
             </div>
-        @endif
-        @if($audios)
+            @endif
+            @if(!empty($audios))
             <div class="b_audio {b_audio}">
                 <div class="page_bg border_radius_5 margin_top_10" style="padding-bottom:10px">
                     <div id="jquery_jplayer"></div>
@@ -605,8 +605,8 @@
                     <div class="clear"></div>
                 </div>
             </div>
-        @endif
-        @if($gifts)
+            @endif
+            @if(!empty($gifts))
         <div class="b_gifts {b_gifts}">
             <div class="page_bg border_radius_5 margin_top_10">
                 <a href="/gifts{{ $user_id }}" onClick="Page.Go(this.href); return false" style="text-decoration:none">
@@ -755,22 +755,25 @@
             </div>
 
             <div id="wall_records">
-                @if($wall_num > 0 && !$blacklist)
-                    @include('wall.one_record', ['wall_records' => $wall_records])
+                @if($user_id === 0 && $wall_num > 0 && !$blacklist)
+                    {{--                    @include('wall.one_record', ['wall_records' => $wall_records])--}}
                 @else
-                    <div class="wall_none" >На стене пока нет ни одной записи.</div>
+                    <div class="wall_none">На стене пока нет ни одной записи.</div>
                 @endif
             </div>
-            [wall-link]<span id="wall_all_record"></span>
-            <div onClick="wall.page('{{ $user_id }}'); return false" id="wall_l_href" class="cursor_pointer">
-                <div class="doc_all_but margin_top_10 border_radius_5" id="wall_link">к предыдущим записям</div>
-            </div>
-            [/wall-link]@endif
+            @if($wall_link)
+                <span id="wall_all_record"></span>
+                <div onClick="wall.page('{{ $user_id }}'); return false" id="wall_l_href" class="cursor_pointer">
+                    <div class="doc_all_but margin_top_10 border_radius_5" id="wall_link">к предыдущим записям</div>
+                </div>
+            @endif
+            @endif
         </div>
-        @if($blacklist)
-            <div class="err_yellow" style="font-weight:normal;margin-top:5px">{name} ограничил доступ к своей странице.
-            </div>
-        @endif
+            @if($blacklist)
+                <div class="err_yellow" style="font-weight:normal;margin-top:5px">{name} ограничил доступ к своей
+                    странице.
+                </div>
+            @endif
     </div>
     <div class="clear"></div>
 @endsection

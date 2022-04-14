@@ -269,10 +269,15 @@ class wall
 
                             if ($row_vote['answer_num']) {
                                 $answer_num_text = declOfNum($row_vote['answer_num'], array('человек', 'человека', 'человек'));
-                            } else $answer_num_text = 'человек';
+                            } else {
+                                $answer_num_text = 'человек';
+                            }
 
-                            if ($row_vote['answer_num'] <= 1) $answer_text2 = 'Проголосовал';
-                            else $answer_text2 = 'Проголосовало';
+                            if ($row_vote['answer_num'] <= 1) {
+                                $answer_text2 = 'Проголосовал';
+                            } else {
+                                $answer_text2 = 'Проголосовало';
+                            }
 
                             $attach_result .= "{$answer_text2} <b>{$row_vote['answer_num']}</b> {$answer_num_text}.<div class=\"clear\" style=\"margin-top:10px\"></div></div>";
 

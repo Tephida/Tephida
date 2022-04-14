@@ -14,20 +14,23 @@
     "ext-zlib": "*",
     "ext-gd": "*",
     "ext-iconv": "*",
-    "tephida/fluffy-dollop": "^3.3.2",
-    "tephida/view": "^1.0",
-    "sinergi/browser-detector": "^6.1",
     "ext-curl": "*",
+    "tephida/fluffy-dollop": "^3.12",
+    "tephida/view": "^1.0",
+    "tephida/database": "^0.1",
+    "sinergi/browser-detector": "^6.1",
     "james-heinrich/getid3": "^2.0-dev"
   },
   "require-dev": {
+    "roave/security-advisories": "dev-latest",
     "fakerphp/faker": "^1.19",
     "php-coveralls/php-coveralls": "^2.1",
     "phpspec/prophecy": "^1.15",
     "phpspec/prophecy-phpunit": "^2.0",
     "phpstan/phpstan": "^1.5",
     "phpunit/phpunit": "^9.5",
-    "squizlabs/php_codesniffer": "^3.6"
+    "squizlabs/php_codesniffer": "^3.6",
+    "ext-pdo": "*"
   },
   "autoload": {
     "files": [

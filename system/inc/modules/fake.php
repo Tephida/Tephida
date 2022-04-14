@@ -13,7 +13,7 @@ use Mozg\classes\TplCp;
 
 $config = settings_get();
 
-$act = requestFilter('act');
+$act = (new \FluffyDollop\Http\Request)->filter('act');
 
 switch ($act) {
     case "people":

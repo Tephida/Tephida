@@ -21,19 +21,20 @@ class Communities extends Module
 
         if (Registry::get('logged')) {
             $db = Registry::get('db');
-            $lang = Registry::get('lang');
+            $register = new \FluffyDollop\Registry\Registry();
+            $lang = $register->get('lang');
             $user_info = Registry::get('user_info');
             $server_time = Registry::get('server_time');
             $config = settings_get();
 
             $user_id = $user_info['user_id'];
-            $pid = intFilter('pid');
+            $pid = (new \FluffyDollop\Http\Request)->int('pid');
             $mobile_speedbar = 'Сообщество';
-            $get_adres = requestFilter('get_adres', 100);
+            $get_adres = (new \FluffyDollop\Http\Request)->filter('get_adres', 100);
 
             //Если страница вызвана через "к предыдущим записям"
             $limit_select = 10;
-            $page_cnt = intFilter('page_cnt');
+            $page_cnt = (new \FluffyDollop\Http\Request)->int('page_cnt');
             if ($page_cnt > 0) {
                 $page_cnt *= $limit_select;
             }

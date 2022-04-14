@@ -12,6 +12,7 @@ use FluffyDollop\Support\{Filesystem, Gzip, Registry, Templates};
 use JetBrains\PhpStorm\ArrayShape;
 use FluffyDollop\Support\Cookie;
 use Mozg\classes\Cache;
+use Mozg\classes\I18n;
 use Mozg\modules\Lang;
 
 /**
@@ -190,7 +191,7 @@ function msgbox($title, $text, $tpl_name) {
     $tpl_2->set('{title}', $title);
     $tpl_2->compile('info');
     $tpl_2->clear();
-    $tpl->result['info'] .= $tpl_2->result['info'];
+//    $tpl->result['info'] .= $tpl_2->result['info'];
 }
 
 /**
@@ -296,7 +297,7 @@ function user_age($user_year, $user_month, $user_day)
 
 function declWord(int $num, string $type): string
 {
-    $lang = Lang::getLang();
+    $lang = I18n::getLang();
     $decl_list = require ROOT_DIR . "/lang/{$lang}/declensions.php";
     return (new \FluffyDollop\Support\Declensions($decl_list))->makeWord($num, $type);
 }
@@ -345,8 +346,11 @@ HTML;
  * @param $mobile
  * @return void
  */
-function OnlineTpl($time, $mobile = false) {
+function OnlineTpl($time, $mobile = false)
+{
     global $tpl, $online_time, $lang;
+    $config = settings_get();
+    $online_time = time() - $config['online_time'];
     //Если человек сидит с мобильнйо версии
     if ($mobile)
         $mobile_icon = '<img src="/images/spacer.gif" class="mobile_online" />';
@@ -356,17 +360,6 @@ function OnlineTpl($time, $mobile = false) {
         return $tpl->set('{online}', $lang['online'] . $mobile_icon);
     else
         return $tpl->set('{online}', '');
-}
-
-/**
- * @deprecated
- * @param $tpl
- * @return int
- */
-function AjaxTpl($tpl): int
-{
-    $config = settings_get();
-    return print(str_replace('{theme}', '/templates/' . $config['temp'], $tpl->result['info'] . $tpl->result['content']));
 }
 
 function GenerateAlbumPhotosPosition($uid, $aid = false)
@@ -578,368 +571,16 @@ function settings_get(): array
     if (Registry::exists('config')) {
         return Registry::get('config');
     }
-    if (file_exists('./data/config.php')) {
-        $config = require './data/config.php';
+    try {
+        $config = require __DIR__ . '/data/config.php';
         Registry::set('config', $config);
         return $config;
+    } catch (Error) {
+        echo 'Please install system';
+        exit();
     }
-    return [];
+
 //    die("Vii Engine not installed. Please run install.php");//todo
-}
-
-/**
- * @deprecated
- * @param $tpl
- * @param array $params
- * @return int
- * @throws JsonException
- * @throws Exception
- */
-function compile($tpl, array $params = array()): int
-{
-    $config = settings_get();
-
-    $metatags['title'] = $params['metatags']['title'] ?? $config['home'];
-//    $checkLang = Registry::get('checkLang') ?? 'Russian';
-//    $lang = require ROOT_DIR . '/lang/' . $checkLang . '/site.php';
-    $params['speedbar'] = $config['home'];
-    $params['headers'] = '<title>' . $metatags['title'] . '</title>
-    <meta name="generator" content="VII ENGINE" />
-    <meta http-equiv="content-type" content="text/html; charset=utf-8" />';
-
-
-    $user_info = Registry::get('user_info');
-    //Если юзер перешел по реферальной ссылке, то добавляем ид реферала в сессию
-    if (isset($_GET['reg'])) {
-        $_SESSION['ref_id'] = intFilter('reg');
-    }
-
-    if (isset($user_info['user_id'])) {
-        //Загружаем кол-во новых новостей
-        $CacheNews = Cache::mozgCache('user_' . $user_info['user_id'] . '/new_news');
-        if ($CacheNews) {
-            $params['new_news'] = "<div class=\"ic_newAct\" style=\"margin-left:18px\">{$CacheNews}</div>";
-            $params['news_link'] = '/notifications';
-        } else {
-            $params['new_news'] = '';
-            $params['news_link'] = '';
-        }
-//Загружаем кол-во новых подарков
-        $CacheGift = Cache::mozgCache("user_{$user_info['user_id']}/new_gift");
-        if ($CacheGift) {
-            $params['new_ubm'] = "<div class=\"ic_newAct\" style=\"margin-left:20px\">{$CacheGift}</div>";
-            $params['gifts_link'] = "/gifts{$user_info['user_id']}?new=1";
-        } else {
-            $params['new_ubm'] = '';
-            $params['gifts_link'] = '/balance';
-        }
-//Новые сообщения
-        $user_pm_num = $user_info['user_pm_num'];
-        if ($user_pm_num) {
-            $params['user_pm_num'] = "<div class=\"ic_newAct\" style=\"margin-left:37px\">{$user_pm_num}</div>";
-        } else $params['user_pm_num'] = '';
-//Новые друзья
-        $user_friends_demands = $user_info['user_friends_demands'];
-        if ($user_friends_demands) {
-            $params['demands'] = "<div class=\"ic_newAct\">{$user_friends_demands}</div>";
-            $params['requests_link'] = '/requests';
-        } else {
-            $params['demands'] = '';
-            $params['requests_link'] = '';
-        }
-//ТП
-        $user_support = $user_info['user_support'];
-        if ($user_support) {
-            $params['support'] = "<div class=\"ic_newAct\" style=\"margin-left:26px\">{$user_support}</div>";
-        } else {
-            $params['support'] = '';
-        }
-//Отметки на фото
-        if ($user_info['user_new_mark_photos']) {
-            $params['new_photos_link'] = 'newphotos';
-            $params['new_photos'] = "<div class=\"ic_newAct\" style=\"margin-left:22px\">" . $user_info['user_new_mark_photos'] . "</div>";
-        } else {
-            $params['new_photos'] = '';
-            $params['new_photos_link'] = $user_info['user_id'];
-        }
-//Приглашения в сообщества
-        if ($user_info['invties_pub_num']) {
-            $params['new_groups'] = "<div class=\"ic_newAct\" style=\"margin-left:26px\">" . $user_info['invties_pub_num'] . "</div>";
-            $params['new_groups_lnk'] = '/groups?act=invites';
-        } else {
-            $params['new_groups'] = '';
-            $params['new_groups_lnk'] = '/groups';
-        }
-    } else {
-        $params['user_pm_num'] = '';
-        $params['new_news'] = '';
-        $params['new_ubm'] = '';
-        $params['gifts_link'] = '/balance';
-        $params['support'] = '';
-        $params['news_link'] = '';
-        $params['demands'] = '';
-        $params['new_photos'] = '';
-        $params['new_photos_link'] = 0;
-        $params['requests_link'] = '/requests';
-        $params['new_groups_lnk'] = '/groups';
-        $params['new_groups'] = '';
-    }
-
-    //Если включен AJAX, то загружаем стр.
-    if (requestFilter('ajax') == 'yes') {
-        return compileAjax($tpl, $params);
-    } else {
-        return compileNoAjax($tpl, $params);
-    }
-}
-
-/**
- * @deprecated
- * @param $tpl
- * @param $params
- * @return int
- * @throws JsonException
- * @throws Exception
- */
-function compileAjax($tpl, $params): int
-{
-    $config = settings_get();
-    //Если есть POST Запрос и значение AJAX, а $ajax не равняется "yes", то не пропускаем
-    //FIXME
-//    if ($_SERVER['REQUEST_METHOD'] == 'POST')
-//        throw new Exception('Неизвестная ошибка');
-
-    $speedbar = $speedbar ?? null;
-    $spBar = $spBar ?? null;
-    $metatags = $params['metatags'] ?? null;
-
-    $metatags['title'] = $metatags['title'] ?? $config['home'];
-
-//    if (isset($spBar) and $spBar)
-//        $ajaxSpBar = "$('#speedbar').show().html('{$speedbar}')";
-//    else
-//        $ajaxSpBar = "$('#speedbar').hide()";
-
-    $params['requests_link'] = $requests_link ?? '';
-    $tpl->result['info'] = $tpl->result['info'] ?? '';
-    if (Registry::get('logged')) {
-        $result_ajax = array(
-            'title' => $metatags['title'],
-            'user_pm_num' => $params['user_pm_num'],
-            'new_news' => $params['new_news'],
-            'new_ubm' => $params['new_ubm'],
-            'gifts_link' => $params['gifts_link'],
-            'support' => $params['support'],
-            'news_link' => $params['news_link'],
-            'demands' => $params['demands'],
-            'new_photos' => $params['new_photos'],
-            'new_photos_link' => $params['new_photos_link'],
-            'requests_link' => $params['requests_link'],
-            'new_groups' => $params['new_groups'],
-            'new_groups_lnk' => $params['new_groups_lnk'],
-            'sbar' => $spBar ? $speedbar : '',
-            'content' => $tpl->result['info'] . $tpl->result['content']
-        );
-
-    } else {
-        $result_ajax = array(
-            'title' => $metatags['title'],
-            'sbar' => $spBar ? $speedbar : '',
-            'content' => $tpl->result['info'] . $tpl->result['content']
-        );
-    }
-    $res = str_replace('{theme}', '/templates/' . $config['temp'], $result_ajax);
-
-    _e_json($res);
-    $tpl->global_clear();
-//        $db->close();
-    if ($config['gzip'] == 'yes') {
-        (new Gzip(false))->GzipOut();
-    }
-    return print('');
-}
-
-/**
- * @deprecated
- * @param $tpl
- * @param $params
- * @return int
- * @throws Exception
- *
- */
-function compileNoAjax($tpl, $params): int
-{
-    $tpl->load_template('main.tpl');
-//Если юзер авторизован
-    if (Registry::get('logged')) {
-        $user_info = Registry::get('user_info');
-        $tpl->set_block("'\\[not-logged\\](.*?)\\[/not-logged\\]'si", "");
-        $tpl->set('[logged]', '');
-        $tpl->set('[/logged]', '');
-        $tpl->set('{my-page-link}', '/u' . $user_info['user_id']);
-        $tpl->set('{my-id}', $user_info['user_id']);
-        //Заявки в друзья
-        $user_friends_demands = $user_info['user_friends_demands'];
-        if ($user_friends_demands) {
-            $tpl->set('{demands}', $params['demands']);
-            $requests_link = $requests_link ?? '';
-            $tpl->set('{requests-link}', $requests_link);
-        } else {
-            $tpl->set('{demands}', '');
-            $tpl->set('{requests-link}', '');
-        }
-        //Новости
-        if (isset($CacheNews) and $CacheNews) {
-            $tpl->set('{new-news}', $params['new_news']);
-            $tpl->set('{news-link}', $params['news_link']);
-        } else {
-            $tpl->set('{new-news}', '');
-            $tpl->set('{news-link}', '');
-        }
-        //Сообщения
-        if (!empty($params['user_pm_num'])) {
-            $tpl->set('{msg}', $params['user_pm_num']);
-        } else {
-            $tpl->set('{msg}', '');
-        }
-
-        $user_support = $user_support ?? null;
-        //Поддержка
-        if ($user_support) {
-            $tpl->set('{new-support}', $params['support']);
-        } else {
-            $tpl->set('{new-support}', '');
-        }
-        //Отметки на фото
-        if ($user_info['user_new_mark_photos']) {
-            $tpl->set('{my-id}', 'newphotos');
-            $tpl->set('{new_photos}', $params['new_photos']);
-        } else {
-            $tpl->set('{new_photos}', '');
-        }
-        //UBM
-
-        $CacheGift = $CacheGift ?? null;
-        if ($CacheGift) {
-            $tpl->set('{new-ubm}', $params['new_ubm']);
-        } else {
-            $tpl->set('{new-ubm}', '');
-        }
-        $tpl->set('{ubm-link}', $params['gifts_link']);
-
-        //Приглашения в сообщества
-        if ($user_info['invties_pub_num']) {
-            $tpl->set('{new_groups}', $params['new_groups']);
-        } else {
-            $tpl->set('{new_groups}', '');
-        }
-        $tpl->set('{groups-link}', $params['new_groups_lnk']);
-
-        if ($user_info['user_photo']) {
-            $config = settings_get();
-            $ava = '<img src="' . $config['home_url'] . 'uploads/users/' . $user_info['user_id'] . '/100_' . $user_info['user_photo'] . '"   style="width: 40px;height: 40px;" />';
-        } else {
-            $ava = '<img src="/images/no_ava_50.png" />';
-        }
-        $tpl->set('{user_photo}', $ava);
-    } else {
-        $tpl->set_block("'\\[logged\\](.*?)\\[/logged\\]'si", "");
-        $tpl->set('[not-logged]', '');
-        $tpl->set('[/not-logged]', '');
-        $tpl->set('{my-page-link}', '');
-    }
-
-    $mobile_speedbar = $mobile_speedbar ?? '';
-    $headers = $headers ?? '';
-    $speedbar = $speedbar ?? '';
-
-    $tpl->set('{header}', $headers);
-    $tpl->set('{speedbar}', $speedbar);
-
-    $tpl->set('{mobile-speedbar}', $mobile_speedbar);
-    $tpl->set('{info}', $tpl->result['info'] ?? '');
-// FOR MOBILE VERSION 1.0
-    $config = settings_get();
-    if ($config['temp'] == 'mobile') {
-        $tpl->result['content'] = str_replace('onClick="Page.Go(this.href); return false"', '', $tpl->result['content']);
-        if ($user_info['user_status']) {
-            $tpl->set('{status-mobile}', '<span style="font-size:11px;color:#000">' . $user_info['user_status'] . '</span>');
-        } else {
-            $tpl->set('{status-mobile}', '<span style="font-size:11px;color:#999">установить статус</span>');
-        }
-
-        $user_friends_demands = $user_friends_demands ?? null;
-        $user_support = $user_support ?? null;
-        $CacheNews = $CacheNews ?? null;
-        $CacheGift = $CacheGift ?? null;
-
-        $new_actions = $user_friends_demands + $user_support + $CacheNews + $CacheGift + $user_info['user_pm_num'];
-        if ($new_actions) {
-            $tpl->set('{new-actions}', "<div class=\"ic_newAct\" style=\"margin-top:5px;margin-left:30px\">+{$new_actions}</div>");
-        } else {
-            $tpl->set('{new-actions}', "");
-        }
-    }
-    $tpl->set('{content}', $tpl->result['content']);
-
-    if (isset($spBar) && $spBar) {
-        $tpl->set_block("'\\[speedbar\\](.*?)\\[/speedbar\\]'si", "");
-    } else {
-        $tpl->set('[speedbar]', '');
-        $tpl->set('[/speedbar]', '');
-    }
-//BUILD JS
-//    $checkLang = Registry::get('checkLang');
-    $tpl->set('{js}', '<script type="text/javascript" src="/js/jquery.lib.js"></script>
-<script type="text/javascript" src="/js/' . Lang::getLang() . '/lang.js"></script>
-<script type="text/javascript" src="/js/main.js"></script>
-<script type="text/javascript" src="/js/audio.js"></script>
-<script type="text/javascript" src="/js/profile.js"></script>');
-
-// FOR MOBILE VERSION 1.0
-    if (isset($user_info['user_photo']) && $user_info['user_photo']) {
-        $tpl->set('{my-ava}', "/uploads/users/{$user_info['user_id']}/50_{$user_info['user_photo']}");
-    } else {
-        $tpl->set('{my-ava}', "/images/no_ava_50.png");
-    }
-
-    if (isset($user_info['user_search_pref'])) {
-        $tpl->set('{my-name}', $user_info['user_search_pref']);
-    } else {
-        $tpl->set('{my-name}', '');
-    }
-
-    if (isset($check_smartphone)) {
-        $tpl->set('{mobile-link}', '<a href="/index.php?act=change_mobile">мобильная версия</a>');
-    } else {
-        $tpl->set('{mobile-link}', '');
-    }
-
-    $tpl->set('{lang}', Lang::getLang());
-    $tpl->compile('main');
-    header('Content-type: text/html; charset=utf-8');
-    $result = str_replace('{theme}', '/templates/' . $config['temp'], $tpl->result['main']);
-    print $result;
-    $tpl->global_clear();
-//    $db->close();
-    if ($config['gzip'] === 'yes') {
-        (new Gzip(false))->GzipOut();
-    }
-
-    return print('');
-}
-
-/**
- * @deprecated
- * @return Templates
- */
-function tpl_init(): Templates
-{
-    $tpl = new Templates();
-    $config = settings_get();
-    $tpl->dir = ROOT_DIR . '/templates/' . $config['temp'];
-    define('TEMPLATE_DIR', $tpl->dir);
-    return $tpl;
 }
 
 /**
@@ -969,13 +610,13 @@ function compileAdmin($tpl): void
     $tpl->set('{exit_lnk}', $exit_lnk);
     $tpl->set('{content}', $tpl->result['content']);
     $tpl->compile('main');
-    if (requestFilter('ajax') == 'yes') {
+    if ((new \FluffyDollop\Http\Request)->filter('ajax') === 'yes') {
         $metatags['title'] = $metatags['title'] ?? 'Панель управления';
         $result_ajax = array(
             'title' => $metatags['title'],
             'content' => $tpl->result['info'] . $tpl->result['content']
         );
-        _e_json($result_ajax);
+        (new \FluffyDollop\Http\Response)->_e_json($result_ajax);
     } else {
         echo $tpl->result['main'];
     }
@@ -991,10 +632,19 @@ function compileAdmin($tpl): void
 function view(?string $view, array $variables = []): bool
 {
     try {
-        echo  (new Mozg\classes\View())->render($view,$variables);
+        echo (new Mozg\classes\View())->render($view, $variables);
         return true;
-    }catch (Error){
+    } catch (Error) {
         return false;
+    }
+}
+
+function view_json(?string $view, array $variables = []): string
+{
+    try {
+        return (new Mozg\classes\View())->render($view, $variables);
+    } catch (Error|Exception) {
+        return 'err 500';
     }
 }
 
@@ -1003,10 +653,10 @@ function view(?string $view, array $variables = []): bool
  * @return array
  */
 #[ArrayShape(['browser' => 'string',
-        'browser_ver' => 'string',
-        'operating_system' => 'string',
-        'device ' => 'string',
-        'language ' => 'string'])]
+    'browser_ver' => 'string',
+    'operating_system' => 'string',
+    'device ' => 'string',
+    'language ' => 'string'])]
 function get_device(): array
 {
     $browser = new \Sinergi\BrowserDetector\Browser();
