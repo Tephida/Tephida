@@ -7,19 +7,16 @@ dependencies:
   - "composer.json"
   - "composer.lock"
 type:helper:
-  - "src/Helpers/**/*"
-  - "src/Support/**/*"
-  - "src/Traits/**/*"
   - "system/functions.php"
-
 type:major:
-  - "system/init.php"
-  - "system/login.php"
-  - "system/mod.php"
+  - "system/Mozg.php"
+  - "composer.json"
 type:classes:
   - "system/classes/**/*"
 type:modules:
   - "system/modules/**/*"
+type:models:
+  - "system/Models/**/*"
 type:admin:
   - "system/inc/**/*"
 type:i18n:

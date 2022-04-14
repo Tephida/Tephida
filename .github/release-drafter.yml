@@ -16,9 +16,10 @@ categories:
       - 'type:modules'
       - 'type:admin'
       - 'type:templates'
-      - 'type:resources'
       - 'type:services'
       - 'type:interfaces'
+      - 'type:major'
+      - 'type:models'
   - title: '🐛 Bug Fixes'
     labels:
       - 'fix'
@@ -26,7 +27,6 @@ categories:
       - 'bug'
       - 'hotfix'
       - 'dependencies'
-      - 'type:major'
   - title: '🧰 Maintenance'
     labels:
       - 'type:build'
@@ -42,7 +42,6 @@ version-resolver:
     labels:
       - major
       - refactoring
-      - 'type:classes'
       - 'type:major'
   minor:
     labels:
@@ -51,9 +50,10 @@ version-resolver:
       - 'type:helper'
       - 'type:modules'
       - 'type:admin'
-      - 'type:resources'
       - 'type:services'
       - 'type:interfaces'
+      - 'type:models'
+      - dependencies
   patch:
     labels:
       - patch
