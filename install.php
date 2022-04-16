@@ -576,7 +576,14 @@ HTML;
 
             \FluffyDollop\Filesystem\Filesystem::delete(ROOT_DIR . '/adminpanel.php');
 
-            $db = require ENGINE_DIR . '/data/db.php';
+            $db_config = require ENGINE_DIR . '/data/db_config.php';
+
+            $db = new PDO(
+                "mysql:dbname=" . $db_config['name'] . ";host=" . $db_config['host'],
+                $db_config['user'],
+                $db_config['pass']);
+
+            $db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);//Error Handling
 
             $table_Chema = array();
             $table_Chema[] = "DROP TABLE IF EXISTS `room`";
@@ -647,7 +654,7 @@ HTML;
             }
 
             \FluffyDollop\Filesystem\Filesystem::delete(ENGINE_DIR . '/data/config.php');
-            \FluffyDollop\Filesystem\Filesystem::delete(ENGINE_DIR . '/data/db.php');
+            \FluffyDollop\Filesystem\Filesystem::delete(ENGINE_DIR . '/data/db_config.php');
 
             echo <<<HTML
 Добро пожаловать в мастер установки Vii Engine. 
