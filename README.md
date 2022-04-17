@@ -1,6 +1,6 @@
 # VII Engine
 <!-- ALL-CONTRIBUTORS-BADGE:START - Do not remove or modify this section -->
-[![All Contributors](https://img.shields.io/badge/all_contributors-1-orange.svg?style=flat-square)](#contributors-)
+[![All Contributors](https://img.shields.io/badge/all_contributors-2-orange.svg?style=flat-square)](#contributors-)
 <!-- ALL-CONTRIBUTORS-BADGE:END -->
 
 ![vii engine](https://raw.githubusercontent.com/Tephida/vii/master/images/app.gif)
@@ -46,6 +46,7 @@ Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/d
 <table>
   <tr>
     <td align="center"><a href="https://github.com/semyon492"><img src="https://avatars.githubusercontent.com/u/22177963?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Semen Alekseev</b></sub></a><br /><a href="https://github.com/Tephida/Tephida/commits?author=semyon492" title="Code">💻</a></td>
+    <td align="center"><a href="https://github.com/phakof"><img src="https://avatars.githubusercontent.com/u/62615948?v=4?s=100" width="100px;" alt=""/><br /><sub><b>phakof</b></sub></a><br /><a href="https://github.com/Tephida/Tephida/pulls?q=is%3Apr+reviewed-by%3Aphakof" title="Reviewed Pull Requests">👀</a></td>
   </tr>
 </table>
 
