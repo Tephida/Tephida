@@ -9,15 +9,7 @@
 
 ## Installation
 
-Install VII Engine with Composer.
-
-1. install [composer](https://getcomposer.org/)
-
-2. Please run install.php
-
-It requires PHP version 8.0 and supports PHP up to 8.1.
-
-<a name="server-requirements"></a>
+[Install Tephida](https://tephida.github.io/docs/docs/getting-started#installing-tephida) with Composer (see requirements details).
 
 ### Server Requirements
 
