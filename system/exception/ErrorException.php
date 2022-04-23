@@ -9,7 +9,9 @@
 
 namespace Mozg\exception;
 
-class ErrorException extends \Error
+use Tephida\Corner\Error;
+
+class ErrorException extends Error
 {
     public function __construct(string|false $message = false, $code = false)
     {
