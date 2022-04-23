@@ -1,12 +1,12 @@
-# VII Engine
+# Tephida
 
-![vii engine](https://raw.githubusercontent.com/Tephida/vii/master/images/app.gif)
+![Tephida](https://raw.githubusercontent.com/Tephida/vii/master/images/app.gif)
 
 <a name="installation"></a>
 
 ## Installation
 
-Install VII Engine with Composer.
+Install Tephida with Composer.
 
 1. install [composer](https://getcomposer.org/)
 
@@ -18,7 +18,7 @@ It requires PHP version 8.0 and supports PHP up to 8.1.
 
 ### Server Requirements
 
-Vii engine has a few system requirements.
+Tephida has a few system requirements.
 
 However, if you are not using Homestead, you will need to make sure your server meets the following requirements:
 
@@ -30,5 +30,5 @@ However, if you are not using Homestead, you will need to make sure your server 
 
 ## License
 
-This software is distributed as open source with the [MIT](https://github.com/semyon492/vii/blob/master/LICENSE)
+This software is distributed as open source with the [MIT](https://github.com/tephida/tephida/blob/master/LICENSE)
 license.
