@@ -1,6 +1,6 @@
 # How to contribute
 
-VII Engine loves to welcome your contributions. There are several ways to help out:
+Tephida loves to welcome your contributions. There are several ways to help out:
 
 * Create an [issue](https://github.com/Tephida/vii/issues) on GitHub, if you have found a bug
 * Write test cases for open bug issues
@@ -48,7 +48,7 @@ chance of keeping on top of things.
 
 ## Reporting a Security Issue
 
-If you've found a security related issue in VII Engine, please don't open an issue in GitHub. Instead contact us at
+If you've found a security related issue in Tephida, please don't open an issue in GitHub. Instead contact us at
 semyon492@ya.ru.
 
 # Additional Resources

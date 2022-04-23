@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-    <title>Vii Engine - Панель управления</title>
+    <title>Tephida - Панель управления</title>
     <meta http-equiv="content-type" content="text/html; charset=utf-8"/>
     <script type="text/javascript" src="/js/jquery.lib.js"></script>
     <script type="text/javascript" src="/js/en/lang.js"></script>
@@ -43,6 +43,6 @@
         <a href="/" style="margin-right:10px" target="_blank">просмотр сайта</a>
         {exit_lnk}
     </div>
-    <br/>Vii Engine<br/></div>
+    <br/>Tephida<br/></div>
 </body>
 </html>

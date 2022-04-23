@@ -1,9 +1,16 @@
 <?php
+/*
+ * Copyright (c) 2022 Tephida
+ *
+ *  For the full copyright and license information, please view the LICENSE
+ *   file that was distributed with this source code.
+ *
+ */
 
 namespace Mozg;
 
-use Error;
-use ErrorException;
+use Tephida\Corner\Error;
+use Mozg\exception\ErrorException;
 use FluffyDollop\Http\Request;
 use JsonException;
 use FluffyDollop\Support\{Registry, Router};
@@ -17,18 +24,18 @@ class Mozg
     public static function initialize(): mixed
     {
         if (isset($_POST['PHPSESSID'])) {
-            session_id($_POST['PHPSESSID']);
+            \session_id($_POST['PHPSESSID']);
         }
 
-        $db = require ENGINE_DIR . '/data/db.php';
-        Registry::set('db', $db);
+//        $db = require ENGINE_DIR . '/data/db_config.php';
+//        Registry::set('db', $db);
 
 //        $checkLang = I18n::getLang();
         $lang = I18n::dictionary();
         Registry::set('lang', $lang);
 
 //        $config = settings_get();
-        Registry::set('server_time', time());
+        Registry::set('server_time', \time());
         (new classes\Auth)->login();
 //        if ($config['offline'] === 'yes') {
 //            include ENGINE_DIR . '/modules/offline.php';
@@ -59,7 +66,7 @@ class Mozg
             }
 
             if (($user_info['user_last_visit'] + 60) <= $server_time) {
-                if (date('Y-m-d', $user_info['user_lastupdate']) < date('Y-m-d', $server_time)) {
+                if (\date('Y-m-d', $user_info['user_lastupdate']) < \date('Y-m-d', $server_time)) {
                     DB::getDB()->update('users', [
                         'user_logged_mobile' => $device_user,
                         'user_last_visit' => $server_time,

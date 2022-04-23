@@ -9,6 +9,7 @@
  */
 
 use FluffyDollop\Support\Registry;
+use Mozg\classes\View;
 use FluffyDollop\Http\{Request, Response};
 use JetBrains\PhpStorm\ArrayShape;
 use Mozg\classes\Cache;
@@ -543,8 +544,6 @@ function settings_get(): array
         echo 'Please install system';
         exit();
     }
-
-//    die("Vii Engine not installed. Please run install.php");//todo
 }
 
 /**
