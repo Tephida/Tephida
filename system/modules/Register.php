@@ -320,7 +320,7 @@ final class Register extends Module
                         $rand_lost .= $salt[random_int(0, 33)];
                     }
                     $hash = md5(time() . $user_email . random_int(0, 100000) . $rand_lost);
-                    $_IP = null;//fixme
+                    $_IP = $_SERVER['REMOTE_ADDR'];//fixme
                     //Вставляем в базу
 //                    $db->query("INSERT INTO `restore` SET email = '{$user_email}', hash = '{$hash}', ip = '{$_IP}'");
 
@@ -377,15 +377,19 @@ final class Register extends Module
                     'email' => $row['email']
                 ]);
 
-            } else {
-//            echo 'Эта ссылка на регистрацию устарела. Пройдите процесс получения ссылки еще раз.';
-//            msgbox('', 'Эта ссылка на регистрацию устарела. Пройдите процесс получения ссылки еще раз.', 'info');
+                $params = [
+                    'title' => $config['home'],
+                    'hash' => $new_hash
+//                    'available' => 'main'
+                ];
 
-//                $tpl->load_template('info.tpl');
-//                $tpl->set('{error}', 'Эта ссылка на регистрацию устарела. Пройдите процесс получения ссылки еще раз.');
+                view('register.step3', $params);
+            } else {
+                $params = [
+                    'title' => $config['home'],
+                ];
+                view('register.old', $params);
             }
-//            $tpl->compile('content');
-//            $tpl->render();
         }catch (\Error $error){
 //            var_dump($error);
         }
