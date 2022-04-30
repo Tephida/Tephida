@@ -96,7 +96,7 @@ class Profile extends Module
 
                 $params['blacklist'] = \Mozg\classes\Friends::checkBlackList($id);
 
-                $user_privacy = xfieldsdataload($row['user_privacy']);
+                $user_privacy = unserialize($row['user_privacy']);
 
                 Registry::set('user_privacy', $user_privacy);
 
@@ -395,7 +395,7 @@ HTML;
 
                         //Выводим имя юзера и настройки приватности
                         $row_user = $db->super_query("SELECT user_name, user_wall_num, user_privacy FROM `users` WHERE user_id = '{$id}'");
-                        $user_privacy = xfieldsdataload($row_user['user_privacy']);
+                        $user_privacy = unserialize($row_user['user_privacy']);
 
                         if ($row_user) {
                             //ЧС
@@ -627,7 +627,7 @@ HTML;
                                 }*/
 
                 //Контакты
-                $xfields = xfieldsdataload($row['user_xfields']);
+                $xfields = unserialize($row['user_xfields']);
                 $preg_safq_name_exp = explode(', ', 'phone, vk, od, skype, fb, icq, site');
                 foreach ($preg_safq_name_exp as $preg_safq_name) {
                     if (isset($xfields[$preg_safq_name]) and $xfields[$preg_safq_name]) {
@@ -694,7 +694,7 @@ HTML;
                                 }*/
 
                 //Интересы
-                $xfields_all = xfieldsdataload($row['user_xfields_all']);
+                $xfields_all = unserialize($row['user_xfields_all']);
 
                 /*                if (!isset($xfields_all['activity'])) $xfields_all['activity'] = '';
                                 if (!isset($xfields_all['interests'])) $xfields_all['interests'] = '';
