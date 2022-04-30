@@ -357,20 +357,15 @@ final class Register extends Module
     {
         try {
             $hash = strip_data($_GET['hash']);
-
             $_IP = $_SERVER['REMOTE_ADDR'];
             $row = DB::getDB()->row('SELECT email FROM `restore` WHERE hash = ? AND ip = ?', $hash, $_IP);
-//            $tpl = new TpLSite($this->tpl_dir_name);
             if ($row) {
-//                $tpl->load_template('register/step3.tpl');
-
                 $salt = 'abchefghjkmnpqrstuvwxyz0123456789';
                 $rand_lost = '';
                 for ($max_var = 0; $max_var < 15; $max_var++) {
                     $rand_lost .= $salt[random_int(0, 33)];
                 }
                 $new_hash = md5(time() . $row['email'] . random_int(0, 100000) . $rand_lost);
-//                $tpl->set('{hash}', $new_hash);
                 DB::getDB()->update('restore', [
                     'hash' => $new_hash,
                 ], [
@@ -380,7 +375,6 @@ final class Register extends Module
                 $params = [
                     'title' => $config['home'],
                     'hash' => $new_hash
-//                    'available' => 'main'
                 ];
 
                 view('register.step3', $params);
@@ -391,7 +385,6 @@ final class Register extends Module
                 view('register.old', $params);
             }
         }catch (\Error $error){
-//            var_dump($error);
         }
 
     }
@@ -454,18 +447,6 @@ final class Register extends Module
 
                 //Вставляем юзера в базу
                 $server_time = time();
-//                $db->query("INSERT INTO `users` SET
-//                        user_email = '{$row['email']}',
-//                        user_password = '{$md5_pass}',
-//                        user_name = '{$user_name}',
-//                        user_lastname = '{$user_lastname}',
-//                        user_reg_date = '{$server_time}',
-//                        user_lastdate = '{$server_time}',
-//                        user_group = '{$user_group}',
-//                        user_search_pref = '{$user_search_pref}',
-//                        user_privacy = 'val_msg|2||val_wall1|2||val_wall2|2||val_wall3|2||val_info|2||',
-//                        user_active = '1'"
-//                );
 
                 $reg_user_id = DB::getDB()->insert('users', [
                     'user_email' => $row['email'],
