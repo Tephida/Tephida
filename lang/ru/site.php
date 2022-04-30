@@ -1,4 +1,11 @@
 <?php
+/*
+ * Copyright (c) 2022 Tephida
+ *
+ *  For the full copyright and license information, please view the LICENSE
+ *   file that was distributed with this source code.
+ *
+ */
 
 @setlocale(LC_ALL, 'ru');
 
@@ -103,6 +110,7 @@ return [
 //Настройки
     'settings' => 'Настройки',
     'settings_nobaduser' => '<br /><br /><br /><br />В Вашем черном списке еще нет пользователей.<br /><br />Вы можете добавить любого человека, чтобы он не мог просматривать Вашу страницу, а также оставлять комментарии к Вашим материалам и отправлять Вам личные сообщения.<br /><br /><br /><br />',
+    'edit_pass' => 'Изменить пароль',
 
 //Новости
     'news_title' => 'Новости',
