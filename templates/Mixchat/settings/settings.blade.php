@@ -1,16 +1,18 @@
 @extends('main.main')
 @section('content')
-    <nav aria-label="breadcrumb">
-        <ol class="breadcrumb">
-            <li class="breadcrumb-item"><a href="/settings/">@_e('settings')</a></li>
-            <li class="breadcrumb-item active" aria-current="page">@_e('all')</li>
-        </ol>
-    </nav>
+
     <div class="card">
         <div class="card-body">
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="/settings">@_e('settings')</a></li>
+                    <li class="breadcrumb-item active" aria-current="page">@_e('all')</li>
+                </ol>
+            </nav>
+
             <div class="search_form_tab d-none" style="margin-top:-9px">
                 <div class="buttonsprofile albumsbuttonsprofile buttonsprofileSecond" style="height:22px">
-                    <div class="buttonsprofileSec"><a href="/settings/" onClick="Page.Go(this.href); return false;">
+                    <div class="buttonsprofileSec"><a href="/settings" onClick="Page.Go(this.href); return false;">
                             <div><b>@_e('all')</b></div>
                         </a></div>
                     <a href="/settings/privacy/" onClick="Page.Go(this.href); return false;">
@@ -21,6 +23,19 @@
                     </a>
                 </div>
             </div>
+
+            <ul class="nav nav-pills">
+                <li class="nav-item">
+                    <a class="nav-link active" aria-current="page" href="#">@_e('all')</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#">@_e('settings_privacy')</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#">@_e('blacklist')</a>
+                </li>
+            </ul>
+
             <div class="err_yellow name_errors {{ $code_1 }}" style="font-weight:normal;margin-top:25px">
                 @_e('privacy_err_code1')
             </div>
@@ -31,7 +46,7 @@
                 @_e('privacy_err_code3')
             </div>
             <div class="margin_top_10"></div>
-            <div class="allbar_title">@_e('rrr')Изменить пароль</div>
+            <div class="allbar_title">@_e('edit_pass')</div>
             <div class="err_red no_display pass_errors" id="err_pass_1" style="font-weight:normal;">@_e('err_pass_1')
             </div>
             <div class="err_red no_display pass_errors" id="err_pass_2" style="font-weight:normal;">@_e('err_pass_2')
