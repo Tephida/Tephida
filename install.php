@@ -151,7 +151,7 @@ switch ($act) {
                     //System Configurations 
                     
                     return [
-                    'home' => "Социальная сеть", 
+                    'home' => "Social", 
                     'charset' => "utf-8", 
                     'home_url' => "{$_POST['url']}", 
                     'admin_index' => "{$_POST['adminfile']}",
