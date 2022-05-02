@@ -16,7 +16,7 @@
     "ext-iconv": "*",
     "ext-curl": "*",
     "ext-pdo": "*",
-    "tephida/fluffy-dollop": "^3.12",
+    "tephida/fluffy-dollop": "^4.0",
     "tephida/view": "^1.0",
     "tephida/database": "^0.1",
     "sinergi/browser-detector": "^6.1",
