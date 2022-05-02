@@ -65,10 +65,10 @@
         @if(!$blacklist )
             <div class="menuleft2" style="margin-top:-3px">
                 @if($owner)
-                    <a href="/docs" onClick="Page.Go(this.href); return false;">
-                        <div class="fl_l pr_ic_docs"></div>
-                        <div>Мои документы</div>
-                    </a>
+                    {{--                    <a href="/docs" onClick="Page.Go(this.href); return false;">--}}
+                    {{--                        <div class="fl_l pr_ic_docs"></div>--}}
+                    {{--                        <div>Мои документы</div>--}}
+                    {{--                    </a>--}}
                     <a href="/editmypage" onClick="Page.Go(this.href); return false;">
                         <div class="fl_l pr_ic_edit"></div>
                         <div>Редактировать страницу</div>
@@ -625,150 +625,150 @@
         </div>
         @endif
 
-        <div class="b_wall {b_wall}">
-            <div class="page_bg border_radius_5 margin_top_10 page_bg_wall"
-                 style="padding-bottom:15px">
-                <a href="/wall{{ $user_id }}" onClick="Page.Go(this.href); return false" style="text-decoration:none">
-                    <div class="albtitle albtitle2" style="border-bottom:0">Стена <span
-                                id="wall_rec_num">{{ $wall_num }}</span></div>
-                </a>
-                @if($privacy_wall)
-                <div class="newmes" id="wall_tab"
-                     style="border-bottom:0px;margin-left:-13px;margin-top:-15px;margin-bottom:-10px">
-                    <input type="hidden"
-                           value=" @if($owner) Что у Вас нового? @else Написать сообщение... @endif "
-                           id="wall_input_text"/>
-                    <input type="text" class="msg_se_inp"
-                           value=" @if($owner) Что у Вас нового? @else Написать сообщение... @endif "
-                           onMouseDown="wall.form_open(); return false" id="wall_input" style="width:600px"/>
-                    <div class="no_display" id="wall_textarea">
-                       <textarea id="wall_text" class="wall_inpst wall_fast_opened_texta"
-                                 style="width:612px"
-                                 onKeyUp="wall.CheckLinkText(this.value)"
-                                 onBlur="wall.CheckLinkText(this.value, 1)"
-                       >
-                       </textarea>
-                        <div id="attach_files" class="margin_top_10 no_display"></div>
-                        <div id="attach_block_lnk" class="no_display clear">
-                            <div class="attach_link_bg">
-                                <div align="center" id="loading_att_lnk">
-                                    <img src="/images/loading_mini.gif" style="margin-bottom:-2px"/>
+            {{--        <div class="b_wall {b_wall}">
+                        <div class="page_bg border_radius_5 margin_top_10 page_bg_wall"
+                             style="padding-bottom:15px">
+                            <a href="/wall{{ $user_id }}" onClick="Page.Go(this.href); return false" style="text-decoration:none">
+                                <div class="albtitle albtitle2" style="border-bottom:0">Стена <span
+                                            id="wall_rec_num">{{ $wall_num }}</span></div>
+                            </a>
+                            @if($privacy_wall)
+                            <div class="newmes" id="wall_tab"
+                                 style="border-bottom:0px;margin-left:-13px;margin-top:-15px;margin-bottom:-10px">
+                                <input type="hidden"
+                                       value=" @if($owner) Что у Вас нового? @else Написать сообщение... @endif "
+                                       id="wall_input_text"/>
+                                <input type="text" class="msg_se_inp"
+                                       value=" @if($owner) Что у Вас нового? @else Написать сообщение... @endif "
+                                       onMouseDown="wall.form_open(); return false" id="wall_input" style="width:600px"/>
+                                <div class="no_display" id="wall_textarea">
+                                   <textarea id="wall_text" class="wall_inpst wall_fast_opened_texta"
+                                             style="width:612px"
+                                             onKeyUp="wall.CheckLinkText(this.value)"
+                                             onBlur="wall.CheckLinkText(this.value, 1)"
+                                   >
+                                   </textarea>
+                                    <div id="attach_files" class="margin_top_10 no_display"></div>
+                                    <div id="attach_block_lnk" class="no_display clear">
+                                        <div class="attach_link_bg">
+                                            <div align="center" id="loading_att_lnk">
+                                                <img src="/images/loading_mini.gif" style="margin-bottom:-2px"/>
+                                            </div>
+                                            <img src="" align="left" id="attatch_link_img" class="no_display cursor_pointer"
+                                                 onClick="wall.UrlNextImg()"/>
+                                            <div id="attatch_link_title"></div>
+                                            <div id="attatch_link_descr"></div>
+                                            <div class="clear"></div>
+                                        </div>
+                                        <div class="attach_toolip_but"></div>
+                                        <div class="attach_link_block_ic fl_l"></div>
+                                        <div class="attach_link_block_te">
+                                            <div class="fl_l">Ссылка: <a href="/" id="attatch_link_url" target="_blank"></a></div>
+                                            <img class="fl_l cursor_pointer" style="margin-top:2px;margin-left:5px"
+                                                 src="/images/close_a.png"
+                                                 onMouseOver="myhtml.title('1', 'Не прикреплять', 'attach_lnk_')" id="attach_lnk_1"
+                                                 onClick="wall.RemoveAttachLnk()"/></div>
+                                        <input type="hidden" id="attach_lnk_stared"/>
+                                        <input type="hidden" id="teck_link_attach"/>
+                                        <span id="urlParseImgs" class="no_display"></span>
+                                    </div>
+                                    <div class="clear"></div>
+                                    <div id="attach_block_vote" class="no_display">
+                                        <div class="attach_link_bg">
+                                            <div class="texta">Тема опроса:</div>
+                                            <input type="text" id="vote_title" class="inpst" maxlength="80" value=""
+                                                   style="width:355px;margin-left:5px"
+                                                   onKeyUp="$('#attatch_vote_title').text(this.value)"
+                                            />
+                                            <div class="mgclr"></div>
+                                            <div class="texta">Варианты ответа:<br/>
+                                                <small>
+                                            <span id="addNewAnswer">
+                                                <a class="cursor_pointer" onClick="Votes.AddInp()">добавить</a>
+                                            </span>
+                                                    | <span id="addDelAnswer">удалить</span>
+                                                </small>
+                                            </div>
+                                            <input type="text" id="vote_answer_1" class="inpst" maxlength="80" value=""
+                                                   style="width:355px;margin-left:5px"/>
+                                            <div class="mgclr"></div>
+                                            <div class="texta">&nbsp;</div>
+                                            <input type="text" id="vote_answer_2" class="inpst" maxlength="80" value=""
+                                                   style="width:355px;margin-left:5px"/>
+                                            <div class="mgclr"></div>
+                                            <div id="addAnswerInp"></div>
+                                            <div class="clear"></div>
+                                        </div>
+                                        <div class="attach_toolip_but"></div>
+                                        <div class="attach_link_block_ic fl_l"></div>
+                                        <div class="attach_link_block_te">
+                                            <div class="fl_l">Опрос: <a id="attatch_vote_title"
+                                                                        style="text-decoration:none;cursor:default"></a>
+                                            </div>
+                                            <img class="fl_l cursor_pointer" style="margin-top:2px;margin-left:5px"
+                                                 src="/images/close_a.png"
+                                                 onMouseOver="myhtml.title('1', 'Не прикреплять', 'attach_vote_')"
+                                                 id="attach_vote_1"
+                                                 onClick="Votes.RemoveForAttach()"/>
+                                        </div>
+                                        <input type="hidden" id="answerNum" value="2"/>
+                                    </div>
+                                    <div class="clear"></div>
+                                    <input id="vaLattach_files" type="hidden"/>
+                                    <div class="clear"></div>
+                                    <div class="button_div fl_l margin_top_10">
+                                        <button onClick="wall.send(); return false" id="wall_send">Отправить</button>
+                                    </div>
+                                    <div class="wall_attach fl_r" style="margin-right:-14px"
+                                         onMouseOver="wall.attach_menu('open', this.id, 'wall_attach_menu')"
+                                         onMouseOut="wall.attach_menu('close', this.id, 'wall_attach_menu')" id="wall_attach">
+                                        Прикрепить
+                                    </div>
+                                    <div class="wall_attach_menu no_display"
+                                         onMouseOver="wall.attach_menu('open', 'wall_attach', 'wall_attach_menu')"
+                                         onMouseOut="wall.attach_menu('close', 'wall_attach', 'wall_attach_menu')"
+                                         id="wall_attach_menu">
+                                        <div class="wall_attach_icon_smile border_radius_5" id="wall_attach_link"
+                                             onClick="wall.attach_addsmile()">Смайлик
+                                        </div>
+                                        <div class="wall_attach_icon_photo border_radius_5" id="wall_attach_link"
+                                             onClick="wall.attach_addphoto()">Фотографию
+                                        </div>
+                                        <div class="wall_attach_icon_video border_radius_5" id="wall_attach_link"
+                                             onClick="wall.attach_addvideo()">Видеозапись
+                                        </div>
+                                        <div class="wall_attach_icon_audio border_radius_5" id="wall_attach_link"
+                                             onClick="wall.attach_addaudio()">Аудиозапись
+                                        </div>
+                                        <div class="wall_attach_icon_doc border_radius_5" id="wall_attach_link"
+                                             onClick="wall.attach_addDoc()">Документ
+                                        </div>
+                                        <div class="wall_attach_icon_vote border_radius_5" id="wall_attach_link"
+                                             onClick="$('#attach_block_vote').slideDown('fast');wall.attach_menu('close', 'wall_attach', 'wall_attach_menu');$('#vote_title').focus();$('#vaLattach_files').val($('#vaLattach_files').val()+'vote|start||')">
+                                            Опрос
+                                        </div>
+                                    </div>
                                 </div>
-                                <img src="" align="left" id="attatch_link_img" class="no_display cursor_pointer"
-                                     onClick="wall.UrlNextImg()"/>
-                                <div id="attatch_link_title"></div>
-                                <div id="attatch_link_descr"></div>
                                 <div class="clear"></div>
                             </div>
-                            <div class="attach_toolip_but"></div>
-                            <div class="attach_link_block_ic fl_l"></div>
-                            <div class="attach_link_block_te">
-                                <div class="fl_l">Ссылка: <a href="/" id="attatch_link_url" target="_blank"></a></div>
-                                <img class="fl_l cursor_pointer" style="margin-top:2px;margin-left:5px"
-                                     src="/images/close_a.png"
-                                     onMouseOver="myhtml.title('1', 'Не прикреплять', 'attach_lnk_')" id="attach_lnk_1"
-                                     onClick="wall.RemoveAttachLnk()"/></div>
-                            <input type="hidden" id="attach_lnk_stared"/>
-                            <input type="hidden" id="teck_link_attach"/>
-                            <span id="urlParseImgs" class="no_display"></span>
+                            @endif
                         </div>
-                        <div class="clear"></div>
-                        <div id="attach_block_vote" class="no_display">
-                            <div class="attach_link_bg">
-                                <div class="texta">Тема опроса:</div>
-                                <input type="text" id="vote_title" class="inpst" maxlength="80" value=""
-                                       style="width:355px;margin-left:5px"
-                                       onKeyUp="$('#attatch_vote_title').text(this.value)"
-                                />
-                                <div class="mgclr"></div>
-                                <div class="texta">Варианты ответа:<br/>
-                                    <small>
-                                <span id="addNewAnswer">
-                                    <a class="cursor_pointer" onClick="Votes.AddInp()">добавить</a>
-                                </span>
-                                        | <span id="addDelAnswer">удалить</span>
-                                    </small>
-                                </div>
-                                <input type="text" id="vote_answer_1" class="inpst" maxlength="80" value=""
-                                       style="width:355px;margin-left:5px"/>
-                                <div class="mgclr"></div>
-                                <div class="texta">&nbsp;</div>
-                                <input type="text" id="vote_answer_2" class="inpst" maxlength="80" value=""
-                                       style="width:355px;margin-left:5px"/>
-                                <div class="mgclr"></div>
-                                <div id="addAnswerInp"></div>
-                                <div class="clear"></div>
-                            </div>
-                            <div class="attach_toolip_but"></div>
-                            <div class="attach_link_block_ic fl_l"></div>
-                            <div class="attach_link_block_te">
-                                <div class="fl_l">Опрос: <a id="attatch_vote_title"
-                                                            style="text-decoration:none;cursor:default"></a>
-                                </div>
-                                <img class="fl_l cursor_pointer" style="margin-top:2px;margin-left:5px"
-                                     src="/images/close_a.png"
-                                     onMouseOver="myhtml.title('1', 'Не прикреплять', 'attach_vote_')"
-                                     id="attach_vote_1"
-                                     onClick="Votes.RemoveForAttach()"/>
-                            </div>
-                            <input type="hidden" id="answerNum" value="2"/>
+                        <div id="wall_records">
+                            @if($user_id === 0 && $wall_num > 0 && !$blacklist)
+                                                    @include('wall.one_record', ['wall_records' => $wall_records])
+                            @else
+                                <div class="wall_none">На стене пока нет ни одной записи.</div>
+                            @endif
                         </div>
-                        <div class="clear"></div>
-                        <input id="vaLattach_files" type="hidden"/>
-                        <div class="clear"></div>
-                        <div class="button_div fl_l margin_top_10">
-                            <button onClick="wall.send(); return false" id="wall_send">Отправить</button>
-                        </div>
-                        <div class="wall_attach fl_r" style="margin-right:-14px"
-                             onMouseOver="wall.attach_menu('open', this.id, 'wall_attach_menu')"
-                             onMouseOut="wall.attach_menu('close', this.id, 'wall_attach_menu')" id="wall_attach">
-                            Прикрепить
-                        </div>
-                        <div class="wall_attach_menu no_display"
-                             onMouseOver="wall.attach_menu('open', 'wall_attach', 'wall_attach_menu')"
-                             onMouseOut="wall.attach_menu('close', 'wall_attach', 'wall_attach_menu')"
-                             id="wall_attach_menu">
-                            <div class="wall_attach_icon_smile border_radius_5" id="wall_attach_link"
-                                 onClick="wall.attach_addsmile()">Смайлик
+                        @if($wall_link)
+                            <span id="wall_all_record"></span>
+                            <div onClick="wall.page('{{ $user_id }}'); return false" id="wall_l_href" class="cursor_pointer">
+                                <div class="doc_all_but margin_top_10 border_radius_5" id="wall_link">к предыдущим записям</div>
                             </div>
-                            <div class="wall_attach_icon_photo border_radius_5" id="wall_attach_link"
-                                 onClick="wall.attach_addphoto()">Фотографию
-                            </div>
-                            <div class="wall_attach_icon_video border_radius_5" id="wall_attach_link"
-                                 onClick="wall.attach_addvideo()">Видеозапись
-                            </div>
-                            <div class="wall_attach_icon_audio border_radius_5" id="wall_attach_link"
-                                 onClick="wall.attach_addaudio()">Аудиозапись
-                            </div>
-                            <div class="wall_attach_icon_doc border_radius_5" id="wall_attach_link"
-                                 onClick="wall.attach_addDoc()">Документ
-                            </div>
-                            <div class="wall_attach_icon_vote border_radius_5" id="wall_attach_link"
-                                 onClick="$('#attach_block_vote').slideDown('fast');wall.attach_menu('close', 'wall_attach', 'wall_attach_menu');$('#vote_title').focus();$('#vaLattach_files').val($('#vaLattach_files').val()+'vote|start||')">
-                                Опрос
-                            </div>
-                        </div>
-                    </div>
-                    <div class="clear"></div>
-                </div>
-                @endif
-            </div>
+                        @endif
 
-            <div id="wall_records">
-                @if($user_id === 0 && $wall_num > 0 && !$blacklist)
-                    {{--                    @include('wall.one_record', ['wall_records' => $wall_records])--}}
-                @else
-                    <div class="wall_none">На стене пока нет ни одной записи.</div>
-                @endif
-            </div>
-            @if($wall_link)
-                <span id="wall_all_record"></span>
-                <div onClick="wall.page('{{ $user_id }}'); return false" id="wall_l_href" class="cursor_pointer">
-                    <div class="doc_all_but margin_top_10 border_radius_5" id="wall_link">к предыдущим записям</div>
-                </div>
+                    </div>--}}
             @endif
-            @endif
-        </div>
             @if($blacklist)
                 <div class="err_yellow" style="font-weight:normal;margin-top:5px">{name} ограничил доступ к своей
                     странице.

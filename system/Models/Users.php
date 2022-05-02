@@ -1,4 +1,11 @@
 <?php
+/*
+ * Copyright (c) 2022 Tephida
+ *
+ *  For the full copyright and license information, please view the LICENSE
+ *   file that was distributed with this source code.
+ *
+ */
 
 declare(strict_types=1);
 
@@ -12,6 +19,7 @@ use Mozg\classes\DB;
  */
 class Users
 {
+
     /**
      * Get user data from login
      * @param int $id
@@ -97,5 +105,39 @@ class Users
             return $user_info;
         }
         return [];
+    }
+
+    /**
+     * @param $user_sex
+     * @param $user_sp
+     * @return string
+     */
+    public static function relationships($user_sex, $user_sp): string
+    {
+        if ($user_sex == 1) {
+            if ($user_sp == 2) {
+                return 'Подруга:';
+            } elseif ($user_sp == 3) {
+                return 'Невеста:';
+            } else if ($user_sp == 4) {
+                return 'Жена:';
+            } else if ($user_sp == 5) {
+                return 'Любимая:';
+            } else {
+                return 'Партнёр:';
+            }
+        } else {
+            if ($user_sp == 2) {
+                return 'Друг:';
+            } elseif ($user_sp == 3)
+                return 'Жених:';
+            else if ($user_sp == 4)
+                return 'Муж:';
+            else if ($user_sp == 5)
+                return 'Любимый:';
+            else {
+                return 'Партнёр:';
+            }
+        }
     }
 }

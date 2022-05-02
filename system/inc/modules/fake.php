@@ -1,7 +1,7 @@
 <?php
 
 /*
- *   (c) Tephida
+ * Copyright (c) 2022 Tephida
  *
  *  For the full copyright and license information, please view the LICENSE
  *   file that was distributed with this source code.
@@ -84,7 +84,7 @@ switch ($act) {
             );
         }
 
-        _e_json($response);
+        (new \FluffyDollop\Http\Response)->_e_json($response);
         break;
 
     default:
