@@ -16,7 +16,6 @@ use Mozg\classes\Module;
 
 class Support extends Module
 {
-
     public function pageNew()
     {
         $params['title'] = 'Новый вопрос';
