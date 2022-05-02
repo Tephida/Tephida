@@ -3815,7 +3815,6 @@ $table_Chema[] = "CREATE TABLE `messages` (
   `read_ids` text NOT NULL,
   `user_ids` text NOT NULL,
   `record_id` bigint(20) UNSIGNED NOT NULL DEFAULT '0',
-  `theme` varchar(255) NOT NULL,
   `text` text NOT NULL,
   `for_user_id` int(11) unsigned NOT NULL,
   `from_user_id` int(11) unsigned NOT NULL,
