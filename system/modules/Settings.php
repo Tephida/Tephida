@@ -10,10 +10,11 @@
 namespace Mozg\modules;
 
 use FluffyDollop\Http\Request;
+use Mozg\classes\Module;
 
-class Settings extends \Mozg\classes\Module
+class Settings extends Module
 {
-    final public function main()
+    final public function main(): bool
     {
         $lang = $this->lang;
         $db = $this->db;
@@ -25,7 +26,7 @@ class Settings extends \Mozg\classes\Module
         $params['user']['user_info']['user_lastname'] = $user_name[1];
         if ($logged) {
 //            $database = self::getDB();
-            $params['title'] = $lang['settings'] . ' | Sura';
+            $params['title'] = $lang['settings'];
 
 //            $request = (Request::getRequest()->getGlobal());
 
