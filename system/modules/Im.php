@@ -1,7 +1,15 @@
 <?php
+/*
+ * Copyright (c) 2022 Tephida
+ *
+ *  For the full copyright and license information, please view the LICENSE
+ *   file that was distributed with this source code.
+ *
+ */
 
 namespace Mozg\modules;
 
+use Mozg\classes\DB;
 use Mozg\classes\Module;
 
 class Im extends Module
@@ -24,7 +32,8 @@ class Im extends Module
             $params['title'] = 'Диалоги';
 
             //Вывод диалогов
-            $sql_ = $db->super_query("SELECT tb1.msg_num, im_user_id, tb2.user_search_pref, user_photo FROM `im` tb1, `users` tb2 WHERE tb1.iuser_id = '" . $user_id . "' AND tb1.im_user_id = tb2.user_id ORDER by `idate` DESC LIMIT 0, 50", 1);
+            $sql_ = DB::getDB()->run("SELECT tb1.msg_num, im_user_id, tb2.user_search_pref, user_photo 
+                FROM `im` tb1, `users` tb2 WHERE tb1.iuser_id = ? AND tb1.im_user_id = tb2.user_id ORDER by `idate` DESC LIMIT 0, 50", $user_id);
             foreach ($sql_ as $key => $row) {
                 $sql_[$key]['name'] = $row['user_search_pref'];
                 $sql_[$key]['uid'] = $row['im_user_id'];
