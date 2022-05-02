@@ -1,0 +1,33 @@
+{
+  "files": [
+    "README.md"
+  ],
+  "imageSize": 100,
+  "commit": false,
+  "contributors": [
+    {
+      "login": "semyon492",
+      "name": "Semen Alekseev",
+      "avatar_url": "https://avatars.githubusercontent.com/u/22177963?v=4",
+      "profile": "https://github.com/semyon492",
+      "contributions": [
+        "code"
+      ]
+    },
+    {
+      "login": "phakof",
+      "name": "phakof",
+      "avatar_url": "https://avatars.githubusercontent.com/u/62615948?v=4",
+      "profile": "https://github.com/phakof",
+      "contributions": [
+        "review"
+      ]
+    }
+  ],
+  "contributorsPerLine": 7,
+  "projectName": "Tephida",
+  "projectOwner": "Tephida",
+  "repoType": "github",
+  "repoHost": "https://github.com",
+  "skipCi": true
+}
