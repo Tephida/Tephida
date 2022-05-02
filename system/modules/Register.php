@@ -12,7 +12,6 @@ namespace Mozg\modules;
 
 use Mozg\classes\{Cache, DB, Email, Module, ViewEmail};
 use FluffyDollop\Http\Request;
-use FluffyDollop\Http\Response;
 use FluffyDollop\Support\{Registry, Status, Cookie};
 use FluffyDollop\Filesystem\Filesystem;
 use JetBrains\PhpStorm\NoReturn;
@@ -205,7 +204,7 @@ final class Register extends Module
             'status' => $status,
             'user_id' => $id,
         );
-        (new Response)->_e_json($response);
+        (new \FluffyDollop\Http\Response)->_e_json($response);
     }
 
     /**
