@@ -1,10 +1,20 @@
 <?php
+/*
+ * Copyright (c) 2022 Tephida
+ *
+ *  For the full copyright and license information, please view the LICENSE
+ *   file that was distributed with this source code.
+ *
+ */
 
 namespace Mozg\classes;
 
+use Tephida\Database\Database;
+use Tephida\Database\Factory;
+
 class DB
 {
-    private static ?\Tephida\Database\Database $database = null;
+    private static ?Database $database = null;
 
     protected function __construct()
     {
@@ -14,7 +24,7 @@ class DB
     {
     }
 
-    public static function getDB(): null|\Tephida\Database\Database
+    public static function getDB(): null|Database
     {
         if (self::$database === null) {
             if (!\is_file(ENGINE_DIR . '/data/db_config.php')) {
@@ -22,7 +32,7 @@ class DB
                 exit();
             }
             $db_config = require ENGINE_DIR . '/data/db_config.php';
-            self::$database = \Tephida\Database\Factory::fromArray([
+            self::$database = Factory::fromArray([
                 'mysql:host=' . $db_config['host'] . ';dbname=' . $db_config['name'],
                 $db_config['user'],
                 $db_config['pass']

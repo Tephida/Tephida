@@ -11,6 +11,7 @@ namespace Mozg\modules;
 
 use FluffyDollop\Http\Request;
 use FluffyDollop\Support\Registry;
+use Mozg\classes\DB;
 use Mozg\classes\Module;
 
 class Support extends Module
@@ -40,13 +41,13 @@ class Support extends Module
             $title = (new Request)->filter('title', 25000, true);
             $question = (new Request)->filter('question');
             $limitTime = $server_time - 3600;
-            $rowLast = $db->super_query("SELECT COUNT(*) AS cnt FROM `support` WHERE сdate > '{$limitTime}'");
+            $rowLast = DB::getDB()->super_query("SELECT COUNT(*) AS cnt FROM `support` WHERE сdate > '{$limitTime}'");
             if (!$rowLast['cnt'] and !empty($title) and !empty($question) and $user_info['user_group'] != 4) {
                 Flood::LogInsert('support');
                 $question = preg_replace('`(http(?:s)?://\w+[^\s\[\]\<]+)`i', '<!--link:$1--><a href="$1" target="_blank">$1</a><!--/link-->', $question);
-                $db->query("INSERT INTO `support` SET title = '{$title}', question = '{$question}', suser_id = '{$user_id}', sfor_user_id = '{$user_id}', sdate = '{$server_time}', сdate = '{$server_time}'");
-                $dbid = $db->insert_id();
-                $row = $db->super_query("SELECT user_search_pref, user_photo FROM `users` WHERE user_id = '{$user_id}'");
+                DB::getDB()->query("INSERT INTO `support` SET title = '{$title}', question = '{$question}', suser_id = '{$user_id}', sfor_user_id = '{$user_id}', sdate = '{$server_time}', сdate = '{$server_time}'");
+                $dbid = DB::getDB()->insert_id();
+                $row = DB::getDB()->super_query("SELECT user_search_pref, user_photo FROM `users` WHERE user_id = '{$user_id}'");
 
                 $meta_tags['title'] = 'Новый вопрос';
                 $config = settings_get();
@@ -81,10 +82,10 @@ class Support extends Module
     {
         NoAjaxQuery();
         $qid = (new Request)->int('qid');
-        $row = $db->super_query("SELECT suser_id FROM `support` WHERE id = '{$qid}'");
+        $row = DB::getDB()->super_query("SELECT suser_id FROM `support` WHERE id = '{$qid}'");
         if ($row['suser_id'] == $user_id || $user_info['user_group'] == 4) {
-            $db->query("DELETE FROM `support` WHERE id = '{$qid}'");
-            $db->query("DELETE FROM `support_answers` WHERE qid = '{$qid}'");
+            DB::getDB()->query("DELETE FROM `support` WHERE id = '{$qid}'");
+            DB::getDB()->query("DELETE FROM `support_answers` WHERE qid = '{$qid}'");
         }
     }
 
@@ -92,9 +93,9 @@ class Support extends Module
     {
         NoAjaxQuery();
         $id = (new Request)->int('id');
-        $row = $db->super_query("SELECT auser_id FROM `support_answers` WHERE id = '{$id}'");
+        $row = DB::getDB()->super_query("SELECT auser_id FROM `support_answers` WHERE id = '{$id}'");
         if ($row['auser_id'] == $user_id || $user_info['user_group'] == 4) {
-            $db->query("DELETE FROM `support_answers` WHERE id = '{$id}'");
+            DB::getDB()->query("DELETE FROM `support_answers` WHERE id = '{$id}'");
         }
     }
 
@@ -103,9 +104,9 @@ class Support extends Module
         NoAjaxQuery();
         $qid = (new Request)->int('qid');
         if ($user_info['user_group'] == 4) {
-            $row = $db->super_query("SELECT COUNT(*) AS cnt FROM `support` WHERE id = '{$qid}'");
+            $row = DB::getDB()->super_query("SELECT COUNT(*) AS cnt FROM `support` WHERE id = '{$qid}'");
             if ($row['cnt']) {
-                $db->query("UPDATE `support` SET sfor_user_id = 0 WHERE id = '{$qid}'");
+                DB::getDB()->query("UPDATE `support` SET sfor_user_id = 0 WHERE id = '{$qid}'");
             }
         }
     }
@@ -115,21 +116,21 @@ class Support extends Module
         NoAjaxQuery();
         $qid = (new Request)->int('qid');
         $answer = (new Request)->filter('answer');
-        $check = $db->super_query("SELECT suser_id FROM `support` WHERE id = '{$qid}'");
+        $check = DB::getDB()->super_query("SELECT suser_id FROM `support` WHERE id = '{$qid}'");
         if ($check['suser_id'] == $user_id or $user_info['user_group'] == 4 and isset($answer) and !empty($answer)) {
             if ($user_info['user_group'] == 4) {
                 $auser_id = 0;
-                $db->query("UPDATE `users` SET user_support = user_support+1 WHERE user_id = '{$check['suser_id']}'");
+                DB::getDB()->query("UPDATE `users` SET user_support = user_support+1 WHERE user_id = '{$check['suser_id']}'");
             } else {
                 $auser_id = $user_id;
             }
 
             $answer = preg_replace('`(http(?:s)?://\w+[^\s\[\]\<]+)`i', '<!--link:$1--><a href="$1" target="_blank">$1</a><!--/link-->', $answer);
 
-            $db->query("INSERT INTO `support_answers` SET qid = '{$qid}', auser_id = '{$auser_id}', adate = '{$server_time}', answer = '{$answer}'");
-            $db->query("UPDATE `support` SET sfor_user_id = '{$auser_id}', sdate = '{$server_time}' WHERE id = '{$qid}'");
+            DB::getDB()->query("INSERT INTO `support_answers` SET qid = '{$qid}', auser_id = '{$auser_id}', adate = '{$server_time}', answer = '{$answer}'");
+            DB::getDB()->query("UPDATE `support` SET sfor_user_id = '{$auser_id}', sdate = '{$server_time}' WHERE id = '{$qid}'");
 
-            $row = $db->super_query("SELECT user_search_pref, user_photo FROM `users` WHERE user_id = '{$user_id}'");
+            $row = DB::getDB()->super_query("SELECT user_search_pref, user_photo FROM `users` WHERE user_id = '{$user_id}'");
 
             $meta_tags['title'] = 'Новый вопрос';
             $config = settings_get();
@@ -186,10 +187,10 @@ class Support extends Module
             $sql_where = "AND tb1.suser_id = '{$user_id}'";
         }
 
-        $row = $db->super_query("SELECT tb1.id, title, question, sdate, sfor_user_id, suser_id, tb2.user_search_pref, user_photo FROM `support` tb1, `users` tb2 WHERE tb1.id = '{$qid}' AND tb1.suser_id = tb2.user_id {$sql_where}");
+        $row = DB::getDB()->super_query("SELECT tb1.id, title, question, sdate, sfor_user_id, suser_id, tb2.user_search_pref, user_photo FROM `support` tb1, `users` tb2 WHERE tb1.id = '{$qid}' AND tb1.suser_id = tb2.user_id {$sql_where}");
         if ($row) {
             //Выводим ответы
-            $sql_answer = $db->super_query("SELECT id, adate, answer, auser_id FROM `support_answers` WHERE qid = '{$qid}' ORDER by `adate` ASC LIMIT 0, 100", true);
+            $sql_answer = DB::getDB()->super_query("SELECT id, adate, answer, auser_id FROM `support_answers` WHERE qid = '{$qid}' ORDER by `adate` ASC LIMIT 0, 100", true);
 
             $tpl->load_template('support/answer.tpl');
             foreach ($sql_answer as $row_answer) {
@@ -287,7 +288,11 @@ class Support extends Module
             $g_count = 20;
             $limit_page = ($page - 1) * $g_count;
             if ($user_info['user_support'] && $user_info['user_group'] !== 4) {
-                $db->query("UPDATE `users` SET user_support = 0 WHERE user_id = '{$user_id}'");
+                DB::getDB()->update('users', [
+                    'user_support' => '0',
+                ], [
+                    'user_id' => $user_id,
+                ]);
             }
 
             $params['group'] = $user_info['user_group'];
@@ -301,22 +306,24 @@ class Support extends Module
                 $params['support_title'] = 'Мои вопросы';
             }
 
-            $sql_ = $db->super_query("SELECT tb1.id, title, suser_id, sfor_user_id, sdate, tb2.user_photo, user_search_pref FROM `support` tb1, `users` tb2 WHERE tb1.suser_id = tb2.user_id {$sql_where} LIMIT {$limit_page}, {$g_count}", 1);
+            $sql_ = DB::getDB()->run(
+                "SELECT tb1.id, title, suser_id, sfor_user_id, sdate, tb2.user_photo, user_search_pref 
+                FROM `support` tb1, `users` tb2 WHERE tb1.suser_id = tb2.user_id AND tb1.suser_id = ? 
+                ORDER by `sdate` DESC LIMIT ?, ?", $user_id, $limit_page, $g_count);
 
             if ($sql_) {
-                $count = $db->super_query("SELECT COUNT(*) AS cnt FROM `support` {$sql_where_cnt}");
-                $count['cnt'] = (int)$count['cnt'];
+                $count = DB::getDB()->single('SELECT COUNT(*) FROM support WHERE suser_id = ?', $user_id);
             } else {
-                $count = ['cnt' => 0];
+                $count = 0;
             }
-            $params['cnt'] = $count['cnt'];
+            $params['cnt'] = $count;
             $params['alert_info'] = '';
 
             if (isset($sql_) && $sql_) {
                 if ($user_info['user_group'] <= 4) {
-                    $params['cnt'] = $count['cnt'] . ' ' . declWord($count['cnt'], 'questions');
+                    $params['cnt'] = $count . ' ' . declWord($count, 'questions');
                 } else {
-                    $params['cnt'] = 'Вы задали ' . $count['cnt'] . ' ' . declWord($count['cnt'], 'questions');
+                    $params['cnt'] = 'Вы задали ' . $count . ' ' . declWord($count, 'questions');
                 }
                 foreach ($sql_ as $key => $row) {
                     $sql_[$key]['title'] = stripslashes($row['title']);

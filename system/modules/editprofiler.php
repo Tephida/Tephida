@@ -172,7 +172,7 @@ if (Registry::get('logged')) {
                 'status' => $status,
                 'photo' => $photo,
             ];
-            _e_json($response);
+            (new \FluffyDollop\Http\Response)->_e_json($response);
             break;
 
         //Удаление фотографии

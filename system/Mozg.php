@@ -101,7 +101,9 @@ class Mozg
 
             '/u:num' => 'Profile@main',
             '/u:numafter' => 'Profile@main',
+
             '/public:num' => 'Communities@main',
+
             //restore
             '/restore' => 'Restore@main',
             '/restore/next' => 'Restore@next',
@@ -117,8 +119,8 @@ class Mozg
 
             '/langs/box' => 'Lang@main',
             '/langs/change' => 'Lang@change',
-            '/balance' => 'Balance@main',
 
+            '/balance' => 'Balance@main',
             '/balance/payment_2' => 'Balance@payment_2',
             '/balance/ok_payment' => 'Balance@ok_payment',
 
@@ -127,9 +129,7 @@ class Mozg
             '/pay/fkw/create/' => 'Balance@payCreateFkw',//2
             '/pay/test/' => 'Balance@payMain',//3
             '/pay/test/success/' => 'Balance@payTestSuccess',//4
-
             '/pay/fw/check/' => 'Balance@checkFWKassa',
-
             '/pay/fw/success/' => 'Balance@main',//4
             '/pay/fkw/success/' => 'Balance@main',//4
             '/pay/fw/bad/' => 'Balance@main',//4
@@ -147,6 +147,7 @@ class Mozg
             '/news' => 'News@main',
 
             '/editprofile/delete/photo' => 'Editprofile@deletePhoto',
+            '/editmypage' => 'Editprofile@main'
 
         ];
         $router->add($routers);

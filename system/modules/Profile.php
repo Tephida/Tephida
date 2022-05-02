@@ -48,7 +48,7 @@ class Profile extends Module
             $row_online = \Mozg\classes\DB::getDB()->row('SELECT user_last_visit, user_logged_mobile FROM `users` WHERE user_id = ?', $id);
         } else {
             /** @var array $row */
-            $row = $db->super_query("SELECT user_id, user_real, user_search_pref, user_country_city_name, user_birthday, user_xfields, user_xfields_all, user_city, user_country, user_photo, user_friends_num, user_notes_num, user_subscriptions_num, user_wall_num, user_albums_num, user_last_visit, user_videos_num, user_status, user_privacy, user_sp, user_sex, user_gifts, user_public_num, user_audio, user_delet, user_ban_date, xfields, user_logged_mobile, user_rating FROM `users` WHERE user_id = '{$id}'");
+            $row = \Mozg\classes\User::getUser($id);
             //todo update
             if ($row) {
                 Cache::mozgCreateFolderCache($cache_folder);
@@ -56,7 +56,7 @@ class Profile extends Module
                 $row_online['user_last_visit'] = $row['user_last_visit'];
                 $row_online['user_logged_mobile'] = $row['user_logged_mobile'];
             } else {
-                $row_online = $db->super_query("SELECT user_last_visit, user_logged_mobile FROM `users` WHERE user_id = '{$id}'");
+                $row_online = \Mozg\classes\DB::getDB()->row('SELECT user_last_visit, user_logged_mobile FROM `users` WHERE user_id = ?', $id);
             }
         }
 
@@ -96,7 +96,7 @@ class Profile extends Module
 
                 $params['blacklist'] = \Mozg\classes\Friends::checkBlackList($id);
 
-                $user_privacy = xfieldsdataload($row['user_privacy']);
+                $user_privacy = unserialize($row['user_privacy']);
 
                 Registry::set('user_privacy', $user_privacy);
 
@@ -395,7 +395,7 @@ HTML;
 
                         //Выводим имя юзера и настройки приватности
                         $row_user = $db->super_query("SELECT user_name, user_wall_num, user_privacy FROM `users` WHERE user_id = '{$id}'");
-                        $user_privacy = xfieldsdataload($row_user['user_privacy']);
+                        $user_privacy = unserialize($row_user['user_privacy']);
 
                         if ($row_user) {
                             //ЧС
@@ -627,7 +627,7 @@ HTML;
                                 }*/
 
                 //Контакты
-                $xfields = xfieldsdataload($row['user_xfields']);
+                $xfields = unserialize($row['user_xfields']);
                 $preg_safq_name_exp = explode(', ', 'phone, vk, od, skype, fb, icq, site');
                 foreach ($preg_safq_name_exp as $preg_safq_name) {
                     if (isset($xfields[$preg_safq_name]) and $xfields[$preg_safq_name]) {
@@ -694,7 +694,7 @@ HTML;
                                 }*/
 
                 //Интересы
-                $xfields_all = xfieldsdataload($row['user_xfields_all']);
+                $xfields_all = unserialize($row['user_xfields_all']);
 
                 /*                if (!isset($xfields_all['activity'])) $xfields_all['activity'] = '';
                                 if (!isset($xfields_all['interests'])) $xfields_all['interests'] = '';
