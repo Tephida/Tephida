@@ -10,7 +10,6 @@
 namespace Mozg\modules;
 
 use FluffyDollop\Http\Request;
-use FluffyDollop\Support\Registry;
 use Mozg\classes\DB;
 use Mozg\classes\Module;
 
