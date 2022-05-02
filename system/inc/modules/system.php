@@ -61,7 +61,7 @@ switch ($act) {
             );
         }
 
-        _e_json($response);
+        (new \FluffyDollop\Http\Response)->_e_json($response);
         break;
 
     default:
