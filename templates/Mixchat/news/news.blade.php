@@ -1,6 +1,6 @@
 @extends('main.main')
 @section('content')
-    <div class="buttonsprofile">
+{{--    <div class="buttonsprofile">
         <div class=""><a href="/news" onClick="Page.Go(this.href); return false;">
                 <div>Новости</div>
             </a></div>
@@ -16,5 +16,5 @@
         <div class=""><a href="/news/updates" onClick="Page.Go(this.href); return false;">
                 <div>Обновления</div>
             </a></div>
-    </div>
+    </div>--}}
 @endsection
