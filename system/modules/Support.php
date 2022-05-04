@@ -10,19 +10,18 @@
 namespace Mozg\modules;
 
 use FluffyDollop\Http\Request;
-use FluffyDollop\Support\Registry;
 use Mozg\classes\DB;
+use Mozg\classes\Flood;
 use Mozg\classes\Module;
 
 class Support extends Module
 {
-
     public function pageNew()
     {
         $params['title'] = 'Новый вопрос';
         $config = settings_get();
         $tpl_dir_name = ROOT_DIR . '/templates/' . $config['temp'];
-        $tpl = new TpLSite($tpl_dir_name, $meta_tags);
+//        $tpl = new TpLSite($tpl_dir_name, $meta_tags);
 
         $mobile_speedbar = 'Новый вопрос';
         $tpl->load_template('support/new.tpl');
@@ -40,7 +39,7 @@ class Support extends Module
         } else {
             $title = (new Request)->filter('title', 25000, true);
             $question = (new Request)->filter('question');
-            $limitTime = $server_time - 3600;
+            $limitTime = time() - 3600;
             $rowLast = DB::getDB()->super_query("SELECT COUNT(*) AS cnt FROM `support` WHERE сdate > '{$limitTime}'");
             if (!$rowLast['cnt'] and !empty($title) and !empty($question) and $user_info['user_group'] != 4) {
                 Flood::LogInsert('support');
@@ -70,7 +69,7 @@ class Support extends Module
                 }
                 $tpl->set('{answers}', '');
                 $tpl->compile('content');
-                AjaxTpl($tpl);
+//                AjaxTpl($tpl);
                 echo 'r|x' . $dbid;
             } else {
                 echo 'limit';
@@ -135,7 +134,7 @@ class Support extends Module
             $meta_tags['title'] = 'Новый вопрос';
             $config = settings_get();
             $tpl_dir_name = ROOT_DIR . '/templates/' . $config['temp'];
-            $tpl = new TpLSite($tpl_dir_name, $meta_tags);
+//            $tpl = new TpLSite($tpl_dir_name, $meta_tags);
 
             $tpl->load_template('support/answer.tpl');
             if (!$auser_id) {
@@ -166,7 +165,7 @@ class Support extends Module
             $date_str = megaDate($server_time);
             $tpl->set('{date}', $date_str);
             $tpl->compile('content');
-            AjaxTpl($tpl);
+//            AjaxTpl($tpl);
         }
     }
 
@@ -179,7 +178,7 @@ class Support extends Module
         $meta_tags['title'] = 'Просмотр вопроса';
         $config = settings_get();
         $tpl_dir_name = ROOT_DIR . '/templates/' . $config['temp'];
-        $tpl = new TpLSite($tpl_dir_name, $meta_tags);
+//        $tpl = new TpLSite($tpl_dir_name, $meta_tags);
 
         if ($user_info['user_group'] == 4) {
             $sql_where = "";
