@@ -27,6 +27,8 @@ However, if you are not using Homestead, you will need to make sure your server 
 - GD PHP extension
 - MySQLI PHP Extension
 - Zlib PHP Extension
+- Curl PHP Extension
+- PDO PHP Extension
 
 ## License
 
